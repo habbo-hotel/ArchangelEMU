@@ -347,16 +347,17 @@ public class Incoming
     public static final int StopBreedingEvent = 2713;
     public static final int ConfirmPetBreedingEvent = 3382;
 
+
+    public static final int GuildForumListEvent = 873;
+    public static final int GuildForumThreadsEvent = 436;
     public static final int GuildForumDataEvent = 3149;
-    public static final int UNKNOWN_GUILD_FORUMS_EVENT2 = 3900;
-    public static final int UNKNOWN_GUILD_FORUMS_EVENT3 = 873;
-    public static final int GuildForumListEvent = 436;
-    public static final int UNKNOWN_GUILD_FORUMS_EVENT5 = 232;
-    public static final int UNKNOWN_GUILD_FORUMS_EVENT6 = 2214;
-    public static final int UNKNOWN_GUILD_FORUMS_EVENT7 = 3529;
-    public static final int UNKNOWN_GUILD_FORUMS_EVENT8 = 1397;
-    public static final int UNKNOWN_GUILD_FORUMS_EVENT9 = 3045;
-    public static final int UNKNOWN_GUILD_FORUMS_EVENT10 = 286;
+    public static final int GuildForumPostThreadEvent = 3529;
+    public static final int GuildForumUpdateSettingsEvent = 2214;
+    public static final int GuildForumThreadsMessagesEvent = 232;
+    public static final int GuildForumModerateMessageEvent = 286;
+    public static final int GuildForumModerateThreadEvent = 1397;
+    public static final int GuildForumThreadUpdateEvent = 3045;
+    public static final int GuildForumMarkAsReadEvent = 1855;
 
 
     public static final int UNKNOWN_SNOWSTORM_6000 = 6000;

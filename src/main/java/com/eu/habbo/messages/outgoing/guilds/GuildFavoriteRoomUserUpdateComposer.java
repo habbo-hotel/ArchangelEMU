@@ -8,8 +8,8 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class GuildFavoriteRoomUserUpdateComposer extends MessageComposer
 {
-    private final RoomUnit roomUnit;
-    private final Guild guild;
+    private RoomUnit roomUnit;
+    private Guild guild;
 
     public GuildFavoriteRoomUserUpdateComposer(RoomUnit roomUnit, Guild guild)
     {

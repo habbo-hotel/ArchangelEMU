@@ -29,8 +29,7 @@ import com.eu.habbo.messages.incoming.guardians.GuardianNoUpdatesWantedEvent;
 import com.eu.habbo.messages.incoming.guardians.GuardianVoteEvent;
 import com.eu.habbo.messages.incoming.guides.*;
 import com.eu.habbo.messages.incoming.guilds.*;
-import com.eu.habbo.messages.incoming.guilds.forums.GuildForumDataEvent;
-import com.eu.habbo.messages.incoming.guilds.forums.GuildForumListEvent;
+import com.eu.habbo.messages.incoming.guilds.forums.*;
 import com.eu.habbo.messages.incoming.handshake.*;
 import com.eu.habbo.messages.incoming.helper.RequestTalentTrackEvent;
 import com.eu.habbo.messages.incoming.hotelview.*;
@@ -525,16 +524,23 @@ public class PacketManager
         this.registerHandler(Incoming.GuildConfirmRemoveMemberEvent,            GuildConfirmRemoveMemberEvent.class);
         this.registerHandler(Incoming.GuildRemoveFavoriteEvent,                 GuildRemoveFavoriteEvent.class);
         this.registerHandler(Incoming.GuildDeleteEvent,                         GuildDeleteEvent.class);
+        this.registerHandler(Incoming.GuildForumListEvent,                      GuildForumListEvent.class);
+        this.registerHandler(Incoming.GuildForumThreadsEvent,                   GuildForumThreadsEvent.class);
+        this.registerHandler(Incoming.GuildForumDataEvent,                      GuildForumDataEvent.class);
+        this.registerHandler(Incoming.GuildForumPostThreadEvent,                GuildForumPostThreadEvent.class);
+        this.registerHandler(Incoming.GuildForumUpdateSettingsEvent,            GuildForumUpdateSettingsEvent.class);
+        this.registerHandler(Incoming.GuildForumThreadsMessagesEvent,           GuildForumThreadsMessagesEvent.class);
+        this.registerHandler(Incoming.GuildForumModerateMessageEvent,           GuildForumModerateMessageEvent.class);
+        this.registerHandler(Incoming.GuildForumModerateThreadEvent,            GuildForumModerateThreadEvent.class);
+        this.registerHandler(Incoming.GuildForumThreadUpdateEvent,              GuildForumThreadUpdateEvent.class);
         this.registerHandler(Incoming.GetHabboGuildBadgesMessageEvent,          GetHabboGuildBadgesMessageEvent.class);
 
-        this.registerHandler(Incoming.GuildForumDataEvent,              GuildForumDataEvent.class);
-        this.registerHandler(Incoming.GuildForumListEvent,              GuildForumListEvent.class);
-
-
-
-
-
-
+//        this.registerHandler(Incoming.GuildForumDataEvent,              GuildForumModerateMessageEvent.class);
+//        this.registerHandler(Incoming.GuildForumDataEvent,              GuildForumModerateThreadEvent.class);
+//        this.registerHandler(Incoming.GuildForumDataEvent,              GuildForumPostThreadEvent.class);
+//        this.registerHandler(Incoming.GuildForumDataEvent,              GuildForumThreadsEvent.class);
+//        this.registerHandler(Incoming.GuildForumDataEvent,              GuildForumThreadsMessagesEvent.class);
+//        this.registerHandler(Incoming.GuildForumDataEvent,              GuildForumUpdateSettingsEvent.class);
     }
 
     void registerPets() throws Exception

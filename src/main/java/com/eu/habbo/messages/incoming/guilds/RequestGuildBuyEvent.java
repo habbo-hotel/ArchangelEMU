@@ -48,7 +48,7 @@ public class RequestGuildBuyEvent extends MessageHandler
 
                     int count = this.packet.readInt();
 
-                    StringBuilder badge = new StringBuilder();
+                    String badge = "";
 
                     byte base = 1;
 
@@ -60,19 +60,20 @@ public class RequestGuildBuyEvent extends MessageHandler
 
                         if(base == 1)
                         {
-                            badge.append("b");
+                            badge += "b";
                         }
                         else
                         {
-                            badge.append("s");
+                            badge += "s";
                         }
 
-                        badge.append(id < 100 ? "0" : "").append(id < 10 ? "0" : "").append(id).append(color < 10 ? "0" : "").append(color).append(pos);
+                        badge += (id < 100 ? "0" : "") + (id < 10 ? "0" : "") + id + (color < 10 ? "0" : "") + color + "" + pos;
 
                         base += 3;
                     }
 
-                    Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), roomId, r.getName(), name, description, badge.toString(), colorOne, colorTwo);
+                    Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), roomId, r.getName(), name, description, badge, colorOne, colorTwo);
+
                     r.setGuild(guild.getId());
                     r.setNeedsUpdate(true);
                     
