@@ -3,11 +3,19 @@
 # Arcturus Morningstar #
 
 ## Current Stable Version: 1.16 ##
+## Current Unstable Version: 2.0.0 ##
 Arcturus Morningstar is a Habbo emulator written in Java aiming to be an exact clone of the offical server, based on Arcturus Emulator by TheGeneral.
 Targeting PRODUCTION-201611291003-338511768
 
 ### Contributing ###
 Anyone is allowed to contribute to the project. Reporting bugs and issues goes via the issue tracker.
 Add me on discord if you wish to chat :) capheus#7127
+
+### Credits ###
+- TheGeneral
+- Capheus (Decompilation.)
+- Harmonic
+- Beny
+- Claudio
 
 
