@@ -21,14 +21,14 @@ public class RoomPointsCommand extends Command
         {
             try
             {
-                type = Integer.valueOf(params[1]);
+                amountString = params[1];
+
+                type = Integer.valueOf(params[2]);
             } catch (Exception e)
             {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_masspoints.invalid_type").replace("%types%", Emulator.getConfig().getValue("seasonal.types").replace(";", ", ")), RoomChatMessageBubbles.ALERT);
                 return true;
             }
-
-            amountString = params[2];
         }
         else if(params.length == 2)
         {
