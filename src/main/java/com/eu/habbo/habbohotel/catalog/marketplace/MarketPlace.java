@@ -131,30 +131,10 @@ public class MarketPlace
     }
 
 
-    public static List<MarketPlaceOffer> getOffers(int minPrice, int maxPrice, String search, int sort)
-    {
-        List<MarketPlaceOffer> offers = new ArrayList<>(10);
-
-        //String query = "SELECT items_base.type AS type, items.item_id AS base_item_id, items.limited_data AS ltd_data, marketplace_items.*, COUNT(*) as number, AVG(price) as avg, MIN(price) as minPrice FROM marketplace_items INNER JOIN items ON marketplace_items.item_id = items.id INNER JOIN items_base ON items.item_id = items_base.id WHERE state = ? AND timestamp >= ?";
-
-
-        String query =  "SELECT " +
-                            "B.* FROM marketplace_items a " +
-                        "INNER JOIN (" +
-                                        "SELECT " +
-                                        "items.item_id AS base_item_id, " +
-                                        "items.limited_data AS ltd_data, " +
-                                        "marketplace_items.*, " +
-                                        "AVG(price) as avg, " +
-                                        "MIN(marketplace_items.price) as minPrice, " +
-                                        "MAX(marketplace_items.price) as maxPrice, " +
-                                        "COUNT(*) as number, " +
-                                        //"SUM(DATE(from_unixtime(timestamp)) >= (NOW() - INTERVAL 1 DAY)) as offer_count_today, " +
-                                        "(SELECT COUNT(*) FROM marketplace_items c INNER JOIN items as items_b ON c.item_id = items_b.id WHERE state = 2 AND items_b.item_id = base_item_id AND DATE(from_unixtime(sold_timestamp)) = CURDATE()) as sold_count_today " +
-                                    "FROM marketplace_items " +
-                                    "INNER JOIN items ON marketplace_items.item_id = items.id " +
-                                    "WHERE state = 1 AND timestamp > ?";
-        if(minPrice > 0)
+    public static List<MarketPlaceOffer> getOffers(int minPrice, int maxPrice, String search, int sort) {
+        List<MarketPlaceOffer> offers = new ArrayList(10);
+        String query = "SELECT B.* FROM marketplace_items a INNER JOIN (SELECT b.item_id AS base_item_id, b.limited_data AS ltd_data, marketplace_items.*, AVG(price) as avg, MIN(marketplace_items.price) as minPrice, MAX(marketplace_items.price) as maxPrice, COUNT(*) as number, (SELECT COUNT(*) FROM marketplace_items c INNER JOIN items as items_b ON c.item_id = items_b.id WHERE state = 2 AND items_b.item_id = base_item_id AND DATE(from_unixtime(sold_timestamp)) = CURDATE()) as sold_count_today FROM marketplace_items INNER JOIN items b ON marketplace_items.item_id = b.id WHERE price = (SELECT MIN(e.price) FROM marketplace_items e, items d WHERE e.item_id = d.id AND d.item_id = b.item_id AND e.state = 1 AND e.timestamp > ? GROUP BY d.item_id, d.limited_data) AND state = 1 AND timestamp > ?";
+        if (minPrice > 0)
         {
             query += " AND CEIL(price + (price / 100)) >= " + minPrice;
         }
@@ -201,6 +181,7 @@ public class MarketPlace
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(query))
         {
             statement.setInt(1, Emulator.getIntUnixTimestamp() - 172800);
+            statement.setInt(2, Emulator.getIntUnixTimestamp() - 172800);
             if(search.length() > 0)
                 statement.setString(3, "%"+search+"%");
 

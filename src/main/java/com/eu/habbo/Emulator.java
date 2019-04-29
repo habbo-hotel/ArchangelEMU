@@ -126,11 +126,12 @@ public final class Emulator
             Emulator.rconServer.initializePipeline();
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
-            if (Emulator.getConfig().getBoolean("camera.enabled"))
+          // Removed Wesleys Camera Server lol.
+            /* if (Emulator.getConfig().getBoolean("camera.enabled"))
             {
                 Emulator.getThreading().run(new CameraClientAutoReconnect());
             }
-
+            */
             Emulator.getLogging().logStart("Habbo Hotel Emulator has succesfully loaded.");
             Emulator.getLogging().logStart("You're running: " + Emulator.version);
             Emulator.getLogging().logStart("System launched in: " + (System.nanoTime() - startTime) / 1e6 + "ms. Using: " + (Runtime.getRuntime().availableProcessors() * 2) + " threads!");
@@ -162,8 +163,8 @@ public final class Emulator
                 @Override
                 public void run()
                 {
-                    Emulator.getLogging().logStart("Thanks for using Arcturus. Contact: Skype: wesley.jabbo Discord: TheGeneral#0063");
-                    Emulator.getLogging().logStart("-The General");
+                    Emulator.getLogging().logStart("This is not an official arcturus build. This is a community forked version released under the GPL License. You are breaking no laws by using this software... Except for copyright infringement from sulake i suppose... oopsie.");
+                    Emulator.getLogging().logStart("- Krews.org Team");
                     System.out.println("Waiting for command: ");
                 }
             }, 3500);
@@ -458,12 +459,13 @@ public final class Emulator
     }
 
     private static final String logo =
-            "                    _                          ______                 _       _             _ \n" +
-            "     /\\            | |                        |  ____|               | |     | |           | |\n" +
-            "    /  \\   _ __ ___| |_ _   _ _ __ _   _ ___  | |__   _ __ ___  _   _| | __ _| |_ ___  _ __| |\n" +
-            "   / /\\ \\ | '__/ __| __| | | | '__| | | / __| |  __| | '_ ` _ \\| | | | |/ _` | __/ _ \\| '__| |\n" +
-            "  / ____ \\| | | (__| |_| |_| | |  | |_| \\__ \\ | |____| | | | | | |_| | | (_| | || (_) | |  |_|\n" +
-            " /_/    \\_\\_|  \\___|\\__|\\__,_|_|   \\__,_|___/ |______|_| |_| |_|\\__,_|_|\\__,_|\\__\\___/|_|  (_)\n" +
-            "                                                                                              \n" +
-            "                                                                                              ";
+
+                    "											            			\n" +
+                    "    __  ___                 _      ARCTURUS    __            		\n" +
+                    "   /  |/  /___  _________  (_)___  ____ ______/ /_____ ______		\n" +
+                    "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
+                    " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
+                    "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
+                    "                               /____/    Love You Wesley x         \n" +
+                    "																	\n" ;
 }
