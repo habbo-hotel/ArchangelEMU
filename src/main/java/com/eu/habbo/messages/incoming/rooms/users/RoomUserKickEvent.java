@@ -28,7 +28,7 @@ public class RoomUserKickEvent extends MessageHandler
         if(target == null)
             return;
 
-        if (target.hasPermission(Permission.ACC_UNKICKABLE) || target.getHabboInfo().getRank().getId() > this.client.getHabbo().getHabboInfo().getRank().getId())
+        if (target.hasPermission(Permission.ACC_UNKICKABLE))
         {
             this.client.sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(Emulator.getTexts().getValue("commands.error.cmd_kick.unkickable").replace("%username%", target.getHabboInfo().getUsername()), this.client.getHabbo(), this.client.getHabbo(), RoomChatMessageBubbles.ALERT)));
             return;
