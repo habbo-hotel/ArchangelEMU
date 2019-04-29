@@ -1227,7 +1227,24 @@ public class CatalogManager
                                             Emulator.getThreading().run(habboItem);
                                             Emulator.getGameEnvironment().getGuildManager().setGuild(habboItem, guildId);
                                             itemsList.add(habboItem);
-                                        } else if (baseItem.getInteractionType().getType() == InteractionMusicDisc.class)
+
+                                            if(baseItem.getName().equals("guild_forum")) {
+                                                Emulator.getGameEnvironment().getGuildManager().getGuild(guildId).setForum(true);
+                                                Emulator.getGameEnvironment().getGuildManager().getGuild(guildId).needsUpdate = true;
+                                                Emulator.getGameEnvironment().getGuildForumManager().addGuildForum(guildId);
+                                                {
+                                                    try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds SET forum = '1' WHERE id = ?"))
+
+                                                    {
+                                                        statement.setInt(1, guildId);
+                                                        statement.execute();
+                                                    }
+                                                }
+
+                                            }
+
+                                        }
+                                     else if (baseItem.getInteractionType().getType() == InteractionMusicDisc.class)
                                         {
                                             SoundTrack track = Emulator.getGameEnvironment().getItemManager().getSoundTrack(item.getExtradata());
 

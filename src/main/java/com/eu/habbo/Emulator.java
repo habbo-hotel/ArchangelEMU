@@ -30,10 +30,10 @@ import java.util.Random;
 public final class Emulator
 {
 
-    public final static int MAJOR = 1;
+    public final static int MAJOR = 2;
 
 
-    public final static int MINOR = 16;
+    public final static int MINOR = 0;
 
 
     public final static int BUILD = 0;
