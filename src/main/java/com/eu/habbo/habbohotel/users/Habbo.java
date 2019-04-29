@@ -468,23 +468,9 @@ public class Habbo implements Runnable
 
     public int noobStatus()
     {
-       /* if (this.firstVisit)
-        {
-            return 2;
-        }
 
-        int accountAge = Emulator.getIntUnixTimestamp() - this.habboInfo.getAccountCreated();
-        if (accountAge < (86400))
-        { */
-        return 1;
-     /*   }
-
-        if (accountAge < (3 * 86400))
-        {
             return 1;
-        }
 
-        return 0; */
     }
 
     public void clearCaches()
