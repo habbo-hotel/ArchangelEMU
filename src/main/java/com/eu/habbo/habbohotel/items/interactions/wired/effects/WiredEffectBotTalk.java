@@ -170,6 +170,6 @@ public class WiredEffectBotTalk extends InteractionWiredEffect
     @Override
     protected long requiredCooldown()
     {
-        return 1000;
+        return 500;
     }
 }
