@@ -18,7 +18,7 @@ Unstable Version: **2.0.0**
 Client build: **PRODUCTION-201611291003-338511768**
 
 ## Reporting problems ##
-You can report problems via the Issue Tracker at https://github.com/KrewsOrg/Arcturus-Community/issues
+You can report problems via the Issue Tracker at https://git.krews.org/morningstar/Arcturus-Community/issues
 
 ## Credits ##
 - TheGeneral
