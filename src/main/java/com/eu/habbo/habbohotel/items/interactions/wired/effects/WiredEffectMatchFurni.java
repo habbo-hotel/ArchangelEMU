@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
@@ -91,8 +92,10 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect
                                 canMove = !(room.getTopItemAt(t.x, t.y) == item);
                                 slideAnimation = false;
                             }
+                            // TODO: MOVE THIS TO ARCTURUSEXTENDED INSTEAD OF A CONFIG.
+                            // if (canMove && !room.hasHabbosAt(t.x, t.y))
+                            if ((canMove && !room.hasHabbosAt(t.x, t.y) && !Emulator.getConfig().getBoolean("hotel.room.wired.norules")) || (Emulator.getConfig().getBoolean("hotel.room.wired.norules") && (!room.hasHabbosAt(t.x, t.y) || item.isWalkable() || item.getBaseItem().allowSit())))
 
-                            if (canMove && !room.hasHabbosAt(t.x, t.y))
                             {
                                 THashSet<RoomTile> tiles = room.getLayout().getTilesAt(t, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation);
                                 double highestZ = -1d;
@@ -133,6 +136,19 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect
 
                                     room.sendComposer(new FloorItemOnRollerComposer(item, null, t, offsetZ, room).compose());
                                 }
+                                // TODO: MOVE THIS TO ARCTURUSEXTENDED INSTEAD OF A CONFIG.
+                                if(Emulator.getConfig().getBoolean("hotel.room.wired.norules")) {
+                                    if (room.hasHabbosAt(t.x, t.y)) {
+                                        THashSet<Habbo> habbos = room.getHabbosAt(t.x, t.y);
+                                        for (Habbo habbo : habbos) {
+                                            try {
+                                                item.onWalkOn(habbo.getRoomUnit(), room, null);
+                                            } catch (Exception e) {
+                                            }
+                                        }
+                                    }
+                                }
+
                             }
                         }
                     }

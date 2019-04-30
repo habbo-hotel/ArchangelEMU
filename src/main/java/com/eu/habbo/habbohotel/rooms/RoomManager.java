@@ -1070,16 +1070,6 @@ public class RoomManager
         if(habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom() == room)
         {
             habbo.getRoomUnit().setPathFinderRoom(null);
-            if (habbo.getHabboInfo().getRiding() != null)
-            {
-                if (habbo.getHabboInfo().getRiding().getRoomUnit() != null)
-                {
-                    habbo.getHabboInfo().getRiding().getRoomUnit().setGoalLocation(habbo.getHabboInfo().getRiding().getRoomUnit().getCurrentLocation());
-                }
-                habbo.getHabboInfo().getRiding().setTask(PetTasks.FREE);
-                habbo.getHabboInfo().getRiding().setRider(null);
-                habbo.getHabboInfo().setRiding(null);
-            }
 
             if (!room.isOwner(habbo))
             {
@@ -1109,6 +1099,17 @@ public class RoomManager
         {
             Habbo control = (Habbo)habbo.getRoomUnit().getCacheable().remove("control");
             control.getRoomUnit().getCacheable().remove("controller");
+        }
+
+        if (habbo.getHabboInfo().getRiding() != null)
+        {
+            if (habbo.getHabboInfo().getRiding().getRoomUnit() != null)
+            {
+                habbo.getHabboInfo().getRiding().getRoomUnit().setGoalLocation(habbo.getHabboInfo().getRiding().getRoomUnit().getCurrentLocation());
+            }
+            habbo.getHabboInfo().getRiding().setTask(PetTasks.FREE);
+            habbo.getHabboInfo().getRiding().setRider(null);
+            habbo.getHabboInfo().setRiding(null);
         }
 
         Room room = habbo.getHabboInfo().getCurrentRoom();

@@ -65,10 +65,12 @@ public class HorseRideEvent extends MessageHandler
         }
         else
         {
+            // TODO : THIS IS NOT THE CORRECT WAY OF HANDLING MOUNTING. CHECK HABBO.COM. THE HORSE SHOULD NOT COME TO YOU. YOU SHOULD GO TO THE HORSE.
             this.client.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(this.client.getHabbo(), 0, -1);
             ((HorsePet) pet).setRider(null);
             pet.setTask(PetTasks.FREE);
             this.client.getHabbo().getHabboInfo().setRiding(null);
+            this.client.getHabbo().getRoomUnit().setGoalLocation(this.client.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(this.client.getHabbo().getRoomUnit().getCurrentLocation(), this.client.getHabbo().getRoomUnit().getBodyRotation().getValue()));
         }
     }
 }
