@@ -5,8 +5,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.friends.SearchUserEvent;
 import com.eu.habbo.messages.incoming.navigator.SearchRoomsEvent;
 import com.eu.habbo.threading.runnables.AchievementUpdater;
-import com.eu.habbo.util.callback.HTTPPostStatus;
-import com.eu.habbo.util.callback.HTTPVersionCheck;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -77,7 +76,7 @@ public class CleanerThread implements Runnable {
 
         Emulator.getThreading().run(new AchievementUpdater());
 
-        Emulator.getThreading().run(new HTTPVersionCheck(), 10000);
+      //  Emulator.getThreading().run(new HTTPVersionCheck(), 10000);
     }
 
     @Override
@@ -126,7 +125,7 @@ public class CleanerThread implements Runnable {
 
         if (time - LAST_CALLBACK > CALLBACK_TIME)
         {
-            Emulator.getThreading().run(new HTTPPostStatus());
+          //  Emulator.getThreading().run(new HTTPPostStatus());
             LAST_CALLBACK = time;
         }
 

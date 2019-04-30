@@ -62,7 +62,7 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter
         {
             if (!(cause instanceof IOException))
             {
-                cause.printStackTrace(Logging.getErrorsRuntimeWriter());
+               // cause.printStackTrace(Logging.getErrorsRuntimeWriter());
             }
         }
 

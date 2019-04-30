@@ -8,7 +8,7 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HTTPPostError implements Runnable
+/* public class HTTPPostError implements Runnable
 {
     public Throwable stackTrace;
 
@@ -60,4 +60,4 @@ public class HTTPPostError implements Runnable
         {
         }
     }
-}
+} */

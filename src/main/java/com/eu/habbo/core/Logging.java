@@ -2,7 +2,6 @@ package com.eu.habbo.core;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
-import com.eu.habbo.util.callback.HTTPPostError;
 import gnu.trove.set.hash.THashSet;
 import io.netty.util.internal.ConcurrentSet;
 
@@ -241,7 +240,7 @@ public class Logging
                 this.logSQLException((SQLException) line);
                 return;
             }
-            Emulator.getThreading().run(new HTTPPostError((Throwable) line));
+           // Emulator.getThreading().run(new HTTPPostError((Throwable) line));
 
             this.errorLogs.add(new ErrorLog("Exception", (Throwable) line));
 
@@ -258,7 +257,7 @@ public class Logging
             e.printStackTrace();
             this.write(errorsSQLWriter, e);
 
-            Emulator.getThreading().run(new HTTPPostError(e));
+            //Emulator.getThreading().run(new HTTPPostError(e));
         }
     }
 
@@ -281,7 +280,7 @@ public class Logging
                 return;
             }
 
-            Emulator.getThreading().run(new HTTPPostError((Throwable) e));
+          //  Emulator.getThreading().run(new HTTPPostError((Throwable) e));
         }
     }
     
@@ -405,7 +404,7 @@ public class Logging
     {
         return packetsUndefinedWriter;
     }
-
+    /*
     public static PrintWriter getErrorsPacketsWriter()
     {
         return errorsPacketsWriter;
@@ -421,8 +420,9 @@ public class Logging
         return errorsRuntimeWriter;
     }
 
-    public static PrintWriter getDebugFileWriter()
+     public static PrintWriter getDebugFileWriter()
     {
         return debugFileWriter;
     }
+    */
 }

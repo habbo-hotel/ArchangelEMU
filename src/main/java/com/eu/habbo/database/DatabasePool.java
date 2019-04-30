@@ -30,7 +30,7 @@ class DatabasePool
             databaseConfiguration.addDataSourceProperty("dataSource.dumpQueriesOnException", "true");
             databaseConfiguration.addDataSourceProperty("prepStmtCacheSize", "500");
             databaseConfiguration.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-            databaseConfiguration.addDataSourceProperty("dataSource.logWriter", Logging.getErrorsSQLWriter());
+           // databaseConfiguration.addDataSourceProperty("dataSource.logWriter", Logging.getErrorsSQLWriter());
             databaseConfiguration.addDataSourceProperty("cachePrepStmts", "true");
             databaseConfiguration.addDataSourceProperty("useServerPrepStmts", "true");
             databaseConfiguration.addDataSourceProperty("rewriteBatchedStatements", "true");

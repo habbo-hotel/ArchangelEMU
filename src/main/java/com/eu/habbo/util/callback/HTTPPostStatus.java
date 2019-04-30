@@ -1,4 +1,4 @@
-package com.eu.habbo.util.callback;
+/* package com.eu.habbo.util.callback;
 
 import com.eu.habbo.Emulator;
 
@@ -6,7 +6,7 @@ import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HTTPPostStatus implements Runnable
+ public class HTTPPostStatus implements Runnable
 {
     private void sendPost() throws Exception
     {
@@ -37,3 +37,4 @@ public class HTTPPostStatus implements Runnable
         }
     }
 }
+*/

@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HTTPVersionCheck implements Runnable
+/* public class HTTPVersionCheck implements Runnable
 {
     private void sendPost()
     {
@@ -73,4 +73,6 @@ public class HTTPVersionCheck implements Runnable
 
 
     }
+
 }
+ */

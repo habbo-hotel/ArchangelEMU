@@ -153,19 +153,16 @@ public final class Emulator
                 Emulator.getLogging().logStart("Emulator settings runtime.threads (" + Emulator.getConfig().getInt("runtime.threads") + ") can be increased to " + (Runtime.getRuntime().availableProcessors() * 2) + " to possibly increase performance.");
             }
 
-            if (Emulator.getConfig().getValue("username").isEmpty())
-            {
-                Emulator.getLogging().logErrorLine("No account has been found in config.ini Please create an account on Arcturus.pw and edit the config.ini in order to maximize usage of Arcturus! http://arcturus.pw");
-            }
 
             Emulator.getThreading().run(new Runnable()
             {
                 @Override
                 public void run()
                 {
+                    Emulator.getLogging().logStart("Arcturus Morningstar does not include a camera by default, if you wish to have that feature please download the PNGCamera plugin!");
                     Emulator.getLogging().logStart("This is not an official arcturus build. This is a community forked version released under the GPL License. You are breaking no laws by using this software... Except for copyright infringement from sulake i suppose... oopsie.");
                     Emulator.getLogging().logStart("- Krews.org Team");
-                    System.out.println("Waiting for command: ");
+                    System.out.println("Waiting for commands: ");
                 }
             }, 3500);
 
