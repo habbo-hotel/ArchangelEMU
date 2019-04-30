@@ -1633,8 +1633,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                             if (tileInFront == null)
                                 return true;
 
-                            if (!InteractionRoller.NO_RULES && roller.getZ() != rollerTile.z)
-                                return true;
 
                             if (!Room.this.layout.tileExists(tileInFront.x, tileInFront.y))
                                 return true;
@@ -1643,9 +1641,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                                 return true;
 
                             if (!tileInFront.getAllowStack() && !(tileInFront.isWalkable() || tileInFront.state == RoomTileState.SIT || tileInFront.state == RoomTileState.LAY))
-                                return true;
-
-                            if (tileInFront.getStackHeight() > Item.getCurrentHeight(roller) + rollerTile.z)
                                 return true;
 
                             if (Room.this.hasHabbosAt(tileInFront.x, tileInFront.y))
