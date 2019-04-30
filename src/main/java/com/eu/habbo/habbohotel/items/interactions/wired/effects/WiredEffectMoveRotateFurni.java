@@ -393,6 +393,6 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect
     @Override
     protected long requiredCooldown()
     {
-        return -100;
+        return 100;
     }
 }
