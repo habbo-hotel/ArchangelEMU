@@ -71,4 +71,5 @@ Below are some cool plugins coded by friends of the Arcturus Morningstar Project
 If you want yours here just message us on discord!
 
 [PNGCamera 1.3](https://www.mediafire.com/file/90etuhb2un6rt1h/PNGCamera-1.3.jar/file) - Your own Camera for Arcturus! 
+
 [WiredEffectMatchFurniAndHeight] *Download Coming Soon* - A new wired that matches Position and state, but remembers furniture height and even lets you place furniture under habbos!
