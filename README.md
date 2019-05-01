@@ -63,3 +63,11 @@ We have no problem with developers making money through the sale of custom featu
 Sale of a special edition of a *source code* will not be permitted. You may use your own private edition of a source code, but we will not help you if you have any problems with it.
 
 If we ever are to make paid features or plugins, we will not prevent or discourage developers from creating alternative options for users.
+
+
+## Plugins ##
+Below are some cool plugins coded by friends of the Arcturus Morningstar Project.
+
+If you want yours here just message us on discord!
+
+[PNGCamera 1.3](https://www.mediafire.com/file/90etuhb2un6rt1h/PNGCamera-1.3.jar/file) - Your own Camera for Arcturus! 
