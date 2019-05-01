@@ -5622,8 +5622,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         {
             item.setZ(40);
         }
-
-        this.sendComposer(new FloorItemOnRollerComposer(item, null, tile, this.getStackHeight(tile.x, tile.y, false, item), this).compose());
+        double offset = this.getStackHeight(tile.x, tile.y, false, item) - item.getZ();
+        this.sendComposer(new FloorItemOnRollerComposer(item, null, tile, offset, this).compose());
 
         //Update Habbos at old position
         for (RoomTile t : occupiedTiles)
