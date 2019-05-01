@@ -12,9 +12,11 @@ Arcturus Morningstar is released under the [GNU General Public License v3](https
 
 ## Versions ##
 Stable Version: **Not Yet Reached**
+
 Compiled Download: **Unavailable** 
 
 Unstable Version: **2.0.0**
+
 Unstable Compiled Download: https://arcturus.wf/downloads/dev.zip
 
 Client build: **PRODUCTION-201611291003-338511768**
