@@ -65,9 +65,10 @@ Sale of a special edition of a *source code* will not be permitted. You may use 
 If we ever are to make paid features or plugins, we will not prevent or discourage developers from creating alternative options for users.
 
 
-## Plugins ##
-Below are some cool plugins coded by friends of the Arcturus Morningstar Project.
+## Plugins - ArcturusExtended ##
+Below are some cool plugins coded by friends of the Arcturus Morningstar Project, which offer custom features that are not in normal habbo, or are done in a different way.
 
 If you want yours here just message us on discord!
 
 [PNGCamera 1.3](https://www.mediafire.com/file/90etuhb2un6rt1h/PNGCamera-1.3.jar/file) - Your own Camera for Arcturus! 
+[WiredEffectMatchFurniAndHeight] *Download Coming Soon* - A new wired that matches Position and state, but remembers furniture height and even lets you place furniture under habbos!
