@@ -4,6 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
+import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiTile;
+import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeTile;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -159,14 +161,21 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect
                 }
             }
 
+            boolean validMove = true;
             RoomTile newTile = room.getLayout().getTile((short) (item.getX() + x), (short) (item.getY() + y));
-
-            if (newTile != null && ((newTile.state == RoomTileState.OPEN && newTile.isWalkable()) || newTile.state == RoomTileState.BLOCKED && room.getTopItemAt(newTile.x, newTile.y) == item) && room.furnitureFitsAt(newTile, item, item.getRotation()) == FurnitureMovementError.NONE)
-            {
-                if (room.getLayout().tileExists(newTile.x, newTile.y))
-                {
-                    room.slideFurniTo(item, newTile, item.getRotation());
+            if(room.getLayout().getTilesAt(newTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()) == null) {
+                validMove = false;
+            }
+            for(RoomTile t : room.getLayout().getTilesAt(newTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation())) {
+                if ((item instanceof InteractionFreezeTile || item instanceof InteractionBattleBanzaiTile) && room.hasItemsAt(t.x, t.y)) {
+                    validMove = false;
                 }
+                if (t == null || (t.state == RoomTileState.OPEN && !t.isWalkable()) || t.state == RoomTileState.BLOCKED || t.state == RoomTileState.INVALID || !room.furnitureFitsAt(t, item, item.getRotation()).equals(FurnitureMovementError.NONE) || !room.getLayout().tileExists(t.x, t.y)) {
+                    validMove = false;
+                }
+            }
+            if(validMove) {
+                room.slideFurniTo(item, newTile, item.getRotation());
             }
         }
 

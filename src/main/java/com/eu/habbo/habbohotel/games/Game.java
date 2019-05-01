@@ -47,6 +47,8 @@ public abstract class Game implements Runnable
 
     protected int endTime;
 
+    public boolean isRunning;
+
 
     public GameState state = GameState.IDLE;
 
@@ -149,6 +151,7 @@ public abstract class Game implements Runnable
 
     public void start()
     {
+        this.isRunning = false;
         this.state = GameState.RUNNING;
         this.startTime = Emulator.getIntUnixTimestamp();
 

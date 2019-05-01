@@ -16,7 +16,7 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionGameTimer extends HabboItem
+public abstract class InteractionGameTimer extends HabboItem
 {
     private int baseTime = 0;
     private int lastToggle = 0;
@@ -103,8 +103,10 @@ public class InteractionGameTimer extends HabboItem
 
         if ((objects.length >= 2 && objects[1] instanceof WiredEffectType))
         {
-            if (game.state.equals(GameState.RUNNING))
-                return;
+            if (game == null || !game.isRunning)
+                startGame(room);
+            else if (game.isRunning)
+                stopGame(room);
         }
 
         if(objects.length >= 1 && objects[0] instanceof Integer && client != null)
@@ -210,7 +212,9 @@ public class InteractionGameTimer extends HabboItem
 
         if(game != null && game.state != GameState.IDLE)
         {
+            this.setExtradata(this.baseTime + "");
             game.stop();
+            stopGame(room);
         }
 
         room.updateItem(this);
@@ -254,10 +258,7 @@ public class InteractionGameTimer extends HabboItem
         return this.getExtradata() + "\t" + this.baseTime;
     }
 
-    public Class<? extends Game> getGameType()
-    {
-        return WiredGame.class;
-    }
+    public abstract Class<? extends Game> getGameType();
 
     @Override
     public boolean allowWiredResetState()
