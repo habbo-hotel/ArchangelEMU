@@ -190,4 +190,16 @@ public class GameEnvironment
     {
         return this.pollManager;
     }
+
+    public CreditsScheduler getCreditsScheduler() {
+        return this.creditsScheduler;
+    }
+
+    public PixelScheduler getPixelScheduler() {
+        return this.pixelScheduler;
+    }
+
+    public PointsScheduler getPointsScheduler() {
+        return this.pointsScheduler;
+    }
 }
