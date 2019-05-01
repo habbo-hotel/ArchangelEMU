@@ -83,72 +83,48 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect
 
                     if (t != null)
                     {
-                        if (t.state != RoomTileState.INVALID)
-                        {
+                        if (t.state != RoomTileState.INVALID) {
                             boolean canMove = true;
 
-                            if (t.x == item.getX() && t.y == item.getY())
-                            {
+                            if (t.x == item.getX() && t.y == item.getY()) {
                                 canMove = !(room.getTopItemAt(t.x, t.y) == item);
                                 slideAnimation = false;
                             }
-                            // TODO: MOVE THIS TO ARCTURUSEXTENDED INSTEAD OF A CONFIG.
-                            // if (canMove && !room.hasHabbosAt(t.x, t.y))
-                            if ((canMove && !room.hasHabbosAt(t.x, t.y) && !Emulator.getConfig().getBoolean("hotel.room.wired.norules")) || (Emulator.getConfig().getBoolean("hotel.room.wired.norules") && (!room.hasHabbosAt(t.x, t.y) || item.isWalkable() || item.getBaseItem().allowSit())))
 
-                            {
+                            if (canMove && !room.hasHabbosAt(t.x, t.y)) {
                                 THashSet<RoomTile> tiles = room.getLayout().getTilesAt(t, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation);
                                 double highestZ = -1d;
-                                for (RoomTile tile : tiles)
-                                {
-                                    if (tile.state == RoomTileState.INVALID)
-                                    {
+                                for (RoomTile tile : tiles) {
+                                    if (tile.state == RoomTileState.INVALID) {
                                         highestZ = -1d;
                                         break;
                                     }
 
-                                    if (item instanceof InteractionRoller && room.hasItemsAt(tile.x, tile.y))
-                                    {
+                                    if (item instanceof InteractionRoller && room.hasItemsAt(tile.x, tile.y)) {
                                         highestZ = -1d;
                                         break;
                                     }
 
                                     double stackHeight = room.getStackHeight(tile.x, tile.y, false, item);
-                                    if (stackHeight > highestZ)
-                                    {
+                                    if (stackHeight > highestZ) {
                                         highestZ = stackHeight;
                                     }
                                 }
 
-                                if (highestZ != -1d)
-                                {
+                                if (highestZ != -1d) {
                                     tilesToUpdate.addAll(tiles);
 
                                     double offsetZ = highestZ - item.getZ();
 
                                     tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation));
 
-                                    if (!slideAnimation)
-                                    {
+                                    if (!slideAnimation) {
                                         item.setX(t.x);
                                         item.setY(t.y);
                                     }
 
                                     room.sendComposer(new FloorItemOnRollerComposer(item, null, t, offsetZ, room).compose());
                                 }
-                                // TODO: MOVE THIS TO ARCTURUSEXTENDED INSTEAD OF A CONFIG.
-                                if(Emulator.getConfig().getBoolean("hotel.room.wired.norules")) {
-                                    if (room.hasHabbosAt(t.x, t.y)) {
-                                        THashSet<Habbo> habbos = room.getHabbosAt(t.x, t.y);
-                                        for (Habbo habbo : habbos) {
-                                            try {
-                                                item.onWalkOn(habbo.getRoomUnit(), room, null);
-                                            } catch (Exception e) {
-                                            }
-                                        }
-                                    }
-                                }
-
                             }
                         }
                     }

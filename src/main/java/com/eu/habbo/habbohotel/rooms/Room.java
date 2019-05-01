@@ -5382,23 +5382,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
     public FurnitureMovementError furnitureFitsAt(RoomTile tile, HabboItem item, int rotation)
     {
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
-        if(Emulator.getConfig().getBoolean("hotel.room.wired.norules") && !item.getBaseItem().allowSit() && !item.isWalkable()) {
             for (RoomTile t : occupiedTiles) {
 
                 if (this.hasHabbosAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_HABBOS;
                 if (this.hasBotsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_BOTS;
                 if (this.hasPetsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_PETS;
             }
-        }
-
-        if(!Emulator.getConfig().getBoolean("hotel.room.wired.norules")) {
-            for (RoomTile t : occupiedTiles) {
-
-                if (this.hasHabbosAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_HABBOS;
-                if (this.hasBotsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_BOTS;
-                if (this.hasPetsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_PETS;
-            }
-        }
 
         List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
         for (RoomTile t : occupiedTiles)

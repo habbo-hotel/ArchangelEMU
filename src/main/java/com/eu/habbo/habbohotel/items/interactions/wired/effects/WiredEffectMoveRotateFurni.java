@@ -99,18 +99,6 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect
                 {
                     tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                     room.sendComposer(new FloorItemUpdateComposer(item).compose());
-                    // TODO: MOVE THIS TO ARCTURUSEXTENDED INSTEAD OF A CONFIG.
-                    if(Emulator.getConfig().getBoolean("hotel.room.wired.norules")) {
-                        if (room.hasHabbosAt(item.getX(), item.getY())) {
-                            THashSet<Habbo> habbos = room.getHabbosAt(item.getX(), item.getY());
-                            for (Habbo habbo : habbos) {
-                                try {
-                                    item.onWalkOn(habbo.getRoomUnit(), room, null);
-                                } catch (Exception e) {
-                                }
-                            }
-                        }
-                    }
                 }
             }
 

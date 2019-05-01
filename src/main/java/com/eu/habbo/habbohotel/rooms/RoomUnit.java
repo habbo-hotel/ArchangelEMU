@@ -178,7 +178,6 @@ public class RoomUnit
                     if(!isHorse) {
                         return false;
                     }
-
                 }
             }
 
