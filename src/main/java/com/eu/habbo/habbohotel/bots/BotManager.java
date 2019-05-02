@@ -144,7 +144,8 @@ public class BotManager
                 roomUnit.setRotation(RoomUserRotation.SOUTH);
                 roomUnit.setLocation(location);
                 HabboItem topItem = room.getTopItemAt(location.x, location.y);
-                if (topItem != null)
+
+                if (topItem != null && !topItem.getBaseItem().allowSit())
                 {
                     roomUnit.setZ(topItem.getZ() + Item.getCurrentHeight(topItem));
                 }
