@@ -384,5 +384,10 @@ public class PluginManager
         AchievementManager.TALENTTRACK_ENABLED = Emulator.getConfig().getBoolean("hotel.talenttrack.enabled");
         InteractionRoller.NO_RULES = Emulator.getConfig().getBoolean("hotel.room.rollers.norules");
         RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB = Emulator.getConfig().getBoolean("hotel.navigator.populartab.publics");
+        if(Emulator.isReady) {
+            Emulator.getGameEnvironment().getCreditsScheduler().reloadConfig();
+            Emulator.getGameEnvironment().getPointsScheduler().reloadConfig();
+            Emulator.getGameEnvironment().getPixelScheduler().reloadConfig();
+        }
     }
 }

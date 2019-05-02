@@ -19,13 +19,19 @@ public class PixelScheduler extends Scheduler
     public PixelScheduler()
     {
         super(Emulator.getConfig().getInt("hotel.auto.pixels.interval"));
+        this.reloadConfig();
+    }
 
+    public void reloadConfig() {
         if(Emulator.getConfig().getBoolean("hotel.auto.pixels.enabled"))
         {
             IGNORE_HOTEL_VIEW   = Emulator.getConfig().getBoolean("hotel.auto.pixels.ignore.hotelview");
             IGNORE_IDLED        = Emulator.getConfig().getBoolean("hotel.auto.pixels.ignore.idled");
-
             PIXELS              = Emulator.getConfig().getInt("hotel.auto.pixels.amount");
+            if (this.disposed) {
+                this.disposed = false;
+                this.run();
+            }
         }
         else
         {

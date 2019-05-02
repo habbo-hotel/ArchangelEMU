@@ -19,13 +19,19 @@ public class PointsScheduler extends Scheduler
     public PointsScheduler()
     {
         super(Emulator.getConfig().getInt("hotel.auto.points.interval"));
+        this.reloadConfig();
+    }
 
+    public void reloadConfig() {
         if(Emulator.getConfig().getBoolean("hotel.auto.points.enabled"))
         {
             IGNORE_HOTEL_VIEW   = Emulator.getConfig().getBoolean("hotel.auto.points.ignore.hotelview");
             IGNORE_IDLED        = Emulator.getConfig().getBoolean("hotel.auto.points.ignore.idled");
-
             POINTS              = Emulator.getConfig().getInt("hotel.auto.points.amount");
+            if (this.disposed) {
+                this.disposed = false;
+                this.run();
+            }
         }
         else
         {

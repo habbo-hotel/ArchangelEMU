@@ -16,16 +16,21 @@ public class CreditsScheduler extends Scheduler
 
     public static int CREDITS;
 
-    public CreditsScheduler()
-    {
+    public CreditsScheduler() {
         super(Emulator.getConfig().getInt("hotel.auto.credits.interval"));
+        this.reloadConfig();
+    }
 
+    public void reloadConfig() {
         if(Emulator.getConfig().getBoolean("hotel.auto.credits.enabled"))
         {
             IGNORE_HOTEL_VIEW   = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.hotelview");
             IGNORE_IDLED        = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.idled");
-
             CREDITS             = Emulator.getConfig().getInt("hotel.auto.credits.amount");
+            if (this.disposed) {
+                this.disposed = false;
+                this.run();
+            }
         }
         else
         {
