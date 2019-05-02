@@ -592,4 +592,18 @@ public class Bot implements Runnable
     {
         this.canWalk = canWalk;
     }
+
+    public void lookAt(Habbo habbo) {
+        this.lookAt(habbo.getRoomUnit().getCurrentLocation());
+    }
+
+    public void lookAt(RoomUnit roomUnit) {
+        this.lookAt(roomUnit.getCurrentLocation());
+    }
+
+    public void lookAt(RoomTile tile) {
+        this.roomUnit.lookAtPoint(tile);
+        this.roomUnit.statusUpdate(true);
+    }
+
 }

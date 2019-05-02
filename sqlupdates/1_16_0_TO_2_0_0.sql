@@ -4,5 +4,6 @@ INSERT INTO `catalog_pages`(`id`, `parent_id`, `caption_save`, `caption`, `icon_
 SET @page_id = LAST_INSERT_ID();
 UPDATE catalog_items SET page_id = @page_id WHERE catalog_name LIKE '%guild_forum%';
 UPDATE items_base SET `interaction_type` = 'guild_furni' WHERE item_name LIKE '%guild_forum%';
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.bot.butler.commanddistance', '5');
 
 #END DATABASE UPDATE: 1.16.0 -> 2.0.0
