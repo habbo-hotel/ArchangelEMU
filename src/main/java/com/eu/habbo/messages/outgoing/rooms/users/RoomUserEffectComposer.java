@@ -8,10 +8,17 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class RoomUserEffectComposer extends MessageComposer
 {
     private final RoomUnit roomUnit;
+    private final int effectId;
 
     public RoomUserEffectComposer(RoomUnit roomUnit)
     {
         this.roomUnit = roomUnit;
+        this.effectId = -1;
+    }
+    public RoomUserEffectComposer(RoomUnit roomUnit, int effectId)
+    {
+        this.roomUnit = roomUnit;
+        this.effectId = effectId;
     }
 
     @Override
@@ -19,7 +26,7 @@ public class RoomUserEffectComposer extends MessageComposer
     {
         this.response.init(Outgoing.RoomUserEffectComposer);
         this.response.appendInt(this.roomUnit.getId());
-        this.response.appendInt(this.roomUnit.getEffectId());
+        this.response.appendInt(this.effectId == -1 ? this.roomUnit.getEffectId() : this.effectId);
         this.response.appendInt(0);
         return this.response;
     }

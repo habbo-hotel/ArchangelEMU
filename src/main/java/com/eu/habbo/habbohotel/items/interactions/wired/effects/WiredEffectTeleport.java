@@ -14,7 +14,9 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserEffectComposer;
 import com.eu.habbo.threading.runnables.RoomUnitTeleport;
+import com.eu.habbo.threading.runnables.SendRoomUnitEffectComposer;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 
@@ -146,7 +148,10 @@ public class WiredEffectTeleport extends InteractionWiredEffect
 
                 int currentEffect = roomUnit.getEffectId();
 
-                room.giveEffect(roomUnit, 4, 2);
+                // makes a temporary effect
+                room.sendComposer(new RoomUserEffectComposer(roomUnit, 4).compose());
+                Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), 2000);
+
                 final WiredEffectTeleport teleportWired = this;
                 RoomTile targetTile = room.getLayout().getTile(item.getX(), item.getY());
                 boolean foundTile = false;
@@ -172,6 +177,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect
                 {
                     continue;
                 }
+
                 Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, targetTile.x, targetTile.y, targetTile.getStackHeight() + (targetTile.state == RoomTileState.SIT ? -0.5 : 0) , currentEffect), WiredHandler.TELEPORT_DELAY);
                 Emulator.getThreading().run(new Runnable()
                 {

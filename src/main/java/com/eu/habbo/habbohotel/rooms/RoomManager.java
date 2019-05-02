@@ -687,9 +687,7 @@ public class RoomManager
         }
         habbo.getHabboInfo().setRoomQueueId(0);
         habbo.getClient().sendResponse(new HideDoorbellComposer(""));
-
-        if (habbo.getRoomUnit() == null)
-            habbo.setRoomUnit(new RoomUnit());
+        habbo.setRoomUnit(new RoomUnit());
 
         habbo.getRoomUnit().clearStatus();
         if (habbo.getRoomUnit().getCurrentLocation() == null)
