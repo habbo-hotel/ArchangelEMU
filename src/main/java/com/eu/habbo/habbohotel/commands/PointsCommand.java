@@ -61,7 +61,7 @@ public class PointsCommand extends Command
                         else
                             habbo.alert(Emulator.getTexts().getValue("commands.generic.cmd_points.received").replace("%amount%", amount + "").replace("%type%", Emulator.getTexts().getValue("seasonal.name." + type)));
 
-                        habbo.getClient().sendResponse(new UserPointsComposer(habbo.getHabboInfo().getCurrencyAmount(type), amount, type));
+                       // habbo.getClient().sendResponse(new UserPointsComposer(habbo.getHabboInfo().getCurrencyAmount(type), amount, type));
 
                         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_points.send").replace("%amount%", amount + "").replace("%user%", params[1]).replace("%type%", Emulator.getTexts().getValue("seasonal.name." + type)), RoomChatMessageBubbles.ALERT);
 
