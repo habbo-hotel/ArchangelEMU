@@ -149,6 +149,11 @@ public class BotManager
                 {
                     roomUnit.setZ(topItem.getZ() + Item.getCurrentHeight(topItem));
                 }
+
+                if (topItem.getBaseItem().allowSit())
+                {
+                    roomUnit.setZ(topItem.getZ());
+                }
                 roomUnit.setPreviousLocationZ(roomUnit.getZ());
                 roomUnit.setPathFinderRoom(room);
                 roomUnit.setRoomUnitType(RoomUnitType.BOT);
