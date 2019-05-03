@@ -23,6 +23,28 @@ public enum RoomUserRotation
         return this.direction;
     }
 
+    public RoomUserRotation getOpposite() {
+        switch (this) {
+            case NORTH:
+                return RoomUserRotation.SOUTH;
+            case NORTH_EAST:
+                return RoomUserRotation.SOUTH_WEST;
+            case EAST:
+                return RoomUserRotation.WEST;
+            case SOUTH_EAST:
+                return RoomUserRotation.NORTH_WEST;
+            case SOUTH:
+                return RoomUserRotation.NORTH;
+            case SOUTH_WEST:
+                return RoomUserRotation.NORTH_EAST;
+            case WEST:
+                return RoomUserRotation.EAST;
+            case NORTH_WEST:
+                return RoomUserRotation.SOUTH_EAST;
+        }
+        return null;
+    }
+
     public static RoomUserRotation fromValue(int rotation)
     {
         rotation %= 8;

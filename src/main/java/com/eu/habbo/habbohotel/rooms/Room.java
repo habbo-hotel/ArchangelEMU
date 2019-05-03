@@ -5381,6 +5381,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
     public FurnitureMovementError furnitureFitsAt(RoomTile tile, HabboItem item, int rotation)
     {
+        if(!this.layout.fitsOnMap(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))
+            return FurnitureMovementError.INVALID_MOVE;
+
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
             for (RoomTile t : occupiedTiles) {
 

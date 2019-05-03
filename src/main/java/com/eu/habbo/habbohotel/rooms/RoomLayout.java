@@ -666,6 +666,47 @@ public class RoomLayout
         return new Rectangle(x, y, width, length);
     }
 
+    public boolean fitsOnMap(RoomTile tile, int width, int length, int rotation)
+    {
+        THashSet<RoomTile> pointList = new THashSet<>(width * length, 0.1f);
+
+        if (tile != null)
+        {
+            if (rotation == 0 || rotation == 4)
+            {
+                for (short i = tile.x; i <= (tile.x + (width - 1)); i++)
+                {
+                    for (short j = tile.y; j <= (tile.y + (length - 1)); j++)
+                    {
+                        RoomTile t = this.getTile(i, j);
+
+                        if (t == null || t.state == RoomTileState.INVALID)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            else if (rotation == 2 || rotation == 6)
+            {
+                for (short i = tile.x; i <= (tile.x + (length - 1)); i++)
+                {
+                    for (short j = tile.y; j <= (tile.y + (width - 1)); j++)
+                    {
+                        RoomTile t = this.getTile(i, j);
+
+                        if (t == null || t.state == RoomTileState.INVALID)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     public THashSet<RoomTile> getTilesAt(RoomTile tile, int width, int length, int rotation)
     {
         THashSet<RoomTile> pointList = new THashSet<>(width * length, 0.1f);

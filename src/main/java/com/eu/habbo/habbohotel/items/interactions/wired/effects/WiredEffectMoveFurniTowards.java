@@ -4,32 +4,41 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiTile;
-import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeTile;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.util.pathfinding.Rotation;
+import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
+import com.eu.habbo.threading.runnables.WiredCollissionRunnable;
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Wired effect: move to closest user
+ * Confirmed as working exactly like Habbo.com 03/05/2019 04:00
+ * @author Beny.
+ */
 public class WiredEffectMoveFurniTowards extends InteractionWiredEffect
 {
     public static final WiredEffectType type = WiredEffectType.CHASE;
 
     private THashSet<HabboItem> items;
 
+    private THashMap<Integer, RoomUserRotation> lastDirections;
+
+
     public WiredEffectMoveFurniTowards(ResultSet set, Item baseItem) throws SQLException
     {
         super(set, baseItem);
         this.items = new THashSet<>();
+        this.lastDirections = new THashMap<>();
     }
 
     public WiredEffectMoveFurniTowards(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
@@ -38,144 +47,183 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect
         this.items = new THashSet<>();
     }
 
+    public List<RoomUserRotation> getAvailableDirections(HabboItem item, Room room) {
+        List<RoomUserRotation> availableDirections = new ArrayList<>();
+        RoomLayout layout = room.getLayout();
+
+        RoomTile currentTile = layout.getTile(item.getX(), item.getY());
+
+        RoomUserRotation[] rotations = new RoomUserRotation[] { RoomUserRotation.NORTH, RoomUserRotation.EAST, RoomUserRotation.SOUTH, RoomUserRotation.WEST };
+
+        for(RoomUserRotation rot : rotations) {
+            RoomTile tile = layout.getTileInFront(currentTile, rot.getValue());
+
+            if(tile == null || tile.state == RoomTileState.BLOCKED || tile.state == RoomTileState.INVALID)
+                continue;
+
+            if(!layout.tileExists(tile.x, tile.y))
+                continue;
+
+            if(room.furnitureFitsAt(tile, item, item.getRotation()) == FurnitureMovementError.INVALID_MOVE)
+                continue;
+
+            HabboItem topItem = room.getTopItemAt(tile.x, tile.y);
+            if(topItem != null && !topItem.getBaseItem().allowStack())
+                continue;
+
+            if(tile.getAllowStack()) {
+                availableDirections.add(rot);
+            }
+        }
+
+        return availableDirections;
+    }
+
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
     {
-        THashSet<HabboItem> items = new THashSet<>();
+
+        THashSet<HabboItem> items = new THashSet<HabboItem>();
 
         for(HabboItem item : this.items)
         {
-            if (item.getRoomId() == 0)
+            if(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
                 items.add(item);
         }
 
-        this.items.removeAll(items);
-
-        for(HabboItem item : this.items)
+        for(HabboItem item : items)
         {
-            RoomTile furniLocation = room.getLayout().getTile(item.getX(), item.getY());
+            this.items.remove(item);
+        }
 
+        for(HabboItem item : this.items) {
+
+            // direction the furni will move in
+            RoomUserRotation moveDirection = null;
+            RoomUserRotation lastDirection = lastDirections.get(item.getId());
+
+            // 1. Check if any user is within 3 tiles from the item
+            Habbo target = null; // closest found user
+            RoomLayout layout = room.getLayout();
             boolean collided = false;
-            double shortest = 3 + Math.max(item.getBaseItem().getWidth(), item.getBaseItem().getLength());
-            Habbo target = null;
-            THashSet<RoomTile> tiles = room.getLayout().getTilesAt(furniLocation, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
-            for (Habbo habbo : room.getHabbos())
-            {
-                RoomTile currentLocation = habbo.getRoomUnit().getCurrentLocation();
-                for (RoomTile t : tiles)
-                {
-                    if (currentLocation.x == t.x || currentLocation.y == t.y)
-                    {
-                        double distance = t.distance(habbo.getRoomUnit().getCurrentLocation());
-                        if (distance == 1)
-                        {
-                            Emulator.getThreading().run(new Runnable()
-                            {
-                                @Override
-                                public void run()
-                                {
-                                    WiredHandler.handle(WiredTriggerType.COLLISION, habbo.getRoomUnit(), room, new Object[]{item});
-                                }
-                            });
 
-                            collided = true;
+            for(int i = 0; i < 3; i++) {
+                if(target != null)
+                    break;
+
+                RoomUserRotation[] rotations = new RoomUserRotation[] { RoomUserRotation.NORTH, RoomUserRotation.EAST, RoomUserRotation.SOUTH, RoomUserRotation.WEST };
+
+                for(RoomUserRotation rot : rotations) {
+                    RoomTile startTile = layout.getTile(item.getX(), item.getY());
+
+                    for(int ii = 0; ii <= i; ii++) {
+                        if(startTile == null)
+                            break;
+
+                        startTile = layout.getTileInFront(startTile, rot.getValue());
+                    }
+
+                    if(startTile != null && layout.tileExists(startTile.x, startTile.y)) {
+                        THashSet<Habbo> habbosAtTile = room.getHabbosAt(startTile.x, startTile.y);
+                        if (habbosAtTile.size() > 0) {
+                            target = habbosAtTile.iterator().next();
+                            if (i == 0) { // i = 0 means right next to it
+                                collided = true;
+                                Emulator.getThreading().run(new WiredCollissionRunnable(target.getRoomUnit(), room, new Object[]{item}));
+                            }
                             break;
                         }
-
-                        boolean valid = true;
-                        for (RoomTile tile : room.getLayout().getTilesInFront(habbo.getRoomUnit().getCurrentLocation(), Rotation.Calculate(currentLocation.x, currentLocation.y, t.x, t.y), (int) Math.ceil(distance)))
-                        {
-                            if (tile.state == RoomTileState.INVALID)
-                            {
-                                valid = false;
-                                break;
-                            }
-
-                            if (tile == t)
-                            {
-                                //Do not look further in  case of rounding error.
-                                break;
-                            }
-                        }
-
-                        if (valid && distance <= shortest)
-                        {
-                            target = habbo;
-                            shortest = distance;
-                        }
                     }
                 }
             }
 
-            if (collided)
-            {
-                break;
+            if(collided)
+                continue;
+
+            if(target != null) {
+                if(target.getRoomUnit().getX() == item.getX())
+                {
+                    if (item.getY() < target.getRoomUnit().getY())
+                        moveDirection = RoomUserRotation.SOUTH;
+                    else
+                        moveDirection = RoomUserRotation.NORTH;
+                }
+                else if(target.getRoomUnit().getY() == item.getY())
+                {
+                    if (item.getX() < target.getRoomUnit().getX())
+                        moveDirection = RoomUserRotation.EAST;
+                    else
+                        moveDirection = RoomUserRotation.WEST;
+                }
+                else if (target.getRoomUnit().getX() - item.getX() > target.getRoomUnit().getY() - item.getY())
+                {
+                    if (target.getRoomUnit().getX() - item.getX() > 0 )
+                        moveDirection = RoomUserRotation.EAST;
+                    else
+                        moveDirection = RoomUserRotation.WEST;
+                }
+                else
+                {
+                    if (target.getRoomUnit().getY() - item.getY() > 0)
+                        moveDirection = RoomUserRotation.SOUTH;
+                    else
+                        moveDirection = RoomUserRotation.NORTH;
+                }
             }
 
-            int x = 0;
-            int y = 0;
-            if(target != null)
-            {
-                for (RoomTile tile : tiles)
-                {
-                    if (target.getRoomUnit().getX() == tile.x)
-                    {
-                        if (tile.y < target.getRoomUnit().getY())
-                            y++;
-                        else
-                            y--;
 
-                        break;
-                    } else if (target.getRoomUnit().getY() == tile.y)
-                    {
-                        if (tile.x < target.getRoomUnit().getX())
-                            x++;
-                        else
-                            x--;
-                        break;
-                    } else if (target.getRoomUnit().getX() - tile.x > target.getRoomUnit().getY() - tile.y)
-                    {
-                        if (target.getRoomUnit().getX() - tile.x > 0)
-                            x++;
-                        else
-                            x--;
-                        break;
-                    } else
-                    {
-                        if (target.getRoomUnit().getY() - tile.y > 0)
-                            y++;
-                        else
-                            y--;
-                        break;
+            // 2. Get a random direction
+            /*
+            getAvailableDirections:
+                0 available - don't move
+                1 available - move in that direction
+                2 available - if lastdirection = null move in random possible direction
+                              else if direction[0] = lastdirection opposite, move in direction[1]
+                              else move in direction[0]
+                3+ available - move in random direction, but never the opposite
+             */
+
+            List<RoomUserRotation> availableDirections = this.getAvailableDirections(item, room);
+
+            if(moveDirection != null && !availableDirections.contains(moveDirection))
+                moveDirection = null;
+
+            if(moveDirection == null) {
+                if (availableDirections.size() == 0) {
+                    continue;
+                } else if (availableDirections.size() == 1) {
+                    moveDirection = availableDirections.iterator().next();
+                } else if (availableDirections.size() == 2) {
+                    if (lastDirection == null) {
+                        moveDirection = availableDirections.get(Emulator.getRandom().nextInt(availableDirections.size()));
+                    } else {
+                        RoomUserRotation oppositeLast = lastDirection.getOpposite();
+
+                        if (availableDirections.get(0) == oppositeLast) {
+                            moveDirection = availableDirections.get(1);
+                        } else {
+                            moveDirection = availableDirections.get(0);
+                        }
                     }
-                }
-            }
-            else
-            {
-                switch (Emulator.getRandom().nextInt(4))
-                {
-                    case 0: x--; break;
-                    case 1: x++; break;
-                    case 2: y--; break;
-                    case 3: y++; break;
+                } else {
+                    if (lastDirection != null) {
+                        RoomUserRotation opposite = lastDirection.getOpposite();
+                        availableDirections.remove(opposite);
+                    }
+                    moveDirection = availableDirections.get(Emulator.getRandom().nextInt(availableDirections.size()));
                 }
             }
 
-            boolean validMove = true;
-            RoomTile newTile = room.getLayout().getTile((short) (item.getX() + x), (short) (item.getY() + y));
-            if(room.getLayout().getTilesAt(newTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()) == null) {
-                validMove = false;
-            }
-            for(RoomTile t : room.getLayout().getTilesAt(newTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation())) {
-                if ((item instanceof InteractionFreezeTile || item instanceof InteractionBattleBanzaiTile) && room.hasItemsAt(t.x, t.y)) {
-                    validMove = false;
+            RoomTile newTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), moveDirection.getValue());
+
+            if(newTile != null) {
+                lastDirections.put(item.getId(), moveDirection);
+
+                FurnitureMovementError error = room.furnitureFitsAt(newTile, item, item.getRotation());
+                if(error == FurnitureMovementError.NONE) {
+                    double offset = room.getStackHeight(newTile.x, newTile.y, false, item) - item.getZ();
+                    room.sendComposer(new FloorItemOnRollerComposer(item, null, newTile, offset, room).compose());
                 }
-                if (t == null || (t.state == RoomTileState.OPEN && !t.isWalkable()) || t.state == RoomTileState.BLOCKED || t.state == RoomTileState.INVALID || !room.furnitureFitsAt(t, item, item.getRotation()).equals(FurnitureMovementError.NONE) || !room.getLayout().tileExists(t.x, t.y)) {
-                    validMove = false;
-                }
-            }
-            if(validMove) {
-                room.slideFurniTo(item, newTile, item.getRotation());
             }
         }
 
