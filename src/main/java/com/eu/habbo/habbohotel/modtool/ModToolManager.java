@@ -467,23 +467,23 @@ public class ModToolManager
 
     public void alert(Habbo moderator, Habbo target, String message)
     {
-        if(moderator.hasPermission(Permission.ACC_SUPPORTTOOL))
-        {
-            SupportUserAlertedEvent alertedEvent = new SupportUserAlertedEvent(moderator, target, message);
-            if (Emulator.getPluginManager().fireEvent(alertedEvent).isCancelled())
-            {
-                return;
-            }
+        alert(moderator, target, message, SupportUserAlertedReason.ALERT);
+    }
 
-            if(target != null)
-            {
-                alertedEvent.target.getClient().sendResponse(new ModToolIssueHandledComposer(alertedEvent.message));
-            }
-        }
-        else
-        {
+    public void alert(Habbo moderator, Habbo target, String message, SupportUserAlertedReason reason)
+    {
+        if(!moderator.hasPermission(Permission.ACC_SUPPORTTOOL)) {
             Emulator.getGameEnvironment().getModToolManager().quickTicket(moderator, "Scripter", Emulator.getTexts().getValue("scripter.warning.modtools.alert").replace("%username%", moderator.getHabboInfo().getUsername()).replace("%message%", message));
+            return;
         }
+
+        SupportUserAlertedEvent alertedEvent = new SupportUserAlertedEvent(moderator, target, message, reason);
+
+        if (Emulator.getPluginManager().fireEvent(alertedEvent).isCancelled())
+            return;
+
+        if(target != null)
+            alertedEvent.target.getClient().sendResponse(new ModToolIssueHandledComposer(alertedEvent.message));
     }
 
     public void kick(Habbo moderator, Habbo target, String message)
@@ -494,7 +494,7 @@ public class ModToolManager
             {
                 Emulator.getGameEnvironment().getRoomManager().leaveRoom(target, target.getHabboInfo().getCurrentRoom());
             }
-            this.alert(moderator, target, message);
+            this.alert(moderator, target, message, SupportUserAlertedReason.KICKED);
         }
     }
 
