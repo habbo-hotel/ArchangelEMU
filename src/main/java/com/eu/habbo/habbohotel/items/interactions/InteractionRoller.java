@@ -82,7 +82,7 @@ public class InteractionRoller extends HabboItem
 
         for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation)
         {
-            if (!set.getValue().isEmpty())
+            if (set.getValue() != null && !set.getValue().isEmpty())
             {
                 if (set.getValue().size() > 1)
                 {
