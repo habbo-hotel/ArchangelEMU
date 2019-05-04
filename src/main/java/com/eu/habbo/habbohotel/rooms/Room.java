@@ -1617,7 +1617,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                             HabboItem newRoller = null;
 
                             THashSet<Habbo> habbosOnRoller = Room.this.getHabbosAt(roller.getX(), roller.getY());
-                            THashSet<HabboItem> itemsOnRoller = new THashSet<>(getItemsAt(roller.getX(), roller.getY()));
+                            THashSet<HabboItem> itemsOnRoller = new THashSet<>();
+
+                            RoomTile rollerTile = Room.this.layout.getTile(roller.getX(), roller.getY());
+
+                            for(HabboItem item : getItemsAt(rollerTile))
+                            {
+                                itemsOnRoller.add(item);
+                            }
 
                             itemsOnRoller.remove(roller);
 
@@ -1628,7 +1635,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                             }
 
                             RoomTile tileInFront = Room.this.layout.getTileInFront(Room.this.layout.getTile(roller.getX(), roller.getY()), roller.getRotation());
-                            RoomTile rollerTile = Room.this.layout.getTile(roller.getX(), roller.getY());
 
                             if (tileInFront == null)
                                 return true;
@@ -1646,7 +1652,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                             if (Room.this.hasHabbosAt(tileInFront.x, tileInFront.y))
                                 return true;
 
-                            THashSet<HabboItem> itemsNewTile = new THashSet<>(getItemsAt(tileInFront.x, tileInFront.y));
+                            THashSet<HabboItem> itemsNewTile = new THashSet<>();
+
+                            for(HabboItem item : getItemsAt(tileInFront))
+                            {
+                                itemsNewTile.add(item);
+                            }
+
                             itemsNewTile.removeAll(itemsOnRoller);
                             List<HabboItem> toRemove = new ArrayList<>();
                             for (HabboItem item : itemsOnRoller)
@@ -2593,7 +2605,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
     public int getUserCount()
     {
-		return this.currentHabbos.size();
+        return this.currentHabbos.size();
     }
 
     public ConcurrentHashMap<Integer, Habbo> getCurrentHabbos()
@@ -3110,7 +3122,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
 
 
-            return items;
+        return items;
 
     }
 
@@ -3140,13 +3152,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
     public void addHabbo(Habbo habbo)
     {
-		synchronized (this.roomUnitLock)
-		{
-			habbo.getRoomUnit().setId(this.unitCounter);
-			this.currentHabbos.put(habbo.getHabboInfo().getId(), habbo);
-			this.unitCounter++;
-			this.updateDatabaseUserCount();
-		}
+        synchronized (this.roomUnitLock)
+        {
+            habbo.getRoomUnit().setId(this.unitCounter);
+            this.currentHabbos.put(habbo.getHabboInfo().getId(), habbo);
+            this.unitCounter++;
+            this.updateDatabaseUserCount();
+        }
     }
 
     public void kickHabbo(Habbo habbo, boolean alert)
@@ -3921,7 +3933,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
             for(RoomTile tile : lockedTiles)
             {
                 if(tile.x == item.getX() &&
-                   tile.y == item.getY())
+                        tile.y == item.getY())
                 {
                     found = true;
                     break;
@@ -5385,12 +5397,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
             return FurnitureMovementError.INVALID_MOVE;
 
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
-            for (RoomTile t : occupiedTiles) {
+        for (RoomTile t : occupiedTiles) {
 
-                if (this.hasHabbosAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_HABBOS;
-                if (this.hasBotsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_BOTS;
-                if (this.hasPetsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_PETS;
-            }
+            if (this.hasHabbosAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_HABBOS;
+            if (this.hasBotsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_BOTS;
+            if (this.hasPetsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_PETS;
+        }
 
         List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
         for (RoomTile t : occupiedTiles)
