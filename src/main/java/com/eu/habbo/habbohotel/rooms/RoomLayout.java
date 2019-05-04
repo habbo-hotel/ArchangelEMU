@@ -314,7 +314,7 @@ public class RoomLayout
                     if (height > MAXIMUM_STEP_HEIGHT && currentAdj.state == RoomTileState.OPEN) continue;
 
                     //Check if the tile has habbos.
-                    if (!this.room.isAllowWalkthrough() && this.room.hasHabbosAt(currentAdj.x, currentAdj.y))
+                    if ((!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation)) && (this.room.hasHabbosAt(currentAdj.x, currentAdj.y) || this.room.hasPetsAt(currentAdj.x, currentAdj.y) || this.room.hasBotsAt(currentAdj.x, currentAdj.y)))
                     {
                         closedList.add(currentAdj);
                         openList.remove(currentAdj);
