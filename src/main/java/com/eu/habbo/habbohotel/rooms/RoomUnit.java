@@ -241,10 +241,9 @@ public class RoomUnit
 
             HabboItem item = room.getTopItemAt(next.x, next.y);
 
-
             //if(!(this.path.size() == 0 && canSitNextTile))
             {
-                if (!room.tileWalkable(next.x, next.y) && !(item instanceof InteractionTeleport))
+                if (!room.tileWalkable(next.x, next.y))
                 {
                     this.room = room;
                     this.findPath();
@@ -798,5 +797,9 @@ public class RoomUnit
     public boolean isInvisible()
     {
         return this.invisible;
+    }
+
+    public Room getRoom() {
+        return room;
     }
 }

@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 
@@ -28,16 +29,26 @@ public class InteractionTeleportTile extends InteractionTeleport
     }
 
     @Override
+    public boolean isWalkable() {
+        return true;
+    }
+
+    @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
     {
         if (roomUnit != null)
         {
-            if (roomUnit.getGoal().is(this.getX(), this.getY()) && this.canWalkOn(roomUnit, room, objects))
+            RoomTile currentLocation = room.getLayout().getTile(this.getX(), this.getY());
+
+            if (roomUnit.getGoal().equals(currentLocation) && this.canWalkOn(roomUnit, room, objects))
             {
                 Habbo habbo = room.getHabbo(roomUnit);
 
                 if (habbo != null)
                 {
+                    if(!canUseTeleport(habbo.getClient(), room))
+                        return;
+
                     if (!habbo.getRoomUnit().isTeleporting)
                     {
                         this.startTeleport(room, habbo);
@@ -45,17 +56,5 @@ public class InteractionTeleportTile extends InteractionTeleport
                 }
             }
         }
-    }
-
-    @Override
-    protected boolean canUseTeleport(GameClient client, Room room)
-    {
-        if(client.getHabbo().getRoomUnit().isTeleporting)
-            return false;
-
-        if (client.getHabbo().getRoomUnit().getCurrentLocation().is(this.getX(), this.getY()))
-            return true;
-
-        return true;
     }
 }
