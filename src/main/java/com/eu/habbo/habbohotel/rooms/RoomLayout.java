@@ -1,6 +1,9 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.pets.Pet;
+import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.set.hash.THashSet;
 
 import java.awt.*;
@@ -271,10 +274,24 @@ public class RoomLayout
 
             openList.add(oldTile.copy());
 
+            List<RoomTile> unitsAt = new ArrayList<>();
+
+            for(Bot b : this.room.getCurrentBots().valueCollection()) {
+                unitsAt.add(b.getRoomUnit().getCurrentLocation());
+            }
+
+            for(Habbo b : this.room.getCurrentHabbos().values()) {
+                unitsAt.add(b.getRoomUnit().getCurrentLocation());
+            }
+
+            for(Pet b : this.room.getCurrentPets().valueCollection()) {
+                unitsAt.add(b.getRoomUnit().getCurrentLocation());
+            }
+
             long startMillis = System.currentTimeMillis();
             while (true)
             {
-                if (System.currentTimeMillis() - startMillis > 25)
+                if (System.currentTimeMillis() - startMillis > 50)
                 {
                     return new LinkedList<>();
                 }
@@ -294,9 +311,7 @@ public class RoomLayout
                     if (closedList.contains(currentAdj)) continue;
 
                     //If the tile is sitable or layable and its not our goal tile, we cannot walk over it.
-                    if (
-                            (currentAdj.state == RoomTileState.BLOCKED) ||
-                            ((currentAdj.state == RoomTileState.SIT || currentAdj.state == RoomTileState.LAY) && !currentAdj.equals(goalLocation)))
+                    if (!currentAdj.equals(goalLocation) && (currentAdj.state == RoomTileState.BLOCKED || currentAdj.state == RoomTileState.SIT || currentAdj.state == RoomTileState.LAY))
                     {
                         closedList.add(currentAdj);
                         openList.remove(currentAdj);
@@ -311,10 +326,10 @@ public class RoomLayout
                     if (!ALLOW_FALLING && height < - MAXIMUM_STEP_HEIGHT) continue;
 
                     //If the step difference is bigger than the maximum step height, continue.
-                    if (height > MAXIMUM_STEP_HEIGHT && currentAdj.state == RoomTileState.OPEN) continue;
+                    if (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT) continue;
 
                     //Check if the tile has habbos.
-                    if ((!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation)) && (this.room.hasHabbosAt(currentAdj.x, currentAdj.y) || this.room.hasPetsAt(currentAdj.x, currentAdj.y) || this.room.hasBotsAt(currentAdj.x, currentAdj.y)))
+                    if (unitsAt.contains(currentAdj) && (!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation)))
                     {
                         closedList.add(currentAdj);
                         openList.remove(currentAdj);
@@ -392,11 +407,14 @@ public class RoomLayout
             return null;
 
         RoomTile cheapest = openList.get(0);
+        int cheapestFcost = Integer.MAX_VALUE;
         for (RoomTile anOpenList : openList)
         {
-            if (anOpenList.getfCosts() < cheapest.getfCosts())
+            int f = cheapest.getfCosts();
+            if (anOpenList.getfCosts() < cheapestFcost)
             {
                 cheapest = anOpenList;
+                cheapestFcost = f;
             }
         }
         return cheapest;
