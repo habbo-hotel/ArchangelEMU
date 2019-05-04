@@ -145,15 +145,9 @@ public class BotManager
                 roomUnit.setLocation(location);
                 HabboItem topItem = room.getTopItemAt(location.x, location.y);
 
-                if (topItem != null && !topItem.getBaseItem().allowSit())
-                {
-                    roomUnit.setZ(topItem.getZ() + Item.getCurrentHeight(topItem));
-                }
+                if (topItem != null )
+                    roomUnit.setZ(topItem.getBaseItem().allowSit() ? topItem.getZ() : topItem.getZ() + Item.getCurrentHeight(topItem));
 
-                if (topItem.getBaseItem().allowSit())
-                {
-                    roomUnit.setZ(topItem.getZ());
-                }
                 roomUnit.setPreviousLocationZ(roomUnit.getZ());
                 roomUnit.setPathFinderRoom(room);
                 roomUnit.setRoomUnitType(RoomUnitType.BOT);
