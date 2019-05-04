@@ -795,11 +795,12 @@ public class RoomManager
 
         if (!habbo.getRoomUnit().isTeleporting)
         {
-            habbo.getRoomUnit().setLocation(room.getLayout().getTile(room.getLayout().getDoorX(), room.getLayout().getDoorY()));
+
             RoomTile doorTile = room.getLayout().getTile(room.getLayout().getDoorX(), room.getLayout().getDoorY());
 
             if (doorTile != null)
             {
+                habbo.getRoomUnit().setLocation(doorTile);
                 habbo.getRoomUnit().setZ(doorTile.getStackHeight());
             }
 
