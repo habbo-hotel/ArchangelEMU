@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.support.SupportUserAlertedReason;
 
-public class ModToolAlertEvent extends MessageHandler
+public class ModToolWarnEvent extends MessageHandler
 {
     @Override
     public void handle() throws Exception
@@ -16,7 +16,7 @@ public class ModToolAlertEvent extends MessageHandler
             Habbo alertedUser = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.packet.readInt());
 
             if(alertedUser != null)
-                Emulator.getGameEnvironment().getModToolManager().alert(this.client.getHabbo(), alertedUser, this.packet.readString(), SupportUserAlertedReason.ALERT);
+                Emulator.getGameEnvironment().getModToolManager().alert(this.client.getHabbo(), alertedUser, this.packet.readString(), SupportUserAlertedReason.CAUTION);
         }
         else
         {

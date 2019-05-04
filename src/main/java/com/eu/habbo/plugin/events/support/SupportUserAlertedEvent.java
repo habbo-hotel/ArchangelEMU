@@ -7,15 +7,16 @@ public class SupportUserAlertedEvent extends SupportEvent
 
     public Habbo target;
 
-
     public String message;
 
+    public SupportUserAlertedReason reason;
 
-    public SupportUserAlertedEvent(Habbo moderator, Habbo target, String message)
+    public SupportUserAlertedEvent(Habbo moderator, Habbo target, String message, SupportUserAlertedReason reason)
     {
         super(moderator);
 
         this.message = message;
         this.target  = target;
+        this.reason = reason;
     }
 }
