@@ -6,8 +6,8 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionGuildGate;
 import com.eu.habbo.habbohotel.items.interactions.InteractionMultiHeight;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleport;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeBlock;
-import com.eu.habbo.habbohotel.pets.HorsePet;
 import com.eu.habbo.habbohotel.pets.Pet;
+import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -117,15 +117,15 @@ public class RoomUnit
                 return false;
             }
 
-            Boolean isHorse = false;
+            Boolean isRiding = false;
             Pet pet = room.getPet(this);
             if(pet != null) {
-                if(pet instanceof HorsePet) {
-                    isHorse = true;
-                    if (((HorsePet) pet).getRider() != null) {
-                        if(!((HorsePet) pet).getRider().getRoomUnit().isWalking()) {
+                if(pet instanceof RideablePet) {
+                    isRiding = true;
+                    if (((RideablePet) pet).getRider() != null) {
+                        if(!((RideablePet) pet).getRider().getRoomUnit().isWalking()) {
                             this.status.remove(RoomUnitStatus.MOVE);
-                            this.setCurrentLocation(((HorsePet) pet).getRider().getRoomUnit().getPreviousLocation());
+                            this.setCurrentLocation(((RideablePet) pet).getRider().getRoomUnit().getPreviousLocation());
                             if (this.status.remove(RoomUnitStatus.MOVE) != null) this.statusUpdate = true;
 
                         }
@@ -182,7 +182,7 @@ public class RoomUnit
 
                 if (next != null && room.hasHabbosAt(next.x, next.y))
                 {
-                    if(!isHorse) {
+                    if(!isRiding) {
                         return false;
                     }
                 }
@@ -284,7 +284,7 @@ public class RoomUnit
 
             double zHeight = 0.0D;
 
-            if (((habbo != null && habbo.getHabboInfo().getRiding() != null) || isHorse) && next.equals(this.goalLocation) && (next.state == RoomTileState.SIT || next.state == RoomTileState.LAY)) {
+            if (((habbo != null && habbo.getHabboInfo().getRiding() != null) || isRiding) && next.equals(this.goalLocation) && (next.state == RoomTileState.SIT || next.state == RoomTileState.LAY)) {
                 this.status.remove(RoomUnitStatus.MOVE);
                 return false;
             }
@@ -368,14 +368,14 @@ public class RoomUnit
 
                     if (ridingUnit != null)
                     {
+                        ridingUnit.setPreviousLocationZ(this.getZ());
                         this.setZ(zHeight - 1.0);
                         ridingUnit.setRotation(RoomUserRotation.values()[Rotation.Calculate(this.getX(), this.getY(), next.x, next.y)]);
                         ridingUnit.setPreviousLocation(this.getCurrentLocation());
                         ridingUnit.setGoalLocation(this.getGoal());
                         ridingUnit.setStatus(RoomUnitStatus.MOVE, next.x + "," + next.y + "," + (zHeight - 1.0));
-                        ridingUnit.setZ(zHeight - 1.0);
                         room.sendComposer(new RoomUserStatusComposer(ridingUnit).compose());
-
+                        //ridingUnit.setZ(zHeight - 1.0);
                     }
                 }
             }

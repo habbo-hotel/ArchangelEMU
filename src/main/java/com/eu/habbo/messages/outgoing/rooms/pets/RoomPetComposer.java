@@ -1,9 +1,6 @@
 package com.eu.habbo.messages.outgoing.rooms.pets;
 
-import com.eu.habbo.habbohotel.pets.HorsePet;
-import com.eu.habbo.habbohotel.pets.IPetLook;
-import com.eu.habbo.habbohotel.pets.MonsterplantPet;
-import com.eu.habbo.habbohotel.pets.Pet;
+import com.eu.habbo.habbohotel.pets.*;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -59,7 +56,7 @@ public class RoomPetComposer extends MessageComposer implements TIntObjectProced
         this.response.appendInt(pet.getUserId());
         this.response.appendString(pet.getRoom().getFurniOwnerNames().get(pet.getUserId()));
         this.response.appendInt(pet instanceof MonsterplantPet ? ((MonsterplantPet) pet).getRarity() : 1);
-        this.response.appendBoolean(pet instanceof HorsePet && ((HorsePet) pet).hasSaddle());
+        this.response.appendBoolean(pet instanceof RideablePet && ((RideablePet) pet).hasSaddle());
         this.response.appendBoolean(false);
         this.response.appendBoolean((pet instanceof MonsterplantPet && ((MonsterplantPet) pet).canBreed())); //Has breeasasd//
         this.response.appendBoolean(!(pet instanceof MonsterplantPet && ((MonsterplantPet) pet).isFullyGrown())); //unknown 1

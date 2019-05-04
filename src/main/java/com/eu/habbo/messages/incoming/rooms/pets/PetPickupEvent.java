@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.pets;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
+import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
@@ -35,6 +36,14 @@ public class PetPickupEvent extends MessageHandler
                     this.client.sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(Emulator.getTexts().getValue("error.pets.max.inventory"), this.client.getHabbo(), this.client.getHabbo(), RoomChatMessageBubbles.ALERT)));
                     return;
                 }
+
+                if(pet instanceof RideablePet) {
+                    RideablePet rideablePet = (RideablePet)pet;
+                    if(rideablePet.getRider() != null) {
+                        rideablePet.getRider().getHabboInfo().dismountPet(true);
+                    }
+                }
+
                 room.sendComposer(new RoomUserRemoveComposer(pet.getRoomUnit()).compose());
                 room.removePet(petId);
                 pet.setRoomUnit(null);

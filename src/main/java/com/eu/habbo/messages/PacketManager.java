@@ -549,9 +549,9 @@ public class PacketManager
         this.registerHandler(Incoming.PetPickupEvent,                           PetPickupEvent.class);
         this.registerHandler(Incoming.ScratchPetEvent,                          ScratchPetEvent.class);
         this.registerHandler(Incoming.RequestPetTrainingPanelEvent,             RequestPetTrainingPanelEvent.class);
-        this.registerHandler(Incoming.HorseUseItemEvent,                        HorseUseItemEvent.class);
-        this.registerHandler(Incoming.HorseRideSettingsEvent,                   HorseRideSettingsEvent.class);
-        this.registerHandler(Incoming.HorseRideEvent,                           HorseRideEvent.class);
+        this.registerHandler(Incoming.HorseUseItemEvent,                        PetUseItemEvent.class);
+        this.registerHandler(Incoming.HorseRideSettingsEvent,                   PetRideSettingsEvent.class);
+        this.registerHandler(Incoming.HorseRideEvent,                           PetRideEvent.class);
         this.registerHandler(Incoming.ToggleMonsterplantBreedableEvent,         ToggleMonsterplantBreedableEvent.class);
         this.registerHandler(Incoming.CompostMonsterplantEvent,                 CompostMonsterplantEvent.class);
         this.registerHandler(Incoming.BreedMonsterplantsEvent,                  BreedMonsterplantsEvent.class);

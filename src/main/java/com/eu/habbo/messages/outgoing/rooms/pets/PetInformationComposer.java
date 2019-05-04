@@ -1,10 +1,7 @@
 package com.eu.habbo.messages.outgoing.rooms.pets;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.pets.HorsePet;
-import com.eu.habbo.habbohotel.pets.MonsterplantPet;
-import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.pets.PetManager;
+import com.eu.habbo.habbohotel.pets.*;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -57,10 +54,10 @@ public class PetInformationComposer extends MessageComposer
         this.response.appendString(this.room.getFurniOwnerName(this.pet.getUserId())); //Owner name
 
         this.response.appendInt(this.pet instanceof MonsterplantPet ? ((MonsterplantPet) this.pet).getRarity() : 0);
-        this.response.appendBoolean(this.pet instanceof HorsePet && ((HorsePet) this.pet).hasSaddle());
-        this.response.appendBoolean(this.pet instanceof HorsePet && ((HorsePet) this.pet).getRider() != null);
+        this.response.appendBoolean(this.pet instanceof RideablePet && ((RideablePet) this.pet).hasSaddle());
+        this.response.appendBoolean(this.pet instanceof RideablePet && ((RideablePet) this.pet).getRider() != null);
         this.response.appendInt(0);
-        this.response.appendInt(this.pet instanceof HorsePet && ((HorsePet) this.pet).anyoneCanRide() ? 1 : 0);
+        this.response.appendInt(this.pet instanceof RideablePet && ((RideablePet) this.pet).anyoneCanRide() ? 1 : 0);
         this.response.appendBoolean(this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).canBreed()); //State Grown
         this.response.appendBoolean(!(this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).isFullyGrown())); //unknown 1
         this.response.appendBoolean(this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).isDead()); //Dead

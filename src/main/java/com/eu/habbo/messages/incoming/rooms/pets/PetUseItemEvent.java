@@ -15,7 +15,7 @@ import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetHorseFigureComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
-public class HorseUseItemEvent extends MessageHandler
+public class PetUseItemEvent extends MessageHandler
 {
     @Override
     public void handle() throws Exception

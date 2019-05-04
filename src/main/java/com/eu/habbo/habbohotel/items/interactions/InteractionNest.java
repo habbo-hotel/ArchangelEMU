@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.HorsePet;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
+import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
@@ -67,27 +68,24 @@ public class InteractionNest extends HabboItem
 
         Pet pet = room.getPet(roomUnit);
 
-        if(pet != null)
-        {
-            if(pet instanceof HorsePet)
-            {
-                if(((HorsePet) pet).getRider() != null)
-                    return;
-            }
+        if(pet == null)
+            return;
 
-            if(pet.getPetData().haveNest(this))
-            {
-                if (pet.getEnergy() <= 85)
-                {
-                    pet.setTask(PetTasks.NEST);
-                    pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getX(), this.getY()));
-                    pet.getRoomUnit().clearStatus();
-                    pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
-                    pet.getRoomUnit().setStatus(RoomUnitStatus.LAY, room.getStackHeight(this.getX(), this.getY(), false) + "");
-                    room.sendComposer(new RoomUserStatusComposer(roomUnit).compose());
-                }
-            }
-        }
+        if(pet instanceof RideablePet && ((RideablePet) pet).getRider() != null)
+            return;
+
+        if(!pet.getPetData().haveNest(this))
+            return;
+
+        if(pet.getEnergy() > 85)
+            return;
+
+        pet.setTask(PetTasks.NEST);
+        pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getX(), this.getY()));
+        pet.getRoomUnit().clearStatus();
+        pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
+        pet.getRoomUnit().setStatus(RoomUnitStatus.LAY, room.getStackHeight(this.getX(), this.getY(), false) + "");
+        room.sendComposer(new RoomUserStatusComposer(roomUnit).compose());
     }
 
     @Override
