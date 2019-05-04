@@ -161,7 +161,14 @@ public class RoomUnit
             if (this.path == null || this.path.isEmpty())
                 return true;
 
-            if (this.fastWalk && this.path.size() >= 3)
+            boolean canfastwalk = true;
+            Habbo habboT = room.getHabbo(this);
+            if(habboT != null) {
+                if(habboT.getHabboInfo().getRiding() != null)
+                    canfastwalk = false;
+            }
+
+            if (canfastwalk && this.fastWalk && this.path.size() >= 3)
             {
                 this.path.poll();
                 this.path.poll();

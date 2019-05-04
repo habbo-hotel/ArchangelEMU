@@ -16,6 +16,11 @@ public class FastwalkCommand extends Command
     {
         if(gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null)
         {
+            if(gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+                if (gameClient.getHabbo().getHabboInfo().getRiding() != null) //TODO Make this an event plugin which fires that can be cancelled
+                return true;
+            }
+
             Habbo habbo = gameClient.getHabbo();
 
             if(params.length >= 2)
