@@ -221,6 +221,10 @@ public abstract class HabboItem implements Runnable, IEventTriggers
         return this.needsUpdate;
     }
 
+    public boolean needsDelete() {
+        return needsDelete;
+    }
+
     public void needsUpdate(boolean value)
     {
         this.needsUpdate = value;

@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.games;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredHighscore;
+import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.items.interactions.wired.triggers.WiredTriggerTeamLoses;
 import com.eu.habbo.habbohotel.items.interactions.wired.triggers.WiredTriggerTeamWins;
@@ -170,32 +171,7 @@ public abstract class Game implements Runnable
         }
     }
 
-
-    public abstract void run();
-
-    public void pause()
-    {
-        if (this.state.equals(GameState.RUNNING))
-        {
-            this.state = GameState.PAUSED;
-            this.pauseTime = Emulator.getIntUnixTimestamp();
-        }
-    }
-
-    public void unpause()
-    {
-        if (this.state.equals(GameState.PAUSED))
-        {
-            this.state = GameState.RUNNING;
-            this.endTime = Emulator.getIntUnixTimestamp() + (this.endTime - this.pauseTime);
-        }
-    }
-
-    public void stop()
-    {
-        this.state = GameState.IDLE;
-        this.endTime = Emulator.getIntUnixTimestamp();
-
+    public void onEnd() {
         this.saveScores();
 
         GameTeam winningTeam = null;
@@ -225,17 +201,54 @@ public abstract class Game implements Runnable
             }
         }
 
+        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class))
+        {
+            this.room.updateItem(item);
+        }
+    }
+
+    public abstract void run();
+
+    public void pause()
+    {
+        if (this.state.equals(GameState.RUNNING))
+        {
+            this.state = GameState.PAUSED;
+            this.pauseTime = Emulator.getIntUnixTimestamp();
+        }
+    }
+
+    public void unpause()
+    {
+        if (this.state.equals(GameState.PAUSED))
+        {
+            this.state = GameState.RUNNING;
+            this.endTime = Emulator.getIntUnixTimestamp() + (this.endTime - this.pauseTime);
+        }
+    }
+
+    public void stop()
+    {
+        this.state = GameState.IDLE;
+        this.endTime = Emulator.getIntUnixTimestamp();
+
+        boolean gamesActive = false;
+        for(HabboItem timer : room.getFloorItems())
+        {
+            if(timer instanceof InteractionGameTimer) {
+                if(((InteractionGameTimer) timer).isRunning())
+                    gamesActive = true;
+            }
+        }
+
+        if(gamesActive) {
+            return;
+        }
+
         if(Emulator.getPluginManager().isRegistered(GameStoppedEvent.class, true))
         {
             Event gameStoppedEvent = new GameStoppedEvent(this);
             Emulator.getPluginManager().fireEvent(gameStoppedEvent);
-        }
-
-        WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, this.room, new Object[]{this});
-
-        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class))
-        {
-            this.room.updateItem(item);
         }
     }
 
