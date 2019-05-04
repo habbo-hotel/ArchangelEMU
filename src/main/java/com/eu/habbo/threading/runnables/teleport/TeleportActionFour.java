@@ -24,14 +24,10 @@ class TeleportActionFour implements Runnable
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != this.room)
         {
             this.client.getHabbo().getRoomUnit().setCanWalk(true);
-            this.client.getHabbo().getRoomUnit().isTeleporting = false;
             this.currentTeleport.setExtradata("0");
             this.room.updateItem(this.currentTeleport);
             return;
         }
-
-
-
 
         Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 500);
     }

@@ -692,8 +692,22 @@ public class RoomManager
         habbo.getRoomUnit().clearStatus();
         if (habbo.getRoomUnit().getCurrentLocation() == null)
         {
-            habbo.getRoomUnit().setLocation(room.getLayout().getDoorTile());
+            habbo.getRoomUnit().setLocation(doorLocation != null ? doorLocation : room.getLayout().getDoorTile());
+            habbo.getRoomUnit().setZ(habbo.getRoomUnit().getCurrentLocation().getStackHeight());
+
+            if(doorLocation == null) {
+                habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
+                habbo.getRoomUnit().setHeadRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
+            }
+            else {
+                habbo.getRoomUnit().isTeleporting = true;
+                HabboItem topItem = room.getTopItemAt(doorLocation.x, doorLocation.y);
+                if(topItem != null) {
+                    habbo.getRoomUnit().setRotation(RoomUserRotation.values()[topItem.getRotation()]);
+                }
+            }
         }
+
         habbo.getRoomUnit().setRoomUnitType(RoomUnitType.USER);
         if(room.isBanned(habbo))
         {
@@ -731,11 +745,6 @@ public class RoomManager
         }
 
         habbo.getHabboInfo().setLoadingRoom(room.getId());
-
-        if (habbo.getRoomUnit().isTeleporting)
-        {
-            habbo.getRoomUnit().setLocation(doorLocation);
-        }
 
         habbo.getClient().sendResponse(new RoomModelComposer(room));
 
@@ -793,7 +802,7 @@ public class RoomManager
         }
         habbo.getRoomUnit().isKicked = false;
 
-        if (!habbo.getRoomUnit().isTeleporting)
+        if (habbo.getRoomUnit().getCurrentLocation() == null && !habbo.getRoomUnit().isTeleporting)
         {
 
             RoomTile doorTile = room.getLayout().getTile(room.getLayout().getDoorX(), room.getLayout().getDoorY());
