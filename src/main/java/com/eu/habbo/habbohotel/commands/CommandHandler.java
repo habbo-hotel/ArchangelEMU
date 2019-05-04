@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.permissions.PermissionSetting;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetCommand;
 import com.eu.habbo.habbohotel.pets.PetVocalsType;
+import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTypingComposer;
 import com.eu.habbo.plugin.events.users.UserCommandEvent;
@@ -267,6 +268,13 @@ public class CommandHandler
                                 {
                                     if (command.key.equalsIgnoreCase(s.toString()))
                                     {
+                                        if(pet instanceof RideablePet && ((RideablePet)pet).getRider() != null) {
+                                            if(((RideablePet) pet).getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
+                                                ((RideablePet) pet).getRider().getHabboInfo().dismountPet();
+                                            }
+                                            break;
+                                        }
+
                                         if (command.level <= pet.getLevel())
                                             pet.handleCommand(command, gameClient.getHabbo(), args);
                                         else
