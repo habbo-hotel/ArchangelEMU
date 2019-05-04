@@ -22,10 +22,8 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.pets.HorsePet;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetManager;
-import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.users.*;
 import com.eu.habbo.habbohotel.wired.*;
 import com.eu.habbo.messages.ISerialize;
@@ -1567,21 +1565,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                             {
                                 updatedUnit.add(pet.getRoomUnit());
                                 pet.packetUpdate = false;
-                            }
-
-                            if (pet.getTask() == PetTasks.RIDE)
-                            {
-                                if (pet instanceof HorsePet)
-                                {
-                                    HorsePet horse = ((HorsePet) pet);
-                                    if (horse.getRider() != null)
-                                    {
-                                        if (!horse.getRider().getRoomUnit().getCurrentLocation().equals(horse.getRoomUnit().getCurrentLocation()))
-                                        {
-                                            horse.getRoomUnit().setGoalLocation(horse.getRider().getRoomUnit().getCurrentLocation());
-                                        }
-                                    }
-                                }
                             }
 
                             if (pet.getRoomUnit().isWalking() && pet.getRoomUnit().getPath().size() == 1 && pet.getRoomUnit().hasStatus(RoomUnitStatus.GESTURE))

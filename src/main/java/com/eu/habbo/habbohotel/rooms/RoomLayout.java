@@ -654,6 +654,28 @@ public class RoomLayout
         return tiles;
     }
 
+    public List<RoomTile> getWalkableTilesAround(RoomTile tile) {
+        return getWalkableTilesAround(tile, 0);
+    }
+
+    public List<RoomTile> getWalkableTilesAround(RoomTile tile, int directionOffset) {
+        List<RoomTile> availableTiles = new ArrayList<>(this.getTilesAround(tile, directionOffset));
+
+        List<RoomTile> toRemove = new ArrayList<>();
+
+        for(RoomTile t : availableTiles) {
+            if(t == null || t.state != RoomTileState.OPEN || !t.isWalkable()) {
+                toRemove.add(t);
+            }
+        }
+
+        for(RoomTile t : toRemove) {
+            availableTiles.remove(t);
+        }
+
+        return availableTiles;
+    }
+
     public static Rectangle getRectangle(int x, int y, int width, int length, int rotation)
     {
         rotation = (rotation % 8);

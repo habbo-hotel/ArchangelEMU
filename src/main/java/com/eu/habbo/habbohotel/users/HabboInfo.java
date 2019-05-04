@@ -6,7 +6,13 @@ import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.permissions.Rank;
 import com.eu.habbo.habbohotel.pets.HorsePet;
+import com.eu.habbo.habbohotel.pets.PetTasks;
+import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.threading.runnables.RoomUnitRidePet;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.procedure.TIntIntProcedure;
 
@@ -14,6 +20,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HabboInfo implements Runnable
 {
@@ -40,7 +48,7 @@ public class HabboInfo implements Runnable
     private Room currentRoom;
     private int roomQueueId;
 
-    private HorsePet riding;
+    private RideablePet riding;
 
     private Class<? extends Game> currentGame;
     private TIntIntHashMap currencies;
@@ -357,12 +365,49 @@ public class HabboInfo implements Runnable
         this.roomQueueId = roomQueueId;
     }
 
-    public HorsePet getRiding()
+    public RideablePet getRiding()
     {
         return this.riding;
     }
 
-    public void setRiding(HorsePet riding)
+    public void dismountPet() {
+        this.dismountPet(false);
+    }
+
+    public void dismountPet(boolean isRemoving) {
+        if(this.getRiding() == null)
+            return;
+
+        Habbo habbo = this.getCurrentRoom().getHabbo(this.getId());
+        if(habbo == null)
+            return;
+
+        RideablePet riding = this.getRiding();
+
+        riding.setRider(null);
+        riding.setTask(PetTasks.FREE);
+        this.setRiding(null);
+
+        Room room = this.getCurrentRoom();
+        if(room != null)
+            room.giveEffect(habbo, 0, -1);
+
+        RoomUnit roomUnit = habbo.getRoomUnit();
+        if(roomUnit == null)
+            return;
+
+        roomUnit.setZ(riding.getRoomUnit().getZ());
+        roomUnit.setPreviousLocationZ(riding.getRoomUnit().getZ());
+        roomUnit.stopWalking();
+        room.sendComposer(new RoomUserStatusComposer(roomUnit).compose());
+        List<RoomTile> availableTiles = isRemoving ? new ArrayList<>() : this.getCurrentRoom().getLayout().getWalkableTilesAround(roomUnit.getCurrentLocation());
+
+        RoomTile tile = availableTiles.isEmpty() ? roomUnit.getCurrentLocation() : availableTiles.get(0);
+        roomUnit.setGoalLocation(tile);
+        roomUnit.statusUpdate(true);
+    }
+
+    public void setRiding(RideablePet riding)
     {
         this.riding = riding;
     }

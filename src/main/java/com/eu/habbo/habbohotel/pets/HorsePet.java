@@ -1,31 +1,24 @@
 package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class HorsePet extends Pet
+public class HorsePet extends RideablePet
 {
     private int hairColor;
     private int hairStyle;
-
-    private boolean hasSaddle;
-    private boolean anyoneCanRide;
-
-    private Habbo rider;
 
     public HorsePet(ResultSet set) throws SQLException
     {
         super(set);
         this.hairColor = set.getInt("hair_color");
         this.hairStyle = set.getInt("hair_style");
-        this.hasSaddle = set.getString("saddle").equalsIgnoreCase("1");
-        this.anyoneCanRide = set.getString("ride").equalsIgnoreCase("1");
-        this.rider = null;
+        this.hasSaddle(set.getString("saddle").equalsIgnoreCase("1"));
+        this.setAnyoneCanRide(set.getString("ride").equalsIgnoreCase("1"));
     }
 
     public HorsePet(int type, int race, String color, String name, int userId)
@@ -33,9 +26,8 @@ public class HorsePet extends Pet
         super(type, race, color, name, userId);
         this.hairColor = 0;
         this.hairStyle = -1;
-        this.hasSaddle = false;
-        this.anyoneCanRide = false;
-        this.rider = null;
+        this.hasSaddle(false);
+        this.setAnyoneCanRide(false);
     }
 
     @Override
@@ -47,8 +39,8 @@ public class HorsePet extends Pet
             {
                 statement.setInt(1, this.hairStyle);
                 statement.setInt(2, this.hairColor);
-                statement.setString(3, this.hasSaddle ? "1" : "0");
-                statement.setString(4, this.anyoneCanRide ? "1" : "0");
+                statement.setString(3, this.hasSaddle() ? "1" : "0");
+                statement.setString(4, this.anyoneCanRide() ? "1" : "0");
                 statement.setInt(5, super.getId());
                 statement.execute();
             }
@@ -79,35 +71,5 @@ public class HorsePet extends Pet
     public void setHairStyle(int hairStyle)
     {
         this.hairStyle = hairStyle;
-    }
-
-    public boolean hasSaddle()
-    {
-        return this.hasSaddle;
-    }
-
-    public void hasSaddle(boolean hasSaddle)
-    {
-        this.hasSaddle = hasSaddle;
-    }
-
-    public boolean anyoneCanRide()
-    {
-        return this.anyoneCanRide;
-    }
-
-    public void setAnyoneCanRide(boolean anyoneCanRide)
-    {
-        this.anyoneCanRide = anyoneCanRide;
-    }
-
-    public Habbo getRider()
-    {
-        return this.rider;
-    }
-
-    public void setRider(Habbo rider)
-    {
-        this.rider = rider;
     }
 }
