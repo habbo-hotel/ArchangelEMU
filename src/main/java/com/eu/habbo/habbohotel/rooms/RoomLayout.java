@@ -407,14 +407,11 @@ public class RoomLayout
             return null;
 
         RoomTile cheapest = openList.get(0);
-        int cheapestFcost = Integer.MAX_VALUE;
         for (RoomTile anOpenList : openList)
         {
-            int f = cheapest.getfCosts();
-            if (anOpenList.getfCosts() < cheapestFcost)
+            if (anOpenList.getfCosts() < cheapest.getfCosts())
             {
                 cheapest = anOpenList;
-                cheapestFcost = f;
             }
         }
         return cheapest;
