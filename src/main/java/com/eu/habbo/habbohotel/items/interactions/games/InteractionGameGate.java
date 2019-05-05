@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions.games;
 
+import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -14,11 +15,13 @@ public abstract class InteractionGameGate extends InteractionGameTeamItem
     public InteractionGameGate(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException
     {
         super(set, baseItem, teamColor);
+        this.setExtradata("0");
     }
 
     public InteractionGameGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor)
     {
         super(id, userId, item, extradata, limitedStack, limitedSells, teamColor);
+        this.setExtradata("0");
     }
 
     @Override
@@ -40,5 +43,14 @@ public abstract class InteractionGameGate extends InteractionGameTeamItem
         serverMessage.appendString(this.getExtradata());
 
         super.serializeExtradata(serverMessage);
+    }
+
+    public void updateState(Game game, int maxPlayers) {
+        int memberCount = game.getTeam(this.teamColor).getMembers().size();
+        if(memberCount > maxPlayers) {
+            memberCount = maxPlayers;
+        }
+        this.setExtradata(memberCount + "");
+        game.getRoom().updateItem(this);
     }
 }

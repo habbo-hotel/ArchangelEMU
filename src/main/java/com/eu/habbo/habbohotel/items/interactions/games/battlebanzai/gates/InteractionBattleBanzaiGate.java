@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.gates;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.games.GameState;
 import com.eu.habbo.habbohotel.games.GameTeam;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
@@ -9,6 +10,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -67,17 +69,10 @@ public class InteractionBattleBanzaiGate extends InteractionGameGate
         }
         else
         {
-            if(this.getExtradata().isEmpty())
-            {
-                this.setExtradata("0");
-            }
-
-            int value = Integer.valueOf(this.getExtradata()) + 1;
-
-            this.setExtradata(value + "");
-            room.updateItem(this);
             game.addHabbo(room.getHabbo(roomUnit), this.teamColor);
         }
+
+        updateState(game, 5);
 
         super.onWalkOn(roomUnit, room, objects);
     }

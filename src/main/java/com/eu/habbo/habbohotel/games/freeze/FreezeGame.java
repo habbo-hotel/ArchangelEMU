@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreeze
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeTimer;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.gates.InteractionFreezeGate;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.scoreboards.InteractionFreezeScoreboard;
+import com.eu.habbo.habbohotel.items.interactions.wired.effects.WiredEffectTeleport;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
@@ -64,23 +65,6 @@ public class FreezeGame extends Game
             t.initialise();
         }
 
-        if (this.room.getRoomSpecialTypes().hasFreezeExitTile())
-        {
-            for (Habbo habbo : this.room.getHabbos())
-            {
-                if (this.getTeamForHabbo(habbo) == null)
-                {
-                    for (HabboItem item : this.room.getItemsAt(habbo.getRoomUnit().getCurrentLocation()))
-                    {
-                        if (item instanceof InteractionFreezeTile)
-                        {
-                            this.room.teleportHabboToItem(habbo, this.room.getRoomSpecialTypes().getRandomFreezeExitTile());
-                        }
-                    }
-                }
-            }
-        }
-
         this.start();
     }
 
@@ -93,22 +77,6 @@ public class FreezeGame extends Game
                 item.setExtradata("0");
                 this.room.updateItemState(item);
             }
-        }
-    }
-
-    public synchronized void placebackHelmet(GameTeamColors teamColor)
-    {
-        for (InteractionFreezeGate gate : this.room.getRoomSpecialTypes().getFreezeGates().values())
-        {
-            if (gate.teamColor != teamColor)
-                continue;
-
-            if (gate.getExtradata().isEmpty() || gate.getExtradata().equals("0"))
-                continue;
-
-            gate.setExtradata(Integer.valueOf(gate.getExtradata()) - 1 + "");
-            this.room.updateItemState(gate);
-            break;
         }
     }
 
@@ -259,8 +227,26 @@ public class FreezeGame extends Game
 
         super.start();
 
+        if (this.room.getRoomSpecialTypes().hasFreezeExitTile())
+        {
+            for (Habbo habbo : this.room.getHabbos())
+            {
+                if (this.getTeamForHabbo(habbo) == null)
+                {
+                    for (HabboItem item : this.room.getItemsAt(habbo.getRoomUnit().getCurrentLocation()))
+                    {
+                        if (item instanceof InteractionFreezeTile)
+                        {
+                            HabboItem exitTile = this.room.getRoomSpecialTypes().getRandomFreezeExitTile();
+                            WiredEffectTeleport.teleportUnitToTile(habbo.getRoomUnit(), this.room.getLayout().getTile(exitTile.getX(), exitTile.getY()));
+                        }
+                    }
+                }
+            }
+        }
+
         this.refreshGates();
-        
+
         this.setFreezeTileState("1");
         this.run();
     }

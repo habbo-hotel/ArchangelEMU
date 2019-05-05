@@ -175,7 +175,7 @@ public class BattleBanzaiGame extends Game
                         timer.setRunning(false);
                 }
 
-                InteractionGameTimer.endGames(room);
+                InteractionGameTimer.endGames(room, true);
             }
         }
         catch (Exception e)
@@ -264,22 +264,6 @@ public class BattleBanzaiGame extends Game
                 item.setExtradata("0");
                 this.room.updateItemState(item);
             }
-        }
-    }
-
-    public void addPositionToGate(GameTeamColors teamColor)
-    {
-        for (InteractionBattleBanzaiGate gate : this.room.getRoomSpecialTypes().getBattleBanzaiGates().values())
-        {
-            if (gate.teamColor != teamColor)
-                continue;
-
-            if (gate.getExtradata().isEmpty() || gate.getExtradata().equals("0"))
-                continue;
-
-            gate.setExtradata(Integer.valueOf(gate.getExtradata()) - 1 + "");
-            this.room.updateItemState(gate);
-            break;
         }
     }
 

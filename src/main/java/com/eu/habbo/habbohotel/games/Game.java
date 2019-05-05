@@ -25,28 +25,19 @@ import java.util.Map;
 public abstract class Game implements Runnable
 {
 
-    public final Class<? extends GameTeam> gameTeamClazz;
+    private final Class<? extends GameTeam> gameTeamClazz;
 
-
-    public final Class<? extends GamePlayer> gamePlayerClazz;
-
+    private final Class<? extends GamePlayer> gamePlayerClazz;
 
     protected final THashMap<GameTeamColors, GameTeam> teams = new THashMap<>();
 
-
     protected final Room room;
 
+    private final boolean countsAchievements;
 
-    protected final boolean countsAchievements;
+    private int startTime;
 
-
-    protected int startTime;
-
-
-    protected int pauseTime;
-
-
-    protected int endTime;
+    private int endTime;
 
     public boolean isRunning;
 
@@ -133,6 +124,7 @@ public abstract class Game implements Runnable
             }
         }
 
+        /*
         boolean deleteGame = true;
         for (GameTeam team : this.teams.values())
         {
@@ -147,6 +139,7 @@ public abstract class Game implements Runnable
         {
             this.room.deleteGame(this);
         }
+        */
     }
 
 
@@ -172,6 +165,8 @@ public abstract class Game implements Runnable
     }
 
     public void onEnd() {
+        this.endTime = Emulator.getIntUnixTimestamp();
+
         this.saveScores();
 
         GameTeam winningTeam = null;
@@ -214,7 +209,6 @@ public abstract class Game implements Runnable
         if (this.state.equals(GameState.RUNNING))
         {
             this.state = GameState.PAUSED;
-            this.pauseTime = Emulator.getIntUnixTimestamp();
         }
     }
 
@@ -223,14 +217,12 @@ public abstract class Game implements Runnable
         if (this.state.equals(GameState.PAUSED))
         {
             this.state = GameState.RUNNING;
-            this.endTime = Emulator.getIntUnixTimestamp() + (this.endTime - this.pauseTime);
         }
     }
 
     public void stop()
     {
         this.state = GameState.IDLE;
-        this.endTime = Emulator.getIntUnixTimestamp();
 
         boolean gamesActive = false;
         for(HabboItem timer : room.getFloorItems())
@@ -302,27 +294,33 @@ public abstract class Game implements Runnable
         }
     }
 
-
     public Room getRoom()
     {
         return this.room;
     }
-
 
     public int getStartTime()
     {
         return this.startTime;
     }
 
-
-    public int getEndTime()
-    {
-        return this.endTime;
+    public Class<? extends GameTeam> getGameTeamClass() {
+        return gameTeamClazz;
     }
 
+    public Class<? extends GamePlayer> getGamePlayerClass() {
+        return gamePlayerClazz;
+    }
 
-    public void addTime(int time)
-    {
-        this.endTime += time;
+    public THashMap<GameTeamColors, GameTeam> getTeams() {
+        return teams;
+    }
+
+    public boolean isCountsAchievements() {
+        return countsAchievements;
+    }
+
+    public GameState getState() {
+        return state;
     }
 }

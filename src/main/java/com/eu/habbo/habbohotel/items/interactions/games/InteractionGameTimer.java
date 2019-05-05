@@ -59,6 +59,9 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
             super.run();
         }
 
+        if(this.getRoomId() == 0)
+            return;
+
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
         if(room == null || !this.isRunning || this.isPaused)
@@ -89,16 +92,26 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
     }
 
     public static void endGames(Room room) {
+        endGames(room, false);
+    }
+
+    public static void endGames(Room room, boolean overrideTriggerWired) {
+
+        boolean triggerWired = false;
+
         //end existing games
         for (Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
             Game game = InteractionGameTimer.getOrCreateGame(room, gameClass);
             if (!game.state.equals(GameState.IDLE)) {
+                triggerWired = true;
                 game.onEnd();
                 game.stop();
             }
         }
 
-        WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, room, new Object[] { });
+        if(triggerWired) {
+            WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, room, new Object[]{});
+        }
     }
 
     @Override
@@ -151,27 +164,12 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
         // if wired triggered it
         if (objects.length >= 2 && objects[1] instanceof WiredEffectType && !this.isRunning)
         {
-            boolean gamesActive = false;
-            for(InteractionGameTimer timer : room.getRoomSpecialTypes().getGameTimers().values())
-            {
-                if(timer.isRunning())
-                    gamesActive = true;
-            }
-
-            if(gamesActive) {
-                //stop existing games
-                for(Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
-                    Game game = getOrCreateGame(room, gameClass);
-                    if(game.isRunning) {
-                        game.stop();
-                    }
-                }
-            }
+            endGamesIfLastTimer(room);
 
             for(Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
                 Game game = getOrCreateGame(room, gameClass);
                 if(!game.isRunning) {
-                    game.start();
+                    game.initialise();
                 }
             }
 
@@ -196,13 +194,18 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
             switch (state)
             {
                 case 1:
-
                     if(this.isRunning) {
                         this.isPaused = !this.isPaused;
 
+                        boolean allPaused = this.isPaused;
+                        for(InteractionGameTimer timer : room.getRoomSpecialTypes().getGameTimers().values()) {
+                            if(!timer.isPaused)
+                                allPaused = false;
+                        }
+
                         for(Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
                             Game game = getOrCreateGame(room, gameClass);
-                            if(this.isPaused) {
+                            if(allPaused) {
                                 game.pause();
                             }
                             else {
@@ -211,24 +214,26 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
                         }
 
                         if(!this.isPaused) {
+                            this.isRunning = true;
+                            timeNow = this.baseTime;
+                            room.updateItem(this);
                             Emulator.getThreading().run(this);
                         }
                     }
 
                     if(!this.isRunning) {
+                        endGamesIfLastTimer(room);
+
                         for(Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
                             Game game = getOrCreateGame(room, gameClass);
                             game.initialise();
                         }
 
                         WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, room, new Object[] { });
-                        Emulator.getThreading().run(this);
-                    }
-
-                    if(!this.isRunning) {
-                        timeNow = this.baseTime;
                         this.isRunning = true;
+                        timeNow = this.baseTime;
                         room.updateItem(this);
+                        Emulator.getThreading().run(this);
                     }
                     break;
 

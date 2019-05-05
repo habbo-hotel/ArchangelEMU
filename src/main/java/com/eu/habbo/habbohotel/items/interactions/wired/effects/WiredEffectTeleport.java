@@ -119,6 +119,50 @@ public class WiredEffectTeleport extends InteractionWiredEffect
         return true;
     }
 
+    public static void teleportUnitToTile(RoomUnit roomUnit, RoomTile tile) {
+        Room room = roomUnit.getRoom();
+
+        // makes a temporary effect
+        room.sendComposer(new RoomUserEffectComposer(roomUnit, 4).compose());
+        Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), WiredHandler.TELEPORT_DELAY);
+
+        if (tile.state == RoomTileState.INVALID || tile.state == RoomTileState.BLOCKED)
+        {
+            RoomTile alternativeTile = null;
+            List<RoomTile> optionalTiles = room.getLayout().getTilesAround(tile);
+
+            Collections.reverse(optionalTiles);
+            for (RoomTile optionalTile : optionalTiles)
+            {
+                if (optionalTile.state != RoomTileState.INVALID && optionalTile.state != RoomTileState.BLOCKED)
+                {
+                    alternativeTile = optionalTile;
+                }
+            }
+
+            if(alternativeTile != null) {
+                tile = alternativeTile;
+            }
+        }
+
+        Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, tile.x, tile.y, tile.getStackHeight() + (tile.state == RoomTileState.SIT ? -0.5 : 0) , roomUnit.getEffectId()), WiredHandler.TELEPORT_DELAY);
+
+        HabboItem topItem = room.getTopItemAt(tile.x, tile.y);
+
+        if(topItem != null) {
+            Emulator.getThreading().run(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        topItem.onWalkOn(roomUnit, room, new Object[] { });
+                    } catch (Exception e) {
+                    }
+                }
+            }, WiredHandler.TELEPORT_DELAY);
+        }
+
+    }
+
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
     {
@@ -146,52 +190,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect
                 tryCount++;
                 HabboItem item = this.items.get((tryCount - 1 + i) % this.items.size());
 
-                int currentEffect = roomUnit.getEffectId();
-
-                // makes a temporary effect
-                room.sendComposer(new RoomUserEffectComposer(roomUnit, 4).compose());
-                Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), 2000);
-
-                final WiredEffectTeleport teleportWired = this;
-                RoomTile targetTile = room.getLayout().getTile(item.getX(), item.getY());
-                boolean foundTile = false;
-                if (targetTile.state == RoomTileState.INVALID || targetTile.state == RoomTileState.BLOCKED)
-                {
-                    List<RoomTile> optionalTiles = room.getLayout().getTilesAround(targetTile, item.getRotation() + 3);
-
-                    Collections.reverse(optionalTiles);
-                    for (RoomTile tile : optionalTiles)
-                    {
-                        if (tile.state != RoomTileState.INVALID && tile.state != RoomTileState.BLOCKED)
-                        {
-                            targetTile = tile;
-                            foundTile = true;
-                        }
-                    }
-                }
-                else
-                {
-                    foundTile = true;
-                }
-                if (!foundTile)
-                {
-                    continue;
-                }
-
-                Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, targetTile.x, targetTile.y, targetTile.getStackHeight() + (targetTile.state == RoomTileState.SIT ? -0.5 : 0) , currentEffect), WiredHandler.TELEPORT_DELAY);
-                Emulator.getThreading().run(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        try
-                        {
-                            item.onWalkOn(roomUnit, room, new Object[]{teleportWired});
-                        }
-                        catch (Exception e)
-                        {}
-                    }
-                }, WiredHandler.TELEPORT_DELAY);
+                teleportUnitToTile(roomUnit, room.getLayout().getTile(item.getX(), item.getY()));
                 break;
 
             }
