@@ -4,6 +4,15 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.core.RoomUserPetComposer;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.games.Game;
+import com.eu.habbo.habbohotel.games.battlebanzai.BattleBanzaiGame;
+import com.eu.habbo.habbohotel.games.football.FootballGame;
+import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
+import com.eu.habbo.habbohotel.games.tag.BunnyrunGame;
+import com.eu.habbo.habbohotel.games.tag.IceTagGame;
+import com.eu.habbo.habbohotel.games.tag.RollerskateGame;
+import com.eu.habbo.habbohotel.games.tag.TagGame;
+import com.eu.habbo.habbohotel.games.wired.WiredGame;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWired;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
@@ -57,6 +66,7 @@ public class RoomManager
     private final THashMap<Integer, RoomCategory> roomCategories;
     private final List<String> mapNames;
     private final ConcurrentHashMap<Integer, Room> activeRooms;
+    private final ArrayList<Class<? extends Game>> gameTypes;
 
     public RoomManager()
     {
@@ -66,6 +76,16 @@ public class RoomManager
         this.activeRooms = new ConcurrentHashMap<>();
         this.loadRoomCategories();
         this.loadRoomModels();
+
+        this.gameTypes = new ArrayList<>();
+
+        registerGameType(BattleBanzaiGame.class);
+        registerGameType(FreezeGame.class);
+        registerGameType(WiredGame.class);
+        registerGameType(FootballGame.class);
+        registerGameType(BunnyrunGame.class);
+        registerGameType(IceTagGame.class);
+        registerGameType(RollerskateGame.class);
 
         Emulator.getLogging().logStart("Room Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
@@ -1759,5 +1779,17 @@ public class RoomManager
         {
             this.duration = duration;
         }
+    }
+
+    public void registerGameType(Class<? extends Game> gameClass) {
+        gameTypes.add(gameClass);
+    }
+
+    public void unregisterGameType(Class<? extends Game> gameClass) {
+        gameTypes.remove(gameClass);
+    }
+
+    public ArrayList<Class<? extends Game>> getGameTypes() {
+        return gameTypes;
     }
 }

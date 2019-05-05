@@ -94,11 +94,8 @@ public class WiredEffectBotTalk extends InteractionWiredEffect
         }
         List<Bot> bots = room.getBots(this.botName);
 
-        int now = Emulator.getIntUnixTimestamp();
         for(Bot bot : bots)
         {
-            if (now - bot.getChatTimestamp() < bot.getChatDelay()) continue;
-
             if(this.mode == 1)
                 bot.shout(message);
             else

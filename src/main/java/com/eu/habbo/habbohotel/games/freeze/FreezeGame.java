@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreeze
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeTimer;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.gates.InteractionFreezeGate;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.scoreboards.InteractionFreezeScoreboard;
+import com.eu.habbo.habbohotel.items.interactions.wired.effects.WiredEffectTeleport;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
@@ -45,8 +46,6 @@ public class FreezeGame extends Game
     public static int FREEZE_LOOSE_POINTS;
     public static boolean POWERUP_STACK;
 
-    private int timeLeft;
-
     public FreezeGame(Room room)
     {
         super(FreezeGameTeam.class, FreezeGamePlayer.class, room, true);
@@ -59,47 +58,11 @@ public class FreezeGame extends Game
         if(this.state == GameState.RUNNING)
             return;
 
-        int highestTime = 0;
-
         this.resetMap();
-
-        for (Map.Entry<Integer, InteractionFreezeTimer> set : this.room.getRoomSpecialTypes().getFreezeTimers().entrySet())
-        {
-            if(set.getValue().getExtradata().isEmpty())
-                continue;
-
-            if(highestTime < Integer.valueOf(set.getValue().getExtradata()))
-            {
-                highestTime = Integer.valueOf(set.getValue().getExtradata());
-            }
-        }
 
         for (GameTeam t : this.teams.values())
         {
             t.initialise();
-        }
-
-        if (this.room.getRoomSpecialTypes().hasFreezeExitTile())
-        {
-            for (Habbo habbo : this.room.getHabbos())
-            {
-                if (this.getTeamForHabbo(habbo) == null)
-                {
-                    for (HabboItem item : this.room.getItemsAt(habbo.getRoomUnit().getCurrentLocation()))
-                    {
-                        if (item instanceof InteractionFreezeTile)
-                        {
-                            this.room.teleportHabboToItem(habbo, this.room.getRoomSpecialTypes().getRandomFreezeExitTile());
-                        }
-                    }
-                }
-            }
-        }
-        this.timeLeft = highestTime;
-
-        if (this.timeLeft == 0)
-        {
-            this.timeLeft = 30;
         }
 
         this.start();
@@ -114,22 +77,6 @@ public class FreezeGame extends Game
                 item.setExtradata("0");
                 this.room.updateItemState(item);
             }
-        }
-    }
-
-    public synchronized void placebackHelmet(GameTeamColors teamColor)
-    {
-        for (InteractionFreezeGate gate : this.room.getRoomSpecialTypes().getFreezeGates().values())
-        {
-            if (gate.teamColor != teamColor)
-                continue;
-
-            if (gate.getExtradata().isEmpty() || gate.getExtradata().equals("0"))
-                continue;
-
-            gate.setExtradata(Integer.valueOf(gate.getExtradata()) - 1 + "");
-            this.room.updateItemState(gate);
-            break;
         }
     }
 
@@ -280,9 +227,26 @@ public class FreezeGame extends Game
 
         super.start();
 
+        if (this.room.getRoomSpecialTypes().hasFreezeExitTile())
+        {
+            for (Habbo habbo : this.room.getHabbos())
+            {
+                if (this.getTeamForHabbo(habbo) == null)
+                {
+                    for (HabboItem item : this.room.getItemsAt(habbo.getRoomUnit().getCurrentLocation()))
+                    {
+                        if (item instanceof InteractionFreezeTile)
+                        {
+                            HabboItem exitTile = this.room.getRoomSpecialTypes().getRandomFreezeExitTile();
+                            WiredEffectTeleport.teleportUnitToTile(habbo.getRoomUnit(), this.room.getLayout().getTile(exitTile.getX(), exitTile.getY()));
+                        }
+                    }
+                }
+            }
+        }
+
         this.refreshGates();
 
-        WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, this.room, null);
         this.setFreezeTileState("1");
         this.run();
     }
@@ -295,50 +259,36 @@ public class FreezeGame extends Game
             if (this.state.equals(GameState.IDLE))
                 return;
 
-            if (this.timeLeft > 0)
+            Emulator.getThreading().run(this, 1000);
+
+            if (this.state.equals(GameState.PAUSED)) return;
+
+            for (GameTeam team : this.teams.values())
             {
-                Emulator.getThreading().run(this, 1000);
-
-                if (this.state.equals(GameState.PAUSED)) return;
-
-                this.timeLeft--;
-
-                for (GameTeam team : this.teams.values())
+                for (GamePlayer player : team.getMembers())
                 {
-                    for (GamePlayer player : team.getMembers())
-                    {
-                        ((FreezeGamePlayer)player).cycle();
-                    }
-
-                    int totalScore = team.getTotalScore();
-
-                    THashMap<Integer, InteractionFreezeScoreboard> scoreBoards = this.room.getRoomSpecialTypes().getFreezeScoreboards(team.teamColor);
-
-                    for (InteractionFreezeScoreboard scoreboard : scoreBoards.values())
-                    {
-                        if(scoreboard.getExtradata().isEmpty())
-                        {
-                            scoreboard.setExtradata("0");
-                        }
-
-                        int oldScore = Integer.valueOf(scoreboard.getExtradata());
-
-                        if(oldScore == totalScore)
-                            continue;
-
-                        scoreboard.setExtradata(totalScore + "");
-                        this.room.updateItemState(scoreboard);
-                    }
+                    ((FreezeGamePlayer)player).cycle();
                 }
 
-                for (Map.Entry<Integer, InteractionFreezeTimer> set : this.room.getRoomSpecialTypes().getFreezeTimers().entrySet())
+                int totalScore = team.getTotalScore();
+
+                THashMap<Integer, InteractionFreezeScoreboard> scoreBoards = this.room.getRoomSpecialTypes().getFreezeScoreboards(team.teamColor);
+
+                for (InteractionFreezeScoreboard scoreboard : scoreBoards.values())
                 {
-                    set.getValue().setExtradata(this.timeLeft + "");
-                    this.room.updateItemState(set.getValue());
+                    if(scoreboard.getExtradata().isEmpty())
+                    {
+                        scoreboard.setExtradata("0");
+                    }
+
+                    int oldScore = Integer.valueOf(scoreboard.getExtradata());
+
+                    if(oldScore == totalScore)
+                        continue;
+
+                    scoreboard.setExtradata(totalScore + "");
+                    this.room.updateItemState(scoreboard);
                 }
-            } else
-            {
-                this.stop();
             }
         }
         catch (Exception e)
@@ -351,8 +301,6 @@ public class FreezeGame extends Game
     public void stop()
     {
         super.stop();
-
-        this.timeLeft = 0;
 
         GameTeam winningTeam = null;
 

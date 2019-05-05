@@ -1013,6 +1013,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                         this.mutedHabbos.clear();
                     }
 
+                    for(InteractionGameTimer timer : this.getRoomSpecialTypes().getGameTimers().values()) {
+                        timer.setRunning(false);
+                    }
+
                     for (Game game : this.games)
                     {
                         game.stop();
