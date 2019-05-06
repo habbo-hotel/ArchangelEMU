@@ -1099,10 +1099,6 @@ public class RoomManager
         {
             habbo.getRoomUnit().setPathFinderRoom(null);
 
-            if (!room.isOwner(habbo))
-            {
-                room.pickupPetsForHabbo(habbo);
-            }
             this.logExit(habbo);
             room.removeHabbo(habbo);
 
