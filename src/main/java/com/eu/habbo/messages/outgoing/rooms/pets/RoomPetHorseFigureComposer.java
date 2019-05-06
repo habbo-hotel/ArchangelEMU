@@ -51,7 +51,7 @@ public class RoomPetHorseFigureComposer extends MessageComposer
             this.response.appendInt(this.pet.getHairColor());
         }
         this.response.appendBoolean(this.pet.hasSaddle());
-        this.response.appendBoolean(this.pet.anyoneCanRide());
+        this.response.appendBoolean(false); // this.pet.anyoneCanRide()
         return this.response;
     }
 }

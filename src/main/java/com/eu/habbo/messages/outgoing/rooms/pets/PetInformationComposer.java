@@ -3,6 +3,7 @@ package com.eu.habbo.messages.outgoing.rooms.pets;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.pets.*;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -11,11 +12,13 @@ public class PetInformationComposer extends MessageComposer
 {
     private final Pet pet;
     private final Room room;
+    private final Habbo requestingHabbo;
 
-    public PetInformationComposer(Pet pet, Room room)
+    public PetInformationComposer(Pet pet, Room room, Habbo requestingHabbo)
     {
         this.pet = pet;
         this.room = room;
+        this.requestingHabbo = requestingHabbo;
     }
 
     @Override
@@ -54,10 +57,10 @@ public class PetInformationComposer extends MessageComposer
         this.response.appendString(this.room.getFurniOwnerName(this.pet.getUserId())); //Owner name
 
         this.response.appendInt(this.pet instanceof MonsterplantPet ? ((MonsterplantPet) this.pet).getRarity() : 0);
-        this.response.appendBoolean(this.pet instanceof RideablePet && ((RideablePet) this.pet).hasSaddle());
-        this.response.appendBoolean(this.pet instanceof RideablePet && ((RideablePet) this.pet).getRider() != null);
+        this.response.appendBoolean(this.pet instanceof RideablePet && this.requestingHabbo != null && (((RideablePet) this.pet).getRider() == null || this.pet.getUserId() == this.requestingHabbo.getHabboInfo().getId()) && ((RideablePet) this.pet).hasSaddle());  // can ride
+        this.response.appendBoolean(this.pet instanceof RideablePet && ((RideablePet) this.pet).getRider() != null && this.requestingHabbo != null && ((RideablePet) this.pet).getRider().getHabboInfo().getId() == this.requestingHabbo.getHabboInfo().getId()); // is current user riding
         this.response.appendInt(0);
-        this.response.appendInt(this.pet instanceof RideablePet && ((RideablePet) this.pet).anyoneCanRide() ? 1 : 0);
+        this.response.appendInt(this.pet instanceof RideablePet && ((RideablePet) this.pet).anyoneCanRide() ? 1 : 0); // anyone can ride
         this.response.appendBoolean(this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).canBreed()); //State Grown
         this.response.appendBoolean(!(this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).isFullyGrown())); //unknown 1
         this.response.appendBoolean(this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).isDead()); //Dead

@@ -1023,6 +1023,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                     }
                     this.games.clear();
 
+                    removeAllPets(ownerId);
+
                     synchronized (this.roomItems)
                     {
                         TIntObjectIterator<HabboItem> iterator = this.roomItems.iterator();
@@ -1080,22 +1082,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                             botIterator.value().needsUpdate(true);
                             Emulator.getThreading().run(botIterator.value());
                         } catch (NoSuchElementException e)
-                        {
-                            Emulator.getLogging().logErrorLine(e);
-                            break;
-                        }
-                    }
-
-                    TIntObjectIterator<Pet> petIterator = this.currentPets.iterator();
-                    for (int i = this.currentPets.size(); i-- > 0; )
-                    {
-                        try
-                        {
-                            petIterator.advance();
-                            petIterator.value().needsUpdate = true;
-                            Emulator.getThreading().run(petIterator.value());
-                        }
-                        catch (NoSuchElementException e)
                         {
                             Emulator.getLogging().logErrorLine(e);
                             break;
@@ -2386,6 +2372,48 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
     public void setAllowPets(boolean allowPets)
     {
         this.allowPets = allowPets;
+        if(!allowPets) {
+            removeAllPets(ownerId);
+        }
+    }
+
+    public void removeAllPets() {
+        removeAllPets(-1);
+    }
+
+    /**
+     * Removes all pets from the room except if the owner id is excludeUserId
+     * @param excludeUserId Habbo id to keep pets
+     */
+    public void removeAllPets(int excludeUserId) {
+        ArrayList<Pet> removedPets = new ArrayList<>();
+        synchronized (this.currentPets) {
+            for (Pet pet : this.currentPets.valueCollection()) {
+                try {
+                    if (pet.getUserId() != excludeUserId) {
+                        pet.setRoom(null);
+                        removedPets.add(pet);
+                        this.sendComposer(new RoomUserRemoveComposer(pet.getRoomUnit()).compose());
+
+                        Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(pet.getUserId());
+                        if (habbo != null) {
+                            habbo.getInventory().getPetsComponent().addPet(pet);
+                            habbo.getClient().sendResponse(new AddPetComposer(pet));
+                        }
+                    }
+
+                    pet.needsUpdate = true;
+                    pet.run();
+                } catch (NoSuchElementException e) {
+                    Emulator.getLogging().logErrorLine(e);
+                    break;
+                }
+            }
+        }
+
+        for (Pet pet : removedPets) {
+            this.currentPets.remove(pet.getId());
+        }
     }
 
     public void setAllowPetsEat(boolean allowPetsEat)
@@ -3199,6 +3227,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         if(trade != null)
         {
             trade.stopTrade(habbo);
+        }
+
+        if (habbo.getHabboInfo().getId() != this.ownerId)
+        {
+            this.pickupPetsForHabbo(habbo);
         }
 
         this.updateDatabaseUserCount();

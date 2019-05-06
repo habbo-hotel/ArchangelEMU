@@ -157,7 +157,7 @@ public class TestCommand extends Command
                     ((MonsterplantPet) pet).setPubliclyBreedable(false);
                     ((MonsterplantPet) pet).setCanBreed(true);
                     gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetStatusUpdateComposer(pet).compose());
-                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetInformationComposer(pet, gameClient.getHabbo().getHabboInfo().getCurrentRoom()).compose());
+                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetInformationComposer(pet, gameClient.getHabbo().getHabboInfo().getCurrentRoom(), gameClient.getHabbo()).compose());
                 }
             }
 
