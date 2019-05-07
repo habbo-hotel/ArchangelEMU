@@ -144,11 +144,8 @@ public class BotManager
                 roomUnit.setRotation(RoomUserRotation.SOUTH);
                 roomUnit.setLocation(location);
                 HabboItem topItem = room.getTopItemAt(location.x, location.y);
-
-                if (topItem != null )
-                    roomUnit.setZ(topItem.getBaseItem().allowSit() ? topItem.getZ() : topItem.getZ() + Item.getCurrentHeight(topItem));
-
-                roomUnit.setPreviousLocationZ(roomUnit.getZ());
+                roomUnit.setZ(roomUnit.getCurrentLocation().getStackHeight());
+                roomUnit.setPreviousLocationZ(roomUnit.getCurrentLocation().getStackHeight());
                 roomUnit.setPathFinderRoom(room);
                 roomUnit.setRoomUnitType(RoomUnitType.BOT);
                 roomUnit.setCanWalk(room.isAllowBotsWalk());
@@ -164,6 +161,7 @@ public class BotManager
 
                 if (topItem != null)
                 {
+                    roomUnit.setZ(topItem.getBaseItem().allowSit() ? topItem.getZ() : topItem.getZ() + Item.getCurrentHeight(topItem));
                     try
                     {
                         topItem.onWalkOn(bot.getRoomUnit(), room, null);
