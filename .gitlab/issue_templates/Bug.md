@@ -1,4 +1,5 @@
 <!--- Provide a general summary of the issue in the Title above -->
+<!-- You may remove sections that are not related --> 
 
 ## Expected Behavior
 <!--- Tell us what should happen -->
