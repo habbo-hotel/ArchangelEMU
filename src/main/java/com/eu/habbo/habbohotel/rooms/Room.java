@@ -1596,7 +1596,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
                             for(HabboItem item : getItemsAt(rollerTile))
                             {
-                                itemsOnRoller.add(item);
+                                if(item.getZ() >= roller.getZ() + roller.getBaseItem().getHeight()) {
+                                    itemsOnRoller.add(item);
+                                }
                             }
 
                             itemsOnRoller.remove(roller);
@@ -1611,7 +1613,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
                             if (tileInFront == null)
                                 return true;
-
 
                             if (!Room.this.layout.tileExists(tileInFront.x, tileInFront.y))
                                 return true;
@@ -1758,7 +1759,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                                 messages.clear();
                             }
 
-                            if ((allowFurniture || !stackContainsRoller) && !InteractionRoller.NO_RULES)
+                            if (allowFurniture || !stackContainsRoller || InteractionRoller.NO_RULES)
                             {
                                 Event furnitureRolledEvent = null;
 
