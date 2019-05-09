@@ -5425,21 +5425,22 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
             if (this.hasPetsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_PETS;
         }
 
-        List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
-        for (RoomTile t : occupiedTiles)
-        {
-            tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
+        boolean magicTile = item instanceof InteractionStackHelper;
 
-            HabboItem topItem = this.getTopItemAt(t.x, t.y, item);
-            if (topItem != null && !topItem.getBaseItem().allowStack())
-            {
+        if(!magicTile) {
+            List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
+            for (RoomTile t : occupiedTiles) {
+                tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
+
+                HabboItem topItem = this.getTopItemAt(t.x, t.y, item);
+                if (topItem != null && !topItem.getBaseItem().allowStack() && !t.getAllowStack()) {
+                    return FurnitureMovementError.CANT_STACK;
+                }
+            }
+
+            if (!item.canStackAt(this, tileFurniList)) {
                 return FurnitureMovementError.CANT_STACK;
             }
-        }
-
-        if (!item.canStackAt(this, tileFurniList))
-        {
-            return FurnitureMovementError.CANT_STACK;
         }
 
         return FurnitureMovementError.NONE;
