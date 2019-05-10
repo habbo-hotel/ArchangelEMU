@@ -78,10 +78,10 @@ public class GuildForumDataComposer extends MessageComposer {
             this.response.appendInt(guild.canPostThreads().state);
             this.response.appendInt(guild.canModForum().state);
             this.response.appendString(errorRead);
-            this.response.appendString("not_citizen"); //errorPost);
-            this.response.appendString("not_citizen"); //errorStartThread);
-            this.response.appendString("not_admin"); //errorModerate);
-            this.response.appendString("not_citizen"); //citizen
+            this.response.appendString(errorPost);
+            this.response.appendString(errorStartThread);
+            this.response.appendString(errorModerate);
+            this.response.appendString(""); //citizen
             this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId()); //Forum Settings
             this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId() || isStaff); //Can Mod (staff)
         }
