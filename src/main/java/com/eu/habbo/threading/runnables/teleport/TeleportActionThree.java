@@ -39,7 +39,10 @@ class TeleportActionThree implements Runnable
         }
 
         if(targetRoom == null)
+        {
+            Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
             return;
+        }
 
         if (targetRoom.isPreLoaded())
         {
@@ -49,7 +52,10 @@ class TeleportActionThree implements Runnable
         targetTeleport = targetRoom.getHabboItem(((InteractionTeleport) this.currentTeleport).getTargetId());
 
         if(targetTeleport == null)
+        {
+            Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
             return;
+        }
 
         RoomTile teleportLocation = targetRoom.getLayout().getTile(targetTeleport.getX(), targetTeleport.getY());
 
