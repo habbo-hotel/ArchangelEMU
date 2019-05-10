@@ -10,13 +10,18 @@ public class DiscountComposer extends MessageComposer
     public ServerMessage compose()
     {
         this.response.init(Outgoing.DiscountComposer);
-        this.response.appendInt(100);
-        this.response.appendInt(6);
+
+        this.response.appendInt(100); // maximum allowed to buy
+
+        this.response.appendInt(6); // free every x
+
         this.response.appendInt(1);
         this.response.appendInt(1);
-        this.response.appendInt(2);
-        this.response.appendInt(40);
-        this.response.appendInt(99);
+
+        this.response.appendInt(2); // array count for additional extras
+        this.response.appendInt(40); //extra free at 40
+        this.response.appendInt(99); //extra free at 99
+
         return this.response;
     }
 }
