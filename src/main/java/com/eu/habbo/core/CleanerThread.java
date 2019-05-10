@@ -1,6 +1,7 @@
 package com.eu.habbo.core;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.friends.SearchUserEvent;
 import com.eu.habbo.messages.incoming.navigator.SearchRoomsEvent;
@@ -107,7 +108,7 @@ public class CleanerThread implements Runnable {
         if (time - LAST_INACTIVE_GUILDS_CLEARED > REMOVE_INACTIVE_GUILDS)
         {
             Emulator.getGameEnvironment().getGuildManager().clearInactiveGuilds();
-            Emulator.getGameEnvironment().getGuildForumManager().clearInactiveForums();
+            ForumThread.clearCache();
             LAST_INACTIVE_GUILDS_CLEARED = time;
         }
 

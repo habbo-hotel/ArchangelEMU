@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.SoundTrack;
@@ -1229,18 +1230,12 @@ public class CatalogManager
                                             itemsList.add(habboItem);
 
                                             if(baseItem.getName().equals("guild_forum")) {
-                                                Emulator.getGameEnvironment().getGuildManager().getGuild(guildId).setForum(true);
-                                                Emulator.getGameEnvironment().getGuildManager().getGuild(guildId).needsUpdate = true;
-                                                Emulator.getGameEnvironment().getGuildForumManager().addGuildForum(guildId);
-                                                {
-                                                    try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds SET forum = '1' WHERE id = ?"))
-
-                                                    {
-                                                        statement.setInt(1, guildId);
-                                                        statement.execute();
-                                                    }
+                                                Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
+                                                if(guild != null) {
+                                                    guild.setForum(true);
+                                                    guild.needsUpdate = true;
+                                                    guild.run();
                                                 }
-
                                             }
 
                                         }

@@ -23,7 +23,6 @@ public class GuildManager {
 
     private final THashMap<GuildPartType, THashMap<Integer, GuildPart>> guildParts;
 
-
     private final TIntObjectMap<Guild> guilds;
 
     public GuildManager() {
@@ -40,7 +39,7 @@ public class GuildManager {
         this.guildParts.clear();
 
         for (GuildPartType t : GuildPartType.values()) {
-            this.guildParts.put(t, new THashMap<Integer, GuildPart>());
+            this.guildParts.put(t, new THashMap<>());
         }
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();

@@ -4,30 +4,39 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
-import com.eu.habbo.habbohotel.guilds.forums.GuildForum;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
+import gnu.trove.set.hash.THashSet;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 public class GuildForumDataComposer extends MessageComposer {
-    public final GuildForum forum;
+    public final Guild guild;
     public Habbo habbo;
 
-    public GuildForumDataComposer(GuildForum forum, Habbo habbo) {
-        this.forum = forum;
+    public GuildForumDataComposer(Guild guild, Habbo habbo) {
+        this.guild = guild;
         this.habbo = habbo;
     }
 
     @Override
     public ServerMessage compose() {
-        this.response.init(Outgoing.GuildForumDataComposer);
-        {
-            this.forum.serializeUserForum(this.response, this.habbo);
 
-            Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(this.forum.getGuild());
+        try {
+            this.response.init(Outgoing.GuildForumDataComposer);
+            serializeForumData(this.response, guild, habbo);
+
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo);
-            boolean isAdmin = member != null && (member.getRank() == GuildRank.MOD || member.getRank() == GuildRank.ADMIN || guild.getOwnerId() == this.habbo.getHabboInfo().getId());
+            boolean isAdmin = member != null && (member.getRank().type < GuildRank.MEMBER.type || guild.getOwnerId() == this.habbo.getHabboInfo().getId());
             boolean isStaff = this.habbo.hasPermission("acc_modtool_ticket_q");
 
             String errorRead = "";
@@ -46,7 +55,7 @@ public class GuildForumDataComposer extends MessageComposer {
             } else if (guild.canPostMessages().state == 2 && !isAdmin && !isStaff) {
                 errorPost = "not_admin";
             } else if (guild.canPostMessages().state == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
-                errorPost = "now_owner";
+                errorPost = "not_owner";
             }
 
             if (guild.canPostThreads().state == 1 && member == null && !isStaff) {
@@ -54,13 +63,14 @@ public class GuildForumDataComposer extends MessageComposer {
             } else if (guild.canPostThreads().state == 2 && !isAdmin && !isStaff) {
                 errorStartThread = "not_admin";
             } else if (guild.canPostThreads().state == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
-                errorStartThread = "now_owner";
+                errorStartThread = "not_owner";
             }
 
-            if (guild.canModForum().state == 2 && !isAdmin && !isStaff) {
+            if (guild.canModForum().state == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
+                errorModerate = "not_owner";
+            }
+            else if (!isAdmin && !isStaff) {
                 errorModerate = "not_admin";
-            } else if (guild.canModForum().state == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
-                errorModerate = "now_owner";
             }
 
             this.response.appendInt(guild.canReadForum().state);
@@ -68,13 +78,87 @@ public class GuildForumDataComposer extends MessageComposer {
             this.response.appendInt(guild.canPostThreads().state);
             this.response.appendInt(guild.canModForum().state);
             this.response.appendString(errorRead);
-            this.response.appendString(errorPost);
-            this.response.appendString(errorStartThread);
-            this.response.appendString(errorModerate);
-            this.response.appendString(""); //citizen
+            this.response.appendString("not_citizen"); //errorPost);
+            this.response.appendString("not_citizen"); //errorStartThread);
+            this.response.appendString("not_admin"); //errorModerate);
+            this.response.appendString("not_citizen"); //citizen
             this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId()); //Forum Settings
             this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId() || isStaff); //Can Mod (staff)
         }
+        catch (Exception e) {
+            e.printStackTrace();
+            return new ConnectionErrorComposer(500).compose();
+        }
+
         return this.response;
+    }
+
+    public static void serializeForumData(ServerMessage response, Guild guild, Habbo habbo) throws SQLException {
+
+        final THashSet<ForumThread> forumThreads = ForumThread.getByGuildId(guild.getId());
+        int lastSeenAt = 0;
+
+        int totalComments = 0;
+        int newComments = 0;
+        int totalThreads = 0;
+        ForumThreadComment lastComment = null;
+
+        synchronized (forumThreads) {
+            for (ForumThread thread : forumThreads) {
+                totalThreads++;
+                totalComments += thread.getPostsCount();
+
+                ForumThreadComment comment = thread.getLastComment();
+                if (comment != null && (lastComment == null || lastComment.getCreatedAt() < comment.getCreatedAt())) {
+                    lastComment = comment;
+                }
+            }
+        }
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(
+        "SELECT COUNT(*) " +
+            "FROM guilds_forums_threads A " +
+            "JOIN ( " +
+                "SELECT * " +
+                "FROM `guilds_forums_comments` " +
+                "WHERE `id` IN ( " +
+                    "SELECT id " +
+                    "FROM `guilds_forums_comments` B " +
+                    "ORDER BY B.`id` ASC " +
+                ") " +
+            "ORDER BY `id` DESC " +
+            ") B ON A.`id` = B.`thread_id` " +
+            "WHERE A.`guild_id` = ? AND B.`created_at` > ?"
+        ))
+        {
+            statement.setInt(1, guild.getId());
+            statement.setInt(2, lastSeenAt);
+
+            ResultSet set = statement.executeQuery();
+            while(set.next()) {
+                newComments = set.getInt(1);
+            }
+        }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
+
+        response.appendInt(guild.getId());
+
+        response.appendString(guild.getName());
+        response.appendString(guild.getDescription());
+        response.appendString(guild.getBadge());
+
+        response.appendInt(totalThreads);
+        response.appendInt(0); //Rating
+
+        response.appendInt(totalComments); //Total comments
+        response.appendInt(newComments); //Unread comments
+
+        response.appendInt(lastComment != null ? lastComment.getThreadId() : -1);
+        response.appendInt(lastComment != null ? lastComment.getUserId() : -1);
+        response.appendString(lastComment != null && lastComment.getHabbo() != null ? lastComment.getHabbo().getHabboInfo().getUsername() : "");
+        response.appendInt(lastComment != null ? Emulator.getIntUnixTimestamp() - lastComment.getCreatedAt() : 0);
     }
 }

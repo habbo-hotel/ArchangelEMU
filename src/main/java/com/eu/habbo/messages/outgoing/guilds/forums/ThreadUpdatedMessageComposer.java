@@ -3,8 +3,7 @@ package com.eu.habbo.messages.outgoing.guilds.forums;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
-import com.eu.habbo.habbohotel.guilds.forums.GuildForum;
-import com.eu.habbo.habbohotel.guilds.forums.GuildForumThread;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -13,9 +12,10 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 
 public class ThreadUpdatedMessageComposer extends MessageComposer {
-    public final GuildForumThread thread;
 
-    public final GuildForum forum;
+    public final Guild guild;
+
+    public final ForumThread thread;
 
     private final Habbo habbo;
 
@@ -23,21 +23,16 @@ public class ThreadUpdatedMessageComposer extends MessageComposer {
 
     private final boolean isLocked;
 
-    public ThreadUpdatedMessageComposer(GuildForum forum, Integer thread, Habbo habbo, boolean isPinned, boolean isLocked) {
-        this.forum = forum;
+    public ThreadUpdatedMessageComposer(Guild guild, ForumThread thread, Habbo habbo, boolean isPinned, boolean isLocked) {
+        this.guild = guild;
         this.habbo = habbo;
-        this.thread = forum.getThread(thread);
+        this.thread = thread;
         this.isPinned = isPinned;
         this.isLocked = isLocked;
     }
 
     @Override
     public ServerMessage compose() {
-        Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(forum.getGuild());
-
-        if (this.thread == null)
-            return null;
-
         if (isPinned != thread.isPinned()) {
             this.habbo.getClient().sendResponse(new BubbleAlertComposer(isPinned ? BubbleAlertKeys.FORUMS_THREAD_PINNED.key : BubbleAlertKeys.FORUMS_THREAD_UNPINNED.key).compose());
         }
@@ -53,17 +48,11 @@ public class ThreadUpdatedMessageComposer extends MessageComposer {
             this.thread.setPinned(isPinned);
             this.thread.setLocked(isLocked);
 
-            this.response.init(Outgoing.ThreadUpdateMessageComposer);
-
-            this.response.appendInt(this.thread.getGuildId());
-
-            this.thread.serialize(this.response);
-
-            guild.needsUpdate = true;
-
             Emulator.getThreading().run(this.thread);
 
-            Emulator.getThreading().run(guild);
+            this.response.init(Outgoing.ThreadUpdateMessageComposer);
+            this.response.appendInt(this.thread.getGuildId());
+            this.thread.serialize(this.response);
 
             return this.response;
         }
