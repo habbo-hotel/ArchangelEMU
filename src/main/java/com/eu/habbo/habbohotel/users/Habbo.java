@@ -40,13 +40,11 @@ public class Habbo implements Runnable
     private volatile boolean disconnected = false;
     private volatile boolean disconnecting = false;
 
-    public boolean firstVisit = false;
-
     public Habbo(ResultSet set)
     {
         this.client = null;
         this.habboInfo = new HabboInfo(set);
-        this.habboStats = HabboStats.load(this);
+        this.habboStats = HabboStats.load(this.habboInfo);
         this.habboInventory = new HabboInventory(this);
 
         this.messenger = new Messenger();

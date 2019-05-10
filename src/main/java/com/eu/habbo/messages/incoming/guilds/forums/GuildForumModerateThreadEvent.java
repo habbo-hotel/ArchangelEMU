@@ -4,12 +4,13 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
-import com.eu.habbo.habbohotel.guilds.forums.GuildForum;
-import com.eu.habbo.habbohotel.guilds.forums.GuildForumThread;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThreadState;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadMessagesComposer;
+import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 
 
 public class GuildForumModerateThreadEvent extends MessageHandler {
@@ -20,19 +21,35 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
         int state = packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
+        ForumThread thread = ForumThread.getById(threadId);
+
+        if(guild == null || thread == null) {
+            this.client.sendResponse(new ConnectionErrorComposer(404));
+            return;
+        }
 
         boolean isStaff = this.client.getHabbo().hasPermission("acc_modtool_ticket_q");
-        final GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
-        boolean isAdmin = member != null && (member.getRank() == GuildRank.MOD || member.getRank() == GuildRank.ADMIN || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId());
 
-        if (guild == null || (!isAdmin && !isStaff))
+        GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
+        if(member == null) {
+            this.client.sendResponse(new ConnectionErrorComposer(401));
             return;
+        }
 
-        GuildForum forum = Emulator.getGameEnvironment().getGuildForumManager().getGuildForum(guildId);
-        GuildForumThread thread = forum.getThread(threadId);
-        thread.setState(GuildForum.ThreadState.fromValue(state));
+        boolean isAdmin = (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().type < GuildRank.MEMBER.type);
+
+        if (!isAdmin && !isStaff) {
+            this.client.sendResponse(new ConnectionErrorComposer(403));
+            return;
+        }
+
+        if(state == ForumThreadState.HIDDEN_BY_STAFF.getStateId() && !isStaff) {
+            this.client.sendResponse(new ConnectionErrorComposer(403));
+            return;
+        }
+
+        thread.setState(ForumThreadState.fromValue(state));
         thread.setAdminId(this.client.getHabbo().getHabboInfo().getId());
-        thread.setAdminName(this.client.getHabbo().getHabboInfo().getUsername());
 
         switch (state) {
             case 10:
@@ -43,8 +60,6 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
                 this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FORUMS_THREAD_RESTORED.key).compose());
                 break;
         }
-
-        Emulator.getThreading().run(thread);
 
         this.client.sendResponse(new GuildForumThreadMessagesComposer(thread));
     }

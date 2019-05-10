@@ -1,41 +1,57 @@
 package com.eu.habbo.messages.outgoing.guilds.forums;
 
-import com.eu.habbo.habbohotel.guilds.forums.GuildForum;
+import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
+import gnu.trove.set.hash.THashSet;
+import java.sql.SQLException;
+import java.util.Iterator;
 
 public class GuildForumListComposer extends MessageComposer {
-    private final List<GuildForum> forums;
+    private final THashSet<Guild> guilds;
     private final Habbo habbo;
-    private final int viewMode;
-    private final int startIndex;
+    private final int mode;
+    private final int index;
 
-    public GuildForumListComposer(List<GuildForum> forums, Habbo habbo, int viewMode, int page) {
-        this.forums = forums;
+    public GuildForumListComposer(THashSet<Guild> guilds, Habbo habbo, int mode, int index) {
+        this.guilds = guilds;
         this.habbo = habbo;
-        this.viewMode = viewMode;
-        this.startIndex = page;
+        this.mode = mode;
+        this.index = index;
     }
 
     @Override
     public ServerMessage compose() {
-        forums.removeIf(Objects::isNull);
-
-        List<Integer> guilds = forums.stream().skip(this.startIndex).limit(20).map(GuildForum::getGuild).collect(Collectors.toList());
-
         this.response.init(Outgoing.GuildForumListComposer);
-        this.response.appendInt(this.viewMode);
-        this.response.appendInt(guilds.size());
-        this.response.appendInt(0);
-        this.response.appendInt(this.forums.size());
-        for (final GuildForum forum : this.forums) {
-            forum.serializeUserForum(this.response, this.habbo);
+        this.response.appendInt(this.mode);
+        this.response.appendInt(this.guilds.size());
+
+        this.response.appendInt(this.index);
+
+        Iterator<Guild> it = guilds.iterator();
+        int count = guilds.size() > 20 ? 20 : guilds.size();
+
+        this.response.appendInt(count);
+
+        for(int i = 0; i < index; i++) {
+            if(!it.hasNext())
+                break;
+
+            it.next();
+        }
+
+        for(int i = 0; i < count; i++) {
+            if(!it.hasNext())
+                break;
+
+            try {
+                GuildForumDataComposer.serializeForumData(this.response, it.next(), habbo);
+            } catch (SQLException e) {
+                return new ConnectionErrorComposer(500).compose();
+            }
         }
 
         return this.response;

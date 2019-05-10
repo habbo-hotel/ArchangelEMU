@@ -114,7 +114,7 @@ public class Guild implements Runnable
     {
         if(this.needsUpdate)
         {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds SET name = ?, description = ?, state = ?, rights = ?, color_one = ?, color_two = ?, badge = ?, read_forum = ?, post_messages = ?, post_threads = ?, mod_forum = ? WHERE id = ?"))
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds SET name = ?, description = ?, state = ?, rights = ?, color_one = ?, color_two = ?, badge = ?, read_forum = ?, post_messages = ?, post_threads = ?, mod_forum = ?, forum = ? WHERE id = ?"))
             {
                 statement.setString(1, this.name);
                 statement.setString(2, this.description);
@@ -127,7 +127,8 @@ public class Guild implements Runnable
                 statement.setString(9, this.postMessages.name());
                 statement.setString(10, this.postThreads.name());
                 statement.setString(11, this.modForum.name());
-                statement.setInt(12, this.id);
+                statement.setString(12, this.forum ? "1" : "0");
+                statement.setInt(13, this.id);
                 statement.execute();
 
                 this.needsUpdate = false;

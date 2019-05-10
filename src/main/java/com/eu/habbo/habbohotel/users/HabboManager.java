@@ -119,7 +119,7 @@ public class HabboManager
                 {
                     habbo = new Habbo(set);
 
-                    if (habbo.firstVisit)
+                    if (habbo.getHabboInfo().firstVisit)
                     {
                         Emulator.getPluginManager().fireEvent(new UserRegisteredEvent(habbo));
                     }
@@ -150,6 +150,13 @@ public class HabboManager
         }
 
         return habbo;
+    }
+
+    public HabboInfo getHabboInfo(int id) {
+        if(this.getHabbo(id) == null) {
+            return getOfflineHabboInfo(id);
+        }
+        return this.getHabbo(id).getHabboInfo();
     }
 
     public static HabboInfo getOfflineHabboInfo(int id)

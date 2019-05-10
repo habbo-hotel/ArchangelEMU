@@ -1,6 +1,6 @@
 package com.eu.habbo.messages.outgoing.guilds.forums;
 
-import com.eu.habbo.habbohotel.guilds.forums.GuildForumComment;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -9,9 +9,9 @@ public class PostUpdateMessageComposer extends MessageComposer
 {
     public final int guildId;
     public final int threadId;
-    public final GuildForumComment comment;
+    public final ForumThreadComment comment;
 
-    public PostUpdateMessageComposer(int guildId, int threadId, GuildForumComment comment)
+    public PostUpdateMessageComposer(int guildId, int threadId, ForumThreadComment comment)
     {
         this.guildId = guildId;
         this.threadId = threadId;

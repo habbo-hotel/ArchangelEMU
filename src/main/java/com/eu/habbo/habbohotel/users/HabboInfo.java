@@ -60,6 +60,7 @@ public class HabboInfo implements Runnable
     private String photoJSON;
     private int webPublishTimestamp;
     private String machineID;
+    public boolean firstVisit = false;
 
     public HabboInfo(ResultSet set)
     {
@@ -528,5 +529,14 @@ public class HabboInfo implements Runnable
     public int getBonusRarePoints()
     {
         return this.getCurrencyAmount(Emulator.getConfig().getInt("hotelview.promotional.points.type"));
+    }
+
+    public HabboStats getHabboStats() {
+        Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getId());
+        if(habbo != null) {
+            return habbo.getHabboStats();
+        }
+
+        return HabboStats.load(this);
     }
 }

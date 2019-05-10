@@ -3,11 +3,11 @@ package com.eu.habbo.messages.incoming.guilds.forums;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.SettingsState;
-import com.eu.habbo.habbohotel.guilds.forums.GuildForum;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumDataComposer;
+import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 
 public class GuildForumUpdateSettingsEvent extends MessageHandler
 {
@@ -22,13 +22,15 @@ public class GuildForumUpdateSettingsEvent extends MessageHandler
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if(guild == null || guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId())
+        if(guild == null) {
+            this.client.sendResponse(new ConnectionErrorComposer(404));
             return;
+        }
 
-        GuildForum forum = Emulator.getGameEnvironment().getGuildForumManager().getGuildForum(guildId);
-
-        if(forum == null)
+        if(guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId()) {
+            this.client.sendResponse(new ConnectionErrorComposer(403));
             return;
+        }
 
         guild.setReadForum(SettingsState.fromValue(canRead));
         guild.setPostMessages(SettingsState.fromValue(postMessages));
@@ -41,6 +43,6 @@ public class GuildForumUpdateSettingsEvent extends MessageHandler
 
         this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FORUMS_FORUM_SETTINGS_UPDATED.key).compose());
 
-        this.client.sendResponse(new GuildForumDataComposer(forum, this.client.getHabbo()));
+        this.client.sendResponse(new GuildForumDataComposer(guild, this.client.getHabbo()));
     }
 }
