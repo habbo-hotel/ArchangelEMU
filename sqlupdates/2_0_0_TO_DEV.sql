@@ -63,4 +63,6 @@ DROP PROCEDURE IF EXISTS MIGRATION_FORUMS;
 
 UPDATE `users_pets` LEFT JOIN `rooms` ON `users_pets`.`room_id` = `rooms`.`id` SET `users_pets`.`room_id` = 0 WHERE `users_pets`.`room_id` != 0 AND `rooms`.`id` IS NULL;
 
+ALTER TABLE `users_settings` ADD COLUMN `forums_post_count` int(11) NULL DEFAULT 0 AFTER `perk_trade`;
+
 #END DATABASE UPDATE: 2.0.0 -> DEV
