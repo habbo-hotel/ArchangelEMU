@@ -17,7 +17,7 @@ public class Guild implements Runnable
     private int roomId;
     private String roomName;
     private GuildState state;
-    private int rights;
+    private boolean rights;
     private int colorOne;
     private int colorTwo;
     private String badge;
@@ -43,7 +43,7 @@ public class Guild implements Runnable
         this.state = GuildState.values()[set.getInt("state")];
         this.roomId = set.getInt("room_id");
         this.roomName = set.getString("room_name");
-        this.rights = set.getString("rights").equalsIgnoreCase("1") ? 1 : 0;
+        this.rights = set.getString("rights").equalsIgnoreCase("1");
         this.colorOne = set.getInt("color_one");
         this.colorTwo = set.getInt("color_two");
         this.badge = set.getString("badge");
@@ -67,7 +67,7 @@ public class Guild implements Runnable
         this.name = name;
         this.description = description;
         this.state = GuildState.OPEN;
-        this.rights = 0;
+        this.rights = false;
         this.colorOne = colorOne;
         this.colorTwo = colorTwo;
         this.badge = badge;
@@ -119,7 +119,7 @@ public class Guild implements Runnable
                 statement.setString(1, this.name);
                 statement.setString(2, this.description);
                 statement.setInt(3, this.state.state);
-                statement.setString(4, this.rights == 1 ? "1" : "0");
+                statement.setString(4, this.rights ? "1" : "0");
                 statement.setInt(5, this.colorOne);
                 statement.setInt(6, this.colorTwo);
                 statement.setString(7, this.badge);
@@ -200,12 +200,12 @@ public class Guild implements Runnable
         this.state = state;
     }
 
-    public int getRights()
+    public boolean getRights()
     {
         return this.rights;
     }
 
-    public void setRights(int rights)
+    public void setRights(boolean rights)
     {
         this.rights = rights;
     }

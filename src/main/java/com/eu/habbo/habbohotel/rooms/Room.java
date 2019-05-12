@@ -4620,7 +4620,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
             if(Emulator.getGameEnvironment().getGuildManager().getOnlyAdmins(guild).get(habbo.getHabboInfo().getId()) != null)
                 return 3;
 
-            if(guild.getRights() == 0)
+            if(guild.getRights())
             {
                 return 2;
             }

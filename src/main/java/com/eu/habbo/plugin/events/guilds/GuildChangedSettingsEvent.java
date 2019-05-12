@@ -7,10 +7,9 @@ public class GuildChangedSettingsEvent extends GuildEvent
 
     public int state;
 
+    public boolean rights;
 
-    public int rights;
-
-    public GuildChangedSettingsEvent(Guild guild, int state, int rights)
+    public GuildChangedSettingsEvent(Guild guild, int state, boolean rights)
     {
         super(guild);
         this.state = state;
