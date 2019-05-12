@@ -1,13 +1,13 @@
 package com.eu.habbo.messages.incoming.navigator;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.navigation.NavigatorFilter;
-import com.eu.habbo.habbohotel.navigation.NavigatorFilterField;
-import com.eu.habbo.habbohotel.navigation.SearchResultList;
+import com.eu.habbo.habbohotel.navigation.*;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomCategory;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.navigator.NewNavigatorSearchResultsComposer;
+import gnu.trove.map.hash.THashMap;
 
 import java.util.*;
 
@@ -58,6 +58,11 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler
 
             List<SearchResultList> resultLists = filter.getResult(this.client.getHabbo());
             Collections.sort(resultLists);
+
+            if(!query.isEmpty()) {
+                resultLists = toQueryResults(resultLists);
+            }
+
             this.client.sendResponse(new NewNavigatorSearchResultsComposer(view, query, resultLists));
             return;
         }
@@ -72,6 +77,19 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler
 
         try
         {
+            List<SearchResultList> resultLists = new ArrayList<>(filter.getResult(this.client.getHabbo(), field, part, category != null ? category.getId() : -1));
+            filter.filter(field.field, part, resultLists);
+            resultLists = toQueryResults(resultLists);
+            this.client.sendResponse(new NewNavigatorSearchResultsComposer(view, query, resultLists));
+        }
+        catch (Exception e)
+        {
+            Emulator.getLogging().logErrorLine(e);
+        }
+
+        /*
+        try
+        {
 
             List<SearchResultList> resultLists = new ArrayList<>(filter.getResult(this.client.getHabbo(), field, part, category != null ? category.getId() : -1));
             filter.filter(field.field, part, resultLists);
@@ -83,6 +101,24 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler
         {
             Emulator.getLogging().logErrorLine(e);
         }
+        */
+    }
+
+    private ArrayList<SearchResultList> toQueryResults(List<SearchResultList> resultLists) {
+        ArrayList<SearchResultList> nList = new ArrayList<>();
+        THashMap<Integer, Room> searchRooms = new THashMap<>();
+
+        for(SearchResultList li : resultLists)
+        {
+            for(Room room : li.rooms)
+            {
+                searchRooms.put(room.getId(), room);
+            }
+        }
+
+        SearchResultList list = new SearchResultList(0, "query", "", SearchAction.NONE, ListMode.LIST, DisplayMode.VISIBLE, new ArrayList<Room>(searchRooms.values()), true, this.client.getHabbo().hasPermission("acc_enter_anyroom") || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER), DisplayOrder.ACTIVITY, -1);
+        nList.add(list);
+        return nList;
     }
 
     private void filter(List<SearchResultList> resultLists, NavigatorFilter filter, String part)
