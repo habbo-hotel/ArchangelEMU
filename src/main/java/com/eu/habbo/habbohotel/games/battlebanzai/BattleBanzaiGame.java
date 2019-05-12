@@ -21,8 +21,7 @@ import com.eu.habbo.threading.runnables.BattleBanzaiTilesFlicker;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 
 public class BattleBanzaiGame extends Game
 {
@@ -270,6 +269,11 @@ public class BattleBanzaiGame extends Game
 
     public void tileLocked(GameTeamColors teamColor, HabboItem item, Habbo habbo)
     {
+        this.tileLocked(teamColor, item, habbo, false);
+    }
+
+    public void tileLocked(GameTeamColors teamColor, HabboItem item, Habbo habbo, boolean doNotCheckFill)
+    {
         if(item instanceof InteractionBattleBanzaiTile)
         {
             if(!this.lockedTiles.containsKey(teamColor))
@@ -284,8 +288,85 @@ public class BattleBanzaiGame extends Game
         {
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallTilesLocked"));
         }
+
+        if (doNotCheckFill) return;
+
+        int x = item.getX();
+        int y = item.getY();
+
+        List<List<RoomTile>> filledAreas =  new ArrayList<>();
+        filledAreas.add(this.floodFill(x, y - 1, this.lockedTiles.get(teamColor), new ArrayList<>()));
+        filledAreas.add(this.floodFill(x, y + 1, this.lockedTiles.get(teamColor), new ArrayList<>()));
+        filledAreas.add(this.floodFill(x - 1, y, this.lockedTiles.get(teamColor), new ArrayList<>()));
+        filledAreas.add(this.floodFill(x + 1, y, this.lockedTiles.get(teamColor), new ArrayList<>()));
+
+        Optional<List<RoomTile>> largestAreaOfAll = filledAreas.stream().filter(Objects::nonNull).max(Comparator.comparing(List::size));
+
+        if (largestAreaOfAll.isPresent())
+        {
+            for (RoomTile tile: largestAreaOfAll.get())
+            {
+                Optional<HabboItem> tileItem = this.gameTiles.values().stream().filter(i -> i.getX() == tile.x && i.getY() == tile.y && i instanceof InteractionBattleBanzaiTile).findAny();
+
+                tileItem.ifPresent(habboItem -> {
+                    this.tileLocked(teamColor, habboItem, habbo, true);
+
+                    habboItem.setExtradata((2 + (teamColor.type * 3) + 3) + "");
+                    this.room.updateItem(habboItem);
+                });
+            }
+
+            this.refreshCounters(teamColor);
+            if (habbo != null)
+            {
+                habbo.getHabboInfo().getGamePlayer().addScore(BattleBanzaiGame.POINTS_LOCK_TILE * largestAreaOfAll.get().size());
+            }
+        }
     }
 
+    private List<RoomTile> floodFill(int x, int y, THashSet<HabboItem> lockedTiles, List<RoomTile> stack)
+    {
+        if (this.isOutOfBounds(x, y)) return null;
+
+        RoomTile tile = this.room.getLayout().getTile((short)x, (short)y);
+
+        if (this.hasLockedTileAtCoordinates(x, y, lockedTiles) || stack.contains(tile)) return stack;
+
+        stack.add(tile);
+
+        List<List<RoomTile>> result = new ArrayList<>();
+        result.add(this.floodFill(x, y - 1, lockedTiles, stack));
+        result.add(this.floodFill(x, y + 1, lockedTiles, stack));
+        result.add(this.floodFill(x - 1, y, lockedTiles, stack));
+        result.add(this.floodFill(x + 1, y, lockedTiles, stack));
+
+        if (result.contains(null)) return null;
+
+        Optional<List<RoomTile>> biggestArea = result.stream().max(Comparator.comparing(List::size));
+
+        return biggestArea.orElse(null);
+
+    }
+
+    private boolean hasLockedTileAtCoordinates(int x, int y, THashSet<HabboItem> lockedTiles)
+    {
+        for (HabboItem item: lockedTiles)
+        {
+            if (item.getX() == x && item.getY() == y) return true;
+        }
+
+        return false;
+    }
+
+    private boolean isOutOfBounds(int x, int y)
+    {
+        for (HabboItem item: this.gameTiles.values())
+        {
+            if (item.getX() == x && item.getY() == y) return false;
+        }
+
+        return true;
+    }
 
     public void refreshCounters()
     {
