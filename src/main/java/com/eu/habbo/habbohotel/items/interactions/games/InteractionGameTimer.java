@@ -291,7 +291,6 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
 
         if (game == null)  {
             try {
-                System.out.println(gameClass.getName());
                 game = gameClass.getDeclaredConstructor(Room.class).newInstance(room);
                 room.addGame(game);
             } catch (Exception e) {
