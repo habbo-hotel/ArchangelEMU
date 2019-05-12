@@ -43,7 +43,7 @@ public class BadgesComponent
 
                         for (Rank rank : Emulator.getGameEnvironment().getPermissionsManager().getRanks(badge.getCode()))
                         {
-                            if (rank.getId() == habbo.getHabboInfo().getId())
+                            if (rank.getId() == habbo.getHabboInfo().getRank().getId())
                             {
                                 delete = false;
                                 break;
