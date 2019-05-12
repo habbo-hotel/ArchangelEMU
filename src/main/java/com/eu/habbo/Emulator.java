@@ -49,9 +49,6 @@ public final class Emulator
 
     public static String build = "";
 
-
-    public static MessengerBuddy publicChatBuddy;
-
     public static boolean isReady = false;
 
     public static boolean isShuttingDown = false;
@@ -100,7 +97,6 @@ public final class Emulator
             Emulator.getLogging().logStart("\r" + Emulator.logo +
             "       Build: " + build + "\n");
             random = new Random();
-            publicChatBuddy = new MessengerBuddy(-1, "Staff Chat", "", (short) 0, 0);
             long startTime = System.nanoTime();
 
             Emulator.runtime = Runtime.getRuntime();

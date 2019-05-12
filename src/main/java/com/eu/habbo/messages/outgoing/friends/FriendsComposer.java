@@ -32,7 +32,7 @@ public class FriendsComposer extends MessageComposer
             //this.response.appendInt(3); //Club level
             this.response.appendInt(this.habbo.hasPermission("acc_infinite_friends") ? Integer.MAX_VALUE : Messenger.MAXIMUM_FRIENDS);
             this.response.appendInt(this.habbo.hasPermission("acc_infinite_friends") ? Integer.MAX_VALUE : Messenger.MAXIMUM_FRIENDS);
-            this.response.appendInt(this.habbo.getMessenger().getFriends().size() + (this.habbo.hasPermission("acc_staff_chat") ? 1 : 0));
+            this.response.appendInt(this.habbo.getMessenger().getFriends().size()/* + (this.habbo.hasPermission("acc_staff_chat") ? 1 : 0)*/);
 
             for (Map.Entry<Integer, MessengerBuddy> row : this.habbo.getMessenger().getFriends().entrySet()) {
                 this.response.appendInt(row.getKey());
@@ -51,7 +51,7 @@ public class FriendsComposer extends MessageComposer
                 this.response.appendShort(row.getValue().getRelation());
             }
 
-            if(this.habbo.hasPermission("acc_staff_chat"))
+            /*if(this.habbo.hasPermission("acc_staff_chat"))
             {
                 this.response.appendInt(-1);
                 this.response.appendString("Staff Chat");
@@ -67,7 +67,8 @@ public class FriendsComposer extends MessageComposer
                 this.response.appendBoolean(false);
                 this.response.appendBoolean(false);
                 this.response.appendShort(0);
-            }
+            }*/
+
             return this.response;
         }
         catch(Exception e)
