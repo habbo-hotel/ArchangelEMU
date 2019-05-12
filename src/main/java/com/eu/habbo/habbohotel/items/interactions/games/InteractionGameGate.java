@@ -46,7 +46,12 @@ public abstract class InteractionGameGate extends InteractionGameTeamItem
     }
 
     public void updateState(Game game, int maxPlayers) {
-        int memberCount = game.getTeam(this.teamColor).getMembers().size();
+        int memberCount = 0;
+
+        if(game.getTeam(this.teamColor) != null) {
+            memberCount = game.getTeam(this.teamColor).getMembers().size();
+        }
+
         if(memberCount > maxPlayers) {
             memberCount = maxPlayers;
         }
