@@ -39,7 +39,10 @@ public final class Emulator
     public final static int BUILD = 0;
 
 
-    public static final String version = "Version: " + MAJOR + "." + MINOR + "." + BUILD;
+    public final static String PREVIEW = "RC-2";
+
+
+    public static final String version = "Arcturus Morningstar"+ " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
 
 
     public static MessengerBuddy publicChatBuddy;
@@ -159,9 +162,9 @@ public final class Emulator
                 @Override
                 public void run()
                 {
-                    Emulator.getLogging().logStart("Arcturus Morningstar does not include a camera by default, if you wish to have that feature please download the PNGCamera plugin!");
-                    Emulator.getLogging().logStart("This is not an official arcturus build. This is a community forked version released under the GPL License. You are breaking no laws by using this software... Except for copyright infringement from sulake i suppose... oopsie.");
-                    Emulator.getLogging().logStart("- Krews.org Team");
+                    Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a Release Candidate for 2.0.0, if you find any bugs please place them on our git repository.");
+                    Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
+                    Emulator.getLogging().logStart("https://discord.gg/syuqgN");
                     System.out.println("Waiting for commands: ");
                 }
             }, 3500);
@@ -457,12 +460,12 @@ public final class Emulator
 
     private static final String logo =
 
-                    "											            			\n" +
-                    "    __  ___                 _      ARCTURUS    __            		\n" +
+                    "							                    				    \n" +
+                    "    __  ___                 _  A R C T U R U S __            		\n" +
                     "   /  |/  /___  _________  (_)___  ____ ______/ /_____ ______		\n" +
                     "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
                     " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
                     "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
-                    "                               /____/    Love You Wesley x         \n" +
-                    "																	\n" ;
+                    "                                /____/                             \n" +
+                    "										    						\n" ;
 }
