@@ -54,7 +54,7 @@ public class BadgeCommand extends Command
                 {
                     boolean found;
 
-                    try (PreparedStatement statement = connection.prepareStatement("SELECT badge_code FROM users_badges INNER JOIN users ON users.id = user_id WHERE users.username = ? AND badge_code = ? LIMIT 1"))
+                    try (PreparedStatement statement = connection.prepareStatement("SELECT `badge_code` FROM `users_badges` INNER JOIN `users` ON `users`.`id` = `user_id` WHERE `users`.`username` = ? AND `badge_code` = ? LIMIT 1"))
                     {
                         statement.setString(1, params[1]);
                         statement.setString(2, params[2]);
@@ -71,7 +71,7 @@ public class BadgeCommand extends Command
                     }
                     else
                     {
-                        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_badges VALUES (null, (SELECT id FROM users WHERE username = ? LIMIT 1), 0, ?)"))
+                        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_badges (`id`, `user_id`, `slot_id`, `badge_code`) VALUES (null, (SELECT `id` FROM `users` WHERE `username` = ? LIMIT 1), 0, ?)"))
                         {
                             statement.setString(1, params[1]);
                             statement.setString(2, params[2]);

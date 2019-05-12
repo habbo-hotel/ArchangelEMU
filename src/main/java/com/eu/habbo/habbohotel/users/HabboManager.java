@@ -333,7 +333,7 @@ public class HabboManager
             if (!oldRank.getBadge().isEmpty())
             {
                 habbo.deleteBadge(habbo.getInventory().getBadgesComponent().getBadge(oldRank.getBadge()));
-                BadgesComponent.deleteBadge(userId, oldRank.getBadge());
+                //BadgesComponent.deleteBadge(userId, oldRank.getBadge()); // unnecessary as Habbo.deleteBadge does this
             }
 
             habbo.getHabboInfo().setRank(newRank);
