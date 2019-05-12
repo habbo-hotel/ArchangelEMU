@@ -759,6 +759,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
             for (RoomTile tile : updatedTiles)
             {
                 this.updateHabbosAt(tile.x, tile.y);
+                this.updateBotsAt(tile.x, tile.y);
             }
         }
         else if (item.getBaseItem().getType() == FurnitureType.WALL)
@@ -871,6 +872,41 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                 habbo.getRoomUnit().setPreviousLocationZ(habbo.getRoomUnit().getCurrentLocation().getStackHeight());
             }
             roomUnits.add(habbo.getRoomUnit());
+        }
+
+        if (!roomUnits.isEmpty())
+        {
+            this.sendComposer(new RoomUserStatusComposer(roomUnits, true).compose());
+        }
+    }
+
+    private void updateBotsAt(short x, short y)
+    {
+        HabboItem topItem = this.getTopItemAt(x, y);
+
+        THashSet<RoomUnit> roomUnits = new THashSet<>();
+
+        for (Bot bot: this.getBotsAt(this.layout.getTile(x, y))) {
+            if (topItem != null)
+            {
+                if (topItem.getBaseItem().allowSit())
+                {
+                    bot.getRoomUnit().setZ(topItem.getZ());
+                    bot.getRoomUnit().setPreviousLocationZ(topItem.getZ());
+                    bot.getRoomUnit().setRotation(RoomUserRotation.fromValue(topItem.getRotation()));
+                } else{
+                    bot.getRoomUnit().setZ(topItem.getZ() + topItem.getBaseItem().getHeight());
+
+                    if (topItem.getBaseItem().allowLay())
+                    {
+                        bot.getRoomUnit().setStatus(RoomUnitStatus.LAY, (topItem.getZ() + topItem.getBaseItem().getHeight()) + "");
+                    }
+                }
+            } else {
+                bot.getRoomUnit().setZ(bot.getRoomUnit().getCurrentLocation().getStackHeight());
+            }
+
+            roomUnits.add(bot.getRoomUnit());
         }
 
         if (!roomUnits.isEmpty())
@@ -5449,6 +5485,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         for (RoomTile t : occupiedTiles)
         {
             this.updateHabbosAt(t.x, t.y);
+            this.updateBotsAt(t.x, t.y);
         }
 
         Emulator.getThreading().run(item);
@@ -5572,6 +5609,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         for (RoomTile t : occupiedTiles)
         {
             this.updateHabbosAt(t.x, t.y);
+            this.updateBotsAt(t.x, t.y);
         }
         return FurnitureMovementError.NONE;
     }
@@ -5620,6 +5658,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         for (RoomTile t : occupiedTiles)
         {
             this.updateHabbosAt(t.x, t.y);
+            this.updateBotsAt(t.x, t.y);
         }
         return FurnitureMovementError.NONE;
     }
