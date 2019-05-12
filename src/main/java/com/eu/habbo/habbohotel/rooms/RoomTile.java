@@ -1,5 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import gnu.trove.set.hash.THashSet;
+
 public class RoomTile
 {
     public final short x;
@@ -10,11 +12,12 @@ public class RoomTile
     private double stackHeight;
     private boolean allowStack = true;
 
-
     private RoomTile previous = null;
     private boolean diagonally;
     private short gCosts;
     private short hCosts;
+
+    private THashSet<RoomUnit> units;
 
 
     public RoomTile(short x, short y, short z, RoomTileState state, boolean allowStack)
@@ -25,6 +28,7 @@ public class RoomTile
         this.stackHeight = z;
         this.state = state;
         this.setAllowStack(allowStack);
+        this.units = new THashSet<>();
     }
 
     public RoomTile(RoomTile tile)
@@ -43,6 +47,7 @@ public class RoomTile
         {
             this.allowStack = false;
         }
+        this.units = tile.units;
     }
 
     public double getStackHeight()
@@ -198,5 +203,19 @@ public class RoomTile
     public boolean is(short x, short y)
     {
         return this.x == x && this.y == y;
+    }
+
+    public void addUnit(RoomUnit unit) {
+        if(!this.units.contains(unit)) {
+            this.units.add(unit);
+        }
+    }
+
+    public void removeUnit(RoomUnit unit) {
+        this.units.remove(unit);
+    }
+
+    public boolean hasUnits() {
+        return this.units.size() > 0;
     }
 }

@@ -262,7 +262,7 @@ public class RoomLayout
         return this.heightmap.replace("\r\n", "\r");
     }
 
-    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation)
+    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit)
     {
         LinkedList<RoomTile> openList = new LinkedList<>();
         try
@@ -273,20 +273,6 @@ public class RoomLayout
             List<RoomTile> closedList = new LinkedList<>();
 
             openList.add(oldTile.copy());
-
-            List<RoomTile> unitsAt = new ArrayList<>();
-
-            for(Bot b : this.room.getCurrentBots().valueCollection()) {
-                unitsAt.add(b.getRoomUnit().getCurrentLocation());
-            }
-
-            for(Habbo b : this.room.getCurrentHabbos().values()) {
-                unitsAt.add(b.getRoomUnit().getCurrentLocation());
-            }
-
-            for(Pet b : this.room.getCurrentPets().valueCollection()) {
-                unitsAt.add(b.getRoomUnit().getCurrentLocation());
-            }
 
             long startMillis = System.currentTimeMillis();
             while (true)
@@ -310,6 +296,14 @@ public class RoomLayout
                 {
                     if (closedList.contains(currentAdj)) continue;
 
+                    if(roomUnit.canOverrideTile(currentAdj) || (currentAdj.state != RoomTileState.BLOCKED && currentAdj.x == doorX && currentAdj.y == doorY)) {
+                        currentAdj.setPrevious(current);
+                        currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
+                        currentAdj.setgCosts(current);
+                        openList.add(currentAdj);
+                        continue;
+                    }
+
                     //If the tile is sitable or layable and its not our goal tile, we cannot walk over it.
                     if (!currentAdj.equals(goalLocation) && (currentAdj.state == RoomTileState.BLOCKED || currentAdj.state == RoomTileState.SIT || currentAdj.state == RoomTileState.LAY))
                     {
@@ -329,7 +323,7 @@ public class RoomLayout
                     if (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT) continue;
 
                     //Check if the tile has habbos.
-                    if (unitsAt.contains(currentAdj) && (!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation)))
+                    if (currentAdj.hasUnits() && (!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation)))
                     {
                         closedList.add(currentAdj);
                         openList.remove(currentAdj);

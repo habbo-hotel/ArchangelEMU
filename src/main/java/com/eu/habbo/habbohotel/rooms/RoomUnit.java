@@ -21,7 +21,9 @@ import com.eu.habbo.threading.runnables.RoomUnitKick;
 import com.eu.habbo.util.pathfinding.Rotation;
 import gnu.trove.map.TMap;
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 
+import java.awt.geom.RectangularShape;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
@@ -72,6 +74,7 @@ public class RoomUnit
     private int idleTimer;
     private Room room;
     private RoomRightLevels rightsLevel = RoomRightLevels.NONE;
+    private THashSet<Integer> overridableTiles;
 
     public RoomUnit()
     {
@@ -87,6 +90,7 @@ public class RoomUnit
         this.walkTimeOut = Emulator.getIntUnixTimestamp();
         this.effectId = 0;
         this.isKicked = false;
+        this.overridableTiles = new THashSet<>();
     }
 
     public void clearWalking()
@@ -113,11 +117,6 @@ public class RoomUnit
     {
         try
         {
-            if (this.isTeleporting)
-            {
-                return false;
-            }
-
             Habbo rider = null;
             if(this.getRoomUnitType() == RoomUnitType.PET) {
                 Pet pet = room.getPet(this);
@@ -179,25 +178,20 @@ public class RoomUnit
                     canfastwalk = false;
             }
 
-            if (canfastwalk && this.fastWalk && this.path.size() >= 3)
-            {
-                this.path.poll();
-                this.path.poll();
-            }
-
             RoomTile next = this.path.poll();
+            boolean overrideChecks = next != null && this.canOverrideTile(next);
 
             if (this.path.isEmpty())
             {
                 this.sitUpdate = true;
 
-                if (next != null && room.hasHabbosAt(next.x, next.y))
+                if (next != null && next.hasUnits() && !overrideChecks)
                 {
                     return false;
                 }
             }
 
-            Deque<RoomTile> peekPath = room.getLayout().findPath(this.currentLocation, this.path.peek(), this.goalLocation);
+            Deque<RoomTile> peekPath = room.getLayout().findPath(this.currentLocation, this.path.peek(), this.goalLocation, this);
             if (peekPath.size() >= 3)
             {
                 path.pop();
@@ -211,6 +205,13 @@ public class RoomUnit
                     {
                         this.path.addFirst(peekPath.removeLast());
                     }
+                }
+            }
+
+            if (canfastwalk && this.fastWalk)
+            {
+                if(this.path.size() > 1) {
+                    next = this.path.poll();
                 }
             }
 
@@ -252,7 +253,7 @@ public class RoomUnit
 
             //if(!(this.path.size() == 0 && canSitNextTile))
             {
-                if (!room.tileWalkable(next.x, next.y))
+                if (!room.tileWalkable(next.x, next.y) && !overrideChecks)
                 {
                     this.room = room;
                     this.findPath();
@@ -281,7 +282,7 @@ public class RoomUnit
                     item = lowestChair;
             }
 
-            if (next.equals(this.goalLocation) && next.state == RoomTileState.SIT)
+            if (next.equals(this.goalLocation) && next.state == RoomTileState.SIT && !overrideChecks)
             {
                 if (item == null || item.getZ() - this.getZ() > RoomLayout.MAXIMUM_STEP_HEIGHT)
                 {
@@ -343,20 +344,7 @@ public class RoomUnit
 
                 if (!item.getBaseItem().allowSit() && !item.getBaseItem().allowLay())
                 {
-                    zHeight += item.getBaseItem().getHeight();
-
-                    if (item instanceof InteractionMultiHeight)
-                    {
-                        if (item.getExtradata().length() == 0)
-                        {
-                            item.setExtradata("0");
-                        }
-                        zHeight += Item.getCurrentHeight(item);
-                    }
-                    else if (item instanceof InteractionFreezeBlock)
-                    {
-                        zHeight -= item.getBaseItem().getHeight();
-                    }
+                    zHeight += Item.getCurrentHeight(item);
                 }
             }
             else
@@ -574,8 +562,8 @@ public class RoomUnit
         if (location != null)
         {
             this.startLocation    = location;
-            this.previousLocation = location;
-            this.currentLocation  = location;
+            setPreviousLocation(location);
+            setCurrentLocation(location);
             this.goalLocation     = location;
         }
     }
@@ -584,7 +572,11 @@ public class RoomUnit
     {
         if (location != null)
         {
-            this.currentLocation = location;
+            if(this.currentLocation != null) {
+                this.currentLocation.removeUnit(this);
+            }
+            this.currentLocation  = location;
+            location.addUnit(this);
         }
     }
 
@@ -616,9 +608,9 @@ public class RoomUnit
 
     public void findPath()
     {
-        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y)))
+        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation)))
         {
-            this.path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation);
+            this.path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation, this);
         }
     }
 
@@ -810,5 +802,26 @@ public class RoomUnit
 
     public Room getRoom() {
         return room;
+    }
+
+    public boolean canOverrideTile(RoomTile tile) {
+        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        return this.overridableTiles.contains(tileIndex);
+    }
+
+    public void addOverrideTile(RoomTile tile) {
+        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        if(!this.overridableTiles.contains(tileIndex)) {
+            this.overridableTiles.add(tileIndex);
+        }
+    }
+
+    public void removeOverrideTile(RoomTile tile) {
+        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        this.overridableTiles.remove(tileIndex);
+    }
+
+    public void clearOverrideTiles() {
+        this.overridableTiles.clear();
     }
 }

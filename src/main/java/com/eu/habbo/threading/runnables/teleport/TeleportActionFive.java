@@ -35,8 +35,6 @@ class TeleportActionFive implements Runnable
 
         if (tile != null)
         {
-            this.client.getHabbo().getRoomUnit().setPreviousLocation(currentLocation);
-            this.client.getHabbo().getRoomUnit().setPreviousLocationZ(currentLocation.getStackHeight());
             this.client.getHabbo().getRoomUnit().setGoalLocation(tile);
             this.client.getHabbo().getRoomUnit().statusUpdate(true);
         }

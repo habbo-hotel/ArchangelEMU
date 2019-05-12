@@ -44,12 +44,7 @@ public class PetPickupEvent extends MessageHandler
                     }
                 }
 
-                room.sendComposer(new RoomUserRemoveComposer(pet.getRoomUnit()).compose());
-                room.removePet(petId);
-                pet.setRoomUnit(null);
-                pet.setRoom(null);
-                pet.needsUpdate = true;
-
+                pet.removeFromRoom();
                 Emulator.getThreading().run(pet);
 
                 if (this.client.getHabbo().getHabboInfo().getId() == pet.getUserId())

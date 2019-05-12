@@ -701,59 +701,17 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
     public boolean tileWalkable(short x, short y)
     {
         boolean walkable = this.layout.tileWalkable(x, y);
+        RoomTile tile = this.getLayout().getTile(x, y);
 
-        if (walkable)
+        if (walkable && tile != null)
         {
-            if (this.hasHabbosAt(x, y) && !this.allowWalkthrough)
+            if (tile.hasUnits() && !this.allowWalkthrough)
             {
                 walkable = false;
             }
         }
-        return walkable; //&& (!this.allowWalkthrough && !this.hasHabbosAt(x, y)));
-        //if(this.layout.tileWalkable(x, y))
 
-
-
-
-
-//
-
-
-
-//
-
-
-
-//
-
-
-
-
-
-//
-
-
-//
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-
-
-//
-
-
-
+        return walkable;
     }
 
     public void pickUpItem(HabboItem item, Habbo picker)
@@ -849,7 +807,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
             }
             else
             {
-                roomUnit.setZ(item.getZ() + item.getBaseItem().getHeight());
+                roomUnit.setZ(item.getZ() + Item.getCurrentHeight(item));
             }
 
             if (oldZ != roomUnit.getZ())
@@ -899,11 +857,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                 }
                 else
                 {
-                    habbo.getRoomUnit().setZ(item.getZ() + item.getBaseItem().getHeight());
+                    habbo.getRoomUnit().setZ(item.getZ() + Item.getCurrentHeight(item));
 
                     if (item.getBaseItem().allowLay())
                     {
-                        habbo.getRoomUnit().setStatus(RoomUnitStatus.LAY, (item.getZ() + item.getBaseItem().getHeight()) + "");
+                        habbo.getRoomUnit().setStatus(RoomUnitStatus.LAY, (item.getZ() + Item.getCurrentHeight(item)) + "");
                     }
                 }
             }
@@ -938,10 +896,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
         for(Pet pet : pets)
         {
-            pet.setRoom(null);
-            pet.needsUpdate = true;
+            pet.removeFromRoom();
+            Emulator.getThreading().run(pet);
             habbo.getInventory().getPetsComponent().addPet(pet);
-            this.sendComposer(new RoomUserRemoveComposer(pet.getRoomUnit()).compose());
             habbo.getClient().sendResponse(new AddPetComposer(pet));
             this.currentPets.remove(pet.getId());
         }
@@ -1596,7 +1553,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
                             for(HabboItem item : getItemsAt(rollerTile))
                             {
-                                if(item.getZ() >= roller.getZ() + roller.getBaseItem().getHeight()) {
+                                if(item.getZ() >= roller.getZ() + Item.getCurrentHeight(roller)) {
                                     itemsOnRoller.add(item);
                                 }
                             }
@@ -1689,7 +1646,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                             }
                             else
                             {
-                                zOffset = -roller.getBaseItem().getHeight() + tileInFront.getStackHeight() - rollerTile.z;
+                                zOffset = -Item.getCurrentHeight(roller) + tileInFront.getStackHeight() - rollerTile.z;
                             }
 
                             if (allowUsers)
@@ -1917,7 +1874,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
             if (!unit.isWalking() && !unit.cmdSit)
             {
-                HabboItem topItem = this.getLowestChair(unit.getX(), unit.getY());
+                HabboItem topItem = this.getLowestChair(this.getLayout().getTile(unit.getX(), unit.getY()));
 
                 if (topItem == null || !topItem.getBaseItem().allowSit())
                 {
@@ -1932,15 +1889,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                     if (!unit.hasStatus(RoomUnitStatus.SIT) || unit.sitUpdate)
                     {
                         this.dance(unit, DanceType.NONE);
-                        int tileHeight = this.layout.getTile(topItem.getX(), topItem.getY()).z;
-                        if (topItem instanceof InteractionMultiHeight)
-                        {
-                            unit.setStatus(RoomUnitStatus.SIT, (Item.getCurrentHeight(topItem) * 1.0D) + "");
-                        }
-                        else
-                        {
-                            unit.setStatus(RoomUnitStatus.SIT, (topItem.getBaseItem().getHeight() * 1.0D) + "");
-                        }
+                        //int tileHeight = this.layout.getTile(topItem.getX(), topItem.getY()).z;
+                        unit.setStatus(RoomUnitStatus.SIT, (Item.getCurrentHeight(topItem) * 1.0D) + "");
                         unit.setPreviousLocationZ(topItem.getZ());
                         unit.setRotation(RoomUserRotation.values()[topItem.getRotation()]);
                         unit.sitUpdate = false;
@@ -1966,14 +1916,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
             {
                 if (!unit.hasStatus(RoomUnitStatus.LAY))
                 {
-                    if (topItem instanceof InteractionMultiHeight)
-                    {
-                        unit.setStatus(RoomUnitStatus.LAY, Item.getCurrentHeight(topItem) * 1.0D + "");
-                    }
-                    else
-                    {
-                        unit.setStatus(RoomUnitStatus.LAY, topItem.getBaseItem().getHeight() * 1.0D + "");
-                    }
+                    unit.setStatus(RoomUnitStatus.LAY, Item.getCurrentHeight(topItem) * 1.0D + "");
                     unit.setRotation(RoomUserRotation.values()[topItem.getRotation()]);
 
                     if (topItem.getRotation() == 0 || topItem.getRotation() == 4)
@@ -2392,9 +2335,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
             for (Pet pet : this.currentPets.valueCollection()) {
                 try {
                     if (pet.getUserId() != excludeUserId) {
-                        pet.setRoom(null);
-                        removedPets.add(pet);
-                        this.sendComposer(new RoomUserRemoveComposer(pet.getRoomUnit()).compose());
+
+                        pet.removeFromRoom();
 
                         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(pet.getUserId());
                         if (habbo != null) {
@@ -3194,8 +3136,20 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         }
     }
 
-    public void removeHabbo(Habbo habbo)
+    public void removeHabbo(Habbo habbo) {
+        removeHabbo(habbo, false);
+    }
+
+    public void removeHabbo(Habbo habbo, boolean sendRemovePacket)
     {
+        if(habbo.getRoomUnit() != null && habbo.getRoomUnit().getCurrentLocation() != null) {
+            habbo.getRoomUnit().getCurrentLocation().removeUnit(habbo.getRoomUnit());
+        }
+
+        if(sendRemovePacket && habbo.getRoomUnit() != null) {
+            this.sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
+        }
+
         HabboItem item = this.getTopItemAt(habbo.getRoomUnit().getX(), habbo.getRoomUnit().getY());
 
         if (item != null)
@@ -3408,6 +3362,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         {
             if (this.currentBots.containsKey(bot.getId()))
             {
+                if(bot.getRoomUnit() != null && bot.getRoomUnit().getCurrentLocation() != null) {
+                    bot.getRoomUnit().getCurrentLocation().removeUnit(bot.getRoomUnit());
+                }
+
                 this.currentBots.remove(bot.getId());
                 bot.getRoomUnit().setInRoom(false);
                 bot.setRoom(null);
@@ -3570,7 +3528,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
     public void teleportHabboToItem(Habbo habbo, HabboItem item)
     {
-        this.teleportRoomUnitToLocation(habbo.getRoomUnit(), item.getX(), item.getY(), item.getZ() + item.getBaseItem().getHeight());
+        this.teleportRoomUnitToLocation(habbo.getRoomUnit(), item.getX(), item.getY(), item.getZ() + Item.getCurrentHeight(item));
     }
 
     public void teleportHabboToLocation(Habbo habbo, short x, short y)
@@ -3580,7 +3538,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
     public void teleportRoomUnitToItem(RoomUnit roomUnit, HabboItem item)
     {
-        this.teleportRoomUnitToLocation(roomUnit, item.getX(), item.getY(), item.getZ() + item.getBaseItem().getHeight());
+        this.teleportRoomUnitToLocation(roomUnit, item.getX(), item.getY(), item.getZ() + Item.getCurrentHeight(item));
     }
 
     public void teleportRoomUnitToLocation(RoomUnit roomUnit, short x, short y)
@@ -4208,7 +4166,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                 {
                     item = habboItem;
                 }
-            } else
+            }
+            else
             {
                 if (habboItem.getBaseItem().getWidth() <= 1 && habboItem.getBaseItem().getLength() <= 1)
                 {
@@ -4240,7 +4199,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         HabboItem item = this.getTopItemAt(x, y);
 
         if(item != null)
-            return (item.getZ() + item.getBaseItem().getHeight());
+            return (item.getZ() + Item.getCurrentHeight(item));
         else
             return this.layout.getHeightAtSquare(x, y);
     }
@@ -4318,6 +4277,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                 {
                     canStack = item.getBaseItem().allowStack();
                     height = item.getZ() + Item.getCurrentHeight(item);
+                }
+
+                HabboItem lowestChair = this.getLowestChair(x, y);
+                if(lowestChair != null) {
+                    canStack = true;
+                    height = lowestChair.getZ() + Item.getCurrentHeight(lowestChair);
                 }
             }
         }

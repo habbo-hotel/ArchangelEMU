@@ -750,7 +750,8 @@ public class RoomManager
         if (habbo.getHabboInfo().getCurrentRoom() != room && habbo.getHabboInfo().getCurrentRoom() != null)
         {
             habbo.getHabboInfo().getCurrentRoom().removeHabbo(habbo);
-        } else if (!habbo.getHabboStats().blockFollowing && habbo.getHabboInfo().getCurrentRoom() == null)
+        }
+        else if (!habbo.getHabboStats().blockFollowing && habbo.getHabboInfo().getCurrentRoom() == null)
         {
             habbo.getMessenger().connectionChanged(habbo, true, true);
         }
@@ -824,7 +825,6 @@ public class RoomManager
 
         if (habbo.getRoomUnit().getCurrentLocation() == null && !habbo.getRoomUnit().isTeleporting)
         {
-
             RoomTile doorTile = room.getLayout().getTile(room.getLayout().getDoorX(), room.getLayout().getDoorY());
 
             if (doorTile != null)
@@ -836,6 +836,7 @@ public class RoomManager
             habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
             habbo.getRoomUnit().setHeadRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
         }
+
         habbo.getRoomUnit().setPathFinderRoom(room);
         habbo.getRoomUnit().resetIdleTimer();
 
@@ -1100,9 +1101,8 @@ public class RoomManager
             habbo.getRoomUnit().setPathFinderRoom(null);
 
             this.logExit(habbo);
-            room.removeHabbo(habbo);
+            room.removeHabbo(habbo, true);
 
-            room.sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
             if (redirectToHotelView)
             {
                 habbo.getClient().sendResponse(new HotelViewComposer());

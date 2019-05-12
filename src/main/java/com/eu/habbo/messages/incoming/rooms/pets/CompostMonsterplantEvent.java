@@ -45,12 +45,7 @@ public class CompostMonsterplantEvent extends MessageHandler
                             room.sendComposer(new AddFloorItemComposer(compost, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         }
 
-                        pet.setRoom(null);
-                        pet.setUserId(0);
-                        room.removePet(petId);
-                        room.sendComposer(new RoomUserRemoveComposer(pet.getRoomUnit()).compose());
-                        pet.setRoomUnit(null);
-
+                        pet.removeFromRoom();
                         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM users_pets WHERE id = ? LIMIT 1"))
                         {
                             statement.setInt(1, pet.getId());
