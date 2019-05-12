@@ -66,5 +66,6 @@ UPDATE `users_pets` LEFT JOIN `rooms` ON `users_pets`.`room_id` = `rooms`.`id` S
 ALTER TABLE `users_settings` ADD COLUMN `forums_post_count` int(11) NULL DEFAULT 0 AFTER `perk_trade`;
 
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('catalog.guild.hc_required', '1');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('catalog.ltd.random', '1');
 
 #END DATABASE UPDATE: 2.0.0 -> DEV
