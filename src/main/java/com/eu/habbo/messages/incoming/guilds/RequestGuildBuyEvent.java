@@ -8,6 +8,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildBoughtComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildEditFailComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.plugin.events.guilds.GuildPurchasedEvent;
 
@@ -30,6 +31,11 @@ public class RequestGuildBuyEvent extends MessageHandler
             }
         }
 
+        if(Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && this.client.getHabbo().getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
+            this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.HC_REQUIRED));
+            return;
+        }
+
         String name = this.packet.readString();
         String description = this.packet.readString();
 
@@ -39,6 +45,11 @@ public class RequestGuildBuyEvent extends MessageHandler
 
         if(r != null)
         {
+            if(r.hasGuild()) {
+                this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.ROOM_ALREADY_IN_USE));
+                return;
+            }
+
             if(r.getOwnerId() == this.client.getHabbo().getHabboInfo().getId())
             {
                 if (r.getGuildId() == 0)
