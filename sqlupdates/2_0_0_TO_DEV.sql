@@ -67,5 +67,8 @@ ALTER TABLE `users_settings` ADD COLUMN `forums_post_count` int(11) NULL DEFAULT
 
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('catalog.guild.hc_required', '1');
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('catalog.ltd.random', '1');
+UPDATE `emulator_settings` SET `value` = '0' WHERE `key` = 'hotel.banzai.points.tile.steal';
+UPDATE `emulator_settings` SET `value` = '0' WHERE `key` = 'hotel.banzai.points.tile.fill';
+UPDATE `emulator_settings` SET `value` = '1' WHERE `key` = 'hotel.banzai.points.tile.lock';
 
 #END DATABASE UPDATE: 2.0.0 -> DEV
