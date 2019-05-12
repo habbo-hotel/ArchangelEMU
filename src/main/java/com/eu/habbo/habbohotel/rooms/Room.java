@@ -850,7 +850,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
             if(item != null)
             {
-                if(item.getBaseItem().allowSit())
+                if(item.getBaseItem().allowSit() || item.getBaseItem().allowLay())
                 {
                     habbo.getRoomUnit().setZ(item.getZ());
                     habbo.getRoomUnit().setPreviousLocationZ(item.getZ());
@@ -859,11 +859,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                 else
                 {
                     habbo.getRoomUnit().setZ(item.getZ() + Item.getCurrentHeight(item));
-
-                    if (item.getBaseItem().allowLay())
-                    {
-                        habbo.getRoomUnit().setStatus(RoomUnitStatus.LAY, (item.getZ() + Item.getCurrentHeight(item)) + "");
-                    }
                 }
             }
             else
