@@ -1,7 +1,9 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
 import gnu.trove.map.hash.THashMap;
 
 import java.sql.ResultSet;
@@ -12,7 +14,8 @@ public class InteractionInformationTerminal extends InteractionCustomValues
     public static final THashMap<String, String> defaultValues = new THashMap<String, String>()
     {
         {
-            this.put("internalLink", "http://arcturus.pw");}
+            this.put("internalLink", "habbopages/chat/commands");
+        }
     };
 
     public InteractionInformationTerminal(ResultSet set, Item baseItem) throws SQLException
@@ -26,8 +29,11 @@ public class InteractionInformationTerminal extends InteractionCustomValues
     }
 
     @Override
-    public void onPickUp(Room room)
-    {
-        this.values.clear();
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+        super.onClick(client, room, objects);
+
+        if(this.values.containsKey("internalLink")) {
+            client.sendResponse(new NuxAlertComposer(this.values.get("internalLink")));
+        }
     }
 }
