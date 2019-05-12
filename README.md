@@ -23,6 +23,7 @@ Client build: **PRODUCTION-201611291003-338511768**
 
 ## Reporting problems ##
 You can report problems via the Issue Tracker at https://git.krews.org/morningstar/Arcturus-Community/issues
+When making an bug report or a feature request use the template we provide so that it can be categorized correctly and we have more information to replicate a bug or implement a feature correctly.
 
 ## Credits ##
 - TheGeneral

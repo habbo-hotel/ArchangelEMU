@@ -58,7 +58,10 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON>
                 if (!json.look.isEmpty())
                 {
                     habbo.getHabboInfo().setLook(json.look);
-                    habbo.getHabboInfo().getCurrentRoom().sendComposer(new UpdateUserLookComposer(habbo).compose());
+                    if(habbo.getClient() != null) {
+                        habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo).compose());
+                    }
+
                     if (habbo.getHabboInfo().getCurrentRoom() != null)
                     {
                         habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
