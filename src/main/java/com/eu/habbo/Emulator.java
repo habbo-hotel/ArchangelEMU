@@ -21,11 +21,15 @@ import com.eu.habbo.threading.runnables.CameraClientAutoReconnect;
 import com.eu.habbo.util.imager.badges.BadgeImager;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+import java.util.zip.Checksum;
 
 public final class Emulator
 {
@@ -41,21 +45,18 @@ public final class Emulator
 
     public final static String PREVIEW = "RC-2";
 
-
     public static final String version = "Arcturus Morningstar"+ " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
+
+    public static String build = "";
 
 
     public static MessengerBuddy publicChatBuddy;
 
-
     public static boolean isReady = false;
-
 
     public static boolean isShuttingDown = false;
 
-
     public static boolean stopped = false;
-
 
     public static boolean debugging = false;
 
@@ -92,10 +93,12 @@ public final class Emulator
     {
         try
         {
+            setBuild();
             Emulator.stopped = false;
             ConsoleCommand.load();
             Emulator.logging = new Logging();
-            Emulator.getLogging().logStart("\r" + Emulator.logo);
+            Emulator.getLogging().logStart("\r" + Emulator.logo +
+            "       Build: " + build + "\n");
             random = new Random();
             publicChatBuddy = new MessengerBuddy(-1, "Staff Chat", "", (short) 0, 0);
             long startTime = System.nanoTime();
@@ -194,6 +197,38 @@ public final class Emulator
         {
             e.printStackTrace();
         }
+    }
+
+    private static void setBuild() {
+        if(Emulator.class.getProtectionDomain().getCodeSource() == null) {
+            build = "UNKNOWN";
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        try
+        {
+            String filepath = new File(Emulator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
+            MessageDigest md = MessageDigest.getInstance("MD5");// MD5
+            FileInputStream fis = new FileInputStream(filepath);
+            byte[] dataBytes = new byte[1024];
+            int nread = 0;
+
+            while((nread = fis.read(dataBytes)) != -1)
+                md.update(dataBytes, 0, nread);
+
+            byte[] mdbytes = md.digest();
+
+            for(int i=0; i<mdbytes.length; i++)
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100 , 16).substring(1));
+        }
+        catch(Exception e)
+        {
+            build = "UNKNOWN";
+            return;
+        }
+
+        build = sb.toString();
     }
 
 
@@ -466,6 +501,5 @@ public final class Emulator
                     "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
                     " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
                     "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
-                    "                                /____/                             \n" +
-                    "										    						\n" ;
+                    "                                /____/                             \n";
 }
