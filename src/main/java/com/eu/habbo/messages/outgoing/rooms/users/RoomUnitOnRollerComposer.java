@@ -62,19 +62,13 @@ public class RoomUnitOnRollerComposer extends MessageComposer
         {
             RoomTile rollerTile = room.getLayout().getTile(this.roller.getX(), this.roller.getY());
 
-
-
-
-
-                    if (RoomUnitOnRollerComposer.this.oldLocation == rollerTile && RoomUnitOnRollerComposer.this.roomUnit.getGoal() == rollerTile)
-                    {
-                        RoomUnitOnRollerComposer.this.roomUnit.setLocation(room.getLayout().getTile(newLocation.x, newLocation.y));
-                        RoomUnitOnRollerComposer.this.roomUnit.setPreviousLocationZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
-                        RoomUnitOnRollerComposer.this.roomUnit.setZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
-                        RoomUnitOnRollerComposer.this.roomUnit.sitUpdate = true;
-                    }
-
-            //});
+            if (RoomUnitOnRollerComposer.this.oldLocation == rollerTile && RoomUnitOnRollerComposer.this.roomUnit.getGoal() == rollerTile)
+            {
+                RoomUnitOnRollerComposer.this.roomUnit.setLocation(room.getLayout().getTile(newLocation.x, newLocation.y));
+                RoomUnitOnRollerComposer.this.roomUnit.setPreviousLocationZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
+                RoomUnitOnRollerComposer.this.roomUnit.setZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
+                RoomUnitOnRollerComposer.this.roomUnit.sitUpdate = true;
+            }
         }
         else
         {
