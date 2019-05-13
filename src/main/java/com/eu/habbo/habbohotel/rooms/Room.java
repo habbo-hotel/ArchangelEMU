@@ -1575,7 +1575,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                         THashSet<HabboItem> itemsOnRoller = new THashSet<>();
 
                         RoomTile rollerTile = Room.this.layout.getTile(roller.getX(), roller.getY());
-                        itemsOnRoller.addAll(this.getItemsAt(rollerTile));
+                        for(HabboItem item : getItemsAt(rollerTile))
+                        {
+                            if(item.getZ() >= roller.getZ() + Item.getCurrentHeight(roller)) {
+                                itemsOnRoller.add(item);
+                            }
+                        }
+
+                       // itemsOnRoller.addAll(this.getItemsAt(rollerTile));
                         itemsOnRoller.remove(roller);
 
                         if (habbosOnRoller.isEmpty() && itemsOnRoller.isEmpty() && botsOnRoller.isEmpty())
