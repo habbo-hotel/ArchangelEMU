@@ -4333,7 +4333,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                 }
 
                 HabboItem lowestChair = this.getLowestChair(x, y);
-                if(lowestChair != null) {
+                if(lowestChair != null && lowestChair != exclude) {
                     canStack = true;
                     height = lowestChair.getZ() + Item.getCurrentHeight(lowestChair);
                 }
