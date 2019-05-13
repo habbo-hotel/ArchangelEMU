@@ -2,6 +2,10 @@ package com.eu.habbo.habbohotel.rooms;
 
 import gnu.trove.set.hash.THashSet;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 public class RoomTile
 {
     public final short x;
@@ -203,6 +207,10 @@ public class RoomTile
     public boolean is(short x, short y)
     {
         return this.x == x && this.y == y;
+    }
+
+    public List<RoomUnit> getUnits() {
+        return new ArrayList<RoomUnit>(this.units);
     }
 
     public void addUnit(RoomUnit unit) {
