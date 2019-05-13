@@ -133,13 +133,6 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect
 
 		HabboItem triggerItem = null;
 
-		if (stuff != null && stuff.length > 0)
-		{
-			if (stuff[0] instanceof HabboItem)
-			{
-            }
-		}
-
 		THashSet<HabboItem> itemsToRemove = new THashSet<>();
 		for (HabboItem item : this.items)
 		{
@@ -153,7 +146,7 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect
 			{
 				if (item.getBaseItem().getStateCount() > 1 || item instanceof InteractionGameTimer)
 				{
-					item.onClick(habbo != null ? habbo.getClient() : null, room, new Object[]{item.getExtradata().length() == 0 ? 0 : Integer.valueOf(item.getExtradata()), this.getType()});
+					item.onClick(habbo != null && !(item instanceof InteractionGameTimer) ? habbo.getClient() : null, room, new Object[]{item.getExtradata().length() == 0 ? 0 : Integer.valueOf(item.getExtradata()), this.getType()});
 				}
 			}
 			catch (Exception e)
