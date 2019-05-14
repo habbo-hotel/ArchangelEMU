@@ -2,7 +2,6 @@ package com.eu.habbo.habbohotel.rooms;
 
 import gnu.trove.set.hash.THashSet;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class RoomTile
     private short gCosts;
     private short hCosts;
 
-    private THashSet<RoomUnit> units;
+    private final THashSet<RoomUnit> units;
 
 
     public RoomTile(short x, short y, short z, RoomTileState state, boolean allowStack)
@@ -210,20 +209,28 @@ public class RoomTile
     }
 
     public List<RoomUnit> getUnits() {
-        return new ArrayList<RoomUnit>(this.units);
+        synchronized (this.units) {
+            return new ArrayList<RoomUnit>(this.units);
+        }
     }
 
     public void addUnit(RoomUnit unit) {
-        if(!this.units.contains(unit)) {
-            this.units.add(unit);
+        synchronized (this.units) {
+            if (!this.units.contains(unit)) {
+                this.units.add(unit);
+            }
         }
     }
 
     public void removeUnit(RoomUnit unit) {
-        this.units.remove(unit);
+        synchronized (this.units) {
+            this.units.remove(unit);
+        }
     }
 
     public boolean hasUnits() {
-        return this.units.size() > 0;
+        synchronized (this.units) {
+            return this.units.size() > 0;
+        }
     }
 }
