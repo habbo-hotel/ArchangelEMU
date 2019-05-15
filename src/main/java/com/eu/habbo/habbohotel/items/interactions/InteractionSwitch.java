@@ -43,6 +43,9 @@ public class InteractionSwitch extends InteractionDefault
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception
     {
+        if(client == null)
+            return;
+
         if (!this.canToggle(client.getHabbo(), room))
         {
             RoomTile closestTile = null;
