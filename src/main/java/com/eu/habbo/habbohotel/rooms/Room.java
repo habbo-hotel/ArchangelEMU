@@ -1937,6 +1937,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                         //int tileHeight = this.layout.getTile(topItem.getX(), topItem.getY()).z;
                         unit.setStatus(RoomUnitStatus.SIT, (Item.getCurrentHeight(topItem) * 1.0D) + "");
                         unit.setPreviousLocationZ(topItem.getZ());
+                        unit.setZ(topItem.getZ());
                         unit.setRotation(RoomUserRotation.values()[topItem.getRotation()]);
                         unit.sitUpdate = false;
                         return true;
