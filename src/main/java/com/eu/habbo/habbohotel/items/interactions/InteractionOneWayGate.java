@@ -91,15 +91,15 @@ public class InteractionOneWayGate extends HabboItem
                     List<Runnable> onFail = new ArrayList<Runnable>();
 
                     onSuccess.add(() -> {
+                        unit.setCanLeaveRoomByDoor(false);
                         walkable = this.getBaseItem().allowWalk();
-                        room.updateTile(currentLocation);
-                        room.sendComposer(new ItemIntStateComposer(this.getId(), 0).compose());
-                        unit.removeOverrideTile(currentLocation);
-
-                        unit.setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation() + 4));
+                        RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation() + 4);
+                        unit.setGoalLocation(tile);
+                        Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
                     });
 
                     onFail.add(() -> {
+                        unit.setCanLeaveRoomByDoor(true);
                         walkable = this.getBaseItem().allowWalk();
                         room.updateTile(currentLocation);
                         room.sendComposer(new ItemIntStateComposer(this.getId(), 0).compose());

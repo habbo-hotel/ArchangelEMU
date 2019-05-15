@@ -103,6 +103,7 @@ public class InteractionTeleport extends HabboItem
                 room.updateTile(currentLocation);
                 tryTeleport(client, room);
                 unit.removeOverrideTile(currentLocation);
+                unit.setCanLeaveRoomByDoor(true);
             });
 
             onFail.add(() -> {
@@ -112,12 +113,14 @@ public class InteractionTeleport extends HabboItem
                 room.updateItem(this);
                 this.roomUnitID = -1;
                 unit.removeOverrideTile(currentLocation);
+                unit.setCanLeaveRoomByDoor(true);
             });
 
             walkable = true;
             room.updateTile(currentLocation);
             unit.addOverrideTile(currentLocation);
             unit.setGoalLocation(currentLocation);
+            unit.setCanLeaveRoomByDoor(false);
             Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
         }
         else {

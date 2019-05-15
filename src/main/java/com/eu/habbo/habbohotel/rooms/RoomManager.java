@@ -720,6 +720,7 @@ public class RoomManager
                 habbo.getRoomUnit().setHeadRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
             }
             else {
+                habbo.getRoomUnit().setCanLeaveRoomByDoor(false);
                 habbo.getRoomUnit().isTeleporting = true;
                 HabboItem topItem = room.getTopItemAt(doorLocation.x, doorLocation.y);
                 if(topItem != null) {
