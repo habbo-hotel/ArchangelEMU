@@ -11,6 +11,7 @@ import java.util.List;
 
 public class RoomUnitWalkToRoomUnit implements Runnable
 {
+    private final int minDistance;
     private RoomUnit walker;
     private RoomUnit target;
     private Room room;
@@ -26,6 +27,17 @@ public class RoomUnitWalkToRoomUnit implements Runnable
         this.room = room;
         this.targetReached = targetReached;
         this.failedReached = failedReached;
+        this.minDistance = 1;
+    }
+
+    public RoomUnitWalkToRoomUnit(RoomUnit walker, RoomUnit target, Room room, List<Runnable> targetReached, List<Runnable> failedReached, int minDistance)
+    {
+        this.walker = walker;
+        this.target = target;
+        this.room = room;
+        this.targetReached = targetReached;
+        this.failedReached = failedReached;
+        this.minDistance = minDistance;
     }
 
     @Override
@@ -36,10 +48,14 @@ public class RoomUnitWalkToRoomUnit implements Runnable
             this.findNewLocation();
             Emulator.getThreading().run(this, 500);
         }
-        else if(this.walker.getGoal().equals(this.goalTile)) //Check if the goal is still the same. Chances are something is running the same task. If so we dump this task.
+
+        if(this.goalTile == null)
+            return;
+
+        if(this.walker.getGoal().equals(this.goalTile)) //Check if the goal is still the same. Chances are something is running the same task. If so we dump this task.
         {
             //Check if arrived.
-            if(this.walker.getCurrentLocation().equals(this.goalTile))
+            if(this.walker.getCurrentLocation().distance(this.goalTile) <= this.minDistance)
             {
                 for(Runnable r : this.targetReached)
                 {
