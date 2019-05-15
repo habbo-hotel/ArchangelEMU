@@ -80,6 +80,8 @@ public class HabboInfo implements Runnable
             if (this.rank == null)
             {
                 Emulator.getLogging().logErrorLine("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+                Emulator.getLogging().logUserLine(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+                this.rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(1);
             }
 
             this.accountCreated = set.getInt("account_created");
@@ -514,7 +516,7 @@ public class HabboInfo implements Runnable
             statement.setInt(6, Emulator.getIntUnixTimestamp());
             statement.setInt(8, this.homeRoom);
             statement.setString(9, this.ipLogin);
-            statement.setInt(10, this.rank.getId());
+            statement.setInt(10, this.rank != null ? this.rank.getId() : 1);
             statement.setString(11, this.machineID);
             statement.setString(12, this.username);
             statement.setInt(13, this.id);
