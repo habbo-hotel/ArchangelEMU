@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.catalog.marketplace;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlace;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
@@ -30,7 +31,7 @@ public class SellItemEvent extends MessageHandler
             if (!item.getBaseItem().allowMarketplace())
             {
                 String message = Emulator.getTexts().getValue("scripter.warning.marketplace.forbidden").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%itemname%", item.getBaseItem().getName()).replace("%credits%", credits + "");
-                Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", message);
+                ScripterManager.scripterDetected(this.client, message);
                 Emulator.getLogging().logUserLine(message);
                 this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                 return;
@@ -39,7 +40,7 @@ public class SellItemEvent extends MessageHandler
             if(credits < 0)
             {
                 String message = Emulator.getTexts().getValue("scripter.warning.marketplace.negative").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%itemname%", item.getBaseItem().getName()).replace("%credits%", credits + "");
-                Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", message);
+                ScripterManager.scripterDetected(this.client, message);
                 Emulator.getLogging().logUserLine(message);
                 this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                 return;

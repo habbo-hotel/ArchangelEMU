@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.navigator;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomDeletedEvent;
@@ -90,7 +91,7 @@ public class RequestDeleteRoomEvent extends MessageHandler
             else
             {
                 String message = Emulator.getTexts().getValue("scripter.warning.room.delete").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", room.getName()).replace("%roomowner%", room.getOwnerName());
-                Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", message);
+                ScripterManager.scripterDetected(this.client, message);
                 Emulator.getLogging().logUserLine(message);
             }
         }

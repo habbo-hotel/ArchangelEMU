@@ -473,7 +473,7 @@ public class ModToolManager
     public void alert(Habbo moderator, Habbo target, String message, SupportUserAlertedReason reason)
     {
         if(!moderator.hasPermission(Permission.ACC_SUPPORTTOOL)) {
-            Emulator.getGameEnvironment().getModToolManager().quickTicket(moderator, "Scripter", Emulator.getTexts().getValue("scripter.warning.modtools.alert").replace("%username%", moderator.getHabboInfo().getUsername()).replace("%message%", message));
+            ScripterManager.scripterDetected(moderator.getClient(), Emulator.getTexts().getValue("scripter.warning.modtools.alert").replace("%username%", moderator.getHabboInfo().getUsername()).replace("%message%", message));
             return;
         }
 

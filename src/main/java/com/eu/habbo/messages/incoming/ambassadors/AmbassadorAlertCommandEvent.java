@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.incoming.ambassadors;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
@@ -13,7 +14,7 @@ public class AmbassadorAlertCommandEvent extends MessageHandler
     public void handle() throws Exception
     {
         if(!this.client.getHabbo().hasPermission("acc_ambassador")) {
-            Emulator.getGameEnvironment().getModToolManager().quickTicket(client.getHabbo(), "Scripter", Emulator.getTexts().getValue("scripter.warning.modtools.alert").replace("%username%", client.getHabbo().getHabboInfo().getUsername()).replace("%message%", "${notification.ambassador.alert.warning.message}"));
+            ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.alert").replace("%username%", client.getHabbo().getHabboInfo().getUsername()).replace("%message%", "${notification.ambassador.alert.warning.message}"));
             return;
         }
 
