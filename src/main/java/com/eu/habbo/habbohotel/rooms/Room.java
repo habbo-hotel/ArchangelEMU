@@ -4294,7 +4294,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
     public double getStackHeight(short x, short y, boolean calculateHeightmap, HabboItem exclude)
     {
-        if(x < 0 || y < 0)
+        if(x < 0 || y < 0 || this.layout == null)
             return calculateHeightmap ? Short.MAX_VALUE : 0.0;
 
         double height = this.layout.getHeightAtSquare(x, y);
