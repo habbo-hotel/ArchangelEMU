@@ -3,7 +3,7 @@
 
 ## Build Information
 <!-- Issues will be closed if you don't provide this information, as we may need to replicate it on your exact build -->
-Emulator Version: 
+Emulator Version:  
 Emulator Build (hash):
 
 ## Expected Behavior
