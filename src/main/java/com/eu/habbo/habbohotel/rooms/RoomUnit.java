@@ -57,6 +57,7 @@ public class RoomUnit
     private boolean statusUpdate = false;
     private boolean invisible = false;
     private boolean lastCycleStatus = false;
+    private boolean canLeaveRoomByDoor = true;
 
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
@@ -383,7 +384,7 @@ public class RoomUnit
 
             if (habbo != null)
             {
-                if (next.x == room.getLayout().getDoorX() && next.y == room.getLayout().getDoorY() && (!room.isPublicRoom()) || (room.isPublicRoom() && Emulator.getConfig().getBoolean("hotel.room.public.doortile.kick")))
+                if (this.canLeaveRoomByDoor && next.x == room.getLayout().getDoorX() && next.y == room.getLayout().getDoorY() && (!room.isPublicRoom()) || (room.isPublicRoom() && Emulator.getConfig().getBoolean("hotel.room.public.doortile.kick")))
                 {
                     Emulator.getThreading().run(new RoomUnitKick(habbo, room, false), 500);
                 }
@@ -823,5 +824,13 @@ public class RoomUnit
 
     public void clearOverrideTiles() {
         this.overridableTiles.clear();
+    }
+
+    public boolean canLeaveRoomByDoor() {
+        return canLeaveRoomByDoor;
+    }
+
+    public void setCanLeaveRoomByDoor(boolean canLeaveRoomByDoor) {
+        this.canLeaveRoomByDoor = canLeaveRoomByDoor;
     }
 }
