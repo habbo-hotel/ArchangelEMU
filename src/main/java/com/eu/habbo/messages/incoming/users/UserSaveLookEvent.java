@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.users;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
@@ -23,7 +24,7 @@ public class UserSaveLookEvent extends MessageHandler
         catch (IllegalArgumentException e)
         {
             String message = Emulator.getTexts().getValue("scripter.warning.look.gender").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%gender%", genderCode);
-            Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", message);
+            ScripterManager.scripterDetected(this.client, message);
             Emulator.getLogging().logUserLine(message);
             return;
         }

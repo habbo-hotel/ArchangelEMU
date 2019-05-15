@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.incoming.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomCategory;
 import com.eu.habbo.habbohotel.rooms.RoomState;
@@ -109,7 +110,7 @@ public class RoomSettingsSaveEvent extends MessageHandler
                         message = Emulator.getTexts().getValue("scripter.warning.roomsettings.category.permission").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%category%", Emulator.getGameEnvironment().getRoomManager().getCategory(categoryId) + "");
                     }
 
-                    Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", message);
+                    ScripterManager.scripterDetected(this.client, message);
                     Emulator.getLogging().logUserLine(message);
                 }
 
