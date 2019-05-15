@@ -20,6 +20,9 @@ class RemoveFloorItemTask implements Runnable
     @Override
     public void run()
     {
+        if(this.item == null || this.room == null)
+            return;
+
         RoomTile tile = this.room.getLayout().getTile(this.item.getX(), this.item.getY());
         this.room.removeHabboItem(this.item);
         this.room.updateTile(tile);
