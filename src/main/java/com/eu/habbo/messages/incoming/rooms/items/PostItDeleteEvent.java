@@ -29,7 +29,7 @@ public class PostItDeleteEvent extends MessageHandler
                 item.setRoomId(0);
                 room.removeHabboItem(item);
                 room.sendComposer(new RemoveWallItemComposer(item).compose());
-                Emulator.getThreading().run(new QueryDeleteHabboItem(item));
+                Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
             }
         }
     }

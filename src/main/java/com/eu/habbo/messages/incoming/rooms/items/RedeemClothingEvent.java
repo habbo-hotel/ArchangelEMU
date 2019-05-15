@@ -45,7 +45,7 @@ public class RedeemClothingEvent extends MessageHandler
                             this.client.getHabbo().getHabboInfo().getCurrentRoom().updateTile(tile);
                             this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UpdateStackHeightComposer(tile.x, tile.y, tile.relativeHeight()).compose());
                             this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RemoveFloorItemComposer(item, true).compose());
-                            Emulator.getThreading().run(new QueryDeleteHabboItem(item));
+                            Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 
                             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_clothing (user_id, clothing_id) VALUES (?, ?)"))
                             {

@@ -56,7 +56,7 @@ public class InteractionFXBox extends InteractionDefault
                 @Override
                 public void run()
                 {
-                    new QueryDeleteHabboItem(item).run();
+                    new QueryDeleteHabboItem(item.getId()).run();
                     room.sendComposer(new RemoveFloorItemComposer(item).compose());
                 }
             }, 500);

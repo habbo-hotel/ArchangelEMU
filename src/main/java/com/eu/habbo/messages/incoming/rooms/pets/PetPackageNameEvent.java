@@ -70,7 +70,7 @@ public class PetPackageNameEvent extends MessageHandler
                             pet.needsUpdate = true;
                             pet.getRoomUnit().setLocation(room.getLayout().getTile(item.getX(), item.getY()));
                             pet.getRoomUnit().setZ(item.getZ());
-                            Emulator.getThreading().run(new QueryDeleteHabboItem(item));
+                            Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                             room.removeHabboItem(item);
                             room.sendComposer(new RemoveFloorItemComposer(item).compose());
                             RoomTile tile = room.getLayout().getTile(item.getX(), item.getY());

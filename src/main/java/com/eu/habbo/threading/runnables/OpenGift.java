@@ -53,7 +53,7 @@ public class OpenGift implements Runnable
             this.habbo.getClient().sendResponse(new InventoryRefreshComposer());
 
 
-            Emulator.getThreading().run(new QueryDeleteHabboItem(this.item));
+            Emulator.getThreading().run(new QueryDeleteHabboItem(this.item.getId()));
             Emulator.getThreading().run(new RemoveFloorItemTask(this.room, this.item), this.item.getBaseItem().getName().contains("present_wrap") ? 5000 : 0);
 
             if (inside != null)
