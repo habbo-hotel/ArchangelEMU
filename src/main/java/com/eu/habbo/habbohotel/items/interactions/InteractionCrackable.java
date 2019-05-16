@@ -11,6 +11,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.outgoing.users.UserClubComposer;
+import com.eu.habbo.messages.outgoing.users.UserPermissionsComposer;
 import com.eu.habbo.threading.runnables.CrackableExplode;
 import com.eu.habbo.util.pathfinding.Rotation;
 
@@ -77,7 +79,7 @@ public class InteractionCrackable extends HabboItem
             if (this.cracked)
                 return;
 
-            if (client.getHabbo().getRoomUnit().getCurrentLocation().distance(room.getLayout().getTile(this.getX(), this.getY())) > 1.5)
+            if (this.userRequiredToBeAdjacent() && client.getHabbo().getRoomUnit().getCurrentLocation().distance(room.getLayout().getTile(this.getX(), this.getY())) > 1.5)
             {
                 client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), Rotation.Calculate(client.getHabbo().getRoomUnit().getX(), client.getHabbo().getRoomUnit().getY(), this.getX(), this.getY())));
                 return;
@@ -129,6 +131,24 @@ public class InteractionCrackable extends HabboItem
                     {
                         AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement(rewardData.achievementCracked));
                     }
+
+                    if (rewardData.subscriptionType != null && rewardData.subscriptionDuration > 0) {
+                        // subscriptions are given immediately upon cracking
+                        switch (rewardData.subscriptionType) {
+                            case HABBO_CLUB:
+                                if (habbo.getHabboStats().getClubExpireTimestamp() <= Emulator.getIntUnixTimestamp())
+                                    habbo.getHabboStats().setClubExpireTimestamp(Emulator.getIntUnixTimestamp());
+
+                                habbo.getHabboStats().setClubExpireTimestamp(habbo.getHabboStats().getClubExpireTimestamp() + (rewardData.subscriptionDuration * 86400));
+                                habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
+                                habbo.getClient().sendResponse(new UserClubComposer(habbo));
+                                habbo.getHabboStats().run();
+                                break;
+                            case BUILDERS_CLUB:
+                                habbo.alert("Builders club has not been implemented yet. Sorry!");
+                                break;
+                        }
+                    }
                 }
             }
         }
@@ -165,6 +185,10 @@ public class InteractionCrackable extends HabboItem
     public boolean resetable()
     {
         return false;
+    }
+
+    public boolean userRequiredToBeAdjacent() {
+        return true;
     }
 
     public void reset(Room room)

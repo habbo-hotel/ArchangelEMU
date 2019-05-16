@@ -17,6 +17,8 @@ public class CrackableReward
     public final String achievementTick;
     public final String achievementCracked;
     public final int requiredEffect;
+    public final int subscriptionDuration;
+    public final RedeemableSubscriptionType subscriptionType;
 
     public CrackableReward(ResultSet set) throws SQLException
     {
@@ -25,9 +27,14 @@ public class CrackableReward
         this.achievementTick = set.getString("achievement_tick");
         this.achievementCracked = set.getString("achievement_cracked");
         this.requiredEffect = set.getInt("required_effect");
+        this.subscriptionDuration = set.getInt("subscription_duration");
+        this.subscriptionType = RedeemableSubscriptionType.fromString(set.getString("subscription_type"));
+
 
         String[] prizes = set.getString("prizes").split(";");
         this.prizes = new HashMap<>();
+
+        if (set.getString("prizes").isEmpty()) return;
 
         this.totalChance = 0;
         for (String prize : prizes)
@@ -59,6 +66,8 @@ public class CrackableReward
 
     public int getRandomReward()
     {
+        if (this.prizes.size() == 0) return 0;
+
         int random = Emulator.getRandom().nextInt(this.totalChance);
 
         int notFound = 0;
