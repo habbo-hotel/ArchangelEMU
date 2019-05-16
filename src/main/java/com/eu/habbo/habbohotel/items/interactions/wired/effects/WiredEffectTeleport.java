@@ -120,7 +120,13 @@ public class WiredEffectTeleport extends InteractionWiredEffect
     }
 
     public static void teleportUnitToTile(RoomUnit roomUnit, RoomTile tile) {
+        if(roomUnit == null || tile == null)
+            return;
+
         Room room = roomUnit.getRoom();
+
+        if(room == null)
+            return;
 
         // makes a temporary effect
         room.sendComposer(new RoomUserEffectComposer(roomUnit, 4).compose());
