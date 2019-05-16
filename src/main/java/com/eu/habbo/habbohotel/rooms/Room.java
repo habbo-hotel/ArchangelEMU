@@ -1737,13 +1737,21 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
                                     if (item != null && itemsNewTile.contains(item))
                                     {
-                                        try
-                                        {
-                                            item.onWalkOn(unit, room, null);
-                                        } catch (Exception e)
-                                        {
-                                            Emulator.getLogging().logErrorLine(e);
-                                        }
+                                        Emulator.getThreading().run(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (unit.getGoal() == rollerTile)
+                                                {
+                                                    try
+                                                    {
+                                                        item.onWalkOn(unit, room, null);
+                                                    } catch (Exception e)
+                                                    {
+                                                        Emulator.getLogging().logErrorLine(e);
+                                                    }
+                                                }
+                                            }
+                                        }, 500);
                                     }
                                 }
 

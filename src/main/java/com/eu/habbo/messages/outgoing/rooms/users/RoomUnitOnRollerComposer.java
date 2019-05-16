@@ -1,5 +1,6 @@
 package com.eu.habbo.messages.outgoing.rooms.users;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
@@ -62,13 +63,18 @@ public class RoomUnitOnRollerComposer extends MessageComposer
         {
             RoomTile rollerTile = room.getLayout().getTile(this.roller.getX(), this.roller.getY());
 
-            if (RoomUnitOnRollerComposer.this.oldLocation == rollerTile && RoomUnitOnRollerComposer.this.roomUnit.getGoal() == rollerTile)
-            {
-                RoomUnitOnRollerComposer.this.roomUnit.setLocation(room.getLayout().getTile(newLocation.x, newLocation.y));
-                RoomUnitOnRollerComposer.this.roomUnit.setPreviousLocationZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
-                RoomUnitOnRollerComposer.this.roomUnit.setZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
-                RoomUnitOnRollerComposer.this.roomUnit.sitUpdate = true;
-            }
+            Emulator.getThreading().run(new Runnable() {
+                @Override
+                public void run() {
+                    if (RoomUnitOnRollerComposer.this.oldLocation == rollerTile && RoomUnitOnRollerComposer.this.roomUnit.getGoal() == rollerTile)
+                    {
+                        RoomUnitOnRollerComposer.this.roomUnit.setLocation(room.getLayout().getTile(newLocation.x, newLocation.y));
+                        RoomUnitOnRollerComposer.this.roomUnit.setPreviousLocationZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
+                        RoomUnitOnRollerComposer.this.roomUnit.setZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
+                        RoomUnitOnRollerComposer.this.roomUnit.sitUpdate = true;
+                    }
+                }
+            }, 500);
         }
         else
         {
