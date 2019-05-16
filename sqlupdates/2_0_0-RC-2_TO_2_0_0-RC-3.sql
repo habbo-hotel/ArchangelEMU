@@ -11,4 +11,6 @@ INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('scripter.modtool.ticket
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('invisible.prevent.chat', '0');
 INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('invisible.prevent.chat.error', 'While being invisible you cannot talk.');
 
+INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.succes.cmd_invisible.updated.back', 'You are now visible again.');
+
 #END DATABASE UPDATE: 2.0.0 RC-2 -> 2.0.0 RC-3
