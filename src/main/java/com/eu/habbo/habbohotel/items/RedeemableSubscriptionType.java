@@ -12,6 +12,8 @@ public enum RedeemableSubscriptionType {
     }
 
     public static RedeemableSubscriptionType fromString(String subscriptionType) {
+        if (subscriptionType == null) return null;
+
         switch (subscriptionType) {
             case "hc":
                 return HABBO_CLUB;
