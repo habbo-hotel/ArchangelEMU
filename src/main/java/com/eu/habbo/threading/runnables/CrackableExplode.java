@@ -42,7 +42,7 @@ public class CrackableExplode implements Runnable
         if (!this.habboItem.resetable())
         {
             this.room.removeHabboItem(this.habboItem);
-            this.room.sendComposer(new RemoveFloorItemComposer(this.habboItem).compose());
+            this.room.sendComposer(new RemoveFloorItemComposer(this.habboItem, true).compose());
             this.habboItem.setRoomId(0);
             Emulator.getGameEnvironment().getItemManager().deleteItem(this.habboItem);
         }
