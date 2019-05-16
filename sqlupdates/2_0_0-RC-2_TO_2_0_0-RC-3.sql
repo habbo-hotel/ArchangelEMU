@@ -8,4 +8,7 @@ ADD COLUMN `build_hash`  varchar(64) NOT NULL AFTER `version`;
 
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('scripter.modtool.tickets', '1');
 
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('invisible.prevent.chat', '0');
+INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('invisible.prevent.chat.error', 'While being invisible you cannot talk.');
+
 #END DATABASE UPDATE: 2.0.0 RC-2 -> 2.0.0 RC-3
