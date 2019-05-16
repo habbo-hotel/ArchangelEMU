@@ -3,13 +3,16 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
+import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
+import com.eu.habbo.threading.runnables.RoomUnitTeleport;
 
 public class InvisibleCommand extends Command
 {
@@ -26,11 +29,8 @@ public class InvisibleCommand extends Command
         if (roomUnit.isInvisible()) {
             RoomLayout roomLayout = roomUnit.getRoom().getLayout();
 
-            roomUnit.setLocation(roomLayout.getDoorTile());
-            roomUnit.clearStatus();
-            roomUnit.clearWalking();
-            roomUnit.setBodyRotation(RoomUserRotation.values()[roomLayout.getDoorDirection()]);
-            roomUnit.setHeadRotation(RoomUserRotation.values()[roomLayout.getDoorDirection()]);
+            new RoomUnitTeleport(roomUnit, roomUnit.getRoom(), roomLayout.getDoorTile().x, roomLayout.getDoorTile().y, roomLayout.getDoorTile().z, 0).run();
+
             roomUnit.setInvisible(false);
             roomUnit.setInRoom(true);
 
