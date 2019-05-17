@@ -295,10 +295,10 @@ public class BattleBanzaiGame extends Game
         int y = item.getY();
 
         List<List<RoomTile>> filledAreas =  new ArrayList<>();
-        filledAreas.add(this.floodFill(x, y - 1, this.lockedTiles.get(teamColor), new ArrayList<>()));
-        filledAreas.add(this.floodFill(x, y + 1, this.lockedTiles.get(teamColor), new ArrayList<>()));
-        filledAreas.add(this.floodFill(x - 1, y, this.lockedTiles.get(teamColor), new ArrayList<>()));
-        filledAreas.add(this.floodFill(x + 1, y, this.lockedTiles.get(teamColor), new ArrayList<>()));
+        filledAreas.add(this.floodFill(x, y - 1, this.lockedTiles.get(teamColor), new ArrayList<>(), teamColor));
+        filledAreas.add(this.floodFill(x, y + 1, this.lockedTiles.get(teamColor), new ArrayList<>(), teamColor));
+        filledAreas.add(this.floodFill(x - 1, y, this.lockedTiles.get(teamColor), new ArrayList<>(), teamColor));
+        filledAreas.add(this.floodFill(x + 1, y, this.lockedTiles.get(teamColor), new ArrayList<>(), teamColor));
 
         Optional<List<RoomTile>> largestAreaOfAll = filledAreas.stream().filter(Objects::nonNull).max(Comparator.comparing(List::size));
 
@@ -324,9 +324,9 @@ public class BattleBanzaiGame extends Game
         }
     }
 
-    private List<RoomTile> floodFill(int x, int y, THashSet<HabboItem> lockedTiles, List<RoomTile> stack)
+    private List<RoomTile> floodFill(int x, int y, THashSet<HabboItem> lockedTiles, List<RoomTile> stack, GameTeamColors color)
     {
-        if (this.isOutOfBounds(x, y)) return null;
+        if (this.isOutOfBounds(x, y) || this.isForeignLockedTile(x, y, color)) return null;
 
         RoomTile tile = this.room.getLayout().getTile((short)x, (short)y);
 
@@ -335,10 +335,10 @@ public class BattleBanzaiGame extends Game
         stack.add(tile);
 
         List<List<RoomTile>> result = new ArrayList<>();
-        result.add(this.floodFill(x, y - 1, lockedTiles, stack));
-        result.add(this.floodFill(x, y + 1, lockedTiles, stack));
-        result.add(this.floodFill(x - 1, y, lockedTiles, stack));
-        result.add(this.floodFill(x + 1, y, lockedTiles, stack));
+        result.add(this.floodFill(x, y - 1, lockedTiles, stack, color));
+        result.add(this.floodFill(x, y + 1, lockedTiles, stack, color));
+        result.add(this.floodFill(x - 1, y, lockedTiles, stack, color));
+        result.add(this.floodFill(x + 1, y, lockedTiles, stack, color));
 
         if (result.contains(null)) return null;
 
@@ -366,6 +366,19 @@ public class BattleBanzaiGame extends Game
         }
 
         return true;
+    }
+
+    private boolean isForeignLockedTile(int x, int y, GameTeamColors color)
+    {
+        for (HashMap.Entry<GameTeamColors, THashSet<HabboItem>> lockedTilesForColor : this.lockedTiles.entrySet()) {
+            if (lockedTilesForColor.getKey() == color) continue;
+
+            for (HabboItem item : lockedTilesForColor.getValue()) {
+                if (item.getX() == x && item.getY() == y) return true;
+            }
+        }
+
+        return false;
     }
 
     public void refreshCounters()
