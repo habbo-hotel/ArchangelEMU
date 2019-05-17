@@ -41,6 +41,7 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CatalogManager
 {
@@ -1077,7 +1078,9 @@ public class CatalogManager
                 if (totalPoints > 0 && habbo.getHabboInfo().getCurrencyAmount(item.getPointsType()) - totalPoints < 0) return;
 
                 List<String> badges = new ArrayList<>();
+                Map<AddHabboItemComposer.AddHabboItemCategory, List<Integer>> unseenItems = new HashMap<>();
                 boolean badgeFound = false;
+
                 for (int i = 0; i < amount; i++) {
                     habbo.getHabboStats().addLtdLog(item.getId(), Emulator.getIntUnixTimestamp());
 
@@ -1105,6 +1108,12 @@ public class CatalogManager
                                     Emulator.getThreading().run(bot);
                                     habbo.getClient().getHabbo().getInventory().getBotsComponent().addBot(bot);
                                     habbo.getClient().sendResponse(new AddBotComposer(bot));
+
+                                    if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BOT)) {
+                                        unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BOT, new ArrayList<>());
+                                    }
+
+                                    unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.BOT).add(bot.getId());
                                 } else {
                                     throw new Exception("Failed to create bot of type: " + type);
                                 }
@@ -1144,6 +1153,12 @@ public class CatalogManager
                                 habbo.getClient().sendResponse(new PetBoughtNotificationComposer(pet, false));
 
                                 AchievementManager.progressAchievement(habbo.getClient().getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLover"));
+
+                                if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.PET)) {
+                                    unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.PET, new ArrayList<>());
+                                }
+
+                                unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.PET).add(pet.getId());
                             } else if (baseItem.getType() == FurnitureType.BADGE) {
                                 if (!habbo.getInventory().getBadgesComponent().hasBadge(baseItem.getName())) {
                                     if (!badges.contains(baseItem.getName())) {
@@ -1256,12 +1271,10 @@ public class CatalogManager
                     }
                 }
 
-                if (purchasedEvent.itemsList != null)
+                if (purchasedEvent.itemsList != null && !purchasedEvent.itemsList.isEmpty())
                 {
-                    habbo.getClient().sendResponse(new AddHabboItemComposer(purchasedEvent.itemsList));
                     habbo.getClient().getHabbo().getInventory().getItemsComponent().addItems(purchasedEvent.itemsList);
-                    habbo.getClient().sendResponse(new PurchaseOKComposer(purchasedEvent.catalogItem));
-                    habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                    unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI, purchasedEvent.itemsList.stream().map(HabboItem::getId).collect(Collectors.toList()));
 
                     Emulator.getPluginManager().fireEvent(new UserCatalogFurnitureBoughtEvent(habbo, item, purchasedEvent.itemsList));
 
@@ -1272,6 +1285,10 @@ public class CatalogManager
                             limitedConfiguration.limitedSold(item.getId(), habbo, itm);
                         }
                     }
+                }
+
+                if (!purchasedEvent.badges.isEmpty() && !unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BOT)) {
+                    unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BADGE, new ArrayList<>());
                 }
 
                 for (String b : purchasedEvent.badges)
@@ -1285,8 +1302,14 @@ public class CatalogManager
                     keys.put("image", "${image.library.url}album1584/" + badge.getCode() + ".gif");
                     keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
                     habbo.getClient().sendResponse(new BubbleAlertComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys));
+                    unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.BADGE).add(badge.getId());
                 }
                 habbo.getClient().getHabbo().getHabboStats().addPurchase(purchasedEvent.catalogItem);
+
+                habbo.getClient().sendResponse(new AddHabboItemComposer(unseenItems));
+
+                habbo.getClient().sendResponse(new PurchaseOKComposer(purchasedEvent.catalogItem));
+                habbo.getClient().sendResponse(new InventoryRefreshComposer());
 
             } catch (Exception e)
             {
