@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
+import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -99,7 +100,17 @@ public class InteractionPressurePlate extends HabboItem
     {
         boolean occupied = false;
 
-        for (RoomTile tile : room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))
+        if (room == null || room.getLayout() == null || this.getBaseItem() == null) return;
+
+        RoomTile tileAtItem = room.getLayout().getTile(this.getX(), this.getY());
+
+        if (tileAtItem == null) return;
+
+        THashSet<RoomTile> tiles = room.getLayout().getTilesAt(tileAtItem, this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+
+        if (tiles == null) return;
+
+        for (RoomTile tile : tiles)
         {
             boolean hasHabbos = room.hasHabbosAt(tile.x, tile.y);
             if (!hasHabbos && this.requiresAllTilesOccupied())
