@@ -6,11 +6,11 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class DiscountComposer extends MessageComposer
 {
-    public final static int MAXIMUM_ALLOWED_ITEMS = 100;
-    public final static int DISCOUNT_BATCH_SIZE = 6;
-    public final static int DISCOUNT_AMOUNT_PER_BATCH = 1;
-    public final static int MINIMUM_DISCOUNTS_FOR_BONUS = 1;
-    public final static int[] ADDITIONAL_DISCOUNT_THRESHOLDS = new int[]{40, 99};
+    public static int MAXIMUM_ALLOWED_ITEMS = 100;
+    public static int DISCOUNT_BATCH_SIZE = 6;
+    public static int DISCOUNT_AMOUNT_PER_BATCH = 1;
+    public static int MINIMUM_DISCOUNTS_FOR_BONUS = 1;
+    public static int[] ADDITIONAL_DISCOUNT_THRESHOLDS = new int[]{40, 99};
 
     @Override
     public ServerMessage compose()
