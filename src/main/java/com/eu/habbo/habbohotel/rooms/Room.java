@@ -3683,7 +3683,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         }
 
         HabboItem doorTileTopItem = this.getTopItemAt(habbo.getRoomUnit().getX(), habbo.getRoomUnit().getY());
-        if (doorTileTopItem != null)
+        if (doorTileTopItem != null && !(doorTileTopItem instanceof InteractionTeleportTile))
         {
             try
             {
