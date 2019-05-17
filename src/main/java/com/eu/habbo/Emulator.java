@@ -28,6 +28,7 @@ import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 import java.util.zip.Checksum;
 
@@ -90,6 +91,8 @@ public final class Emulator
     {
         try
         {
+            Locale.setDefault(new Locale("en"));
+
             setBuild();
             Emulator.stopped = false;
             ConsoleCommand.load();
