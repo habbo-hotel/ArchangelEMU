@@ -13,6 +13,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.RoomUnitRidePet;
+import com.eu.habbo.util.figure.FigureUtil;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.procedure.TIntIntProcedure;
 
@@ -215,7 +216,19 @@ public class HabboInfo implements Runnable
         return this.look;
     }
 
-    public void setLook(String look) { this.look = look; }
+    public void setLook(String look) {
+        this.setLook(look, false);
+    }
+
+    public void setLook(String look, boolean stripForbidden) {
+        if (stripForbidden) {
+            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.id);
+
+            if (habbo != null) look = FigureUtil.stripBlacklistedClothing(look, habbo.getForbiddenClothing());
+        }
+
+        this.look = look;
+    }
 
     public HabboGender getGender()
     {

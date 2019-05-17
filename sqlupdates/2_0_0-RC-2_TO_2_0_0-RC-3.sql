@@ -17,4 +17,8 @@ INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('invisible.prevent.chat.err
 
 INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.succes.cmd_invisible.updated.back', 'You are now visible again.');
 
+INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.error.cmd_mimic.forbidden_clothing', 'The other user has clothing that you do not own yet.');
+ALTER TABLE `permissions`
+ADD COLUMN `acc_mimic_unredeemed` enum('0','1') NOT NULL DEFAULT '0';
+
 #END DATABASE UPDATE: 2.0.0 RC-2 -> 2.0.0 RC-3

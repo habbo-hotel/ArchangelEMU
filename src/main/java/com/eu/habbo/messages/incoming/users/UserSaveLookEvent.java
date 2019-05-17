@@ -8,6 +8,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
 import com.eu.habbo.plugin.events.users.UserSavedLookEvent;
+import com.eu.habbo.util.figure.FigureUtil;
 
 public class UserSaveLookEvent extends MessageHandler
 {
@@ -30,6 +31,12 @@ public class UserSaveLookEvent extends MessageHandler
         }
 
         String look = this.packet.readString();
+
+        if (FigureUtil.hasBlacklistedClothing(look, this.client.getHabbo().getForbiddenClothing())) {
+            ScripterManager.scripterDetected(this.client, "The user tried to wear clothing that they have not bought yet.");
+            return;
+        }
+
         UserSavedLookEvent lookEvent = new UserSavedLookEvent(this.client.getHabbo(), gender, look);
         Emulator.getPluginManager().fireEvent(lookEvent);
         if(lookEvent.isCancelled())
