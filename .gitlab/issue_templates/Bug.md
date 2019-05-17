@@ -1,5 +1,5 @@
 <!--- Provide a general summary of the issue in the Title above -->
-<!-- You may remove sections that are not related --> 
+<!-- You should remove sections that are not related --> 
 
 ## Build Information
 <!-- Issues will be closed if you don't provide this information, as we may need to replicate it on your exact build -->
@@ -13,7 +13,7 @@ Emulator Build (hash):
 <!--- Tell us what happens instead of the expected behavior -->
 
 ## Possible Solution
-<!--- Not obligatory, but suggest a fix/reason for the bug, -->
+<!--- Not obligatory, but suggest a fix/reason for the bug -->
 
 ## Steps to Reproduce
 <!--- Provide a link to a live example, or an unambiguous set of steps to -->
