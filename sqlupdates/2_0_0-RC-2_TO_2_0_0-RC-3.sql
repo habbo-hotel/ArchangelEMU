@@ -21,4 +21,10 @@ INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.error.cmd_mimic.f
 ALTER TABLE `permissions`
 ADD COLUMN `acc_mimic_unredeemed` enum('0','1') NOT NULL DEFAULT '0';
 
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('discount.max.allowed.items', '100');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('discount.batch.size', '6');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('discount.batch.free.items', '1');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('discount.bonus.min.discounts', '1');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('discount.additional.thresholds', '40;99');
+
 #END DATABASE UPDATE: 2.0.0 RC-2 -> 2.0.0 RC-3

@@ -24,6 +24,7 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.messages.incoming.floorplaneditor.FloorPlanEditorSaveEvent;
 import com.eu.habbo.messages.incoming.hotelview.HotelViewRequestLTDAvailabilityEvent;
+import com.eu.habbo.messages.outgoing.catalog.DiscountComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
 import com.eu.habbo.plugin.events.users.*;
@@ -42,6 +43,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -332,6 +334,11 @@ public class PluginManager
         RoomTrade.TRADING_ENABLED = Emulator.getConfig().getBoolean("hotel.trading.enabled") && !ShutdownEmulator.instantiated;
         RoomTrade.TRADING_REQUIRES_PERK = Emulator.getConfig().getBoolean("hotel.trading.requires.perk");
         WordFilter.ENABLED_FRIENDCHAT = Emulator.getConfig().getBoolean("hotel.wordfilter.messenger");
+        DiscountComposer.MAXIMUM_ALLOWED_ITEMS = Emulator.getConfig().getInt("discount.max.allowed.items", 100);
+        DiscountComposer.DISCOUNT_BATCH_SIZE = Emulator.getConfig().getInt("discount.batch.size", 6);
+        DiscountComposer.DISCOUNT_AMOUNT_PER_BATCH = Emulator.getConfig().getInt("discount.batch.free.items", 1);
+        DiscountComposer.MINIMUM_DISCOUNTS_FOR_BONUS = Emulator.getConfig().getInt("discount.bonus.min.discounts", 1);
+        DiscountComposer.ADDITIONAL_DISCOUNT_THRESHOLDS = Arrays.stream(Emulator.getConfig().getValue("discount.additional.thresholds", "40;99").split(";")).mapToInt(Integer::parseInt).toArray();
 
         BotManager.MINIMUM_CHAT_SPEED = Emulator.getConfig().getInt("hotel.bot.chat.minimum.interval");
         BotManager.MAXIMUM_CHAT_LENGTH = Emulator.getConfig().getInt("hotel.bot.max.chatlength");
