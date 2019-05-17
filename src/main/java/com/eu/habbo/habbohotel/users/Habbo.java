@@ -17,14 +17,15 @@ import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.users.UserCreditsEvent;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
 import com.eu.habbo.plugin.events.users.UserPointsEvent;
+import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.net.InetSocketAddress;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Habbo implements Runnable
 {
@@ -511,5 +512,15 @@ public class Habbo implements Runnable
 
             this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(this.client.getHabbo());
         }
+    }
+
+    public Set<Integer> getForbiddenClothing() {
+        TIntCollection clothingIDs = this.getInventory().getWardrobeComponent().getClothing();
+
+        return Emulator.getGameEnvironment().getCatalogManager().clothing.values().stream()
+                .filter(c -> !clothingIDs.contains(c.id))
+                .map(c -> c.setId)
+                .flatMap(c -> Arrays.stream(c).boxed())
+                .collect(Collectors.toSet());
     }
 }

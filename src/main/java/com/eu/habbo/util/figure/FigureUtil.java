@@ -4,34 +4,70 @@ import gnu.trove.map.hash.THashMap;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.StringJoiner;
 
-public class FigureUtil 
+public class FigureUtil
 {
-    public static THashMap<String, String> getFigureBits(String looks) 
+    public static THashMap<String, String> getFigureBits(String looks)
     {
         THashMap<String, String> bits = new THashMap<>();
         String[] sets = looks.split("\\.");
-        
+
         for(String set : sets)
         {
             String[] setBits = set.split("-", 2);
             bits.put(setBits[0], setBits.length > 1 ? setBits[1] : "");
         }
-        
+
         return bits;
     }
-    
-    
+
+
     public static String mergeFigures(String figure1, String figure2)
     {
         return mergeFigures(figure1, figure2, null, null);
     }
-    
+
     public static String mergeFigures(String figure1, String figure2, String[] limitFigure1)
     {
         return mergeFigures(figure1, figure2, limitFigure1, null);
     }
-    
+
+    public static boolean hasBlacklistedClothing(String figure, Set<Integer> blacklist) {
+        for (String set : figure.split("\\.")) {
+            String[] pieces = set.split("-");
+
+            try {
+                if (pieces.length >= 2 && blacklist.contains(Integer.valueOf(pieces[1]))) {
+                    return true;
+                }
+            } catch (NumberFormatException ignored) {
+
+            }
+        }
+
+        return false;
+    }
+
+    public static String stripBlacklistedClothing(String figure, Set<Integer> blacklist) {
+        StringJoiner joiner = new StringJoiner(".");
+
+        for (String set : figure.split("\\.")) {
+            String[] pieces = set.split("-");
+
+            try {
+                if (pieces.length < 2 || !blacklist.contains(Integer.valueOf(pieces[1]))) {
+                    joiner.add(set);
+                }
+            } catch (NumberFormatException ignored) {
+                joiner.add(set);
+            }
+        }
+
+        return joiner.toString();
+    }
+
     public static String mergeFigures(String figure1, String figure2, String[] limitFigure1, String[] limitFigure2)
     {
         THashMap<String, String> figureBits1 = getFigureBits(figure1);
@@ -39,17 +75,17 @@ public class FigureUtil
 
         StringBuilder finalLook = new StringBuilder();
 
-        for (Map.Entry<String, String> keys : figureBits1.entrySet()) 
+        for (Map.Entry<String, String> keys : figureBits1.entrySet())
         {
-            if(limitFigure1 == null || ArrayUtils.contains(limitFigure1, keys.getKey())) 
+            if(limitFigure1 == null || ArrayUtils.contains(limitFigure1, keys.getKey()))
             {
                 finalLook.append(keys.getKey()).append("-").append(keys.getValue()).append(".");
             }
         }
 
-        for (Map.Entry<String, String> keys : figureBits2.entrySet()) 
+        for (Map.Entry<String, String> keys : figureBits2.entrySet())
         {
-            if(limitFigure2 == null || ArrayUtils.contains(limitFigure2, keys.getKey())) 
+            if(limitFigure2 == null || ArrayUtils.contains(limitFigure2, keys.getKey()))
             {
                 finalLook.append(keys.getKey()).append("-").append(keys.getValue()).append(".");
             }
@@ -59,7 +95,7 @@ public class FigureUtil
         {
             finalLook = new StringBuilder(finalLook.substring(0, finalLook.length() - 1));
         }
-        
+
         return finalLook.toString();
     }
 }

@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UserDataComposer;
+import com.eu.habbo.util.figure.FigureUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -93,7 +94,7 @@ public class InteractionMannequin extends HabboItem
             }
         }
 
-        client.getHabbo().getHabboInfo().setLook(look.substring(0, look.length() - 1));
+        client.getHabbo().getHabboInfo().setLook(look.substring(0, look.length() - 1), true);
         room.sendComposer(new RoomUserDataComposer(client.getHabbo()).compose());
         client.sendResponse(new UserDataComposer(client.getHabbo()));
     }

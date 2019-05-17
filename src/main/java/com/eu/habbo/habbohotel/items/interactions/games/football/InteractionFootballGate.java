@@ -14,7 +14,7 @@ import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
 import com.eu.habbo.plugin.events.users.UserSavedLookEvent;
-import com.eu.habbo.util.FigureUtil;
+import com.eu.habbo.util.figure.FigureUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -102,7 +102,7 @@ public class InteractionFootballGate extends HabboItem
                 Emulator.getPluginManager().fireEvent(lookEvent);
                 if(!lookEvent.isCancelled())
                 {
-                    habbo.getHabboInfo().setLook(lookEvent.newLook);
+                    habbo.getHabboInfo().setLook(lookEvent.newLook, true);
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
                     room.sendComposer(new RoomUserDataComposer(habbo).compose());
@@ -119,7 +119,7 @@ public class InteractionFootballGate extends HabboItem
                 if(!lookEvent.isCancelled())
                 {
                     habbo.getHabboStats().cache.put(CACHE_KEY, habbo.getHabboInfo().getLook());
-                    habbo.getHabboInfo().setLook(lookEvent.newLook);
+                    habbo.getHabboInfo().setLook(lookEvent.newLook, true);
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
                     room.sendComposer(new RoomUserDataComposer(habbo).compose());
