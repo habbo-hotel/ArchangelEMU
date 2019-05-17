@@ -8,7 +8,7 @@ Emulator Build (hash):
 
 ## What is the error?
 ```
-<!-- Include your error here. If you have a thread dump, attach it as a txt file  -->
+Include your error here. If you have a thread dump, attach it as a txt file
 ```
 
 ## When does this error occur?
