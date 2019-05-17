@@ -1718,14 +1718,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                                 boolean isRiding = false;
                                 if(unit.getRoomUnitType() == RoomUnitType.USER) {
                                     Habbo rollingHabbo = this.getHabbo(unit);
-                                    RideablePet riding = rollingHabbo.getHabboInfo().getRiding();
-                                    if(riding != null) {
-                                        RoomUnit ridingUnit = riding.getRoomUnit();
-                                        tile.setStackHeight(ridingUnit.getZ() + zOffset);
-                                        rolledUnitIds.add(ridingUnit.getId());
-                                        updatedUnit.remove(ridingUnit);
-                                        messages.add(new RoomUnitOnRollerComposer(ridingUnit, roller, ridingUnit.getCurrentLocation(), ridingUnit.getZ(), tile, tile.getStackHeight() + (nextTileChair != null ? -1 : 0), room));
-                                        isRiding = true;
+                                    if(rollingHabbo != null && rollingHabbo.getHabboInfo() != null) {
+                                        RideablePet riding = rollingHabbo.getHabboInfo().getRiding();
+                                        if (riding != null) {
+                                            RoomUnit ridingUnit = riding.getRoomUnit();
+                                            tile.setStackHeight(ridingUnit.getZ() + zOffset);
+                                            rolledUnitIds.add(ridingUnit.getId());
+                                            updatedUnit.remove(ridingUnit);
+                                            messages.add(new RoomUnitOnRollerComposer(ridingUnit, roller, ridingUnit.getCurrentLocation(), ridingUnit.getZ(), tile, tile.getStackHeight() + (nextTileChair != null ? -1 : 0), room));
+                                            isRiding = true;
+                                        }
                                     }
                                 }
 
