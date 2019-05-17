@@ -1,5 +1,5 @@
 <!--- Provide a general summary of the feature request in the Title above -->
-<!-- You may remove sections that are not related --> 
+<!-- You should remove sections that are not related --> 
 
 ## Summary
 <!--- Summarize the feature that you want to add -->
