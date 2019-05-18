@@ -4047,6 +4047,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
         THashSet<HabboItem> items = new THashSet<>(0);
 
+        if (tile == null)
+            return items;
+
         TIntObjectIterator<HabboItem> iterator = this.roomItems.iterator();
 
         for (int i = this.roomItems.size(); i-- > 0; )
@@ -4061,6 +4064,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
             {
                 break;
             }
+
+            if (item == null)
+                continue;
 
             if (item.getBaseItem().getType() != FurnitureType.FLOOR)
                 continue;
