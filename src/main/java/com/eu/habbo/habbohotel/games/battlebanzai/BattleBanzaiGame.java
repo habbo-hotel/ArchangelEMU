@@ -23,6 +23,8 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class BattleBanzaiGame extends Game
 {
@@ -37,6 +39,8 @@ public class BattleBanzaiGame extends Game
 
 
     public static final int POINTS_LOCK_TILE = Emulator.getConfig().getInt("hotel.banzai.points.tile.lock", 1);
+
+    private static final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Emulator.getConfig().getInt("hotel.banzai.fill.threads", 2));
 
     private int tileCount;
 
@@ -292,38 +296,41 @@ public class BattleBanzaiGame extends Game
 
         if (doNotCheckFill) return;
 
-        int x = item.getX();
-        int y = item.getY();
+        final int x = item.getX();
+        final int y = item.getY();
 
-        List<List<RoomTile>> filledAreas =  new ArrayList<>();
-        THashSet<HabboItem> lockedTiles = new THashSet<>(this.lockedTiles.get(teamColor));
-        filledAreas.add(this.floodFill(x, y - 1, lockedTiles, new ArrayList<>(), teamColor));
-        filledAreas.add(this.floodFill(x, y + 1, lockedTiles, new ArrayList<>(), teamColor));
-        filledAreas.add(this.floodFill(x - 1, y, lockedTiles, new ArrayList<>(), teamColor));
-        filledAreas.add(this.floodFill(x + 1, y, lockedTiles, new ArrayList<>(), teamColor));
+        final List<List<RoomTile>> filledAreas =  new ArrayList<>();
+        final THashSet<HabboItem> lockedTiles = new THashSet<>(this.lockedTiles.get(teamColor));
 
-        Optional<List<RoomTile>> largestAreaOfAll = filledAreas.stream().filter(Objects::nonNull).max(Comparator.comparing(List::size));
+        executor.execute(() -> {
+            filledAreas.add(this.floodFill(x, y - 1, lockedTiles, new ArrayList<>(), teamColor));
+            filledAreas.add(this.floodFill(x, y + 1, lockedTiles, new ArrayList<>(), teamColor));
+            filledAreas.add(this.floodFill(x - 1, y, lockedTiles, new ArrayList<>(), teamColor));
+            filledAreas.add(this.floodFill(x + 1, y, lockedTiles, new ArrayList<>(), teamColor));
 
-        if (largestAreaOfAll.isPresent())
-        {
-            for (RoomTile tile: largestAreaOfAll.get())
+            Optional<List<RoomTile>> largestAreaOfAll = filledAreas.stream().filter(Objects::nonNull).max(Comparator.comparing(List::size));
+
+            if (largestAreaOfAll.isPresent())
             {
-                Optional<HabboItem> tileItem = this.gameTiles.values().stream().filter(i -> i.getX() == tile.x && i.getY() == tile.y && i instanceof InteractionBattleBanzaiTile).findAny();
+                for (RoomTile tile: largestAreaOfAll.get())
+                {
+                    Optional<HabboItem> tileItem = this.gameTiles.values().stream().filter(i -> i.getX() == tile.x && i.getY() == tile.y && i instanceof InteractionBattleBanzaiTile).findAny();
 
-                tileItem.ifPresent(habboItem -> {
-                    this.tileLocked(teamColor, habboItem, habbo, true);
+                    tileItem.ifPresent(habboItem -> {
+                        this.tileLocked(teamColor, habboItem, habbo, true);
 
-                    habboItem.setExtradata((2 + (teamColor.type * 3) + 3) + "");
-                    this.room.updateItem(habboItem);
-                });
+                        habboItem.setExtradata((2 + (teamColor.type * 3) + 3) + "");
+                        this.room.updateItem(habboItem);
+                    });
+                }
+
+                this.refreshCounters(teamColor);
+                if (habbo != null)
+                {
+                    habbo.getHabboInfo().getGamePlayer().addScore(BattleBanzaiGame.POINTS_LOCK_TILE * largestAreaOfAll.get().size());
+                }
             }
-
-            this.refreshCounters(teamColor);
-            if (habbo != null)
-            {
-                habbo.getHabboInfo().getGamePlayer().addScore(BattleBanzaiGame.POINTS_LOCK_TILE * largestAreaOfAll.get().size());
-            }
-        }
+        });
     }
 
     private List<RoomTile> floodFill(int x, int y, THashSet<HabboItem> lockedTiles, List<RoomTile> stack, GameTeamColors color)
