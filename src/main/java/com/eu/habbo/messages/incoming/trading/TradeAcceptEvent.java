@@ -10,6 +10,10 @@ public class TradeAcceptEvent extends MessageHandler
     public void handle() throws Exception
     {
         Habbo habbo = this.client.getHabbo();
+
+        if(habbo == null || habbo.getHabboInfo() == null || habbo.getHabboInfo().getCurrentRoom() == null)
+            return;
+
         RoomTrade trade = habbo.getHabboInfo().getCurrentRoom().getActiveTradeForHabbo(habbo);
 
         if(trade == null)
