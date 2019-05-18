@@ -639,7 +639,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
     private RoomTileState calculateTileState(RoomTile tile, HabboItem exclude)
     {
-        if (tile.state == RoomTileState.INVALID)
+        if (tile == null || tile.state == RoomTileState.INVALID)
             return RoomTileState.INVALID;
 
         RoomTileState result = RoomTileState.OPEN;
