@@ -18,6 +18,7 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserActionComposer;
 import com.eu.habbo.threading.runnables.BattleBanzaiTilesFlicker;
+import gnu.trove.impl.hash.THash;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
@@ -295,10 +296,11 @@ public class BattleBanzaiGame extends Game
         int y = item.getY();
 
         List<List<RoomTile>> filledAreas =  new ArrayList<>();
-        filledAreas.add(this.floodFill(x, y - 1, this.lockedTiles.get(teamColor), new ArrayList<>(), teamColor));
-        filledAreas.add(this.floodFill(x, y + 1, this.lockedTiles.get(teamColor), new ArrayList<>(), teamColor));
-        filledAreas.add(this.floodFill(x - 1, y, this.lockedTiles.get(teamColor), new ArrayList<>(), teamColor));
-        filledAreas.add(this.floodFill(x + 1, y, this.lockedTiles.get(teamColor), new ArrayList<>(), teamColor));
+        THashSet<HabboItem> lockedTiles = new THashSet<>(this.lockedTiles.get(teamColor));
+        filledAreas.add(this.floodFill(x, y - 1, lockedTiles, new ArrayList<>(), teamColor));
+        filledAreas.add(this.floodFill(x, y + 1, lockedTiles, new ArrayList<>(), teamColor));
+        filledAreas.add(this.floodFill(x - 1, y, lockedTiles, new ArrayList<>(), teamColor));
+        filledAreas.add(this.floodFill(x + 1, y, lockedTiles, new ArrayList<>(), teamColor));
 
         Optional<List<RoomTile>> largestAreaOfAll = filledAreas.stream().filter(Objects::nonNull).max(Comparator.comparing(List::size));
 
@@ -335,10 +337,10 @@ public class BattleBanzaiGame extends Game
         stack.add(tile);
 
         List<List<RoomTile>> result = new ArrayList<>();
-        result.add(this.floodFill(x, y - 1, lockedTiles, stack, color));
-        result.add(this.floodFill(x, y + 1, lockedTiles, stack, color));
-        result.add(this.floodFill(x - 1, y, lockedTiles, stack, color));
-        result.add(this.floodFill(x + 1, y, lockedTiles, stack, color));
+        result.add(this.floodFill(x, y - 1, new THashSet<>(lockedTiles), stack, color));
+        result.add(this.floodFill(x, y + 1, new THashSet<>(lockedTiles), stack, color));
+        result.add(this.floodFill(x - 1, y, new THashSet<>(lockedTiles), stack, color));
+        result.add(this.floodFill(x + 1, y, new THashSet<>(lockedTiles), stack, color));
 
         if (result.contains(null)) return null;
 
@@ -350,7 +352,7 @@ public class BattleBanzaiGame extends Game
 
     private boolean hasLockedTileAtCoordinates(int x, int y, THashSet<HabboItem> lockedTiles)
     {
-        for (HabboItem item: lockedTiles)
+        for (HabboItem item : lockedTiles)
         {
             if (item.getX() == x && item.getY() == y) return true;
         }
@@ -360,7 +362,7 @@ public class BattleBanzaiGame extends Game
 
     private boolean isOutOfBounds(int x, int y)
     {
-        for (HabboItem item: this.gameTiles.values())
+        for (HabboItem item : this.gameTiles.values())
         {
             if (item.getX() == x && item.getY() == y) return false;
         }
