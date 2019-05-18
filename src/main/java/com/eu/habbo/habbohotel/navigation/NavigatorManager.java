@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,7 +28,6 @@ public class NavigatorManager
     public NavigatorManager()
     {
         long millis = System.currentTimeMillis();
-        this.loadNavigator();
 
         this.filters.put(NavigatorPublicFilter.name, new NavigatorPublicFilter());
         this.filters.put(NavigatorHotelFilter.name, new NavigatorHotelFilter());
@@ -138,6 +138,12 @@ public class NavigatorManager
         catch (SQLException e)
         {
             Emulator.getLogging().logSQLException(e);
+        }
+
+        List<Room> staffPromotedRooms = Emulator.getGameEnvironment().getRoomManager().getRoomsStaffPromoted();
+
+        for (Room room : staffPromotedRooms) {
+            this.publicCategories.get(Emulator.getConfig().getInt("hotel.navigator.staffpicks.categoryid")).addRoom(room);
         }
     }
 

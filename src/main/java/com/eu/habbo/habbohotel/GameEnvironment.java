@@ -71,6 +71,7 @@ public class GameEnvironment
         this.pollManager        = new PollManager();
 
         this.roomManager.loadPublicRooms();
+        this.navigatorManager.loadNavigator();
 
         this.creditsScheduler   = new CreditsScheduler();
         Emulator.getThreading().run(this.creditsScheduler);

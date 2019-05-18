@@ -1598,6 +1598,20 @@ public class RoomManager
         return r;
     }
 
+    public ArrayList<Room> getRoomsStaffPromoted() {
+        ArrayList<Room> r = new ArrayList<>();
+
+        for(Room room : this.getActiveRooms())
+        {
+            if(room.isStaffPromotedRoom())
+            {
+                r.add(room);
+            }
+        }
+
+        return r;
+    }
+
     public List<Room> filterRoomsByOwner(List<Room> rooms, String filter)
     {
         ArrayList<Room> r = new ArrayList<>();
