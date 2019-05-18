@@ -47,7 +47,7 @@ public class InventoryItemsComposer extends MessageComposer implements TIntObjec
     @Override
     public boolean execute(int a, HabboItem habboItem)
     {
-        this.response.appendInt(habboItem.getId());
+        this.response.appendInt(habboItem.getGiftAdjustedId());
         this.response.appendString(habboItem.getBaseItem().getType().code);
         this.response.appendInt(habboItem.getId());
         this.response.appendInt(habboItem.getBaseItem().getSpriteId());

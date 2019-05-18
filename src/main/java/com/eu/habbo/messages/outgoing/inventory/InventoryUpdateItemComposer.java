@@ -19,8 +19,7 @@ public class InventoryUpdateItemComposer extends MessageComposer
     public ServerMessage compose()
     {
         this.response.init(Outgoing.InventoryItemUpdateComposer);
-        this.response.appendInt(2);
-        this.response.appendInt(this.habboItem.getId());
+        this.response.appendInt(this.habboItem.getGiftAdjustedId());
         this.response.appendString(this.habboItem.getBaseItem().getType().code);
         this.response.appendInt(this.habboItem.getId());
         this.response.appendInt(this.habboItem.getBaseItem().getSpriteId());
@@ -55,7 +54,7 @@ public class InventoryUpdateItemComposer extends MessageComposer
         this.response.appendBoolean(false);
         this.response.appendInt(-1);
 
-        if (this.habboItem.getBaseItem().getType() != FurnitureType.WALL) {
+        if (this.habboItem.getBaseItem().getType() == FurnitureType.FLOOR) {
             this.response.appendString(""); //slotId
             this.response.appendInt(0);
         }

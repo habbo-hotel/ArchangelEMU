@@ -50,7 +50,7 @@ public class RecycleEvent extends MessageHandler
                 for (HabboItem item : items)
                 {
                     this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
-                    this.client.sendResponse(new RemoveHabboItemComposer(item.getId()));
+                    this.client.sendResponse(new RemoveHabboItemComposer(item.getGiftAdjustedId()));
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                 }
             }

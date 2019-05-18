@@ -43,6 +43,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers
     private int limitedSells;
     private boolean needsUpdate = false;
     private boolean needsDelete = false;
+    private boolean isFromGift = false;
 
     public HabboItem(ResultSet set, Item baseItem) throws SQLException
     {
@@ -128,6 +129,12 @@ public abstract class HabboItem implements Runnable, IEventTriggers
 
     public int getId()
     {
+        return this.id;
+    }
+
+    public int getGiftAdjustedId() {
+        if (this.isFromGift) return -this.id;
+
         return this.id;
     }
 
@@ -507,5 +514,13 @@ public abstract class HabboItem implements Runnable, IEventTriggers
     public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation)
     {
         return true;
+    }
+
+    public boolean isFromGift() {
+        return isFromGift;
+    }
+
+    public void setFromGift(boolean fromGift) {
+        isFromGift = fromGift;
     }
 }
