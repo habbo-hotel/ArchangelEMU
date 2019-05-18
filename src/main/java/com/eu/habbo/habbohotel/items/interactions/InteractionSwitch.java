@@ -25,7 +25,7 @@ public class InteractionSwitch extends InteractionDefault
     @Override
     public boolean canToggle(Habbo habbo, Room room)
     {
-        return super.canToggle(habbo, room) || RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getX(), this.getY()), habbo.getRoomUnit().getCurrentLocation());
+        return RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getX(), this.getY()), habbo.getRoomUnit().getCurrentLocation());
     }
 
     @Override
