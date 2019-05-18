@@ -5696,5 +5696,27 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         return FurnitureMovementError.NONE;
     }
 
+    public THashSet<RoomUnit> getRoomUnits() {
+        THashSet<RoomUnit> units = new THashSet<>();
 
+        for (Habbo habbo : this.currentHabbos.values()) {
+            if (habbo != null && habbo.getRoomUnit() != null && habbo.getRoomUnit().getRoom().getId() == this.getId()) {
+                units.add(habbo.getRoomUnit());
+            }
+        }
+
+        for (Pet pet : this.currentPets.valueCollection()) {
+            if (pet != null && pet.getRoomUnit() != null && pet.getRoomUnit().getRoom().getId() == this.getId()) {
+                units.add(pet.getRoomUnit());
+            }
+        }
+
+        for (Bot bot : this.currentBots.valueCollection()) {
+            if (bot != null && bot.getRoomUnit() != null && bot.getRoomUnit().getRoom().getId() == this.getId()) {
+                units.add(bot.getRoomUnit());
+            }
+        }
+
+        return units;
+    }
 }
