@@ -36,7 +36,8 @@ public class PostItPlaceEvent extends MessageHandler
                     item.needsUpdate(true);
                     room.sendComposer(new AddWallItemComposer(item, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                     this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
-                    this.client.sendResponse(new RemoveHabboItemComposer(item.getId()));
+                    this.client.sendResponse(new RemoveHabboItemComposer(item.getGiftAdjustedId()));
+                    item.setFromGift(false);
                     Emulator.getThreading().run(item);
 
                     if (room.getOwnerId() != this.client.getHabbo().getHabboInfo().getId())

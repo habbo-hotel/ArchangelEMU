@@ -23,11 +23,6 @@ public class RoomPlaceItemEvent extends MessageHandler
         int itemId = -1;
 
         if (values.length != 0) itemId = Integer.valueOf(values[0]);
-        if(itemId < 0)
-        {
-            this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.INVALID_MOVE.errorCode));
-            return;
-        }
 
         if(!this.client.getHabbo().getRoomUnit().isInRoom())
         {
@@ -122,7 +117,8 @@ public class RoomPlaceItemEvent extends MessageHandler
             }
         }
 
-        this.client.sendResponse(new RemoveHabboItemComposer(item.getId()));
+        this.client.sendResponse(new RemoveHabboItemComposer(item.getGiftAdjustedId()));
         this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item.getId());
+        item.setFromGift(false);
     }
 }
