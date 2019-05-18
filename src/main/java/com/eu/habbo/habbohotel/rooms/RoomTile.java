@@ -1,5 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.ArrayList;
@@ -232,5 +234,9 @@ public class RoomTile
         synchronized (this.units) {
             return this.units.size() > 0;
         }
+    }
+
+    public boolean unitIsOnFurniOnTile(RoomUnit unit, Item item) {
+        return (unit.getX() >= this.x && unit.getX() < this.x + item.getLength()) && (unit.getY() >= this.y && unit.getY() < this.y + item.getWidth());
     }
 }

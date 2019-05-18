@@ -34,6 +34,8 @@ public class InteractionWater extends InteractionDefault
     @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation)
     {
+        super.onMove(room, oldLocation, newLocation);
+
         this.recalculate(room);
     }
 
