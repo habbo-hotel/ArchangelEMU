@@ -337,10 +337,10 @@ public class BattleBanzaiGame extends Game
         stack.add(tile);
 
         List<List<RoomTile>> result = new ArrayList<>();
-        result.add(this.floodFill(x, y - 1, new THashSet<>(lockedTiles), stack, color));
-        result.add(this.floodFill(x, y + 1, new THashSet<>(lockedTiles), stack, color));
-        result.add(this.floodFill(x - 1, y, new THashSet<>(lockedTiles), stack, color));
-        result.add(this.floodFill(x + 1, y, new THashSet<>(lockedTiles), stack, color));
+        result.add(this.floodFill(x, y - 1, lockedTiles, stack, color));
+        result.add(this.floodFill(x, y + 1, lockedTiles, stack, color));
+        result.add(this.floodFill(x - 1, y, lockedTiles, stack, color));
+        result.add(this.floodFill(x + 1, y, lockedTiles, stack, color));
 
         if (result.contains(null)) return null;
 
