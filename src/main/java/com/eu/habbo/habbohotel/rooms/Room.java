@@ -5095,12 +5095,15 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
     {
         if(guild.getRoomId() == this.id)
         {
-            THashMap<Integer, GuildMember> admins = Emulator.getGameEnvironment().getGuildManager().getOnlyAdmins(guild);
+            THashSet<GuildMember> members = Emulator.getGameEnvironment().getGuildManager().getGuildMembers(guild.getId());
 
             for (Habbo habbo : this.getHabbos())
             {
-                GuildMember member = admins.get(habbo.getHabboInfo().getId());
-                habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, member));
+                Optional<GuildMember> member = members.stream().filter(m -> m.getUserId() == habbo.getHabboInfo().getId()).findAny();
+
+                if (!member.isPresent()) continue;
+
+                habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, member.get()));
             }
         }
 
