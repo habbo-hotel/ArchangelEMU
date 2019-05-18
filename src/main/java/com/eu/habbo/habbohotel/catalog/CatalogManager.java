@@ -1287,7 +1287,7 @@ public class CatalogManager
                     }
                 }
 
-                if (!purchasedEvent.badges.isEmpty() && !unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BOT)) {
+                if (!purchasedEvent.badges.isEmpty() && !unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BADGE)) {
                     unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BADGE, new ArrayList<>());
                 }
 
