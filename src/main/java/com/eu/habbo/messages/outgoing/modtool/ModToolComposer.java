@@ -3,11 +3,16 @@ package com.eu.habbo.messages.outgoing.modtool;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolCategory;
 import com.eu.habbo.habbohotel.modtool.ModToolIssue;
+import com.eu.habbo.habbohotel.modtool.ModToolTicketState;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectProcedure;
+import gnu.trove.set.hash.THashSet;
+
+import java.util.Iterator;
 
 public class ModToolComposer extends MessageComposer implements TObjectProcedure<ModToolCategory>
 {
@@ -25,11 +30,28 @@ public class ModToolComposer extends MessageComposer implements TObjectProcedure
 
         if(this.habbo.hasPermission("acc_modtool_ticket_q"))
         {
-            this.response.appendInt(Emulator.getGameEnvironment().getModToolManager().getTickets().size()); //tickets
+            THashSet<ModToolIssue> openTickets = new THashSet<>();
 
-            for (ModToolIssue issue : Emulator.getGameEnvironment().getModToolManager().getTickets().values())
+            THashMap<Integer, ModToolIssue> tickets = Emulator.getGameEnvironment().getModToolManager().getTickets();
+
+            for(ModToolIssue t : tickets.values()) {
+                if(t.state != ModToolTicketState.CLOSED)
+                    openTickets.add(t);
+            }
+
+            int ticketsCount = openTickets.size();
+
+            if(ticketsCount > 100) {
+                ticketsCount = 100;
+            }
+
+            this.response.appendInt(ticketsCount); //tickets
+
+            Iterator<ModToolIssue> it = openTickets.iterator();
+
+            for(int i = 0; i < ticketsCount; i++)
             {
-                issue.serialize(this.response);
+                it.next().serialize(this.response);
             }
         }
         else
