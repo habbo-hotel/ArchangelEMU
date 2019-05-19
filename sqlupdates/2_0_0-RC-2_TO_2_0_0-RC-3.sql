@@ -26,5 +26,6 @@ INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('discount.batch.size', '
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('discount.batch.free.items', '1');
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('discount.bonus.min.discounts', '1');
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('discount.additional.thresholds', '40;99');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('clothing.strip_unowned', '0');
 
 #END DATABASE UPDATE: 2.0.0 RC-2 -> 2.0.0 RC-3
