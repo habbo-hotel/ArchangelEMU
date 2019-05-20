@@ -94,7 +94,7 @@ public class InteractionMannequin extends HabboItem
             }
         }
 
-        client.getHabbo().getHabboInfo().setLook(look.substring(0, look.length() - 1), true);
+        client.getHabbo().getHabboInfo().setLook(look.substring(0, look.length() - 1));
         room.sendComposer(new RoomUserDataComposer(client.getHabbo()).compose());
         client.sendResponse(new UserDataComposer(client.getHabbo()));
     }

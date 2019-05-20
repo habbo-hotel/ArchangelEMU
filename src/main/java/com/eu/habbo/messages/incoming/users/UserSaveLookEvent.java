@@ -32,11 +32,6 @@ public class UserSaveLookEvent extends MessageHandler
 
         String look = this.packet.readString();
 
-        if (FigureUtil.hasBlacklistedClothing(look, this.client.getHabbo().getForbiddenClothing())) {
-            ScripterManager.scripterDetected(this.client, "The user tried to wear clothing that they have not bought yet.");
-            return;
-        }
-
         UserSavedLookEvent lookEvent = new UserSavedLookEvent(this.client.getHabbo(), gender, look);
         Emulator.getPluginManager().fireEvent(lookEvent);
         if(lookEvent.isCancelled())

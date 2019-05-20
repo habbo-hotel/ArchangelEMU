@@ -217,16 +217,6 @@ public class HabboInfo implements Runnable
     }
 
     public void setLook(String look) {
-        this.setLook(look, false);
-    }
-
-    public void setLook(String look, boolean stripForbidden) {
-        if (stripForbidden && Emulator.getConfig().getBoolean("clothing.strip_unowned", false)) {
-            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.id);
-
-            if (habbo != null) look = FigureUtil.stripBlacklistedClothing(look, habbo.getForbiddenClothing());
-        }
-
         this.look = look;
     }
 

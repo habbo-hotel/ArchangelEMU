@@ -50,24 +50,6 @@ public class FigureUtil
         return false;
     }
 
-    public static String stripBlacklistedClothing(String figure, Set<Integer> blacklist) {
-        StringJoiner joiner = new StringJoiner(".");
-
-        for (String set : figure.split("\\.")) {
-            String[] pieces = set.split("-");
-
-            try {
-                if (pieces.length < 2 || !blacklist.contains(Integer.valueOf(pieces[1]))) {
-                    joiner.add(set);
-                }
-            } catch (NumberFormatException ignored) {
-                joiner.add(set);
-            }
-        }
-
-        return joiner.toString();
-    }
-
     public static String mergeFigures(String figure1, String figure2, String[] limitFigure1, String[] limitFigure2)
     {
         THashMap<String, String> figureBits1 = getFigureBits(figure1);

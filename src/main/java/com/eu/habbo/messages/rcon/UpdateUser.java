@@ -58,7 +58,7 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON>
 
                 if (!json.look.isEmpty())
                 {
-                    habbo.getHabboInfo().setLook(json.look, json.strip_unredeemed_clothing);
+                    habbo.getHabboInfo().setLook(json.look);
                     if(habbo.getClient() != null) {
                         habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo).compose());
                     }

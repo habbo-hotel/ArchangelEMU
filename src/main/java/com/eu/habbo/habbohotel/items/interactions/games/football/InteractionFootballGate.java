@@ -102,7 +102,7 @@ public class InteractionFootballGate extends HabboItem
                 Emulator.getPluginManager().fireEvent(lookEvent);
                 if(!lookEvent.isCancelled())
                 {
-                    habbo.getHabboInfo().setLook(lookEvent.newLook, true);
+                    habbo.getHabboInfo().setLook(lookEvent.newLook);
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
                     room.sendComposer(new RoomUserDataComposer(habbo).compose());
@@ -119,7 +119,7 @@ public class InteractionFootballGate extends HabboItem
                 if(!lookEvent.isCancelled())
                 {
                     habbo.getHabboStats().cache.put(CACHE_KEY, habbo.getHabboInfo().getLook());
-                    habbo.getHabboInfo().setLook(lookEvent.newLook, true);
+                    habbo.getHabboInfo().setLook(lookEvent.newLook);
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
                     room.sendComposer(new RoomUserDataComposer(habbo).compose());
