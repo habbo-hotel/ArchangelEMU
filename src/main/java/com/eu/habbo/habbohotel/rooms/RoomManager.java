@@ -41,8 +41,10 @@ import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
+import com.eu.habbo.plugin.PluginManager;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomCreatedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUncachedEvent;
+import com.eu.habbo.plugin.events.users.HabboAddedToRoomEvent;
 import com.eu.habbo.plugin.events.users.UserEnterRoomEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
 import gnu.trove.iterator.TIntObjectIterator;
@@ -50,6 +52,7 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TIntProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
+import sun.plugin2.main.server.Plugin;
 
 import java.sql.*;
 import java.util.*;
@@ -1071,6 +1074,10 @@ public class RoomManager
         if (!habbo.getHabboStats().nux && (room.isOwner(habbo) || room.isPublicRoom()))
         {
             UserNuxEvent.handle(habbo);
+        }
+
+        if(Emulator.getPluginManager().isRegistered(HabboAddedToRoomEvent.class, false)) {
+            Emulator.getPluginManager().fireEvent(new HabboAddedToRoomEvent(habbo, room));
         }
     }
 
