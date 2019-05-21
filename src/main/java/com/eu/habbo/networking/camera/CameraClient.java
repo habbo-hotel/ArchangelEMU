@@ -11,7 +11,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 public class CameraClient
 {
-    private static final String host = "arcturus.pw";
+    private static final String host = "google.com";
     private static final int port = 1232;
     public static ChannelFuture channelFuture;
     private static Channel channel;
