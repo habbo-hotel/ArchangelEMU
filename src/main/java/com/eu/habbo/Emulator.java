@@ -44,9 +44,9 @@ public final class Emulator
     public final static int BUILD = 0;
 
 
-    public final static String PREVIEW = "RC-3";
+    public final static String PREVIEW = "";
 
-    public static final String version = "Arcturus Morningstar"+ " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
+    public static final String version = "Arcturus Morningstar"+ " " + MAJOR + "." + MINOR + "." + BUILD;
 
     public static String build = "";
 
