@@ -38,15 +38,15 @@ public final class Emulator
     public final static int MAJOR = 2;
 
 
-    public final static int MINOR = 0;
+    public final static int MINOR = 1;
 
 
     public final static int BUILD = 0;
 
 
-    public final static String PREVIEW = "";
+    public final static String PREVIEW = "RC-1";
 
-    public static final String version = "Arcturus Morningstar"+ " " + MAJOR + "." + MINOR + "." + BUILD;
+    public static final String version = "Arcturus Morningstar"+ " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
 
     public static String build = "";
 
@@ -164,7 +164,7 @@ public final class Emulator
                 @Override
                 public void run()
                 {
-                    Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a Release Candidate for 2.0.0, if you find any bugs please place them on our git repository.");
+                    Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a Release Candidate for 2.1.0, if you find any bugs please place them on our git repository.");
                     Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
                     Emulator.getLogging().logStart("https://discord.gg/syuqgN");
                     System.out.println("Waiting for commands: ");
