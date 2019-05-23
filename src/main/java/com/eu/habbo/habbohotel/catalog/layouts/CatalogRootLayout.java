@@ -8,6 +8,11 @@ import java.sql.SQLException;
 
 public class CatalogRootLayout extends CatalogPage
 {
+    public CatalogRootLayout()
+    {
+        super();
+    }
+
     public CatalogRootLayout(ResultSet set) throws SQLException
     {
         super(null);

@@ -368,7 +368,7 @@ public class MarketPlace
     }
 
 
-    public static void sendErrorMessage(GameClient client, int baseItemId, int offerId) throws SQLException
+    public static void sendErrorMessage(GameClient client, int baseItemId, int offerId)
     {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT marketplace_items.*, COUNT( * ) AS count\n" +
                 "FROM marketplace_items\n" +
@@ -394,6 +394,10 @@ public class MarketPlace
                 }
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
 
@@ -412,24 +416,18 @@ public class MarketPlace
         }
 
         RequestOffersEvent.cachedResults.clear();
-        try
-        {
-            client.sendResponse(new RemoveHabboItemComposer(event.item.getGiftAdjustedId()));
-            client.sendResponse(new InventoryRefreshComposer());
 
-            event.item.setFromGift(false);
+        client.sendResponse(new RemoveHabboItemComposer(event.item.getGiftAdjustedId()));
+        client.sendResponse(new InventoryRefreshComposer());
 
-            MarketPlaceOffer offer = new MarketPlaceOffer(event.item, event.price, client.getHabbo());
-            client.getHabbo().getInventory().addMarketplaceOffer(offer);
-            client.getHabbo().getInventory().getItemsComponent().removeHabboItem(event.item);
-            item.setUserId(-1);
-            item.needsUpdate(true);
-            Emulator.getThreading().run(item);
-        }
-        catch (SQLException e)
-        {
-			Emulator.getLogging().logSQLException(e);
-        }
+        event.item.setFromGift(false);
+
+        MarketPlaceOffer offer = new MarketPlaceOffer(event.item, event.price, client.getHabbo());
+        client.getHabbo().getInventory().addMarketplaceOffer(offer);
+        client.getHabbo().getInventory().getItemsComponent().removeHabboItem(event.item);
+        item.setUserId(-1);
+        item.needsUpdate(true);
+        Emulator.getThreading().run(item);
 
         return true;
     }

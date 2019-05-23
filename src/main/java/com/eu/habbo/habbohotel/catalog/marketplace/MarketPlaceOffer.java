@@ -48,7 +48,7 @@ public class MarketPlaceOffer implements Runnable
         }
     }
 
-    public MarketPlaceOffer(HabboItem item, int price, Habbo habbo) throws SQLException
+    public MarketPlaceOffer(HabboItem item, int price, Habbo habbo)
     {
         this.price = price;
         this.baseItem = item.getBaseItem();
@@ -75,6 +75,10 @@ public class MarketPlaceOffer implements Runnable
                     this.offerId = id.getInt(1);
                 }
             }
+        }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
         }
     }
 

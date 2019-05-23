@@ -47,11 +47,7 @@ public class GuildForumListComposer extends MessageComposer {
             if(!it.hasNext())
                 break;
 
-            try {
-                GuildForumDataComposer.serializeForumData(this.response, it.next(), habbo);
-            } catch (SQLException e) {
-                return new ConnectionErrorComposer(500).compose();
-            }
+            GuildForumDataComposer.serializeForumData(this.response, it.next(), habbo);
         }
 
         return this.response;

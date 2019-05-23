@@ -242,17 +242,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
         this.bannedHabbos = new TIntObjectHashMap<>();
 
-
-
-
-
-
-
-
-
-
-
-
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM room_promotions WHERE room_id = ? AND end_timestamp > ? LIMIT 1"))
         {
             if(this.promoted)
@@ -273,6 +262,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
 
             this.loadBans(connection);
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
+
         this.tradeMode = set.getInt("trade_mode");
         this.moveDiagonally = set.getString("move_diagonally").equals("1");
 
@@ -456,7 +450,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         }
     }
 
-    private synchronized void loadItems(Connection connection) throws SQLException
+    private synchronized void loadItems(Connection connection)
     {
         this.roomItems.clear();
 
@@ -471,9 +465,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                 }
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
-    private synchronized void loadWiredData(Connection connection) throws SQLException
+    private synchronized void loadWiredData(Connection connection)
     {
         try (PreparedStatement statement = connection.prepareStatement("SELECT id, wired_data FROM items WHERE room_id = ? AND wired_data<>''"))
         {
@@ -499,13 +497,17 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                 }
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
         catch (Exception e)
         {
             Emulator.getLogging().logErrorLine(e);
         }
     }
 
-    private synchronized void loadBots(Connection connection) throws SQLException
+    private synchronized void loadBots(Connection connection)
     {
         this.currentBots.clear();
 
@@ -550,7 +552,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
         }
     }
 
-    private synchronized void loadPets(Connection connection) throws SQLException
+    private synchronized void loadPets(Connection connection)
     {
         this.currentPets.clear();
 
@@ -591,9 +593,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                 }
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
-    private synchronized void loadWordFilter(Connection connection) throws SQLException
+    private synchronized void loadWordFilter(Connection connection)
     {
         this.wordFilterWords.clear();
 
@@ -607,6 +613,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable
                     this.wordFilterWords.add(set.getString("word"));
                 }
             }
+        }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
         }
     }
 

@@ -349,7 +349,7 @@ public class ForumThread implements Runnable, ISerialize {
         return createdThread;
     }
 
-    public static THashSet<ForumThread> getByGuildId(int guildId) throws SQLException {
+    public static THashSet<ForumThread> getByGuildId(int guildId) {
         THashSet<ForumThread> threads = null;
 
         if(guildThreadsCache.containsKey(guildId)) {
@@ -381,14 +381,15 @@ public class ForumThread implements Runnable, ISerialize {
         ))
         {
             statement.setInt(1, guildId);
-            ResultSet set = statement.executeQuery();
 
-            while(set.next()) {
-                ForumThread thread = new ForumThread(set);
-                synchronized (threads) {
-                    threads.add(thread);
+            try(ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    ForumThread thread = new ForumThread(set);
+                    synchronized (threads) {
+                        threads.add(thread);
+                    }
+                    cacheThread(thread);
                 }
-                cacheThread(thread);
             }
         }
         catch (SQLException e)
@@ -425,11 +426,12 @@ public class ForumThread implements Runnable, ISerialize {
         ))
         {
             statement.setInt(1, threadId);
-            ResultSet set = statement.executeQuery();
 
-            while(set.next()) {
-                foundThread = new ForumThread(set);
-                cacheThread(foundThread);
+            try(ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    foundThread = new ForumThread(set);
+                    cacheThread(foundThread);
+                }
             }
         }
         catch (SQLException e)

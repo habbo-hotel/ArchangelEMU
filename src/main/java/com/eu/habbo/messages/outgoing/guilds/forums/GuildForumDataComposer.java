@@ -93,7 +93,7 @@ public class GuildForumDataComposer extends MessageComposer {
         return this.response;
     }
 
-    public static void serializeForumData(ServerMessage response, Guild guild, Habbo habbo) throws SQLException {
+    public static void serializeForumData(ServerMessage response, Guild guild, Habbo habbo) {
 
         final THashSet<ForumThread> forumThreads = ForumThread.getByGuildId(guild.getId());
         int lastSeenAt = 0;

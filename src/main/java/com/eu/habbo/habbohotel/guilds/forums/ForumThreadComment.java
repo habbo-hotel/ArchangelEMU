@@ -57,11 +57,12 @@ public class ForumThreadComment implements Runnable, ISerialize {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM `guilds_forums_comments` WHERE `id` = ? LIMIT 1"))
         {
             statement.setInt(1, id);
-            ResultSet set = statement.executeQuery();
 
-            while(set.next()) {
-                foundComment = new ForumThreadComment(set);
-                cacheComment(foundComment);
+            try(ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    foundComment = new ForumThreadComment(set);
+                    cacheComment(foundComment);
+                }
             }
         }
         catch (SQLException e)

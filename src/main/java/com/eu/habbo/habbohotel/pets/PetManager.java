@@ -106,7 +106,7 @@ public class PetManager
         }
     }
 
-    private void loadRaces(Connection connection) throws SQLException
+    private void loadRaces(Connection connection)
     {
         this.petRaces.clear();
 
@@ -120,9 +120,13 @@ public class PetManager
                 this.petRaces.get(set.getInt("race")).add(new PetRace(set));
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
-    private void loadPetData(Connection connection) throws SQLException
+    private void loadPetData(Connection connection)
     {
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_actions ORDER BY pet_type ASC"))
         {
@@ -131,13 +135,17 @@ public class PetManager
                 this.petData.put(set.getInt("pet_type"), new PetData(set));
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
 
         this.loadPetItems(connection);
 
         this.loadPetVocals(connection);
     }
 
-    private void loadPetItems(Connection connection) throws SQLException
+    private void loadPetItems(Connection connection)
     {
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_items"))
         {
@@ -169,9 +177,13 @@ public class PetManager
                 }
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
-    private void loadPetVocals(Connection connection) throws SQLException
+    private void loadPetVocals(Connection connection)
     {
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_vocals"))
         {
@@ -206,9 +218,13 @@ public class PetManager
                 }
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
-    private void loadPetCommands(Connection connection) throws SQLException
+    private void loadPetCommands(Connection connection)
     {
         THashMap<Integer, PetCommand> commandsList = new THashMap<>();
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_commands_data"))
@@ -217,6 +233,10 @@ public class PetManager
             {
                commandsList.put(set.getInt("command_id"), new PetCommand(set, this.petActions.get(set.getInt("command_id"))));
             }
+        }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
         }
 
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_commands ORDER BY pet_id ASC"))
@@ -231,9 +251,13 @@ public class PetManager
                 }
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
-    private void loadPetBreeding(Connection connection) throws SQLException
+    private void loadPetBreeding(Connection connection)
     {
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_breeding"))
         {
@@ -241,6 +265,10 @@ public class PetManager
             {
                 this.breedingPetType.put(set.getInt("pet_id"), set.getInt("offspring_id"));
             }
+        }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
         }
 
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_breeding_races"))
@@ -260,6 +288,10 @@ public class PetManager
 
                 this.breedingReward.get(reward.petType).get(reward.rarityLevel).add(reward);
             }
+        }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
         }
     }
 

@@ -68,7 +68,7 @@ public class ModToolManager
 		}
     }
 
-    private void loadCategory(Connection connection) throws SQLException
+    private void loadCategory(Connection connection)
     {
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM support_issue_categories"))
         {
@@ -89,9 +89,13 @@ public class ModToolManager
                 }
             }
         }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
-    private void loadPresets(Connection connection) throws SQLException
+    private void loadPresets(Connection connection)
     {
         synchronized (this.presets)
         {
@@ -102,10 +106,14 @@ public class ModToolManager
                     this.presets.get(set.getString("type")).add(set.getString("preset"));
                 }
             }
+            catch (SQLException e)
+            {
+                Emulator.getLogging().logSQLException(e);
+            }
         }
     }
 
-    private void loadTickets(Connection connection) throws SQLException
+    private void loadTickets(Connection connection)
     {
         synchronized (this.tickets)
         {
@@ -116,10 +124,14 @@ public class ModToolManager
                     this.tickets.put(set.getInt("id"), new ModToolIssue(set));
                 }
             }
+            catch (SQLException e)
+            {
+                Emulator.getLogging().logSQLException(e);
+            }
         }
     }
 
-    private void loadCfhCategories(Connection connection) throws SQLException
+    private void loadCfhCategories(Connection connection)
     {
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT " +
                 "support_cfh_topics.id, " +
@@ -143,6 +155,10 @@ public class ModToolManager
 
                 this.cfhCategories.get(set.getInt("support_cfh_category_id")).addTopic(new CfhTopic(set, this.getIssuePreset(set.getInt("default_sanction"))));
             }
+        }
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
         }
     }
 

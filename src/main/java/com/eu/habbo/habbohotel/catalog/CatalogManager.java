@@ -212,27 +212,20 @@ public class CatalogManager
     {
         Emulator.getPluginManager().fireEvent(new EmulatorLoadCatalogManagerEvent());
 
-        try
-        {
-            this.loadLimitedNumbers();
-            this.loadCatalogPages();
-            this.loadCatalogFeaturedPages();
-            this.loadCatalogItems();
-            this.loadClubOffers();
-            this.loadTargetOffers();
-            this.loadVouchers();
-            this.loadClothing();
-            this.loadRecycler();
-            this.loadGiftWrappers();
-            this.loadCalendarRewards();
-        }
-        catch(SQLException e)
-        {
-            Emulator.getLogging().logSQLException(e);
-        }
+        this.loadLimitedNumbers();
+        this.loadCatalogPages();
+        this.loadCatalogFeaturedPages();
+        this.loadCatalogItems();
+        this.loadClubOffers();
+        this.loadTargetOffers();
+        this.loadVouchers();
+        this.loadClothing();
+        this.loadRecycler();
+        this.loadGiftWrappers();
+        this.loadCalendarRewards();
     }
 
-    private synchronized void loadLimitedNumbers() throws SQLException
+    private synchronized void loadLimitedNumbers()
     {
         this.limitedNumbers.clear();
 
@@ -270,12 +263,12 @@ public class CatalogManager
     }
 
 
-    private synchronized void loadCatalogPages() throws SQLException
+    private synchronized void loadCatalogPages()
     {
         this.catalogPages.clear();
 
         final THashMap<Integer, CatalogPage> pages = new THashMap<>();
-        pages.put(-1, new CatalogRootLayout(null));
+        pages.put(-1, new CatalogRootLayout());
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM catalog_pages ORDER BY parent_id, id"))
         {
             try (ResultSet set = statement.executeQuery())
@@ -338,7 +331,7 @@ public class CatalogManager
     }
 
 
-    private synchronized void loadCatalogFeaturedPages() throws SQLException
+    private synchronized void loadCatalogFeaturedPages()
     {
         this.catalogFeaturedPages.clear();
 
@@ -364,7 +357,7 @@ public class CatalogManager
         }
     }
 
-    private synchronized void loadCatalogItems() throws SQLException
+    private synchronized void loadCatalogItems()
     {
         this.clubItems.clear();
         catalogItemAmount = 0;
@@ -431,7 +424,7 @@ public class CatalogManager
         }
     }
 
-    private void loadClubOffers() throws SQLException
+    private void loadClubOffers()
     {
 		this.clubOffers.clear();
 
@@ -446,9 +439,13 @@ public class CatalogManager
 				}
 			}
 		}
+        catch (SQLException e)
+        {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
-    private void loadTargetOffers() throws SQLException
+    private void loadTargetOffers()
     {
         synchronized (this.targetOffers)
         {
@@ -465,11 +462,15 @@ public class CatalogManager
                     }
                 }
             }
+            catch (SQLException e)
+            {
+                Emulator.getLogging().logSQLException(e);
+            }
         }
     }
 
 
-    private void loadVouchers() throws SQLException
+    private void loadVouchers()
     {
         synchronized (this.vouchers)
         {
@@ -482,11 +483,15 @@ public class CatalogManager
                     this.vouchers.add(new Voucher(set));
                 }
             }
+            catch (SQLException e)
+            {
+                Emulator.getLogging().logSQLException(e);
+            }
         }
     }
 
 
-    public void loadRecycler() throws SQLException
+    public void loadRecycler()
     {
         synchronized (this.prizes)
         {
@@ -520,7 +525,7 @@ public class CatalogManager
     }
 
 
-    public void loadGiftWrappers() throws SQLException
+    public void loadGiftWrappers()
     {
         synchronized (this.giftWrappers)
         {
