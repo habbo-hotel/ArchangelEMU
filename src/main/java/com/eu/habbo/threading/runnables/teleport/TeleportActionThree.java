@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleport;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -38,7 +39,10 @@ class TeleportActionThree implements Runnable
         }
 
         if(targetRoom == null)
+        {
+            Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
             return;
+        }
 
         if (targetRoom.isPreLoaded())
         {
@@ -48,9 +52,14 @@ class TeleportActionThree implements Runnable
         targetTeleport = targetRoom.getHabboItem(((InteractionTeleport) this.currentTeleport).getTargetId());
 
         if(targetTeleport == null)
+        {
+            Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
             return;
+        }
 
-        this.client.getHabbo().getRoomUnit().setLocation(targetRoom.getLayout().getTile(targetTeleport.getX(), targetTeleport.getY()));
+        RoomTile teleportLocation = targetRoom.getLayout().getTile(targetTeleport.getX(), targetTeleport.getY());
+
+        this.client.getHabbo().getRoomUnit().setLocation(teleportLocation);
         this.client.getHabbo().getRoomUnit().getPath().clear();
         this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
         this.client.getHabbo().getRoomUnit().setZ(targetTeleport.getZ());
@@ -59,14 +68,14 @@ class TeleportActionThree implements Runnable
 
         if(targetRoom != this.room)
         {
-            this.room.sendComposer(new RoomUserRemoveComposer(this.client.getHabbo().getRoomUnit()).compose());
-            Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), targetRoom.getId(), "", Emulator.getConfig().getBoolean("hotel.teleport.locked.allowed"));
+            this.room.removeHabbo(this.client.getHabbo(), true);
+            Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), targetRoom.getId(), "", Emulator.getConfig().getBoolean("hotel.teleport.locked.allowed"), teleportLocation);
         }
 
         targetTeleport.setExtradata("2");
         targetRoom.updateItem(targetTeleport);
         targetRoom.updateHabbo(this.client.getHabbo());
-        System.out.println(targetTeleport.getX() + " | " + targetTeleport.getY());
+        //System.out.println(targetTeleport.getX() + " | " + targetTeleport.getY());
         this.client.getHabbo().getHabboInfo().setCurrentRoom(targetRoom);
         //Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), 500);
         Emulator.getThreading().run(new TeleportActionFour(targetTeleport, targetRoom, this.client), this.currentTeleport instanceof InteractionTeleportTile ? 0 : 500);

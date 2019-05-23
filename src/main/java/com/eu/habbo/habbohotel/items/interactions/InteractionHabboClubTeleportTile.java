@@ -35,8 +35,8 @@ public class InteractionHabboClubTeleportTile extends InteractionTeleportTile
     }
 
     @Override
-    protected boolean canUseTeleport(GameClient client, Room room)
+    public boolean canUseTeleport(GameClient client, Room room)
     {
-        return client.getHabbo().getHabboStats().hasActiveClub();
+        return super.canUseTeleport(client, room) && client.getHabbo().getHabboStats().hasActiveClub();
     }
 }

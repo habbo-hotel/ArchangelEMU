@@ -14,7 +14,7 @@ import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
 import com.eu.habbo.plugin.events.users.UserSavedLookEvent;
-import com.eu.habbo.util.FigureUtil;
+import com.eu.habbo.util.figure.FigureUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

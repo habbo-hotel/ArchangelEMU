@@ -9,11 +9,16 @@ import java.sql.SQLException;
 
 public class QueryDeleteHabboItem implements Runnable
 {
-    private final HabboItem item;
+    private final int itemId;
+
+    public QueryDeleteHabboItem(int itemId)
+    {
+        this.itemId = itemId;
+    }
 
     public QueryDeleteHabboItem(HabboItem item)
     {
-        this.item = item;
+        this.itemId = item.getId();
     }
 
     @Override
@@ -21,7 +26,7 @@ public class QueryDeleteHabboItem implements Runnable
     {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM items WHERE id = ?"))
         {
-            statement.setInt(1, this.item.getId());
+            statement.setInt(1, this.itemId);
             statement.execute();
         }
         catch (SQLException e)

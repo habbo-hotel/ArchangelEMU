@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.modtool;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolBanType;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
@@ -44,7 +45,7 @@ public class ModToolSanctionBanEvent extends MessageHandler
         }
         else
         {
-            Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", Emulator.getTexts().getValue("scripter.warning.modtools.ban").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
+            ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.ban").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
         }
     }
 }

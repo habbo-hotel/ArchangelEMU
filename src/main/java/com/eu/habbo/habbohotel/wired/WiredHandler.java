@@ -217,7 +217,7 @@ public class WiredHandler
     private static boolean triggerEffect(InteractionWiredEffect effect, RoomUnit roomUnit, Room room, Object[] stuff, long millis)
     {
         boolean executed = false;
-        if (effect.canExecute(millis))
+        if (effect != null && effect.canExecute(millis))
         {
             executed = true;
             if (!effect.requiresTriggeringUser() || (roomUnit != null && effect.requiresTriggeringUser()))

@@ -22,11 +22,11 @@ public class PresentItemOpenedComposer extends MessageComposer
     public ServerMessage compose()
     {
         this.response.init(Outgoing.PresentItemOpenedComposer);
-        this.response.appendString(this.item.getBaseItem().getType().code);
+        this.response.appendString(this.item.getBaseItem().getType().code.toLowerCase());
         this.response.appendInt(this.item.getBaseItem().getSpriteId());
         this.response.appendString(this.item.getBaseItem().getName());
         this.response.appendInt(this.item.getId());
-        this.response.appendString(this.item.getBaseItem().getType().code);
+        this.response.appendString(this.item.getBaseItem().getType().code.toLowerCase());
         this.response.appendBoolean(this.unknown);
         this.response.appendString(this.text);
         return this.response;

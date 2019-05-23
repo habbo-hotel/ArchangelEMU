@@ -20,7 +20,7 @@ public class RedeemVoucherErrorComposer extends MessageComposer
     public ServerMessage compose()
     {
         this.response.init(Outgoing.RedeemVoucherErrorComposer);
-        this.response.appendInt(this.code);
+        this.response.appendString(this.code + "");
         return this.response;
     }
 }

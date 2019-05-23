@@ -117,7 +117,7 @@ public class ItemsComponent
 
     public HabboItem getHabboItem(int itemId)
     {
-        return this.items.get(itemId);
+        return this.items.get(Math.abs(itemId));
     }
 
     public HabboItem getAndRemoveHabboItem(final Item item)

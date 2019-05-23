@@ -4,6 +4,8 @@ import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.games.GameTeam;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
+import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
+import com.eu.habbo.habbohotel.rooms.Room;
 
 public class BattleBanzaiGameTeam extends GameTeam
 {
@@ -24,14 +26,17 @@ public class BattleBanzaiGameTeam extends GameTeam
     public void removeMember(GamePlayer gamePlayer)
     {
         Game game = gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().getGame(gamePlayer.getHabbo().getHabboInfo().getCurrentGame());
-        if(game instanceof BattleBanzaiGame)
-        {
-            ((BattleBanzaiGame) game).addPositionToGate(gamePlayer.getTeamColor());
-        }
+        Room room = gamePlayer.getHabbo().getRoomUnit().getRoom();
 
         gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(gamePlayer.getHabbo(), 0, -1);
         gamePlayer.getHabbo().getRoomUnit().setCanWalk(true);
 
         super.removeMember(gamePlayer);
+
+        if(room != null && room.getRoomSpecialTypes() != null) {
+            for (InteractionGameGate gate : room.getRoomSpecialTypes().getBattleBanzaiGates().values()) {
+                gate.updateState(game, 5);
+            }
+        }
     }
 }

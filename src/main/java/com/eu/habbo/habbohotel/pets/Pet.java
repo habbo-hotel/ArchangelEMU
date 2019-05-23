@@ -11,6 +11,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetLevelUpdatedComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetExperienceComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetRespectComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTalkComposer;
 import com.eu.habbo.plugin.events.pets.PetTalkEvent;
 import gnu.trove.map.hash.THashMap;
@@ -875,5 +876,25 @@ public class Pet implements ISerialize, Runnable
     public void setLevelHunger(int levelHunger)
     {
         this.levelHunger = levelHunger;
+    }
+
+    public void removeFromRoom() {
+        removeFromRoom(false);
+    }
+
+    public void removeFromRoom(boolean dontSendPackets) {
+
+        if(this.roomUnit != null && this.roomUnit.getCurrentLocation() != null) {
+            this.roomUnit.getCurrentLocation().removeUnit(this.roomUnit);
+        }
+
+        if(!dontSendPackets) {
+            room.sendComposer(new RoomUserRemoveComposer(this.roomUnit).compose());
+            room.removePet(this.id);
+        }
+
+        this.roomUnit = null;
+        this.room = null;
+        this.needsUpdate = true;
     }
 }

@@ -42,7 +42,7 @@ public class CrackableExplode implements Runnable
         if (!this.habboItem.resetable())
         {
             this.room.removeHabboItem(this.habboItem);
-            this.room.sendComposer(new RemoveFloorItemComposer(this.habboItem).compose());
+            this.room.sendComposer(new RemoveFloorItemComposer(this.habboItem, true).compose());
             this.habboItem.setRoomId(0);
             Emulator.getGameEnvironment().getItemManager().deleteItem(this.habboItem);
         }
@@ -63,7 +63,8 @@ public class CrackableExplode implements Runnable
                     this.habbo.getInventory().getItemsComponent().addItem(newItem);
                     this.habbo.getClient().sendResponse(new AddHabboItemComposer(newItem));
                     this.habbo.getClient().sendResponse(new InventoryRefreshComposer());
-                } else
+                }
+                else
                 {
                     newItem.setX(this.x);
                     newItem.setY(this.y);
@@ -71,6 +72,7 @@ public class CrackableExplode implements Runnable
                     newItem.setRoomId(this.room.getId());
                     newItem.needsUpdate(true);
                     this.room.addHabboItem(newItem);
+                    this.room.updateItem(newItem);
                     this.room.sendComposer(new AddFloorItemComposer(newItem, this.room.getFurniOwnerNames().get(newItem.getUserId())).compose());
                 }
             }

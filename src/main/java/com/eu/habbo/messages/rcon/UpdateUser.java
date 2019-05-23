@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.MeMenuSettingsComposer;
 import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
+import com.eu.habbo.util.figure.FigureUtil;
 import com.google.gson.Gson;
 
 import java.sql.Connection;
@@ -58,7 +59,10 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON>
                 if (!json.look.isEmpty())
                 {
                     habbo.getHabboInfo().setLook(json.look);
-                    habbo.getHabboInfo().getCurrentRoom().sendComposer(new UpdateUserLookComposer(habbo).compose());
+                    if(habbo.getClient() != null) {
+                        habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo).compose());
+                    }
+
                     if (habbo.getHabboInfo().getCurrentRoom() != null)
                     {
                         habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
@@ -157,6 +161,8 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON>
 
 
         public String look = "";
+
+        public boolean strip_unredeemed_clothing = false;
         //More could be added in the future.
     }
 }

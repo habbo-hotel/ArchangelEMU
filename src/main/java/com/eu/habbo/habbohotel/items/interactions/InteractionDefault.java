@@ -51,6 +51,23 @@ public class InteractionDefault extends HabboItem
     }
 
     @Override
+    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation)
+    {
+        super.onMove(room, oldLocation, newLocation);
+
+        for (RoomUnit unit : room.getRoomUnits()) {
+            if (!oldLocation.unitIsOnFurniOnTile(unit, this.getBaseItem())) continue; // If the unit was previously on the furni...
+            if (newLocation.unitIsOnFurniOnTile(unit, this.getBaseItem())) continue; // but is not anymore...
+
+            try {
+                this.onWalkOff(unit, room, new Object[]{}); // the unit walked off!
+            } catch (Exception ignored) {
+
+            }
+        }
+    }
+
+    @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception
     {
         if(room != null && (client == null || this.canToggle(client.getHabbo(), room) || (objects.length >= 2 && objects[1] instanceof WiredEffectType && objects[1] == WiredEffectType.TOGGLE_STATE)))

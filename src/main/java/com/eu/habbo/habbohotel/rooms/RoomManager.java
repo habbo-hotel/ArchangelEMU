@@ -4,6 +4,14 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.core.RoomUserPetComposer;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.games.Game;
+import com.eu.habbo.habbohotel.games.battlebanzai.BattleBanzaiGame;
+import com.eu.habbo.habbohotel.games.football.FootballGame;
+import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
+import com.eu.habbo.habbohotel.games.tag.BunnyrunGame;
+import com.eu.habbo.habbohotel.games.tag.IceTagGame;
+import com.eu.habbo.habbohotel.games.tag.RollerskateGame;
+import com.eu.habbo.habbohotel.games.wired.WiredGame;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWired;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
@@ -34,6 +42,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomCreatedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUncachedEvent;
+import com.eu.habbo.plugin.events.users.HabboAddedToRoomEvent;
 import com.eu.habbo.plugin.events.users.UserEnterRoomEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
 import gnu.trove.iterator.TIntObjectIterator;
@@ -57,6 +66,7 @@ public class RoomManager
     private final THashMap<Integer, RoomCategory> roomCategories;
     private final List<String> mapNames;
     private final ConcurrentHashMap<Integer, Room> activeRooms;
+    private final ArrayList<Class<? extends Game>> gameTypes;
 
     public RoomManager()
     {
@@ -66,6 +76,16 @@ public class RoomManager
         this.activeRooms = new ConcurrentHashMap<>();
         this.loadRoomCategories();
         this.loadRoomModels();
+
+        this.gameTypes = new ArrayList<>();
+
+        registerGameType(BattleBanzaiGame.class);
+        registerGameType(FreezeGame.class);
+        registerGameType(WiredGame.class);
+        registerGameType(FootballGame.class);
+        registerGameType(BunnyrunGame.class);
+        registerGameType(IceTagGame.class);
+        registerGameType(RollerskateGame.class);
 
         Emulator.getLogging().logStart("Room Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
@@ -692,8 +712,23 @@ public class RoomManager
         habbo.getRoomUnit().clearStatus();
         if (habbo.getRoomUnit().getCurrentLocation() == null)
         {
-            habbo.getRoomUnit().setLocation(room.getLayout().getDoorTile());
+            habbo.getRoomUnit().setLocation(doorLocation != null ? doorLocation : room.getLayout().getDoorTile());
+            habbo.getRoomUnit().setZ(habbo.getRoomUnit().getCurrentLocation().getStackHeight());
+
+            if(doorLocation == null) {
+                habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
+                habbo.getRoomUnit().setHeadRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
+            }
+            else {
+                habbo.getRoomUnit().setCanLeaveRoomByDoor(false);
+                habbo.getRoomUnit().isTeleporting = true;
+                HabboItem topItem = room.getTopItemAt(doorLocation.x, doorLocation.y);
+                if(topItem != null) {
+                    habbo.getRoomUnit().setRotation(RoomUserRotation.values()[topItem.getRotation()]);
+                }
+            }
         }
+
         habbo.getRoomUnit().setRoomUnitType(RoomUnitType.USER);
         if(room.isBanned(habbo))
         {
@@ -716,7 +751,8 @@ public class RoomManager
         if (habbo.getHabboInfo().getCurrentRoom() != room && habbo.getHabboInfo().getCurrentRoom() != null)
         {
             habbo.getHabboInfo().getCurrentRoom().removeHabbo(habbo);
-        } else if (!habbo.getHabboStats().blockFollowing && habbo.getHabboInfo().getCurrentRoom() == null)
+        }
+        else if (!habbo.getHabboStats().blockFollowing && habbo.getHabboInfo().getCurrentRoom() == null)
         {
             habbo.getMessenger().connectionChanged(habbo, true, true);
         }
@@ -731,11 +767,6 @@ public class RoomManager
         }
 
         habbo.getHabboInfo().setLoadingRoom(room.getId());
-
-        if (habbo.getRoomUnit().isTeleporting)
-        {
-            habbo.getRoomUnit().setLocation(doorLocation);
-        }
 
         habbo.getClient().sendResponse(new RoomModelComposer(room));
 
@@ -793,9 +824,8 @@ public class RoomManager
         }
         habbo.getRoomUnit().isKicked = false;
 
-        if (!habbo.getRoomUnit().isTeleporting)
+        if (habbo.getRoomUnit().getCurrentLocation() == null && !habbo.getRoomUnit().isTeleporting)
         {
-
             RoomTile doorTile = room.getLayout().getTile(room.getLayout().getDoorX(), room.getLayout().getDoorY());
 
             if (doorTile != null)
@@ -807,6 +837,7 @@ public class RoomManager
             habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
             habbo.getRoomUnit().setHeadRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
         }
+
         habbo.getRoomUnit().setPathFinderRoom(room);
         habbo.getRoomUnit().resetIdleTimer();
 
@@ -1041,6 +1072,10 @@ public class RoomManager
         {
             UserNuxEvent.handle(habbo);
         }
+
+        if(Emulator.getPluginManager().isRegistered(HabboAddedToRoomEvent.class, false)) {
+            Emulator.getPluginManager().fireEvent(new HabboAddedToRoomEvent(habbo, room));
+        }
     }
 
     void logEnter(Habbo habbo, Room room)
@@ -1070,14 +1105,9 @@ public class RoomManager
         {
             habbo.getRoomUnit().setPathFinderRoom(null);
 
-            if (!room.isOwner(habbo))
-            {
-                room.pickupPetsForHabbo(habbo);
-            }
             this.logExit(habbo);
-            room.removeHabbo(habbo);
+            room.removeHabbo(habbo, true);
 
-            room.sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
             if (redirectToHotelView)
             {
                 habbo.getClient().sendResponse(new HotelViewComposer());
@@ -1572,6 +1602,20 @@ public class RoomManager
         return r;
     }
 
+    public ArrayList<Room> getRoomsStaffPromoted() {
+        ArrayList<Room> r = new ArrayList<>();
+
+        for(Room room : this.getActiveRooms())
+        {
+            if(room.isStaffPromotedRoom())
+            {
+                r.add(room);
+            }
+        }
+
+        return r;
+    }
+
     public List<Room> filterRoomsByOwner(List<Room> rooms, String filter)
     {
         ArrayList<Room> r = new ArrayList<>();
@@ -1750,5 +1794,17 @@ public class RoomManager
         {
             this.duration = duration;
         }
+    }
+
+    public void registerGameType(Class<? extends Game> gameClass) {
+        gameTypes.add(gameClass);
+    }
+
+    public void unregisterGameType(Class<? extends Game> gameClass) {
+        gameTypes.remove(gameClass);
+    }
+
+    public ArrayList<Class<? extends Game>> getGameTypes() {
+        return gameTypes;
     }
 }

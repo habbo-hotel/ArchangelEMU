@@ -1,6 +1,9 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.pets.Pet;
+import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.set.hash.THashSet;
 
 import java.awt.*;
@@ -259,7 +262,7 @@ public class RoomLayout
         return this.heightmap.replace("\r\n", "\r");
     }
 
-    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation)
+    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit)
     {
         LinkedList<RoomTile> openList = new LinkedList<>();
         try
@@ -274,7 +277,7 @@ public class RoomLayout
             long startMillis = System.currentTimeMillis();
             while (true)
             {
-                if (System.currentTimeMillis() - startMillis > 25)
+                if (System.currentTimeMillis() - startMillis > 50)
                 {
                     return new LinkedList<>();
                 }
@@ -293,10 +296,16 @@ public class RoomLayout
                 {
                     if (closedList.contains(currentAdj)) continue;
 
+                    if(roomUnit.canOverrideTile(currentAdj) || (currentAdj.state != RoomTileState.BLOCKED && currentAdj.x == doorX && currentAdj.y == doorY)) {
+                        currentAdj.setPrevious(current);
+                        currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
+                        currentAdj.setgCosts(current);
+                        openList.add(currentAdj);
+                        continue;
+                    }
+
                     //If the tile is sitable or layable and its not our goal tile, we cannot walk over it.
-                    if (
-                            (currentAdj.state == RoomTileState.BLOCKED) ||
-                            ((currentAdj.state == RoomTileState.SIT || currentAdj.state == RoomTileState.LAY) && !currentAdj.equals(goalLocation)))
+                    if (!currentAdj.equals(goalLocation) && (currentAdj.state == RoomTileState.BLOCKED || currentAdj.state == RoomTileState.SIT || currentAdj.state == RoomTileState.LAY))
                     {
                         closedList.add(currentAdj);
                         openList.remove(currentAdj);
@@ -311,10 +320,10 @@ public class RoomLayout
                     if (!ALLOW_FALLING && height < - MAXIMUM_STEP_HEIGHT) continue;
 
                     //If the step difference is bigger than the maximum step height, continue.
-                    if (height > MAXIMUM_STEP_HEIGHT && currentAdj.state == RoomTileState.OPEN) continue;
+                    if (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT) continue;
 
                     //Check if the tile has habbos.
-                    if (!this.room.isAllowWalkthrough() && this.room.hasHabbosAt(currentAdj.x, currentAdj.y))
+                    if (currentAdj.hasUnits() && (!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation)))
                     {
                         closedList.add(currentAdj);
                         openList.remove(currentAdj);
@@ -652,6 +661,28 @@ public class RoomLayout
         }
 
         return tiles;
+    }
+
+    public List<RoomTile> getWalkableTilesAround(RoomTile tile) {
+        return getWalkableTilesAround(tile, 0);
+    }
+
+    public List<RoomTile> getWalkableTilesAround(RoomTile tile, int directionOffset) {
+        List<RoomTile> availableTiles = new ArrayList<>(this.getTilesAround(tile, directionOffset));
+
+        List<RoomTile> toRemove = new ArrayList<>();
+
+        for(RoomTile t : availableTiles) {
+            if(t == null || t.state != RoomTileState.OPEN || !t.isWalkable()) {
+                toRemove.add(t);
+            }
+        }
+
+        for(RoomTile t : toRemove) {
+            availableTiles.remove(t);
+        }
+
+        return availableTiles;
     }
 
     public static Rectangle getRectangle(int x, int y, int width, int length, int rotation)

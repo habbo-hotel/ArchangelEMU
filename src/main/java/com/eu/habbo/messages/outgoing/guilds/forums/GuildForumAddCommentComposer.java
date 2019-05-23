@@ -1,16 +1,15 @@
 package com.eu.habbo.messages.outgoing.guilds.forums;
 
-import com.eu.habbo.habbohotel.guilds.forums.GuildForumComment;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class GuildForumAddCommentComposer extends MessageComposer
 {
-    private final GuildForumComment comment;
+    private final ForumThreadComment comment;
 
-    public GuildForumAddCommentComposer(GuildForumComment comment)
-    {
+    public GuildForumAddCommentComposer(ForumThreadComment comment) {
         this.comment = comment;
     }
 
@@ -18,7 +17,7 @@ public class GuildForumAddCommentComposer extends MessageComposer
     public ServerMessage compose()
     {
         this.response.init(Outgoing.GuildForumAddCommentComposer);
-        this.response.appendInt(this.comment.getGuildId()); //guild_id
+        this.response.appendInt(this.comment.getThread().getGuildId()); //guild_id
         this.response.appendInt(this.comment.getThreadId()); //thread_id
         this.comment.serialize(this.response); //Comment
         return this.response;

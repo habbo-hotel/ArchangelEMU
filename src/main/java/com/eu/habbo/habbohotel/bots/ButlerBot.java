@@ -99,20 +99,28 @@ public class ButlerBot extends Bot
                                         b.talk(Emulator.getTexts().getValue("bots.butler.given").replace("%key%", key).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername()));
                                     }
                                 });
+
                                 List<Runnable> failedReached = new ArrayList();
                                 failedReached.add(new Runnable()
                                 {
                                     public void run()
                                     {
-                                        if (b.getRoomUnit().getCurrentLocation().distance(serveEvent.habbo.getRoomUnit().getCurrentLocation()) <= Emulator.getConfig().getInt("hotel.bot.butler.servedistance")) {
+                                        if (b.getRoomUnit().getCurrentLocation().distance(serveEvent.habbo.getRoomUnit().getCurrentLocation()) <= Emulator.getConfig().getInt("hotel.bot.butler.servedistance", 8)) {
                                             for (Runnable t : tasks) {
                                                 t.run();
                                             }
                                         }
                                     }
                                 });
+
                                 Emulator.getThreading().run(new RoomUnitGiveHanditem(this.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), serveEvent.itemId));
-                                Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(this.getRoomUnit(), serveEvent.habbo.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), tasks, failedReached));
+
+                                if (b.getRoomUnit().getCurrentLocation().distance(serveEvent.habbo.getRoomUnit().getCurrentLocation()) > Emulator.getConfig().getInt("hotel.bot.butler.reachdistance", 3)) {
+                                    Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(this.getRoomUnit(), serveEvent.habbo.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), tasks, failedReached, Emulator.getConfig().getInt("hotel.bot.butler.reachdistance", 3)));
+                                }
+                                else {
+                                    Emulator.getThreading().run(failedReached.get(0), 1000);
+                                }
                             }
                             else
                             {

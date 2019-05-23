@@ -1,5 +1,12 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.users.HabboItem;
+import gnu.trove.set.hash.THashSet;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class RoomTile
 {
     public final short x;
@@ -10,11 +17,12 @@ public class RoomTile
     private double stackHeight;
     private boolean allowStack = true;
 
-
     private RoomTile previous = null;
     private boolean diagonally;
     private short gCosts;
     private short hCosts;
+
+    private final THashSet<RoomUnit> units;
 
 
     public RoomTile(short x, short y, short z, RoomTileState state, boolean allowStack)
@@ -25,6 +33,7 @@ public class RoomTile
         this.stackHeight = z;
         this.state = state;
         this.setAllowStack(allowStack);
+        this.units = new THashSet<>();
     }
 
     public RoomTile(RoomTile tile)
@@ -43,6 +52,7 @@ public class RoomTile
         {
             this.allowStack = false;
         }
+        this.units = tile.units;
     }
 
     public double getStackHeight()
@@ -198,5 +208,35 @@ public class RoomTile
     public boolean is(short x, short y)
     {
         return this.x == x && this.y == y;
+    }
+
+    public List<RoomUnit> getUnits() {
+        synchronized (this.units) {
+            return new ArrayList<RoomUnit>(this.units);
+        }
+    }
+
+    public void addUnit(RoomUnit unit) {
+        synchronized (this.units) {
+            if (!this.units.contains(unit)) {
+                this.units.add(unit);
+            }
+        }
+    }
+
+    public void removeUnit(RoomUnit unit) {
+        synchronized (this.units) {
+            this.units.remove(unit);
+        }
+    }
+
+    public boolean hasUnits() {
+        synchronized (this.units) {
+            return this.units.size() > 0;
+        }
+    }
+
+    public boolean unitIsOnFurniOnTile(RoomUnit unit, Item item) {
+        return (unit.getX() >= this.x && unit.getX() < this.x + item.getLength()) && (unit.getY() >= this.y && unit.getY() < this.y + item.getWidth());
     }
 }

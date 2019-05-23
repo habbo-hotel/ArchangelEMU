@@ -1,15 +1,15 @@
 package com.eu.habbo.messages.outgoing.guilds.forums;
 
-import com.eu.habbo.habbohotel.guilds.forums.GuildForumThread;
+import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class GuildForumThreadMessagesComposer extends MessageComposer
 {
-    public final GuildForumThread thread;
+    public final ForumThread thread;
 
-    public GuildForumThreadMessagesComposer(GuildForumThread thread)
+    public GuildForumThreadMessagesComposer(ForumThread thread)
     {
         this.thread = thread;
     }

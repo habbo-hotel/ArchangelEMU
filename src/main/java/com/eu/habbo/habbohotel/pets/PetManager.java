@@ -79,6 +79,19 @@ public class PetManager
         this.breedingPetType = new TIntIntHashMap();
         this.breedingReward = new THashMap<>();
 
+        reloadPetData();
+
+        Emulator.getLogging().logStart("Pet Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+    }
+
+
+    public void reloadPetData()
+    {
+        this.petRaces.clear();
+        this.petData.clear();
+        this.breedingPetType.clear();
+        this.breedingReward.clear();
+
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
         {
             this.loadRaces(connection);
@@ -90,55 +103,6 @@ public class PetManager
         {
             Emulator.getLogging().logSQLException(e);
             Emulator.getLogging().logErrorLine("Pet Manager -> Failed to load!");
-            return;
-        }
-
-        Emulator.getLogging().logStart("Pet Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
-    }
-
-
-    public void reloadPetData()
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-        {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM pet_actions ORDER BY pet_type ASC"))
-            {
-                try (ResultSet set = statement.executeQuery())
-                {
-                    while (set.next())
-                    {
-                        PetData petData = this.petData.get(set.getInt("pet_type"));
-
-                        if (petData != null)
-                        {
-                            petData.load(set);
-                        }
-                        else
-                        {
-                            this.petData.put(set.getInt("pet_type"), new PetData(set));
-                        }
-                    }
-                }
-            }
-
-            PetData.generalNestItems.clear();
-            PetData.generalFoodItems.clear();
-            PetData.generalDrinkItems.clear();
-
-            for(PetData data : this.petData.values())
-            {
-                data.reset();
-            }
-
-            this.loadPetItems(connection);
-
-            this.loadPetVocals(connection);
-
-            this.loadRaces(connection);
-        }
-        catch (SQLException e)
-        {
-            Emulator.getLogging().logSQLException(e);
         }
     }
 

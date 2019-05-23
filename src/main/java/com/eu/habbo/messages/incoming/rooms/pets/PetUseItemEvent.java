@@ -15,7 +15,7 @@ import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetHorseFigureComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
-public class HorseUseItemEvent extends MessageHandler
+public class PetUseItemEvent extends MessageHandler
 {
     @Override
     public void handle() throws Exception
@@ -103,7 +103,7 @@ public class HorseUseItemEvent extends MessageHandler
                 Emulator.getThreading().run(pet);
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomPetHorseFigureComposer((HorsePet) pet).compose());
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RemoveFloorItemComposer(item).compose());
-                Emulator.getThreading().run(new QueryDeleteHabboItem(item));
+                Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
             }
         }
         else if (pet instanceof MonsterplantPet)
@@ -124,7 +124,7 @@ public class HorseUseItemEvent extends MessageHandler
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantHealer"));
                     pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
-                    Emulator.getThreading().run(new QueryDeleteHabboItem(item));
+                    Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                 }
             }
             else if (item.getBaseItem().getName().equalsIgnoreCase("mnstr_fert"))
@@ -143,7 +143,7 @@ public class HorseUseItemEvent extends MessageHandler
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                     pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
                     pet.cycle();
-                    Emulator.getThreading().run(new QueryDeleteHabboItem(item));
+                    Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                 }
             }
             else if (item.getBaseItem().getName().startsWith("mnstr_rebreed"))
@@ -167,7 +167,7 @@ public class HorseUseItemEvent extends MessageHandler
                         this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetStatusUpdateComposer(pet).compose());
                         this.client.getHabbo().getHabboInfo().getCurrentRoom().updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                         pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
-                        Emulator.getThreading().run(new QueryDeleteHabboItem(item));
+                        Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                     }
                 }
             }

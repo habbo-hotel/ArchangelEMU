@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.modtool;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolIssue;
 import com.eu.habbo.habbohotel.modtool.ModToolTicketState;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
@@ -38,7 +39,7 @@ public class ModToolReleaseTicketEvent extends MessageHandler
         }
         else
         {
-            Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", Emulator.getTexts().getValue("scripter.warning.modtools.ticket.release").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
+            ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.ticket.release").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
         }
     }
 }

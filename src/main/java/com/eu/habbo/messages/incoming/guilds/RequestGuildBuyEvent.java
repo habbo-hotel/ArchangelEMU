@@ -2,12 +2,14 @@ package com.eu.habbo.messages.incoming.guilds;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildBoughtComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildEditFailComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.plugin.events.guilds.GuildPurchasedEvent;
 
@@ -30,6 +32,11 @@ public class RequestGuildBuyEvent extends MessageHandler
             }
         }
 
+        if(Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && this.client.getHabbo().getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
+            this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.HC_REQUIRED));
+            return;
+        }
+
         String name = this.packet.readString();
         String description = this.packet.readString();
 
@@ -39,6 +46,11 @@ public class RequestGuildBuyEvent extends MessageHandler
 
         if(r != null)
         {
+            if(r.hasGuild()) {
+                this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.ROOM_ALREADY_IN_USE));
+                return;
+            }
+
             if(r.getOwnerId() == this.client.getHabbo().getHabboInfo().getId())
             {
                 if (r.getGuildId() == 0)
@@ -98,7 +110,7 @@ public class RequestGuildBuyEvent extends MessageHandler
             else
             {
                 String message = Emulator.getTexts().getValue("scripter.warning.guild.buy.owner").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", r.getName().replace("%owner%", r.getOwnerName()));
-                Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", message);
+                ScripterManager.scripterDetected(this.client, message);
                 Emulator.getLogging().logUserLine(message);
             }
         }

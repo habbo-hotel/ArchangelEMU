@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDice;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -38,7 +39,7 @@ public class CloseDiceEvent extends MessageHandler
             }
             else
             {
-                Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", Emulator.getTexts().getValue("scripter.warning.packet.closedice").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%id%", item.getId() + "").replace("%itemname%", item.getBaseItem().getName()));
+                ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.packet.closedice").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%id%", item.getId() + "").replace("%itemname%", item.getBaseItem().getName()));
             }
         }
     }

@@ -21,11 +21,16 @@ import com.eu.habbo.threading.runnables.CameraClientAutoReconnect;
 import com.eu.habbo.util.imager.badges.BadgeImager;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
+import java.util.zip.Checksum;
 
 public final class Emulator
 {
@@ -39,20 +44,17 @@ public final class Emulator
     public final static int BUILD = 0;
 
 
-    public static final String version = "Version: " + MAJOR + "." + MINOR + "." + BUILD;
+    public final static String PREVIEW = "RC-3";
 
+    public static final String version = "Arcturus Morningstar"+ " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
 
-    public static MessengerBuddy publicChatBuddy;
-
+    public static String build = "";
 
     public static boolean isReady = false;
 
-
     public static boolean isShuttingDown = false;
 
-
     public static boolean stopped = false;
-
 
     public static boolean debugging = false;
 
@@ -89,12 +91,15 @@ public final class Emulator
     {
         try
         {
+            Locale.setDefault(new Locale("en"));
+
+            setBuild();
             Emulator.stopped = false;
             ConsoleCommand.load();
             Emulator.logging = new Logging();
-            Emulator.getLogging().logStart("\r" + Emulator.logo);
+            Emulator.getLogging().logStart("\r" + Emulator.logo +
+            "       Build: " + build + "\n");
             random = new Random();
-            publicChatBuddy = new MessengerBuddy(-1, "Staff Chat", "", (short) 0, 0);
             long startTime = System.nanoTime();
 
             Emulator.runtime = Runtime.getRuntime();
@@ -159,9 +164,9 @@ public final class Emulator
                 @Override
                 public void run()
                 {
-                    Emulator.getLogging().logStart("Arcturus Morningstar does not include a camera by default, if you wish to have that feature please download the PNGCamera plugin!");
-                    Emulator.getLogging().logStart("This is not an official arcturus build. This is a community forked version released under the GPL License. You are breaking no laws by using this software... Except for copyright infringement from sulake i suppose... oopsie.");
-                    Emulator.getLogging().logStart("- Krews.org Team");
+                    Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a Release Candidate for 2.0.0, if you find any bugs please place them on our git repository.");
+                    Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
+                    Emulator.getLogging().logStart("https://discord.gg/syuqgN");
                     System.out.println("Waiting for commands: ");
                 }
             }, 3500);
@@ -191,6 +196,38 @@ public final class Emulator
         {
             e.printStackTrace();
         }
+    }
+
+    private static void setBuild() {
+        if(Emulator.class.getProtectionDomain().getCodeSource() == null) {
+            build = "UNKNOWN";
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        try
+        {
+            String filepath = new File(Emulator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
+            MessageDigest md = MessageDigest.getInstance("MD5");// MD5
+            FileInputStream fis = new FileInputStream(filepath);
+            byte[] dataBytes = new byte[1024];
+            int nread = 0;
+
+            while((nread = fis.read(dataBytes)) != -1)
+                md.update(dataBytes, 0, nread);
+
+            byte[] mdbytes = md.digest();
+
+            for(int i=0; i<mdbytes.length; i++)
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100 , 16).substring(1));
+        }
+        catch(Exception e)
+        {
+            build = "UNKNOWN";
+            return;
+        }
+
+        build = sb.toString();
     }
 
 
@@ -457,12 +494,11 @@ public final class Emulator
 
     private static final String logo =
 
-                    "											            			\n" +
-                    "    __  ___                 _      ARCTURUS    __            		\n" +
+                    "							                    				    \n" +
+                    "    __  ___                 _  A R C T U R U S __            		\n" +
                     "   /  |/  /___  _________  (_)___  ____ ______/ /_____ ______		\n" +
                     "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
                     " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
                     "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
-                    "                               /____/    Love You Wesley x         \n" +
-                    "																	\n" ;
+                    "                                /____/                             \n";
 }

@@ -24,7 +24,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
 
     private boolean state;
     private boolean position;
-    private boolean direction;
+    private boolean rotation;
 
     public WiredConditionNotMatchStatePosition(ResultSet set, Item baseItem) throws SQLException
     {
@@ -52,23 +52,12 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
 
             if(item != null)
             {
-                if(this.state)
-                {
-                    if(item.getExtradata().equals(setting.state))
-                        return false;
-                }
+                boolean stateMatches = !this.state || item.getExtradata().equals(setting.state);
+                boolean positionMatches = !this.position || (setting.x == item.getX() && setting.y == item.getY());
+                boolean directionMatches = !this.rotation || setting.rotation == item.getRotation();
 
-                if(this.position)
-                {
-                    if((setting.x == item.getX() && setting.y == item.getY()))
-                        return false;
-                }
-
-                if(this.direction)
-                {
-                    if((setting.rotation == item.getRotation()))
-                        return false;
-                }
+                if(stateMatches && positionMatches && directionMatches)
+                    return false;
             }
             else
             {
@@ -102,7 +91,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
                 data.append(item.toString()).append(";");
         }
 
-        data.append(":").append(this.state ? 1 : 0).append(":").append(this.direction ? 1 : 0).append(":").append(this.position ? 1 : 0);
+        data.append(":").append(this.state ? 1 : 0).append(":").append(this.rotation ? 1 : 0).append(":").append(this.position ? 1 : 0);
 
         return data.toString();
     }
@@ -125,7 +114,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
         }
 
         this.state = data[2].equals("1");
-        this.direction = data[3].equals("1");
+        this.rotation = data[3].equals("1");
         this.position = data[4].equals("1");
     }
 
@@ -134,7 +123,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
     {
         this.settings.clear();
         this.state = false;
-        this.direction = false;
+        this.rotation = false;
         this.position = false;
     }
 
@@ -161,7 +150,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
         message.appendString("");
         message.appendInt(4);
         message.appendInt(this.state ? 1 : 0);
-        message.appendInt(this.direction ? 1 : 0);
+        message.appendInt(this.rotation ? 1 : 0);
         message.appendInt(this.position ? 1 : 0);
         message.appendInt(10);
         message.appendInt(0);
@@ -179,7 +168,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
         packet.readInt();
 
         this.state = packet.readInt() == 1;
-        this.direction = packet.readInt() == 1;
+        this.rotation = packet.readInt() == 1;
         this.position = packet.readInt() == 1;
 
         packet.readString();

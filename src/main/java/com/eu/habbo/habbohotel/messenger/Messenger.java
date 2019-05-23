@@ -124,6 +124,11 @@ public class Messenger
         this.friends.remove(habbo.getHabboInfo().getId());
     }
 
+    public void addBuddy(MessengerBuddy buddy)
+    {
+        this.friends.put(buddy.getId(), buddy);
+    }
+
     public static void unfriend(int userOne, int userTwo)
     {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM messenger_friendships WHERE (user_one_id = ? AND user_two_id = ?) OR (user_one_id = ? AND user_two_id = ?)"))

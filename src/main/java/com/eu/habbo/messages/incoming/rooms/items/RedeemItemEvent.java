@@ -12,6 +12,9 @@ import com.eu.habbo.messages.outgoing.users.UserCurrencyComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.furniture.FurnitureRedeemedEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
+import gnu.trove.set.hash.THashSet;
+
+import java.util.ArrayList;
 
 public class RedeemItemEvent extends MessageHandler
 {
@@ -29,6 +32,7 @@ public class RedeemItemEvent extends MessageHandler
             if(item != null && this.client.getHabbo().getHabboInfo().getId() == item.getUserId())
             {
                 boolean furnitureRedeemEventRegistered = Emulator.getPluginManager().isRegistered(FurnitureRedeemedEvent.class, true);
+                FurnitureRedeemedEvent furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), 0, FurnitureRedeemedEvent.CREDITS);
 
                 if(item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_"))
                 {
@@ -45,19 +49,9 @@ public class RedeemItemEvent extends MessageHandler
                             return;
                         }
 
-                        if(furnitureRedeemEventRegistered)
-                        {
-                            Event furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), credits, FurnitureRedeemedEvent.CREDITS);
-                            Emulator.getPluginManager().fireEvent(furniRedeemEvent);
-
-                            if(furniRedeemEvent.isCancelled())
-                                return;
-                        }
-
-                        this.client.getHabbo().getHabboInfo().addCredits(credits);
-                        this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
-
-                    } else if (item.getBaseItem().getName().startsWith("PF_"))
+                        furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), credits, FurnitureRedeemedEvent.CREDITS);
+                    }
+                    else if (item.getBaseItem().getName().startsWith("PF_"))
                     {
                         int pixels;
 
@@ -71,17 +65,7 @@ public class RedeemItemEvent extends MessageHandler
                             return;
                         }
 
-                        if(furnitureRedeemEventRegistered)
-                        {
-                            Event furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), pixels, FurnitureRedeemedEvent.PIXELS);
-                            Emulator.getPluginManager().fireEvent(furniRedeemEvent);
-
-                            if(furniRedeemEvent.isCancelled())
-                                return;
-                        }
-
-                        this.client.getHabbo().getHabboInfo().addPixels(pixels);
-                        this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
+                        furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), pixels, FurnitureRedeemedEvent.PIXELS);
                     }
                     else if (item.getBaseItem().getName().startsWith("DF_"))
                     {
@@ -108,29 +92,38 @@ public class RedeemItemEvent extends MessageHandler
                             return;
                         }
 
-                        if(furnitureRedeemEventRegistered)
-                        {
-                            Event furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), points, FurnitureRedeemedEvent.DIAMONDS);
-                            Emulator.getPluginManager().fireEvent(furniRedeemEvent);
-
-                            if(furniRedeemEvent.isCancelled())
-                                return;
-                        }
-
-                        this.client.getHabbo().givePoints(pointsType, points);
+                        furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), points, pointsType);
                     }
                     else if (item.getBaseItem().getName().startsWith("CF_diamond_"))
                     {
+                        int points;
+
                         try
                         {
-                            this.client.getHabbo().givePoints(Integer.valueOf(item.getBaseItem().getName().split("_")[2]));
+                            points = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
                         }
                         catch (Exception e)
                         {
                             Emulator.getLogging().logErrorLine("Failed to parse redeemable diamonds furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_diamond_<amount>");
                             return;
                         }
+
+                        furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), points, FurnitureRedeemedEvent.DIAMONDS);
                     }
+
+                    if(furnitureRedeemEventRegistered)
+                    {
+                        Emulator.getPluginManager().fireEvent(furniRedeemEvent);
+
+                        if(furniRedeemEvent.isCancelled())
+                            return;
+                    }
+
+                    if(furniRedeemEvent.amount < 1)
+                        return;
+
+                    if(room.getHabboItem(item.getId()) == null) // plugins may cause a lag between which time the item can be removed from the room
+                        return;
 
                     room.removeHabboItem(item);
                     room.sendComposer(new RemoveFloorItemComposer(item).compose());
@@ -138,7 +131,27 @@ public class RedeemItemEvent extends MessageHandler
                     t.setStackHeight(room.getStackHeight(item.getX(), item.getY(), false));
                     room.updateTile(t);
                     room.sendComposer(new UpdateStackHeightComposer(item.getX(), item.getY(), t.relativeHeight()).compose());
-                    Emulator.getThreading().run(new QueryDeleteHabboItem(item));
+                    Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
+
+                    switch(furniRedeemEvent.currencyID) {
+                        case FurnitureRedeemedEvent.CREDITS:
+                            this.client.getHabbo().getHabboInfo().addCredits(furniRedeemEvent.amount);
+                            this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
+                            break;
+
+                        case FurnitureRedeemedEvent.DIAMONDS:
+                            this.client.getHabbo().givePoints(furniRedeemEvent.amount);
+                            break;
+
+                        case FurnitureRedeemedEvent.PIXELS:
+                            this.client.getHabbo().getHabboInfo().addPixels(furniRedeemEvent.amount);
+                            this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
+                            break;
+
+                        default:
+                            this.client.getHabbo().givePoints(furniRedeemEvent.currencyID, furniRedeemEvent.amount);
+                            break;
+                    }
                 }
             }
         }

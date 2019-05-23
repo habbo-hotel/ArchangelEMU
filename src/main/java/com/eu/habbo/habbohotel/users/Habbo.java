@@ -17,14 +17,15 @@ import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.users.UserCreditsEvent;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
 import com.eu.habbo.plugin.events.users.UserPointsEvent;
+import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.net.InetSocketAddress;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Habbo implements Runnable
 {
@@ -40,13 +41,11 @@ public class Habbo implements Runnable
     private volatile boolean disconnected = false;
     private volatile boolean disconnecting = false;
 
-    public boolean firstVisit = false;
-
     public Habbo(ResultSet set)
     {
         this.client = null;
         this.habboInfo = new HabboInfo(set);
-        this.habboStats = HabboStats.load(this);
+        this.habboStats = HabboStats.load(this.habboInfo);
         this.habboInventory = new HabboInventory(this);
 
         this.messenger = new Messenger();
@@ -415,6 +414,7 @@ public class Habbo implements Runnable
             HabboBadge badge = BadgesComponent.createBadge(code, this);
             this.habboInventory.getBadgesComponent().addBadge(badge);
             this.client.sendResponse(new AddUserBadgeComposer(badge));
+            this.client.sendResponse(new AddHabboItemComposer(badge.getId(), AddHabboItemComposer.AddHabboItemCategory.BADGE));
 
             THashMap<String, String> keys = new THashMap<>();
             keys.put("display", "BUBBLE");
@@ -513,5 +513,15 @@ public class Habbo implements Runnable
 
             this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(this.client.getHabbo());
         }
+    }
+
+    public Set<Integer> getForbiddenClothing() {
+        TIntCollection clothingIDs = this.getInventory().getWardrobeComponent().getClothing();
+
+        return Emulator.getGameEnvironment().getCatalogManager().clothing.values().stream()
+                .filter(c -> !clothingIDs.contains(c.id))
+                .map(c -> c.setId)
+                .flatMap(c -> Arrays.stream(c).boxed())
+                .collect(Collectors.toSet());
     }
 }

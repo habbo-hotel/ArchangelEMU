@@ -110,7 +110,7 @@ public class HabboManager
 
 
         try(Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE auth_ticket LIKE ? LIMIT 1"))
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE auth_ticket = ? LIMIT 1"))
         {
             statement.setString(1, sso);
             try (ResultSet set = statement.executeQuery())
@@ -119,18 +119,17 @@ public class HabboManager
                 {
                     habbo = new Habbo(set);
 
-                    if (habbo.firstVisit)
+                    if (habbo.getHabboInfo().firstVisit)
                     {
                         Emulator.getPluginManager().fireEvent(new UserRegisteredEvent(habbo));
                     }
 
                     if (!Emulator.debugging)
                     {
-                        try (PreparedStatement stmt = connection.prepareStatement("UPDATE users SET auth_ticket = ? WHERE auth_ticket LIKE ? AND id = ? LIMIT 1"))
+                        try (PreparedStatement stmt = connection.prepareStatement("UPDATE users SET auth_ticket = ? WHERE id = ? LIMIT 1"))
                         {
                             stmt.setString(1, "");
-                            stmt.setString(2, sso);
-                            stmt.setInt(3, habbo.getHabboInfo().getId());
+                            stmt.setInt(2, habbo.getHabboInfo().getId());
                             stmt.execute();
                         } catch (SQLException e)
                         {
@@ -150,6 +149,13 @@ public class HabboManager
         }
 
         return habbo;
+    }
+
+    public HabboInfo getHabboInfo(int id) {
+        if(this.getHabbo(id) == null) {
+            return getOfflineHabboInfo(id);
+        }
+        return this.getHabbo(id).getHabboInfo();
     }
 
     public static HabboInfo getOfflineHabboInfo(int id)
@@ -326,7 +332,7 @@ public class HabboManager
             if (!oldRank.getBadge().isEmpty())
             {
                 habbo.deleteBadge(habbo.getInventory().getBadgesComponent().getBadge(oldRank.getBadge()));
-                BadgesComponent.deleteBadge(userId, oldRank.getBadge());
+                //BadgesComponent.deleteBadge(userId, oldRank.getBadge()); // unnecessary as Habbo.deleteBadge does this
             }
 
             habbo.getHabboInfo().setRank(newRank);

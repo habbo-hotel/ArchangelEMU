@@ -10,35 +10,37 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class FriendChatMessageComposer extends MessageComposer
 {
     private final Message message;
+    private final int toId;
+    private final int fromId;
 
     public FriendChatMessageComposer(Message message)
     {
         this.message = message;
+        this.toId = message.getFromId();
+        this.fromId = message.getFromId();
+    }
+
+    public FriendChatMessageComposer(Message message, int toId, int fromId) {
+        this.message = message;
+        this.toId = toId;
+        this.fromId = fromId;
     }
 
     @Override
     public ServerMessage compose()
     {
         this.response.init(Outgoing.FriendChatMessageComposer);
-
-        if (this.message.getToId() == -1)
-        {
-            this.response.appendInt(-1);
-        }
-        else
-        {
-            this.response.appendInt(this.message.getFromId());
-        }
+        this.response.appendInt(this.toId);
         this.response.appendString(this.message.getMessage());
         this.response.appendInt(Emulator.getIntUnixTimestamp() - this.message.getTimestamp());
 
-        if (this.message.getToId() == -1) //TO Staff Chat
+        if(this.toId < 0) // group chat
         {
             String name = "AUTO_MODERATOR";
             String look = "lg-5635282-1193.hd-3091-1.sh-3089-73.cc-156282-64.hr-831-34.ha-1012-1186.ch-3050-62-62";
-            if (this.message.getFromId() != -1)
+            if (this.fromId > 0)
             {
-                Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.message.getFromId());
+                Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.fromId);
 
                 if (habbo != null)
                 {
@@ -50,7 +52,7 @@ public class FriendChatMessageComposer extends MessageComposer
                     name = "UNKNOWN";
                 }
             }
-            this.response.appendString(name + "/" + look + "/" + this.message.getFromId());
+            this.response.appendString(name + "/" + look + "/" + this.fromId);
         }
 
         return this.response;

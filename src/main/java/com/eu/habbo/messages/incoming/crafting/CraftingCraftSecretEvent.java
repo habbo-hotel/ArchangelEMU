@@ -93,8 +93,8 @@ public class CraftingCraftSecretEvent extends MessageHandler
                         for (HabboItem item : habboItems)
                         {
                             this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
-                            this.client.sendResponse(new RemoveHabboItemComposer(item.getId()));
-                            Emulator.getThreading().run(new QueryDeleteHabboItem(item));
+                            this.client.sendResponse(new RemoveHabboItemComposer(item.getGiftAdjustedId()));
+                            Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                         }
                         this.client.sendResponse(new InventoryRefreshComposer());
 

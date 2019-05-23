@@ -41,7 +41,7 @@ public class GiveRankCommand extends Command
             }
             else
             {
-                rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(params[2]);
+                rank = Emulator.getGameEnvironment().getPermissionsManager().getRankByName(params[2]);
             }
 
             if (rank != null)

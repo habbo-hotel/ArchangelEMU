@@ -31,6 +31,8 @@ When making an bug report or a feature request use the template we provide so th
 - Harmonic
 - Beny
 - Claudio
+- Alejandro
+- Harmony
 
 ## Discord ##
 Join us on Discord at https://discord.gg/BzfFsTp

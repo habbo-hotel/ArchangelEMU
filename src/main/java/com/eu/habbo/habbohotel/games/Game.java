@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.games;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredHighscore;
+import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.items.interactions.wired.triggers.WiredTriggerTeamLoses;
 import com.eu.habbo.habbohotel.items.interactions.wired.triggers.WiredTriggerTeamWins;
@@ -24,28 +25,19 @@ import java.util.Map;
 public abstract class Game implements Runnable
 {
 
-    public final Class<? extends GameTeam> gameTeamClazz;
+    private final Class<? extends GameTeam> gameTeamClazz;
 
-
-    public final Class<? extends GamePlayer> gamePlayerClazz;
-
+    private final Class<? extends GamePlayer> gamePlayerClazz;
 
     protected final THashMap<GameTeamColors, GameTeam> teams = new THashMap<>();
 
-
     protected final Room room;
 
+    private final boolean countsAchievements;
 
-    protected final boolean countsAchievements;
+    private int startTime;
 
-
-    protected int startTime;
-
-
-    protected int pauseTime;
-
-
-    protected int endTime;
+    private int endTime;
 
     public boolean isRunning;
 
@@ -132,6 +124,7 @@ public abstract class Game implements Runnable
             }
         }
 
+        /*
         boolean deleteGame = true;
         for (GameTeam team : this.teams.values())
         {
@@ -146,6 +139,7 @@ public abstract class Game implements Runnable
         {
             this.room.deleteGame(this);
         }
+        */
     }
 
 
@@ -170,30 +164,7 @@ public abstract class Game implements Runnable
         }
     }
 
-
-    public abstract void run();
-
-    public void pause()
-    {
-        if (this.state.equals(GameState.RUNNING))
-        {
-            this.state = GameState.PAUSED;
-            this.pauseTime = Emulator.getIntUnixTimestamp();
-        }
-    }
-
-    public void unpause()
-    {
-        if (this.state.equals(GameState.PAUSED))
-        {
-            this.state = GameState.RUNNING;
-            this.endTime = Emulator.getIntUnixTimestamp() + (this.endTime - this.pauseTime);
-        }
-    }
-
-    public void stop()
-    {
-        this.state = GameState.IDLE;
+    public void onEnd() {
         this.endTime = Emulator.getIntUnixTimestamp();
 
         this.saveScores();
@@ -225,17 +196,51 @@ public abstract class Game implements Runnable
             }
         }
 
+        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class))
+        {
+            this.room.updateItem(item);
+        }
+    }
+
+    public abstract void run();
+
+    public void pause()
+    {
+        if (this.state.equals(GameState.RUNNING))
+        {
+            this.state = GameState.PAUSED;
+        }
+    }
+
+    public void unpause()
+    {
+        if (this.state.equals(GameState.PAUSED))
+        {
+            this.state = GameState.RUNNING;
+        }
+    }
+
+    public void stop()
+    {
+        this.state = GameState.IDLE;
+
+        boolean gamesActive = false;
+        for(HabboItem timer : room.getFloorItems())
+        {
+            if(timer instanceof InteractionGameTimer) {
+                if(((InteractionGameTimer) timer).isRunning())
+                    gamesActive = true;
+            }
+        }
+
+        if(gamesActive) {
+            return;
+        }
+
         if(Emulator.getPluginManager().isRegistered(GameStoppedEvent.class, true))
         {
             Event gameStoppedEvent = new GameStoppedEvent(this);
             Emulator.getPluginManager().fireEvent(gameStoppedEvent);
-        }
-
-        WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, this.room, new Object[]{this});
-
-        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class))
-        {
-            this.room.updateItem(item);
         }
     }
 
@@ -289,27 +294,33 @@ public abstract class Game implements Runnable
         }
     }
 
-
     public Room getRoom()
     {
         return this.room;
     }
-
 
     public int getStartTime()
     {
         return this.startTime;
     }
 
-
-    public int getEndTime()
-    {
-        return this.endTime;
+    public Class<? extends GameTeam> getGameTeamClass() {
+        return gameTeamClazz;
     }
 
+    public Class<? extends GamePlayer> getGamePlayerClass() {
+        return gamePlayerClazz;
+    }
 
-    public void addTime(int time)
-    {
-        this.endTime += time;
+    public THashMap<GameTeamColors, GameTeam> getTeams() {
+        return teams;
+    }
+
+    public boolean isCountsAchievements() {
+        return countsAchievements;
+    }
+
+    public GameState getState() {
+        return state;
     }
 }

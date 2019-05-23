@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.incoming.rooms.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.RoomChatType;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -36,7 +37,7 @@ public class RoomUserWhisperEvent extends MessageHandler
         else
         {
             String reportMessage = Emulator.getTexts().getValue("scripter.warning.chat.length").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%length%", chatMessage.getMessage().length() + "");
-            Emulator.getGameEnvironment().getModToolManager().quickTicket(this.client.getHabbo(), "Scripter", reportMessage);
+            ScripterManager.scripterDetected(this.client, reportMessage);
             Emulator.getLogging().logUserLine(reportMessage);
         }
     }

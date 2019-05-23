@@ -132,8 +132,8 @@ public class MarketPlace
 
 
     public static List<MarketPlaceOffer> getOffers(int minPrice, int maxPrice, String search, int sort) {
-        List<MarketPlaceOffer> offers = new ArrayList(10);
-        String query = "SELECT B.* FROM marketplace_items a INNER JOIN (SELECT b.item_id AS base_item_id, b.limited_data AS ltd_data, marketplace_items.*, AVG(price) as avg, MIN(marketplace_items.price) as minPrice, MAX(marketplace_items.price) as maxPrice, COUNT(*) as number, (SELECT COUNT(*) FROM marketplace_items c INNER JOIN items as items_b ON c.item_id = items_b.id WHERE state = 2 AND items_b.item_id = base_item_id AND DATE(from_unixtime(sold_timestamp)) = CURDATE()) as sold_count_today FROM marketplace_items INNER JOIN items b ON marketplace_items.item_id = b.id WHERE price = (SELECT MIN(e.price) FROM marketplace_items e, items d WHERE e.item_id = d.id AND d.item_id = b.item_id AND e.state = 1 AND e.timestamp > ? GROUP BY d.item_id) AND state = 1 AND timestamp > ?";
+        List<MarketPlaceOffer> offers = new ArrayList<>(10);
+        String query = "SELECT B.* FROM marketplace_items a INNER JOIN (SELECT b.item_id AS base_item_id, b.limited_data AS ltd_data, marketplace_items.*, AVG(price) as avg, MIN(marketplace_items.price) as minPrice, MAX(marketplace_items.price) as maxPrice, COUNT(*) as number, (SELECT COUNT(*) FROM marketplace_items c INNER JOIN items as items_b ON c.item_id = items_b.id WHERE state = 2 AND items_b.item_id = base_item_id AND DATE(from_unixtime(sold_timestamp)) = CURDATE()) as sold_count_today FROM marketplace_items INNER JOIN items b ON marketplace_items.item_id = b.id INNER JOIN items_base bi ON b.item_id = bi.id WHERE price = (SELECT MIN(e.price) FROM marketplace_items e, items d WHERE e.item_id = d.id AND d.item_id = b.item_id AND e.state = 1 AND e.timestamp > ? GROUP BY d.item_id) AND state = 1 AND timestamp > ?";
         if (minPrice > 0)
         {
             query += " AND CEIL(price + (price / 100)) >= " + minPrice;
@@ -144,7 +144,7 @@ public class MarketPlace
         }
         if(search.length() > 0)
         {
-            query += " AND items_base.public_name LIKE ?";
+            query += " AND bi.public_name LIKE ?";
         }
 
         query += " GROUP BY base_item_id, ltd_data";
@@ -414,11 +414,14 @@ public class MarketPlace
         RequestOffersEvent.cachedResults.clear();
         try
         {
+            client.sendResponse(new RemoveHabboItemComposer(event.item.getGiftAdjustedId()));
+            client.sendResponse(new InventoryRefreshComposer());
+
+            event.item.setFromGift(false);
+
             MarketPlaceOffer offer = new MarketPlaceOffer(event.item, event.price, client.getHabbo());
             client.getHabbo().getInventory().addMarketplaceOffer(offer);
             client.getHabbo().getInventory().getItemsComponent().removeHabboItem(event.item);
-            client.sendResponse(new RemoveHabboItemComposer(event.item.getId()));
-            client.sendResponse(new InventoryRefreshComposer());
             item.setUserId(-1);
             item.needsUpdate(true);
             Emulator.getThreading().run(item);

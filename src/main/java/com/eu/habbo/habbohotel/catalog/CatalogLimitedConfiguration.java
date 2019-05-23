@@ -21,7 +21,13 @@ public class CatalogLimitedConfiguration implements Runnable
         this.itemId = itemId;
         this.totalSet = totalSet;
         this.limitedNumbers = availableNumbers;
-        Collections.shuffle(this.limitedNumbers);
+
+        if(Emulator.getConfig().getBoolean("catalog.ltd.random", true)) {
+            Collections.shuffle(this.limitedNumbers);
+        }
+        else {
+            Collections.reverse(this.limitedNumbers);
+        }
     }
 
     public int getNumber()
@@ -80,7 +86,13 @@ public class CatalogLimitedConfiguration implements Runnable
             }
 
             this.totalSet += amount;
-            Collections.shuffle(this.limitedNumbers);
+
+            if(Emulator.getConfig().getBoolean("catalog.ltd.random", true)) {
+                Collections.shuffle(this.limitedNumbers);
+            }
+            else {
+                Collections.reverse(this.limitedNumbers);
+            }
         }
     }
 

@@ -2,10 +2,13 @@ package com.eu.habbo.threading.runnables.teleport;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
+import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class TeleportActionFive implements Runnable
 {
@@ -23,21 +26,31 @@ class TeleportActionFive implements Runnable
     @Override
     public void run()
     {
-        this.client.getHabbo().getRoomUnit().isTeleporting = false;
-        this.client.getHabbo().getRoomUnit().setCanWalk(true);
+        RoomUnit unit = this.client.getHabbo().getRoomUnit();
+        
+        unit.isTeleporting = false;
+        unit.setCanWalk(true);
 
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != this.room)
             return;
 
         //if (!(this.currentTeleport instanceof InteractionTeleportTile))
 
-        RoomTile tile = this.room.getLayout().getTileInFront(this.room.getLayout().getTile(this.currentTeleport.getX(), this.currentTeleport.getY()), this.currentTeleport.getRotation());
+        RoomTile currentLocation = this.room.getLayout().getTile(this.currentTeleport.getX(), this.currentTeleport.getY());
+        RoomTile tile = this.room.getLayout().getTileInFront(currentLocation, this.currentTeleport.getRotation());
 
         if (tile != null)
         {
-            this.client.getHabbo().getRoomUnit().setGoalLocation(tile);
-        }
+            List<Runnable> onSuccess = new ArrayList<Runnable>();
+            onSuccess.add(() -> {
+                unit.setCanLeaveRoomByDoor(true);
+            });
 
+            unit.setCanLeaveRoomByDoor(false);
+            unit.setGoalLocation(tile);
+            unit.statusUpdate(true);
+            Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onSuccess, onSuccess));
+        }
 
         this.currentTeleport.setExtradata("1");
         this.room.updateItem(this.currentTeleport);

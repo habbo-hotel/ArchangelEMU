@@ -11,7 +11,6 @@ import com.eu.habbo.habbohotel.commands.CommandHandler;
 import com.eu.habbo.habbohotel.crafting.CraftingManager;
 import com.eu.habbo.habbohotel.guides.GuideManager;
 import com.eu.habbo.habbohotel.guilds.GuildManager;
-import com.eu.habbo.habbohotel.guilds.forums.GuildForumManager;
 import com.eu.habbo.habbohotel.hotelview.HotelViewManager;
 import com.eu.habbo.habbohotel.items.ItemManager;
 import com.eu.habbo.habbohotel.modtool.ModToolManager;
@@ -28,7 +27,6 @@ public class GameEnvironment
     private HabboManager habboManager;
     private NavigatorManager navigatorManager;
     private GuildManager guildManager;
-    private GuildForumManager guildForumManager;
     private ItemManager itemManager;
     private CatalogManager catalogManager;
     private HotelViewManager hotelViewManager;
@@ -60,7 +58,6 @@ public class GameEnvironment
         this.botManager         = new BotManager();
         this.petManager         = new PetManager();
         this.guildManager       = new GuildManager();
-        this.guildForumManager  = new GuildForumManager();
         this.catalogManager     = new CatalogManager();
         this.roomManager        = new RoomManager();
         this.navigatorManager   = new NavigatorManager();
@@ -74,6 +71,7 @@ public class GameEnvironment
         this.pollManager        = new PollManager();
 
         this.roomManager.loadPublicRooms();
+        this.navigatorManager.loadNavigator();
 
         this.creditsScheduler   = new CreditsScheduler();
         Emulator.getThreading().run(this.creditsScheduler);
@@ -114,11 +112,6 @@ public class GameEnvironment
     public GuildManager getGuildManager()
     {
         return this.guildManager;
-    }
-
-    public GuildForumManager getGuildForumManager()
-    {
-        return this.guildForumManager;
     }
 
     public ItemManager getItemManager()

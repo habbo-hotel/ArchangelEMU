@@ -295,6 +295,8 @@ public class AchievementManager
                 }
             }
 
+            habbo.getClient().sendResponse(new AddHabboItemComposer(badge.getId(), AddHabboItemComposer.AddHabboItemCategory.BADGE));
+
             habbo.getHabboStats().addAchievementScore(newLevel.points);
 
             if (newLevel.rewardAmount > 0)

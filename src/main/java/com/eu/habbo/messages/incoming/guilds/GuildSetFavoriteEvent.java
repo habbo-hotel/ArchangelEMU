@@ -29,11 +29,10 @@ public class GuildSetFavoriteEvent extends MessageHandler
 
             if(this.client.getHabbo().getHabboInfo().getCurrentRoom() != null)
             {
-
                 if(guild != null)
                 {
-                    this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new GuildFavoriteRoomUserUpdateComposer(this.client.getHabbo().getRoomUnit(), guild).compose());
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUsersAddGuildBadgeComposer(guild).compose());
+                    this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new GuildFavoriteRoomUserUpdateComposer(this.client.getHabbo().getRoomUnit(), guild).compose());
                 }
             }
 

@@ -1,15 +1,19 @@
 package com.eu.habbo.habbohotel.messenger;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.modtool.WordFilter;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.messages.ISerialize;
+import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.outgoing.friends.FriendChatMessageComposer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MessengerBuddy implements Runnable {
+public class MessengerBuddy implements Runnable, ISerialize {
 
     private int id;
     private String username;
@@ -175,5 +179,40 @@ public class MessengerBuddy implements Runnable {
         {
             Emulator.getLogging().logSQLException(e);
         }
+    }
+
+    public void onMessageReceived(Habbo from, String message) {
+        Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(this.id);
+
+        if(habbo == null)
+            return;
+
+        Message chatMessage = new Message(from.getHabboInfo().getId(), this.id, message);
+        Emulator.getThreading().run(chatMessage);
+
+        if (WordFilter.ENABLED_FRIENDCHAT)
+        {
+            chatMessage.setMessage(Emulator.getGameEnvironment().getWordFilter().filter(chatMessage.getMessage(), from));
+        }
+
+        habbo.getClient().sendResponse(new FriendChatMessageComposer(chatMessage));
+    }
+
+    @Override
+    public void serialize(ServerMessage message) {
+        message.appendInt(this.id);
+        message.appendString(this.username);
+        message.appendInt(this.gender.equals(HabboGender.M) ? 0 : 1);
+        message.appendBoolean(this.online == 1);
+        message.appendBoolean(this.inRoom); //IN ROOM
+        message.appendString(this.look);
+        message.appendInt(0);
+        message.appendString(this.motto);
+        message.appendString("");
+        message.appendString("");
+        message.appendBoolean(false); //Offline messaging.
+        message.appendBoolean(false);
+        message.appendBoolean(false);
+        message.appendShort(this.relation);
     }
 }

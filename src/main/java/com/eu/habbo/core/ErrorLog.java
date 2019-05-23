@@ -11,13 +11,20 @@ import java.sql.SQLException;
 
 public class ErrorLog implements Loggable
 {
-    public final static String insertQuery = "INSERT INTO emulator_errors (timestamp, type, stacktrace) VALUES (?, ?, ?)";
+    public final static String insertQuery = "INSERT INTO emulator_errors (timestamp, version, build_hash, type, stacktrace) VALUES (?, ?, ?, ?, ?)";
+    public final String version;
+    public final String buildHash;
+
     public final int timeStamp;
     public final String type;
     public final String stackTrace;
 
     public ErrorLog(String type, Throwable e)
     {
+
+        this.version = Emulator.version;
+        this.buildHash = Emulator.version;
+
         this.timeStamp = Emulator.getIntUnixTimestamp();
         this.type = type;
 
@@ -38,6 +45,9 @@ public class ErrorLog implements Loggable
 
     public ErrorLog(String type, String message)
     {
+        this.version = Emulator.version;
+        this.buildHash = Emulator.build;
+
         this.timeStamp = Emulator.getIntUnixTimestamp();
         this.type = type;
         this.stackTrace = message;
@@ -47,8 +57,10 @@ public class ErrorLog implements Loggable
     public void log(PreparedStatement statement) throws SQLException
     {
         statement.setInt(1, this.timeStamp);
-        statement.setString(2, this.type);
-        statement.setString(3, this.stackTrace);
+        statement.setString(2, this.version);
+        statement.setString(3, this.buildHash);
+        statement.setString(4, this.type);
+        statement.setString(5, this.stackTrace);
         statement.addBatch();
     }
 }

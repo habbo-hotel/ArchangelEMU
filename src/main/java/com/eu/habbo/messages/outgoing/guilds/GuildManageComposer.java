@@ -19,8 +19,8 @@ public class GuildManageComposer extends MessageComposer
     {
         this.response.init(Outgoing.GuildManageComposer);
         this.response.appendInt(1);
-        this.response.appendInt(1);
-        this.response.appendString("Room Name");
+        this.response.appendInt(guild.getRoomId());
+        this.response.appendString(guild.getRoomName());
         this.response.appendBoolean(false);
         this.response.appendBoolean(true);
         this.response.appendInt(this.guild.getId());
@@ -30,7 +30,7 @@ public class GuildManageComposer extends MessageComposer
         this.response.appendInt(this.guild.getColorOne());
         this.response.appendInt(this.guild.getColorTwo());
         this.response.appendInt(this.guild.getState().state);
-        this.response.appendInt(this.guild.getRights());
+        this.response.appendInt(this.guild.getRights() ? 0 : 1);
         this.response.appendBoolean(false);
         this.response.appendString("");
         this.response.appendInt(5);

@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UserDataComposer;
+import com.eu.habbo.util.figure.FigureUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

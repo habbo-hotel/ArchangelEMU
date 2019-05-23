@@ -25,7 +25,7 @@ public class GuildChangeSettingsEvent extends MessageHandler
                 if (room == null)
                     return;
 
-                GuildChangedSettingsEvent settingsEvent = new GuildChangedSettingsEvent(guild, this.packet.readInt(), this.packet.readInt());
+                GuildChangedSettingsEvent settingsEvent = new GuildChangedSettingsEvent(guild, this.packet.readInt(), this.packet.readInt() == 0);
                 Emulator.getPluginManager().fireEvent(settingsEvent);
 
                 if (settingsEvent.isCancelled())

@@ -108,7 +108,7 @@ public class PermissionsManager
     }
 
 
-    public Rank getRank(String rankName)
+    public Rank getRankByName(String rankName)
     {
         for (Rank rank : this.ranks.valueCollection())
         {
@@ -161,8 +161,12 @@ public class PermissionsManager
         return this.badges.keySet();
     }
 
-    public List<Rank> getRanks(String code)
+    public List<Rank> getRanksByBadgeCode(String code)
     {
         return this.badges.get(code);
+    }
+
+    public List<Rank> getAllRanks() {
+        return new ArrayList<>(this.ranks.valueCollection());
     }
 }

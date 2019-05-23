@@ -774,43 +774,6 @@ public class RoomSpecialTypes
         return this.gameTimers;
     }
 
-    public THashMap<Integer, InteractionFreezeTimer> getFreezeTimers()
-    {
-        synchronized (this.gameTimers)
-        {
-            THashMap<Integer, InteractionFreezeTimer> timers = new THashMap<>();
-
-            for (Map.Entry<Integer, InteractionGameTimer> set : this.gameTimers.entrySet())
-            {
-                if (set.getValue() instanceof InteractionFreezeTimer)
-                {
-                    timers.put(set.getValue().getId(), (InteractionFreezeTimer) set.getValue());
-                }
-            }
-
-            return timers;
-        }
-    }
-
-    public THashMap<Integer, InteractionBattleBanzaiTimer> getBattleBanzaiTimers()
-    {
-        synchronized (this.gameTimers)
-        {
-            THashMap<Integer, InteractionBattleBanzaiTimer> timers = new THashMap<>();
-
-            for (Map.Entry<Integer, InteractionGameTimer> set : this.gameTimers.entrySet())
-            {
-                if (set.getValue() instanceof InteractionBattleBanzaiTimer)
-                {
-                    timers.put(set.getValue().getId(), (InteractionBattleBanzaiTimer) set.getValue());
-                }
-            }
-
-            return timers;
-        }
-    }
-
-
     public InteractionFreezeExitTile getFreezeExitTile()
     {
         for(InteractionFreezeExitTile t : this.freezeExitTile.values())

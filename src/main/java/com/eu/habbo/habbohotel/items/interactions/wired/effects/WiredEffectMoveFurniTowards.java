@@ -45,6 +45,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect
     {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.items = new THashSet<>();
+        this.lastDirections = new THashMap<>();
     }
 
     public List<RoomUserRotation> getAvailableDirections(HabboItem item, Room room) {
@@ -97,6 +98,9 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect
         }
 
         for(HabboItem item : this.items) {
+
+            if(item == null)
+                continue;
 
             // direction the furni will move in
             RoomUserRotation moveDirection = null;

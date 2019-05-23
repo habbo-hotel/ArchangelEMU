@@ -66,17 +66,10 @@ public class InteractionFreezeGate extends InteractionGameGate
         }
         else
         {
-            if(this.getExtradata().isEmpty())
-            {
-                this.setExtradata("0");
-            }
-
-            int value = Integer.valueOf(this.getExtradata()) + 1;
-
-            this.setExtradata(value + "");
-            room.updateItem(this);
             game.addHabbo(room.getHabbo(roomUnit), this.teamColor);
         }
+
+        updateState(game, 5);
 
         super.onWalkOn(roomUnit, room, objects);
     }

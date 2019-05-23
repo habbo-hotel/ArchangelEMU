@@ -14,51 +14,19 @@ import java.util.Map;
 
 public class WiredGame extends Game
 {
-    private int timeLeft = 30;
     public WiredGame(Room room)
     {
         super(GameTeam.class, GamePlayer.class, room , false);
     }
 
     @Override
-    public void initialise()
-    {
-        for (Map.Entry<Integer, InteractionGameTimer> set : this.room.getRoomSpecialTypes().getGameTimers().entrySet())
-        {
-            if(set.getValue().getExtradata().isEmpty())
-                continue;
+    public void initialise() {
 
-            if(this.timeLeft < Integer.valueOf(set.getValue().getExtradata()))
-            {
-                this.timeLeft = Integer.valueOf(set.getValue().getExtradata());
-            }
-        }
-
-        if (this.timeLeft <= 30)
-        {
-            this.timeLeft = 30;
-        }
-
-        this.run();
     }
 
     @Override
-    public void run()
-    {
-        if (this.timeLeft > 0)
-        {
-            Emulator.getThreading().run(this, 1000);
-            this.timeLeft--;
-            for (Map.Entry<Integer, InteractionGameTimer> set : this.room.getRoomSpecialTypes().getGameTimers().entrySet())
-            {
-                set.getValue().setExtradata(this.timeLeft + "");
-                this.room.updateItemState(set.getValue());
-            }
-        }
-        else
-        {
-            this.stop();
-        }
+    public void run() {
+
     }
 
     @Override
