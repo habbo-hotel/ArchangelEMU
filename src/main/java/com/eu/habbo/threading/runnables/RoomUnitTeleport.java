@@ -34,6 +34,9 @@ public class RoomUnitTeleport implements Runnable
     @Override
     public void run()
     {
+        if(roomUnit == null || roomUnit.getRoom() == null)
+            return;
+
         RoomTile t = this.room.getLayout().getTile((short) this.x, (short) this.y);
 
         HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
@@ -57,13 +60,6 @@ public class RoomUnitTeleport implements Runnable
         ServerMessage teleportMessage = new RoomUnitOnRollerComposer(this.roomUnit, t, this.room).compose();
         this.roomUnit.setLocation(t);
         this.room.sendComposer(teleportMessage);
-
-
-
-
-
-
-
 
         this.room.updateHabbosAt(t.x, t.y);
     }

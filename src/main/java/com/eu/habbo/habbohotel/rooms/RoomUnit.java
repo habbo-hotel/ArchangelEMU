@@ -833,4 +833,8 @@ public class RoomUnit
     public void setCanLeaveRoomByDoor(boolean canLeaveRoomByDoor) {
         this.canLeaveRoomByDoor = canLeaveRoomByDoor;
     }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
 }

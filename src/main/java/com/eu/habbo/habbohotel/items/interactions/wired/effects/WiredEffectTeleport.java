@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -160,7 +161,9 @@ public class WiredEffectTeleport extends InteractionWiredEffect
                 @Override
                 public void run() {
                     try {
-                        topItem.onWalkOn(roomUnit, room, new Object[] { });
+                        if(roomUnit != null && roomUnit.getRoom() != null) {
+                            topItem.onWalkOn(roomUnit, room, new Object[]{});
+                        }
                     } catch (Exception e) {
                     }
                 }
