@@ -62,5 +62,13 @@ public class RoomUnitTeleport implements Runnable
         this.room.sendComposer(teleportMessage);
 
         this.room.updateHabbosAt(t.x, t.y);
+
+        topItem = room.getTopItemAt(x, y);
+        if (topItem != null && roomUnit.getCurrentLocation().equals(room.getLayout().getTile((short)x, (short)y))) {
+            try {
+                topItem.onWalkOn(roomUnit, room, new Object[]{});
+            } catch (Exception e) {
+            }
+        }
     }
 }

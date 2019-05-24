@@ -150,22 +150,6 @@ public class WiredEffectTeleport extends InteractionWiredEffect
         }
 
         Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, tile.x, tile.y, tile.getStackHeight() + (tile.state == RoomTileState.SIT ? -0.5 : 0), roomUnit.getEffectId()), WiredHandler.TELEPORT_DELAY);
-
-        Emulator.getThreading().run(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if(roomUnit == null || roomUnit.getRoom() == null)
-                        return;
-
-                    HabboItem topItem = room.getTopItemAt(roomUnit.getX(), roomUnit.getY());
-                    if (topItem != null && roomUnit.getCurrentLocation().equals(room.getLayout().getTile(topItem.getX(), topItem.getY()))) {
-                        topItem.onWalkOn(roomUnit, room, new Object[]{});
-                    }
-                } catch (Exception e) {
-                }
-            }
-        }, WiredHandler.TELEPORT_DELAY);
     }
 
     @Override
