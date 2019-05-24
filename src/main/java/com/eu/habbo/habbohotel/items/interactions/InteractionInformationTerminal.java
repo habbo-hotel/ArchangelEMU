@@ -3,6 +3,8 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
 import gnu.trove.map.hash.THashMap;
 
@@ -34,6 +36,16 @@ public class InteractionInformationTerminal extends InteractionCustomValues
 
         if(this.values.containsKey("internalLink")) {
             client.sendResponse(new NuxAlertComposer(this.values.get("internalLink")));
+        }
+    }
+
+    @Override
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+        super.onWalk(roomUnit, room, objects);
+
+        Habbo habbo = room.getHabbo(roomUnit);
+        if(habbo != null && this.values.containsKey("internalLink")) {
+            habbo.getClient().sendResponse(new NuxAlertComposer(this.values.get("internalLink")));
         }
     }
 }
