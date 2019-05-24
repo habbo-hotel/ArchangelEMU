@@ -18,11 +18,13 @@ public class InteractionHopper extends HabboItem
     public InteractionHopper(ResultSet set, Item baseItem) throws SQLException
     {
         super(set, baseItem);
+        this.setExtradata("0");
     }
 
     public InteractionHopper(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
     {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.setExtradata("0");
     }
 
     @Override

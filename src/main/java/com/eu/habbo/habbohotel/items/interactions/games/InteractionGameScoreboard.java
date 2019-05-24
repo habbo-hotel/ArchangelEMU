@@ -13,11 +13,13 @@ public abstract class InteractionGameScoreboard extends InteractionGameTeamItem
     protected InteractionGameScoreboard(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException
     {
         super(set, baseItem, teamColor);
+        this.setExtradata("0");
     }
 
     protected InteractionGameScoreboard(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor)
     {
         super(id, userId, item, extradata, limitedStack, limitedSells, teamColor);
+        this.setExtradata("0");
     }
 
     @Override

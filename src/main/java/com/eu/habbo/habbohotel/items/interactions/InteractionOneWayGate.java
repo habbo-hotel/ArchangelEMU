@@ -23,11 +23,13 @@ public class InteractionOneWayGate extends HabboItem
     public InteractionOneWayGate(ResultSet set, Item baseItem) throws SQLException
     {
         super(set, baseItem);
+        this.setExtradata("0");
     }
 
     public InteractionOneWayGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
     {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.setExtradata("0");
     }
 
     @Override

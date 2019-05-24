@@ -21,11 +21,13 @@ public class InteractionBattleBanzaiTile extends HabboItem
     public InteractionBattleBanzaiTile(ResultSet set, Item baseItem) throws SQLException
     {
         super(set, baseItem);
+        this.setExtradata("0");
     }
 
     public InteractionBattleBanzaiTile(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
     {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.setExtradata("0");
     }
 
     @Override

@@ -18,11 +18,13 @@ public class InteractionPressurePlate extends HabboItem
     public InteractionPressurePlate(ResultSet set, Item baseItem) throws SQLException
     {
         super(set, baseItem);
+        this.setExtradata("0");
     }
 
     public InteractionPressurePlate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
     {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.setExtradata("0");
     }
 
     @Override

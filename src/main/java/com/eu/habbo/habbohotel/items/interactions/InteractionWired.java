@@ -20,11 +20,13 @@ public abstract class InteractionWired extends HabboItem
     InteractionWired(ResultSet set, Item baseItem) throws SQLException
     {
         super(set, baseItem);
+        this.setExtradata("0");
     }
 
     InteractionWired(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
     {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.setExtradata("0");
     }
 
     public abstract boolean execute(RoomUnit roomUnit, Room room, Object[] stuff);
