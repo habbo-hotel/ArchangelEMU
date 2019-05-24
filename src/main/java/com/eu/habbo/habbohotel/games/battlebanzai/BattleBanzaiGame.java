@@ -253,6 +253,7 @@ public class BattleBanzaiGame extends Game
 
     private synchronized void resetMap()
     {
+        this.tileCount = 0;
         for (HabboItem item : this.room.getFloorItems())
         {
             if (item instanceof InteractionBattleBanzaiTile)
