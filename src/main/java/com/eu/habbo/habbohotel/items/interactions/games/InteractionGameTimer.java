@@ -29,6 +29,7 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
     private int timeNow = 0;
     private boolean isRunning = false;
     private boolean isPaused = false;
+    private boolean threadActive = false;
 
     public InteractionGameTimer(ResultSet set, Item baseItem) throws SQLException
     {
@@ -59,15 +60,20 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
             super.run();
         }
 
-        if(this.getRoomId() == 0)
+        if(this.getRoomId() == 0) {
+            this.threadActive = false;
             return;
+        }
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
-        if(room == null || !this.isRunning || this.isPaused)
+        if(room == null || !this.isRunning || this.isPaused) {
+            this.threadActive = false;
             return;
+        }
 
         if(this.timeNow > 0) {
+            this.threadActive = true;
             Emulator.getThreading().run(this, 1000);
             this.timeNow--;
             room.updateItem(this);
@@ -75,6 +81,7 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
         else {
             this.isRunning = false;
             this.isPaused = false;
+            this.threadActive = false;
             endGamesIfLastTimer(room);
         }
     }
@@ -178,7 +185,10 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
             room.updateItem(this);
             WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, room, new Object[] { });
 
-            Emulator.getThreading().run(this);
+            if(!this.threadActive) {
+                this.threadActive = true;
+                Emulator.getThreading().run(this);
+            }
         }
         else if(client != null)
         {
@@ -217,7 +227,11 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
                             this.isRunning = true;
                             timeNow = this.baseTime;
                             room.updateItem(this);
-                            Emulator.getThreading().run(this);
+
+                            if(!this.threadActive) {
+                                this.threadActive = true;
+                                Emulator.getThreading().run(this);
+                            }
                         }
                     }
 
@@ -233,7 +247,11 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
                         this.isRunning = true;
                         timeNow = this.baseTime;
                         room.updateItem(this);
-                        Emulator.getThreading().run(this);
+
+                        if(!this.threadActive) {
+                            this.threadActive = true;
+                            Emulator.getThreading().run(this);
+                        }
                     }
                     break;
 
