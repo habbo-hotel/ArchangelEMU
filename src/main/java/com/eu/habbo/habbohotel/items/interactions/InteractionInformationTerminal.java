@@ -31,15 +31,6 @@ public class InteractionInformationTerminal extends InteractionCustomValues
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        super.onClick(client, room, objects);
-
-        if(this.values.containsKey("internalLink")) {
-            client.sendResponse(new NuxAlertComposer(this.values.get("internalLink")));
-        }
-    }
-
-    @Override
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalk(roomUnit, room, objects);
 
