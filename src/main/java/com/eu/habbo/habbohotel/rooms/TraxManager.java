@@ -23,7 +23,7 @@ public class TraxManager implements Disposable
     private final Room room;
     private final List<InteractionMusicDisc> songs = new ArrayList<>(0);
     private int totalLength = 0;
-    private int startedTimestamp;
+    private int startedTimestamp = 0;
     private InteractionMusicDisc currentlyPlaying = null;
     private int playingIndex = 0;
 
@@ -70,7 +70,7 @@ public class TraxManager implements Disposable
                 //restart
             }
 
-            if (Emulator.getIntUnixTimestamp() >= this.startedTimestamp + this.currentSong().getLength())
+            if (this.currentSong() != null && Emulator.getIntUnixTimestamp() >= this.startedTimestamp + this.currentSong().getLength())
             {
                 this.play((this.playingIndex + 1) % this.songs.size());
             }
