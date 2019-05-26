@@ -56,6 +56,7 @@ public class RCONServer extends Server {
         this.addRCONMessage("giverespect", GiveRespect.class);
         this.addRCONMessage("ignoreuser", IgnoreUser.class);
         this.addRCONMessage("setmotto", SetMotto.class);
+        this.addRCONMessage("giveuserclothing", GiveUserClothing.class);
 
         Collections.addAll(this.allowedAdresses, Emulator.getConfig().getValue("rcon.allowed", "127.0.0.1").split(";"));
     }
