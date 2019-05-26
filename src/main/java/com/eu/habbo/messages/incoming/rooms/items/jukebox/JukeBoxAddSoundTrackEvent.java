@@ -5,26 +5,21 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class JukeBoxAddSoundTrackEvent extends MessageHandler
-{
+public class JukeBoxAddSoundTrackEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
         int unknown = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if (room != null)
-        {
+        if (room != null) {
             HabboItem item = room.getHabboItem(itemId);
 
-            if (item instanceof InteractionMusicDisc)
-            {
+            if (item instanceof InteractionMusicDisc) {
 
 
-                if (this.client.getHabbo().getHabboInfo().getCurrentRoom().hasRights(this.client.getHabbo()))
-                {
+                if (this.client.getHabbo().getHabboInfo().getCurrentRoom().hasRights(this.client.getHabbo())) {
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().addSong(itemId);
                 }
             }

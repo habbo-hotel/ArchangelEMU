@@ -12,64 +12,52 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionMoreTimeElapsed extends InteractionWiredCondition
-{
+public class WiredConditionMoreTimeElapsed extends InteractionWiredCondition {
     private static final WiredConditionType type = WiredConditionType.TIME_MORE_THAN;
 
     private int cycles;
 
-    public WiredConditionMoreTimeElapsed(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredConditionMoreTimeElapsed(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredConditionMoreTimeElapsed(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredConditionMoreTimeElapsed(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         return (Emulator.getIntUnixTimestamp() - room.getLastTimerReset()) / 0.5 > this.cycles;
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.cycles + "";
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String data = set.getString("wired_data");
 
-        try
-        {
+        try {
             if (!data.equals(""))
                 this.cycles = Integer.valueOf(data);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.cycles = 0;
     }
 
     @Override
-    public WiredConditionType getType()
-    {
+    public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -85,8 +73,7 @@ public class WiredConditionMoreTimeElapsed extends InteractionWiredCondition
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         packet.readInt();
 
         this.cycles = packet.readInt();

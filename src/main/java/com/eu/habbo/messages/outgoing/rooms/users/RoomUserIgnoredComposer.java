@@ -5,8 +5,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUserIgnoredComposer extends MessageComposer
-{
+public class RoomUserIgnoredComposer extends MessageComposer {
     public final static int IGNORED = 1;
     public final static int MUTED = 2;
     public final static int UNIGNORED = 3;
@@ -14,15 +13,13 @@ public class RoomUserIgnoredComposer extends MessageComposer
     private final Habbo habbo;
     private final int state;
 
-    public RoomUserIgnoredComposer(Habbo habbo, int state)
-    {
+    public RoomUserIgnoredComposer(Habbo habbo, int state) {
         this.habbo = habbo;
         this.state = state;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomUserIgnoredComposer);
         this.response.appendInt(this.state);
         this.response.appendString(this.habbo.getHabboInfo().getUsername());

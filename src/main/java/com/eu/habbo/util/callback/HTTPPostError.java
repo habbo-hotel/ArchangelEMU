@@ -1,13 +1,5 @@
 package com.eu.habbo.util.callback;
 
-import com.eu.habbo.Emulator;
-
-import java.io.DataOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 /* public class HTTPPostError implements Runnable
 {
     public Throwable stackTrace;

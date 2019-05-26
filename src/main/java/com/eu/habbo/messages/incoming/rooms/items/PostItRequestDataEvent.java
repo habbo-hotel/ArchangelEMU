@@ -6,21 +6,17 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.PostItDataComposer;
 
-public class PostItRequestDataEvent extends MessageHandler
-{
+public class PostItRequestDataEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if(room != null)
-        {
+        if (room != null) {
             HabboItem item = room.getHabboItem(itemId);
 
-            if(item instanceof InteractionPostIt)
-            {
+            if (item instanceof InteractionPostIt) {
                 this.client.sendResponse(new PostItDataComposer((InteractionPostIt) item));
             }
         }

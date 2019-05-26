@@ -8,26 +8,21 @@ public enum ForumThreadState {
 
     private int stateId;
 
-    public int getStateId()
-    {
-        return this.stateId;
-    }
-
-    ForumThreadState(int stateId)
-    {
+    ForumThreadState(int stateId) {
         this.stateId = stateId;
     }
 
-    public static ForumThreadState fromValue(int value)
-    {
-        for (ForumThreadState state : ForumThreadState.values())
-        {
-            if (state.stateId == value)
-            {
+    public static ForumThreadState fromValue(int value) {
+        for (ForumThreadState state : ForumThreadState.values()) {
+            if (state.stateId == value) {
                 return state;
             }
         }
 
         return CLOSED;
+    }
+
+    public int getStateId() {
+        return this.stateId;
     }
 }

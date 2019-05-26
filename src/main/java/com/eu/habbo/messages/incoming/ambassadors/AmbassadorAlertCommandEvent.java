@@ -8,12 +8,10 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.plugin.events.support.SupportUserAlertedEvent;
 import com.eu.habbo.plugin.events.support.SupportUserAlertedReason;
 
-public class AmbassadorAlertCommandEvent extends MessageHandler
-{
+public class AmbassadorAlertCommandEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if(!this.client.getHabbo().hasPermission("acc_ambassador")) {
+    public void handle() throws Exception {
+        if (!this.client.getHabbo().hasPermission("acc_ambassador")) {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.alert").replace("%username%", client.getHabbo().getHabboInfo().getUsername()).replace("%message%", "${notification.ambassador.alert.warning.message}"));
             return;
         }
@@ -22,7 +20,7 @@ public class AmbassadorAlertCommandEvent extends MessageHandler
 
         Habbo habbo = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(userId);
 
-        if(habbo == null)
+        if (habbo == null)
             return;
 
         SupportUserAlertedEvent alertedEvent = new SupportUserAlertedEvent(client.getHabbo(), habbo, "${notification.ambassador.alert.warning.message}", SupportUserAlertedReason.AMBASSADOR);

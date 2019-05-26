@@ -13,13 +13,10 @@ import com.eu.habbo.threading.runnables.InsertModToolIssue;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReportEvent extends MessageHandler
-{
+public class ReportEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if(!this.client.getHabbo().getHabboStats().allowTalk())
-        {
+    public void handle() throws Exception {
+        if (!this.client.getHabbo().getHabboStats().allowTalk()) {
             this.client.sendResponse(new HelperRequestDisabledComposer());
             return;
         }
@@ -32,8 +29,7 @@ public class ReportEvent extends MessageHandler
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
         List<ModToolIssue> issues = Emulator.getGameEnvironment().getModToolManager().openTicketsForHabbo(this.client.getHabbo());
-        if(!issues.isEmpty())
-        {
+        if (!issues.isEmpty()) {
             //this.client.sendResponse(new GenericAlertComposer("You've got still a pending ticket. Wait till the moderators are done reviewing your ticket."));
             this.client.sendResponse(new ReportRoomFormComposer(issues));
             return;
@@ -41,26 +37,21 @@ public class ReportEvent extends MessageHandler
 
         CfhTopic cfhTopic = Emulator.getGameEnvironment().getModToolManager().getCfhTopic(topic);
 
-        if(userId != -1)
-        {
+        if (userId != -1) {
             Habbo reported = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
-            if(reported != null)
-            {
-                if (cfhTopic != null && cfhTopic.action == CfhActionType.GUARDIANS && Emulator.getGameEnvironment().getGuideManager().activeGuardians())
-                {
+            if (reported != null) {
+                if (cfhTopic != null && cfhTopic.action == CfhActionType.GUARDIANS && Emulator.getGameEnvironment().getGuideManager().activeGuardians()) {
                     GuardianTicket ticket = Emulator.getGameEnvironment().getGuideManager().getOpenReportedHabboTicket(reported);
 
-                    if(ticket != null)
-                    {
+                    if (ticket != null) {
                         this.client.sendResponse(new BullyReportedMessageComposer(BullyReportedMessageComposer.ALREADY_REPORTED));
                         return;
                     }
 
                     ArrayList<ModToolChatLog> chatLog = Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(roomId);
 
-                    if(chatLog.isEmpty())
-                    {
+                    if (chatLog.isEmpty()) {
                         this.client.sendResponse(new BullyReportedMessageComposer(BullyReportedMessageComposer.NO_CHAT));
                         return;
                     }
@@ -68,9 +59,7 @@ public class ReportEvent extends MessageHandler
                     Emulator.getGameEnvironment().getGuideManager().addGuardianTicket(new GuardianTicket(this.client.getHabbo(), reported, chatLog));
 
                     this.client.sendResponse(new BullyReportedMessageComposer(BullyReportedMessageComposer.RECEIVED));
-                }
-                else
-                {
+                } else {
                     ModToolIssue issue = new ModToolIssue(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getUsername(), reported.getHabboInfo().getId(), reported.getHabboInfo().getUsername(), roomId, message, ModToolTicketType.NORMAL);
                     issue.category = topic;
                     new InsertModToolIssue(issue).run();
@@ -79,19 +68,13 @@ public class ReportEvent extends MessageHandler
                     Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
                     this.client.sendResponse(new ModToolReportReceivedAlertComposer(ModToolReportReceivedAlertComposer.REPORT_RECEIVED, cfhTopic.reply));
 
-                    if (cfhTopic != null)
-                    {
-                        if (cfhTopic.action != CfhActionType.MODS)
-                        {
-                            Emulator.getThreading().run(new Runnable()
-                            {
+                    if (cfhTopic != null) {
+                        if (cfhTopic.action != CfhActionType.MODS) {
+                            Emulator.getThreading().run(new Runnable() {
                                 @Override
-                                public void run()
-                                {
-                                    if (issue.state == ModToolTicketState.OPEN)
-                                    {
-                                        if (cfhTopic.action == CfhActionType.AUTO_IGNORE)
-                                        {
+                                public void run() {
+                                    if (issue.state == ModToolTicketState.OPEN) {
+                                        if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
                                             ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(reported.getHabboInfo().getId());
                                             ReportEvent.this.client.sendResponse(new RoomUserIgnoredComposer(reported, RoomUserIgnoredComposer.IGNORED));
                                         }
@@ -105,9 +88,7 @@ public class ReportEvent extends MessageHandler
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             ModToolIssue issue = new ModToolIssue(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getUsername(), room != null ? room.getOwnerId() : 0, room != null ? room.getOwnerName() : "", roomId, message, ModToolTicketType.ROOM);
             issue.category = topic;
             new InsertModToolIssue(issue).run();
@@ -116,23 +97,16 @@ public class ReportEvent extends MessageHandler
             Emulator.getGameEnvironment().getModToolManager().addTicket(issue);
             Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
 
-            if(cfhTopic != null)
-            {
-                if(cfhTopic.action != CfhActionType.MODS)
-                {
-                    Emulator.getThreading().run(new Runnable()
-                    {
+            if (cfhTopic != null) {
+                if (cfhTopic.action != CfhActionType.MODS) {
+                    Emulator.getThreading().run(new Runnable() {
                         @Override
-                        public void run()
-                        {
-                            if(issue.state == ModToolTicketState.OPEN)
-                            {
-                                if(cfhTopic.action == CfhActionType.AUTO_IGNORE)
-                                {
+                        public void run() {
+                            if (issue.state == ModToolTicketState.OPEN) {
+                                if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
                                     ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(issue.reportedId);
                                     Habbo reported = Emulator.getGameEnvironment().getHabboManager().getHabbo(issue.reportedId);
-                                    if (reported != null)
-                                    {
+                                    if (reported != null) {
                                         ReportEvent.this.client.sendResponse(new RoomUserIgnoredComposer(reported, RoomUserIgnoredComposer.IGNORED));
                                     }
                                 }

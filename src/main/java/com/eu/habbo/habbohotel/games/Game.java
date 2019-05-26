@@ -22,30 +22,19 @@ import gnu.trove.map.hash.THashMap;
 
 import java.util.Map;
 
-public abstract class Game implements Runnable
-{
-
-    private final Class<? extends GameTeam> gameTeamClazz;
-
-    private final Class<? extends GamePlayer> gamePlayerClazz;
+public abstract class Game implements Runnable {
 
     protected final THashMap<GameTeamColors, GameTeam> teams = new THashMap<>();
-
     protected final Room room;
-
+    private final Class<? extends GameTeam> gameTeamClazz;
+    private final Class<? extends GamePlayer> gamePlayerClazz;
     private final boolean countsAchievements;
-
+    public boolean isRunning;
+    public GameState state = GameState.IDLE;
     private int startTime;
-
     private int endTime;
 
-    public boolean isRunning;
-
-
-    public GameState state = GameState.IDLE;
-
-    public Game(Class<? extends GameTeam> gameTeamClazz, Class<? extends GamePlayer> gamePlayerClazz, Room room, boolean countsAchievements)
-    {
+    public Game(Class<? extends GameTeam> gameTeamClazz, Class<? extends GamePlayer> gamePlayerClazz, Room room, boolean countsAchievements) {
         this.gameTeamClazz = gameTeamClazz;
         this.gamePlayerClazz = gamePlayerClazz;
         this.room = room;
@@ -56,25 +45,19 @@ public abstract class Game implements Runnable
     public abstract void initialise();
 
 
-    public boolean addHabbo(Habbo habbo, GameTeamColors teamColor)
-    {
-        try
-        {
-            if (habbo != null)
-            {
-                if(Emulator.getPluginManager().isRegistered(GameHabboJoinEvent.class, true))
-                {
+    public boolean addHabbo(Habbo habbo, GameTeamColors teamColor) {
+        try {
+            if (habbo != null) {
+                if (Emulator.getPluginManager().isRegistered(GameHabboJoinEvent.class, true)) {
                     Event gameHabboJoinEvent = new GameHabboJoinEvent(this, habbo);
                     Emulator.getPluginManager().fireEvent(gameHabboJoinEvent);
-                    if(gameHabboJoinEvent.isCancelled())
+                    if (gameHabboJoinEvent.isCancelled())
                         return false;
                 }
 
-                synchronized (this.teams)
-                {
+                synchronized (this.teams) {
                     GameTeam team = this.getTeam(teamColor);
-                    if (team == null)
-                    {
+                    if (team == null) {
                         team = this.gameTeamClazz.getDeclaredConstructor(GameTeamColors.class).newInstance(teamColor);
                         this.addTeam(team);
                     }
@@ -87,9 +70,7 @@ public abstract class Game implements Runnable
 
                 return true;
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
@@ -97,28 +78,23 @@ public abstract class Game implements Runnable
     }
 
 
-    public void removeHabbo(Habbo habbo)
-    {
-        if (habbo != null)
-        {
-            if(Emulator.getPluginManager().isRegistered(GameHabboLeaveEvent.class, true))
-            {
+    public void removeHabbo(Habbo habbo) {
+        if (habbo != null) {
+            if (Emulator.getPluginManager().isRegistered(GameHabboLeaveEvent.class, true)) {
                 Event gameHabboLeaveEvent = new GameHabboLeaveEvent(this, habbo);
                 Emulator.getPluginManager().fireEvent(gameHabboLeaveEvent);
-                if(gameHabboLeaveEvent.isCancelled())
+                if (gameHabboLeaveEvent.isCancelled())
                     return;
             }
 
             GameTeam team = this.getTeamForHabbo(habbo);
-            if (team != null && team.isMember(habbo))
-            {
+            if (team != null && team.isMember(habbo)) {
                 team.removeMember(habbo.getHabboInfo().getGamePlayer());
                 habbo.getHabboInfo().getGamePlayer().reset();
                 habbo.getHabboInfo().setCurrentGame(null);
                 habbo.getHabboInfo().setGamePlayer(null);
 
-                if(this.countsAchievements && this.endTime > this.startTime)
-                {
+                if (this.countsAchievements && this.endTime > this.startTime) {
                     AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GamePlayed"));
                 }
             }
@@ -143,22 +119,19 @@ public abstract class Game implements Runnable
     }
 
 
-    public void start()
-    {
+    public void start() {
         this.isRunning = false;
         this.state = GameState.RUNNING;
         this.startTime = Emulator.getIntUnixTimestamp();
 
-        if(Emulator.getPluginManager().isRegistered(GameStartedEvent.class, true))
-        {
+        if (Emulator.getPluginManager().isRegistered(GameStartedEvent.class, true)) {
             Event gameStartedEvent = new GameStartedEvent(this);
             Emulator.getPluginManager().fireEvent(gameStartedEvent);
         }
 
         WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, this.room, new Object[]{this});
 
-        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class))
-        {
+        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
             item.setExtradata("0");
             this.room.updateItem(item);
         }
@@ -170,103 +143,82 @@ public abstract class Game implements Runnable
         this.saveScores();
 
         GameTeam winningTeam = null;
-        for (GameTeam team : this.teams.values())
-        {
-            if (winningTeam == null || team.getTotalScore() > winningTeam.getTotalScore())
-            {
+        for (GameTeam team : this.teams.values()) {
+            if (winningTeam == null || team.getTotalScore() > winningTeam.getTotalScore()) {
                 winningTeam = team;
             }
         }
 
-        if (winningTeam != null)
-        {
-            for (GamePlayer player : winningTeam.getMembers())
-            {
+        if (winningTeam != null) {
+            for (GamePlayer player : winningTeam.getMembers()) {
                 WiredHandler.handleCustomTrigger(WiredTriggerTeamWins.class, player.getHabbo().getRoomUnit(), this.room, new Object[]{this});
             }
 
-            for (GameTeam team : this.teams.values())
-            {
+            for (GameTeam team : this.teams.values()) {
                 if (team == winningTeam) continue;
 
-                for (GamePlayer player : winningTeam.getMembers())
-                {
+                for (GamePlayer player : winningTeam.getMembers()) {
                     WiredHandler.handleCustomTrigger(WiredTriggerTeamLoses.class, player.getHabbo().getRoomUnit(), this.room, new Object[]{this});
                 }
             }
         }
 
-        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class))
-        {
+        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
             this.room.updateItem(item);
         }
     }
 
     public abstract void run();
 
-    public void pause()
-    {
-        if (this.state.equals(GameState.RUNNING))
-        {
+    public void pause() {
+        if (this.state.equals(GameState.RUNNING)) {
             this.state = GameState.PAUSED;
         }
     }
 
-    public void unpause()
-    {
-        if (this.state.equals(GameState.PAUSED))
-        {
+    public void unpause() {
+        if (this.state.equals(GameState.PAUSED)) {
             this.state = GameState.RUNNING;
         }
     }
 
-    public void stop()
-    {
+    public void stop() {
         this.state = GameState.IDLE;
 
         boolean gamesActive = false;
-        for(HabboItem timer : room.getFloorItems())
-        {
-            if(timer instanceof InteractionGameTimer) {
-                if(((InteractionGameTimer) timer).isRunning())
+        for (HabboItem timer : room.getFloorItems()) {
+            if (timer instanceof InteractionGameTimer) {
+                if (((InteractionGameTimer) timer).isRunning())
                     gamesActive = true;
             }
         }
 
-        if(gamesActive) {
+        if (gamesActive) {
             return;
         }
 
-        if(Emulator.getPluginManager().isRegistered(GameStoppedEvent.class, true))
-        {
+        if (Emulator.getPluginManager().isRegistered(GameStoppedEvent.class, true)) {
             Event gameStoppedEvent = new GameStoppedEvent(this);
             Emulator.getPluginManager().fireEvent(gameStoppedEvent);
         }
     }
 
 
-    private void saveScores()
-    {
-        if(this.room == null)
+    private void saveScores() {
+        if (this.room == null)
             return;
 
-        for(Map.Entry<GameTeamColors, GameTeam> teamEntry : this.teams.entrySet())
-        {
+        for (Map.Entry<GameTeamColors, GameTeam> teamEntry : this.teams.entrySet()) {
             Emulator.getThreading().run(new SaveScoreForTeam(teamEntry.getValue(), this));
         }
     }
 
 
-    public GameTeam getTeamForHabbo(Habbo habbo)
-    {
-        if(habbo != null)
-        {
-            synchronized (this.teams)
-            {
-                for (GameTeam team : this.teams.values())
-                {
-                    if (team.isMember(habbo))
-                    {
+    public GameTeam getTeamForHabbo(Habbo habbo) {
+        if (habbo != null) {
+            synchronized (this.teams) {
+                for (GameTeam team : this.teams.values()) {
+                    if (team.isMember(habbo)) {
                         return team;
                     }
                 }
@@ -277,30 +229,24 @@ public abstract class Game implements Runnable
     }
 
 
-    public GameTeam getTeam(GameTeamColors teamColor)
-    {
-        synchronized (this.teams)
-        {
+    public GameTeam getTeam(GameTeamColors teamColor) {
+        synchronized (this.teams) {
             return this.teams.get(teamColor);
         }
     }
 
 
-    public void addTeam(GameTeam team)
-    {
-        synchronized (this.teams)
-        {
+    public void addTeam(GameTeam team) {
+        synchronized (this.teams) {
             this.teams.put(team.teamColor, team);
         }
     }
 
-    public Room getRoom()
-    {
+    public Room getRoom() {
         return this.room;
     }
 
-    public int getStartTime()
-    {
+    public int getStartTime() {
         return this.startTime;
     }
 

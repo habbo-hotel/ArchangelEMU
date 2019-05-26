@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SearchResultList implements ISerialize, Comparable<SearchResultList>
-{
+public class SearchResultList implements ISerialize, Comparable<SearchResultList> {
     public final int order;
     public final String code;
     public final String query;
@@ -23,8 +22,7 @@ public class SearchResultList implements ISerialize, Comparable<SearchResultList
     public final DisplayOrder displayOrder;
     public final int categoryOrder;
 
-    public SearchResultList(int order, String code, String query, SearchAction action, ListMode mode, DisplayMode hidden, List<Room> rooms, boolean filter, boolean showInvisible, DisplayOrder displayOrder, int categoryOrder)
-    {
+    public SearchResultList(int order, String code, String query, SearchAction action, ListMode mode, DisplayMode hidden, List<Room> rooms, boolean filter, boolean showInvisible, DisplayOrder displayOrder, int categoryOrder) {
         this.order = order;
         this.code = code;
         this.query = query;
@@ -39,23 +37,18 @@ public class SearchResultList implements ISerialize, Comparable<SearchResultList
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendString(this.code); //Search Code
         message.appendString(this.query); //Text
         message.appendInt(this.action.type); //Action Allowed (0 (Nothing), 1 (More Results), 2 (Go Back))
         message.appendBoolean(this.hidden.equals(DisplayMode.COLLAPSED)); //Closed
         message.appendInt(this.mode.type); //Display Mode (0 (List), 1 (Thumbnails), 2 (Thumbnail no choice))
 
-        synchronized (this.rooms)
-        {
-            if (!this.showInvisible)
-            {
+        synchronized (this.rooms) {
+            if (!this.showInvisible) {
                 List<Room> toRemove = new ArrayList<>();
-                for (Room room : this.rooms)
-                {
-                    if (room.getState() == RoomState.INVISIBLE)
-                    {
+                for (Room room : this.rooms) {
+                    if (room.getState() == RoomState.INVISIBLE) {
                         toRemove.add(room);
                     }
                 }
@@ -66,20 +59,16 @@ public class SearchResultList implements ISerialize, Comparable<SearchResultList
             message.appendInt(this.rooms.size());
 
             Collections.sort(this.rooms);
-            for (Room room : this.rooms)
-            {
+            for (Room room : this.rooms) {
                 room.serialize(message);
             }
         }
     }
 
     @Override
-    public int compareTo(SearchResultList o)
-    {
-        if (this.displayOrder == DisplayOrder.ACTIVITY)
-        {
-            if (this.code.equalsIgnoreCase("popular"))
-            {
+    public int compareTo(SearchResultList o) {
+        if (this.displayOrder == DisplayOrder.ACTIVITY) {
+            if (this.code.equalsIgnoreCase("popular")) {
                 return -1;
             }
 

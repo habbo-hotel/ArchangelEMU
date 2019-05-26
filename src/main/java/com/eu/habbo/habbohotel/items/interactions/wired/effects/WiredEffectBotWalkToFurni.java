@@ -18,45 +18,39 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class WiredEffectBotWalkToFurni extends InteractionWiredEffect
-{
+public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.BOT_MOVE;
 
     private THashSet<HabboItem> items;
     private String botName = "";
 
-    public WiredEffectBotWalkToFurni(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectBotWalkToFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.items = new THashSet<>();
     }
 
-    public WiredEffectBotWalkToFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectBotWalkToFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.items = new THashSet<>();
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         THashSet<HabboItem> items = new THashSet<>();
 
-        for(HabboItem item : this.items)
-        {
-            if(item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
+        for (HabboItem item : this.items) {
+            if (item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
                 items.add(item);
         }
 
-        for(HabboItem item : items)
-        {
+        for (HabboItem item : items) {
             this.items.remove(item);
         }
 
         message.appendBoolean(false);
         message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
         message.appendInt(this.items.size());
-        for(HabboItem item : this.items)
+        for (HabboItem item : this.items)
             message.appendInt(item.getId());
 
         message.appendInt(this.getBaseItem().getSpriteId());
@@ -70,8 +64,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
         this.botName = packet.readString();
 
@@ -79,8 +72,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect
 
         int count = packet.readInt();
 
-        for(int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt()));
         }
 
@@ -90,36 +82,32 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
-        if(this.items.isEmpty())
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if (this.items.isEmpty())
             return false;
 
         List<Bot> bots = room.getBots(this.botName);
 
-        if(bots.isEmpty())
+        if (bots.isEmpty())
             return false;
 
         THashSet<HabboItem> items = new THashSet<>();
 
-        for(HabboItem item : this.items)
-        {
-            if(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
+        for (HabboItem item : this.items) {
+            if (Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
                 items.add(item);
         }
 
-        for(HabboItem item : items)
-        {
+        for (HabboItem item : items) {
             this.items.remove(item);
         }
 
-        if(this.items.size() > 0) {
+        if (this.items.size() > 0) {
             for (Bot bot : bots) {
                 int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
                 int j = 1;
@@ -140,16 +128,12 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         StringBuilder wiredData = new StringBuilder(this.getDelay() + "\t" + this.botName + ";");
 
-        if(this.items != null && !this.items.isEmpty())
-        {
-            for (HabboItem item : this.items)
-            {
-                if(item.getRoomId() != 0)
-                {
+        if (this.items != null && !this.items.isEmpty()) {
+            for (HabboItem item : this.items) {
+                if (item.getRoomId() != 0) {
                     wiredData.append(item.getId()).append(";");
                 }
             }
@@ -159,22 +143,18 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items = new THashSet<>();
         String[] wiredData = set.getString("wired_data").split("\t");
 
-        if (wiredData.length > 1)
-        {
+        if (wiredData.length > 1) {
             this.setDelay(Integer.valueOf(wiredData[0]));
             String[] data = wiredData[1].split(";");
 
-            if (data.length >= 1)
-            {
+            if (data.length >= 1) {
                 this.botName = data[0];
 
-                for (int i = 1; i < data.length; i++)
-                {
+                for (int i = 1; i < data.length; i++) {
                     HabboItem item = room.getHabboItem(Integer.valueOf(data[i]));
 
                     if (item != null)
@@ -185,8 +165,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.items.clear();
         this.botName = "";
         this.setDelay(0);

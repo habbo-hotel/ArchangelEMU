@@ -5,20 +5,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UnknownFurniModelComposer extends MessageComposer
-{
+public class UnknownFurniModelComposer extends MessageComposer {
     private final HabboItem item;
     private final int unknownInt;
 
-    public UnknownFurniModelComposer(HabboItem item, int unknownInt)
-    {
+    public UnknownFurniModelComposer(HabboItem item, int unknownInt) {
         this.item = item;
         this.unknownInt = unknownInt;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UnknownFurniModelComposer);
         this.response.appendInt(this.item.getId());
         this.response.appendInt(this.unknownInt);

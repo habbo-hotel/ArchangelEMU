@@ -12,23 +12,20 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class ModToolIssueChatlogComposer extends MessageComposer
-{
+public class ModToolIssueChatlogComposer extends MessageComposer {
     public static SimpleDateFormat format = new SimpleDateFormat("HH:mm");
     private final ModToolIssue issue;
     private final ArrayList<ModToolChatLog> chatlog;
     private final String roomName;
 
-    public ModToolIssueChatlogComposer(ModToolIssue issue, ArrayList<ModToolChatLog> chatlog, String roomName)
-    {
+    public ModToolIssueChatlogComposer(ModToolIssue issue, ArrayList<ModToolChatLog> chatlog, String roomName) {
         this.issue = issue;
         this.chatlog = chatlog;
         this.roomName = roomName;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ModToolIssueChatlogComposer);
         this.response.appendInt(this.issue.id);
         this.response.appendInt(this.issue.senderId);
@@ -37,23 +34,20 @@ public class ModToolIssueChatlogComposer extends MessageComposer
 
         Collections.sort(this.chatlog);
 
-        if(this.chatlog.isEmpty())
+        if (this.chatlog.isEmpty())
             return null;
 
         //ChatRecordData
         //for(ModToolRoomVisit visit : chatlog)
         //{
-            this.response.appendByte(1); //Report Type
+        this.response.appendByte(1); //Report Type
 
-        if (this.issue.type == ModToolTicketType.IM)
-        {
+        if (this.issue.type == ModToolTicketType.IM) {
             this.response.appendShort(1);
 
             ModToolChatRecordDataContext.MESSAGE_ID.append(this.response);
             this.response.appendInt(this.issue.senderId);
-        }
-        else
-        {
+        } else {
             this.response.appendShort(3); //Context Count
 
             ModToolChatRecordDataContext.ROOM_NAME.append(this.response);
@@ -66,15 +60,14 @@ public class ModToolIssueChatlogComposer extends MessageComposer
             this.response.appendInt(12);
         }
 
-            this.response.appendShort(this.chatlog.size());
-            for(ModToolChatLog chatLog : this.chatlog)
-            {
-                this.response.appendString(format.format(chatLog.timestamp * 1000L));
-                this.response.appendInt(chatLog.habboId);
-                this.response.appendString(chatLog.username);
-                this.response.appendString(chatLog.message);
-                this.response.appendBoolean(false);
-            }
+        this.response.appendShort(this.chatlog.size());
+        for (ModToolChatLog chatLog : this.chatlog) {
+            this.response.appendString(format.format(chatLog.timestamp * 1000L));
+            this.response.appendInt(chatLog.habboId);
+            this.response.appendString(chatLog.username);
+            this.response.appendString(chatLog.message);
+            this.response.appendBoolean(false);
+        }
         //}
 
         return this.response;

@@ -4,20 +4,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class CanCreateRoomComposer extends MessageComposer
-{
+public class CanCreateRoomComposer extends MessageComposer {
     private final int count;
     private final int max;
 
-    public CanCreateRoomComposer(int count, int max)
-    {
+    public CanCreateRoomComposer(int count, int max) {
         this.count = count;
         this.max = max;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.CanCreateRoomComposer);
 
         this.response.appendInt(this.count >= this.max ? 1 : 0);

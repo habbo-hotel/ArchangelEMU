@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class MarketplaceBuyErrorComposer extends MessageComposer
-{
+public class MarketplaceBuyErrorComposer extends MessageComposer {
     public static final int REFRESH = 1;
     public static final int SOLD_OUT = 2;
     public static final int UPDATES = 3;
@@ -16,8 +15,7 @@ public class MarketplaceBuyErrorComposer extends MessageComposer
     private final int offerId;
     private final int price;
 
-    public MarketplaceBuyErrorComposer(int errorCode, int unknown, int offerId, int price)
-    {
+    public MarketplaceBuyErrorComposer(int errorCode, int unknown, int offerId, int price) {
         this.errorCode = errorCode;
         this.unknown = unknown;
         this.offerId = offerId;
@@ -25,8 +23,7 @@ public class MarketplaceBuyErrorComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.MarketplaceBuyErrorComposer);
         this.response.appendInt(this.errorCode); //result
         this.response.appendInt(this.unknown); //newOfferId

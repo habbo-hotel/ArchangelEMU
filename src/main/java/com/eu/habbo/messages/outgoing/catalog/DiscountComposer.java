@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class DiscountComposer extends MessageComposer
-{
+public class DiscountComposer extends MessageComposer {
     public static int MAXIMUM_ALLOWED_ITEMS = 100;
     public static int DISCOUNT_BATCH_SIZE = 6;
     public static int DISCOUNT_AMOUNT_PER_BATCH = 1;
@@ -13,8 +12,7 @@ public class DiscountComposer extends MessageComposer
     public static int[] ADDITIONAL_DISCOUNT_THRESHOLDS = new int[]{40, 99};
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.DiscountComposer);
 
         this.response.appendInt(MAXIMUM_ALLOWED_ITEMS);

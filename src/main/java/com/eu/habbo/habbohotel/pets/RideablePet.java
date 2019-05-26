@@ -21,33 +21,27 @@ public class RideablePet extends Pet {
         this.rider = null;
     }
 
-    public boolean hasSaddle()
-    {
+    public boolean hasSaddle() {
         return this.hasSaddle;
     }
 
-    public void hasSaddle(boolean hasSaddle)
-    {
+    public void hasSaddle(boolean hasSaddle) {
         this.hasSaddle = hasSaddle;
     }
 
-    public boolean anyoneCanRide()
-    {
+    public boolean anyoneCanRide() {
         return this.anyoneCanRide;
     }
 
-    public void setAnyoneCanRide(boolean anyoneCanRide)
-    {
+    public void setAnyoneCanRide(boolean anyoneCanRide) {
         this.anyoneCanRide = anyoneCanRide;
     }
 
-    public Habbo getRider()
-    {
+    public Habbo getRider() {
         return this.rider;
     }
 
-    public void setRider(Habbo rider)
-    {
+    public void setRider(Habbo rider) {
         this.rider = rider;
     }
 }

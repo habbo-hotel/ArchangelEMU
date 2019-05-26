@@ -21,26 +21,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredEffectBotGiveHandItem extends InteractionWiredEffect
-{
+public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.BOT_GIVE_HANDITEM;
 
     private String botName = "";
     private int itemId;
 
-    public WiredEffectBotGiveHandItem(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectBotGiveHandItem(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectBotGiveHandItem(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectBotGiveHandItem(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -53,36 +49,28 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect
         message.appendInt(this.getType().code);
         message.appendInt(this.getDelay());
 
-        if (this.requiresTriggeringUser())
-        {
+        if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>()
-            {
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
                 @Override
-                public boolean execute(InteractionWiredTrigger object)
-                {
-                    if (!object.isTriggeredByRoomUnit())
-                    {
+                public boolean execute(InteractionWiredTrigger object) {
+                    if (!object.isTriggeredByRoomUnit()) {
                         invalidTriggers.add(object.getBaseItem().getSpriteId());
                     }
                     return true;
                 }
             });
             message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers)
-            {
+            for (Integer i : invalidTriggers) {
                 message.appendInt(i);
             }
-        }
-        else
-        {
+        } else {
             message.appendInt(0);
         }
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
 
         this.itemId = packet.readInt();
@@ -93,27 +81,23 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo != null)
-        {
+        if (habbo != null) {
             List<Bot> bots = room.getBots(this.botName);
 
-            for(Bot bot : bots)
-            {
+            for (Bot bot : bots) {
                 List<Runnable> tasks = new ArrayList<>();
                 tasks.add(new RoomUnitGiveHanditem(habbo.getRoomUnit(), room, this.itemId));
                 tasks.add(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, 0));
                 Emulator.getThreading().run(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, this.itemId));
-                Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(bot.getRoomUnit(), habbo.getRoomUnit(), room,  tasks, null));
+                Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(bot.getRoomUnit(), habbo.getRoomUnit(), room, tasks, null));
             }
 
             return true;
@@ -123,18 +107,15 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
-        return this.getDelay() + "" + ((char)9) + "" + this.itemId + "" + ((char) 9) + "" + this.botName;
+    public String getWiredData() {
+        return this.getDelay() + "" + ((char) 9) + "" + this.itemId + "" + ((char) 9) + "" + this.botName;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split(((char) 9) + "");
 
-        if(data.length == 3)
-        {
+        if (data.length == 3) {
             this.setDelay(Integer.valueOf(data[0]));
             this.itemId = Integer.valueOf(data[1]);
             this.botName = data[2];
@@ -142,16 +123,14 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.botName = "";
         this.itemId = 0;
         this.setDelay(0);
     }
 
     @Override
-    public boolean requiresTriggeringUser()
-    {
+    public boolean requiresTriggeringUser() {
         return true;
     }
 }

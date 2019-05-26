@@ -16,34 +16,29 @@ import gnu.trove.set.hash.THashSet;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionNotTriggerOnFurni extends InteractionWiredCondition
-{
+public class WiredConditionNotTriggerOnFurni extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.NOT_ACTOR_ON_FURNI;
 
     private THashSet<HabboItem> items = new THashSet<>();
 
-    public WiredConditionNotTriggerOnFurni(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredConditionNotTriggerOnFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredConditionNotTriggerOnFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredConditionNotTriggerOnFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         if (roomUnit == null) return false;
         this.refresh();
 
-        if(this.items.isEmpty())
+        if (this.items.isEmpty())
             return true;
 
-        for(HabboItem item : this.items)
-        {
-            if(RoomLayout.getRectangle(item.getX(), item.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()).contains(roomUnit.getX(), roomUnit.getY()))
+        for (HabboItem item : this.items) {
+            if (RoomLayout.getRectangle(item.getX(), item.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()).contains(roomUnit.getX(), roomUnit.getY()))
                 return false;
         }
 
@@ -51,58 +46,51 @@ public class WiredConditionNotTriggerOnFurni extends InteractionWiredCondition
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         this.refresh();
 
         StringBuilder data = new StringBuilder();
 
-        for(HabboItem item : this.items)
+        for (HabboItem item : this.items)
             data.append(item.getId()).append(";");
 
         return data.toString();
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
 
         String[] data = set.getString("wired_data").split(";");
 
-        for(String s : data)
-        {
+        for (String s : data) {
             HabboItem item = room.getHabboItem(Integer.valueOf(s));
 
-            if (item != null)
-            {
+            if (item != null) {
                 this.items.add(item);
             }
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.items.clear();
     }
 
     @Override
-    public WiredConditionType getType()
-    {
+    public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         this.refresh();
 
         message.appendBoolean(false);
         message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
         message.appendInt(this.items.size());
 
-        for(HabboItem item : this.items)
+        for (HabboItem item : this.items)
             message.appendInt(item.getId());
 
         message.appendInt(this.getBaseItem().getSpriteId());
@@ -116,8 +104,7 @@ public class WiredConditionNotTriggerOnFurni extends InteractionWiredCondition
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         this.items.clear();
 
         packet.readInt();
@@ -127,14 +114,11 @@ public class WiredConditionNotTriggerOnFurni extends InteractionWiredCondition
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
-        if(room != null)
-        {
-            for (int i = 0; i < count; i++)
-            {
+        if (room != null) {
+            for (int i = 0; i < count; i++) {
                 HabboItem item = room.getHabboItem(packet.readInt());
 
-                if (item != null)
-                {
+                if (item != null) {
                     this.items.add(item);
                 }
             }
@@ -143,19 +127,14 @@ public class WiredConditionNotTriggerOnFurni extends InteractionWiredCondition
         return true;
     }
 
-    private void refresh()
-    {
+    private void refresh() {
         THashSet<HabboItem> items = new THashSet<>();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-        if(room == null)
-        {
+        if (room == null) {
             items.addAll(this.items);
-        }
-        else
-        {
-            for (HabboItem item : this.items)
-            {
+        } else {
+            for (HabboItem item : this.items) {
                 if (item.getRoomId() != room.getId())
                     items.add(item);
             }

@@ -3,18 +3,14 @@ package com.eu.habbo.messages.incoming.rooms.users;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTypingComposer;
 
-public class RoomUserStartTypingEvent extends MessageHandler
-{
+public class RoomUserStartTypingEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if(this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
-        {
+    public void handle() throws Exception {
+        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null) {
             return;
         }
 
-        if(this.client.getHabbo().getRoomUnit() == null)
-        {
+        if (this.client.getHabbo().getRoomUnit() == null) {
             return;
         }
 

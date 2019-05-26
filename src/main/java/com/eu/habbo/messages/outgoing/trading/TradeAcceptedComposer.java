@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class TradeAcceptedComposer extends MessageComposer
-{
+public class TradeAcceptedComposer extends MessageComposer {
     private final RoomTradeUser tradeUser;
 
-    public TradeAcceptedComposer(RoomTradeUser tradeUser)
-    {
+    public TradeAcceptedComposer(RoomTradeUser tradeUser) {
         this.tradeUser = tradeUser;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.TradeAcceptedComposer);
         this.response.appendInt(this.tradeUser.getUserId());
         this.response.appendInt(this.tradeUser.getAccepted());

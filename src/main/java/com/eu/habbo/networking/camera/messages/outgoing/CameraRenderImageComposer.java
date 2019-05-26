@@ -5,17 +5,15 @@ import com.eu.habbo.networking.camera.CameraOutgoingMessage;
 import com.eu.habbo.networking.camera.messages.CameraOutgoingHeaders;
 import io.netty.channel.Channel;
 
-public class CameraRenderImageComposer extends CameraOutgoingMessage
-{
-    final int userId;
+public class CameraRenderImageComposer extends CameraOutgoingMessage {
     public final int timestamp;
+    final int userId;
     final int backgroundColor;
     final int width;
     final int height;
     final String JSON;
 
-    public CameraRenderImageComposer(int userId, int backgroundColor, int width, int height, String json)
-    {
+    public CameraRenderImageComposer(int userId, int backgroundColor, int width, int height, String json) {
         super(CameraOutgoingHeaders.RenderImageComposer);
 
         this.userId = userId;
@@ -27,8 +25,7 @@ public class CameraRenderImageComposer extends CameraOutgoingMessage
     }
 
     @Override
-    public void compose(Channel channel)
-    {
+    public void compose(Channel channel) {
         this.appendInt32(this.userId);
         this.appendInt32(this.timestamp);
         this.appendInt32(this.backgroundColor);

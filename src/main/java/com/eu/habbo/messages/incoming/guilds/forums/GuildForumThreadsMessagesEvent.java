@@ -10,11 +10,9 @@ import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumCommentsComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumDataComposer;
 import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 
-public class GuildForumThreadsMessagesEvent extends MessageHandler
-{
+public class GuildForumThreadsMessagesEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int guildId = packet.readInt();
         int threadId = packet.readInt();
         int index = packet.readInt(); // 40
@@ -23,17 +21,14 @@ public class GuildForumThreadsMessagesEvent extends MessageHandler
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
         ForumThread thread = ForumThread.getById(threadId);
 
-        if(guild == null || thread == null) {
+        if (guild == null || thread == null) {
             this.client.sendResponse(new ConnectionErrorComposer(404));
             return;
         }
 
-        if ((thread.getState() == ForumThreadState.HIDDEN_BY_ADMIN || thread.getState() == ForumThreadState.HIDDEN_BY_STAFF) && guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId())
-        {
+        if ((thread.getState() == ForumThreadState.HIDDEN_BY_ADMIN || thread.getState() == ForumThreadState.HIDDEN_BY_STAFF) && guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId()) {
             this.client.sendResponse(new BubbleAlertComposer("oldforums.error.access_denied"));
-        }
-        else
-        {
+        } else {
             this.client.sendResponse(new GuildForumCommentsComposer(guildId, threadId, index, thread.getComments(limit, index)));
         }
 

@@ -8,14 +8,12 @@ import java.sql.SQLException;
 
 public class Default_3x3Layout extends CatalogPage {
 
-    public Default_3x3Layout(ResultSet set) throws SQLException
-    {
+    public Default_3x3Layout(ResultSet set) throws SQLException {
         super(set);
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendString("default_3x3");
         message.appendInt(3);
         message.appendString(super.getHeaderImage());

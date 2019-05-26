@@ -20,79 +20,67 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class WiredEffectChangeFurniDirection extends InteractionWiredEffect
-{
+public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
     public static final int ACTION_WAIT = 0;
-    public static final  int ACTION_TURN_RIGHT_45 = 1;
-    public static final  int ACTION_TURN_RIGHT_90 = 2;
-    public static final  int ACTION_TURN_LEFT_45 = 3;
-    public static final  int ACTION_TURN_LEFT_90 = 4;
-    public static final  int ACTION_TURN_BACK = 5;
-    public static final  int ACTION_TURN_RANDOM = 6;
+    public static final int ACTION_TURN_RIGHT_45 = 1;
+    public static final int ACTION_TURN_RIGHT_90 = 2;
+    public static final int ACTION_TURN_LEFT_45 = 3;
+    public static final int ACTION_TURN_LEFT_90 = 4;
+    public static final int ACTION_TURN_BACK = 5;
+    public static final int ACTION_TURN_RANDOM = 6;
 
     public static final WiredEffectType type = WiredEffectType.MOVE_DIRECTION;
 
     private final THashMap<HabboItem, RoomUserRotation> items = new THashMap<>(0);
     private RoomUserRotation startRotation = RoomUserRotation.NORTH;
     private int rotateAction = 0;
-    public WiredEffectChangeFurniDirection(ResultSet set, Item baseItem) throws SQLException
-    {
+
+    public WiredEffectChangeFurniDirection(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectChangeFurniDirection(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectChangeFurniDirection(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         THashSet<HabboItem> items = new THashSet<>();
 
-        for (HabboItem item : this.items.keySet())
-        {
+        for (HabboItem item : this.items.keySet()) {
             if (Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
                 items.add(item);
         }
 
-        for (HabboItem item : items)
-        {
+        for (HabboItem item : items) {
             this.items.remove(item);
         }
 
         if (this.items.isEmpty()) return false;
-        for (Map.Entry<HabboItem, RoomUserRotation> entry : this.items.entrySet())
-        {
+        for (Map.Entry<HabboItem, RoomUserRotation> entry : this.items.entrySet()) {
             RoomUserRotation currentRotation = entry.getValue();
             RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getValue().getValue());
 
             int count = 1;
-            while ((targetTile == null || !targetTile.getAllowStack() || targetTile.state == RoomTileState.INVALID) && count < 8)
-            {
+            while ((targetTile == null || !targetTile.getAllowStack() || targetTile.state == RoomTileState.INVALID) && count < 8) {
                 entry.setValue(this.nextRotation(entry.getValue()));
                 targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getValue().getValue());
                 count++;
             }
 
-            if (targetTile != null && targetTile.state == RoomTileState.OPEN)
-            {
+            if (targetTile != null && targetTile.state == RoomTileState.OPEN) {
                 boolean hasHabbos = false;
-                for (Habbo habbo : room.getHabbosAt(targetTile))
-                {
+                for (Habbo habbo : room.getHabbosAt(targetTile)) {
                     hasHabbos = true;
-                    Emulator.getThreading().run(new Runnable()
-                    {
+                    Emulator.getThreading().run(new Runnable() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             WiredHandler.handle(WiredTriggerType.COLLISION, habbo.getRoomUnit(), room, new Object[]{entry.getKey()});
                         }
                     });
                 }
 
-                if (!hasHabbos)
-                {
+                if (!hasHabbos) {
                     THashSet<RoomTile> refreshTiles = room.getLayout().getTilesAt(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getKey().getBaseItem().getWidth(), entry.getKey().getBaseItem().getLength(), entry.getKey().getRotation());
                     room.sendComposer(new FloorItemOnRollerComposer(entry.getKey(), null, targetTile, targetTile.getStackHeight() - entry.getKey().getZ(), room).compose());
                     room.getLayout().getTilesAt(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getKey().getBaseItem().getWidth(), entry.getKey().getBaseItem().getLength(), entry.getKey().getRotation());
@@ -105,12 +93,10 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         StringBuilder data = new StringBuilder(this.startRotation.getValue() + "\t" + this.rotateAction + "\t" + this.items.size());
 
-        for (Map.Entry<HabboItem, RoomUserRotation> entry : this.items.entrySet())
-        {
+        for (Map.Entry<HabboItem, RoomUserRotation> entry : this.items.entrySet()) {
             data.append("\t").append(entry.getKey().getId()).append(":").append(entry.getValue().getValue());
         }
 
@@ -118,29 +104,23 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split("\t");
 
-        if (data.length >= 3)
-        {
+        if (data.length >= 3) {
             this.startRotation = RoomUserRotation.fromValue(Integer.valueOf(data[0]));
             this.rotateAction = Integer.valueOf(data[1]);
 
             int itemCount = Integer.valueOf(data[2]);
 
-            if (itemCount > 0)
-            {
-                for (int i = 3; i < data.length; i++)
-                {
+            if (itemCount > 0) {
+                for (int i = 3; i < data.length; i++) {
                     String[] subData = data[i].split(":");
 
-                    if (subData.length == 2)
-                    {
+                    if (subData.length == 2) {
                         HabboItem item = room.getHabboItem(Integer.valueOf(subData[0]));
 
-                        if (item != null)
-                        {
+                        if (item != null) {
                             this.items.put(item, RoomUserRotation.fromValue(Integer.valueOf(subData[1])));
                         }
                     }
@@ -150,8 +130,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.setDelay(0);
         this.items.clear();
         this.rotateAction = 0;
@@ -159,19 +138,16 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
         message.appendInt(this.items.size());
-        for (Map.Entry<HabboItem, RoomUserRotation> item : this.items.entrySet())
-        {
+        for (Map.Entry<HabboItem, RoomUserRotation> item : this.items.entrySet()) {
             message.appendInt(item.getKey().getId());
         }
         message.appendInt(this.getBaseItem().getSpriteId());
@@ -187,8 +163,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         this.items.clear();
         packet.readInt();
         this.startRotation = RoomUserRotation.fromValue(packet.readInt());
@@ -196,22 +171,18 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect
         packet.readString();
 
         int furniCount = packet.readInt();
-        for (int i = 0; i < furniCount; i++)
-        {
+        for (int i = 0; i < furniCount; i++) {
             HabboItem item = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(packet.readInt());
 
-            if (item != null)
-            {
+            if (item != null) {
                 this.items.put(item, this.startRotation);
             }
         }
         return true;
     }
 
-    private RoomUserRotation nextRotation(RoomUserRotation currentRotation)
-    {
-        switch (this.rotateAction)
-        {
+    private RoomUserRotation nextRotation(RoomUserRotation currentRotation) {
+        switch (this.rotateAction) {
             case ACTION_TURN_BACK:
                 return RoomUserRotation.fromValue(currentRotation.getValue() + 4);
 
@@ -234,8 +205,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect
     }
 
     @Override
-    protected long requiredCooldown()
-    {
+    protected long requiredCooldown() {
         return 495;
     }
 }

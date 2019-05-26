@@ -17,63 +17,52 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class CatalogPageComposer extends MessageComposer
-{
+public class CatalogPageComposer extends MessageComposer {
     private final CatalogPage page;
     private final Habbo habbo;
     private final String mode;
 
-    public CatalogPageComposer(CatalogPage page, Habbo habbo, String mode)
-    {
+    public CatalogPageComposer(CatalogPage page, Habbo habbo, String mode) {
         this.page = page;
         this.habbo = habbo;
         this.mode = mode;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.CatalogPageComposer);
         this.response.appendInt(this.page.getId());
         this.response.appendString(this.mode);
         this.page.serialize(this.response);
 
-        if(this.page instanceof RecentPurchasesLayout)
-        {
+        if (this.page instanceof RecentPurchasesLayout) {
             this.response.appendInt(this.habbo.getHabboStats().getRecentPurchases().size());
 
-            for(Map.Entry<Integer, CatalogItem> item : this.habbo.getHabboStats().getRecentPurchases().entrySet())
-            {
+            for (Map.Entry<Integer, CatalogItem> item : this.habbo.getHabboStats().getRecentPurchases().entrySet()) {
                 item.getValue().serialize(this.response);
             }
-        }
-        else
-        {
+        } else {
             this.response.appendInt(this.page.getCatalogItems().size());
             List<CatalogItem> items = new ArrayList<>(this.page.getCatalogItems().valueCollection());
             Collections.sort(items);
-            for (CatalogItem item : items)
-            {
+            for (CatalogItem item : items) {
                 item.serialize(this.response);
             }
         }
         this.response.appendInt(0);
         this.response.appendBoolean(false); //acceptSeasonCurrencyAsCredits
 
-        if (this.page instanceof FrontPageFeaturedLayout || this.page instanceof FrontpageLayout)
-        {
+        if (this.page instanceof FrontPageFeaturedLayout || this.page instanceof FrontpageLayout) {
             this.serializeExtra(this.response);
         }
 
         return this.response;
     }
 
-    public void serializeExtra(ServerMessage message)
-    {
+    public void serializeExtra(ServerMessage message) {
         message.appendInt(Emulator.getGameEnvironment().getCatalogManager().getCatalogFeaturedPages().size());
 
-        for (CatalogFeaturedPage page : Emulator.getGameEnvironment().getCatalogManager().getCatalogFeaturedPages().valueCollection())
-        {
+        for (CatalogFeaturedPage page : Emulator.getGameEnvironment().getCatalogManager().getCatalogFeaturedPages().valueCollection()) {
             page.serialize(message);
         }
     }

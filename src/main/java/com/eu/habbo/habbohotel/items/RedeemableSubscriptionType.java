@@ -6,8 +6,7 @@ public enum RedeemableSubscriptionType {
 
     public final String subscriptionType;
 
-    RedeemableSubscriptionType(String subscriptionType)
-    {
+    RedeemableSubscriptionType(String subscriptionType) {
         this.subscriptionType = subscriptionType;
     }
 

@@ -14,34 +14,30 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.Iterator;
 
-public class ModToolComposer extends MessageComposer implements TObjectProcedure<ModToolCategory>
-{
+public class ModToolComposer extends MessageComposer implements TObjectProcedure<ModToolCategory> {
     private final Habbo habbo;
 
-    public ModToolComposer(Habbo habbo)
-    {
+    public ModToolComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ModToolComposer);
 
-        if(this.habbo.hasPermission("acc_modtool_ticket_q"))
-        {
+        if (this.habbo.hasPermission("acc_modtool_ticket_q")) {
             THashSet<ModToolIssue> openTickets = new THashSet<>();
 
             THashMap<Integer, ModToolIssue> tickets = Emulator.getGameEnvironment().getModToolManager().getTickets();
 
-            for(ModToolIssue t : tickets.values()) {
-                if(t.state != ModToolTicketState.CLOSED)
+            for (ModToolIssue t : tickets.values()) {
+                if (t.state != ModToolTicketState.CLOSED)
                     openTickets.add(t);
             }
 
             int ticketsCount = openTickets.size();
 
-            if(ticketsCount > 100) {
+            if (ticketsCount > 100) {
                 ticketsCount = 100;
             }
 
@@ -49,21 +45,16 @@ public class ModToolComposer extends MessageComposer implements TObjectProcedure
 
             Iterator<ModToolIssue> it = openTickets.iterator();
 
-            for(int i = 0; i < ticketsCount; i++)
-            {
+            for (int i = 0; i < ticketsCount; i++) {
                 it.next().serialize(this.response);
             }
-        }
-        else
-        {
+        } else {
             this.response.appendInt(0);
         }
 
-        synchronized (Emulator.getGameEnvironment().getModToolManager().getPresets())
-        {
+        synchronized (Emulator.getGameEnvironment().getModToolManager().getPresets()) {
             this.response.appendInt(Emulator.getGameEnvironment().getModToolManager().getPresets().get("user").size());
-            for (String s : Emulator.getGameEnvironment().getModToolManager().getPresets().get("user"))
-            {
+            for (String s : Emulator.getGameEnvironment().getModToolManager().getPresets().get("user")) {
                 this.response.appendString(s);
             }
         }
@@ -80,11 +71,9 @@ public class ModToolComposer extends MessageComposer implements TObjectProcedure
         this.response.appendBoolean(this.habbo.hasPermission("acc_modtool_room_info")); //room info ??Not sure
         this.response.appendBoolean(this.habbo.hasPermission("acc_modtool_room_logs")); //room chatlogs ??Not sure
 
-        synchronized (Emulator.getGameEnvironment().getModToolManager().getPresets())
-        {
+        synchronized (Emulator.getGameEnvironment().getModToolManager().getPresets()) {
             this.response.appendInt(Emulator.getGameEnvironment().getModToolManager().getPresets().get("room").size());
-            for (String s : Emulator.getGameEnvironment().getModToolManager().getPresets().get("room"))
-            {
+            for (String s : Emulator.getGameEnvironment().getModToolManager().getPresets().get("room")) {
                 this.response.appendString(s);
             }
         }
@@ -93,32 +82,13 @@ public class ModToolComposer extends MessageComposer implements TObjectProcedure
     }
 
     @Override
-    public boolean execute(ModToolCategory category)
-    {
+    public boolean execute(ModToolCategory category) {
         this.response.appendString(category.getName());
 
 
 //
 
 //
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         return true;

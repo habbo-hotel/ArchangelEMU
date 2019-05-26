@@ -9,25 +9,20 @@ import com.eu.habbo.plugin.events.users.UserIdleEvent;
 
 public class RoomUserDanceEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
             return;
 
         int danceId = this.packet.readInt();
-        if(danceId >= 0 && danceId <= 5)
-        {
-            if (this.client.getHabbo().getRoomUnit().isInRoom())
-            {
+        if (danceId >= 0 && danceId <= 5) {
+            if (this.client.getHabbo().getRoomUnit().isInRoom()) {
 
                 Habbo habbo = this.client.getHabbo();
 
-                if(this.client.getHabbo().getRoomUnit().getCacheable().get("control") != null)
-                {
-                    habbo = (Habbo)this.client.getHabbo().getRoomUnit().getCacheable().get("control");
+                if (this.client.getHabbo().getRoomUnit().getCacheable().get("control") != null) {
+                    habbo = (Habbo) this.client.getHabbo().getRoomUnit().getCacheable().get("control");
 
-                    if(habbo.getHabboInfo().getCurrentRoom() != this.client.getHabbo().getHabboInfo().getCurrentRoom())
-                    {
+                    if (habbo.getHabboInfo().getCurrentRoom() != this.client.getHabbo().getHabboInfo().getCurrentRoom()) {
                         habbo.getRoomUnit().getCacheable().remove("controller");
                         this.client.getHabbo().getRoomUnit().getCacheable().remove("control");
                         habbo = this.client.getHabbo();
@@ -39,10 +34,8 @@ public class RoomUserDanceEvent extends MessageHandler {
                 UserIdleEvent event = new UserIdleEvent(this.client.getHabbo(), UserIdleEvent.IdleReason.DANCE, false);
                 Emulator.getPluginManager().fireEvent(event);
 
-                if (!event.isCancelled())
-                {
-                    if (!event.idle)
-                    {
+                if (!event.isCancelled()) {
+                    if (!event.idle) {
                         this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(habbo);
                     }
                 }

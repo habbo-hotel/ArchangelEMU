@@ -5,27 +5,22 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class MannequinSaveNameEvent extends MessageHandler
-{
+public class MannequinSaveNameEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-        if(room == null || this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())
+        if (room == null || this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())
             return;
 
         HabboItem item = room.getHabboItem(this.packet.readInt());
-        if(item == null)
+        if (item == null)
             return;
 
         String[] data = item.getExtradata().split(":");
         String name = this.packet.readString();
-        if(data.length == 3)
-        {
+        if (data.length == 3) {
             item.setExtradata(this.client.getHabbo().getHabboInfo().getGender().name().toUpperCase() + ":" + data[1] + ":" + name);
-        }
-        else
-        {
+        } else {
             item.setExtradata(this.client.getHabbo().getHabboInfo().getGender().name().toUpperCase() + ":" + this.client.getHabbo().getHabboInfo().getLook() + ":" + name);
         }
         item.needsUpdate(true);

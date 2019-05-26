@@ -5,8 +5,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.util.ArrayList;
 
-public class NavigatorSearchResultEvent extends NavigatorRoomsEvent
-{
+public class NavigatorSearchResultEvent extends NavigatorRoomsEvent {
 
     public final String prefix;
 
@@ -14,8 +13,7 @@ public class NavigatorSearchResultEvent extends NavigatorRoomsEvent
     public final String query;
 
 
-    public NavigatorSearchResultEvent(Habbo habbo, String prefix, String query, ArrayList<Room> rooms)
-    {
+    public NavigatorSearchResultEvent(Habbo habbo, String prefix, String query, ArrayList<Room> rooms) {
         super(habbo, rooms);
 
         this.prefix = prefix;

@@ -14,15 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class ProfileFriendsComposer extends MessageComposer
-{
+public class ProfileFriendsComposer extends MessageComposer {
     private final List<MessengerBuddy> lovers = new ArrayList<>();
     private final List<MessengerBuddy> friends = new ArrayList<>();
     private final List<MessengerBuddy> haters = new ArrayList<>();
     private final int userId;
 
-    public ProfileFriendsComposer(THashMap<Integer, THashSet<MessengerBuddy>> map, int userId)
-    {
+    public ProfileFriendsComposer(THashMap<Integer, THashSet<MessengerBuddy>> map, int userId) {
         this.lovers.addAll(map.get(1));
         this.friends.addAll(map.get(2));
         this.haters.addAll(map.get(3));
@@ -30,12 +28,9 @@ public class ProfileFriendsComposer extends MessageComposer
         this.userId = userId;
     }
 
-    public ProfileFriendsComposer(Habbo habbo)
-    {
-        try
-        {
-            for (Map.Entry<Integer, MessengerBuddy> map : habbo.getMessenger().getFriends().entrySet())
-            {
+    public ProfileFriendsComposer(Habbo habbo) {
+        try {
+            for (Map.Entry<Integer, MessengerBuddy> map : habbo.getMessenger().getFriends().entrySet()) {
                 if (map.getValue().getRelation() == 0)
                     continue;
 
@@ -51,9 +46,7 @@ public class ProfileFriendsComposer extends MessageComposer
                         break;
                 }
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
@@ -61,22 +54,20 @@ public class ProfileFriendsComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
-        try
-        {
+    public ServerMessage compose() {
+        try {
             this.response.init(Outgoing.ProfileFriendsComposer);
             this.response.appendInt(this.userId);
 
             int total = 0;
 
-            if(!this.lovers.isEmpty())
+            if (!this.lovers.isEmpty())
                 total++;
 
-            if(!this.friends.isEmpty())
+            if (!this.friends.isEmpty())
                 total++;
 
-            if(!this.haters.isEmpty())
+            if (!this.haters.isEmpty())
                 total++;
 
             this.response.appendInt(total);
@@ -109,9 +100,7 @@ public class ProfileFriendsComposer extends MessageComposer
                 this.response.appendString(this.haters.get(hatersIndex).getUsername());
                 this.response.appendString(this.haters.get(hatersIndex).getLook());
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
         return this.response;

@@ -5,8 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Poll
-{
+public class Poll {
 
     public final int id;
 
@@ -23,8 +22,7 @@ public class Poll
 
     private ArrayList<PollQuestion> questions;
 
-    public Poll(ResultSet set) throws SQLException
-    {
+    public Poll(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.title = set.getString("title");
         this.thanksMessage = set.getString("thanks_message");
@@ -32,17 +30,13 @@ public class Poll
         this.questions = new ArrayList<>();
     }
 
-    public ArrayList<PollQuestion> getQuestions()
-    {
+    public ArrayList<PollQuestion> getQuestions() {
         return this.questions;
     }
 
-    public PollQuestion getQuestion(int id)
-    {
-        for (PollQuestion q : this.questions)
-        {
-            if (q.id == id)
-            {
+    public PollQuestion getQuestion(int id) {
+        for (PollQuestion q : this.questions) {
+            if (q.id == id) {
                 return q;
             }
         }
@@ -50,8 +44,7 @@ public class Poll
         return null;
     }
 
-    public void addQuestion(PollQuestion question)
-    {
+    public void addQuestion(PollQuestion question) {
         this.questions.add(question);
 
         Collections.sort(this.questions);

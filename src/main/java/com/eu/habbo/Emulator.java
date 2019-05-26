@@ -7,7 +7,6 @@ import com.eu.habbo.core.TextsManager;
 import com.eu.habbo.core.consolecommands.ConsoleCommand;
 import com.eu.habbo.database.Database;
 import com.eu.habbo.habbohotel.GameEnvironment;
-import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.networking.camera.CameraClient;
 import com.eu.habbo.networking.gameserver.GameServer;
 import com.eu.habbo.networking.rconserver.RCONServer;
@@ -17,7 +16,6 @@ import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorStartShutdownEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorStoppedEvent;
 import com.eu.habbo.threading.ThreadPooling;
-import com.eu.habbo.threading.runnables.CameraClientAutoReconnect;
 import com.eu.habbo.util.imager.badges.BadgeImager;
 
 import java.io.BufferedReader;
@@ -30,10 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
-import java.util.zip.Checksum;
 
-public final class Emulator
-{
+public final class Emulator {
 
     public final static int MAJOR = 2;
 
@@ -46,39 +42,39 @@ public final class Emulator
 
     public final static String PREVIEW = "RC-1";
 
-    public static final String version = "Arcturus Morningstar"+ " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
+    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
+    private static final String logo =
 
+            "							                    				    \n" +
+                    "    __  ___                 _  A R C T U R U S __            		\n" +
+                    "   /  |/  /___  _________  (_)___  ____ ______/ /_____ ______		\n" +
+                    "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
+                    " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
+                    "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
+                    "                                /____/                             \n";
     public static String build = "";
-
     public static boolean isReady = false;
-
     public static boolean isShuttingDown = false;
-
     public static boolean stopped = false;
-
     public static boolean debugging = false;
+    private static int timeStarted = 0;
+    private static Runtime runtime;
+    private static ConfigurationManager config;
+    private static TextsManager texts;
+    private static GameServer gameServer;
+    private static RCONServer rconServer;
+    private static CameraClient cameraClient;
+    private static Database database;
+    private static Logging logging;
+    private static ThreadPooling threading;
+    private static GameEnvironment gameEnvironment;
+    private static PluginManager pluginManager;
+    private static Random random;
+    private static BadgeImager badgeImager;
 
-    private static int                      timeStarted = 0;
-    private static Runtime                  runtime;
-    private static ConfigurationManager     config;
-    private static TextsManager             texts;
-    private static GameServer               gameServer;
-    private static RCONServer               rconServer;
-    private static CameraClient             cameraClient;
-    private static Database                 database;
-    private static Logging                  logging;
-    private static ThreadPooling            threading;
-    private static GameEnvironment          gameEnvironment;
-    private static PluginManager            pluginManager;
-    private static Random                   random;
-    private static BadgeImager              badgeImager;
-
-    static
-    {
-        Thread hook = new Thread(new Runnable()
-        {
-            public synchronized void run()
-            {
+    static {
+        Thread hook = new Thread(new Runnable() {
+            public synchronized void run() {
                 Emulator.dispose();
             }
         });
@@ -86,11 +82,8 @@ public final class Emulator
         Runtime.getRuntime().addShutdownHook(hook);
     }
 
-
-    public static void main(String[] args) throws Exception
-    {
-        try
-        {
+    public static void main(String[] args) throws Exception {
+        try {
             Locale.setDefault(new Locale("en"));
 
             setBuild();
@@ -98,15 +91,14 @@ public final class Emulator
             ConsoleCommand.load();
             Emulator.logging = new Logging();
             Emulator.getLogging().logStart("\r" + Emulator.logo +
-            "       Build: " + build + "\n");
+                    "       Build: " + build + "\n");
             random = new Random();
             long startTime = System.nanoTime();
 
             Emulator.runtime = Runtime.getRuntime();
             Emulator.config = new ConfigurationManager("config.ini");
 
-            if (Emulator.getConfig().getValue("username").isEmpty())
-            {
+            if (Emulator.getConfig().getValue("username").isEmpty()) {
                 Emulator.getLogging().logErrorLine("Please make sure you enter your forum login details!");
                 Thread.sleep(2000);
             }
@@ -131,7 +123,7 @@ public final class Emulator
             Emulator.rconServer.initializePipeline();
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
-          // Removed Wesleys Camera Server lol.
+            // Removed Wesleys Camera Server lol.
             /* if (Emulator.getConfig().getBoolean("camera.enabled"))
             {
                 Emulator.getThreading().run(new CameraClientAutoReconnect());
@@ -144,8 +136,7 @@ public final class Emulator
 
             Emulator.debugging = Emulator.getConfig().getBoolean("debug.mode");
 
-            if (debugging)
-            {
+            if (debugging) {
                 Emulator.getLogging().logDebugLine("Debugging Enabled!");
             }
 
@@ -153,17 +144,14 @@ public final class Emulator
             Emulator.isReady = true;
             Emulator.timeStarted = getIntUnixTimestamp();
 
-            if (Emulator.getConfig().getInt("runtime.threads") < (Runtime.getRuntime().availableProcessors() * 2))
-            {
+            if (Emulator.getConfig().getInt("runtime.threads") < (Runtime.getRuntime().availableProcessors() * 2)) {
                 Emulator.getLogging().logStart("Emulator settings runtime.threads (" + Emulator.getConfig().getInt("runtime.threads") + ") can be increased to " + (Runtime.getRuntime().availableProcessors() * 2) + " to possibly increase performance.");
             }
 
 
-            Emulator.getThreading().run(new Runnable()
-            {
+            Emulator.getThreading().run(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a Release Candidate for 2.1.0, if you find any bugs please place them on our git repository.");
                     Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
                     Emulator.getLogging().logStart("https://discord.gg/syuqgN");
@@ -173,56 +161,46 @@ public final class Emulator
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-            while (!isShuttingDown && isReady)
-            {
-                try
-                {
+            while (!isShuttingDown && isReady) {
+                try {
 
                     String line = reader.readLine();
 
-                    if (line != null)
-                    {
+                    if (line != null) {
                         ConsoleCommand.handle(line);
                     }
                     System.out.println("Waiting for command: ");
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     Emulator.getLogging().logErrorLine(e);
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private static void setBuild() {
-        if(Emulator.class.getProtectionDomain().getCodeSource() == null) {
+        if (Emulator.class.getProtectionDomain().getCodeSource() == null) {
             build = "UNKNOWN";
             return;
         }
 
         StringBuilder sb = new StringBuilder();
-        try
-        {
+        try {
             String filepath = new File(Emulator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
             MessageDigest md = MessageDigest.getInstance("MD5");// MD5
             FileInputStream fis = new FileInputStream(filepath);
             byte[] dataBytes = new byte[1024];
             int nread = 0;
 
-            while((nread = fis.read(dataBytes)) != -1)
+            while ((nread = fis.read(dataBytes)) != -1)
                 md.update(dataBytes, 0, nread);
 
             byte[] mdbytes = md.digest();
 
-            for(int i=0; i<mdbytes.length; i++)
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100 , 16).substring(1));
-        }
-        catch(Exception e)
-        {
+            for (int i = 0; i < mdbytes.length; i++)
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+        } catch (Exception e) {
             build = "UNKNOWN";
             return;
         }
@@ -230,193 +208,147 @@ public final class Emulator
         build = sb.toString();
     }
 
-
-    private static void dispose()
-    {
+    private static void dispose() {
         Emulator.getThreading().setCanAdd(false);
         Emulator.isShuttingDown = true;
         Emulator.isReady = false;
         Emulator.getLogging().logShutdownLine("Stopping Arcturus Emulator " + version + "...");
 
-        try
-        {
+        try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStartShutdownEvent());
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
 
-        try
-        {
+        try {
             if (Emulator.cameraClient != null)
                 Emulator.cameraClient.disconnect();
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
 
-        try
-        {
+        try {
             if (Emulator.rconServer != null)
                 Emulator.rconServer.stop();
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
 
 
-        try
-        {
+        try {
             if (Emulator.gameEnvironment != null)
                 Emulator.gameEnvironment.dispose();
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
 
-        try
-        {
+        try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStoppedEvent());
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
 
-        try
-        {
+        try {
             if (Emulator.pluginManager != null)
                 Emulator.pluginManager.dispose();
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
 
         Emulator.getLogging().saveLogs();
 
-        try
-        {
-            if (Emulator.config != null)
-            {
+        try {
+            if (Emulator.config != null) {
                 Emulator.config.saveToDatabase();
             }
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
 
-        try
-        {
+        try {
             if (Emulator.gameServer != null)
                 Emulator.gameServer.stop();
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
 
         Emulator.getLogging().logShutdownLine("Stopped Arcturus Emulator " + version + "...");
 
-        if (Emulator.database != null)
-        {
+        if (Emulator.database != null) {
             Emulator.getDatabase().dispose();
         }
         Emulator.stopped = true;
 
-        try
-        {
+        try {
             if (Emulator.threading != null)
                 Emulator.threading.shutDown();
+        } catch (Exception e) {
         }
-        catch (Exception e) {}
     }
 
-
-    public static ConfigurationManager getConfig()
-    {
+    public static ConfigurationManager getConfig() {
         return config;
     }
 
-
-    public static TextsManager getTexts()
-    {
+    public static TextsManager getTexts() {
         return texts;
     }
 
-
-    public static Database getDatabase()
-    {
+    public static Database getDatabase() {
         return database;
     }
 
-
-    public static Runtime getRuntime()
-    {
+    public static Runtime getRuntime() {
         return runtime;
     }
 
-
-    public static GameServer getGameServer()
-    {
+    public static GameServer getGameServer() {
         return gameServer;
     }
 
-
-    public static RCONServer getRconServer()
-    {
+    public static RCONServer getRconServer() {
         return rconServer;
     }
 
-
-    public static Logging getLogging()
-    {
+    public static Logging getLogging() {
         return logging;
     }
 
-
-    public static ThreadPooling getThreading()
-    {
+    public static ThreadPooling getThreading() {
         return threading;
     }
 
-
-    public static GameEnvironment getGameEnvironment()
-    {
+    public static GameEnvironment getGameEnvironment() {
         return gameEnvironment;
     }
 
-
-    public static PluginManager getPluginManager()
-    {
+    public static PluginManager getPluginManager() {
         return pluginManager;
     }
 
-
-    public static Random getRandom()
-    {
+    public static Random getRandom() {
         return random;
     }
 
-
-    public static BadgeImager getBadgeImager()
-    {
+    public static BadgeImager getBadgeImager() {
         return badgeImager;
     }
 
-    public static CameraClient getCameraClient()
-    {
+    public static CameraClient getCameraClient() {
         return cameraClient;
     }
 
-    public static synchronized void setCameraClient(CameraClient client)
-    {
+    public static synchronized void setCameraClient(CameraClient client) {
         cameraClient = client;
     }
 
-
-    public static int getTimeStarted()
-    {
+    public static int getTimeStarted() {
         return timeStarted;
     }
 
-
-    public static int getOnlineTime()
-    {
+    public static int getOnlineTime() {
         return getIntUnixTimestamp() - timeStarted;
     }
 
-    public static void prepareShutdown()
-    {
+    public static void prepareShutdown() {
         System.exit(0);
     }
 
-
-    private static String dateToUnixTimestamp(Date date)
-    {
+    private static String dateToUnixTimestamp(Date date) {
         String res = "";
         Date aux = stringToDate("1970-01-01 00:00:00");
         Timestamp aux1 = dateToTimeStamp(aux);
@@ -426,55 +358,42 @@ public final class Emulator
         return res + seconds;
     }
 
-
-    private static Date stringToDate(String date)
-    {
+    private static Date stringToDate(String date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date res = null;
-        try
-        {
+        try {
             res = format.parse(date);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
         return res;
     }
 
-    public static Timestamp dateToTimeStamp(Date date)
-    {
+    public static Timestamp dateToTimeStamp(Date date) {
         return new Timestamp(date.getTime());
     }
 
-    public static Date getDate()
-    {
+    public static Date getDate() {
         return new Date(System.currentTimeMillis());
     }
 
-    public static String getUnixTimestamp()
-    {
+    public static String getUnixTimestamp() {
         return dateToUnixTimestamp(getDate());
     }
 
-    public static int getIntUnixTimestamp()
-    {
+    public static int getIntUnixTimestamp() {
         return (int) (System.currentTimeMillis() / 1000);
     }
 
     public static boolean isNumeric(String string)
-        throws IllegalArgumentException
-    {
+            throws IllegalArgumentException {
         boolean isnumeric = false;
-        if ((string != null) && (!string.equals("")))
-        {
+        if ((string != null) && (!string.equals(""))) {
             isnumeric = true;
             char[] chars = string.toCharArray();
-            for (char aChar : chars)
-            {
+            for (char aChar : chars) {
                 isnumeric = Character.isDigit(aChar);
-                if (!isnumeric)
-                {
+                if (!isnumeric) {
                     break;
                 }
             }
@@ -482,23 +401,11 @@ public final class Emulator
         return isnumeric;
     }
 
-    public int getUserCount()
-    {
+    public int getUserCount() {
         return gameEnvironment.getHabboManager().getOnlineCount();
     }
 
-    public int getRoomCount()
-    {
+    public int getRoomCount() {
         return gameEnvironment.getRoomManager().getActiveRooms().size();
     }
-
-    private static final String logo =
-
-                    "							                    				    \n" +
-                    "    __  ___                 _  A R C T U R U S __            		\n" +
-                    "   /  |/  /___  _________  (_)___  ____ ______/ /_____ ______		\n" +
-                    "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
-                    " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
-                    "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
-                    "                                /____/                             \n";
 }

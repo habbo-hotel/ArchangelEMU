@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuildRefreshMembersListComposer extends MessageComposer
-{
+public class GuildRefreshMembersListComposer extends MessageComposer {
     private final Guild guild;
 
-    public GuildRefreshMembersListComposer(Guild guild)
-    {
+    public GuildRefreshMembersListComposer(Guild guild) {
         this.guild = guild;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuildRefreshMembersListComposer);
         this.response.appendInt(this.guild.getId());
         this.response.appendInt(0);

@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class TradeStartFailComposer extends MessageComposer
-{
+public class TradeStartFailComposer extends MessageComposer {
     public static final int HOTEL_TRADING_NOT_ALLOWED = 1;
     public static final int YOU_TRADING_OFF = 2;
     public static final int TARGET_TRADING_NOT_ALLOWED = 4;
@@ -16,20 +15,17 @@ public class TradeStartFailComposer extends MessageComposer
     private final String username;
     private final int code;
 
-    public TradeStartFailComposer(int code)
-    {
+    public TradeStartFailComposer(int code) {
         this.code = code;
         this.username = "";
     }
 
-    public TradeStartFailComposer(int code, String username)
-    {
+    public TradeStartFailComposer(int code, String username) {
         this.code = code;
         this.username = username;
     }
 
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.TradeStartFailComposer);
         this.response.appendInt(this.code);
         this.response.appendString(this.username);

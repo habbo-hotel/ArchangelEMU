@@ -15,40 +15,33 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class InteractionFreezeTile extends HabboItem
-{
-    public InteractionFreezeTile(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionFreezeTile extends HabboItem {
+    public InteractionFreezeTile(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
     }
 
-    public InteractionFreezeTile(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionFreezeTile(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.setExtradata("0");
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return true;
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         if (client == null)
             return;
 
-        if (client.getHabbo().getRoomUnit().getCurrentLocation().x == this.getX() && client.getHabbo().getRoomUnit().getCurrentLocation().y == this.getY())
-        {
+        if (client.getHabbo().getRoomUnit().getCurrentLocation().x == this.getX() && client.getHabbo().getRoomUnit().getCurrentLocation().y == this.getY()) {
             FreezeGame game = (FreezeGame) room.getGame(FreezeGame.class);
 
             if (game != null)
@@ -57,14 +50,12 @@ public class InteractionFreezeTile extends HabboItem
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
@@ -72,23 +63,19 @@ public class InteractionFreezeTile extends HabboItem
     }
 
     @Override
-    public void onPickUp(Room room)
-    {
+    public void onPickUp(Room room) {
         this.setExtradata("0");
     }
 
     @Override
-    public boolean allowWiredResetState()
-    {
+    public boolean allowWiredResetState() {
         return false;
     }
 
 
     @Override
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation)
-    {
-        for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation)
-        {
+    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation) {
+        for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation) {
             if (!set.getValue().isEmpty()) return false;
         }
 

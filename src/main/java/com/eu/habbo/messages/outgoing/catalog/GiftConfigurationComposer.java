@@ -7,18 +7,15 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.Map;
 
-public class GiftConfigurationComposer extends MessageComposer
-{
+public class GiftConfigurationComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GiftConfigurationComposer);
         this.response.appendBoolean(true);
         this.response.appendInt(Emulator.getConfig().getInt("hotel.gifts.special.price", 2));
 
         this.response.appendInt(Emulator.getGameEnvironment().getCatalogManager().giftWrappers.size());
-        for(Integer i : Emulator.getGameEnvironment().getCatalogManager().giftWrappers.keySet())
-        {
+        for (Integer i : Emulator.getGameEnvironment().getCatalogManager().giftWrappers.keySet()) {
             this.response.appendInt(i);
         }
 
@@ -47,8 +44,7 @@ public class GiftConfigurationComposer extends MessageComposer
 
         this.response.appendInt(Emulator.getGameEnvironment().getCatalogManager().giftFurnis.size());
 
-        for(Map.Entry<Integer, Integer> set : Emulator.getGameEnvironment().getCatalogManager().giftFurnis.entrySet())
-        {
+        for (Map.Entry<Integer, Integer> set : Emulator.getGameEnvironment().getCatalogManager().giftFurnis.entrySet()) {
             this.response.appendInt(set.getKey());
         }
 

@@ -7,8 +7,7 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.List;
 
-public class UserCatalogItemPurchasedEvent extends UserCatalogEvent
-{
+public class UserCatalogItemPurchasedEvent extends UserCatalogEvent {
 
     public final THashSet<HabboItem> itemsList;
 
@@ -22,13 +21,12 @@ public class UserCatalogItemPurchasedEvent extends UserCatalogEvent
     public List<String> badges;
 
 
-    public UserCatalogItemPurchasedEvent(Habbo habbo, CatalogItem catalogItem, THashSet<HabboItem> itemsList, int totalCredits, int totalPoints, List<String> badges)
-    {
+    public UserCatalogItemPurchasedEvent(Habbo habbo, CatalogItem catalogItem, THashSet<HabboItem> itemsList, int totalCredits, int totalPoints, List<String> badges) {
         super(habbo, catalogItem);
 
-        this.itemsList    = itemsList;
+        this.itemsList = itemsList;
         this.totalCredits = totalCredits;
-        this.totalPoints  = totalPoints;
-        this.badges       = badges;
+        this.totalPoints = totalPoints;
+        this.badges = badges;
     }
 }

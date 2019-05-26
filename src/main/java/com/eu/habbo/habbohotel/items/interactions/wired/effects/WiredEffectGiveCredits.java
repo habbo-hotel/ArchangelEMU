@@ -17,25 +17,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredEffectGiveCredits extends InteractionWiredEffect
-{
+public class WiredEffectGiveCredits extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.SHOW_MESSAGE;
 
     private int credits = 0;
 
-    public WiredEffectGiveCredits(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectGiveCredits(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectGiveCredits(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectGiveCredits(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(true);
         message.appendInt(0);
         message.appendInt(0);
@@ -47,44 +43,33 @@ public class WiredEffectGiveCredits extends InteractionWiredEffect
         message.appendInt(type.code);
         message.appendInt(this.getDelay());
 
-        if (this.requiresTriggeringUser())
-        {
+        if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>()
-            {
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
                 @Override
-                public boolean execute(InteractionWiredTrigger object)
-                {
-                    if (!object.isTriggeredByRoomUnit())
-                    {
+                public boolean execute(InteractionWiredTrigger object) {
+                    if (!object.isTriggeredByRoomUnit()) {
                         invalidTriggers.add(object.getBaseItem().getSpriteId());
                     }
                     return true;
                 }
             });
             message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers)
-            {
+            for (Integer i : invalidTriggers) {
                 message.appendInt(i);
             }
-        }
-        else
-        {
+        } else {
             message.appendInt(0);
         }
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
 
-        try
-        {
+        try {
             this.credits = Integer.valueOf(packet.readString());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return false;
         }
 
@@ -95,17 +80,15 @@ public class WiredEffectGiveCredits extends InteractionWiredEffect
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo == null)
+        if (habbo == null)
             return false;
 
         habbo.giveCredits(this.credits);
@@ -114,42 +97,34 @@ public class WiredEffectGiveCredits extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.getDelay() + "\t" + this.credits;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String wireData = set.getString("wired_data");
         String[] data = wireData.split("\t");
         this.credits = 0;
 
-        if(data.length >= 2)
-        {
+        if (data.length >= 2) {
             super.setDelay(Integer.valueOf(data[0]));
 
-            try
-            {
+            try {
                 this.credits = Integer.valueOf(data[1]);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
             }
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.credits = 0;
         this.setDelay(0);
     }
 
     @Override
-    public boolean requiresTriggeringUser()
-    {
+    public boolean requiresTriggeringUser() {
         return true;
     }
 }

@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class MarketplaceItemInfoComposer extends MessageComposer
-{
+public class MarketplaceItemInfoComposer extends MessageComposer {
     private final int itemId;
 
-    public MarketplaceItemInfoComposer(int itemId)
-    {
+    public MarketplaceItemInfoComposer(int itemId) {
         this.itemId = itemId;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.MarketplaceItemInfoComposer);
         MarketPlace.serializeItemInfo(this.itemId, this.response);
         return this.response;

@@ -4,12 +4,10 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionPetBreedingNest;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class ConfirmPetBreedingEvent extends MessageHandler
-{
+public class ConfirmPetBreedingEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
         String name = this.packet.readString();
         int petOneId = this.packet.readInt();
@@ -17,9 +15,8 @@ public class ConfirmPetBreedingEvent extends MessageHandler
 
         HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
 
-        if (item instanceof InteractionPetBreedingNest)
-        {
-            ((InteractionPetBreedingNest)item).breed(this.client.getHabbo(), name, petOneId, petTwoId);
+        if (item instanceof InteractionPetBreedingNest) {
+            ((InteractionPetBreedingNest) item).breed(this.client.getHabbo(), name, petOneId, petTwoId);
         }
     }
 }

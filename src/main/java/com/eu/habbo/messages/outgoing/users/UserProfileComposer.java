@@ -19,29 +19,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class UserProfileComposer extends MessageComposer
-{
+public class UserProfileComposer extends MessageComposer {
     private final HabboInfo habboInfo;
     private Habbo habbo;
     private GameClient viewer;
 
-    public UserProfileComposer(HabboInfo habboInfo, GameClient viewer)
-    {
+    public UserProfileComposer(HabboInfo habboInfo, GameClient viewer) {
         this.habboInfo = habboInfo;
         this.viewer = viewer;
     }
 
-    public UserProfileComposer(Habbo habbo, GameClient viewer)
-    {
+    public UserProfileComposer(Habbo habbo, GameClient viewer) {
         this.habbo = habbo;
         this.habboInfo = habbo.getHabboInfo();
         this.viewer = viewer;
     }
 
     @Override
-    public ServerMessage compose()
-    {
-        if(this.habboInfo == null)
+    public ServerMessage compose() {
+        if (this.habboInfo == null)
             return null;
 
         this.response.init(Outgoing.UserProfileComposer);
@@ -53,25 +49,17 @@ public class UserProfileComposer extends MessageComposer
         this.response.appendString(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(this.habboInfo.getAccountCreated() * 1000L)));
 
         int achievementScore = 0;
-        if (this.habbo != null)
-        {
+        if (this.habbo != null) {
             achievementScore = this.habbo.getHabboStats().getAchievementScore();
-        }
-        else
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT achievement_score FROM users_settings WHERE user_id = ? LIMIT 1"))
-            {
+        } else {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT achievement_score FROM users_settings WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.habboInfo.getId());
-                try (ResultSet set = statement.executeQuery())
-                {
-                    if (set.next())
-                    {
+                try (ResultSet set = statement.executeQuery()) {
+                    if (set.next()) {
                         achievementScore = set.getInt("achievement_score");
                     }
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
@@ -82,40 +70,31 @@ public class UserProfileComposer extends MessageComposer
         this.response.appendBoolean(this.habboInfo.isOnline());
 
         List<Guild> guilds = new ArrayList<>();
-        if(this.habbo != null)
-        {
+        if (this.habbo != null) {
             List<Integer> toRemove = new ArrayList<>();
-            for (int index = this.habbo.getHabboStats().guilds.size(); index > 0; index--)
-            {
+            for (int index = this.habbo.getHabboStats().guilds.size(); index > 0; index--) {
                 int i = this.habbo.getHabboStats().guilds.get(index - 1);
                 if (i == 0)
                     continue;
 
                 Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(i);
 
-                if (guild != null)
-                {
+                if (guild != null) {
                     guilds.add(guild);
-                }
-                else
-                {
+                } else {
                     toRemove.add(i);
                 }
             }
 
-            for (int i : toRemove)
-            {
+            for (int i : toRemove) {
                 this.habbo.getHabboStats().removeGuild(i);
             }
-        }
-        else
-        {
+        } else {
             guilds = Emulator.getGameEnvironment().getGuildManager().getGuilds(this.habboInfo.getId());
         }
 
         this.response.appendInt(guilds.size());
-        for(Guild guild : guilds)
-        {
+        for (Guild guild : guilds) {
             this.response.appendInt(guild.getId());
             this.response.appendString(guild.getName());
             this.response.appendString(guild.getBadge());

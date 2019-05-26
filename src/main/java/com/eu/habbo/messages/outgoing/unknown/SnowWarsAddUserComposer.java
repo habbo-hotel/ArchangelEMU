@@ -3,12 +3,10 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 
-public class SnowWarsAddUserComposer extends MessageComposer
-{
+public class SnowWarsAddUserComposer extends MessageComposer {
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(1880);
         this.response.appendInt(3);
         this.response.appendString("Derpface");

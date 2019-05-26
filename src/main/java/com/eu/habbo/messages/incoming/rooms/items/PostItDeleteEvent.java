@@ -9,24 +9,20 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveWallItemComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
-public class PostItDeleteEvent extends MessageHandler
-{
+public class PostItDeleteEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if(room == null)
+        if (room == null)
             return;
 
         HabboItem item = room.getHabboItem(itemId);
 
-        if (item instanceof InteractionPostIt || item instanceof InteractionExternalImage)
-        {
-            if (item.getUserId() == this.client.getHabbo().getHabboInfo().getId() || room.isOwner(this.client.getHabbo()))
-            {
+        if (item instanceof InteractionPostIt || item instanceof InteractionExternalImage) {
+            if (item.getUserId() == this.client.getHabbo().getHabboInfo().getId() || room.isOwner(this.client.getHabbo())) {
                 item.setRoomId(0);
                 room.removeHabboItem(item);
                 room.sendComposer(new RemoveWallItemComposer(item).compose());

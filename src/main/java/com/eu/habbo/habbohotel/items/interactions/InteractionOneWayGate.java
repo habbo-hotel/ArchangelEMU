@@ -16,45 +16,37 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InteractionOneWayGate extends HabboItem
-{
+public class InteractionOneWayGate extends HabboItem {
     private boolean walkable = false;
 
-    public InteractionOneWayGate(ResultSet set, Item baseItem) throws SQLException
-    {
+    public InteractionOneWayGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
     }
 
-    public InteractionOneWayGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionOneWayGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.setExtradata("0");
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return this.getBaseItem().allowWalk();
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return walkable;
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
-        if(this.getExtradata().length() == 0)
-        {
+    public void serializeExtradata(ServerMessage serverMessage) {
+        if (this.getExtradata().length() == 0) {
             this.setExtradata("0");
             this.needsUpdate(true);
         }
@@ -66,29 +58,25 @@ public class InteractionOneWayGate extends HabboItem
     }
 
     @Override
-    public void onClick(final GameClient client, final Room room, Object[] objects) throws Exception
-    {
+    public void onClick(final GameClient client, final Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if (client != null)
-        {
+        if (client != null) {
             RoomTile tileInfront = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation());
-            if(tileInfront == null)
+            if (tileInfront == null)
                 return;
 
             RoomTile currentLocation = room.getLayout().getTile(this.getX(), this.getY());
-            if(currentLocation == null)
+            if (currentLocation == null)
                 return;
 
             RoomUnit unit = client.getHabbo().getRoomUnit();
-            if(unit == null)
+            if (unit == null)
                 return;
 
 
-            if (tileInfront.x == unit.getX() && tileInfront.y == unit.getY())
-            {
-                if(!currentLocation.hasUnits())
-                {
+            if (tileInfront.x == unit.getX() && tileInfront.y == unit.getY()) {
+                if (!currentLocation.hasUnits()) {
                     List<Runnable> onSuccess = new ArrayList<Runnable>();
                     List<Runnable> onFail = new ArrayList<Runnable>();
 
@@ -132,43 +120,37 @@ public class InteractionOneWayGate extends HabboItem
         }
     }
 
-    private void refresh(Room room)
-    {
+    private void refresh(Room room) {
         this.setExtradata("0");
         room.sendComposer(new ItemIntStateComposer(this.getId(), 0).compose());
         room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
     }
 
     @Override
-    public void onPickUp(Room room)
-    {
+    public void onPickUp(Room room) {
         this.setExtradata("0");
         this.refresh(room);
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
         this.refresh(room);
     }
 
     @Override
-    public void onPlace(Room room)
-    {
+    public void onPlace(Room room) {
         super.onPlace(room);
         this.refresh(room);
     }
 
     @Override
-    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation)
-    {
+    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         super.onMove(room, oldLocation, newLocation);
         this.refresh(room);
     }

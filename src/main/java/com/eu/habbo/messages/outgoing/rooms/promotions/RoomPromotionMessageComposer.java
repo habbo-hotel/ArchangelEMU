@@ -6,25 +6,21 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomPromotionMessageComposer extends MessageComposer
-{
+public class RoomPromotionMessageComposer extends MessageComposer {
     private final Room room;
     private final RoomPromotion roomPromotion;
 
-    public RoomPromotionMessageComposer(Room room, RoomPromotion roomPromotion)
-    {
+    public RoomPromotionMessageComposer(Room room, RoomPromotion roomPromotion) {
         this.room = room;
         this.roomPromotion = roomPromotion;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
 
         this.response.init(Outgoing.RoomEventMessageComposer);
 
-        if (this.room == null || this.roomPromotion == null)
-        {
+        if (this.room == null || this.roomPromotion == null) {
 
             this.response.appendInt(-1);
 
@@ -43,9 +39,7 @@ public class RoomPromotionMessageComposer extends MessageComposer
 
             this.response.appendInt(0);
             this.response.appendInt(0);
-        }
-        else
-        {
+        } else {
             this.response.appendInt(this.room.getId());
             this.response.appendInt(this.room.getOwnerId());
             this.response.appendString(this.room.getOwnerName());

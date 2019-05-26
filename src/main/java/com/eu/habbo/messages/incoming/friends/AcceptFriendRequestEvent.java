@@ -5,22 +5,19 @@ import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class AcceptFriendRequestEvent extends MessageHandler
-{
+public class AcceptFriendRequestEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int count = this.packet.readInt();
         int userId;
 
-        for(int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             userId = this.packet.readInt();
 
-            if(userId == 0)
+            if (userId == 0)
                 return;
 
-            if(this.client.getHabbo().getMessenger().getFriends().containsKey(userId))
+            if (this.client.getHabbo().getMessenger().getFriends().containsKey(userId))
                 continue;
 
             this.client.getHabbo().getMessenger().acceptFriendRequest(userId, this.client.getHabbo().getHabboInfo().getId());
@@ -29,8 +26,7 @@ public class AcceptFriendRequestEvent extends MessageHandler
 
             Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
-            if (target != null)
-            {
+            if (target != null) {
                 Messenger.checkFriendSizeProgress(target);
             }
         }

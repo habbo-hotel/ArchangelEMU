@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class BotErrorComposer extends MessageComposer
-{
+public class BotErrorComposer extends MessageComposer {
     public static final int ROOM_ERROR_BOTS_FORBIDDEN_IN_HOTEL = 0;
     public static final int ROOM_ERROR_BOTS_FORBIDDEN_IN_FLAT = 1;
     public static final int ROOM_ERROR_MAX_BOTS = 2;
@@ -14,14 +13,12 @@ public class BotErrorComposer extends MessageComposer
 
     private final int errorCode;
 
-    public BotErrorComposer(int errorCode)
-    {
+    public BotErrorComposer(int errorCode) {
         this.errorCode = errorCode;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.BotErrorComposer);
         this.response.appendInt(this.errorCode);
         return this.response;

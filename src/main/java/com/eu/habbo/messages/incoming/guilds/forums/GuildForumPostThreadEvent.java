@@ -22,7 +22,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if(guild == null) {
+        if (guild == null) {
             this.client.sendResponse(new ConnectionErrorComposer(404));
             return;
         }
@@ -38,7 +38,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
 
         ForumThread thread = ForumThread.getById(threadId);
 
-        if(threadId == 0) {
+        if (threadId == 0) {
             if (!((guild.canPostThreads().state == 0)
                     || (guild.canPostThreads().state == 1 && member != null)
                     || (guild.canPostThreads().state == 2 && member != null && (member.getRank().type < GuildRank.MEMBER.type))
@@ -62,7 +62,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
             return;
         }
 
-        if(thread == null) {
+        if (thread == null) {
             this.client.sendResponse(new ConnectionErrorComposer(404));
             return;
         }
@@ -79,14 +79,13 @@ public class GuildForumPostThreadEvent extends MessageHandler {
 
         ForumThreadComment comment = ForumThreadComment.create(thread, this.client.getHabbo(), message);
 
-        if(comment != null) {
+        if (comment != null) {
             thread.addComment(comment);
             thread.setUpdatedAt(Emulator.getIntUnixTimestamp());
             this.client.getHabbo().getHabboStats().forumPostsCount += 1;
             thread.setPostsCount(thread.getPostsCount() + 1);
             this.client.sendResponse(new GuildForumAddCommentComposer(comment));
-        }
-        else {
+        } else {
             this.client.sendResponse(new ConnectionErrorComposer(500));
         }
     }

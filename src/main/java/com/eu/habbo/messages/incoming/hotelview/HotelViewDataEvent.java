@@ -7,26 +7,18 @@ import com.eu.habbo.messages.outgoing.hotelview.HotelViewDataComposer;
 public class HotelViewDataEvent extends MessageHandler {
 
     @Override
-    public void handle()
-    {
+    public void handle() {
 
 
-
-
-        try
-        {
+        try {
             String data = this.packet.readString();
-            if (data.contains(";"))
-            {
+            if (data.contains(";")) {
                 String[] d = data.split(";");
 
-                for (String s : d)
-                {
-                    if (s.contains(","))
-                    {
+                for (String s : d) {
+                    if (s.contains(",")) {
                         this.client.sendResponse(new HotelViewDataComposer(s, s.split(",")[s.split(",").length - 1]));
-                    } else
-                    {
+                    } else {
                         this.client.sendResponse(new HotelViewDataComposer(data, s));
                     }
 
@@ -34,13 +26,10 @@ public class HotelViewDataEvent extends MessageHandler {
                 }
 
                 //this.client.sendResponse(new HotelViewDataComposer("2013-05-08 13:0", "gamesmaker"));
-            } else
-            {
+            } else {
                 this.client.sendResponse(new HotelViewDataComposer(data, data.split(",")[data.split(",").length - 1]));
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }

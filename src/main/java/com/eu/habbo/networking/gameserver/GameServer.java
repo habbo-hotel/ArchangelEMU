@@ -8,28 +8,23 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.logging.LoggingHandler;
 
-public class GameServer extends Server
-{
+public class GameServer extends Server {
     private final PacketManager packetManager;
     private final GameClientManager gameClientManager;
 
-    public GameServer(String host, int port) throws Exception
-    {
+    public GameServer(String host, int port) throws Exception {
         super("Game Server", host, port, Emulator.getConfig().getInt("io.bossgroup.threads"), Emulator.getConfig().getInt("io.workergroup.threads"));
         this.packetManager = new PacketManager();
         this.gameClientManager = new GameClientManager();
     }
 
     @Override
-    public void initializePipeline()
-    {
+    public void initializePipeline() {
         super.initializePipeline();
 
-        this.serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>()
-        {
+        this.serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
-            public void initChannel(SocketChannel ch) throws Exception
-            {
+            public void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast("logger", new LoggingHandler());
                 ch.pipeline().addLast("bytesDecoder", new GameByteDecoder());
                 ch.pipeline().addLast(new GameMessageHandler());
@@ -37,13 +32,11 @@ public class GameServer extends Server
         });
     }
 
-    public PacketManager getPacketManager()
-    {
+    public PacketManager getPacketManager() {
         return this.packetManager;
     }
 
-    public GameClientManager getGameClientManager()
-    {
+    public GameClientManager getGameClientManager() {
         return this.gameClientManager;
     }
 }

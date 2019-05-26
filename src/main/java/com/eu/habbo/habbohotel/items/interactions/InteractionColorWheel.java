@@ -13,23 +13,19 @@ import com.eu.habbo.threading.runnables.RandomDiceNumber;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionColorWheel extends HabboItem
-{
+public class InteractionColorWheel extends HabboItem {
     private Runnable rollTaks;
 
-    public InteractionColorWheel(ResultSet set, Item baseItem) throws SQLException
-    {
+    public InteractionColorWheel(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionColorWheel(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionColorWheel(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
@@ -37,27 +33,23 @@ public class InteractionColorWheel extends HabboItem
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return false;
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
         if (!room.hasRights(client.getHabbo()))
             return;
 
-        if(this.rollTaks == null)
-        {
+        if (this.rollTaks == null) {
             this.setExtradata("-1");
             room.sendComposer(new WallItemUpdateComposer(this).compose());
             Emulator.getThreading().run(this);
@@ -66,25 +58,21 @@ public class InteractionColorWheel extends HabboItem
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void onWalkOn(RoomUnit client, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit client, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
     }
 
-    public void clearRunnable()
-    {
+    public void clearRunnable() {
         this.rollTaks = null;
     }
 }

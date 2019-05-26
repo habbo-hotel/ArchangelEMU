@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ConnectionErrorComposer extends MessageComposer
-{
+public class ConnectionErrorComposer extends MessageComposer {
     private final int messageId;
     private final int errorCode;
     private final String timestamp;
@@ -23,8 +22,7 @@ public class ConnectionErrorComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ConnectionErrorComposer);
         this.response.appendInt(this.messageId);
         this.response.appendInt(this.errorCode);

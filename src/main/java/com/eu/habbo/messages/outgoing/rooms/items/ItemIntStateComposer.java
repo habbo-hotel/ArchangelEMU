@@ -4,20 +4,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ItemIntStateComposer extends MessageComposer
-{
+public class ItemIntStateComposer extends MessageComposer {
     private final int id;
     private final int value;
 
-    public ItemIntStateComposer(int id, int value)
-    {
+    public ItemIntStateComposer(int id, int value) {
         this.id = id;
         this.value = value;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ItemStateComposer2);
         this.response.appendInt(this.id);
         this.response.appendInt(this.value);

@@ -4,15 +4,13 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ModToolIssueHandlerDimensionsComposer extends MessageComposer
-{
+public class ModToolIssueHandlerDimensionsComposer extends MessageComposer {
     private final int x;
     private final int y;
     private final int width;
     private final int height;
 
-    public ModToolIssueHandlerDimensionsComposer(int x, int y, int width, int height)
-    {
+    public ModToolIssueHandlerDimensionsComposer(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -20,8 +18,7 @@ public class ModToolIssueHandlerDimensionsComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ModToolIssueHandlerDimensionsComposer);
         this.response.appendInt(this.x);
         this.response.appendInt(this.y);

@@ -16,21 +16,154 @@ import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.THashMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-public class CommandHandler
-{
+public class CommandHandler {
     private final static THashMap<String, Command> commands = new THashMap<>(5);
+    private static final Comparator<Command> ALPHABETICAL_ORDER = new Comparator<Command>() {
+        public int compare(Command c1, Command c2) {
+            int res = String.CASE_INSENSITIVE_ORDER.compare(c1.permission, c2.permission);
+            return (res != 0) ? res : c1.permission.compareTo(c2.permission);
+        }
+    };
 
-    public CommandHandler()
-    {
+    public CommandHandler() {
         long millis = System.currentTimeMillis();
         this.reloadCommands();
         Emulator.getLogging().logStart("Command Handler -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
-    public void reloadCommands()
-    {
+    public static void addCommand(Command command) {
+        if (command == null)
+            return;
+
+        commands.put(command.getClass().getName(), command);
+    }
+
+
+    public static void addCommand(Class<? extends Command> command) {
+        try {
+            //command.getConstructor().setAccessible(true);
+            addCommand(command.newInstance());
+            Emulator.getLogging().logDebugLine("Added command: " + command.getName());
+        } catch (Exception e) {
+            Emulator.getLogging().logErrorLine(e);
+        }
+    }
+
+
+    public static boolean handleCommand(GameClient gameClient, String commandLine) {
+        if (gameClient != null) {
+            if (commandLine.startsWith(":")) {
+                commandLine = commandLine.replaceFirst(":", "");
+
+                String[] parts = commandLine.split(" ");
+
+                if (parts.length >= 1) {
+                    for (Command command : commands.values()) {
+                        for (String s : command.keys) {
+                            if (s.toLowerCase().equals(parts[0].toLowerCase())) {
+                                boolean succes = false;
+                                if (command.permission == null || gameClient.getHabbo().hasPermission(command.permission, gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && (gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) || gameClient.getHabbo().hasPermission("acc_placefurni") || (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboInfo().getCurrentRoom().getGuildId() > 0 && gameClient.getHabbo().getHabboInfo().getCurrentRoom().guildRightLevel(gameClient.getHabbo()) >= 2))) {
+                                    try {
+                                        Emulator.getPluginManager().fireEvent(new UserExecuteCommandEvent(gameClient.getHabbo(), command, parts));
+
+                                        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null)
+                                            gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserTypingComposer(gameClient.getHabbo().getRoomUnit(), false).compose());
+
+                                        UserCommandEvent event = new UserCommandEvent(gameClient.getHabbo(), parts, command.handle(gameClient, parts));
+                                        Emulator.getPluginManager().fireEvent(event);
+
+                                        succes = event.succes;
+                                    } catch (Exception e) {
+                                        Emulator.getLogging().logErrorLine(e);
+                                    }
+
+                                    if (gameClient.getHabbo().getHabboInfo().getRank().isLogCommands()) {
+                                        Emulator.getLogging().addLog(new CommandLog(gameClient.getHabbo().getHabboInfo().getId(), command, commandLine, succes));
+                                    }
+                                }
+
+                                return succes;
+                            }
+                        }
+                    }
+                }
+            } else {
+                String[] args = commandLine.split(" ");
+
+                if (args.length <= 1)
+                    return false;
+
+                if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+                    Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+
+                    if (room.getCurrentPets().isEmpty())
+                        return false;
+
+                    TIntObjectIterator<Pet> petIterator = room.getCurrentPets().iterator();
+
+                    for (int j = room.getCurrentPets().size(); j-- > 0; ) {
+                        try {
+                            petIterator.advance();
+                        } catch (NoSuchElementException e) {
+                            break;
+                        }
+
+                        Pet pet = petIterator.value();
+
+                        if (pet != null) {
+                            if (pet.getName().equalsIgnoreCase(args[0])) {
+                                StringBuilder s = new StringBuilder();
+
+                                for (int i = 1; i < args.length; i++) {
+                                    s.append(args[i]).append(" ");
+                                }
+
+                                s = new StringBuilder(s.substring(0, s.length() - 1));
+
+                                for (PetCommand command : pet.getPetData().getPetCommands()) {
+                                    if (command.key.equalsIgnoreCase(s.toString())) {
+                                        if (pet instanceof RideablePet && ((RideablePet) pet).getRider() != null) {
+                                            if (((RideablePet) pet).getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
+                                                ((RideablePet) pet).getRider().getHabboInfo().dismountPet();
+                                            }
+                                            break;
+                                        }
+
+                                        if (command.level <= pet.getLevel())
+                                            pet.handleCommand(command, gameClient.getHabbo(), args);
+                                        else
+                                            pet.say(pet.getPetData().randomVocal(PetVocalsType.UNKNOWN_COMMAND));
+
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static Command getCommand(String key) {
+        for (Command command : commands.values()) {
+            for (String k : command.keys) {
+                if (key.equalsIgnoreCase(k)) {
+                    return command;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void reloadCommands() {
         addCommand(new AboutCommand());
         addCommand(new AlertCommand());
         addCommand(new AllowTradingCommand());
@@ -147,166 +280,16 @@ public class CommandHandler
         addCommand(new TestCommand());
     }
 
-
-    public static void addCommand(Command command)
-    {
-        if(command == null)
-            return;
-
-        commands.put(command.getClass().getName(), command);
-    }
-
-
-    public static void addCommand(Class<? extends Command> command)
-    {
-        try
-        {
-            //command.getConstructor().setAccessible(true);
-            addCommand(command.newInstance());
-            Emulator.getLogging().logDebugLine("Added command: " + command.getName());
-        }
-        catch (Exception e)
-        {
-            Emulator.getLogging().logErrorLine(e);
-        }
-    }
-
-
-    public static boolean handleCommand(GameClient gameClient, String commandLine)
-    {
-        if(gameClient != null)
-        {
-            if (commandLine.startsWith(":"))
-            {
-                commandLine = commandLine.replaceFirst(":", "");
-
-                String[] parts = commandLine.split(" ");
-
-                if (parts.length >= 1)
-                {
-                    for (Command command : commands.values())
-                    {
-                        for (String s : command.keys)
-                        {
-                            if (s.toLowerCase().equals(parts[0].toLowerCase()))
-                            {
-                                boolean succes = false;
-                                if (command.permission == null || gameClient.getHabbo().hasPermission(command.permission, gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && (gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) || gameClient.getHabbo().hasPermission("acc_placefurni") || (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboInfo().getCurrentRoom().getGuildId() > 0 && gameClient.getHabbo().getHabboInfo().getCurrentRoom().guildRightLevel(gameClient.getHabbo()) >= 2)  ))
-                                {
-                                    try
-                                    {
-                                        Emulator.getPluginManager().fireEvent(new UserExecuteCommandEvent(gameClient.getHabbo(), command, parts));
-
-                                        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null)
-                                            gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserTypingComposer(gameClient.getHabbo().getRoomUnit(), false).compose());
-
-                                        UserCommandEvent event = new UserCommandEvent(gameClient.getHabbo(), parts, command.handle(gameClient, parts));
-                                        Emulator.getPluginManager().fireEvent(event);
-
-                                        succes = event.succes;
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        Emulator.getLogging().logErrorLine(e);
-                                    }
-
-                                    if (gameClient.getHabbo().getHabboInfo().getRank().isLogCommands())
-                                    {
-                                        Emulator.getLogging().addLog(new CommandLog(gameClient.getHabbo().getHabboInfo().getId(), command, commandLine, succes));
-                                    }
-                                }
-
-                                return succes;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                String[] args = commandLine.split(" ");
-
-                if (args.length <= 1)
-                    return false;
-
-                if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null)
-                {
-                    Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
-
-                    if (room.getCurrentPets().isEmpty())
-                        return false;
-
-                    TIntObjectIterator<Pet> petIterator = room.getCurrentPets().iterator();
-
-                    for (int j = room.getCurrentPets().size(); j-- > 0; )
-                    {
-                        try
-                        {
-                            petIterator.advance();
-                        }
-                        catch (NoSuchElementException e)
-                        {
-                            break;
-                        }
-
-                        Pet pet = petIterator.value();
-
-                        if (pet != null)
-                        {
-                            if (pet.getName().equalsIgnoreCase(args[0]))
-                            {
-                                StringBuilder s = new StringBuilder();
-
-                                for (int i = 1; i < args.length; i++)
-                                {
-                                    s.append(args[i]).append(" ");
-                                }
-
-                                s = new StringBuilder(s.substring(0, s.length() - 1));
-
-                                for (PetCommand command : pet.getPetData().getPetCommands())
-                                {
-                                    if (command.key.equalsIgnoreCase(s.toString()))
-                                    {
-                                        if(pet instanceof RideablePet && ((RideablePet)pet).getRider() != null) {
-                                            if(((RideablePet) pet).getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
-                                                ((RideablePet) pet).getRider().getHabboInfo().dismountPet();
-                                            }
-                                            break;
-                                        }
-
-                                        if (command.level <= pet.getLevel())
-                                            pet.handleCommand(command, gameClient.getHabbo(), args);
-                                        else
-                                            pet.say(pet.getPetData().randomVocal(PetVocalsType.UNKNOWN_COMMAND));
-
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-
-    public List<Command> getCommandsForRank(int rankId)
-    {
+    public List<Command> getCommandsForRank(int rankId) {
         List<Command> allowedCommands = new ArrayList<>();
-        if (Emulator.getGameEnvironment().getPermissionsManager().rankExists(rankId))
-        {
+        if (Emulator.getGameEnvironment().getPermissionsManager().rankExists(rankId)) {
             THashMap<String, Permission> permissions = Emulator.getGameEnvironment().getPermissionsManager().getRank(rankId).getPermissions();
 
-            for (Command command : commands.values())
-            {
+            for (Command command : commands.values()) {
                 if (allowedCommands.contains(command))
                     continue;
 
-                if (permissions.contains(command.permission) && permissions.get(command.permission).setting != PermissionSetting.DISALLOWED)
-                {
+                if (permissions.contains(command.permission) && permissions.get(command.permission).setting != PermissionSetting.DISALLOWED) {
                     allowedCommands.add(command);
                 }
             }
@@ -317,35 +300,9 @@ public class CommandHandler
         return allowedCommands;
     }
 
-    public static Command getCommand(String key)
-    {
-        for (Command command : commands.values())
-        {
-            for (String k : command.keys)
-            {
-                if (key.equalsIgnoreCase(k))
-                {
-                    return command;
-                }
-            }
-        }
-
-        return null;
-    }
-
-
-    public void dispose()
-    {
+    public void dispose() {
         commands.clear();
 
         Emulator.getLogging().logShutdownLine("Command Handler -> Disposed!");
     }
-
-
-    private static final Comparator<Command> ALPHABETICAL_ORDER = new Comparator<Command>() {
-        public int compare(Command c1, Command c2) {
-            int res = String.CASE_INSENSITIVE_ORDER.compare(c1.permission, c2.permission);
-            return (res != 0) ? res : c1.permission.compareTo(c2.permission);
-        }
-    };
 }

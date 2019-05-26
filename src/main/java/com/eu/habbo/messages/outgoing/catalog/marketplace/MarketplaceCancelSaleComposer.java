@@ -5,20 +5,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class MarketplaceCancelSaleComposer extends MessageComposer
-{
+public class MarketplaceCancelSaleComposer extends MessageComposer {
     private final MarketPlaceOffer offer;
     private final boolean success;
 
-    public MarketplaceCancelSaleComposer(MarketPlaceOffer offer, Boolean success)
-    {
+    public MarketplaceCancelSaleComposer(MarketPlaceOffer offer, Boolean success) {
         this.offer = offer;
         this.success = success;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.MarketplaceCancelSaleComposer);
         this.response.appendInt(this.offer.getOfferId());
         this.response.appendBoolean(this.success);

@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ModToolIssueUpdateComposer extends MessageComposer
-{
+public class ModToolIssueUpdateComposer extends MessageComposer {
     private final ModToolIssue issue;
 
-    public ModToolIssueUpdateComposer(ModToolIssue issue)
-    {
+    public ModToolIssueUpdateComposer(ModToolIssue issue) {
         this.issue = issue;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ModToolIssueUpdateComposer);
         this.issue.serialize(this.response);
         return this.response;

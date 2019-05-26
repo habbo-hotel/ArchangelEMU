@@ -15,45 +15,39 @@ public abstract class InteractionPushable extends InteractionDefault {
 
     private KickBallAction currentThread;
 
-    public InteractionPushable(ResultSet set, Item baseItem) throws SQLException
-    {
+    public InteractionPushable(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
     }
 
-    public InteractionPushable(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionPushable(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.setExtradata("0");
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return true;
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, final Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, final Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        if(!(this.currentThread == null || this.currentThread.dead))
+        if (!(this.currentThread == null || this.currentThread.dead))
             return;
 
         int velocity = this.getWalkOffVelocity(roomUnit, room);
         RoomUserRotation direction = this.getWalkOffDirection(roomUnit, room);
         this.onKick(room, roomUnit, velocity, direction);
 
-        if(velocity > 0)
-        {
-            if(this.currentThread != null)
+        if (velocity > 0) {
+            if (this.currentThread != null)
                 this.currentThread.dead = true;
 
             this.currentThread = new KickBallAction(this, room, roomUnit, direction, velocity);
@@ -62,20 +56,17 @@ public abstract class InteractionPushable extends InteractionDefault {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
         if (client == null) return;
-        if(RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentLocation(), room.getLayout().getTile(this.getX(), this.getY())))
-        {
+        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentLocation(), room.getLayout().getTile(this.getX(), this.getY()))) {
             int velocity = this.getTackleVelocity(client.getHabbo().getRoomUnit(), room);
             RoomUserRotation direction = this.getWalkOnDirection(client.getHabbo().getRoomUnit(), room);
             this.onTackle(room, client.getHabbo().getRoomUnit(), velocity, direction);
 
-            if(velocity > 0)
-            {
-                if(this.currentThread != null)
+            if (velocity > 0) {
+                if (this.currentThread != null)
                     this.currentThread.dead = true;
 
                 this.currentThread = new KickBallAction(this, room, client.getHabbo().getRoomUnit(), direction, velocity);
@@ -85,29 +76,26 @@ public abstract class InteractionPushable extends InteractionDefault {
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, final Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, final Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
         int velocity;
         RoomUserRotation direction;
 
-        if(this.getX() == roomUnit.getGoal().x && this.getY() == roomUnit.getGoal().y) //User clicked on the tile the ball is on, they want to kick it
+        if (this.getX() == roomUnit.getGoal().x && this.getY() == roomUnit.getGoal().y) //User clicked on the tile the ball is on, they want to kick it
         {
             velocity = this.getWalkOnVelocity(roomUnit, room);
             direction = this.getWalkOnDirection(roomUnit, room);
             this.onKick(room, roomUnit, velocity, direction);
-        }
-        else //User is walking past the ball, they want to drag it with them
+        } else //User is walking past the ball, they want to drag it with them
         {
             velocity = this.getDragVelocity(roomUnit, room);
             direction = this.getDragDirection(roomUnit, room);
             this.onDrag(room, roomUnit, velocity, direction);
         }
 
-        if(velocity > 0)
-        {
-            if(this.currentThread != null)
+        if (velocity > 0) {
+            if (this.currentThread != null)
                 this.currentThread.dead = true;
 
             this.currentThread = new KickBallAction(this, room, roomUnit, direction, velocity);

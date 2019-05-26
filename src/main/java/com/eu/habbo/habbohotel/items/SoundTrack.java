@@ -3,8 +3,7 @@ package com.eu.habbo.habbohotel.items;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SoundTrack
-{
+public class SoundTrack {
     private int id;
     private String name;
     private String author;
@@ -12,8 +11,7 @@ public class SoundTrack
     private String data;
     private int length;
 
-    public SoundTrack(ResultSet set) throws SQLException
-    {
+    public SoundTrack(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.name = set.getString("name");
         this.author = set.getString("author");
@@ -22,33 +20,27 @@ public class SoundTrack
         this.length = set.getInt("length");
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public String getAuthor()
-    {
+    public String getAuthor() {
         return this.author;
     }
 
-    public String getCode()
-    {
+    public String getCode() {
         return this.code;
     }
 
-    public String getData()
-    {
+    public String getData() {
         return this.data;
     }
 
-    public int getLength()
-    {
+    public int getLength() {
         return this.length;
     }
 }

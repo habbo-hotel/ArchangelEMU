@@ -7,26 +7,22 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.ArrayList;
 
-public class YoutubeDisplayListComposer extends MessageComposer
-{
+public class YoutubeDisplayListComposer extends MessageComposer {
     public final int itemId;
     public final ArrayList<YoutubeManager.YoutubeItem> items;
 
-    public YoutubeDisplayListComposer(int itemId, ArrayList<YoutubeManager.YoutubeItem> items)
-    {
+    public YoutubeDisplayListComposer(int itemId, ArrayList<YoutubeManager.YoutubeItem> items) {
         this.itemId = itemId;
         this.items = items;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.YoutubeDisplayListComposer);
         this.response.appendInt(this.itemId);
         this.response.appendInt(this.items.size());
 
-        for (YoutubeManager.YoutubeItem item : this.items)
-        {
+        for (YoutubeManager.YoutubeItem item : this.items) {
             this.response.appendString(item.video);
             this.response.appendString(item.title);
             this.response.appendString(item.description);

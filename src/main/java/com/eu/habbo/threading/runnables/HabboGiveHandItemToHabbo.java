@@ -4,30 +4,26 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserHandItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserReceivedHandItemComposer;
 
-public class HabboGiveHandItemToHabbo implements Runnable
-{
+public class HabboGiveHandItemToHabbo implements Runnable {
     private final Habbo target;
     private final Habbo from;
 
-    public HabboGiveHandItemToHabbo(Habbo from, Habbo target)
-    {
+    public HabboGiveHandItemToHabbo(Habbo from, Habbo target) {
         this.target = target;
         this.from = from;
     }
 
     @Override
-    public void run()
-    {
-        if(this.from.getHabboInfo().getCurrentRoom() == null || this.target.getHabboInfo().getCurrentRoom() == null)
+    public void run() {
+        if (this.from.getHabboInfo().getCurrentRoom() == null || this.target.getHabboInfo().getCurrentRoom() == null)
             return;
 
-        if(this.from.getHabboInfo().getCurrentRoom() != this.target.getHabboInfo().getCurrentRoom())
+        if (this.from.getHabboInfo().getCurrentRoom() != this.target.getHabboInfo().getCurrentRoom())
             return;
 
         int itemId = this.from.getRoomUnit().getHandItem();
 
-        if(itemId > 0)
-        {
+        if (itemId > 0) {
             this.from.getRoomUnit().setHandItem(0);
             this.from.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserHandItemComposer(this.from.getRoomUnit()).compose());
             this.target.getClient().sendResponse(new RoomUserReceivedHandItemComposer(this.from.getRoomUnit(), itemId));

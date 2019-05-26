@@ -2,7 +2,9 @@ package com.eu.habbo.threading.runnables.teleport;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
@@ -10,24 +12,21 @@ import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-class TeleportActionFive implements Runnable
-{
+class TeleportActionFive implements Runnable {
     private final HabboItem currentTeleport;
     private final Room room;
     private final GameClient client;
 
-    public TeleportActionFive(HabboItem currentTeleport, Room room, GameClient client)
-    {
+    public TeleportActionFive(HabboItem currentTeleport, Room room, GameClient client) {
         this.currentTeleport = currentTeleport;
         this.client = client;
         this.room = room;
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         RoomUnit unit = this.client.getHabbo().getRoomUnit();
-        
+
         unit.isTeleporting = false;
         unit.setCanWalk(true);
 
@@ -39,8 +38,7 @@ class TeleportActionFive implements Runnable
         RoomTile currentLocation = this.room.getLayout().getTile(this.currentTeleport.getX(), this.currentTeleport.getY());
         RoomTile tile = this.room.getLayout().getTileInFront(currentLocation, this.currentTeleport.getRotation());
 
-        if (tile != null)
-        {
+        if (tile != null) {
             List<Runnable> onSuccess = new ArrayList<Runnable>();
             onSuccess.add(() -> {
                 unit.setCanLeaveRoomByDoor(true);

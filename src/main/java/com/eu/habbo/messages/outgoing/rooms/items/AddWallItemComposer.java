@@ -5,20 +5,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class AddWallItemComposer extends MessageComposer
-{
+public class AddWallItemComposer extends MessageComposer {
     private final HabboItem item;
     private final String itemOwnerName;
 
-    public AddWallItemComposer(HabboItem item, String itemOwnerName)
-    {
+    public AddWallItemComposer(HabboItem item, String itemOwnerName) {
         this.item = item;
         this.itemOwnerName = itemOwnerName;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.AddWallItemComposer);
         this.item.serializeWallData(this.response);
         this.response.appendString(this.itemOwnerName);

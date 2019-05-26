@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.modtool;
 
-public enum ModToolChatRecordDataType
-{
+public enum ModToolChatRecordDataType {
     UNKNOWN(0),
     ROOM_TOOL(1),
     IM_SESSION(2),
@@ -12,8 +11,7 @@ public enum ModToolChatRecordDataType
 
     public final int type;
 
-    ModToolChatRecordDataType(int type)
-    {
+    ModToolChatRecordDataType(int type) {
         this.type = type;
     }
 }

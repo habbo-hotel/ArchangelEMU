@@ -11,8 +11,7 @@ import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.AddFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 
-public class CrackableExplode implements Runnable
-{
+public class CrackableExplode implements Runnable {
     private final Room room;
     private final InteractionCrackable habboItem;
     private final Habbo habbo;
@@ -20,8 +19,7 @@ public class CrackableExplode implements Runnable
     private final short x;
     private final short y;
 
-    public CrackableExplode(Room room, InteractionCrackable item, Habbo habbo, boolean toInventory, short x, short y)
-    {
+    public CrackableExplode(Room room, InteractionCrackable item, Habbo habbo, boolean toInventory, short x, short y) {
         this.room = room;
         this.habboItem = item;
         this.habbo = habbo;
@@ -32,40 +30,30 @@ public class CrackableExplode implements Runnable
     }
 
     @Override
-    public void run()
-    {
-        if (this.habboItem.getRoomId() == 0)
-        {
+    public void run() {
+        if (this.habboItem.getRoomId() == 0) {
             return;
         }
 //MAKING DINNER BRB
-        if (!this.habboItem.resetable())
-        {
+        if (!this.habboItem.resetable()) {
             this.room.removeHabboItem(this.habboItem);
             this.room.sendComposer(new RemoveFloorItemComposer(this.habboItem, true).compose());
             this.habboItem.setRoomId(0);
             Emulator.getGameEnvironment().getItemManager().deleteItem(this.habboItem);
-        }
-        else
-        {
+        } else {
             this.habboItem.reset(this.room);
         }
         Item rewardItem = Emulator.getGameEnvironment().getItemManager().getCrackableReward(this.habboItem.getBaseItem().getId());
 
-        if (rewardItem != null)
-        {
+        if (rewardItem != null) {
             HabboItem newItem = Emulator.getGameEnvironment().getItemManager().createItem(this.habboItem.allowAnyone() ? this.habbo.getHabboInfo().getId() : this.habboItem.getUserId(), rewardItem, 0, 0, "");
 
-            if (newItem != null)
-            {
-                if (this.toInventory)
-                {
+            if (newItem != null) {
+                if (this.toInventory) {
                     this.habbo.getInventory().getItemsComponent().addItem(newItem);
                     this.habbo.getClient().sendResponse(new AddHabboItemComposer(newItem));
                     this.habbo.getClient().sendResponse(new InventoryRefreshComposer());
-                }
-                else
-                {
+                } else {
                     newItem.setX(this.x);
                     newItem.setY(this.y);
                     newItem.setZ(this.room.getStackHeight(this.x, this.y, false));

@@ -6,18 +6,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class BonusRareComposer extends MessageComposer
-{
+public class BonusRareComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public BonusRareComposer(Habbo habbo)
-    {
+    public BonusRareComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.BonusRareComposer);
         this.response.appendString(Emulator.getConfig().getValue("hotelview.promotional.reward.name", "prizetrophy_breed_gold")); //Furniture Name. Note: Image is in external_variables.txt
         this.response.appendInt(Emulator.getConfig().getInt("hotelview.promotional.reward.id", 0)); //Furniture ID

@@ -6,20 +6,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class WiredEffectDataComposer extends MessageComposer
-{
+public class WiredEffectDataComposer extends MessageComposer {
     private final InteractionWiredEffect effect;
     private final Room room;
 
-    public WiredEffectDataComposer(InteractionWiredEffect effect, Room room)
-    {
+    public WiredEffectDataComposer(InteractionWiredEffect effect, Room room) {
         this.effect = effect;
         this.room = room;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.WiredEffectDataComposer);
         this.effect.serializeWiredData(this.response, this.room);
         this.effect.needsUpdate(true);

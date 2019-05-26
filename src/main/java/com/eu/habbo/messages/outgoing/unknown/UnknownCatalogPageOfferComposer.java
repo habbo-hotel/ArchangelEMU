@@ -5,20 +5,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UnknownCatalogPageOfferComposer extends MessageComposer
-{
+public class UnknownCatalogPageOfferComposer extends MessageComposer {
     private final int pageId;
     private final CatalogItem catalogItem;
 
-    public UnknownCatalogPageOfferComposer(int pageId, CatalogItem catalogItem)
-    {
+    public UnknownCatalogPageOfferComposer(int pageId, CatalogItem catalogItem) {
         this.pageId = pageId;
         this.catalogItem = catalogItem;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UnknownCatalogPageOfferComposer);
         this.response.appendInt(this.pageId);
         this.catalogItem.serialize(this.response);

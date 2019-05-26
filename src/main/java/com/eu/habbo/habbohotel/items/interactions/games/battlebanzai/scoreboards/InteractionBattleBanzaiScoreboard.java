@@ -9,33 +9,27 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionBattleBanzaiScoreboard extends InteractionGameScoreboard
-{
-    public InteractionBattleBanzaiScoreboard(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException
-    {
+public class InteractionBattleBanzaiScoreboard extends InteractionGameScoreboard {
+    public InteractionBattleBanzaiScoreboard(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException {
         super(set, baseItem, teamColor);
     }
 
-    public InteractionBattleBanzaiScoreboard(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor)
-    {
+    public InteractionBattleBanzaiScoreboard(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
         super(id, userId, item, extradata, limitedStack, limitedSells, teamColor);
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return false;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return false;
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 }

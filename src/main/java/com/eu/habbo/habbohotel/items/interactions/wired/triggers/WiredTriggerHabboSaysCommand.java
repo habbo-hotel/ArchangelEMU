@@ -15,36 +15,28 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredTriggerHabboSaysCommand  extends InteractionWiredTrigger
-{
+public class WiredTriggerHabboSaysCommand extends InteractionWiredTrigger {
     private static final WiredTriggerType type = WiredTriggerType.SAY_COMMAND;
 
     private boolean ownerOnly = false;
     private String key = "";
 
-    public WiredTriggerHabboSaysCommand(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredTriggerHabboSaysCommand(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredTriggerHabboSaysCommand(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredTriggerHabboSaysCommand(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo != null)
-        {
-            if (this.key.length() > 0)
-            {
-                if (stuff[0] instanceof String)
-                {
-                    if (((String) stuff[0]).replace(":", "").startsWith(this.key + " "))
-                    {
+        if (habbo != null) {
+            if (this.key.length() > 0) {
+                if (stuff[0] instanceof String) {
+                    if (((String) stuff[0]).replace(":", "").startsWith(this.key + " ")) {
                         if (this.ownerOnly && room.getOwnerId() != habbo.getHabboInfo().getId())
                             return false;
 
@@ -59,39 +51,33 @@ public class WiredTriggerHabboSaysCommand  extends InteractionWiredTrigger
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return (this.ownerOnly ? "1" : "0") + "\t" + this.key;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split("\t");
 
-        if(data.length == 2)
-        {
+        if (data.length == 2) {
             this.ownerOnly = data[0].equalsIgnoreCase("1");
             this.setKey(data[1]);
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.ownerOnly = false;
         this.key = "";
     }
 
     @Override
-    public WiredTriggerType getType()
-    {
+    public WiredTriggerType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -106,8 +92,7 @@ public class WiredTriggerHabboSaysCommand  extends InteractionWiredTrigger
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         packet.readInt();
         this.ownerOnly = packet.readInt() == 1;
         setKey(packet.readString());
@@ -116,10 +101,8 @@ public class WiredTriggerHabboSaysCommand  extends InteractionWiredTrigger
         return true;
     }
 
-    private void setKey(String key)
-    {
-        if (key.contains(":"))
-        {
+    private void setKey(String key) {
+        if (key.contains(":")) {
             key = key.replaceAll(":", "");
         }
 
@@ -127,8 +110,7 @@ public class WiredTriggerHabboSaysCommand  extends InteractionWiredTrigger
     }
 
     @Override
-    public boolean isTriggeredByRoomUnit()
-    {
+    public boolean isTriggeredByRoomUnit() {
         return true;
     }
 }

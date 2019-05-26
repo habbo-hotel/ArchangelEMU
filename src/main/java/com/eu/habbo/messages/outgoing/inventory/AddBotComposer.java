@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class AddBotComposer extends MessageComposer
-{
+public class AddBotComposer extends MessageComposer {
     private final Bot bot;
 
-    public AddBotComposer(Bot bot)
-    {
+    public AddBotComposer(Bot bot) {
         this.bot = bot;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.AddBotComposer);
         this.response.appendInt(this.bot.getId());
         this.response.appendString(this.bot.getName());

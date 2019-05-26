@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UpdateUserLookComposer extends MessageComposer
-{
+public class UpdateUserLookComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public UpdateUserLookComposer(Habbo habbo)
-    {
+    public UpdateUserLookComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UpdateUserLookComposer);
         this.response.appendString(this.habbo.getHabboInfo().getLook());
         this.response.appendString(this.habbo.getHabboInfo().getGender().name());

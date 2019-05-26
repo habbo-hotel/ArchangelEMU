@@ -5,8 +5,7 @@ import gnu.trove.map.hash.THashMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Achievement
-{
+public class Achievement {
 
     public final int id;
 
@@ -20,8 +19,7 @@ public class Achievement
     public final THashMap<Integer, AchievementLevel> levels;
 
 
-    public Achievement(ResultSet set) throws SQLException
-    {
+    public Achievement(ResultSet set) throws SQLException {
         this.levels = new THashMap<>();
 
         this.id = set.getInt("id");
@@ -32,28 +30,20 @@ public class Achievement
     }
 
 
-    public void addLevel(AchievementLevel level)
-    {
-        synchronized (this.levels)
-        {
+    public void addLevel(AchievementLevel level) {
+        synchronized (this.levels) {
             this.levels.put(level.level, level);
         }
     }
 
 
-    public AchievementLevel getLevelForProgress(int progress)
-    {
+    public AchievementLevel getLevelForProgress(int progress) {
         AchievementLevel l = null;
-        if (progress > 0)
-        {
-            for (AchievementLevel level : this.levels.values())
-            {
-                if (progress >= level.progress)
-                {
-                    if (l != null)
-                    {
-                        if (l.level > level.level)
-                        {
+        if (progress > 0) {
+            for (AchievementLevel level : this.levels.values()) {
+                if (progress >= level.progress) {
+                    if (l != null) {
+                        if (l.level > level.level) {
                             continue;
                         }
                     }
@@ -66,26 +56,22 @@ public class Achievement
     }
 
 
-    public AchievementLevel getNextLevel(int currentLevel)
-    {
+    public AchievementLevel getNextLevel(int currentLevel) {
         AchievementLevel l = null;
 
-        for(AchievementLevel level : this.levels.values())
-        {
-            if(level.level == (currentLevel + 1))
+        for (AchievementLevel level : this.levels.values()) {
+            if (level.level == (currentLevel + 1))
                 return level;
         }
 
         return null;
     }
 
-    public AchievementLevel firstLevel()
-    {
+    public AchievementLevel firstLevel() {
         return this.levels.get(1);
     }
 
-    public void clearLevels()
-    {
+    public void clearLevels() {
         this.levels.clear();
     }
 }

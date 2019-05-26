@@ -7,15 +7,12 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.lovelock.LoveLockFurniFinishedComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.lovelock.LoveLockFurniFriendConfirmedComposer;
 
-public class LoveLockStartConfirmEvent extends MessageHandler
-{
+public class LoveLockStartConfirmEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
-        if (this.packet.readBoolean())
-        {
+        if (this.packet.readBoolean()) {
             if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
                 return;
 
@@ -24,24 +21,19 @@ public class LoveLockStartConfirmEvent extends MessageHandler
             if (item == null)
                 return;
 
-            if (item instanceof InteractionLoveLock)
-            {
+            if (item instanceof InteractionLoveLock) {
                 int userId = 0;
 
-                if (((InteractionLoveLock) item).userOneId == this.client.getHabbo().getHabboInfo().getId() && ((InteractionLoveLock) item).userTwoId != 0)
-                {
+                if (((InteractionLoveLock) item).userOneId == this.client.getHabbo().getHabboInfo().getId() && ((InteractionLoveLock) item).userTwoId != 0) {
                     userId = ((InteractionLoveLock) item).userTwoId;
-                } else if (((InteractionLoveLock) item).userOneId != 0 && ((InteractionLoveLock) item).userTwoId == this.client.getHabbo().getHabboInfo().getId())
-                {
+                } else if (((InteractionLoveLock) item).userOneId != 0 && ((InteractionLoveLock) item).userTwoId == this.client.getHabbo().getHabboInfo().getId()) {
                     userId = ((InteractionLoveLock) item).userOneId;
                 }
 
-                if (userId > 0)
-                {
+                if (userId > 0) {
                     Habbo habbo = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(userId);
 
-                    if (habbo != null)
-                    {
+                    if (habbo != null) {
                         habbo.getClient().sendResponse(new LoveLockFurniFriendConfirmedComposer((InteractionLoveLock) item));
 
                         habbo.getClient().sendResponse(new LoveLockFurniFinishedComposer((InteractionLoveLock) item));

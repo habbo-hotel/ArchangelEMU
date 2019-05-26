@@ -6,20 +6,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class WiredTriggerDataComposer extends MessageComposer
-{
+public class WiredTriggerDataComposer extends MessageComposer {
     private final InteractionWiredTrigger trigger;
     private final Room room;
 
-    public WiredTriggerDataComposer(InteractionWiredTrigger trigger, Room room)
-    {
+    public WiredTriggerDataComposer(InteractionWiredTrigger trigger, Room room) {
         this.trigger = trigger;
         this.room = room;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.WiredTriggerDataComposer);
         this.trigger.serializeWiredData(this.response, this.room);
         this.trigger.needsUpdate(true);

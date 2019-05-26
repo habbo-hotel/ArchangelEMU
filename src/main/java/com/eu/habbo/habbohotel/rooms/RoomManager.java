@@ -55,21 +55,19 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class RoomManager
-{
+public class RoomManager {
+    private static final int page = 0;
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_ROOMS_USER = 25;
     public static int MAXIMUM_ROOMS_VIP = 35;
     public static int HOME_ROOM_ID = 0;
     public static boolean SHOW_PUBLIC_IN_POPULAR_TAB = false;
-
     private final THashMap<Integer, RoomCategory> roomCategories;
     private final List<String> mapNames;
     private final ConcurrentHashMap<Integer, Room> activeRooms;
     private final ArrayList<Class<? extends Game>> gameTypes;
 
-    public RoomManager()
-    {
+    public RoomManager() {
         long millis = System.currentTimeMillis();
         this.roomCategories = new THashMap<>();
         this.mapNames = new ArrayList<>();
@@ -90,124 +88,91 @@ public class RoomManager
         Emulator.getLogging().logStart("Room Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
-    public void loadRoomModels()
-    {
+    public void loadRoomModels() {
         this.mapNames.clear();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM room_models"))
-        {
-            while(set.next())
-            {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM room_models")) {
+            while (set.next()) {
                 this.mapNames.add(set.getString("name"));
             }
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public CustomRoomLayout loadCustomLayout(Room room)
-    {
+    public CustomRoomLayout loadCustomLayout(Room room) {
         CustomRoomLayout layout = null;
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM room_models_custom WHERE id = ? LIMIT 1"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM room_models_custom WHERE id = ? LIMIT 1")) {
             statement.setInt(1, room.getId());
-            try (ResultSet set = statement.executeQuery())
-            {
-                if (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
                     layout = new CustomRoomLayout(set, room);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return layout;
     }
 
-    private void loadRoomCategories()
-    {
+    private void loadRoomCategories() {
         this.roomCategories.clear();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM navigator_flatcats"))
-        {
-            while(set.next())
-            {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM navigator_flatcats")) {
+            while (set.next()) {
                 this.roomCategories.put(set.getInt("id"), new RoomCategory(set));
             }
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public void loadPublicRooms()
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE is_public = ? OR is_staff_picked = ? ORDER BY id DESC"))
-        {
+    public void loadPublicRooms() {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE is_public = ? OR is_staff_picked = ? ORDER BY id DESC")) {
             statement.setString(1, "1");
             statement.setString(2, "1");
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     Room room = new Room(set);
                     room.preventUncaching = true;
                     this.activeRooms.put(set.getInt("id"), room);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    private static final int page = 0;
-    public THashMap<Integer, List<Room>> findRooms(NavigatorFilterField filterField, String value, int category, boolean showInvisible)
-    {
+    public THashMap<Integer, List<Room>> findRooms(NavigatorFilterField filterField, String value, int category, boolean showInvisible) {
         THashMap<Integer, List<Room>> rooms = new THashMap<>();
-        String query = filterField.databaseQuery + " AND rooms.state NOT LIKE " + (showInvisible ? "''" : "'invisible'")  + (category >= 0 ? "AND rooms.category = '" + category + "'" : "") + "  ORDER BY rooms.users, rooms.id DESC LIMIT " + (page * NavigatorManager.MAXIMUM_RESULTS_PER_PAGE)  + "" + ((page * NavigatorManager.MAXIMUM_RESULTS_PER_PAGE) + NavigatorManager.MAXIMUM_RESULTS_PER_PAGE);
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(query))
-        {
+        String query = filterField.databaseQuery + " AND rooms.state NOT LIKE " + (showInvisible ? "''" : "'invisible'") + (category >= 0 ? "AND rooms.category = '" + category + "'" : "") + "  ORDER BY rooms.users, rooms.id DESC LIMIT " + (page * NavigatorManager.MAXIMUM_RESULTS_PER_PAGE) + "" + ((page * NavigatorManager.MAXIMUM_RESULTS_PER_PAGE) + NavigatorManager.MAXIMUM_RESULTS_PER_PAGE);
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, (filterField.comparator == NavigatorFilterComparator.EQUALS ? value : "%" + value + "%"));
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     Room room = this.activeRooms.get(set.getInt("id"));
 
-                    if (room == null)
-                    {
+                    if (room == null) {
                         room = new Room(set);
                         this.activeRooms.put(set.getInt("id"), room);
                     }
 
-                    if (!rooms.containsKey(set.getInt("category")))
-                    {
+                    if (!rooms.containsKey(set.getInt("category"))) {
                         rooms.put(set.getInt("category"), new ArrayList<>());
                     }
 
                     rooms.get(set.getInt("category")).add(room);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return rooms;
     }
 
-    public RoomCategory getCategory(int id)
-    {
-        for (RoomCategory category : this.roomCategories.values())
-        {
+    public RoomCategory getCategory(int id) {
+        for (RoomCategory category : this.roomCategories.values()) {
             if (category.getId() == id)
                 return category;
         }
@@ -215,12 +180,9 @@ public class RoomManager
         return null;
     }
 
-    public RoomCategory getCategory(String name)
-    {
-        for (RoomCategory category : this.roomCategories.values())
-        {
-            if (category.getCaption().equalsIgnoreCase(name))
-            {
+    public RoomCategory getCategory(String name) {
+        for (RoomCategory category : this.roomCategories.values()) {
+            if (category.getCaption().equalsIgnoreCase(name)) {
                 return category;
             }
         }
@@ -228,12 +190,9 @@ public class RoomManager
         return null;
     }
 
-    public RoomCategory getCategoryBySafeCaption(String safeCaption)
-    {
-        for (RoomCategory category : this.roomCategories.values())
-        {
-            if (category.getCaptionSave().equalsIgnoreCase(safeCaption))
-            {
+    public RoomCategory getCategoryBySafeCaption(String safeCaption) {
+        for (RoomCategory category : this.roomCategories.values()) {
+            if (category.getCaptionSave().equalsIgnoreCase(safeCaption)) {
                 return category;
             }
         }
@@ -241,12 +200,10 @@ public class RoomManager
         return null;
     }
 
-    public List<RoomCategory> roomCategoriesForHabbo(Habbo habbo)
-    {
+    public List<RoomCategory> roomCategoriesForHabbo(Habbo habbo) {
         List<RoomCategory> categories = new ArrayList<>();
-        for(RoomCategory category : this.roomCategories.values())
-        {
-            if(category.getMinRank() <= habbo.getHabboInfo().getRank().getId())
+        for (RoomCategory category : this.roomCategories.values()) {
+            if (category.getMinRank() <= habbo.getHabboInfo().getRank().getId())
                 categories.add(category);
         }
 
@@ -255,14 +212,10 @@ public class RoomManager
         return categories;
     }
 
-    public boolean hasCategory(int categoryId, Habbo habbo)
-    {
-        for(RoomCategory category : this.roomCategories.values())
-        {
-            if(category.getId() == categoryId)
-            {
-                if(category.getMinRank() <= habbo.getHabboInfo().getRank().getId())
-                {
+    public boolean hasCategory(int categoryId, Habbo habbo) {
+        for (RoomCategory category : this.roomCategories.values()) {
+            if (category.getId() == categoryId) {
+                if (category.getMinRank() <= habbo.getHabboInfo().getRank().getId()) {
                     return true;
                 }
             }
@@ -271,24 +224,20 @@ public class RoomManager
         return false;
     }
 
-    public THashMap<Integer, RoomCategory> getRoomCategories()
-    {
+    public THashMap<Integer, RoomCategory> getRoomCategories() {
         return this.roomCategories;
     }
 
-    public List<Room> getRoomsByScore()
-    {
+    public List<Room> getRoomsByScore() {
         List<Room> rooms = new ArrayList<>(this.activeRooms.values());
         rooms.sort(Room.SORT_SCORE);
 
         return rooms;
     }
 
-    public List<Room> getActiveRooms(int categoryId)
-    {
+    public List<Room> getActiveRooms(int categoryId) {
         List<Room> rooms = new ArrayList<>();
-        for (Room room : this.activeRooms.values())
-        {
+        for (Room room : this.activeRooms.values()) {
             if (categoryId == room.getCategory() || categoryId == -1)
                 rooms.add(room);
         }
@@ -297,64 +246,50 @@ public class RoomManager
     }
 
     //TODO Move to HabboInfo class.
-    public List<Room> getRoomsForHabbo(Habbo habbo)
-    {
+    public List<Room> getRoomsForHabbo(Habbo habbo) {
         List<Room> rooms = new ArrayList<>();
-        for(Room room : this.activeRooms.values())
-        {
-            if(room.getOwnerId() == habbo.getHabboInfo().getId())
+        for (Room room : this.activeRooms.values()) {
+            if (room.getOwnerId() == habbo.getHabboInfo().getId())
                 rooms.add(room);
         }
         rooms.sort(Room.SORT_ID);
         return rooms;
     }
 
-    public List<Room> getRoomsForHabbo(String username)
-    {
+    public List<Room> getRoomsForHabbo(String username) {
         Habbo h = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
-        if(h != null)
-        {
+        if (h != null) {
             return this.getRoomsForHabbo(h);
         }
 
         List<Room> rooms = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE owner_name = ? ORDER BY id DESC LIMIT 25"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE owner_name = ? ORDER BY id DESC LIMIT 25")) {
             statement.setString(1, username);
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     rooms.add(this.loadRoom(set.getInt("id")));
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return rooms;
     }
 
-    public Room loadRoom(int id)
-    {
+    public Room loadRoom(int id) {
         return loadRoom(id, false);
     }
 
-    public Room loadRoom(int id, boolean loadData)
-    {
+    public Room loadRoom(int id, boolean loadData) {
         Room room = null;
 
-        if(this.activeRooms.containsKey(id))
-        {
+        if (this.activeRooms.containsKey(id)) {
             room = this.activeRooms.get(id);
 
-            if (loadData)
-            {
-                if (room.isPreLoaded() && !room.isLoaded())
-                {
+            if (loadData) {
+                if (room.isPreLoaded() && !room.isLoaded()) {
                     room.loadData();
                 }
             }
@@ -362,29 +297,22 @@ public class RoomManager
             return room;
         }
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE id = ? LIMIT 1"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE id = ? LIMIT 1")) {
             statement.setInt(1, id);
 
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     room = new Room(set);
-                    if (loadData)
-                    {
+                    if (loadData) {
                         room.loadData();
                     }
                 }
             }
 
-            if(room != null)
-            {
+            if (room != null) {
                 this.activeRooms.put(room.getId(), room);
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
@@ -392,12 +320,10 @@ public class RoomManager
     }
 
 
-    public Room createRoom(int ownerId, String ownerName, String name, String description, String modelName, int usersMax, int categoryId)
-    {
+    public Room createRoom(int ownerId, String ownerName, String name, String description, String modelName, int usersMax, int categoryId) {
         Room room = null;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rooms (owner_id, owner_name, name, description, model, users_max, category) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rooms (owner_id, owner_name, name, description, model, users_max, category) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, ownerId);
             statement.setString(2, ownerName);
             statement.setString(3, name);
@@ -406,14 +332,11 @@ public class RoomManager
             statement.setInt(6, usersMax);
             statement.setInt(7, categoryId);
             statement.execute();
-            try (ResultSet set = statement.getGeneratedKeys())
-            {
+            try (ResultSet set = statement.getGeneratedKeys()) {
                 if (set.next())
                     room = this.loadRoom(set.getInt(1));
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
@@ -421,8 +344,7 @@ public class RoomManager
     }
 
 
-    public Room createRoomForHabbo(Habbo habbo, String name, String description, String modelName, int usersMax, int categoryId)
-    {
+    public Room createRoomForHabbo(Habbo habbo, String name, String description, String modelName, int usersMax, int categoryId) {
         Room room = this.createRoom(habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), name, description, modelName, usersMax, categoryId);
 
         Emulator.getPluginManager().fireEvent(new NavigatorRoomCreatedEvent(habbo, room));
@@ -430,39 +352,29 @@ public class RoomManager
         return room;
     }
 
-    public void loadRoomsForHabbo(Habbo habbo)
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE owner_id = ?"))
-        {
+    public void loadRoomsForHabbo(Habbo habbo) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE owner_id = ?")) {
             statement.setInt(1, habbo.getHabboInfo().getId());
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     if (!this.activeRooms.containsKey(set.getInt("id")))
                         this.activeRooms.put(set.getInt("id"), new Room(set));
                 }
             }
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public void unloadRoomsForHabbo(Habbo habbo)
-    {
+    public void unloadRoomsForHabbo(Habbo habbo) {
         List<Room> roomsToDispose = new ArrayList<>();
-        for(Room room : this.activeRooms.values())
-        {
-            if(!room.isPublicRoom() && !room.isStaffPromotedRoom() && room.getOwnerId() == habbo.getHabboInfo().getId() && room.getUserCount() == 0 && !this.roomCategories.get(room.getCategory()).isPublic())
-            {
+        for (Room room : this.activeRooms.values()) {
+            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && room.getOwnerId() == habbo.getHabboInfo().getId() && room.getUserCount() == 0 && !this.roomCategories.get(room.getCategory()).isPublic()) {
                 roomsToDispose.add(room);
             }
         }
 
-        for(Room room : roomsToDispose)
-        {
+        for (Room room : roomsToDispose) {
             if (Emulator.getPluginManager().fireEvent(new RoomUncachedEvent(room)).isCancelled())
                 continue;
 
@@ -471,198 +383,158 @@ public class RoomManager
         }
     }
 
-    public void clearInactiveRooms()
-    {
+    public void clearInactiveRooms() {
         THashSet<Room> roomsToDispose = new THashSet<>();
-        for(Room room : this.activeRooms.values())
-        {
-            if(!room.isPublicRoom() && !room.isStaffPromotedRoom() && !Emulator.getGameServer().getGameClientManager().containsHabbo(room.getOwnerId()) && room.isPreLoaded() && !this.roomCategories.get(room.getCategory()).isPublic())
-            {
+        for (Room room : this.activeRooms.values()) {
+            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && !Emulator.getGameServer().getGameClientManager().containsHabbo(room.getOwnerId()) && room.isPreLoaded() && !this.roomCategories.get(room.getCategory()).isPublic()) {
                 roomsToDispose.add(room);
             }
         }
 
-        for(Room room : roomsToDispose)
-        {
+        for (Room room : roomsToDispose) {
             room.dispose();
-            if(room.getUserCount() == 0)
+            if (room.getUserCount() == 0)
                 this.activeRooms.remove(room.getId());
         }
     }
 
-    public boolean layoutExists(String name)
-    {
+    public boolean layoutExists(String name) {
         return this.mapNames.contains(name);
     }
 
-    public RoomLayout loadLayout(String name, Room room)
-    {
+    public RoomLayout loadLayout(String name, Room room) {
         RoomLayout layout = null;
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM room_models WHERE name LIKE ? LIMIT 1"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM room_models WHERE name LIKE ? LIMIT 1")) {
             statement.setString(1, name);
-            try (ResultSet set = statement.executeQuery())
-            {
-                if (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
                     layout = new RoomLayout(set, room);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return layout;
     }
 
-    public void unloadRoom(Room room)
-    {
+    public void unloadRoom(Room room) {
         room.dispose();
     }
 
-    public void uncacheRoom(Room room)
-    {
+    public void uncacheRoom(Room room) {
         this.activeRooms.remove(room.getId());
     }
 
-    public void voteForRoom(Habbo habbo, Room room)
-    {
-        if(habbo.getHabboInfo().getCurrentRoom() != null && room != null && habbo.getHabboInfo().getCurrentRoom() == room)
-        {
-            if(this.hasVotedForRoom(habbo, room))
+    public void voteForRoom(Habbo habbo, Room room) {
+        if (habbo.getHabboInfo().getCurrentRoom() != null && room != null && habbo.getHabboInfo().getCurrentRoom() == room) {
+            if (this.hasVotedForRoom(habbo, room))
                 return;
 
             room.setScore(room.getScore() + 1);
             room.setNeedsUpdate(true);
             habbo.getHabboStats().votedRooms.push(room.getId());
-            for(Habbo h : room.getHabbos())
-            {
+            for (Habbo h : room.getHabbos()) {
                 h.getClient().sendResponse(new RoomScoreComposer(room.getScore(), !this.hasVotedForRoom(h, room)));
             }
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_votes VALUES (?, ?)"))
-            {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_votes VALUES (?, ?)")) {
                 statement.setInt(1, habbo.getHabboInfo().getId());
                 statement.setInt(2, room.getId());
                 statement.execute();
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
-    boolean hasVotedForRoom(Habbo habbo, Room room)
-    {
-        if(room.getOwnerId() == habbo.getHabboInfo().getId())
+    boolean hasVotedForRoom(Habbo habbo, Room room) {
+        if (room.getOwnerId() == habbo.getHabboInfo().getId())
             return true;
 
-        for(int i : habbo.getHabboStats().votedRooms.toArray())
-        {
-            if(i == room.getId())
+        for (int i : habbo.getHabboStats().votedRooms.toArray()) {
+            if (i == room.getId())
                 return true;
         }
 
         return false;
     }
 
-    public Room getRoom(int roomId)
-    {
+    public Room getRoom(int roomId) {
         return this.activeRooms.get(roomId);
     }
 
-    public ArrayList<Room> getActiveRooms()
-    {
+    public ArrayList<Room> getActiveRooms() {
         return new ArrayList<>(this.activeRooms.values());
     }
 
-    public int loadedRoomsCount()
-    {
+    public int loadedRoomsCount() {
         return this.activeRooms.size();
     }
 
-    public void enterRoom(Habbo habbo, int roomId, String password)
-    {
+    public void enterRoom(Habbo habbo, int roomId, String password) {
         this.enterRoom(habbo, roomId, password, false, null);
     }
 
-    public void enterRoom(Habbo habbo, int roomId, String password, boolean overrideChecks)
-    {
+    public void enterRoom(Habbo habbo, int roomId, String password, boolean overrideChecks) {
         this.enterRoom(habbo, roomId, password, overrideChecks, null);
     }
 
-    public void enterRoom(Habbo habbo, int roomId, String password, boolean overrideChecks, RoomTile doorLocation)
-    {
+    public void enterRoom(Habbo habbo, int roomId, String password, boolean overrideChecks, RoomTile doorLocation) {
         Room room = this.loadRoom(roomId, true);
 
-        if(room == null)
+        if (room == null)
             return;
 
-        if (habbo.getHabboInfo().getLoadingRoom() != 0 && room.getId() != habbo.getHabboInfo().getLoadingRoom())
-        {
+        if (habbo.getHabboInfo().getLoadingRoom() != 0 && room.getId() != habbo.getHabboInfo().getLoadingRoom()) {
             habbo.getClient().sendResponse(new HotelViewComposer());
             habbo.getHabboInfo().setLoadingRoom(0);
             return;
         }
 
-        if(Emulator.getPluginManager().fireEvent(new UserEnterRoomEvent(habbo, room)).isCancelled())
-        {
-            if(habbo.getHabboInfo().getCurrentRoom() == null)
-            {
+        if (Emulator.getPluginManager().fireEvent(new UserEnterRoomEvent(habbo, room)).isCancelled()) {
+            if (habbo.getHabboInfo().getCurrentRoom() == null) {
                 habbo.getClient().sendResponse(new HotelViewComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
                 return;
             }
         }
 
-        if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission("acc_enteranyroom"))
-        {
+        if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission("acc_enteranyroom")) {
             habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
             return;
         }
 
-        if (habbo.getHabboInfo().getRoomQueueId() != roomId)
-        {
+        if (habbo.getHabboInfo().getRoomQueueId() != roomId) {
             Room queRoom = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
-            if (queRoom != null)
-            {
+            if (queRoom != null) {
                 queRoom.removeFromQueue(habbo);
             }
         }
 
-        if(overrideChecks ||
-           room.isOwner(habbo) ||
-           room.getState() == RoomState.OPEN ||
-           room.getState() == RoomState.INVISIBLE ||
-           habbo.hasPermission(Permission.ACC_ANYROOMOWNER) ||
-           habbo.hasPermission("acc_enteranyroom") ||
-           room.hasRights(habbo) ||
-           (room.hasGuild() && room.guildRightLevel(habbo) > 2))
-        {
+        if (overrideChecks ||
+                room.isOwner(habbo) ||
+                room.getState() == RoomState.OPEN ||
+                room.getState() == RoomState.INVISIBLE ||
+                habbo.hasPermission(Permission.ACC_ANYROOMOWNER) ||
+                habbo.hasPermission("acc_enteranyroom") ||
+                room.hasRights(habbo) ||
+                (room.hasGuild() && room.guildRightLevel(habbo) > 2)) {
             this.openRoom(habbo, room, doorLocation);
-        }
-        else if(room.getState() == RoomState.LOCKED)
-        {
+        } else if (room.getState() == RoomState.LOCKED) {
             boolean rightsFound = false;
 
-            synchronized (room.roomUnitLock)
-            {
-                for (Habbo current : room.getHabbos())
-                {
-                    if (room.hasRights(current) || current.getHabboInfo().getId() == room.getOwnerId() || (room.hasGuild() && room.guildRightLevel(current) >= 2))
-                    {
+            synchronized (room.roomUnitLock) {
+                for (Habbo current : room.getHabbos()) {
+                    if (room.hasRights(current) || current.getHabboInfo().getId() == room.getOwnerId() || (room.hasGuild() && room.guildRightLevel(current) >= 2)) {
                         current.getClient().sendResponse(new DoorbellAddUserComposer(habbo.getHabboInfo().getUsername()));
                         rightsFound = true;
                     }
                 }
             }
 
-            if(!rightsFound)
-            {
+            if (!rightsFound) {
                 habbo.getClient().sendResponse(new RoomAccessDeniedComposer(""));
                 habbo.getClient().sendResponse(new HotelViewComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
@@ -672,13 +544,10 @@ public class RoomManager
             habbo.getHabboInfo().setRoomQueueId(roomId);
             habbo.getClient().sendResponse(new DoorbellAddUserComposer(""));
             room.addToQueue(habbo);
-        }
-        else if(room.getState() == RoomState.PASSWORD)
-        {
-            if(room.getPassword().equalsIgnoreCase(password))
+        } else if (room.getState() == RoomState.PASSWORD) {
+            if (room.getPassword().equalsIgnoreCase(password))
                 this.openRoom(habbo, room, doorLocation);
-            else
-            {
+            else {
                 habbo.getClient().sendResponse(new GenericErrorMessagesComposer(-100002));
                 habbo.getClient().sendResponse(new HotelViewComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
@@ -686,22 +555,18 @@ public class RoomManager
         }
     }
 
-    void openRoom(Habbo habbo, Room room, RoomTile doorLocation)
-    {
+    void openRoom(Habbo habbo, Room room, RoomTile doorLocation) {
         if (room == null || room.getLayout() == null)
             return;
 
-        if (Emulator.getConfig().getBoolean("hotel.room.enter.logs"))
-        {
+        if (Emulator.getConfig().getBoolean("hotel.room.enter.logs")) {
             this.logEnter(habbo, room);
         }
 
-        if (habbo.getHabboInfo().getRoomQueueId() > 0)
-        {
+        if (habbo.getHabboInfo().getRoomQueueId() > 0) {
             Room r = Emulator.getGameEnvironment().getRoomManager().getRoom(habbo.getHabboInfo().getRoomQueueId());
 
-            if (r != null)
-            {
+            if (r != null) {
                 r.removeFromQueue(habbo);
             }
         }
@@ -709,41 +574,37 @@ public class RoomManager
         habbo.getHabboInfo().setRoomQueueId(0);
         habbo.getClient().sendResponse(new HideDoorbellComposer(""));
 
-        if(habbo.getRoomUnit() != null) {
+        if (habbo.getRoomUnit() != null) {
             habbo.getRoomUnit().setRoom(null);
         }
 
         habbo.setRoomUnit(new RoomUnit());
 
         habbo.getRoomUnit().clearStatus();
-        if (habbo.getRoomUnit().getCurrentLocation() == null)
-        {
+        if (habbo.getRoomUnit().getCurrentLocation() == null) {
             habbo.getRoomUnit().setLocation(doorLocation != null ? doorLocation : room.getLayout().getDoorTile());
             habbo.getRoomUnit().setZ(habbo.getRoomUnit().getCurrentLocation().getStackHeight());
 
-            if(doorLocation == null) {
+            if (doorLocation == null) {
                 habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
                 habbo.getRoomUnit().setHeadRotation(RoomUserRotation.values()[room.getLayout().getDoorDirection()]);
-            }
-            else {
+            } else {
                 habbo.getRoomUnit().setCanLeaveRoomByDoor(false);
                 habbo.getRoomUnit().isTeleporting = true;
                 HabboItem topItem = room.getTopItemAt(doorLocation.x, doorLocation.y);
-                if(topItem != null) {
+                if (topItem != null) {
                     habbo.getRoomUnit().setRotation(RoomUserRotation.values()[topItem.getRotation()]);
                 }
             }
         }
 
         habbo.getRoomUnit().setRoomUnitType(RoomUnitType.USER);
-        if(room.isBanned(habbo))
-        {
+        if (room.isBanned(habbo)) {
             habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
             return;
         }
 
-        if (room.getUserCount() >= room.getUsersMax() && !habbo.hasPermission("acc_fullrooms") && !room.hasRights(habbo))
-        {
+        if (room.getUserCount() >= room.getUsersMax() && !habbo.hasPermission("acc_fullrooms") && !room.hasRights(habbo)) {
             habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_GUESTROOM_FULL));
             return;
         }
@@ -754,20 +615,15 @@ public class RoomManager
         habbo.getClient().sendResponse(new RoomOpenComposer());
 
         habbo.getRoomUnit().setInRoom(true);
-        if (habbo.getHabboInfo().getCurrentRoom() != room && habbo.getHabboInfo().getCurrentRoom() != null)
-        {
+        if (habbo.getHabboInfo().getCurrentRoom() != room && habbo.getHabboInfo().getCurrentRoom() != null) {
             habbo.getHabboInfo().getCurrentRoom().removeHabbo(habbo);
-        }
-        else if (!habbo.getHabboStats().blockFollowing && habbo.getHabboInfo().getCurrentRoom() == null)
-        {
+        } else if (!habbo.getHabboStats().blockFollowing && habbo.getHabboInfo().getCurrentRoom() == null) {
             habbo.getMessenger().connectionChanged(habbo, true, true);
         }
 
-        if (habbo.getHabboInfo().getLoadingRoom() != 0)
-        {
+        if (habbo.getHabboInfo().getLoadingRoom() != 0) {
             Room oldRoom = Emulator.getGameEnvironment().getRoomManager().getRoom(habbo.getHabboInfo().getLoadingRoom());
-            if (oldRoom != null)
-            {
+            if (oldRoom != null) {
                 oldRoom.removeFromQueue(habbo);
             }
         }
@@ -790,27 +646,20 @@ public class RoomManager
 
         habbo.getRoomUnit().setFastWalk(habbo.getRoomUnit().isFastWalk() && habbo.hasPermission("cmd_fastwalk", room.hasRights(habbo)));
 
-        if (room.isPromoted())
-        {
+        if (room.isPromoted()) {
             habbo.getClient().sendResponse(new RoomPromotionMessageComposer(room, room.getPromotion()));
-        }
-        else
-        {
+        } else {
             habbo.getClient().sendResponse(new RoomPromotionMessageComposer(null, null));
         }
 
-        if(room.getOwnerId() != habbo.getHabboInfo().getId())
-        {
+        if (room.getOwnerId() != habbo.getHabboInfo().getId()) {
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomEntry"));
         }
     }
 
-    public void enterRoom(final Habbo habbo, final Room room)
-    {
-        if (habbo.getHabboInfo().getLoadingRoom() != room.getId())
-        {
-            if (habbo.getHabboInfo().getLoadingRoom() != 0)
-            {
+    public void enterRoom(final Habbo habbo, final Room room) {
+        if (habbo.getHabboInfo().getLoadingRoom() != room.getId()) {
+            if (habbo.getHabboInfo().getLoadingRoom() != 0) {
                 habbo.getClient().sendResponse(new HotelViewComposer());
             }
             return;
@@ -824,18 +673,15 @@ public class RoomManager
 
         habbo.getRoomUnit().setRightsLevel(RoomRightLevels.NONE);
         room.refreshRightsForHabbo(habbo);
-        if (habbo.getRoomUnit().isKicked && !habbo.getRoomUnit().canWalk())
-        {
+        if (habbo.getRoomUnit().isKicked && !habbo.getRoomUnit().canWalk()) {
             habbo.getRoomUnit().setCanWalk(true);
         }
         habbo.getRoomUnit().isKicked = false;
 
-        if (habbo.getRoomUnit().getCurrentLocation() == null && !habbo.getRoomUnit().isTeleporting)
-        {
+        if (habbo.getRoomUnit().getCurrentLocation() == null && !habbo.getRoomUnit().isTeleporting) {
             RoomTile doorTile = room.getLayout().getTile(room.getLayout().getDoorX(), room.getLayout().getDoorY());
 
-            if (doorTile != null)
-            {
+            if (doorTile != null) {
                 habbo.getRoomUnit().setLocation(doorTile);
                 habbo.getRoomUnit().setZ(doorTile.getStackHeight());
             }
@@ -851,41 +697,34 @@ public class RoomManager
         room.addHabbo(habbo);
 
         List<Habbo> habbos = new ArrayList<>();
-        if (!room.getCurrentHabbos().isEmpty())
-        {
+        if (!room.getCurrentHabbos().isEmpty()) {
 
 
             room.sendComposer(new RoomUsersComposer(habbo).compose());
             room.sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
 
-            for (Habbo h : room.getHabbos())
-            {
-                if (!h.getRoomUnit().isInvisible())
-                {
+            for (Habbo h : room.getHabbos()) {
+                if (!h.getRoomUnit().isInvisible()) {
                     habbos.add(h);
                 }
             }
 
-            synchronized (room.roomUnitLock)
-            {
+            synchronized (room.roomUnitLock) {
                 habbo.getClient().sendResponse(new RoomUsersComposer(habbos));
                 habbo.getClient().sendResponse(new RoomUserStatusComposer(habbos));
             }
 
-            if (habbo.getHabboStats().guild != 0)
-            {
+            if (habbo.getHabboStats().guild != 0) {
                 Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(habbo.getHabboStats().guild);
 
-                if (guild != null)
-                {
+                if (guild != null) {
                     room.sendComposer(new RoomUsersAddGuildBadgeComposer(guild).compose());
                 }
             }
 
             int effect = habbo.getInventory().getEffectsComponent().activatedEffect;
 
-            if (effect == 0)
-            {
+            if (effect == 0) {
                 effect = habbo.getHabboInfo().getRank().getRoomEffect();
             }
 
@@ -894,22 +733,16 @@ public class RoomManager
 
 
         habbo.getClient().sendResponse(new RoomUsersComposer(room.getCurrentBots().valueCollection(), true));
-        if (!room.getCurrentBots().isEmpty())
-        {
+        if (!room.getCurrentBots().isEmpty()) {
             TIntObjectIterator<Bot> botIterator = room.getCurrentBots().iterator();
-            for (int i = room.getCurrentBots().size(); i-- > 0; )
-            {
-                try
-                {
+            for (int i = room.getCurrentBots().size(); i-- > 0; ) {
+                try {
                     botIterator.advance();
-                }
-                catch (NoSuchElementException e)
-                {
+                } catch (NoSuchElementException e) {
                     break;
                 }
                 Bot bot = botIterator.value();
-                if (!bot.getRoomUnit().getDanceType().equals(DanceType.NONE))
-                {
+                if (!bot.getRoomUnit().getDanceType().equals(DanceType.NONE)) {
                     habbo.getClient().sendResponse(new RoomUserDanceComposer(bot.getRoomUnit()));
                 }
 
@@ -927,17 +760,14 @@ public class RoomManager
         {
             final THashSet<HabboItem> floorItems = new THashSet<>();
 
-            room.getFloorItems().forEach(new TObjectProcedure<HabboItem>()
-            {
+            room.getFloorItems().forEach(new TObjectProcedure<HabboItem>() {
                 @Override
-                public boolean execute(HabboItem object)
-                {
+                public boolean execute(HabboItem object) {
                     if (room.isHideWired() && object instanceof InteractionWired)
                         return true;
 
                     floorItems.add(object);
-                    if (floorItems.size() == 250)
-                    {
+                    if (floorItems.size() == 250) {
                         habbo.getClient().sendResponse(new RoomFloorItemsComposer(room.getFurniOwnerNames(), floorItems));
                         floorItems.clear();
                     }
@@ -950,85 +780,65 @@ public class RoomManager
             floorItems.clear();
         }
 
-        if (!room.getCurrentPets().isEmpty())
-        {
+        if (!room.getCurrentPets().isEmpty()) {
             habbo.getClient().sendResponse(new RoomPetComposer(room.getCurrentPets()));
-            for (Pet pet : room.getCurrentPets().valueCollection())
-            {
+            for (Pet pet : room.getCurrentPets().valueCollection()) {
                 habbo.getClient().sendResponse(new RoomUserStatusComposer(pet.getRoomUnit()));
             }
         }
 
-        if (!habbo.getHabboStats().allowTalk())
-        {
+        if (!habbo.getHabboStats().allowTalk()) {
             habbo.getHabboStats().mutedBubbleTracker = true;
             int remainingMuteTime = habbo.getHabboStats().remainingMuteTime();
             habbo.getClient().sendResponse(new FloodCounterComposer(remainingMuteTime));
             habbo.getClient().sendResponse(new MutedWhisperComposer(remainingMuteTime));
             room.sendComposer(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.MUTED).compose());
-        }
-        else if (habbo.getHabboStats().mutedBubbleTracker)
-        {
+        } else if (habbo.getHabboStats().mutedBubbleTracker) {
             habbo.getHabboStats().mutedBubbleTracker = false;
         }
 
         THashMap<Integer, String> guildBadges = new THashMap<>();
-        for (Habbo roomHabbo : habbos)
-        {
+        for (Habbo roomHabbo : habbos) {
             {
-                if (roomHabbo.getRoomUnit().getDanceType().getType() > 0)
-                {
+                if (roomHabbo.getRoomUnit().getDanceType().getType() > 0) {
                     habbo.getClient().sendResponse(new RoomUserDanceComposer(roomHabbo.getRoomUnit()));
                 }
 
-                if (roomHabbo.getRoomUnit().getHandItem() > 0)
-                {
+                if (roomHabbo.getRoomUnit().getHandItem() > 0) {
                     habbo.getClient().sendResponse(new RoomUserHandItemComposer(roomHabbo.getRoomUnit()));
                 }
 
-                if (roomHabbo.getRoomUnit().getEffectId() > 0)
-                {
+                if (roomHabbo.getRoomUnit().getEffectId() > 0) {
                     habbo.getClient().sendResponse(new RoomUserEffectComposer(roomHabbo.getRoomUnit()));
                 }
 
-                if (roomHabbo.getRoomUnit().isIdle())
-                {
+                if (roomHabbo.getRoomUnit().isIdle()) {
                     habbo.getClient().sendResponse(new RoomUnitIdleComposer(roomHabbo.getRoomUnit()));
                 }
 
-                if (roomHabbo.getHabboStats().userIgnored(habbo.getHabboInfo().getId()))
-                {
+                if (roomHabbo.getHabboStats().userIgnored(habbo.getHabboInfo().getId())) {
                     roomHabbo.getClient().sendResponse(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.IGNORED));
                 }
 
-                if (!roomHabbo.getHabboStats().allowTalk())
-                {
+                if (!roomHabbo.getHabboStats().allowTalk()) {
                     habbo.getClient().sendResponse(new RoomUserIgnoredComposer(roomHabbo, RoomUserIgnoredComposer.MUTED));
-                }
-                else if (habbo.getHabboStats().userIgnored(roomHabbo.getHabboInfo().getId()))
-                {
+                } else if (habbo.getHabboStats().userIgnored(roomHabbo.getHabboInfo().getId())) {
                     habbo.getClient().sendResponse(new RoomUserIgnoredComposer(roomHabbo, RoomUserIgnoredComposer.IGNORED));
                 }
 
-                if (roomHabbo.getHabboStats().guild != 0 && !guildBadges.containsKey(roomHabbo.getHabboStats().guild))
-                {
+                if (roomHabbo.getHabboStats().guild != 0 && !guildBadges.containsKey(roomHabbo.getHabboStats().guild)) {
                     Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(roomHabbo.getHabboStats().guild);
 
-                    if (guild != null)
-                    {
+                    if (guild != null) {
                         guildBadges.put(roomHabbo.getHabboStats().guild, guild.getBadge());
                     }
                 }
 
-                if (roomHabbo.getRoomUnit().getRoomUnitType().equals(RoomUnitType.PET))
-                {
-                    try
-                    {
+                if (roomHabbo.getRoomUnit().getRoomUnitType().equals(RoomUnitType.PET)) {
+                    try {
                         habbo.getClient().sendResponse(new RoomUserRemoveComposer(roomHabbo.getRoomUnit()));
-                        habbo.getClient().sendResponse(new RoomUserPetComposer(((PetData)roomHabbo.getHabboStats().cache.get("pet_type")).getType(), (Integer)roomHabbo.getHabboStats().cache.get("pet_race"), (String)roomHabbo.getHabboStats().cache.get("pet_color"), roomHabbo));
-                    }
-                    catch (Exception e)
-                    {
+                        habbo.getClient().sendResponse(new RoomUserPetComposer(((PetData) roomHabbo.getHabboStats().cache.get("pet_type")).getType(), (Integer) roomHabbo.getHabboStats().cache.get("pet_race"), (String) roomHabbo.getHabboStats().cache.get("pet_color"), roomHabbo));
+                    } catch (Exception e) {
 
                     }
                 }
@@ -1037,36 +847,28 @@ public class RoomManager
 
         habbo.getClient().sendResponse(new RoomUsersGuildBadgesComposer(guildBadges));
 
-        if (room.hasRights(habbo) || (room.hasGuild() && room.guildRightLevel(habbo) >= 2))
-        {
-            if (!room.getHabboQueue().isEmpty())
-            {
-                for (Habbo waiting : room.getHabboQueue().valueCollection())
-                {
+        if (room.hasRights(habbo) || (room.hasGuild() && room.guildRightLevel(habbo) >= 2)) {
+            if (!room.getHabboQueue().isEmpty()) {
+                for (Habbo waiting : room.getHabboQueue().valueCollection()) {
                     habbo.getClient().sendResponse(new DoorbellAddUserComposer(waiting.getHabboInfo().getUsername()));
                 }
             }
         }
 
-        if (room.getPollId() > 0)
-        {
-            if (!PollManager.donePoll(habbo.getClient().getHabbo(), room.getPollId()))
-            {
+        if (room.getPollId() > 0) {
+            if (!PollManager.donePoll(habbo.getClient().getHabbo(), room.getPollId())) {
                 Poll poll = Emulator.getGameEnvironment().getPollManager().getPoll(room.getPollId());
 
-                if (poll != null)
-                {
+                if (poll != null) {
                     habbo.getClient().sendResponse(new PollStartComposer(poll));
                 }
             }
         }
 
-        if (room.hasActiveWordQuiz())
-        {
+        if (room.hasActiveWordQuiz()) {
             habbo.getClient().sendResponse(new SimplePollStartComposer((Emulator.getIntUnixTimestamp() - room.wordQuizEnd) * 1000, room.wordQuiz));
 
-            if (room.hasVotedInWordQuiz(habbo))
-            {
+            if (room.hasVotedInWordQuiz(habbo)) {
                 habbo.getClient().sendResponse(new SimplePollAnswersComposer(room.noVotes, room.yesVotes));
             }
         }
@@ -1074,72 +876,59 @@ public class RoomManager
         WiredHandler.handle(WiredTriggerType.ENTER_ROOM, habbo.getRoomUnit(), room, null);
         room.habboEntered(habbo);
 
-        if (!habbo.getHabboStats().nux && (room.isOwner(habbo) || room.isPublicRoom()))
-        {
+        if (!habbo.getHabboStats().nux && (room.isOwner(habbo) || room.isPublicRoom())) {
             UserNuxEvent.handle(habbo);
         }
 
-        if(Emulator.getPluginManager().isRegistered(HabboAddedToRoomEvent.class, false)) {
+        if (Emulator.getPluginManager().isRegistered(HabboAddedToRoomEvent.class, false)) {
             Emulator.getPluginManager().fireEvent(new HabboAddedToRoomEvent(habbo, room));
         }
     }
 
-    void logEnter(Habbo habbo, Room room)
-    {
+    void logEnter(Habbo habbo, Room room) {
         habbo.getHabboStats().roomEnterTimestamp = Emulator.getIntUnixTimestamp();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_enter_log (room_id, user_id, timestamp) VALUES(?, ?, ?)"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_enter_log (room_id, user_id, timestamp) VALUES(?, ?, ?)")) {
             statement.setInt(1, room.getId());
             statement.setInt(2, habbo.getHabboInfo().getId());
-            statement.setInt(3, (int)(habbo.getHabboStats().roomEnterTimestamp));
+            statement.setInt(3, (int) (habbo.getHabboStats().roomEnterTimestamp));
             statement.execute();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public void leaveRoom(Habbo habbo, Room room)
-    {
+    public void leaveRoom(Habbo habbo, Room room) {
         this.leaveRoom(habbo, room, true);
     }
 
-    public void leaveRoom(Habbo habbo, Room room, boolean redirectToHotelView)
-    {
-        if(habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom() == room)
-        {
+    public void leaveRoom(Habbo habbo, Room room, boolean redirectToHotelView) {
+        if (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom() == room) {
             habbo.getRoomUnit().setPathFinderRoom(null);
 
             this.logExit(habbo);
             room.removeHabbo(habbo, true);
 
-            if (redirectToHotelView)
-            {
+            if (redirectToHotelView) {
                 habbo.getClient().sendResponse(new HotelViewComposer());
             }
             habbo.getHabboInfo().setCurrentRoom(null);
             habbo.getRoomUnit().isKicked = false;
 
-            if (room.getOwnerId() != habbo.getHabboInfo().getId())
-            {
-                AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int)Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000));
+            if (room.getOwnerId() != habbo.getHabboInfo().getId()) {
+                AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int) Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000));
             }
         }
     }
-    public void logExit(Habbo habbo)
-    {
+
+    public void logExit(Habbo habbo) {
         Emulator.getPluginManager().fireEvent(new UserExitRoomEvent(habbo, UserExitRoomEvent.UserExitRoomReason.DOOR));
-        if(habbo.getRoomUnit().getCacheable().containsKey("control"))
-        {
-            Habbo control = (Habbo)habbo.getRoomUnit().getCacheable().remove("control");
+        if (habbo.getRoomUnit().getCacheable().containsKey("control")) {
+            Habbo control = (Habbo) habbo.getRoomUnit().getCacheable().remove("control");
             control.getRoomUnit().getCacheable().remove("controller");
         }
 
-        if (habbo.getHabboInfo().getRiding() != null)
-        {
-            if (habbo.getHabboInfo().getRiding().getRoomUnit() != null)
-            {
+        if (habbo.getHabboInfo().getRiding() != null) {
+            if (habbo.getHabboInfo().getRiding().getRoomUnit() != null) {
                 habbo.getHabboInfo().getRiding().getRoomUnit().setGoalLocation(habbo.getHabboInfo().getRiding().getRoomUnit().getCurrentLocation());
             }
             habbo.getHabboInfo().getRiding().setTask(PetTasks.FREE);
@@ -1148,32 +937,25 @@ public class RoomManager
         }
 
         Room room = habbo.getHabboInfo().getCurrentRoom();
-        if(room != null)
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE room_enter_log SET exit_timestamp = ? WHERE user_id = ? AND room_id = ? ORDER BY timestamp DESC LIMIT 1"))
-            {
+        if (room != null) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE room_enter_log SET exit_timestamp = ? WHERE user_id = ? AND room_id = ? ORDER BY timestamp DESC LIMIT 1")) {
                 statement.setInt(1, Emulator.getIntUnixTimestamp());
                 statement.setInt(2, habbo.getHabboInfo().getId());
                 statement.setInt(3, room.getId());
                 statement.execute();
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
-    public Set<String> getTags()
-    {
+    public Set<String> getTags() {
         Map<String, Integer> tagCount = new HashMap<>();
 
-        for(Room room : this.activeRooms.values())
-        {
-            for(String s : room.getTags().split(";"))
-            {
+        for (Room room : this.activeRooms.values()) {
+            for (String s : room.getTags().split(";")) {
                 int i = 0;
-                if(tagCount.get(s) != null)
+                if (tagCount.get(s) != null)
                     i++;
 
                 tagCount.put(s, i++);
@@ -1182,14 +964,11 @@ public class RoomManager
         return new TreeMap<>(tagCount).keySet();
     }
 
-    public ArrayList<Room> getPublicRooms()
-    {
+    public ArrayList<Room> getPublicRooms() {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        for(Room room : this.activeRooms.values())
-        {
-            if(room.isPublicRoom())
-            {
+        for (Room room : this.activeRooms.values()) {
+            if (room.isPublicRoom()) {
                 rooms.add(room);
             }
         }
@@ -1197,22 +976,18 @@ public class RoomManager
         return rooms;
     }
 
-    public ArrayList<Room> getPopularRooms(int count)
-    {
+    public ArrayList<Room> getPopularRooms(int count) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        for (Room room : this.activeRooms.values())
-        {
-            if (room.getUserCount() > 0)
-            {
+        for (Room room : this.activeRooms.values()) {
+            if (room.getUserCount() > 0) {
                 if (!RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB && room.isPublicRoom()) continue;
 
                 rooms.add(room);
             }
         }
 
-        if (rooms.isEmpty())
-        {
+        if (rooms.isEmpty()) {
             return rooms;
         }
 
@@ -1221,20 +996,16 @@ public class RoomManager
         return new ArrayList<>(rooms.subList(0, (rooms.size() < count ? rooms.size() : count)));
     }
 
-    public ArrayList<Room> getPopularRooms(int count, int category)
-    {
+    public ArrayList<Room> getPopularRooms(int count, int category) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        for (Room room : this.activeRooms.values())
-        {
-            if (!room.isPublicRoom() && room.getCategory() == category)
-            {
+        for (Room room : this.activeRooms.values()) {
+            if (!room.isPublicRoom() && room.getCategory() == category) {
                 rooms.add(room);
             }
         }
 
-        if (rooms.isEmpty())
-        {
+        if (rooms.isEmpty()) {
             return rooms;
         }
 
@@ -1243,16 +1014,12 @@ public class RoomManager
         return new ArrayList<>(rooms.subList(0, (rooms.size() < count ? rooms.size() : count)));
     }
 
-    public Map<Integer, List<Room>> getPopularRoomsByCategory(int count)
-    {
+    public Map<Integer, List<Room>> getPopularRoomsByCategory(int count) {
         Map<Integer, List<Room>> rooms = new HashMap<>();
 
-        for (Room room : this.activeRooms.values())
-        {
-            if (!room.isPublicRoom())
-            {
-                if (!rooms.containsKey(room.getCategory()))
-                {
+        for (Room room : this.activeRooms.values()) {
+            if (!room.isPublicRoom()) {
+                if (!rooms.containsKey(room.getCategory())) {
                     rooms.put(room.getCategory(), new ArrayList<>());
                 }
 
@@ -1262,8 +1029,7 @@ public class RoomManager
 
         Map<Integer, List<Room>> result = new HashMap<>();
 
-        for (Map.Entry<Integer, List<Room>> set : rooms.entrySet())
-        {
+        for (Map.Entry<Integer, List<Room>> set : rooms.entrySet()) {
             if (set.getValue().isEmpty())
                 continue;
 
@@ -1275,20 +1041,16 @@ public class RoomManager
         return result;
     }
 
-    public ArrayList<Room> getRoomsWithName(String name)
-    {
+    public ArrayList<Room> getRoomsWithName(String name) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        for (Room room : this.activeRooms.values())
-        {
-            if (room.getName().toLowerCase().contains(name.toLowerCase()))
-            {
+        for (Room room : this.activeRooms.values()) {
+            if (room.getName().toLowerCase().contains(name.toLowerCase())) {
                 rooms.add(room);
             }
         }
 
-        if(rooms.size() < 25)
-        {
+        if (rooms.size() < 25) {
             rooms.addAll(this.getOfflineRoomsWithName(name));
         }
 
@@ -1297,17 +1059,13 @@ public class RoomManager
         return rooms;
     }
 
-    private ArrayList<Room> getOfflineRoomsWithName(String name)
-    {
+    private ArrayList<Room> getOfflineRoomsWithName(String name) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, rooms.* FROM rooms INNER JOIN users ON owner_id = users.id WHERE name LIKE ? ORDER BY id DESC LIMIT 25"))
-        {
-            statement.setString(1, "%"+name+"%");
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, rooms.* FROM rooms INNER JOIN users ON owner_id = users.id WHERE name LIKE ? ORDER BY id DESC LIMIT 25")) {
+            statement.setString(1, "%" + name + "%");
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     if (this.activeRooms.containsKey(set.getInt("id")))
                         continue;
 
@@ -1316,25 +1074,19 @@ public class RoomManager
                     this.activeRooms.put(r.getId(), r);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return rooms;
     }
 
-    public ArrayList<Room> getRoomsWithTag(String tag)
-    {
+    public ArrayList<Room> getRoomsWithTag(String tag) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        for (Room room : this.activeRooms.values())
-        {
-            for (String s : room.getTags().split(";"))
-            {
-                if (s.toLowerCase().equals(tag.toLowerCase()))
-                {
+        for (Room room : this.activeRooms.values()) {
+            for (String s : room.getTags().split(";")) {
+                if (s.toLowerCase().equals(tag.toLowerCase())) {
                     rooms.add(room);
                     break;
                 }
@@ -1346,12 +1098,10 @@ public class RoomManager
         return rooms;
     }
 
-    public ArrayList<Room> getGroupRoomsWithName(String name)
-    {
+    public ArrayList<Room> getGroupRoomsWithName(String name) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        for (Room room : this.activeRooms.values())
-        {
+        for (Room room : this.activeRooms.values()) {
             if (room.getGuildId() == 0)
                 continue;
 
@@ -1359,8 +1109,7 @@ public class RoomManager
                 rooms.add(room);
         }
 
-        if(rooms.size() < 25)
-        {
+        if (rooms.size() < 25) {
             rooms.addAll(this.getOfflineGroupRoomsWithName(name));
         }
 
@@ -1369,17 +1118,13 @@ public class RoomManager
         return rooms;
     }
 
-    private ArrayList<Room> getOfflineGroupRoomsWithName(String name)
-    {
+    private ArrayList<Room> getOfflineGroupRoomsWithName(String name) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, rooms.* FROM rooms INNER JOIN users ON rooms.owner_id = users.id WHERE name LIKE ? AND guild_id != 0 ORDER BY id DESC LIMIT 25"))
-        {
-            statement.setString(1, "%"+name+"%");
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, rooms.* FROM rooms INNER JOIN users ON rooms.owner_id = users.id WHERE name LIKE ? AND guild_id != 0 ORDER BY id DESC LIMIT 25")) {
+            statement.setString(1, "%" + name + "%");
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     if (this.activeRooms.containsKey(set.getInt("id")))
                         continue;
 
@@ -1389,27 +1134,23 @@ public class RoomManager
                     this.activeRooms.put(r.getId(), r);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return rooms;
     }
 
-    public ArrayList<Room> getRoomsFriendsNow(Habbo habbo)
-    {
+    public ArrayList<Room> getRoomsFriendsNow(Habbo habbo) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        for(MessengerBuddy buddy : habbo.getMessenger().getFriends().values())
-        {
-            if(buddy.getOnline() == 0)
+        for (MessengerBuddy buddy : habbo.getMessenger().getFriends().values()) {
+            if (buddy.getOnline() == 0)
                 continue;
 
             Habbo friend = Emulator.getGameEnvironment().getHabboManager().getHabbo(buddy.getId());
 
-            if(friend == null || friend.getHabboInfo().getCurrentRoom() == null)
+            if (friend == null || friend.getHabboInfo().getCurrentRoom() == null)
                 continue;
 
             rooms.add(friend.getHabboInfo().getCurrentRoom());
@@ -1420,18 +1161,16 @@ public class RoomManager
         return rooms;
     }
 
-    public ArrayList<Room> getRoomsFriendsOwn(Habbo habbo)
-    {
+    public ArrayList<Room> getRoomsFriendsOwn(Habbo habbo) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        for(MessengerBuddy buddy : habbo.getMessenger().getFriends().values())
-        {
-            if(buddy.getOnline() == 0)
+        for (MessengerBuddy buddy : habbo.getMessenger().getFriends().values()) {
+            if (buddy.getOnline() == 0)
                 continue;
 
             Habbo friend = Emulator.getGameEnvironment().getHabboManager().getHabbo(buddy.getId());
 
-            if(friend == null)
+            if (friend == null)
                 continue;
 
             rooms.addAll(this.getRoomsForHabbo(friend));
@@ -1442,23 +1181,18 @@ public class RoomManager
         return rooms;
     }
 
-    public ArrayList<Room> getRoomsVisited(Habbo habbo, boolean includeSelf, int limit)
-    {
+    public ArrayList<Room> getRoomsVisited(Habbo habbo, boolean includeSelf, int limit) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.* FROM room_enter_log INNER JOIN rooms ON room_enter_log.room_id = rooms.id WHERE user_id = ? AND timestamp >= ? AND rooms.owner_id != ? GROUP BY rooms.id ORDER BY timestamp DESC LIMIT " + limit))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.* FROM room_enter_log INNER JOIN rooms ON room_enter_log.room_id = rooms.id WHERE user_id = ? AND timestamp >= ? AND rooms.owner_id != ? GROUP BY rooms.id ORDER BY timestamp DESC LIMIT " + limit)) {
             statement.setInt(1, habbo.getHabboInfo().getId());
             statement.setInt(2, Emulator.getIntUnixTimestamp() - 259200);
             statement.setInt(3, (includeSelf ? 0 : habbo.getHabboInfo().getId()));
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     Room room = this.activeRooms.get(set.getInt("id"));
 
-                    if (room == null)
-                    {
+                    if (room == null) {
                         room = new Room(set);
 
                         this.activeRooms.put(room.getId(), room);
@@ -1467,9 +1201,7 @@ public class RoomManager
                     rooms.add(room);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
@@ -1478,21 +1210,16 @@ public class RoomManager
         return rooms;
     }
 
-    public ArrayList<Room> getRoomsFavourite(Habbo habbo)
-    {
+    public ArrayList<Room> getRoomsFavourite(Habbo habbo) {
         final ArrayList<Room> rooms = new ArrayList<>();
 
-        habbo.getHabboStats().getFavoriteRooms().forEach(new TIntProcedure()
-        {
+        habbo.getHabboStats().getFavoriteRooms().forEach(new TIntProcedure() {
             @Override
-            public boolean execute(int value)
-            {
+            public boolean execute(int value) {
                 Room room = RoomManager.this.getRoom(value);
 
-                if (room != null)
-                {
-                    if (room.getState() == RoomState.INVISIBLE)
-                    {
+                if (room != null) {
+                    if (room.getState() == RoomState.INVISIBLE) {
                         room.loadData();
                         if (!room.hasRights(habbo)) return true;
                     }
@@ -1505,18 +1232,14 @@ public class RoomManager
         return rooms;
     }
 
-    public List<Room> getGroupRooms(Habbo habbo, int limit)
-    {
+    public List<Room> getGroupRooms(Habbo habbo, int limit) {
         final ArrayList<Room> rooms = new ArrayList<>();
 
-        for (Guild guild : Emulator.getGameEnvironment().getGuildManager().getGuilds(habbo.getHabboInfo().getId()))
-        {
-            if (guild.getOwnerId() != habbo.getHabboInfo().getId())
-            {
+        for (Guild guild : Emulator.getGameEnvironment().getGuildManager().getGuilds(habbo.getHabboInfo().getId())) {
+            if (guild.getOwnerId() != habbo.getHabboInfo().getId()) {
                 Room room = this.getRoom(guild.getRoomId());
 
-                if (room != null)
-                {
+                if (room != null) {
                     rooms.add(room);
                 }
             }
@@ -1527,80 +1250,58 @@ public class RoomManager
         return rooms.subList(0, (rooms.size() > limit ? limit : rooms.size()));
     }
 
-    public ArrayList<Room> getRoomsWithRights(Habbo habbo)
-    {
+    public ArrayList<Room> getRoomsWithRights(Habbo habbo) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.* FROM rooms INNER JOIN room_rights ON room_rights.room_id = rooms.id WHERE room_rights.user_id = ? ORDER BY rooms.id DESC LIMIT 30"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.* FROM rooms INNER JOIN room_rights ON room_rights.room_id = rooms.id WHERE room_rights.user_id = ? ORDER BY rooms.id DESC LIMIT 30")) {
             statement.setInt(1, habbo.getHabboInfo().getId());
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
-                    if (this.activeRooms.containsKey(set.getInt("id")))
-                    {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    if (this.activeRooms.containsKey(set.getInt("id"))) {
                         rooms.add(this.activeRooms.get(set.getInt("id")));
-                    }
-                    else
-                    {
+                    } else {
                         rooms.add(new Room(set));
                     }
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return rooms;
     }
 
-    public ArrayList<Room> getRoomsWithAdminRights(Habbo habbo)
-    {
+    public ArrayList<Room> getRoomsWithAdminRights(Habbo habbo) {
         ArrayList<Room> rooms = new ArrayList<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-        PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms INNER JOIN guilds_members ON guilds_members.guild_id = rooms.guild_id WHERE guilds_members.user_id = ? AND level_id = 0"))
-        {
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms INNER JOIN guilds_members ON guilds_members.guild_id = rooms.guild_id WHERE guilds_members.user_id = ? AND level_id = 0")) {
             statement.setInt(1, habbo.getHabboInfo().getId());
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
-                    if (this.activeRooms.containsKey(set.getInt("id")))
-                    {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    if (this.activeRooms.containsKey(set.getInt("id"))) {
                         rooms.add(this.activeRooms.get(set.getInt("id")));
-                    }
-                    else
-                    {
+                    } else {
                         rooms.add(new Room(set));
                     }
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return rooms;
     }
 
-    public ArrayList<Room> getRoomsInGroup(Habbo habbo)
-    {
+    public ArrayList<Room> getRoomsInGroup(Habbo habbo) {
         return new ArrayList<>();
     }
 
-    public ArrayList<Room> getRoomsPromoted()
-    {
+    public ArrayList<Room> getRoomsPromoted() {
         ArrayList<Room> r = new ArrayList<>();
 
-        for(Room room : this.getActiveRooms())
-        {
-            if(room.isPromoted())
-            {
+        for (Room room : this.getActiveRooms()) {
+            if (room.isPromoted()) {
                 r.add(room);
             }
         }
@@ -1611,10 +1312,8 @@ public class RoomManager
     public ArrayList<Room> getRoomsStaffPromoted() {
         ArrayList<Room> r = new ArrayList<>();
 
-        for(Room room : this.getActiveRooms())
-        {
-            if(room.isStaffPromotedRoom())
-            {
+        for (Room room : this.getActiveRooms()) {
+            if (room.isStaffPromotedRoom()) {
                 r.add(room);
             }
         }
@@ -1622,57 +1321,48 @@ public class RoomManager
         return r;
     }
 
-    public List<Room> filterRoomsByOwner(List<Room> rooms, String filter)
-    {
+    public List<Room> filterRoomsByOwner(List<Room> rooms, String filter) {
         ArrayList<Room> r = new ArrayList<>();
 
-        for(Room room : rooms)
-        {
-            if(room.getOwnerName().equalsIgnoreCase(filter))
+        for (Room room : rooms) {
+            if (room.getOwnerName().equalsIgnoreCase(filter))
                 r.add(room);
         }
 
         return r;
     }
 
-    public List<Room> filterRoomsByName(List<Room> rooms, String filter)
-    {
+    public List<Room> filterRoomsByName(List<Room> rooms, String filter) {
         ArrayList<Room> r = new ArrayList<>();
 
-        for(Room room : rooms)
-        {
-            if(room.getName().toLowerCase().contains(filter.toLowerCase()))
+        for (Room room : rooms) {
+            if (room.getName().toLowerCase().contains(filter.toLowerCase()))
                 r.add(room);
         }
 
         return r;
     }
 
-    public List<Room> filterRoomsByNameAndDescription(List<Room> rooms, String filter)
-    {
+    public List<Room> filterRoomsByNameAndDescription(List<Room> rooms, String filter) {
         ArrayList<Room> r = new ArrayList<>();
 
-        for(Room room : rooms)
-        {
-            if(room.getName().toLowerCase().contains(filter.toLowerCase()) || room.getDescription().toLowerCase().contains(filter.toLowerCase()))
+        for (Room room : rooms) {
+            if (room.getName().toLowerCase().contains(filter.toLowerCase()) || room.getDescription().toLowerCase().contains(filter.toLowerCase()))
                 r.add(room);
         }
 
         return r;
     }
 
-    public List<Room> filterRoomsByTag(List<Room> rooms, String filter)
-    {
+    public List<Room> filterRoomsByTag(List<Room> rooms, String filter) {
         ArrayList<Room> r = new ArrayList<>();
 
-        for(Room room : rooms)
-        {
-            if(room.getTags().split(";").length == 0)
+        for (Room room : rooms) {
+            if (room.getTags().split(";").length == 0)
                 continue;
 
-            for(String s : room.getTags().split(";"))
-            {
-                if(s.equalsIgnoreCase(filter))
+            for (String s : room.getTags().split(";")) {
+                if (s.equalsIgnoreCase(filter))
                     r.add(room);
             }
         }
@@ -1680,26 +1370,22 @@ public class RoomManager
         return r;
     }
 
-    public List<Room> filterRoomsByGroup(List<Room> rooms, String filter)
-    {
+    public List<Room> filterRoomsByGroup(List<Room> rooms, String filter) {
         ArrayList<Room> r = new ArrayList<>();
 
-        for(Room room : rooms)
-        {
-            if(room.getGuildId() == 0)
+        for (Room room : rooms) {
+            if (room.getGuildId() == 0)
                 continue;
 
-            if(Emulator.getGameEnvironment().getGuildManager().getGuild(room.getGuildId()).getName().toLowerCase().contains(filter.toLowerCase()))
+            if (Emulator.getGameEnvironment().getGuildManager().getGuild(room.getGuildId()).getName().toLowerCase().contains(filter.toLowerCase()))
                 r.add(room);
         }
 
         return r;
     }
 
-    public synchronized void dispose()
-    {
-        for (Room room : this.activeRooms.values())
-        {
+    public synchronized void dispose() {
+        for (Room room : this.activeRooms.values()) {
             room.dispose();
         }
 
@@ -1708,10 +1394,8 @@ public class RoomManager
         Emulator.getLogging().logShutdownLine("Room Manager -> Disposed!");
     }
 
-    public CustomRoomLayout insertCustomLayout(Room room, String map, int doorX, int doorY, int doorDirection)
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_models_custom (id, name, door_x, door_y, door_dir, heightmap) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE door_x = ?, door_y = ?, door_dir = ?, heightmap = ?"))
-        {
+    public CustomRoomLayout insertCustomLayout(Room room, String map, int doorX, int doorY, int doorDirection) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_models_custom (id, name, door_x, door_y, door_dir, heightmap) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE door_x = ?, door_y = ?, door_dir = ?, heightmap = ?")) {
             statement.setInt(1, room.getId());
             statement.setString(2, "custom_" + room.getId());
             statement.setInt(3, doorX);
@@ -1723,17 +1407,14 @@ public class RoomManager
             statement.setInt(9, doorDirection);
             statement.setString(10, map);
             statement.execute();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return this.loadCustomLayout(room);
     }
 
-    public void banUserFromRoom(Habbo rights, int userId, int roomId, RoomBanTypes length)
-    {
+    public void banUserFromRoom(Habbo rights, int userId, int roomId, RoomBanTypes length) {
         Room room = this.getRoom(roomId);
 
         if (room == null)
@@ -1745,31 +1426,24 @@ public class RoomManager
         String name = "";
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
-        if (habbo != null)
-        {
-            if (habbo.hasPermission(Permission.ACC_UNKICKABLE))
-            {
+        if (habbo != null) {
+            if (habbo.hasPermission(Permission.ACC_UNKICKABLE)) {
                 return;
             }
 
             name = habbo.getHabboInfo().getUsername();
-        }
-        else
-        {
+        } else {
             HabboInfo info = HabboManager.getOfflineHabboInfo(userId);
 
-            if (info != null)
-            {
-                if (info.getRank().hasPermission(Permission.ACC_UNKICKABLE, false))
-                {
+            if (info != null) {
+                if (info.getRank().hasPermission(Permission.ACC_UNKICKABLE, false)) {
                     return;
                 }
                 name = info.getUsername();
             }
         }
 
-        if (name.isEmpty())
-        {
+        if (name.isEmpty()) {
             return;
         }
 
@@ -1778,27 +1452,11 @@ public class RoomManager
 
         room.addRoomBan(roomBan);
 
-        if (habbo != null)
-        {
-            if (habbo.getHabboInfo().getCurrentRoom() == room)
-            {
+        if (habbo != null) {
+            if (habbo.getHabboInfo().getCurrentRoom() == room) {
                 room.removeHabbo(habbo);
                 habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
             }
-        }
-    }
-
-    public enum RoomBanTypes
-    {
-        RWUAM_BAN_USER_HOUR(60 * 60),
-        RWUAM_BAN_USER_DAY(24 * 60 * 60),
-        RWUAM_BAN_USER_PERM(10 * 365 * 24 * 60 * 60);
-
-        public int duration;
-
-        RoomBanTypes(int duration)
-        {
-            this.duration = duration;
         }
     }
 
@@ -1812,5 +1470,17 @@ public class RoomManager
 
     public ArrayList<Class<? extends Game>> getGameTypes() {
         return gameTypes;
+    }
+
+    public enum RoomBanTypes {
+        RWUAM_BAN_USER_HOUR(60 * 60),
+        RWUAM_BAN_USER_DAY(24 * 60 * 60),
+        RWUAM_BAN_USER_PERM(10 * 365 * 24 * 60 * 60);
+
+        public int duration;
+
+        RoomBanTypes(int duration) {
+            this.duration = duration;
+        }
     }
 }

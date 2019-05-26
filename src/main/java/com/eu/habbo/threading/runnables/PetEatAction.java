@@ -10,24 +10,19 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 
-public class PetEatAction implements Runnable
-{
+public class PetEatAction implements Runnable {
     private final Pet pet;
     private final InteractionPetFood food;
 
-    public PetEatAction(Pet pet, InteractionPetFood food)
-    {
+    public PetEatAction(Pet pet, InteractionPetFood food) {
         this.pet = pet;
         this.food = food;
     }
 
     @Override
-    public void run()
-    {
-        if(this.pet.getRoomUnit() != null && this.pet.getRoom() != null)
-        {
-            if (this.pet.levelHunger >= 20 && this.food != null && Integer.valueOf(this.food.getExtradata()) < this.food.getBaseItem().getStateCount())
-            {
+    public void run() {
+        if (this.pet.getRoomUnit() != null && this.pet.getRoom() != null) {
+            if (this.pet.levelHunger >= 20 && this.food != null && Integer.valueOf(this.food.getExtradata()) < this.food.getBaseItem().getStateCount()) {
                 this.pet.addHunger(-20);
                 this.pet.setTask(PetTasks.EAT);
                 this.pet.getRoomUnit().setCanWalk(false);
@@ -35,30 +30,21 @@ public class PetEatAction implements Runnable
                 this.food.setExtradata(Integer.valueOf(this.food.getExtradata()) + 1 + "");
                 this.pet.getRoom().updateItem(this.food);
 
-                if (this.pet instanceof GnomePet)
-                {
-                    if (this.pet.getPetData().getType() == 26)
-                    {
+                if (this.pet instanceof GnomePet) {
+                    if (this.pet.getPetData().getType() == 26) {
                         AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.pet.getUserId()), Emulator.getGameEnvironment().getAchievementManager().getAchievement("GnomeFeeding"), 20);
-                    }
-                    else
-                    {
+                    } else {
                         AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.pet.getUserId()), Emulator.getGameEnvironment().getAchievementManager().getAchievement("LeprechaunFeeding"), 20);
                     }
-                }
-                else
-                {
+                } else {
                     AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.pet.getUserId()), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetFeeding"), 20);
                 }
 
                 Emulator.getThreading().run(this, 1000);
-            } else
-            {
-                if (this.food != null && Integer.valueOf(this.food.getExtradata()) == this.food.getBaseItem().getStateCount())
-                {
+            } else {
+                if (this.food != null && Integer.valueOf(this.food.getExtradata()) == this.food.getBaseItem().getStateCount()) {
                     Emulator.getThreading().run(new QueryDeleteHabboItem(this.food.getId()), 500);
-                    if (this.pet.getRoom() != null)
-                    {
+                    if (this.pet.getRoom() != null) {
                         this.pet.getRoom().removeHabboItem(this.food);
                         this.pet.getRoom().sendComposer(new RemoveFloorItemComposer(this.food, true).compose());
                     }

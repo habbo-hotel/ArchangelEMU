@@ -8,13 +8,10 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.users.UserSavedMottoEvent;
 
-public class Easter
-{
+public class Easter {
     @EventHandler
-    public static void onUserChangeMotto(UserSavedMottoEvent event)
-    {
-        if(event.newMotto.equalsIgnoreCase("crickey!"))
-        {
+    public static void onUserChangeMotto(UserSavedMottoEvent event) {
+        if (event.newMotto.equalsIgnoreCase("crickey!")) {
             event.habbo.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(event.newMotto, event.habbo, event.habbo, RoomChatMessageBubbles.ALERT)));
 
             Room room = event.habbo.getHabboInfo().getCurrentRoom();

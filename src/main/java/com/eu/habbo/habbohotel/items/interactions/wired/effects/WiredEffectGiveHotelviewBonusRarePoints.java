@@ -19,25 +19,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEffect
-{
+public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.SHOW_MESSAGE;
 
     private int amount = 0;
 
-    public WiredEffectGiveHotelviewBonusRarePoints(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectGiveHotelviewBonusRarePoints(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectGiveHotelviewBonusRarePoints(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectGiveHotelviewBonusRarePoints(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(0);
         message.appendInt(0);
@@ -49,44 +45,33 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
         message.appendInt(type.code);
         message.appendInt(this.getDelay());
 
-        if (this.requiresTriggeringUser())
-        {
+        if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>()
-            {
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
                 @Override
-                public boolean execute(InteractionWiredTrigger object)
-                {
-                    if (!object.isTriggeredByRoomUnit())
-                    {
+                public boolean execute(InteractionWiredTrigger object) {
+                    if (!object.isTriggeredByRoomUnit()) {
                         invalidTriggers.add(object.getBaseItem().getSpriteId());
                     }
                     return true;
                 }
             });
             message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers)
-            {
+            for (Integer i : invalidTriggers) {
                 message.appendInt(i);
             }
-        }
-        else
-        {
+        } else {
             message.appendInt(0);
         }
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
 
-        try
-        {
+        try {
             this.amount = Integer.valueOf(packet.readString());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return false;
         }
 
@@ -97,21 +82,18 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo == null)
+        if (habbo == null)
             return false;
 
-        if(this.amount > 0)
-        {
+        if (this.amount > 0) {
             habbo.getHabboInfo().addCurrencyAmount(Emulator.getConfig().getInt("hotelview.promotional.points.type"), this.amount);
             habbo.getClient().sendResponse(new BonusRareComposer(habbo));
         }
@@ -120,40 +102,33 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.getDelay() + "\t" + this.amount;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String wireData = set.getString("wired_data");
         this.amount = 0;
 
-        if(wireData.split("\t").length >= 2)
-        {
+        if (wireData.split("\t").length >= 2) {
             super.setDelay(Integer.valueOf(wireData.split("\t")[0]));
 
-            try
-            {
+            try {
                 this.amount = Integer.valueOf(this.getWiredData().split("\t")[1]);
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.amount = 0;
         this.setDelay(0);
     }
 
     @Override
-    public boolean requiresTriggeringUser()
-    {
+    public boolean requiresTriggeringUser() {
         return true;
     }
 }

@@ -6,39 +6,29 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.google.gson.Gson;
 
-public class ProgressAchievement extends RCONMessage<ProgressAchievement.ProgressAchievementJSON>
-{
+public class ProgressAchievement extends RCONMessage<ProgressAchievement.ProgressAchievementJSON> {
 
-    public ProgressAchievement()
-    {
+    public ProgressAchievement() {
         super(ProgressAchievementJSON.class);
     }
 
     @Override
-    public void handle(Gson gson, ProgressAchievementJSON json)
-    {
+    public void handle(Gson gson, ProgressAchievementJSON json) {
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.user_id);
 
-        if (habbo != null)
-        {
+        if (habbo != null) {
             Achievement achievement = Emulator.getGameEnvironment().getAchievementManager().getAchievement(json.achievement_id);
-            if (achievement != null)
-            {
+            if (achievement != null) {
                 AchievementManager.progressAchievement(habbo, achievement, json.progress);
-            }
-            else
-            {
+            } else {
                 this.status = RCONMessage.STATUS_ERROR;
             }
-        }
-        else
-        {
+        } else {
             this.status = RCONMessage.HABBO_NOT_FOUND;
         }
     }
 
-    static class ProgressAchievementJSON
-    {
+    static class ProgressAchievementJSON {
 
         public int user_id;
 

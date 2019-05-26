@@ -10,27 +10,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class GnomePet extends Pet implements IPetLook
-{
+public class GnomePet extends Pet implements IPetLook {
     private final String gnomeData;
 
-    public GnomePet(ResultSet set) throws SQLException
-    {
+    public GnomePet(ResultSet set) throws SQLException {
         super(set);
 
         this.gnomeData = set.getString("gnome_data");
     }
 
-    public GnomePet( int type, int race, String color, String name,int userId, String gnomeData)
-    {
+    public GnomePet(int type, int race, String color, String name, int userId, String gnomeData) {
         super(type, race, color, name, userId);
 
         this.gnomeData = gnomeData;
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendInt(this.getId());
         message.appendString(this.getName());
         message.appendInt(this.petData.getType());
@@ -42,48 +38,36 @@ public class GnomePet extends Pet implements IPetLook
     }
 
     @Override
-    public void run()
-    {
-        if (this.needsUpdate)
-        {
+    public void run() {
+        if (this.needsUpdate) {
             super.run();
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET gnome_data = ? WHERE id = ? LIMIT 1"))
-            {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET gnome_data = ? WHERE id = ? LIMIT 1")) {
                 statement.setString(1, this.gnomeData);
                 statement.setInt(2, this.id);
                 statement.executeUpdate();
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
     @Override
-    public String getLook()
-    {
+    public String getLook() {
         return this.getPetData().getType() + " 0 FFFFFF " + this.gnomeData;
     }
 
     @Override
-    public void scratched(Habbo habbo)
-    {
+    public void scratched(Habbo habbo) {
         super.scratched(habbo);
 
-        if (this.getPetData().getType() == 26)
-        {
-            if (habbo != null)
-            {
+        if (this.getPetData().getType() == 26) {
+            if (habbo != null) {
                 AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GnomeRespectGiver"));
             }
             AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId()), Emulator.getGameEnvironment().getAchievementManager().getAchievement("GnomeRespectReceiver"));
-        }
-        else if (this.getPetData().getType() == 27)
-        {
-            if (habbo != null)
-            {
+        } else if (this.getPetData().getType() == 27) {
+            if (habbo != null) {
                 AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("LeprechaunRespectGiver"));
             }
             AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId()), Emulator.getGameEnvironment().getAchievementManager().getAchievement("LeprechaunRespectReceiver"));
@@ -92,16 +76,12 @@ public class GnomePet extends Pet implements IPetLook
     }
 
     @Override
-    protected void levelUp()
-    {
+    protected void levelUp() {
         super.levelUp();
 
-        if (this.getPetData().getType() == 26)
-        {
+        if (this.getPetData().getType() == 26) {
             AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId()), Emulator.getGameEnvironment().getAchievementManager().getAchievement("GnomeLevelUp"));
-        }
-        else if (this.getPetData().getType() == 27)
-        {
+        } else if (this.getPetData().getType() == 27) {
             AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId()), Emulator.getGameEnvironment().getAchievementManager().getAchievement("LeprechaunLevelUp"));
         }
     }

@@ -4,20 +4,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class HotelViewCustomTimerComposer extends MessageComposer
-{
+public class HotelViewCustomTimerComposer extends MessageComposer {
     private final String name;
     private final int seconds;
 
-    public HotelViewCustomTimerComposer(String name, int seconds)
-    {
+    public HotelViewCustomTimerComposer(String name, int seconds) {
         this.name = name;
         this.seconds = seconds;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.HotelViewCustomTimerComposer);
         this.response.appendString(this.name); //Send by the client.
         this.response.appendInt(this.seconds);

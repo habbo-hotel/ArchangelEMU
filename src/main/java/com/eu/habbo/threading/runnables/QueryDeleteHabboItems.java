@@ -8,22 +8,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class QueryDeleteHabboItems implements Runnable
-{
+public class QueryDeleteHabboItems implements Runnable {
     private TIntObjectMap<HabboItem> items;
 
-    public QueryDeleteHabboItems(TIntObjectMap<HabboItem> items)
-    {
+    public QueryDeleteHabboItems(TIntObjectMap<HabboItem> items) {
         this.items = items;
     }
 
     @Override
-    public void run()
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM items WHERE id = ?"))
-        {
-            for (HabboItem item : this.items.valueCollection())
-            {
+    public void run() {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM items WHERE id = ?")) {
+            for (HabboItem item : this.items.valueCollection()) {
                 if (item.getRoomId() > 0)
                     continue;
 
@@ -32,9 +27,7 @@ public class QueryDeleteHabboItems implements Runnable
             }
 
             statement.executeBatch();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 

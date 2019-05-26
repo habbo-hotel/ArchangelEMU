@@ -8,23 +8,19 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.Map;
 
-public class CraftingRecipeComposer extends MessageComposer
-{
+public class CraftingRecipeComposer extends MessageComposer {
     private final CraftingRecipe recipe;
 
-    public CraftingRecipeComposer(CraftingRecipe recipe)
-    {
+    public CraftingRecipeComposer(CraftingRecipe recipe) {
         this.recipe = recipe;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.CraftingRecipeComposer);
         this.response.appendInt(this.recipe.getIngredients().size());
 
-        for (Map.Entry<Item, Integer> ingredient : this.recipe.getIngredients().entrySet())
-        {
+        for (Map.Entry<Item, Integer> ingredient : this.recipe.getIngredients().entrySet()) {
             this.response.appendInt(ingredient.getValue());
             this.response.appendString(ingredient.getKey().getName());
         }

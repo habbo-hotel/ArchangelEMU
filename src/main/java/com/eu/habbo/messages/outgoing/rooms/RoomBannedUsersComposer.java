@@ -11,48 +11,40 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.NoSuchElementException;
 
-public class RoomBannedUsersComposer extends MessageComposer
-{
+public class RoomBannedUsersComposer extends MessageComposer {
     private final Room room;
 
-    public RoomBannedUsersComposer(Room room)
-    {
+    public RoomBannedUsersComposer(Room room) {
         this.room = room;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         int timeStamp = Emulator.getIntUnixTimestamp();
 
         THashSet<RoomBan> roomBans = new THashSet<>();
 
         TIntObjectIterator<RoomBan> iterator = this.room.getBannedHabbos().iterator();
 
-        for(int i = this.room.getBannedHabbos().size(); i-- > 0;)
-        {
-            try
-            {
+        for (int i = this.room.getBannedHabbos().size(); i-- > 0; ) {
+            try {
                 iterator.advance();
 
-                if(iterator.value().endTimestamp > timeStamp)
+                if (iterator.value().endTimestamp > timeStamp)
                     roomBans.add(iterator.value());
-            }
-            catch (NoSuchElementException e)
-            {
+            } catch (NoSuchElementException e) {
                 break;
             }
         }
 
-        if(roomBans.isEmpty())
+        if (roomBans.isEmpty())
             return null;
 
         this.response.init(Outgoing.RoomBannedUsersComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendInt(roomBans.size());
 
-        for(RoomBan ban : roomBans)
-        {
+        for (RoomBan ban : roomBans) {
             this.response.appendInt(ban.userId);
             this.response.appendString(ban.username);
         }

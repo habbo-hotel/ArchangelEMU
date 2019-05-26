@@ -11,32 +11,25 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class GameClientManager
-{
+public class GameClientManager {
+    public static final AttributeKey<GameClient> CLIENT = AttributeKey.valueOf("GameClient");
     private final ConcurrentMap<ChannelId, GameClient> clients;
 
-    public static final AttributeKey<GameClient> CLIENT = AttributeKey.valueOf("GameClient");
-    
-    public GameClientManager()
-    {
+    public GameClientManager() {
         this.clients = new ConcurrentHashMap<>();
     }
 
 
-    public ConcurrentMap<ChannelId, GameClient> getSessions()
-    {
+    public ConcurrentMap<ChannelId, GameClient> getSessions() {
         return this.clients;
     }
 
 
-    public boolean addClient(ChannelHandlerContext ctx)
-    {
+    public boolean addClient(ChannelHandlerContext ctx) {
         GameClient client = new GameClient(ctx.channel());
-        ctx.channel().closeFuture().addListener(new ChannelFutureListener()
-        {
+        ctx.channel().closeFuture().addListener(new ChannelFutureListener() {
             @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception
-            {
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 GameClientManager.this.disposeClient(ctx.channel());
             }
         });
@@ -48,17 +41,14 @@ public class GameClientManager
     }
 
 
-    public void disposeClient(GameClient client)
-    {
+    public void disposeClient(GameClient client) {
         this.disposeClient(client.getChannel());
     }
 
-    private void disposeClient(Channel channel)
-    {
+    private void disposeClient(Channel channel) {
         GameClient client = channel.attr(CLIENT).get();
 
-        if (client != null)
-        {
+        if (client != null) {
             client.dispose();
         }
         channel.deregister();
@@ -69,16 +59,11 @@ public class GameClientManager
     }
 
 
-    public boolean containsHabbo(Integer id)
-    {
-        if (!this.clients.isEmpty())
-        {
-            for (GameClient client : this.clients.values())
-            {
-                if (client.getHabbo() != null)
-                {
-                    if (client.getHabbo().getHabboInfo() != null)
-                    {
+    public boolean containsHabbo(Integer id) {
+        if (!this.clients.isEmpty()) {
+            for (GameClient client : this.clients.values()) {
+                if (client.getHabbo() != null) {
+                    if (client.getHabbo().getHabboInfo() != null) {
                         if (client.getHabbo().getHabboInfo().getId() == id)
                             return true;
                     }
@@ -89,14 +74,12 @@ public class GameClientManager
     }
 
 
-    public Habbo getHabbo(int id)
-    {
-        for(GameClient client : this.clients.values())
-        {
-            if(client.getHabbo() == null)
+    public Habbo getHabbo(int id) {
+        for (GameClient client : this.clients.values()) {
+            if (client.getHabbo() == null)
                 continue;
 
-            if(client.getHabbo().getHabboInfo().getId() == id)
+            if (client.getHabbo().getHabboInfo().getId() == id)
                 return client.getHabbo();
         }
 
@@ -104,14 +87,12 @@ public class GameClientManager
     }
 
 
-    public Habbo getHabbo(String username)
-    {
-        for(GameClient client : this.clients.values())
-        {
-            if(client.getHabbo() == null)
+    public Habbo getHabbo(String username) {
+        for (GameClient client : this.clients.values()) {
+            if (client.getHabbo() == null)
                 continue;
 
-            if(client.getHabbo().getHabboInfo().getUsername().equalsIgnoreCase(username))
+            if (client.getHabbo().getHabboInfo().getUsername().equalsIgnoreCase(username))
                 return client.getHabbo();
         }
 
@@ -119,16 +100,12 @@ public class GameClientManager
     }
 
 
-    public List<Habbo> getHabbosWithIP(String ip)
-    {
+    public List<Habbo> getHabbosWithIP(String ip) {
         List<Habbo> habbos = new ArrayList<>();
 
-        for (GameClient client : this.clients.values())
-        {
-            if (client.getHabbo() != null && client.getHabbo().getHabboInfo() != null)
-            {
-                if (client.getHabbo().getHabboInfo().getIpLogin().equalsIgnoreCase(ip))
-                {
+        for (GameClient client : this.clients.values()) {
+            if (client.getHabbo() != null && client.getHabbo().getHabboInfo() != null) {
+                if (client.getHabbo().getHabboInfo().getIpLogin().equalsIgnoreCase(ip)) {
                     habbos.add(client.getHabbo());
                 }
             }
@@ -138,14 +115,11 @@ public class GameClientManager
     }
 
 
-    public List<Habbo> getHabbosWithMachineId(String machineId)
-    {
+    public List<Habbo> getHabbosWithMachineId(String machineId) {
         List<Habbo> habbos = new ArrayList<>();
 
-        for (GameClient client : this.clients.values())
-        {
-            if (client.getHabbo() != null && client.getHabbo().getHabboInfo() != null && client.getMachineId().equalsIgnoreCase(machineId))
-            {
+        for (GameClient client : this.clients.values()) {
+            if (client.getHabbo() != null && client.getHabbo().getHabboInfo() != null && client.getMachineId().equalsIgnoreCase(machineId)) {
                 habbos.add(client.getHabbo());
             }
         }
@@ -154,26 +128,21 @@ public class GameClientManager
     }
 
 
-    public void sendBroadcastResponse(MessageComposer composer)
-    {
+    public void sendBroadcastResponse(MessageComposer composer) {
         this.sendBroadcastResponse(composer.compose());
     }
 
 
-    public void sendBroadcastResponse(ServerMessage message)
-    {
-        for (GameClient client : this.clients.values())
-        {
+    public void sendBroadcastResponse(ServerMessage message) {
+        for (GameClient client : this.clients.values()) {
             client.sendResponse(message);
         }
     }
 
 
-    public void sendBroadcastResponse(ServerMessage message, GameClient exclude)
-    {
-        for (GameClient client : this.clients.values())
-        {
-            if(client.equals(exclude))
+    public void sendBroadcastResponse(ServerMessage message, GameClient exclude) {
+        for (GameClient client : this.clients.values()) {
+            if (client.equals(exclude))
                 continue;
 
             client.sendResponse(message);
@@ -181,18 +150,13 @@ public class GameClientManager
     }
 
 
-
-    public void sendBroadcastResponse(ServerMessage message, String minPermission, GameClient exclude)
-    {
-        for (GameClient client : this.clients.values())
-        {
-            if(client.equals(exclude))
+    public void sendBroadcastResponse(ServerMessage message, String minPermission, GameClient exclude) {
+        for (GameClient client : this.clients.values()) {
+            if (client.equals(exclude))
                 continue;
 
-            if(client.getHabbo() != null)
-            {
-                if (client.getHabbo().hasPermission(minPermission))
-                {
+            if (client.getHabbo() != null) {
+                if (client.getHabbo().hasPermission(minPermission)) {
                     client.sendResponse(message);
                 }
             }

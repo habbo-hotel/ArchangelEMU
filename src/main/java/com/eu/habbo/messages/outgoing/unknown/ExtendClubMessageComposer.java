@@ -9,8 +9,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.Calendar;
 
-public class ExtendClubMessageComposer extends MessageComposer
-{
+public class ExtendClubMessageComposer extends MessageComposer {
     private final Habbo habbo;
     private final CatalogItem item;
     private final int unknownInt1;
@@ -18,8 +17,7 @@ public class ExtendClubMessageComposer extends MessageComposer
     private final int unknownInt3;
     private final int unknownInt4;
 
-    public ExtendClubMessageComposer(Habbo habbo, CatalogItem item, int unknownInt1, int unknownInt2, int unknownInt3, int unknownInt4)
-    {
+    public ExtendClubMessageComposer(Habbo habbo, CatalogItem item, int unknownInt1, int unknownInt2, int unknownInt3, int unknownInt4) {
         this.habbo = habbo;
         this.item = item;
         this.unknownInt1 = unknownInt1;
@@ -29,8 +27,7 @@ public class ExtendClubMessageComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ExtendClubMessageComposer);
         this.response.appendInt(this.item.getId());
         this.response.appendString(this.item.getName());
@@ -44,28 +41,23 @@ public class ExtendClubMessageComposer extends MessageComposer
 
         long seconds = 0;
 
-        if(data[3].toLowerCase().startsWith("day"))
-        {
+        if (data[3].toLowerCase().startsWith("day")) {
             seconds = 86400 * Integer.valueOf(data[2]);
-        }
-        else if(data[3].toLowerCase().startsWith("month"))
-        {
+        } else if (data[3].toLowerCase().startsWith("month")) {
             seconds = 86400 * 31 * Integer.valueOf(data[2]);
-        }
-        else if(data[3].toLowerCase().startsWith("year"))
-        {
+        } else if (data[3].toLowerCase().startsWith("year")) {
             seconds = 86400 * 31 * 12 * Integer.valueOf(data[2]);
         }
 
         long secondsTotal = seconds;
 
-        int totalYears = (int)Math.floor((int)seconds / 86400 * 31 * 12);
+        int totalYears = (int) Math.floor((int) seconds / 86400 * 31 * 12);
         seconds -= totalYears * 86400 * 31 * 12;
 
-        int totalMonths = (int)Math.floor((int)seconds / 86400 * 31);
+        int totalMonths = (int) Math.floor((int) seconds / 86400 * 31);
         seconds -= totalMonths * 86400 * 31;
 
-        int totalDays = (int)Math.floor((int)seconds / 86400);
+        int totalDays = (int) Math.floor((int) seconds / 86400);
         seconds -= totalDays * 86400;
 
         this.response.appendInt((int) secondsTotal / 86400 / 31);
@@ -75,8 +67,7 @@ public class ExtendClubMessageComposer extends MessageComposer
 
         int endTimestamp = this.habbo.getHabboStats().getClubExpireTimestamp();
 
-        if (endTimestamp < Emulator.getIntUnixTimestamp())
-        {
+        if (endTimestamp < Emulator.getIntUnixTimestamp()) {
             endTimestamp = Emulator.getIntUnixTimestamp();
         }
 

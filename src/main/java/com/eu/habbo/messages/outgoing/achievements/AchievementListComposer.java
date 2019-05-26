@@ -9,26 +9,21 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class AchievementListComposer extends MessageComposer
-{
+public class AchievementListComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public AchievementListComposer(Habbo habbo)
-    {
+    public AchievementListComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.AchievementListComposer);
 
-        try
-        {
+        try {
             this.response.appendInt(Emulator.getGameEnvironment().getAchievementManager().getAchievements().size());
 
-            for (Achievement achievement : Emulator.getGameEnvironment().getAchievementManager().getAchievements().values())
-            {
+            for (Achievement achievement : Emulator.getGameEnvironment().getAchievementManager().getAchievements().values()) {
                 int achievementProgress;
                 AchievementLevel currentLevel;
                 AchievementLevel nextLevel;
@@ -53,9 +48,7 @@ public class AchievementListComposer extends MessageComposer
             }
 
             this.response.appendString("");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 

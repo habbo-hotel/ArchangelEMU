@@ -6,11 +6,9 @@ import com.eu.habbo.messages.outgoing.gamecenter.basejump.BaseJumpJoinQueueCompo
 import com.eu.habbo.messages.outgoing.gamecenter.basejump.BaseJumpLoadGameComposer;
 import com.eu.habbo.messages.outgoing.gamecenter.basejump.BaseJumpLoadGameURLComposer;
 
-public class GameCenterJoinGameEvent extends MessageHandler
-{
+public class GameCenterJoinGameEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int gameId = this.packet.readInt();
 
         if (gameId == 3) //BaseJump
@@ -18,9 +16,7 @@ public class GameCenterJoinGameEvent extends MessageHandler
             this.client.sendResponse(new GameCenterAchievementsConfigurationComposer());
             this.client.sendResponse(new BaseJumpLoadGameURLComposer());
             this.client.sendResponse(new BaseJumpLoadGameComposer(this.client, 3));
-        }
-        else if (gameId == 4)
-        {
+        } else if (gameId == 4) {
             this.client.sendResponse(new BaseJumpJoinQueueComposer(4));
             this.client.sendResponse(new BaseJumpLoadGameURLComposer());
         }

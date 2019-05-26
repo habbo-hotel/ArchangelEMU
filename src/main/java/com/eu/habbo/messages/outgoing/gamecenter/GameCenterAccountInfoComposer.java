@@ -4,20 +4,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GameCenterAccountInfoComposer extends MessageComposer
-{
+public class GameCenterAccountInfoComposer extends MessageComposer {
     private final int gameId;
     private final int gamesLeft;
 
-    public GameCenterAccountInfoComposer(int gameId, int gamesLeft)
-    {
+    public GameCenterAccountInfoComposer(int gameId, int gamesLeft) {
         this.gameId = gameId;
         this.gamesLeft = gamesLeft;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GameCenterAccountInfoComposer);
         this.response.appendInt(this.gameId);
         this.response.appendInt(this.gamesLeft);

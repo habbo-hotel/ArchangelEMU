@@ -23,8 +23,7 @@ import java.sql.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class AchievementManager
-{
+public class AchievementManager {
     public static boolean TALENTTRACK_ENABLED = false;
 
 
@@ -33,154 +32,43 @@ public class AchievementManager
     private final THashMap<TalentTrackType, LinkedHashMap<Integer, TalentTrackLevel>> talentTrackLevels;
 
 
-    public AchievementManager()
-    {
+    public AchievementManager() {
         this.achievements = new THashMap<>();
         this.talentTrackLevels = new THashMap<>();
     }
 
-
-    public void reload()
-    {
-        long millis = System.currentTimeMillis();
-        synchronized (this.achievements)
-        {
-            for (Achievement achievement : this.achievements.values())
-            {
-                achievement.clearLevels();
-            }
-
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-            {
-                try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM achievements"))
-                {
-                    while (set.next())
-                    {
-                        if (!this.achievements.containsKey(set.getString("name")))
-                        {
-                            this.achievements.put(set.getString("name"), new Achievement(set));
-                        }
-                        else
-                        {
-                            this.achievements.get(set.getString("name")).addLevel(new AchievementLevel(set));
-                        }
-                    }
-                }
-                catch (SQLException e)
-                {
-                    Emulator.getLogging().logSQLException(e);
-                }
-                catch (Exception e)
-                {
-                    Emulator.getLogging().logErrorLine(e);
-                }
-
-
-                synchronized (this.talentTrackLevels)
-                {
-                    this.talentTrackLevels.clear();
-
-                    try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM achievements_talents ORDER BY level ASC"))
-                    {
-                        while (set.next())
-                        {
-                            TalentTrackLevel level = new TalentTrackLevel(set);
-
-                            if (!this.talentTrackLevels.containsKey(level.type))
-                            {
-                                this.talentTrackLevels.put(level.type, new LinkedHashMap<>());
-                            }
-
-                            this.talentTrackLevels.get(level.type).put(level.level, level);
-                        }
-                    }
-                }
-            }
-            catch (SQLException e)
-            {
-                Emulator.getLogging().logSQLException(e);
-                Emulator.getLogging().logErrorLine("Achievement Manager -> Failed to load!");
-                return;
-            }
-        }
-
-        Emulator.getLogging().logStart("Achievement Manager -> Loaded! ("+(System.currentTimeMillis() - millis)+" MS)");
-    }
-
-
-    public Achievement getAchievement(String name)
-    {
-        return this.achievements.get(name);
-    }
-
-
-    public Achievement getAchievement(int id)
-    {
-        synchronized (this.achievements)
-        {
-            for (Map.Entry<String, Achievement> set : this.achievements.entrySet())
-            {
-                if (set.getValue().id == id)
-                {
-                    return set.getValue();
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public THashMap<String, Achievement> getAchievements()
-    {
-        return this.achievements;
-    }
-
-    public static void progressAchievement(int habboId, Achievement achievement)
-    {
+    public static void progressAchievement(int habboId, Achievement achievement) {
         progressAchievement(habboId, achievement, 1);
     }
 
-    public static void progressAchievement(int habboId, Achievement achievement, int amount)
-    {
-        if (achievement != null)
-        {
+    public static void progressAchievement(int habboId, Achievement achievement, int amount) {
+        if (achievement != null) {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(habboId);
 
-            if (habbo != null)
-            {
+            if (habbo != null) {
                 progressAchievement(habbo, achievement, amount);
-            }
-            else
-            {
+            } else {
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
                      PreparedStatement statement = connection.prepareStatement("" +
                              "INSERT INTO users_achievements_queue (user_id, achievement_id, amount) VALUES (?, ?, ?) " +
-                             "ON DUPLICATE KEY UPDATE amount = amount + ?"))
-                {
+                             "ON DUPLICATE KEY UPDATE amount = amount + ?")) {
                     statement.setInt(1, habboId);
                     statement.setInt(2, achievement.id);
                     statement.setInt(3, amount);
                     statement.setInt(4, amount);
                     statement.execute();
-                }
-                catch (SQLException e)
-                {
+                } catch (SQLException e) {
                     Emulator.getLogging().logSQLException(e);
                 }
             }
         }
     }
 
-
-
-    public static void progressAchievement(Habbo habbo, Achievement achievement)
-    {
+    public static void progressAchievement(Habbo habbo, Achievement achievement) {
         progressAchievement(habbo, achievement, 1);
     }
 
-
-    public static void progressAchievement(Habbo habbo, Achievement achievement, int amount)
-    {
+    public static void progressAchievement(Habbo habbo, Achievement achievement, int amount) {
         if (achievement == null)
             return;
 
@@ -192,41 +80,34 @@ public class AchievementManager
 
         int currentProgress = habbo.getHabboStats().getAchievementProgress(achievement);
 
-        if(currentProgress == -1)
-        {
+        if (currentProgress == -1) {
             currentProgress = 0;
             createUserEntry(habbo, achievement);
             habbo.getHabboStats().setProgress(achievement, 0);
         }
 
-        if(Emulator.getPluginManager().isRegistered(UserAchievementProgressEvent.class, true))
-        {
+        if (Emulator.getPluginManager().isRegistered(UserAchievementProgressEvent.class, true)) {
             Event userAchievementProgressedEvent = new UserAchievementProgressEvent(habbo, achievement, amount);
             Emulator.getPluginManager().fireEvent(userAchievementProgressedEvent);
 
-            if(userAchievementProgressedEvent.isCancelled())
+            if (userAchievementProgressedEvent.isCancelled())
                 return;
         }
 
         AchievementLevel oldLevel = achievement.getLevelForProgress(currentProgress);
 
-        if(oldLevel != null && (oldLevel.level == achievement.levels.size() && currentProgress >= oldLevel.progress)) //Maximum achievement gotten.
+        if (oldLevel != null && (oldLevel.level == achievement.levels.size() && currentProgress >= oldLevel.progress)) //Maximum achievement gotten.
             return;
 
         habbo.getHabboStats().setProgress(achievement, currentProgress + amount);
 
         AchievementLevel newLevel = achievement.getLevelForProgress(currentProgress + amount);
 
-        if (AchievementManager.TALENTTRACK_ENABLED)
-        {
-            for (TalentTrackType type : TalentTrackType.values())
-            {
-                if (Emulator.getGameEnvironment().getAchievementManager().talentTrackLevels.containsKey(type))
-                {
-                    for (Map.Entry<Integer, TalentTrackLevel> entry : Emulator.getGameEnvironment().getAchievementManager().talentTrackLevels.get(type).entrySet())
-                    {
-                        if (entry.getValue().achievements.containsKey(achievement))
-                        {
+        if (AchievementManager.TALENTTRACK_ENABLED) {
+            for (TalentTrackType type : TalentTrackType.values()) {
+                if (Emulator.getGameEnvironment().getAchievementManager().talentTrackLevels.containsKey(type)) {
+                    for (Map.Entry<Integer, TalentTrackLevel> entry : Emulator.getGameEnvironment().getAchievementManager().talentTrackLevels.get(type).entrySet()) {
+                        if (entry.getValue().achievements.containsKey(achievement)) {
                             Emulator.getGameEnvironment().getAchievementManager().handleTalentTrackAchievement(habbo, type, achievement);
                             break;
                         }
@@ -235,19 +116,15 @@ public class AchievementManager
             }
         }
 
-        if(newLevel == null ||
-                (oldLevel != null &&(oldLevel.level == newLevel.level && newLevel.level < achievement.levels.size())))
-        {
+        if (newLevel == null ||
+                (oldLevel != null && (oldLevel.level == newLevel.level && newLevel.level < achievement.levels.size()))) {
             habbo.getClient().sendResponse(new AchievementProgressComposer(habbo, achievement));
-        }
-        else
-        {
-            if(Emulator.getPluginManager().isRegistered(UserAchievementLeveledEvent.class, true))
-            {
+        } else {
+            if (Emulator.getPluginManager().isRegistered(UserAchievementLeveledEvent.class, true)) {
                 Event userAchievementLeveledEvent = new UserAchievementLeveledEvent(habbo, achievement, oldLevel, newLevel);
                 Emulator.getPluginManager().fireEvent(userAchievementLeveledEvent);
 
-                if(userAchievementLeveledEvent.isCancelled())
+                if (userAchievementLeveledEvent.isCancelled())
                     return;
             }
 
@@ -259,25 +136,20 @@ public class AchievementManager
             //the badge would result in an nullpointer exception. This is normal behaviour.
             HabboBadge badge = null;
 
-            if (oldLevel != null)
-            {
-                try
-                {
+            if (oldLevel != null) {
+                try {
                     badge = habbo.getInventory().getBadgesComponent().getBadge(("ACH_" + achievement.name + oldLevel.level).toLowerCase());
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                     Emulator.getLogging().logErrorLine(e);
                     return;
                 }
             }
 
-            if (badge != null)
-            {
+            if (badge != null) {
                 badge.setCode("ACH_" + achievement.name + newLevel.level);
                 badge.needsInsert(false);
                 badge.needsUpdate(true);
-            } else
-            {
+            } else {
                 badge = new HabboBadge(0, "ACH_" + achievement.name + newLevel.level, 0, habbo);
                 habbo.getClient().sendResponse(new AddUserBadgeComposer(badge));
                 badge.needsInsert(true);
@@ -287,10 +159,8 @@ public class AchievementManager
 
             Emulator.getThreading().run(badge);
 
-            if(badge.getSlot() > 0)
-            {
-                if(habbo.getHabboInfo().getCurrentRoom() != null)
-                {
+            if (badge.getSlot() > 0) {
+                if (habbo.getHabboInfo().getCurrentRoom() != null) {
                     habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserBadgesComposer(habbo.getInventory().getBadgesComponent().getWearingBadges(), habbo.getHabboInfo().getId()).compose());
                 }
             }
@@ -299,31 +169,26 @@ public class AchievementManager
 
             habbo.getHabboStats().addAchievementScore(newLevel.points);
 
-            if (newLevel.rewardAmount > 0)
-            {
+            if (newLevel.rewardAmount > 0) {
                 habbo.givePoints(newLevel.rewardType, newLevel.rewardAmount);
             }
-            
-            if (habbo.getHabboInfo().getCurrentRoom() != null)
-            {
+
+            if (habbo.getHabboInfo().getCurrentRoom() != null) {
                 habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
             }
         }
     }
 
-
-    public static boolean hasAchieved(Habbo habbo, Achievement achievement)
-    {
+    public static boolean hasAchieved(Habbo habbo, Achievement achievement) {
         int currentProgress = habbo.getHabboStats().getAchievementProgress(achievement);
 
-        if(currentProgress == -1)
-        {
+        if (currentProgress == -1) {
             return false;
         }
 
         AchievementLevel level = achievement.getLevelForProgress(currentProgress);
 
-        if(level == null)
+        if (level == null)
             return false;
 
         AchievementLevel nextLevel = achievement.levels.get(level.level + 1);
@@ -331,83 +196,128 @@ public class AchievementManager
         return nextLevel == null && currentProgress >= level.progress;
     }
 
-
-    public static void createUserEntry(Habbo habbo, Achievement achievement)
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_achievements (user_id, achievement_name, progress) VALUES (?, ?, ?)"))
-        {
+    public static void createUserEntry(Habbo habbo, Achievement achievement) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_achievements (user_id, achievement_name, progress) VALUES (?, ?, ?)")) {
             statement.setInt(1, habbo.getHabboInfo().getId());
             statement.setString(2, achievement.name);
             statement.setInt(3, 1);
             statement.execute();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-
-    public static void saveAchievements(Habbo habbo)
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_achievements SET progress = ? WHERE achievement_name = ? AND user_id = ? LIMIT 1"))
-        {
+    public static void saveAchievements(Habbo habbo) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_achievements SET progress = ? WHERE achievement_name = ? AND user_id = ? LIMIT 1")) {
             statement.setInt(3, habbo.getHabboInfo().getId());
-            for(Map.Entry<Achievement, Integer> map : habbo.getHabboStats().getAchievementProgress().entrySet())
-            {
+            for (Map.Entry<Achievement, Integer> map : habbo.getHabboStats().getAchievementProgress().entrySet()) {
                 statement.setInt(1, map.getValue());
                 statement.setString(2, map.getKey().name);
                 statement.addBatch();
             }
             statement.executeBatch();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public static int getAchievementProgressForHabbo(int userId, Achievement achievement)
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT progress FROM users_achievements WHERE user_id = ? AND achievement_name = ? LIMIT 1"))
-        {
+    public static int getAchievementProgressForHabbo(int userId, Achievement achievement) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT progress FROM users_achievements WHERE user_id = ? AND achievement_name = ? LIMIT 1")) {
             statement.setInt(1, userId);
             statement.setString(2, achievement.name);
-            try (ResultSet set = statement.executeQuery())
-            {
-                if (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
                     return set.getInt("progress");
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return 0;
     }
 
-    public LinkedHashMap<Integer, TalentTrackLevel> getTalenTrackLevels(TalentTrackType type)
-    {
+    public void reload() {
+        long millis = System.currentTimeMillis();
+        synchronized (this.achievements) {
+            for (Achievement achievement : this.achievements.values()) {
+                achievement.clearLevels();
+            }
+
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+                try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM achievements")) {
+                    while (set.next()) {
+                        if (!this.achievements.containsKey(set.getString("name"))) {
+                            this.achievements.put(set.getString("name"), new Achievement(set));
+                        } else {
+                            this.achievements.get(set.getString("name")).addLevel(new AchievementLevel(set));
+                        }
+                    }
+                } catch (SQLException e) {
+                    Emulator.getLogging().logSQLException(e);
+                } catch (Exception e) {
+                    Emulator.getLogging().logErrorLine(e);
+                }
+
+
+                synchronized (this.talentTrackLevels) {
+                    this.talentTrackLevels.clear();
+
+                    try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM achievements_talents ORDER BY level ASC")) {
+                        while (set.next()) {
+                            TalentTrackLevel level = new TalentTrackLevel(set);
+
+                            if (!this.talentTrackLevels.containsKey(level.type)) {
+                                this.talentTrackLevels.put(level.type, new LinkedHashMap<>());
+                            }
+
+                            this.talentTrackLevels.get(level.type).put(level.level, level);
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                Emulator.getLogging().logSQLException(e);
+                Emulator.getLogging().logErrorLine("Achievement Manager -> Failed to load!");
+                return;
+            }
+        }
+
+        Emulator.getLogging().logStart("Achievement Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+    }
+
+    public Achievement getAchievement(String name) {
+        return this.achievements.get(name);
+    }
+
+    public Achievement getAchievement(int id) {
+        synchronized (this.achievements) {
+            for (Map.Entry<String, Achievement> set : this.achievements.entrySet()) {
+                if (set.getValue().id == id) {
+                    return set.getValue();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public THashMap<String, Achievement> getAchievements() {
+        return this.achievements;
+    }
+
+    public LinkedHashMap<Integer, TalentTrackLevel> getTalenTrackLevels(TalentTrackType type) {
         return this.talentTrackLevels.get(type);
     }
 
-    public TalentTrackLevel calculateTalenTrackLevel(Habbo habbo, TalentTrackType type)
-    {
+    public TalentTrackLevel calculateTalenTrackLevel(Habbo habbo, TalentTrackType type) {
         TalentTrackLevel level = null;
 
-        for (Map.Entry<Integer, TalentTrackLevel> entry : this.talentTrackLevels.get(type).entrySet())
-        {
+        for (Map.Entry<Integer, TalentTrackLevel> entry : this.talentTrackLevels.get(type).entrySet()) {
             final boolean[] allCompleted = {true};
-            entry.getValue().achievements.forEachEntry(new TObjectIntProcedure<Achievement>()
-            {
+            entry.getValue().achievements.forEachEntry(new TObjectIntProcedure<Achievement>() {
                 @Override
-                public boolean execute(Achievement a, int b)
-                {
-                    if (habbo.getHabboStats().getAchievementProgress(a) < b)
-                    {
+                public boolean execute(Achievement a, int b) {
+                    if (habbo.getHabboStats().getAchievementProgress(a) < b) {
                         allCompleted[0] = false;
                     }
 
@@ -415,15 +325,11 @@ public class AchievementManager
                 }
             });
 
-            if (allCompleted[0])
-            {
-                if (level == null || level.level < entry.getValue().level)
-                {
+            if (allCompleted[0]) {
+                if (level == null || level.level < entry.getValue().level) {
                     level = entry.getValue();
                 }
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
@@ -431,24 +337,17 @@ public class AchievementManager
         return level;
     }
 
-    public void handleTalentTrackAchievement(Habbo habbo, TalentTrackType type, Achievement achievement)
-    {
+    public void handleTalentTrackAchievement(Habbo habbo, TalentTrackType type, Achievement achievement) {
         TalentTrackLevel currentLevel = this.calculateTalenTrackLevel(habbo, type);
 
-        if (currentLevel != null)
-        {
-            if (currentLevel.level > habbo.getHabboStats().talentTrackLevel(type))
-            {
-                for (int i = habbo.getHabboStats().talentTrackLevel(type); i <= currentLevel.level; i++)
-                {
+        if (currentLevel != null) {
+            if (currentLevel.level > habbo.getHabboStats().talentTrackLevel(type)) {
+                for (int i = habbo.getHabboStats().talentTrackLevel(type); i <= currentLevel.level; i++) {
                     TalentTrackLevel level = this.getTalentTrackLevel(type, i);
 
-                    if (level != null)
-                    {
-                        if (level.items != null && !level.items.isEmpty())
-                        {
-                            for (Item item : level.items)
-                            {
+                    if (level != null) {
+                        if (level.items != null && !level.items.isEmpty()) {
+                            for (Item item : level.items) {
                                 HabboItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), item, 0, 0, "");
                                 habbo.getInventory().getItemsComponent().addItem(rewardItem);
                                 habbo.getClient().sendResponse(new AddHabboItemComposer(rewardItem));
@@ -456,12 +355,9 @@ public class AchievementManager
                             }
                         }
 
-                        if (level.badges != null && level.badges.length > 0 )
-                        {
-                            for (String badge : level.badges)
-                            {
-                                if (!badge.isEmpty())
-                                {
+                        if (level.badges != null && level.badges.length > 0) {
+                            for (String badge : level.badges) {
+                                if (!badge.isEmpty()) {
                                     HabboBadge b = new HabboBadge(0, badge, 0, habbo);
                                     Emulator.getThreading().run(b);
                                     habbo.getInventory().getBadgesComponent().addBadge(b);
@@ -470,12 +366,9 @@ public class AchievementManager
                             }
                         }
 
-                        if (level.perks != null && level.perks.length > 0 )
-                        {
-                            for (String perk : level.perks)
-                            {
-                                if (perk.equalsIgnoreCase("TRADE"))
-                                {
+                        if (level.perks != null && level.perks.length > 0) {
+                            for (String perk : level.perks) {
+                                if (perk.equalsIgnoreCase("TRADE")) {
                                     habbo.getHabboStats().perkTrade = true;
                                 }
                             }
@@ -489,8 +382,7 @@ public class AchievementManager
         }
     }
 
-    public TalentTrackLevel getTalentTrackLevel(TalentTrackType type, int level)
-    {
+    public TalentTrackLevel getTalentTrackLevel(TalentTrackType type, int level) {
         return this.talentTrackLevels.get(type).get(level);
     }
 }

@@ -7,25 +7,21 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
 
-public class FloorPlanEditorBlockedTilesComposer extends MessageComposer
-{
+public class FloorPlanEditorBlockedTilesComposer extends MessageComposer {
     private final Room room;
 
-    public FloorPlanEditorBlockedTilesComposer(Room room)
-    {
+    public FloorPlanEditorBlockedTilesComposer(Room room) {
         this.room = room;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.FloorPlanEditorBlockedTilesComposer);
 
         THashSet<RoomTile> tileList = this.room.getLockedTiles();
 
         this.response.appendInt(tileList.size());
-        for(RoomTile node : tileList)
-        {
+        for (RoomTile node : tileList) {
             this.response.appendInt((int) node.x);
             this.response.appendInt((int) node.y);
         }

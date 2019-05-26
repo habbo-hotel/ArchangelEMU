@@ -1,25 +1,22 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.bots.Bot;
-import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.set.hash.THashSet;
 
 import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 
-public class RoomLayout
-{
-    public static double MAXIMUM_STEP_HEIGHT = 1.1;
-    public static boolean ALLOW_FALLING = true;
+public class RoomLayout {
     protected static final int BASICMOVEMENTCOST = 10;
     protected static final int DIAGONALMOVEMENTCOST = 14;
-
-    public  boolean CANMOVEDIAGONALY = true;
+    public static double MAXIMUM_STEP_HEIGHT = 1.1;
+    public static boolean ALLOW_FALLING = true;
+    public boolean CANMOVEDIAGONALY = true;
     private String name;
     private short doorX;
     private short doorY;
@@ -33,11 +30,9 @@ public class RoomLayout
     private RoomTile doorTile;
     private Room room;
 
-    public RoomLayout(ResultSet set, Room room) throws SQLException
-    {
+    public RoomLayout(ResultSet set, Room room) throws SQLException {
         this.room = room;
-        try
-        {
+        try {
             this.name = set.getString("name");
             this.doorX = set.getShort("door_x");
             this.doorY = set.getShort("door_y");
@@ -46,15 +41,57 @@ public class RoomLayout
             this.heightmap = set.getString("heightmap");
 
             this.parse();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }
 
-    public void parse()
-    {
+    public static boolean squareInSquare(Rectangle outerSquare, Rectangle innerSquare) {
+        if (outerSquare.x > innerSquare.x)
+            return false;
+
+        if (outerSquare.y > innerSquare.y)
+            return false;
+
+        if (outerSquare.x + outerSquare.width < innerSquare.x + innerSquare.width)
+            return false;
+
+        if (outerSquare.y + outerSquare.height < innerSquare.y + innerSquare.height)
+            return false;
+
+        return true;
+    }
+
+    public static boolean tileInSquare(Rectangle square, RoomTile tile) {
+        return (square.contains(tile.x, tile.y));
+    }
+
+    public static boolean pointInSquare(int x1, int y1, int x2, int y2, int pointX, int pointY) {
+        return (pointX >= x1 && pointY >= y1) && (pointX <= x2 && pointY <= y2);
+    }
+
+    public static boolean tilesAdjecent(RoomTile one, RoomTile two) {
+        return !(one == null || two == null) && !(Math.abs(one.x - two.x) > 1) && !(Math.abs(one.y - two.y) > 1);
+    }
+
+    public static Rectangle getRectangle(int x, int y, int width, int length, int rotation) {
+        rotation = (rotation % 8);
+
+        if (rotation == 2 || rotation == 6) {
+            return new Rectangle(x, y, length, width);
+        }
+
+        return new Rectangle(x, y, width, length);
+    }
+
+    public static boolean tilesAdjecent(RoomTile tile, RoomTile comparator, int width, int length, int rotation) {
+        Rectangle rectangle = getRectangle(comparator.x, comparator.y, width, length, rotation);
+        rectangle = new Rectangle(rectangle.x - 1, rectangle.y - 1, rectangle.width + 2, rectangle.height + 2);
+
+        return rectangle.contains(tile.x, tile.y);
+    }
+
+    public void parse() {
         String[] modelTemp = this.heightmap.replace("\n", "").split(Character.toString('\r'));
 
         this.mapSize = 0;
@@ -62,38 +99,27 @@ public class RoomLayout
         this.mapSizeY = modelTemp.length;
         this.roomTiles = new RoomTile[this.mapSizeX][this.mapSizeY];
 
-        for (short y = 0; y < this.mapSizeY; y++)
-        {
-            if(modelTemp[y].isEmpty() || modelTemp[y].equalsIgnoreCase("\r"))
-            {
+        for (short y = 0; y < this.mapSizeY; y++) {
+            if (modelTemp[y].isEmpty() || modelTemp[y].equalsIgnoreCase("\r")) {
                 continue;
             }
 
-            for (short x = 0; x < this.mapSizeX; x++)
-            {
-                if(modelTemp[y].length() != this.mapSizeX)
-                {
+            for (short x = 0; x < this.mapSizeX; x++) {
+                if (modelTemp[y].length() != this.mapSizeX) {
                     break;
                 }
 
                 String square = modelTemp[y].substring(x, x + 1).trim().toLowerCase();
                 RoomTileState state = RoomTileState.OPEN;
                 short height = 0;
-                if (square.equalsIgnoreCase("x"))
-                {
+                if (square.equalsIgnoreCase("x")) {
                     state = RoomTileState.INVALID;
-                }
-                else
-                {
+                } else {
                     if (square.isEmpty()) {
                         height = 0;
-                    }
-                    else if (Emulator.isNumeric(square))
-                    {
+                    } else if (Emulator.isNumeric(square)) {
                         height = Short.parseShort(square);
-                    }
-                    else
-                    {
+                    } else {
                         height = (short) (10 + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(square.toUpperCase()));
                     }
                 }
@@ -105,17 +131,13 @@ public class RoomLayout
 
         this.doorTile = this.roomTiles[this.doorX][this.doorY];
 
-        if (this.doorTile != null)
-        {
+        if (this.doorTile != null) {
             this.doorTile.setAllowStack(false);
             RoomTile doorFrontTile = this.getTileInFront(this.doorTile, this.doorDirection);
 
-            if (doorFrontTile != null && this.tileExists(doorFrontTile.x, doorFrontTile.y))
-            {
-                if (this.roomTiles[doorFrontTile.x][doorFrontTile.y].state != RoomTileState.INVALID)
-                {
-                    if (this.doorZ != this.roomTiles[doorFrontTile.x][doorFrontTile.y].z || this.roomTiles[this.doorX][this.doorY].state != this.roomTiles[doorFrontTile.x][doorFrontTile.y].state)
-                    {
+            if (doorFrontTile != null && this.tileExists(doorFrontTile.x, doorFrontTile.y)) {
+                if (this.roomTiles[doorFrontTile.x][doorFrontTile.y].state != RoomTileState.INVALID) {
+                    if (this.doorZ != this.roomTiles[doorFrontTile.x][doorFrontTile.y].z || this.roomTiles[this.doorX][this.doorY].state != this.roomTiles[doorFrontTile.x][doorFrontTile.y].state) {
                         this.doorZ = this.roomTiles[doorFrontTile.x][doorFrontTile.y].z;
                         this.roomTiles[this.doorX][this.doorY].state = RoomTileState.OPEN;
                     }
@@ -124,90 +146,74 @@ public class RoomLayout
         }
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public short getDoorX()
-    {
+    public short getDoorX() {
         return this.doorX;
     }
 
-    public void setDoorX(short doorX)
-    {
+    public void setDoorX(short doorX) {
         this.doorX = doorX;
     }
 
-    public short getDoorY()
-    {
+    public short getDoorY() {
         return this.doorY;
     }
 
-    public void setDoorY(short doorY)
-    {
+    public void setDoorY(short doorY) {
         this.doorY = doorY;
     }
 
-    public int getDoorZ()
-    {
+    public int getDoorZ() {
         return this.doorZ;
     }
 
-    public RoomTile getDoorTile()
-    {
+    public RoomTile getDoorTile() {
         return this.doorTile;
     }
 
-    public int getDoorDirection()
-    {
+    public int getDoorDirection() {
         return this.doorDirection;
     }
 
-    public void setDoorDirection(int doorDirection)
-    {
+    public void setDoorDirection(int doorDirection) {
         this.doorDirection = doorDirection;
     }
 
-    public void setHeightmap(String heightMap)
-    {
-        this.heightmap = heightMap;
-    }
-
-    public String getHeightmap()
-    {
+    public String getHeightmap() {
         return this.heightmap;
     }
 
-    public int getMapSize()
-    {
+    public void setHeightmap(String heightMap) {
+        this.heightmap = heightMap;
+    }
+
+    public int getMapSize() {
         return this.mapSize;
     }
 
-    public int getMapSizeX()
-    {
+    public int getMapSizeX() {
         return this.mapSizeX;
     }
 
-    public int getMapSizeY()
-    {
+    public int getMapSizeY() {
         return this.mapSizeY;
     }
 
-    public short getHeightAtSquare(int x, int y)
-    {
-        if(x < 0 ||
-           y < 0 ||
-           x >= this.getMapSizeX() ||
-           y >= this.getMapSizeY())
+    public short getHeightAtSquare(int x, int y) {
+        if (x < 0 ||
+                y < 0 ||
+                x >= this.getMapSizeX() ||
+                y >= this.getMapSizeY())
             return 0;
 
         return this.roomTiles[x][y].z;
     }
 
-    public double getStackHeightAtSquare(int x, int y)
-    {
-        if(x < 0 ||
+    public double getStackHeightAtSquare(int x, int y) {
+        if (x < 0 ||
                 y < 0 ||
                 x >= this.getMapSizeX() ||
                 y >= this.getMapSizeY())
@@ -216,9 +222,8 @@ public class RoomLayout
         return this.roomTiles[x][y].getStackHeight();
     }
 
-    public double getRelativeHeightAtSquare(int x, int y)
-    {
-        if(x < 0 ||
+    public double getRelativeHeightAtSquare(int x, int y) {
+        if (x < 0 ||
                 y < 0 ||
                 x >= this.getMapSizeX() ||
                 y >= this.getMapSizeY())
@@ -227,46 +232,38 @@ public class RoomLayout
         return this.roomTiles[x][y].relativeHeight();
     }
 
-    public RoomTile getTile(short x, short y)
-    {
-        if (this.tileExists(x, y))
-        {
+    public RoomTile getTile(short x, short y) {
+        if (this.tileExists(x, y)) {
             return this.roomTiles[x][y];
         }
 
         return null;
     }
 
-    public boolean tileExists(short x, short y)
-    {
+    public boolean tileExists(short x, short y) {
         return !(x < 0 || y < 0 || x >= this.getMapSizeX() || y >= this.getMapSizeY());
     }
 
-    public boolean tileWalkable(short x, short y)
-    {
+    public boolean tileWalkable(short x, short y) {
         return this.tileExists(x, y) && this.roomTiles[x][y].state == RoomTileState.OPEN && this.roomTiles[x][y].isWalkable();
     }
 
-    public boolean isVoidTile(short x, short y)
-    {
+    public boolean isVoidTile(short x, short y) {
         if (!this.tileExists(x, y)) return true;
         return this.roomTiles[x][y].state == RoomTileState.INVALID;
     }
 
-    public RoomTileState getStateAt(short x, short y)
-    {
+    public RoomTileState getStateAt(short x, short y) {
         return this.roomTiles[x][y].state;
     }
-    public String getRelativeMap()
-    {
+
+    public String getRelativeMap() {
         return this.heightmap.replace("\r\n", "\r");
     }
 
-    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit)
-    {
+    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit) {
         LinkedList<RoomTile> openList = new LinkedList<>();
-        try
-        {
+        try {
             if (this.room == null || !this.room.isLoaded() || oldTile == null || newTile == null || oldTile.equals(newTile) || newTile.state == RoomTileState.INVALID)
                 return openList;
 
@@ -275,28 +272,24 @@ public class RoomLayout
             openList.add(oldTile.copy());
 
             long startMillis = System.currentTimeMillis();
-            while (true)
-            {
-                if (System.currentTimeMillis() - startMillis > 50)
-                {
+            while (true) {
+                if (System.currentTimeMillis() - startMillis > 50) {
                     return new LinkedList<>();
                 }
 
                 RoomTile current = this.lowestFInOpen(openList);
                 openList.remove(current);
 
-                if ((current.x == newTile.x) && (current.y == newTile.y))
-                {
+                if ((current.x == newTile.x) && (current.y == newTile.y)) {
                     return this.calcPath(this.findTile(openList, oldTile.x, oldTile.y), current);
                 }
 
                 List<RoomTile> adjacentNodes = this.getAdjacent(openList, current, newTile);
 
-                for (RoomTile currentAdj : adjacentNodes)
-                {
+                for (RoomTile currentAdj : adjacentNodes) {
                     if (closedList.contains(currentAdj)) continue;
 
-                    if(roomUnit.canOverrideTile(currentAdj) || (currentAdj.state != RoomTileState.BLOCKED && currentAdj.x == doorX && currentAdj.y == doorY)) {
+                    if (roomUnit.canOverrideTile(currentAdj) || (currentAdj.state != RoomTileState.BLOCKED && currentAdj.x == doorX && currentAdj.y == doorY)) {
                         currentAdj.setPrevious(current);
                         currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
                         currentAdj.setgCosts(current);
@@ -305,8 +298,7 @@ public class RoomLayout
                     }
 
                     //If the tile is sitable or layable and its not our goal tile, we cannot walk over it.
-                    if (!currentAdj.equals(goalLocation) && (currentAdj.state == RoomTileState.BLOCKED || currentAdj.state == RoomTileState.SIT || currentAdj.state == RoomTileState.LAY))
-                    {
+                    if (!currentAdj.equals(goalLocation) && (currentAdj.state == RoomTileState.BLOCKED || currentAdj.state == RoomTileState.SIT || currentAdj.state == RoomTileState.LAY)) {
                         closedList.add(currentAdj);
                         openList.remove(currentAdj);
                         continue;
@@ -317,14 +309,13 @@ public class RoomLayout
                     double height = currentAdj.getStackHeight() - current.getStackHeight();
 
                     //If we are not allowed to fall and the height difference is bigger than the maximum stepheight, continue.
-                    if (!ALLOW_FALLING && height < - MAXIMUM_STEP_HEIGHT) continue;
+                    if (!ALLOW_FALLING && height < -MAXIMUM_STEP_HEIGHT) continue;
 
                     //If the step difference is bigger than the maximum step height, continue.
                     if (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT) continue;
 
                     //Check if the tile has habbos.
-                    if (currentAdj.hasUnits() && (!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation)))
-                    {
+                    if (currentAdj.hasUnits() && (!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
                         closedList.add(currentAdj);
                         openList.remove(currentAdj);
                         continue;
@@ -332,60 +323,48 @@ public class RoomLayout
 
                     //if (room.hasPetsAt(currentAdj.x, currentAdj.y)) continue;
 
-                    if (!openList.contains(currentAdj))
-                    {
+                    if (!openList.contains(currentAdj)) {
                         currentAdj.setPrevious(current);
                         currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
                         currentAdj.setgCosts(current);
                         openList.add(currentAdj);
-                    }
-                    else if (currentAdj.getgCosts() > currentAdj.calculategCosts(current))
-                    {
+                    } else if (currentAdj.getgCosts() > currentAdj.calculategCosts(current)) {
                         currentAdj.setPrevious(current);
                         currentAdj.setgCosts(current);
                     }
                 }
-                if (openList.isEmpty())
-                {
+                if (openList.isEmpty()) {
                     return new LinkedList<>();
                 }
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
         return new LinkedList<>();
     }
 
-    private RoomTile findTile(List<RoomTile> tiles, short x, short y)
-    {
-        for (RoomTile tile : tiles)
-        {
-            if (x == tile.x && y == tile.y)
-            {
+    private RoomTile findTile(List<RoomTile> tiles, short x, short y) {
+        for (RoomTile tile : tiles) {
+            if (x == tile.x && y == tile.y) {
                 return tile;
             }
         }
 
         RoomTile tile = this.getTile(x, y);
 
-        if (tile != null)
-        {
+        if (tile != null) {
             return tile.copy();
         }
         return null;
     }
 
-    private Deque<RoomTile> calcPath(RoomTile start, RoomTile goal)
-    {
+    private Deque<RoomTile> calcPath(RoomTile start, RoomTile goal) {
         LinkedList<RoomTile> path = new LinkedList<>();
         if (start == null)
             return path;
 
         RoomTile curr = goal;
-        while (curr != null)
-        {
+        while (curr != null) {
             path.addFirst(this.getTile(curr.x, curr.y));
             curr = curr.getPrevious();
             if ((curr != null) && (curr.equals(start))) {
@@ -395,92 +374,71 @@ public class RoomLayout
         return path;
     }
 
-    private RoomTile lowestFInOpen(List<RoomTile> openList)
-    {
-        if(openList == null)
+    private RoomTile lowestFInOpen(List<RoomTile> openList) {
+        if (openList == null)
             return null;
 
         RoomTile cheapest = openList.get(0);
-        for (RoomTile anOpenList : openList)
-        {
-            if (anOpenList.getfCosts() < cheapest.getfCosts())
-            {
+        for (RoomTile anOpenList : openList) {
+            if (anOpenList.getfCosts() < cheapest.getfCosts()) {
                 cheapest = anOpenList;
             }
         }
         return cheapest;
     }
 
-    private List<RoomTile> getAdjacent(List<RoomTile> openList, RoomTile node, RoomTile nextTile)
-    {
+    private List<RoomTile> getAdjacent(List<RoomTile> openList, RoomTile node, RoomTile nextTile) {
         short x = node.x;
         short y = node.y;
         List<RoomTile> adj = new LinkedList<>();
-        if (x > 0)
-        {
+        if (x > 0) {
             RoomTile temp = this.findTile(openList, (short) (x - 1), y);
-            if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID)
-            {
-                if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0)
-                {
+            if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID) {
+                if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0) {
                     temp.isDiagonally(false);
                     if (!adj.contains(temp))
                         adj.add(temp);
                 }
             }
         }
-        if (x < this.mapSizeX)
-        {
+        if (x < this.mapSizeX) {
             RoomTile temp = this.findTile(openList, (short) (x + 1), y);
-            if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID)
-            {
-                if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0)
-                {
+            if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID) {
+                if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0) {
                     temp.isDiagonally(false);
                     if (!adj.contains(temp))
                         adj.add(temp);
                 }
             }
         }
-        if (y > 0)
-        {
+        if (y > 0) {
             RoomTile temp = this.findTile(openList, x, (short) (y - 1));
-            if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID)
-            {
-                if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0)
-                {
+            if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID) {
+                if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0) {
                     temp.isDiagonally(false);
                     if (!adj.contains(temp))
                         adj.add(temp);
                 }
             }
         }
-        if (y < this.mapSizeY)
-        {
+        if (y < this.mapSizeY) {
             RoomTile temp = this.findTile(openList, x, (short) (y + 1));
-            if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID)
-            {
-                if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0)
-                {
+            if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID) {
+                if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0) {
                     temp.isDiagonally(false);
                     if (!adj.contains(temp))
                         adj.add(temp);
                 }
             }
         }
-        if (this.CANMOVEDIAGONALY)
-        {
-            if ((x < this.mapSizeX) && (y < this.mapSizeY))
-            {
+        if (this.CANMOVEDIAGONALY) {
+            if ((x < this.mapSizeX) && (y < this.mapSizeY)) {
                 RoomTile offX = this.findTile(openList, (short) (x + 1), y);
-                RoomTile offY = this.findTile(openList, x, (short) (y+1));
-                if (offX != null && offY != null && (offX.isWalkable() || offY.isWalkable()))
-                {
+                RoomTile offY = this.findTile(openList, x, (short) (y + 1));
+                if (offX != null && offY != null && (offX.isWalkable() || offY.isWalkable())) {
                     RoomTile temp = this.findTile(openList, (short) (x + 1), (short) (y + 1));
-                    if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID)
-                    {
-                        if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0)
-                        {
+                    if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID) {
+                        if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0) {
                             temp.isDiagonally(true);
                             if (!adj.contains(temp))
                                 adj.add(temp);
@@ -488,17 +446,13 @@ public class RoomLayout
                     }
                 }
             }
-            if ((x > 0) && (y > 0))
-            {
+            if ((x > 0) && (y > 0)) {
                 RoomTile offX = this.findTile(openList, (short) (x - 1), y);
                 RoomTile offY = this.findTile(openList, x, (short) (y - 1));
-                if (offX != null && offY != null && (offX.isWalkable() || offY.isWalkable()))
-                {
+                if (offX != null && offY != null && (offX.isWalkable() || offY.isWalkable())) {
                     RoomTile temp = this.findTile(openList, (short) (x - 1), (short) (y - 1));
-                    if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID)
-                    {
-                        if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0)
-                        {
+                    if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID) {
+                        if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0) {
                             temp.isDiagonally(true);
                             if (!adj.contains(temp))
                                 adj.add(temp);
@@ -506,17 +460,13 @@ public class RoomLayout
                     }
                 }
             }
-            if ((x > 0) && (y < this.mapSizeY))
-            {
+            if ((x > 0) && (y < this.mapSizeY)) {
                 RoomTile offX = this.findTile(openList, (short) (x - 1), y);
-                RoomTile offY = this.findTile(openList, x, (short) (y+1));
-                if (offX != null && offY != null && (offX.isWalkable() || offY.isWalkable()))
-                {
+                RoomTile offY = this.findTile(openList, x, (short) (y + 1));
+                if (offX != null && offY != null && (offX.isWalkable() || offY.isWalkable())) {
                     RoomTile temp = this.findTile(openList, (short) (x - 1), (short) (y + 1));
-                    if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID)
-                    {
-                        if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0)
-                        {
+                    if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID) {
+                        if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0) {
                             temp.isDiagonally(true);
                             if (!adj.contains(temp))
                                 adj.add(temp);
@@ -524,17 +474,13 @@ public class RoomLayout
                     }
                 }
             }
-            if ((x < this.mapSizeX) && (y > 0))
-            {
+            if ((x < this.mapSizeX) && (y > 0)) {
                 RoomTile offX = this.findTile(openList, (short) (x + 1), y);
                 RoomTile offY = this.findTile(openList, x, (short) (y - 1));
-                if (offX != null && offY != null && (offX.isWalkable() || offY.isWalkable()))
-                {
+                if (offX != null && offY != null && (offX.isWalkable() || offY.isWalkable())) {
                     RoomTile temp = this.findTile(openList, (short) (x + 1), (short) (y - 1));
-                    if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID)
-                    {
-                        if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0)
-                        {
+                    if (temp != null && temp.state != RoomTileState.BLOCKED && temp.state != RoomTileState.INVALID) {
+                        if (temp.state != RoomTileState.SIT || nextTile.getStackHeight() - node.getStackHeight() <= 2.0) {
                             temp.isDiagonally(true);
                             if (!adj.contains(temp))
                                 adj.add(temp);
@@ -546,71 +492,54 @@ public class RoomLayout
         return adj;
     }
 
-    public void moveDiagonally(boolean value)
-    {
+    public void moveDiagonally(boolean value) {
         this.CANMOVEDIAGONALY = value;
     }
 
-    public static boolean squareInSquare(Rectangle outerSquare, Rectangle innerSquare)
-    {
-        if(outerSquare.x > innerSquare.x)
-            return false;
-
-        if(outerSquare.y > innerSquare.y)
-            return false;
-
-        if(outerSquare.x + outerSquare.width < innerSquare.x + innerSquare.width)
-            return false;
-
-        if(outerSquare.y + outerSquare.height < innerSquare.y + innerSquare.height)
-            return false;
-
-        return true;
-    }
-
-    public static boolean tileInSquare(Rectangle square, RoomTile tile)
-    {
-        return (square.contains(tile.x, tile.y));
-    }
-
-    public static boolean pointInSquare(int x1, int y1, int x2, int y2, int pointX, int pointY)
-    {
-        return (pointX >= x1 && pointY >= y1) && (pointX <= x2 && pointY <= y2);
-    }
-
-    public static boolean tilesAdjecent(RoomTile one, RoomTile two)
-    {
-        return !(one == null || two == null) && !(Math.abs(one.x - two.x) > 1) && !(Math.abs(one.y - two.y) > 1);
-    }
-
-    public RoomTile getTileInFront(RoomTile tile, int rotation)
-    {
+    public RoomTile getTileInFront(RoomTile tile, int rotation) {
         return this.getTileInFront(tile, rotation, 0);
     }
 
-    public RoomTile getTileInFront(RoomTile tile, int rotation, int offset)
-    {
+    public RoomTile getTileInFront(RoomTile tile, int rotation, int offset) {
         int offsetX = 0;
         int offsetY = 0;
 
         rotation = rotation % 8;
-        switch (rotation)
-        {
-            case 0: offsetY--; break;
-            case 1: offsetX++; offsetY--; break;
-            case 2: offsetX++; break;
-            case 3: offsetX++; offsetY++; break;
-            case 4: offsetY++; break;
-            case 5: offsetX--; offsetY++; break;
-            case 6: offsetX--; break;
-            case 7: offsetX--; offsetY--; break;
+        switch (rotation) {
+            case 0:
+                offsetY--;
+                break;
+            case 1:
+                offsetX++;
+                offsetY--;
+                break;
+            case 2:
+                offsetX++;
+                break;
+            case 3:
+                offsetX++;
+                offsetY++;
+                break;
+            case 4:
+                offsetY++;
+                break;
+            case 5:
+                offsetX--;
+                offsetY++;
+                break;
+            case 6:
+                offsetX--;
+                break;
+            case 7:
+                offsetX--;
+                offsetY--;
+                break;
         }
 
         short x = tile.x;
         short y = tile.y;
 
-        for (int i = 0; i <= offset; i++)
-        {
+        for (int i = 0; i <= offset; i++) {
             x += offsetX;
             y += offsetY;
         }
@@ -618,20 +547,15 @@ public class RoomLayout
         return this.getTile(x, y);
     }
 
-    public List<RoomTile> getTilesInFront(RoomTile tile, int rotation, int amount)
-    {
+    public List<RoomTile> getTilesInFront(RoomTile tile, int rotation, int amount) {
         List<RoomTile> tiles = new ArrayList<>(amount);
         RoomTile previous = tile;
-        for (int i = 0; i < amount; i++)
-        {
+        for (int i = 0; i < amount; i++) {
             RoomTile t = this.getTileInFront(previous, rotation, i);
 
-            if (t != null)
-            {
+            if (t != null) {
                 tiles.add(t);
-            }
-            else
-            {
+            } else {
                 break;
             }
         }
@@ -639,22 +563,17 @@ public class RoomLayout
         return tiles;
     }
 
-    public List<RoomTile> getTilesAround(RoomTile tile)
-    {
+    public List<RoomTile> getTilesAround(RoomTile tile) {
         return getTilesAround(tile, 0);
     }
 
-    public List<RoomTile> getTilesAround(RoomTile tile, int directionOffset)
-    {
+    public List<RoomTile> getTilesAround(RoomTile tile, int directionOffset) {
         List<RoomTile> tiles = new ArrayList<>(8);
 
-        if (tile != null)
-        {
-            for (int i = 0; i < 8; i++)
-            {
+        if (tile != null) {
+            for (int i = 0; i < 8; i++) {
                 RoomTile t = this.getTileInFront(tile, (i + directionOffset) % 8);
-                if (t != null)
-                {
+                if (t != null) {
                     tiles.add(t);
                 }
             }
@@ -672,62 +591,39 @@ public class RoomLayout
 
         List<RoomTile> toRemove = new ArrayList<>();
 
-        for(RoomTile t : availableTiles) {
-            if(t == null || t.state != RoomTileState.OPEN || !t.isWalkable()) {
+        for (RoomTile t : availableTiles) {
+            if (t == null || t.state != RoomTileState.OPEN || !t.isWalkable()) {
                 toRemove.add(t);
             }
         }
 
-        for(RoomTile t : toRemove) {
+        for (RoomTile t : toRemove) {
             availableTiles.remove(t);
         }
 
         return availableTiles;
     }
 
-    public static Rectangle getRectangle(int x, int y, int width, int length, int rotation)
-    {
-        rotation = (rotation % 8);
-
-        if(rotation == 2 || rotation == 6)
-        {
-            return new Rectangle(x, y, length, width);
-        }
-
-        return new Rectangle(x, y, width, length);
-    }
-
-    public boolean fitsOnMap(RoomTile tile, int width, int length, int rotation)
-    {
+    public boolean fitsOnMap(RoomTile tile, int width, int length, int rotation) {
         THashSet<RoomTile> pointList = new THashSet<>(width * length, 0.1f);
 
-        if (tile != null)
-        {
-            if (rotation == 0 || rotation == 4)
-            {
-                for (short i = tile.x; i <= (tile.x + (width - 1)); i++)
-                {
-                    for (short j = tile.y; j <= (tile.y + (length - 1)); j++)
-                    {
+        if (tile != null) {
+            if (rotation == 0 || rotation == 4) {
+                for (short i = tile.x; i <= (tile.x + (width - 1)); i++) {
+                    for (short j = tile.y; j <= (tile.y + (length - 1)); j++) {
                         RoomTile t = this.getTile(i, j);
 
-                        if (t == null || t.state == RoomTileState.INVALID)
-                        {
+                        if (t == null || t.state == RoomTileState.INVALID) {
                             return false;
                         }
                     }
                 }
-            }
-            else if (rotation == 2 || rotation == 6)
-            {
-                for (short i = tile.x; i <= (tile.x + (length - 1)); i++)
-                {
-                    for (short j = tile.y; j <= (tile.y + (width - 1)); j++)
-                    {
+            } else if (rotation == 2 || rotation == 6) {
+                for (short i = tile.x; i <= (tile.x + (length - 1)); i++) {
+                    for (short j = tile.y; j <= (tile.y + (width - 1)); j++) {
                         RoomTile t = this.getTile(i, j);
 
-                        if (t == null || t.state == RoomTileState.INVALID)
-                        {
+                        if (t == null || t.state == RoomTileState.INVALID) {
                             return false;
                         }
                     }
@@ -738,37 +634,26 @@ public class RoomLayout
         return true;
     }
 
-    public THashSet<RoomTile> getTilesAt(RoomTile tile, int width, int length, int rotation)
-    {
+    public THashSet<RoomTile> getTilesAt(RoomTile tile, int width, int length, int rotation) {
         THashSet<RoomTile> pointList = new THashSet<>(width * length, 0.1f);
 
-        if (tile != null)
-        {
-            if (rotation == 0 || rotation == 4)
-            {
-                for (short i = tile.x; i <= (tile.x + (width - 1)); i++)
-                {
-                    for (short j = tile.y; j <= (tile.y + (length - 1)); j++)
-                    {
+        if (tile != null) {
+            if (rotation == 0 || rotation == 4) {
+                for (short i = tile.x; i <= (tile.x + (width - 1)); i++) {
+                    for (short j = tile.y; j <= (tile.y + (length - 1)); j++) {
                         RoomTile t = this.getTile(i, j);
 
-                        if (t != null)
-                        {
+                        if (t != null) {
                             pointList.add(t);
                         }
                     }
                 }
-            }
-            else if (rotation == 2 || rotation == 6)
-            {
-                for (short i = tile.x; i <= (tile.x + (length - 1)); i++)
-                {
-                    for (short j = tile.y; j <= (tile.y + (width - 1)); j++)
-                    {
+            } else if (rotation == 2 || rotation == 6) {
+                for (short i = tile.x; i <= (tile.x + (length - 1)); i++) {
+                    for (short j = tile.y; j <= (tile.y + (width - 1)); j++) {
                         RoomTile t = this.getTile(i, j);
 
-                        if (t != null)
-                        {
+                        if (t != null) {
                             pointList.add(t);
                         }
                     }
@@ -777,13 +662,5 @@ public class RoomLayout
         }
 
         return pointList;
-    }
-
-    public static boolean tilesAdjecent(RoomTile tile, RoomTile comparator, int width, int length, int rotation)
-    {
-        Rectangle rectangle = getRectangle(comparator.x, comparator.y, width, length, rotation);
-        rectangle = new Rectangle(rectangle.x - 1, rectangle.y -1, rectangle.width + 2, rectangle.height + 2);
-
-        return rectangle.contains(tile.x, tile.y);
     }
 }

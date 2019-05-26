@@ -7,11 +7,9 @@ import com.eu.habbo.messages.outgoing.rooms.promotions.PromoteOwnRoomsListCompos
 
 import java.util.List;
 
-public class RequestPromotionRoomsEvent extends MessageHandler
-{
+public class RequestPromotionRoomsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         List<Room> roomsToShow = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo());
         roomsToShow.addAll(Emulator.getGameEnvironment().getRoomManager().getRoomsWithRights(this.client.getHabbo()));
         roomsToShow.addAll(Emulator.getGameEnvironment().getRoomManager().getRoomsWithAdminRights(this.client.getHabbo()));

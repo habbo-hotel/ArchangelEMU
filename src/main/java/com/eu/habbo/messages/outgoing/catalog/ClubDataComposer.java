@@ -10,28 +10,24 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import java.util.Calendar;
 import java.util.List;
 
-public class ClubDataComposer extends MessageComposer
-{
+public class ClubDataComposer extends MessageComposer {
     private final int windowId;
     private final Habbo habbo;
 
-    public ClubDataComposer(Habbo habbo, int windowId)
-    {
+    public ClubDataComposer(Habbo habbo, int windowId) {
         this.habbo = habbo;
         this.windowId = windowId;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ClubDataComposer);
 
         List<ClubOffer> offers = Emulator.getGameEnvironment().getCatalogManager().getClubOffers();
         this.response.appendInt(offers.size());
 
         //TODO Change this to a seperate table.
-        for(ClubOffer offer : offers)
-        {
+        for (ClubOffer offer : offers) {
             this.response.appendInt(offer.getId());
             this.response.appendString(offer.getName());
             this.response.appendBoolean(false); //unused
@@ -44,13 +40,13 @@ public class ClubDataComposer extends MessageComposer
 
             long secondsTotal = seconds;
 
-            int totalYears = (int)Math.floor((int)seconds / 86400 * 31 * 12);
+            int totalYears = (int) Math.floor((int) seconds / 86400 * 31 * 12);
             seconds -= totalYears * 86400 * 31 * 12;
 
-            int totalMonths = (int)Math.floor((int)seconds / 86400 * 31);
+            int totalMonths = (int) Math.floor((int) seconds / 86400 * 31);
             seconds -= totalMonths * 86400 * 31;
 
-            int totalDays = (int)Math.floor((int)seconds / 86400);
+            int totalDays = (int) Math.floor((int) seconds / 86400);
             seconds -= totalDays * 86400;
 
             this.response.appendInt((int) secondsTotal / 86400 / 31);
@@ -60,8 +56,7 @@ public class ClubDataComposer extends MessageComposer
 
             int endTimestamp = this.habbo.getHabboStats().getClubExpireTimestamp();
 
-            if (endTimestamp < Emulator.getIntUnixTimestamp())
-            {
+            if (endTimestamp < Emulator.getIntUnixTimestamp()) {
                 endTimestamp = Emulator.getIntUnixTimestamp();
             }
 

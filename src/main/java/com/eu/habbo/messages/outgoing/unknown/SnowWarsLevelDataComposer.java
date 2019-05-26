@@ -3,11 +3,9 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 
-public class SnowWarsLevelDataComposer extends MessageComposer
-{
+public class SnowWarsLevelDataComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(3874);
         this.response.appendInt(0);
         this.response.appendInt(10); //MapID

@@ -8,29 +8,24 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class FrontPageFeaturedLayout extends CatalogPage
-{
-    public FrontPageFeaturedLayout(ResultSet set) throws SQLException
-    {
+public class FrontPageFeaturedLayout extends CatalogPage {
+    public FrontPageFeaturedLayout(ResultSet set) throws SQLException {
         super(set);
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendString("frontpage_featured");
         String[] teaserImages = super.getTeaserImage().split(";");
         String[] specialImages = super.getSpecialImage().split(";");
 
         message.appendInt(1 + teaserImages.length + specialImages.length);
         message.appendString(super.getHeaderImage());
-        for (String s : teaserImages)
-        {
+        for (String s : teaserImages) {
             message.appendString(s);
         }
 
-        for (String s : specialImages)
-        {
+        for (String s : specialImages) {
             message.appendString(s);
         }
         message.appendInt(3);
@@ -39,13 +34,11 @@ public class FrontPageFeaturedLayout extends CatalogPage
         message.appendString(super.getTextTeaser());
     }
 
-    public void serializeExtra(ServerMessage message)
-    {
+    public void serializeExtra(ServerMessage message) {
 
         message.appendInt(Emulator.getGameEnvironment().getCatalogManager().getCatalogFeaturedPages().size());
 
-        for (CatalogFeaturedPage page : Emulator.getGameEnvironment().getCatalogManager().getCatalogFeaturedPages().valueCollection())
-        {
+        for (CatalogFeaturedPage page : Emulator.getGameEnvironment().getCatalogManager().getCatalogFeaturedPages().valueCollection()) {
             page.serialize(message);
         }
         message.appendInt(1); //Position

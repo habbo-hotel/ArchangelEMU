@@ -13,35 +13,27 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionHabboWearsBadge extends InteractionWiredCondition
-{
+public class WiredConditionHabboWearsBadge extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.ACTOR_WEARS_BADGE;
 
     protected String badge = "";
 
-    public WiredConditionHabboWearsBadge(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredConditionHabboWearsBadge(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredConditionHabboWearsBadge(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredConditionHabboWearsBadge(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo != null)
-        {
-            synchronized (habbo.getInventory().getBadgesComponent().getWearingBadges())
-            {
-                for (HabboBadge badge : habbo.getInventory().getBadgesComponent().getWearingBadges())
-                {
-                    if (badge.getCode().equalsIgnoreCase(this.badge))
-                    {
+        if (habbo != null) {
+            synchronized (habbo.getInventory().getBadgesComponent().getWearingBadges()) {
+                for (HabboBadge badge : habbo.getInventory().getBadgesComponent().getWearingBadges()) {
+                    if (badge.getCode().equalsIgnoreCase(this.badge)) {
                         return true;
                     }
                 }
@@ -51,32 +43,27 @@ public class WiredConditionHabboWearsBadge extends InteractionWiredCondition
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.badge;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.badge = set.getString("wired_data");
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.badge = "";
     }
 
     @Override
-    public WiredConditionType getType()
-    {
+    public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -91,8 +78,7 @@ public class WiredConditionHabboWearsBadge extends InteractionWiredCondition
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         packet.readInt();
 
         this.badge = packet.readString();

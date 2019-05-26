@@ -1,26 +1,22 @@
- package com.eu.habbo.habbohotel.commands;
+package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 
 public class CoordsCommand extends Command {
 
-    public CoordsCommand()
-    {
+    public CoordsCommand() {
         super("cmd_coords", Emulator.getTexts().getValue("commands.keys.cmd_coords").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
-        if(gameClient.getHabbo().getRoomUnit() == null || gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (gameClient.getHabbo().getRoomUnit() == null || gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
             return false;
 
-        if (params.length == 1)
-        {
+        if (params.length == 1) {
             gameClient.getHabbo().alert(Emulator.getTexts().getValue("commands.generic.cmd_coords.title") + "\r\n" +
                     "x: " + gameClient.getHabbo().getRoomUnit().getX() + "\r" +
                     "y: " + gameClient.getHabbo().getRoomUnit().getY() + "\r" +
@@ -33,24 +29,19 @@ public class CoordsCommand extends Command {
                     "Tile relative height: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getX(), gameClient.getHabbo().getRoomUnit().getY()).relativeHeight() + "\r" +
                     "Tile stack height: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getX(), gameClient.getHabbo().getRoomUnit().getY()).getStackHeight());
 
-        }
-        else
-        {
+        } else {
             RoomTile tile = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(Short.valueOf(params[1]), Short.valueOf(params[2]));
 
-            if (tile != null)
-            {
+            if (tile != null) {
                 gameClient.getHabbo().alert(Emulator.getTexts().getValue("commands.generic.cmd_coords.title") + "\r\n" +
-                "x: " + tile.x + "\r" +
-                "y: " + tile.y + "\r" +
-                "z: " + tile.z + "\r" +
-                "Tile State: " + tile.state.name() + "\r" +
-                "Tile Relative Height: " + tile.relativeHeight() + "\r" +
-                "Tile Stack Height: " + tile.getStackHeight() + "\r" +
-                "Tile Walkable: " + (tile.isWalkable() ? "Yes" : "No") + "\r");
-            }
-            else
-            {
+                        "x: " + tile.x + "\r" +
+                        "y: " + tile.y + "\r" +
+                        "z: " + tile.z + "\r" +
+                        "Tile State: " + tile.state.name() + "\r" +
+                        "Tile Relative Height: " + tile.relativeHeight() + "\r" +
+                        "Tile Stack Height: " + tile.getStackHeight() + "\r" +
+                        "Tile Walkable: " + (tile.isWalkable() ? "Yes" : "No") + "\r");
+            } else {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.tile.not.exists"));
             }
         }

@@ -11,24 +11,20 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
 
-class FreezeHandleSnowballExplosion implements Runnable
-{
+class FreezeHandleSnowballExplosion implements Runnable {
     private final FreezeThrowSnowball thrownData;
 
-    public FreezeHandleSnowballExplosion(FreezeThrowSnowball thrownData)
-    {
+    public FreezeHandleSnowballExplosion(FreezeThrowSnowball thrownData) {
         this.thrownData = thrownData;
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
-            if(this.thrownData == null || this.thrownData.habbo.getHabboInfo().getGamePlayer() == null)
+    public void run() {
+        try {
+            if (this.thrownData == null || this.thrownData.habbo.getHabboInfo().getGamePlayer() == null)
                 return;
-            
-            FreezeGamePlayer player = (FreezeGamePlayer)this.thrownData.habbo.getHabboInfo().getGamePlayer();
+
+            FreezeGamePlayer player = (FreezeGamePlayer) this.thrownData.habbo.getHabboInfo().getGamePlayer();
 
             if (player == null)
                 return;
@@ -37,44 +33,35 @@ class FreezeHandleSnowballExplosion implements Runnable
 
             THashSet<RoomTile> tiles = new THashSet<>();
 
-            FreezeGame game = ((FreezeGame)this.thrownData.room.getGame(FreezeGame.class));
+            FreezeGame game = ((FreezeGame) this.thrownData.room.getGame(FreezeGame.class));
 
-            if(game == null)
+            if (game == null)
                 return;
 
-            if (player.nextHorizontal)
-            {
+            if (player.nextHorizontal) {
                 tiles.addAll(game.affectedTilesByExplosion(this.thrownData.targetTile.getX(), this.thrownData.targetTile.getY(), this.thrownData.radius + 1));
             }
 
-            if (player.nextDiagonal)
-            {
+            if (player.nextDiagonal) {
                 tiles.addAll(game.affectedTilesByExplosionDiagonal(this.thrownData.targetTile.getX(), this.thrownData.targetTile.getY(), this.thrownData.radius + 1));
                 player.nextDiagonal = false;
             }
 
             THashSet<InteractionFreezeTile> freezeTiles = new THashSet<>();
 
-            for (RoomTile roomTile : tiles)
-            {
+            for (RoomTile roomTile : tiles) {
                 THashSet<HabboItem> items = this.thrownData.room.getItemsAt(roomTile);
 
-                for (HabboItem freezeTile : items)
-                {
-                    if (freezeTile instanceof InteractionFreezeTile || freezeTile instanceof InteractionFreezeBlock)
-                    {
+                for (HabboItem freezeTile : items) {
+                    if (freezeTile instanceof InteractionFreezeTile || freezeTile instanceof InteractionFreezeBlock) {
                         int distance = 0;
-                        if (freezeTile.getX() != this.thrownData.targetTile.getX() && freezeTile.getY() != this.thrownData.targetTile.getY())
-                        {
+                        if (freezeTile.getX() != this.thrownData.targetTile.getX() && freezeTile.getY() != this.thrownData.targetTile.getY()) {
                             distance = Math.abs(freezeTile.getX() - this.thrownData.targetTile.getX());
-                        }
-                        else
-                        {
-                            distance = (int)Math.ceil(this.thrownData.room.getLayout().getTile(this.thrownData.targetTile.getX(), this.thrownData.targetTile.getY()).distance(roomTile));
+                        } else {
+                            distance = (int) Math.ceil(this.thrownData.room.getLayout().getTile(this.thrownData.targetTile.getX(), this.thrownData.targetTile.getY()).distance(roomTile));
                         }
 
-                        if (freezeTile instanceof InteractionFreezeTile)
-                        {
+                        if (freezeTile instanceof InteractionFreezeTile) {
                             freezeTile.setExtradata("11" + String.format("%03d", distance * 100)); //TODO Investigate this further. Probably height dependent or something.
                             freezeTiles.add((InteractionFreezeTile) freezeTile);
                             this.thrownData.room.updateItem(freezeTile);
@@ -83,10 +70,8 @@ class FreezeHandleSnowballExplosion implements Runnable
                             THashSet<Habbo> habbos = new THashSet<>();
                             habbos.addAll(this.thrownData.room.getHabbosAt(freezeTile.getX(), freezeTile.getY()));
 
-                            for (Habbo habbo : habbos)
-                            {
-                                if (habbo.getHabboInfo().getGamePlayer() != null && habbo.getHabboInfo().getGamePlayer() instanceof FreezeGamePlayer)
-                                {
+                            for (Habbo habbo : habbos) {
+                                if (habbo.getHabboInfo().getGamePlayer() != null && habbo.getHabboInfo().getGamePlayer() instanceof FreezeGamePlayer) {
                                     FreezeGamePlayer hPlayer = (FreezeGamePlayer) habbo.getHabboInfo().getGamePlayer();
                                     if (!hPlayer.canGetFrozen())
                                         continue;
@@ -98,17 +83,13 @@ class FreezeHandleSnowballExplosion implements Runnable
 
                                     ((FreezeGamePlayer) habbo.getHabboInfo().getGamePlayer()).freeze();
 
-                                    if (this.thrownData.habbo != habbo)
-                                    {
+                                    if (this.thrownData.habbo != habbo) {
                                         AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("EsA"));
                                     }
                                 }
                             }
-                        }
-                        else if (freezeTile instanceof InteractionFreezeBlock)
-                        {
-                            if (freezeTile.getExtradata().equalsIgnoreCase("0"))
-                            {
+                        } else if (freezeTile instanceof InteractionFreezeBlock) {
+                            if (freezeTile.getExtradata().equalsIgnoreCase("0")) {
                                 game.explodeBox((InteractionFreezeBlock) freezeTile, distance * 100);
                                 player.addScore(FreezeGame.DESTROY_BLOCK_POINTS);
                             }
@@ -118,9 +99,7 @@ class FreezeHandleSnowballExplosion implements Runnable
             }
 
             Emulator.getThreading().run(new FreezeResetExplosionTiles(freezeTiles, this.thrownData.room), 1000);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }

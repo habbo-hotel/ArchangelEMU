@@ -6,11 +6,9 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class RoomPickupItemEvent extends MessageHandler
-{
+public class RoomPickupItemEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int unknown = this.packet.readInt();
         int itemId = this.packet.readInt();
 
@@ -24,19 +22,14 @@ public class RoomPickupItemEvent extends MessageHandler
         if (item == null)
             return;
 
-        if(item instanceof InteractionPostIt)
+        if (item instanceof InteractionPostIt)
             return;
 
-        if (item.getUserId() == this.client.getHabbo().getHabboInfo().getId())
-        {
+        if (item.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
             room.pickUpItem(item, this.client.getHabbo());
-        }
-        else
-        {
-            if (room.hasRights(this.client.getHabbo()))
-            {
-                if (this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER))
-                {
+        } else {
+            if (room.hasRights(this.client.getHabbo())) {
+                if (this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
                     item.setUserId(this.client.getHabbo().getHabboInfo().getId());
                 }
 

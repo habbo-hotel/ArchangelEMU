@@ -19,35 +19,28 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredEffectJoinTeam extends InteractionWiredEffect
-{
+public class WiredEffectJoinTeam extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.JOIN_TEAM;
 
     private GameTeamColors teamColor = GameTeamColors.RED;
 
-    public WiredEffectJoinTeam(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectJoinTeam(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectJoinTeam(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectJoinTeam(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo != null)
-        {
-            if(habbo.getHabboInfo().getGamePlayer() == null)
-            {
-                WiredGame game = (WiredGame)room.getGame(WiredGame.class);
+        if (habbo != null) {
+            if (habbo.getHabboInfo().getGamePlayer() == null) {
+                WiredGame game = (WiredGame) room.getGame(WiredGame.class);
 
-                if(game == null)
-                {
+                if (game == null) {
                     game = new WiredGame(room);
                     room.addGame(game);
                 }
@@ -60,43 +53,36 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.getDelay() + "\t" + this.teamColor.type + "";
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split("\t");
 
-        if (data.length >= 1)
-        {
+        if (data.length >= 1) {
             this.setDelay(Integer.valueOf(data[0]));
 
-            if (data.length >= 2)
-            {
+            if (data.length >= 2) {
                 this.teamColor = GameTeamColors.values()[Integer.valueOf(data[1])];
             }
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.teamColor = GameTeamColors.RED;
         this.setDelay(0);
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -109,36 +95,28 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect
         message.appendInt(this.getType().code);
         message.appendInt(this.getDelay());
 
-        if (this.requiresTriggeringUser())
-        {
+        if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>()
-            {
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
                 @Override
-                public boolean execute(InteractionWiredTrigger object)
-                {
-                    if (!object.isTriggeredByRoomUnit())
-                    {
+                public boolean execute(InteractionWiredTrigger object) {
+                    if (!object.isTriggeredByRoomUnit()) {
                         invalidTriggers.add(object.getBaseItem().getSpriteId());
                     }
                     return true;
                 }
             });
             message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers)
-            {
+            for (Integer i : invalidTriggers) {
                 message.appendInt(i);
             }
-        }
-        else
-        {
+        } else {
             message.appendInt(0);
         }
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
         this.teamColor = GameTeamColors.values()[packet.readInt() - 1];
         int unknownInt = packet.readInt();
@@ -149,8 +127,7 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect
     }
 
     @Override
-    public boolean requiresTriggeringUser()
-    {
+    public boolean requiresTriggeringUser() {
         return true;
     }
 }

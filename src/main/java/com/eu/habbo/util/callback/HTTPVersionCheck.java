@@ -1,15 +1,5 @@
 package com.eu.habbo.util.callback;
 
-import com.eu.habbo.Emulator;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 /* public class HTTPVersionCheck implements Runnable
 {
     private void sendPost()

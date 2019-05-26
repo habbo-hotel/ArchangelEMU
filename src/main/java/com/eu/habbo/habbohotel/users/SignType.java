@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.users;
 
-public enum SignType
-{
+public enum SignType {
     ZERO(0),
     ONE(1),
     TWO(2),
@@ -24,13 +23,11 @@ public enum SignType
 
     private final int id;
 
-    SignType(int id)
-    {
+    SignType(int id) {
         this.id = id;
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 }

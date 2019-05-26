@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.modtool;
 
-public enum CfhActionType
-{
+public enum CfhActionType {
     MODS(0),
     AUTO_REPLY(1),
     AUTO_IGNORE(2),
@@ -9,21 +8,12 @@ public enum CfhActionType
 
     public final int type;
 
-    CfhActionType(int type)
-    {
+    CfhActionType(int type) {
         this.type = type;
     }
 
-    @Override
-    public String toString()
-    {
-        return this.name().toLowerCase();
-    }
-
-    public static CfhActionType get(String name)
-    {
-        switch(name)
-        {
+    public static CfhActionType get(String name) {
+        switch (name) {
             case "auto_reply":
                 return CfhActionType.AUTO_REPLY;
 
@@ -35,5 +25,10 @@ public enum CfhActionType
         }
 
         return CfhActionType.MODS;
+    }
+
+    @Override
+    public String toString() {
+        return this.name().toLowerCase();
     }
 }

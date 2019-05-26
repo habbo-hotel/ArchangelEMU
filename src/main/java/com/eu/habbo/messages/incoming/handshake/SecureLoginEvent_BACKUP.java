@@ -18,24 +18,20 @@ import com.eu.habbo.plugin.events.users.UserLoginEvent;
 
 import java.util.ArrayList;
 
-public class SecureLoginEvent_BACKUP extends MessageHandler
-{
+public class SecureLoginEvent_BACKUP extends MessageHandler {
 
 
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
 
-        if(!Emulator.isReady)
+        if (!Emulator.isReady)
             return;
 
         String sso = this.packet.readString();
 
-        if(this.client.getHabbo() == null)
-        {
+        if (this.client.getHabbo() == null) {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().loadHabbo(sso);
-            if(habbo != null)
-            {
+            if (habbo != null) {
                 habbo.setClient(this.client);
                 this.client.setHabbo(habbo);
                 this.client.getHabbo().connect();
@@ -44,9 +40,6 @@ public class SecureLoginEvent_BACKUP extends MessageHandler
                 Emulator.getGameEnvironment().getHabboManager().addHabbo(habbo);
 
                 ArrayList<ServerMessage> messages = new ArrayList<>();
-
-
-
 
 
                 messages.add(new SecureLoginOKComposer().compose());
@@ -67,8 +60,7 @@ public class SecureLoginEvent_BACKUP extends MessageHandler
                 //messages.add(new MessengerInitComposer(this.client.getHabbo()).compose());
                 //messages.add(new FriendsComposer(this.client.getHabbo()).compose());
 
-                if(this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL))
-                {
+                if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
                     messages.add(new ModToolComposer(this.client.getHabbo()).compose());
                 }
 
@@ -85,15 +77,9 @@ public class SecureLoginEvent_BACKUP extends MessageHandler
                 //this.client.sendResponse(new UserEffectsListComposer());
 
 
-
-
-
-
                 Emulator.getPluginManager().fireEvent(new UserLoginEvent(habbo, this.client.getChannel().localAddress()));
 
-            }
-            else
-            {
+            } else {
                 this.client.sendResponse(new GenericAlertComposer("Can't connect *sadpanda*"));
 
                 this.client.getChannel().close();

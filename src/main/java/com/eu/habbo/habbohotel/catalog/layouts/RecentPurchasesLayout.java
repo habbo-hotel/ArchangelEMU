@@ -6,10 +6,8 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class RecentPurchasesLayout extends CatalogPage
-{
-    public RecentPurchasesLayout(ResultSet set) throws SQLException
-    {
+public class RecentPurchasesLayout extends CatalogPage {
+    public RecentPurchasesLayout(ResultSet set) throws SQLException {
         super(set);
     }
 

@@ -11,13 +11,11 @@ import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
 
-public class SearchRoomsEvent extends MessageHandler
-{
+public class SearchRoomsEvent extends MessageHandler {
     public final static THashMap<Rank, THashMap<String, ServerMessage>> cachedResults = new THashMap<>(4);
 
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         String name = this.packet.readString();
 
         String prefix = "";
@@ -25,45 +23,33 @@ public class SearchRoomsEvent extends MessageHandler
         ArrayList<Room> rooms;
 
         ServerMessage message = null;
-        if (cachedResults.containsKey(this.client.getHabbo().getHabboInfo().getRank()))
-        {
+        if (cachedResults.containsKey(this.client.getHabbo().getHabboInfo().getRank())) {
             message = cachedResults.get(this.client.getHabbo().getHabboInfo().getRank()).get((name + "\t" + query).toLowerCase());
-        }
-        else
-        {
+        } else {
             cachedResults.put(this.client.getHabbo().getHabboInfo().getRank(), new THashMap<>());
         }
 
-        if (message == null)
-        {
-            if (name.startsWith("owner:"))
-            {
+        if (message == null) {
+            if (name.startsWith("owner:")) {
                 query = name.split("owner:")[1];
                 prefix = "owner:";
                 rooms = (ArrayList<Room>) Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(name);
-            }
-            else if (name.startsWith("tag:"))
-            {
+            } else if (name.startsWith("tag:")) {
                 query = name.split("tag:")[1];
                 prefix = "tag:";
                 rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithTag(name);
-            }
-            else if (name.startsWith("group:"))
-            {
+            } else if (name.startsWith("group:")) {
                 query = name.split("group:")[1];
                 prefix = "group:";
                 rooms = Emulator.getGameEnvironment().getRoomManager().getGroupRoomsWithName(name);
-            }
-            else
-            {
+            } else {
                 rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithName(name);
             }
 
             message = new PrivateRoomsComposer(rooms).compose();
             THashMap<String, ServerMessage> map = cachedResults.get(this.client.getHabbo().getHabboInfo().getRank());
 
-            if (map == null)
-            {
+            if (map == null) {
                 map = new THashMap<>(1);
             }
 
@@ -71,8 +57,7 @@ public class SearchRoomsEvent extends MessageHandler
             cachedResults.put(this.client.getHabbo().getHabboInfo().getRank(), map);
 
             NavigatorSearchResultEvent event = new NavigatorSearchResultEvent(this.client.getHabbo(), prefix, query, rooms);
-            if(Emulator.getPluginManager().fireEvent(event).isCancelled())
-            {
+            if (Emulator.getPluginManager().fireEvent(event).isCancelled()) {
                 return;
             }
         }

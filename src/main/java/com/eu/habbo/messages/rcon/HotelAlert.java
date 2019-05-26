@@ -9,33 +9,25 @@ import com.google.gson.Gson;
 
 import java.util.Map;
 
-public class HotelAlert extends RCONMessage<HotelAlert.JSONHotelAlert>
-{
+public class HotelAlert extends RCONMessage<HotelAlert.JSONHotelAlert> {
 
-    public HotelAlert()
-    {
+    public HotelAlert() {
         super(JSONHotelAlert.class);
     }
 
     @Override
-    public void handle(Gson gson, JSONHotelAlert object)
-    {
+    public void handle(Gson gson, JSONHotelAlert object) {
         ServerMessage serverMessage;
-        if (object.url.isEmpty())
-        {
+        if (object.url.isEmpty()) {
             serverMessage = new GenericAlertComposer(object.message).compose();
-        }
-        else
-        {
+        } else {
             serverMessage = new StaffAlertWithLinkComposer(object.message, object.url).compose();
         }
 
-        if (serverMessage != null)
-        {
-            for(Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet())
-            {
+        if (serverMessage != null) {
+            for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
                 Habbo habbo = set.getValue();
-                if(habbo.getHabboStats().blockStaffAlerts)
+                if (habbo.getHabboStats().blockStaffAlerts)
                     continue;
 
                 habbo.getClient().sendResponse(serverMessage);
@@ -43,8 +35,7 @@ public class HotelAlert extends RCONMessage<HotelAlert.JSONHotelAlert>
         }
     }
 
-    static class JSONHotelAlert
-    {
+    static class JSONHotelAlert {
 
         public String message;
 

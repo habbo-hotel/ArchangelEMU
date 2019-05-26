@@ -5,20 +5,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomMessagesPostedCountComposer extends MessageComposer
-{
+public class RoomMessagesPostedCountComposer extends MessageComposer {
     private final Room room;
     private final int count;
 
-    public RoomMessagesPostedCountComposer(Room room, int count)
-    {
+    public RoomMessagesPostedCountComposer(Room room, int count) {
         this.room = room;
         this.count = count;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomMessagesPostedCountComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendString(this.room.getName());

@@ -8,20 +8,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class AchievementProgressComposer extends MessageComposer
-{
+public class AchievementProgressComposer extends MessageComposer {
     private final Habbo habbo;
     private final Achievement achievement;
 
-    public AchievementProgressComposer(Habbo habbo, Achievement achievement)
-    {
+    public AchievementProgressComposer(Habbo habbo, Achievement achievement) {
         this.habbo = habbo;
         this.achievement = achievement;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.AchievementProgressComposer);
 
         int achievementProgress;
@@ -32,15 +29,15 @@ public class AchievementProgressComposer extends MessageComposer
         currentLevel = this.achievement.getLevelForProgress(achievementProgress);
         nextLevel = this.achievement.getNextLevel(currentLevel != null ? currentLevel.level : 0);
 
-        if(currentLevel != null && currentLevel.level == this.achievement.levels.size())
+        if (currentLevel != null && currentLevel.level == this.achievement.levels.size())
             nextLevel = null;
 
         int targetLevel = 1;
 
-        if(nextLevel != null)
+        if (nextLevel != null)
             targetLevel = nextLevel.level;
 
-        if(currentLevel != null && currentLevel.level == this.achievement.levels.size())
+        if (currentLevel != null && currentLevel.level == this.achievement.levels.size())
             targetLevel = currentLevel.level;
 
         this.response.appendInt(this.achievement.id); //ID

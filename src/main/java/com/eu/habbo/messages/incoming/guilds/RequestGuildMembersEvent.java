@@ -7,11 +7,9 @@ import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.GuildMembersComposer;
 
-public class RequestGuildMembersEvent extends MessageHandler
-{
+public class RequestGuildMembersEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int groupId = this.packet.readInt();
         int pageId = this.packet.readInt();
         String query = this.packet.readString();
@@ -19,11 +17,9 @@ public class RequestGuildMembersEvent extends MessageHandler
 
         Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(groupId);
 
-        if (g != null)
-        {
+        if (g != null) {
             boolean isAdmin = this.client.getHabbo().hasPermission("acc_guild_admin");
-            if (!isAdmin && this.client.getHabbo().getHabboStats().hasGuild(g.getId()))
-            {
+            if (!isAdmin && this.client.getHabbo().getHabboStats().hasGuild(g.getId())) {
                 GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(g, this.client.getHabbo());
                 isAdmin = member != null && member.getRank().equals(GuildRank.ADMIN);
             }

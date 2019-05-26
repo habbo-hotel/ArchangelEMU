@@ -5,27 +5,23 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class QuestCompletedComposer extends MessageComposer
-{
+public class QuestCompletedComposer extends MessageComposer {
     private final UnknownClass unknownClass;
     private final boolean unknowbOolean;
 
-    public QuestCompletedComposer(UnknownClass unknownClass, boolean unknowbOolean)
-    {
+    public QuestCompletedComposer(UnknownClass unknownClass, boolean unknowbOolean) {
         this.unknownClass = unknownClass;
         this.unknowbOolean = unknowbOolean;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.QuestCompletedComposer);
 
         return this.response;
     }
 
-    public static class UnknownClass implements ISerialize
-    {
+    public static class UnknownClass implements ISerialize {
         private final int activityPointsType;
         private final boolean accepted;
         private final int id;
@@ -33,8 +29,7 @@ public class QuestCompletedComposer extends MessageComposer
         private final int sortOrder;
         private final boolean easy;
 
-        public UnknownClass(int activityPointsType, boolean accepted, int id, String type, int sortOrder, boolean easy)
-        {
+        public UnknownClass(int activityPointsType, boolean accepted, int id, String type, int sortOrder, boolean easy) {
             this.activityPointsType = activityPointsType;
             this.accepted = accepted;
             this.id = id;
@@ -44,8 +39,7 @@ public class QuestCompletedComposer extends MessageComposer
         }
 
         @Override
-        public void serialize(ServerMessage message)
-        {
+        public void serialize(ServerMessage message) {
             message.appendString("");
             message.appendInt(0);
             message.appendInt(0);

@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.rooms;
 
-public enum RoomUnitStatus
-{
+public enum RoomUnitStatus {
     MOVE("mv", true),
     SIT("sit", true),
     LAY("lay", true),
@@ -41,34 +40,28 @@ public enum RoomUnitStatus
     public final String key;
     public final boolean removeWhenWalking;
 
-    RoomUnitStatus(String key)
-    {
+    RoomUnitStatus(String key) {
         this.key = key;
         this.removeWhenWalking = false;
     }
 
-    RoomUnitStatus(String key, boolean removeWhenWalking)
-    {
+    RoomUnitStatus(String key, boolean removeWhenWalking) {
         this.key = key;
         this.removeWhenWalking = removeWhenWalking;
     }
 
-    @Override
-    public String toString()
-    {
-        return this.key;
-    }
-
-    public static RoomUnitStatus fromString(String key)
-    {
-        for (RoomUnitStatus status : values())
-        {
-            if (status.key.equalsIgnoreCase(key))
-            {
+    public static RoomUnitStatus fromString(String key) {
+        for (RoomUnitStatus status : values()) {
+            if (status.key.equalsIgnoreCase(key)) {
                 return status;
             }
         }
 
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return this.key;
     }
 }

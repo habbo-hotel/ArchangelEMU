@@ -7,32 +7,27 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class QuestsComposer extends MessageComposer
-{
+public class QuestsComposer extends MessageComposer {
     private final List<Quest> quests;
     private final boolean unknownBoolean;
 
-    public QuestsComposer(List<Quest> quests, boolean unknownBoolean)
-    {
+    public QuestsComposer(List<Quest> quests, boolean unknownBoolean) {
         this.quests = quests;
         this.unknownBoolean = unknownBoolean;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.QuestsComposer);
         this.response.appendInt(this.quests.size());
-        for (Quest quest : this.quests)
-        {
+        for (Quest quest : this.quests) {
             this.response.append(quest);
         }
         this.response.appendBoolean(this.unknownBoolean);
         return this.response;
     }
 
-    public static class Quest implements ISerialize
-    {
+    public static class Quest implements ISerialize {
         private final String campaignCode;
         private final int completedQuestsInCampaign;
         private final int questCountInCampaign;
@@ -50,8 +45,7 @@ public class QuestsComposer extends MessageComposer
         private final String chainCode;
         private final boolean easy;
 
-        public Quest(String campaignCode, int completedQuestsInCampaign, int questCountInCampaign, int activityPointType, int id, boolean accepted, String type, String imageVersion, int rewardCurrencyAmount, String localizationCode, int completedSteps, int totalSteps, int sortOrder, String catalogPageName, String chainCode, boolean easy)
-        {
+        public Quest(String campaignCode, int completedQuestsInCampaign, int questCountInCampaign, int activityPointType, int id, boolean accepted, String type, String imageVersion, int rewardCurrencyAmount, String localizationCode, int completedSteps, int totalSteps, int sortOrder, String catalogPageName, String chainCode, boolean easy) {
             this.campaignCode = campaignCode;
             this.completedQuestsInCampaign = completedQuestsInCampaign;
             this.questCountInCampaign = questCountInCampaign;
@@ -71,8 +65,7 @@ public class QuestsComposer extends MessageComposer
         }
 
         @Override
-        public void serialize(ServerMessage message)
-        {
+        public void serialize(ServerMessage message) {
             message.appendString(this.campaignCode);
             message.appendInt(this.completedQuestsInCampaign);
             message.appendInt(this.questCountInCampaign);

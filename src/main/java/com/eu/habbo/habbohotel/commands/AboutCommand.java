@@ -3,16 +3,13 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 
 import java.util.concurrent.TimeUnit;
 
 
-public class AboutCommand extends Command
-{
-    public AboutCommand()
-    {
-        super(null, new String[]{ "about", "info", "online", "server" });
+public class AboutCommand extends Command {
+    public AboutCommand() {
+        super(null, new String[]{"about", "info", "online", "server"});
     }
 
     @Override
@@ -20,15 +17,14 @@ public class AboutCommand extends Command
         Emulator.getRuntime().gc();
 
         int seconds = Emulator.getIntUnixTimestamp() - Emulator.getTimeStarted();
-        int day = (int)TimeUnit.SECONDS.toDays(seconds);
-        long hours = TimeUnit.SECONDS.toHours(seconds) - (day *24);
-        long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds)* 60);
-        long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) *60);
+        int day = (int) TimeUnit.SECONDS.toDays(seconds);
+        long hours = TimeUnit.SECONDS.toHours(seconds) - (day * 24);
+        long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds) * 60);
+        long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) * 60);
 
         String message = "<b>" + Emulator.version + "</b>\r\n";
 
-        if (Emulator.getConfig().getBoolean("info.shown", true))
-        {
+        if (Emulator.getConfig().getBoolean("info.shown", true)) {
             message += "<b>Hotel Statistics</b>\r" +
                     "- Online Users: " + Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "\r" +
                     "- Active Rooms: " + Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + "\r" +
@@ -42,7 +38,7 @@ public class AboutCommand extends Command
                     "- Total Memory: " + Emulator.getRuntime().maxMemory() / (1024 * 1024) + "MB" + "\r\n";
         }
 
-                message += "\r" +
+        message += "\r" +
 
                 "<b>Thanks for using Arcturus. Report issues on the forums. http://arcturus.wf \r\r" +
                 "    - The General";

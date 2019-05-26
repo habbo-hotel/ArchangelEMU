@@ -14,45 +14,24 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class TalentTrackComposer extends MessageComposer
-{
-    public enum TalentTrackState
-    {
-        LOCKED(0),
-        IN_PROGRESS(1),
-        COMPLETED(2);
-
-        public final int id;
-
-        TalentTrackState(int id)
-        {
-            this.id = id;
-        }
-    }
-
+public class TalentTrackComposer extends MessageComposer {
     public final Habbo habbo;
     public final TalentTrackType type;
-
-    public TalentTrackComposer(Habbo habbo, TalentTrackType type)
-    {
+    public TalentTrackComposer(Habbo habbo, TalentTrackType type) {
         this.habbo = habbo;
         this.type = type;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.TalentTrackComposer);
         this.response.appendString(this.type.name().toLowerCase());
 
         LinkedHashMap<Integer, TalentTrackLevel> talentTrackLevels = Emulator.getGameEnvironment().getAchievementManager().getTalenTrackLevels(this.type);
-        if (talentTrackLevels != null)
-        {
+        if (talentTrackLevels != null) {
             this.response.appendInt(talentTrackLevels.size()); //Count
-            for (Map.Entry<Integer, TalentTrackLevel> set : talentTrackLevels.entrySet())
-            {
-                try
-                {
+            for (Map.Entry<Integer, TalentTrackLevel> set : talentTrackLevels.entrySet()) {
+                try {
                     TalentTrackLevel level = set.getValue();
 
                     this.response.appendInt(level.level);
@@ -61,12 +40,9 @@ public class TalentTrackComposer extends MessageComposer
 
                     int currentLevel = this.habbo.getHabboStats().talentTrackLevel(this.type);
 
-                    if (currentLevel + 1 == level.level)
-                    {
+                    if (currentLevel + 1 == level.level) {
                         state = TalentTrackState.IN_PROGRESS;
-                    }
-                    else if (currentLevel >= level.level)
-                    {
+                    } else if (currentLevel >= level.level) {
                         state = TalentTrackState.COMPLETED;
                     }
 
@@ -75,8 +51,7 @@ public class TalentTrackComposer extends MessageComposer
 
                     final TalentTrackState finalState = state;
                     level.achievements.forEachEntry((achievement, index) -> {
-                        if (achievement != null)
-                        {
+                        if (achievement != null) {
                             this.response.appendInt(achievement.id);
 
                             //TODO Move this to TalenTrackLevel class
@@ -86,30 +61,21 @@ public class TalentTrackComposer extends MessageComposer
                             int progress = Math.max(0, this.habbo.getHabboStats().getAchievementProgress(achievement));
                             AchievementLevel achievementLevel = achievement.getLevelForProgress(progress);
 
-                            if (achievementLevel == null)
-                            {
+                            if (achievementLevel == null) {
                                 achievementLevel = achievement.firstLevel();
                             }
-                            if (finalState != TalentTrackState.LOCKED)
-                            {
-                                if (achievementLevel != null && achievementLevel.progress <= progress)
-                                {
+                            if (finalState != TalentTrackState.LOCKED) {
+                                if (achievementLevel != null && achievementLevel.progress <= progress) {
                                     this.response.appendInt(2);
-                                }
-                                else
-                                {
+                                } else {
                                     this.response.appendInt(1);
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 this.response.appendInt(0);
                             }
                             this.response.appendInt(progress);
                             this.response.appendInt(achievementLevel != null ? achievementLevel.progress : 0);
-                        }
-                        else
-                        {
+                        } else {
                             this.response.appendInt(0);
                             this.response.appendInt(0);
                             this.response.appendString("");
@@ -122,43 +88,43 @@ public class TalentTrackComposer extends MessageComposer
                     });
 
 
-                    if (level.perks != null && level.perks.length > 0)
-                    {
+                    if (level.perks != null && level.perks.length > 0) {
                         this.response.appendInt(level.perks.length);
-                        for (String perk : level.perks)
-                        {
+                        for (String perk : level.perks) {
                             this.response.appendString(perk);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         this.response.appendInt(-1);
                     }
 
-                    if (!level.items.isEmpty())
-                    {
+                    if (!level.items.isEmpty()) {
                         this.response.appendInt(level.items.size());
-                        for (Item item : level.items)
-                        {
+                        for (Item item : level.items) {
                             this.response.appendString(item.getName());
                             this.response.appendInt(0);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         this.response.appendInt(-1);
                     }
-                }
-                catch (NoSuchElementException e)
-                {
+                } catch (NoSuchElementException e) {
                     return null;
                 }
             }
-        }
-        else
-        {
+        } else {
             this.response.appendInt(0);
         }
         return this.response;
+    }
+
+    public enum TalentTrackState {
+        LOCKED(0),
+        IN_PROGRESS(1),
+        COMPLETED(2);
+
+        public final int id;
+
+        TalentTrackState(int id) {
+            this.id = id;
+        }
     }
 }

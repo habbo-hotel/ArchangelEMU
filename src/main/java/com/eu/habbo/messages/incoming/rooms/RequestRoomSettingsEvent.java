@@ -6,16 +6,14 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.RoomSettingsComposer;
 
-public class RequestRoomSettingsEvent extends MessageHandler
-{
+public class RequestRoomSettingsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int roomId = this.packet.readInt();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
-        if(room != null)
+        if (room != null)
             this.client.sendResponse(new RoomSettingsComposer(room));
 
         AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModChatFloodFilterSeen"));

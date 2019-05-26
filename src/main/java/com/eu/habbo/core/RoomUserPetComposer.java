@@ -5,15 +5,13 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUserPetComposer extends MessageComposer
-{
+public class RoomUserPetComposer extends MessageComposer {
     private final int petType;
     private final int race;
     private final String color;
     private final Habbo habbo;
 
-    public RoomUserPetComposer(int petType, int race, String color, Habbo habbo)
-    {
+    public RoomUserPetComposer(int petType, int race, String color, Habbo habbo) {
         this.petType = petType;
         this.race = race;
         this.color = color;
@@ -21,8 +19,7 @@ public class RoomUserPetComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomUsersComposer);
         this.response.appendInt(1);
         this.response.appendInt(this.habbo.getHabboInfo().getId());

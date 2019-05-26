@@ -6,16 +6,13 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class LoyaltyVipBuyLayout extends CatalogPage
-{
-    public LoyaltyVipBuyLayout(ResultSet set) throws SQLException
-    {
+public class LoyaltyVipBuyLayout extends CatalogPage {
+    public LoyaltyVipBuyLayout(ResultSet set) throws SQLException {
         super(set);
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendString("loyalty_vip_buy");
         message.appendInt(3);
         message.appendString(super.getHeaderImage());

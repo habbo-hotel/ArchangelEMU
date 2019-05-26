@@ -6,47 +6,33 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 
-public class RoomUnitTeleportWalkToAction implements Runnable
-{
+public class RoomUnitTeleportWalkToAction implements Runnable {
     private final Habbo habbo;
     private final HabboItem habboItem;
     private final Room room;
 
-    public RoomUnitTeleportWalkToAction(Habbo habbo, HabboItem habboItem, Room room)
-    {
+    public RoomUnitTeleportWalkToAction(Habbo habbo, HabboItem habboItem, Room room) {
         this.habbo = habbo;
         this.habboItem = habboItem;
         this.room = room;
     }
 
     @Override
-    public void run()
-    {
-        if(this.habbo.getHabboInfo().getCurrentRoom() == this.room)
-        {
-            if(this.habboItem.getRoomId() == this.room.getId())
-            {
+    public void run() {
+        if (this.habbo.getHabboInfo().getCurrentRoom() == this.room) {
+            if (this.habboItem.getRoomId() == this.room.getId()) {
                 RoomTile tile = HabboItem.getSquareInFront(this.room.getLayout(), this.habboItem);
 
-                if (tile != null)
-                {
-                    if (this.habbo.getRoomUnit().getGoal().equals(tile))
-                    {
-                        if (this.habbo.getRoomUnit().getCurrentLocation().equals(tile))
-                        {
-                            try
-                            {
+                if (tile != null) {
+                    if (this.habbo.getRoomUnit().getGoal().equals(tile)) {
+                        if (this.habbo.getRoomUnit().getCurrentLocation().equals(tile)) {
+                            try {
                                 this.habboItem.onClick(this.habbo.getClient(), this.room, new Object[]{0});
-                            }
-                            catch (Exception e)
-                            {
+                            } catch (Exception e) {
                                 Emulator.getLogging().logErrorLine(e);
                             }
-                        }
-                        else
-                        {
-                            if (tile.isWalkable())
-                            {
+                        } else {
+                            if (tile.isWalkable()) {
                                 this.habbo.getRoomUnit().setGoalLocation(tile);
                                 Emulator.getThreading().run(this, this.habbo.getRoomUnit().getPath().size() + 2 * 510);
                             }

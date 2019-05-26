@@ -6,15 +6,12 @@ import com.eu.habbo.habbohotel.items.Item;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionFootballScoreboardBlue extends InteractionFootballScoreboard
-{
-    public InteractionFootballScoreboardBlue(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionFootballScoreboardBlue extends InteractionFootballScoreboard {
+    public InteractionFootballScoreboardBlue(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem, GameTeamColors.BLUE);
     }
 
-    public InteractionFootballScoreboardBlue(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionFootballScoreboardBlue(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells, GameTeamColors.BLUE);
     }
 }

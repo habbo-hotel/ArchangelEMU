@@ -1,7 +1,6 @@
 package com.eu.habbo.messages.outgoing.generic.alerts;
 
-public enum BubbleAlertKeys
-{
+public enum BubbleAlertKeys {
     ADMIN_PERSISTENT("admin.persistent"),
     ADMIN_TRANSIENT("admin.transient"),
     BUILDERS_CLUB_MEMBERSHIP_EXPIRED("builders_club.membership_expired"),
@@ -37,8 +36,7 @@ public enum BubbleAlertKeys
 
     public final String key;
 
-    BubbleAlertKeys(String key)
-    {
+    BubbleAlertKeys(String key) {
         this.key = key;
     }
 }

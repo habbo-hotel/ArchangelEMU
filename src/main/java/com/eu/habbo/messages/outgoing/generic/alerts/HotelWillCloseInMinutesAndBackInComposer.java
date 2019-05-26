@@ -4,20 +4,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class HotelWillCloseInMinutesAndBackInComposer extends MessageComposer
-{
+public class HotelWillCloseInMinutesAndBackInComposer extends MessageComposer {
     private final int closeInMinutes;
     private final int reopenInMinutes;
 
-    public HotelWillCloseInMinutesAndBackInComposer(int closeInMinutes, int reopenInMinutes)
-    {
+    public HotelWillCloseInMinutesAndBackInComposer(int closeInMinutes, int reopenInMinutes) {
         this.closeInMinutes = closeInMinutes;
         this.reopenInMinutes = reopenInMinutes;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.HotelWillCloseInMinutesAndBackInComposer);
         this.response.appendBoolean(true);
         this.response.appendInt(this.closeInMinutes);

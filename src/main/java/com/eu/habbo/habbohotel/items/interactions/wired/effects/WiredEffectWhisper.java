@@ -21,25 +21,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredEffectWhisper extends InteractionWiredEffect
-{
+public class WiredEffectWhisper extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.SHOW_MESSAGE;
 
     protected String message = "";
 
-    public WiredEffectWhisper(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectWhisper(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectWhisper(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectWhisper(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(0);
         message.appendInt(0);
@@ -51,41 +47,32 @@ public class WiredEffectWhisper extends InteractionWiredEffect
         message.appendInt(type.code);
         message.appendInt(this.getDelay());
 
-        if (this.requiresTriggeringUser())
-        {
+        if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>()
-            {
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
                 @Override
-                public boolean execute(InteractionWiredTrigger object)
-                {
-                    if (!object.isTriggeredByRoomUnit())
-                    {
+                public boolean execute(InteractionWiredTrigger object) {
+                    if (!object.isTriggeredByRoomUnit()) {
                         invalidTriggers.add(object.getBaseItem().getSpriteId());
                     }
                     return true;
                 }
             });
             message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers)
-            {
+            for (Integer i : invalidTriggers) {
                 message.appendInt(i);
             }
-        }
-        else
-        {
+        } else {
             message.appendInt(0);
         }
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
 
         this.message = Emulator.getGameEnvironment().getWordFilter().filter(packet.readString(), null);
-        if (this.message.length() > 100)
-        {
+        if (this.message.length() > 100) {
             this.message = "";
         }
         packet.readInt();
@@ -94,24 +81,17 @@ public class WiredEffectWhisper extends InteractionWiredEffect
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
-        if(this.message.length() > 0)
-        {
-            if(roomUnit != null)
-            {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if (this.message.length() > 0) {
+            if (roomUnit != null) {
                 Habbo habbo = room.getHabbo(roomUnit);
 
-                if (habbo != null)
-                {
+                if (habbo != null) {
                     habbo.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(this.message.replace("%user%", habbo.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + ""), habbo, habbo, RoomChatMessageBubbles.WIRED)));
                     return true;
                 }
-            }
-            else
-            {
-                for(Habbo h : room.getHabbos())
-                {
+            } else {
+                for (Habbo h : room.getHabbos()) {
                     h.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(this.message.replace("%user%", h.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + ""), h, h, RoomChatMessageBubbles.WIRED)));
                 }
 
@@ -122,40 +102,34 @@ public class WiredEffectWhisper extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.getDelay() + "\t" + this.message;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String wireData = set.getString("wired_data");
         this.message = "";
 
-        if(wireData.split("\t").length >= 2)
-        {
+        if (wireData.split("\t").length >= 2) {
             super.setDelay(Integer.valueOf(wireData.split("\t")[0]));
             this.message = wireData.split("\t")[1];
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.message = "";
         this.setDelay(0);
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public boolean requiresTriggeringUser()
-    {
+    public boolean requiresTriggeringUser() {
         return true;
     }
 }

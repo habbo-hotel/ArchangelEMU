@@ -4,18 +4,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PickMonthlyClubGiftNotificationComposer extends MessageComposer
-{
+public class PickMonthlyClubGiftNotificationComposer extends MessageComposer {
     private final int count;
 
-    public PickMonthlyClubGiftNotificationComposer(int count)
-    {
+    public PickMonthlyClubGiftNotificationComposer(int count) {
         this.count = count;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PickMonthlyClubGiftNotificationComposer);
         this.response.appendInt(this.count);
         return this.response;

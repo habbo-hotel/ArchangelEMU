@@ -1,7 +1,6 @@
 package com.eu.habbo.plugin;
 
-public enum EventPriority
-{
+public enum EventPriority {
 
     LOWEST(0),
 
@@ -17,13 +16,11 @@ public enum EventPriority
 
     private final int slot;
 
-    EventPriority(int slot)
-    {
+    EventPriority(int slot) {
         this.slot = slot;
     }
 
-    public int getSlot()
-    {
+    public int getSlot() {
         return this.slot;
     }
 }

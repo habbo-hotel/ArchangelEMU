@@ -6,18 +6,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UserClubComposer extends MessageComposer
-{
+public class UserClubComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public UserClubComposer(Habbo habbo)
-    {
+    public UserClubComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UserClubComposer);
 
         this.response.appendString("club_habbo");
@@ -25,8 +22,7 @@ public class UserClubComposer extends MessageComposer
         int endTimestamp = this.habbo.getHabboStats().getClubExpireTimestamp();
         int now = Emulator.getIntUnixTimestamp();
 
-        if(endTimestamp >= now)
-        {
+        if (endTimestamp >= now) {
 
 
             int days = ((endTimestamp - Emulator.getIntUnixTimestamp()) / 86400);
@@ -37,8 +33,7 @@ public class UserClubComposer extends MessageComposer
 
             int months = 0;
 
-            if(days > 31)
-            {
+            if (days > 31) {
                 months = (int) Math.floor(days / 31);
                 days = days - (months * 31);
             }
@@ -47,9 +42,7 @@ public class UserClubComposer extends MessageComposer
             this.response.appendInt(1);
             this.response.appendInt(months);
             this.response.appendInt(years);
-        }
-        else
-        {
+        } else {
             this.response.appendInt(0);
             this.response.appendInt(7);
             this.response.appendInt(0);
@@ -62,12 +55,9 @@ public class UserClubComposer extends MessageComposer
 
         long remaining = (endTimestamp - Emulator.getIntUnixTimestamp()) * 1000;
 
-        if (remaining > Integer.MAX_VALUE || remaining <= 0)
-        {
+        if (remaining > Integer.MAX_VALUE || remaining <= 0) {
             this.response.appendInt(Integer.MAX_VALUE);
-        }
-        else
-        {
+        } else {
             this.response.appendInt((int) remaining);
         }
 

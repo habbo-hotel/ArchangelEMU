@@ -13,26 +13,20 @@ import com.eu.habbo.messages.outgoing.guilds.GuildEditFailComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.plugin.events.guilds.GuildPurchasedEvent;
 
-public class RequestGuildBuyEvent extends MessageHandler
-{
+public class RequestGuildBuyEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if (!this.client.getHabbo().hasPermission("acc_infinite_credits"))
-        {
+    public void handle() throws Exception {
+        if (!this.client.getHabbo().hasPermission("acc_infinite_credits")) {
             int guildPrice = Emulator.getConfig().getInt("catalog.guild.price");
-            if (this.client.getHabbo().getHabboInfo().getCredits() >= guildPrice)
-            {
+            if (this.client.getHabbo().getHabboInfo().getCredits() >= guildPrice) {
                 this.client.getHabbo().giveCredits(-guildPrice);
-            }
-            else
-            {
+            } else {
                 this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                 return;
             }
         }
 
-        if(Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && this.client.getHabbo().getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
+        if (Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && this.client.getHabbo().getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
             this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.HC_REQUIRED));
             return;
         }
@@ -44,17 +38,14 @@ public class RequestGuildBuyEvent extends MessageHandler
 
         Room r = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
-        if(r != null)
-        {
-            if(r.hasGuild()) {
+        if (r != null) {
+            if (r.hasGuild()) {
                 this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.ROOM_ALREADY_IN_USE));
                 return;
             }
 
-            if(r.getOwnerId() == this.client.getHabbo().getHabboInfo().getId())
-            {
-                if (r.getGuildId() == 0)
-                {
+            if (r.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
+                if (r.getGuildId() == 0) {
                     int colorOne = this.packet.readInt();
                     int colorTwo = this.packet.readInt();
 
@@ -64,18 +55,14 @@ public class RequestGuildBuyEvent extends MessageHandler
 
                     byte base = 1;
 
-                    while(base < count)
-                    {
-                        int id      = this.packet.readInt();
-                        int color   = this.packet.readInt();
-                        int pos     = this.packet.readInt();
+                    while (base < count) {
+                        int id = this.packet.readInt();
+                        int color = this.packet.readInt();
+                        int pos = this.packet.readInt();
 
-                        if(base == 1)
-                        {
+                        if (base == 1) {
                             badge += "b";
-                        }
-                        else
-                        {
+                        } else {
                             badge += "s";
                         }
 
@@ -88,16 +75,14 @@ public class RequestGuildBuyEvent extends MessageHandler
 
                     r.setGuild(guild.getId());
                     r.setNeedsUpdate(true);
-                    
-                    if (Emulator.getConfig().getBoolean("imager.internal.enabled")) 
-                    {
+
+                    if (Emulator.getConfig().getBoolean("imager.internal.enabled")) {
                         Emulator.getBadgeImager().generate(guild);
                     }
-                    
+
                     this.client.sendResponse(new PurchaseOKComposer());
                     this.client.sendResponse(new GuildBoughtComposer(guild));
-                    for (Habbo habbo : r.getHabbos())
-                    {
+                    for (Habbo habbo : r.getHabbos()) {
                         habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, null));
                     }
                     r.refreshGuild(guild);
@@ -106,9 +91,7 @@ public class RequestGuildBuyEvent extends MessageHandler
 
                     Emulator.getGameEnvironment().getGuildManager().addGuild(guild);
                 }
-            }
-            else
-            {
+            } else {
                 String message = Emulator.getTexts().getValue("scripter.warning.guild.buy.owner").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", r.getName().replace("%owner%", r.getOwnerName()));
                 ScripterManager.scripterDetected(this.client, message);
                 Emulator.getLogging().logUserLine(message);

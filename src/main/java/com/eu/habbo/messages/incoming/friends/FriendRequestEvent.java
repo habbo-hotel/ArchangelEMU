@@ -15,16 +15,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class FriendRequestEvent extends MessageHandler
-{
+public class FriendRequestEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         String username = this.packet.readString();
         Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(username);
 
-        if(Emulator.getPluginManager().fireEvent(new UserRequestFriendshipEvent(this.client.getHabbo(), username, habbo)).isCancelled())
-        {
+        if (Emulator.getPluginManager().fireEvent(new UserRequestFriendshipEvent(this.client.getHabbo(), username, habbo)).isCancelled()) {
             this.client.sendResponse(new FriendRequestErrorComposer(2));
             return;
         }
@@ -33,63 +30,48 @@ public class FriendRequestEvent extends MessageHandler
         boolean allowFriendRequests = true;
 
         FriendRequest friendRequest = this.client.getHabbo().getMessenger().findFriendRequest(username);
-        if (friendRequest != null)
-        {
+        if (friendRequest != null) {
             this.client.getHabbo().getMessenger().acceptFriendRequest(friendRequest.getId(), this.client.getHabbo().getHabboInfo().getId());
             return;
         }
 
-        if(!Messenger.canFriendRequest(this.client.getHabbo(), username))
-        {
+        if (!Messenger.canFriendRequest(this.client.getHabbo(), username)) {
             this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_FOUND));
             return;
         }
 
-        if(habbo == null)
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users_settings.block_friendrequests, users.id FROM users INNER JOIN users_settings ON users.id = users_settings.user_id WHERE username = ? LIMIT 1"))
-            {
+        if (habbo == null) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users_settings.block_friendrequests, users.id FROM users INNER JOIN users_settings ON users.id = users_settings.user_id WHERE username = ? LIMIT 1")) {
                 statement.setString(1, username);
-                try (ResultSet set = statement.executeQuery())
-                {
-                    while (set.next())
-                    {
+                try (ResultSet set = statement.executeQuery()) {
+                    while (set.next()) {
                         id = set.getInt("id");
                         allowFriendRequests = set.getString("block_friendrequests").equalsIgnoreCase("0");
                     }
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
                 return;
             }
-        }
-        else
-        {
+        } else {
             id = habbo.getHabboInfo().getId();
             allowFriendRequests = !habbo.getHabboStats().blockFriendRequests;
-            if(allowFriendRequests)
+            if (allowFriendRequests)
                 habbo.getClient().sendResponse(new FriendRequestComposer(this.client.getHabbo()));
         }
 
-        if(id != 0)
-        {
-            if(!allowFriendRequests)
-            {
+        if (id != 0) {
+            if (!allowFriendRequests) {
                 this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_ACCEPTING_REQUESTS));
                 return;
             }
 
-            if(this.client.getHabbo().getMessenger().getFriends().values().size() >= Messenger.friendLimit(this.client.getHabbo()) && !this.client.getHabbo().hasPermission("acc_infinite_friends"))
-            {
+            if (this.client.getHabbo().getMessenger().getFriends().values().size() >= Messenger.friendLimit(this.client.getHabbo()) && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
                 this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.FRIEND_LIST_OWN_FULL));
                 return;
             }
             Messenger.makeFriendRequest(this.client.getHabbo().getHabboInfo().getId(), id);
-        }
-        else
-        {
+        } else {
             this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_FOUND));
         }
     }

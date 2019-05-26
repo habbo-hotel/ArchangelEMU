@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuildJoinErrorComposer extends MessageComposer
-{
+public class GuildJoinErrorComposer extends MessageComposer {
     public static final int GROUP_FULL = 0;
     public static final int GROUP_LIMIT_EXCEED = 1;
     public static final int GROUP_CLOSED = 2;
@@ -16,14 +15,12 @@ public class GuildJoinErrorComposer extends MessageComposer
 
     private final int code;
 
-    public GuildJoinErrorComposer(int code)
-    {
+    public GuildJoinErrorComposer(int code) {
         this.code = code;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuildJoinErrorComposer);
         this.response.appendInt(this.code);
         return this.response;

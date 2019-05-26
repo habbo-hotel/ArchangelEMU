@@ -7,36 +7,30 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessagesForYouComposer extends MessageComposer
-{
+public class MessagesForYouComposer extends MessageComposer {
     private final String[] messages;
     private final List<String> newMessages;
 
-    public MessagesForYouComposer(String[] messages)
-    {
+    public MessagesForYouComposer(String[] messages) {
         this.messages = messages;
         this.newMessages = new ArrayList<>();
     }
 
-    public MessagesForYouComposer(List<String> newMessages)
-    {
+    public MessagesForYouComposer(List<String> newMessages) {
         this.newMessages = newMessages;
         this.messages = new String[]{};
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.MessagesForYouComposer);
         this.response.appendInt(this.messages.length + this.newMessages.size());
 
-        for(String s : this.messages)
-        {
+        for (String s : this.messages) {
             this.response.appendString(s);
         }
 
-        for (String s : this.newMessages)
-        {
+        for (String s : this.newMessages) {
             this.response.appendString(s);
         }
 

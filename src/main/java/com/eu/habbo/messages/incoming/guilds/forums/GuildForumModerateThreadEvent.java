@@ -23,7 +23,7 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
         ForumThread thread = ForumThread.getById(threadId);
 
-        if(guild == null || thread == null) {
+        if (guild == null || thread == null) {
             this.client.sendResponse(new ConnectionErrorComposer(404));
             return;
         }
@@ -31,7 +31,7 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
         boolean isStaff = this.client.getHabbo().hasPermission("acc_modtool_ticket_q");
 
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
-        if(member == null) {
+        if (member == null) {
             this.client.sendResponse(new ConnectionErrorComposer(401));
             return;
         }
@@ -43,7 +43,7 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
             return;
         }
 
-        if(state == ForumThreadState.HIDDEN_BY_STAFF.getStateId() && !isStaff) {
+        if (state == ForumThreadState.HIDDEN_BY_STAFF.getStateId() && !isStaff) {
             this.client.sendResponse(new ConnectionErrorComposer(403));
             return;
         }

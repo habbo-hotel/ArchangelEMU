@@ -6,21 +6,18 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 
-class RemoveFloorItemTask implements Runnable
-{
+class RemoveFloorItemTask implements Runnable {
     private final Room room;
     private final HabboItem item;
 
-    public RemoveFloorItemTask(Room room, HabboItem item)
-    {
+    public RemoveFloorItemTask(Room room, HabboItem item) {
         this.room = room;
         this.item = item;
     }
 
     @Override
-    public void run()
-    {
-        if(this.item == null || this.room == null)
+    public void run() {
+        if (this.item == null || this.room == null)
             return;
 
         RoomTile tile = this.room.getLayout().getTile(this.item.getX(), this.item.getY());

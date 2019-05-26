@@ -12,32 +12,27 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionDateRangeActive extends InteractionWiredCondition
-{
+public class WiredConditionDateRangeActive extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.DATE_RANGE;
 
     private int startDate;
     private int endDate;
 
-    public WiredConditionDateRangeActive(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredConditionDateRangeActive(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredConditionDateRangeActive(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredConditionDateRangeActive(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public WiredConditionType getType()
-    {
+    public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -54,8 +49,7 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         packet.readInt();
         this.startDate = packet.readInt();
         this.endDate = packet.readInt();
@@ -63,39 +57,31 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         int time = Emulator.getIntUnixTimestamp();
         return this.startDate < time && this.endDate >= time;
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.startDate + "\t" + this.endDate;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split("\t");
 
-        if (data.length == 2)
-        {
-            try
-            {
+        if (data.length == 2) {
+            try {
                 this.startDate = Integer.valueOf(data[0]);
                 this.endDate = Integer.valueOf(data[1]);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
             }
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.startDate = 0;
         this.endDate = 0;
     }

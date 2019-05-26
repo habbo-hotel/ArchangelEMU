@@ -5,20 +5,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PetBoughtNotificationComposer extends MessageComposer
-{
+public class PetBoughtNotificationComposer extends MessageComposer {
     private final Pet pet;
     private final boolean gift;
 
-    public PetBoughtNotificationComposer(Pet pet, boolean gift)
-    {
+    public PetBoughtNotificationComposer(Pet pet, boolean gift) {
         this.pet = pet;
         this.gift = gift;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PetBoughtNotificationComposer);
         this.response.appendBoolean(this.gift);
         this.pet.serialize(this.response);

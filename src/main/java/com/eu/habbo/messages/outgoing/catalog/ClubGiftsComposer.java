@@ -10,11 +10,9 @@ import gnu.trove.iterator.TIntObjectIterator;
 
 import java.util.NoSuchElementException;
 
-public class ClubGiftsComposer extends MessageComposer
-{
+public class ClubGiftsComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ClubGiftsComposer);
 
         this.response.appendInt(0); //Days Until Next Gift
@@ -22,63 +20,48 @@ public class ClubGiftsComposer extends MessageComposer
 
         CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(Emulator.getConfig().getInt("catalog.page.vipgifts"));
 
-        if (page != null)
-        {
+        if (page != null) {
             this.response.appendInt(page.getCatalogItems().size());
 
             TIntObjectIterator<CatalogItem> iterator = page.getCatalogItems().iterator();
-            for (int i = page.getCatalogItems().size(); i-- > 0; )
-            {
-                try
-                {
+            for (int i = page.getCatalogItems().size(); i-- > 0; ) {
+                try {
                     iterator.advance();
 
                     CatalogItem item = iterator.value();
 
-                    if (item != null)
-                    {
+                    if (item != null) {
                         item.serialize(this.response);
                     }
-                }
-                catch (NoSuchElementException e)
-                {
+                } catch (NoSuchElementException e) {
                     break;
                 }
             }
 
             this.response.appendInt(page.getCatalogItems().size());
             iterator = page.getCatalogItems().iterator();
-            for (int i = page.getCatalogItems().size(); i-- > 0; )
-            {
-                try
-                {
+            for (int i = page.getCatalogItems().size(); i-- > 0; ) {
+                try {
                     iterator.advance();
 
                     CatalogItem item = iterator.value();
 
-                    if (item != null)
-                    {
+                    if (item != null) {
                         this.response.appendInt(item.getId());
                         this.response.appendBoolean(true);
                         this.response.appendInt(i);
                         this.response.appendBoolean(true);
-                    }
-                    else
-                    {
+                    } else {
                         this.response.appendInt(-100);
                         this.response.appendBoolean(false);
                         this.response.appendInt(-100);
                         this.response.appendBoolean(false);
                     }
-                }
-                catch (NoSuchElementException e)
-                {
+                } catch (NoSuchElementException e) {
                     break;
                 }
             }
-        }
-        else
-        {
+        } else {
             this.response.appendInt(0);
             this.response.appendInt(0);
         }

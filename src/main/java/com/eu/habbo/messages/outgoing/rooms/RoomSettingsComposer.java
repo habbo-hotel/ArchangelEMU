@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomSettingsComposer extends MessageComposer
-{
+public class RoomSettingsComposer extends MessageComposer {
     private final Room room;
 
-    public RoomSettingsComposer(Room room)
-    {
+    public RoomSettingsComposer(Room room) {
         this.room = room;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomSettingsComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendString(this.room.getName());
@@ -26,19 +23,15 @@ public class RoomSettingsComposer extends MessageComposer
         this.response.appendInt(this.room.getUsersMax());
         this.response.appendInt(this.room.getUsersMax());
 
-        if (!this.room.getTags().isEmpty())
-        {
+        if (!this.room.getTags().isEmpty()) {
             this.response.appendInt(this.room.getTags().split(";").length);
-            for (String tag : this.room.getTags().split(";"))
-            {
+            for (String tag : this.room.getTags().split(";")) {
                 this.response.appendString(tag);
             }
-        }
-        else
-        {
+        } else {
             this.response.appendInt(0);
         }
-        
+
         //this.response.appendInt(this.room.getRights().size());
         this.response.appendInt(this.room.getTradeMode()); //Trade Mode
         this.response.appendInt(this.room.isAllowPets() ? 1 : 0);

@@ -7,15 +7,12 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guides.GuideSessionMessageComposer;
 
-public class GuideUserMessageEvent extends MessageHandler
-{
+public class GuideUserMessageEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByHabbo(this.client.getHabbo());
 
-        if(tour != null)
-        {
+        if (tour != null) {
             GuideChatMessage chatMessage = new GuideChatMessage(this.client.getHabbo().getHabboInfo().getId(), this.packet.readString(), Emulator.getIntUnixTimestamp());
             tour.addMessage(chatMessage);
             ServerMessage serverMessage = new GuideSessionMessageComposer(chatMessage).compose();

@@ -11,30 +11,24 @@ import gnu.trove.map.hash.THashMap;
 
 import java.util.Map;
 
-public class RequestCraftingRecipesAvailableEvent extends MessageHandler
-{
+public class RequestCraftingRecipesAvailableEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int altarId = this.packet.readInt();
 
         HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(altarId);
 
         CraftingAltar altar = Emulator.getGameEnvironment().getCraftingManager().getAltar(item.getBaseItem());
 
-        if (altar != null)
-        {
+        if (altar != null) {
             Map<Item, Integer> items = new THashMap<>();
 
             int count = this.packet.readInt();
-            for (int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++) {
                 HabboItem habboItem = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(this.packet.readInt());
 
-                if (habboItem != null)
-                {
-                    if (!items.containsKey(habboItem.getBaseItem()))
-                    {
+                if (habboItem != null) {
+                    if (!items.containsKey(habboItem.getBaseItem())) {
                         items.put(habboItem.getBaseItem(), 0);
                     }
 
@@ -43,8 +37,7 @@ public class RequestCraftingRecipesAvailableEvent extends MessageHandler
             }
 
             CraftingRecipe equalsRecipe = altar.getRecipe(items);
-            if (equalsRecipe != null && this.client.getHabbo().getHabboStats().hasRecipe(equalsRecipe.getId()))
-            {
+            if (equalsRecipe != null && this.client.getHabbo().getHabboStats().hasRecipe(equalsRecipe.getId())) {
                 //this.client.sendResponse(new CraftingRecipesAvailableComposer(-1, true));
                 //this.client.sendResponse(new CraftingRecipeComposer(equalsRecipe));
                 //this.client.sendResponse(new CraftingResultComposer(equalsRecipe, true));
@@ -54,16 +47,13 @@ public class RequestCraftingRecipesAvailableEvent extends MessageHandler
 
             boolean found = false;
             int c = recipes.size();
-            for (Map.Entry<CraftingRecipe, Boolean> set : recipes.entrySet())
-            {
-                if (this.client.getHabbo().getHabboStats().hasRecipe(set.getKey().getId()))
-                {
+            for (Map.Entry<CraftingRecipe, Boolean> set : recipes.entrySet()) {
+                if (this.client.getHabbo().getHabboStats().hasRecipe(set.getKey().getId())) {
                     c--;
                     continue;
                 }
 
-                if (set.getValue())
-                {
+                if (set.getValue()) {
                     found = true;
                     break;
                 }

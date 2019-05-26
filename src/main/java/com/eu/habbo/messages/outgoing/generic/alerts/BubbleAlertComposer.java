@@ -7,38 +7,32 @@ import gnu.trove.map.hash.THashMap;
 
 import java.util.Map;
 
-public class BubbleAlertComposer extends MessageComposer
-{
+public class BubbleAlertComposer extends MessageComposer {
     private final String errorKey;
     private final THashMap<String, String> keys;
 
-    public BubbleAlertComposer(String errorKey, THashMap<String, String> keys)
-    {
+    public BubbleAlertComposer(String errorKey, THashMap<String, String> keys) {
         this.errorKey = errorKey;
         this.keys = keys;
     }
 
-    public BubbleAlertComposer(String errorKey, String message)
-    {
+    public BubbleAlertComposer(String errorKey, String message) {
         this.errorKey = errorKey;
         this.keys = new THashMap<>();
         this.keys.put("message", message);
     }
 
-    public BubbleAlertComposer(String errorKey)
-    {
+    public BubbleAlertComposer(String errorKey) {
         this.errorKey = errorKey;
         this.keys = new THashMap<>();
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.BubbleAlertComposer);
         this.response.appendString(this.errorKey);
         this.response.appendInt(this.keys.size());
-        for(Map.Entry<String, String> set : this.keys.entrySet())
-        {
+        for (Map.Entry<String, String> set : this.keys.entrySet()) {
             this.response.appendString(set.getKey());
             this.response.appendString(set.getValue());
         }

@@ -4,41 +4,33 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.core.ConfigurationManager;
 import com.zaxxer.hikari.HikariDataSource;
 
-public class Database
-{
+public class Database {
 
     private HikariDataSource dataSource;
 
 
     private DatabasePool databasePool;
-    
-    public Database(ConfigurationManager config)
-    {
+
+    public Database(ConfigurationManager config) {
 
         long millis = System.currentTimeMillis();
 
         boolean SQLException = false;
 
-        try
-        {
+        try {
             this.databasePool = new DatabasePool();
-            if (!this.databasePool.getStoragePooling(config))
-            {
+            if (!this.databasePool.getStoragePooling(config)) {
                 Emulator.getLogging().logStart("Failed to connect to the database. Please check config.ini and make sure the MySQL process is running. Shutting down...");
                 SQLException = true;
                 return;
             }
             this.dataSource = this.databasePool.getDatabase();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             SQLException = true;
             e.printStackTrace();
             Emulator.getLogging().logStart("Failed to connect to your database.");
             Emulator.getLogging().logStart(e.getMessage());
-        }
-        finally
-        {
+        } finally {
             if (SQLException)
                 Emulator.prepareShutdown();
         }
@@ -47,23 +39,19 @@ public class Database
     }
 
 
-    public void dispose()
-    {
-        if (this.databasePool != null)
-        {
+    public void dispose() {
+        if (this.databasePool != null) {
             this.databasePool.getDatabase().close();
         }
 
         this.dataSource.close();
     }
 
-    public HikariDataSource getDataSource()
-    {
+    public HikariDataSource getDataSource() {
         return this.dataSource;
     }
 
-    public DatabasePool getDatabasePool()
-    {
+    public DatabasePool getDatabasePool() {
         return this.databasePool;
     }
 }

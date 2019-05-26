@@ -7,17 +7,15 @@ import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumDataComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadsComposer;
 import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 
-public class GuildForumThreadsEvent extends MessageHandler
-{
+public class GuildForumThreadsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int guildId = packet.readInt();
         int index = packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if(guild == null) {
+        if (guild == null) {
             this.client.sendResponse(new ConnectionErrorComposer(404));
             return;
         }

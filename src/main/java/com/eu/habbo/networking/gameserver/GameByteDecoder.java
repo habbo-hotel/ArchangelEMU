@@ -9,16 +9,13 @@ import io.netty.util.CharsetUtil;
 
 import java.util.List;
 
-public class GameByteDecoder extends ByteToMessageDecoder
-{
+public class GameByteDecoder extends ByteToMessageDecoder {
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out)
-    {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         in.markReaderIndex();
 
         //4 bytes length + 2 bytes header
-        if (in.readableBytes() < 6)
-        {
+        if (in.readableBytes() < 6) {
             in.resetReaderIndex();
             return;
         }
@@ -30,8 +27,7 @@ public class GameByteDecoder extends ByteToMessageDecoder
 
         //}
 
-        if (length == 1014001516)
-        {
+        if (length == 1014001516) {
             in.resetReaderIndex();
             //in.readBytes(in.readableBytes());
 
@@ -46,8 +42,7 @@ public class GameByteDecoder extends ByteToMessageDecoder
             return;
         }
 
-        if (in.readableBytes() < length || length < 0)
-        {
+        if (in.readableBytes() < length || length < 0) {
             in.resetReaderIndex();
             return;
         }

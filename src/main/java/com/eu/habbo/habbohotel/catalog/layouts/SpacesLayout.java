@@ -8,14 +8,12 @@ import java.sql.SQLException;
 
 public class SpacesLayout extends CatalogPage {
 
-    public SpacesLayout(ResultSet set) throws SQLException
-    {
+    public SpacesLayout(ResultSet set) throws SQLException {
         super(set);
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendString("spaces_new");
         message.appendInt(3);
         message.appendString(super.getHeaderImage());

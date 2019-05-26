@@ -11,20 +11,16 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.Map;
 
-public class FriendsComposer extends MessageComposer
-{
+public class FriendsComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public FriendsComposer(Habbo habbo)
-    {
+    public FriendsComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
-        try
-        {
+    public ServerMessage compose() {
+        try {
             this.response.init(Outgoing.FriendsComposer);
 
             //this.response.appendInt(300);
@@ -70,9 +66,7 @@ public class FriendsComposer extends MessageComposer
             }*/
 
             return this.response;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
         return null;

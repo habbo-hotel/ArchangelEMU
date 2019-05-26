@@ -44,44 +44,36 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public class TestCommand extends Command
-{
+public class TestCommand extends Command {
     public static boolean stopThreads = true;
 
-    public TestCommand()
-    {
-        super("acc_debug", new String[]{ "test" });
+    public TestCommand() {
+        super("acc_debug", new String[]{"test"});
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
         if (true) return true;
-        if (params[1].equalsIgnoreCase("ut"))
-        {
+        if (params[1].equalsIgnoreCase("ut")) {
             RoomTile tile = gameClient.getHabbo().getRoomUnit().getCurrentLocation();
             gameClient.getHabbo().getHabboInfo().getCurrentRoom().updateTile(tile);
             return true;
         }
 
-        if (params[1].equalsIgnoreCase("clients"))
-        {
+        if (params[1].equalsIgnoreCase("clients")) {
             System.out.println(Emulator.getGameServer().getGameClientManager().getSessions().size());
         }
 
-        if (params[1].equalsIgnoreCase("queue"))
-        {
+        if (params[1].equalsIgnoreCase("queue")) {
             gameClient.sendResponse(new RoomQueueStatusMessage());
             return true;
         }
-        if (params[1].equalsIgnoreCase("public"))
-        {
+        if (params[1].equalsIgnoreCase("public")) {
             gameClient.getHabbo().getHabboInfo().getCurrentRoom().setPublicRoom(true);
             return true;
         }
 
-        if (params[1].equalsIgnoreCase("randtel"))
-        {
+        if (params[1].equalsIgnoreCase("randtel")) {
             RoomTile tile = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getRandomWalkableTile();
             gameClient.getHabbo().getRoomUnit().setCurrentLocation(tile);
             gameClient.getHabbo().getHabboInfo().getCurrentRoom().updateHabbo(gameClient.getHabbo());
@@ -89,55 +81,46 @@ public class TestCommand extends Command
             return true;
         }
 
-        if (params[1].equals("ach"))
-        {
+        if (params[1].equals("ach")) {
             AchievementManager.progressAchievement(gameClient.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Jogger"), 1000);
             return true;
         }
 
-        if (params[1].equals("asddsa"))
-        {
+        if (params[1].equals("asddsa")) {
             gameClient.getHabbo().getHabboStats().addAchievementScore(1000);
             gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(gameClient.getHabbo()).compose());
             return true;
         }
 
-        if (params[1].equals("gc"))
-        {
+        if (params[1].equals("gc")) {
 
             Emulator.getGameServer().getPacketManager().registerHandler(Incoming.GameCenterRequestGamesEvent, GameCenterRequestGamesEvent.class);
             Emulator.getGameServer().getPacketManager().registerHandler(Incoming.GameCenterRequestAccountStatusEvent, GameCenterRequestAccountStatusEvent.class);
             return true;
         }
 
-        if (params[1].equals("namechange"))
-        {
+        if (params[1].equals("namechange")) {
             gameClient.sendResponse(new UserDataComposer(gameClient.getHabbo()));
             return true;
         }
         //Emulator.getGameEnvironment().getRoomManager().clearInactiveRooms();
         //gameClient.sendResponse(new RoomDataComposer(gameClient.getHabbo().getHabboInfo().getCurrentRoom(), gameClient.getHabbo(), true, false));
 
-        if (params[1].equals("uach"))
-        {
+        if (params[1].equals("uach")) {
             Emulator.getGameEnvironment().getAchievementManager().reload();
         }
 
-        if(params[1].equals("units"))
-        {
+        if (params[1].equals("units")) {
             StringBuilder s = new StringBuilder();
 
-            for(Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos())
-            {
+            for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
                 s.append("Habbo ID: ").append(habbo.getHabboInfo().getId()).append(", RoomUnit ID: ").append(habbo.getRoomUnit().getId()).append("\r");
             }
 
-            for (Pet pet : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentPets().valueCollection())
-            {
+            for (Pet pet : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentPets().valueCollection()) {
                 s.append("Pet ID: ").append(pet.getId()).append(", RoomUnit ID: ").append(pet.getRoomUnit().getId()).append(", Name: ").append(pet.getName());
 
-                if (pet instanceof MonsterplantPet)
-                {
+                if (pet instanceof MonsterplantPet) {
                     s.append(", B:").append(((MonsterplantPet) pet).canBreed() ? "Y" : "N").append(", PB: ").append(((MonsterplantPet) pet).isPubliclyBreedable() ? "Y" : "N").append(", D: ").append(((MonsterplantPet) pet).isDead() ? "Y" : "N");
                 }
 
@@ -148,12 +131,9 @@ public class TestCommand extends Command
             return true;
         }
 
-        if (params[1].equalsIgnoreCase("rebr"))
-        {
-            for (Pet pet : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentPets().valueCollection())
-            {
-                if (pet instanceof MonsterplantPet)
-                {
+        if (params[1].equalsIgnoreCase("rebr")) {
+            for (Pet pet : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentPets().valueCollection()) {
+                if (pet instanceof MonsterplantPet) {
                     ((MonsterplantPet) pet).setPubliclyBreedable(false);
                     ((MonsterplantPet) pet).setCanBreed(true);
                     gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetStatusUpdateComposer(pet).compose());
@@ -164,12 +144,10 @@ public class TestCommand extends Command
             return true;
         }
 
-        if (params[1].equalsIgnoreCase("bots"))
-        {
+        if (params[1].equalsIgnoreCase("bots")) {
             StringBuilder message = new StringBuilder();
 
-            for (Bot bot : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentBots().valueCollection())
-            {
+            for (Bot bot : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentBots().valueCollection()) {
                 message.append("Name: ").append(bot.getName()).append(", ID: ").append(bot.getId()).append(", RID: ").append(bot.getRoomUnit().getId()).append(", Rot: ").append(bot.getRoomUnit().getBodyRotation()).append("\r");
             }
 
@@ -177,88 +155,66 @@ public class TestCommand extends Command
             return true;
         }
 
-        if (params[1].equalsIgnoreCase("packu"))
-        {
+        if (params[1].equalsIgnoreCase("packu")) {
             Emulator.getGameServer().getPacketManager().registerHandler(Incoming.MovePetEvent, MovePetEvent.class);
             return true;
         }
 
-        if(params[1].equals("a"))
-        {
+        if (params[1].equals("a")) {
             int count = Integer.valueOf(params[2]);
 
-            for(int i = 0; i < count; i++)
-            {
+            for (int i = 0; i < count; i++) {
                 gameClient.getHabbo().whisper("" + i, RoomChatMessageBubbles.getBubble(i));
             }
 
             return true;
-        }
-        else if(params[1].equals("b"))
-        {
-            try
-            {
+        } else if (params[1].equals("b")) {
+            try {
                 int itemId = Integer.valueOf(params[2]);
 
                 HabboItem item = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
 
-                if(item != null)
-                {
+                if (item != null) {
                     item.setExtradata(params[3]);
                     gameClient.getHabbo().getHabboInfo().getCurrentRoom().updateItem(item);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
 
             }
             return true;
-        }
-        else if(params[1].equalsIgnoreCase("pet"))
-        {
+        } else if (params[1].equalsIgnoreCase("pet")) {
             Pet pet = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getPet(Integer.valueOf(params[2]));
 
-            if(pet != null)
-            {
+            if (pet != null) {
                 String a;
                 String b = "";
                 String c = "";
-                if(params[3] != null)
-                {
+                if (params[3] != null) {
                     a = params[3];
-                    if(params.length > 4)
-                    {
+                    if (params.length > 4) {
                         b = params[4];
                     }
-                    if(params.length > 5)
-                    {
+                    if (params.length > 5) {
                         c = params[5];
                     }
                     pet.getRoomUnit().setStatus(RoomUnitStatus.fromString(a), b + " " + c);
                     gameClient.sendResponse(new RoomUserStatusComposer(pet.getRoomUnit()));
                 }
             }
-        }
-        else if (params[1].equalsIgnoreCase("petc"))
-        {
+        } else if (params[1].equalsIgnoreCase("petc")) {
             Pet pet = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getPet(Integer.valueOf(params[2]));
 
-            if (pet != null)
-            {
+            if (pet != null) {
                 pet.getRoomUnit().clearStatus();
                 gameClient.sendResponse(new RoomUserStatusComposer(pet.getRoomUnit()));
             }
-        }
-        else if (params[1].equalsIgnoreCase("rand"))
-        {
+        } else if (params[1].equalsIgnoreCase("rand")) {
             Map<Integer, Integer> results = new HashMap<>();
 
-            for (int i = 0; i < Integer.valueOf(params[2]); i++)
-            {
+            for (int i = 0; i < Integer.valueOf(params[2]); i++) {
                 int random = PetManager.random(0, 12, Double.valueOf(params[3]));
 
-                if (!results.containsKey(random))
-                {
+                if (!results.containsKey(random)) {
                     results.put(random, 0);
                 }
 
@@ -267,86 +223,59 @@ public class TestCommand extends Command
 
             StringBuilder result = new StringBuilder("Results : " + params[2] + "<br/><br/>");
 
-            for (Map.Entry<Integer, Integer> set : results.entrySet())
-            {
+            for (Map.Entry<Integer, Integer> set : results.entrySet()) {
                 result.append(set.getKey()).append(" -> ").append(set.getValue()).append("<br/>");
             }
 
             gameClient.sendResponse(new GenericAlertComposer(result.toString()));
-        }
-        else if (params[1].equalsIgnoreCase("threads"))
-        {
-            if (stopThreads)
-            {
+        } else if (params[1].equalsIgnoreCase("threads")) {
+            if (stopThreads) {
                 stopThreads = false;
-                for (int i = 0; i < 30; i++)
-                {
+                for (int i = 0; i < 30; i++) {
                     final int finalI = i;
-                    Emulator.getThreading().run(new Runnable()
-                    {
+                    Emulator.getThreading().run(new Runnable() {
                         @Override
-                        public void run()
-                        {
-                            try
-                            {
+                        public void run() {
+                            try {
                                 Thread.sleep(500);
                                 Emulator.getLogging().logStart("Started " + finalI + " on " + Thread.currentThread().getName());
-                                if (!TestCommand.stopThreads)
-                                {
+                                if (!TestCommand.stopThreads) {
                                     Emulator.getThreading().run(this);
                                 }
-                            }
-                            catch (Exception e)
-                            {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     }, i * 10);
                 }
-            }
-            else
-            {
+            } else {
                 stopThreads = true;
             }
-        }
-        else if (params[1].equalsIgnoreCase("pethere"))
-        {
+        } else if (params[1].equalsIgnoreCase("pethere")) {
             Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
             List<RoomTile> tiles = room.getLayout().getTilesAround(gameClient.getHabbo().getRoomUnit().getCurrentLocation());
 
-            room.getCurrentPets().forEachValue(new TObjectProcedure<Pet>()
-            {
+            room.getCurrentPets().forEachValue(new TObjectProcedure<Pet>() {
                 @Override
-                public boolean execute(Pet object)
-                {
-                    Emulator.getThreading().run(new Runnable()
-                    {
+                public boolean execute(Pet object) {
+                    Emulator.getThreading().run(new Runnable() {
                         @Override
-                        public void run()
-                        {
+                        public void run() {
                             object.getRoomUnit().setGoalLocation(tiles.get(Emulator.getRandom().nextInt(tiles.size())));
                         }
                     });
                     return true;
                 }
             });
-        }
-        else if(params[1].equalsIgnoreCase("st"))
-        {
+        } else if (params[1].equalsIgnoreCase("st")) {
             gameClient.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.fromString(params[2]), params[3]);
             gameClient.sendResponse(new RoomUserStatusComposer(gameClient.getHabbo().getRoomUnit()));
-        }
-        else if (params[1].equalsIgnoreCase("filt"))
-        {
+        } else if (params[1].equalsIgnoreCase("filt")) {
             gameClient.sendResponse(new GenericAlertComposer(Normalizer.normalize(params[2], Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("\\p{M}", "")));
-        }
-        else if (params[1].equalsIgnoreCase("nux"))
-        {
-            gameClient.sendResponse(new MessageComposer()
-            {
+        } else if (params[1].equalsIgnoreCase("nux")) {
+            gameClient.sendResponse(new MessageComposer() {
                 @Override
-                public ServerMessage compose()
-                {
+                public ServerMessage compose() {
                     this.response.init(Outgoing.NewUserGiftComposer);
 
                     this.response.appendInt(1); //?
@@ -395,85 +324,62 @@ public class TestCommand extends Command
                     return this.response;
                 }
             });
-        }
-        else if (params[1].equals("adv"))
-        {
-        }
-        else if (params[1].equals("datb"))
-        {
-                    long millis;
-                    long diff = 1;
-                    try(Connection conn = Emulator.getDatabase().getDataSource().getConnection())
-                    {
-                        millis = System.currentTimeMillis();
-                        for (long i = 0; i < 1000000; i++)
-                        {
-                            try (PreparedStatement stmt = conn.prepareStatement("SELECT 1"))
-                            {
-                                //PreparedStatement stmt2 = conn.prepareStatement("SELECT 2");
-                                stmt.close();
-                            }
-                            //stmt2.close();
-                        }
-                        diff = System.currentTimeMillis() - millis;
+        } else if (params[1].equals("adv")) {
+        } else if (params[1].equals("datb")) {
+            long millis;
+            long diff = 1;
+            try (Connection conn = Emulator.getDatabase().getDataSource().getConnection()) {
+                millis = System.currentTimeMillis();
+                for (long i = 0; i < 1000000; i++) {
+                    try (PreparedStatement stmt = conn.prepareStatement("SELECT 1")) {
+                        //PreparedStatement stmt2 = conn.prepareStatement("SELECT 2");
+                        stmt.close();
                     }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    System.out.println("Difference " + (diff) + "MS. ops: "  + ((long)1000000 / diff) + " ops/MS");
+                    //stmt2.close();
+                }
+                diff = System.currentTimeMillis() - millis;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("Difference " + (diff) + "MS. ops: " + ((long) 1000000 / diff) + " ops/MS");
 
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 int header = Integer.valueOf(params[1]);
 
                 ServerMessage message = new ServerMessage(header);
 
-                for (int i = 1; i < params.length; i++)
-                {
+                for (int i = 1; i < params.length; i++) {
                     String[] data = params[i].split(":");
 
-                    if (data[0].equalsIgnoreCase("b"))
-                    {
+                    if (data[0].equalsIgnoreCase("b")) {
                         message.appendBoolean(data[1].equalsIgnoreCase("1"));
-                    } else if (data[0].equalsIgnoreCase("s"))
-                    {
-                        if (data.length > 1)
-                        {
+                    } else if (data[0].equalsIgnoreCase("s")) {
+                        if (data.length > 1) {
                             message.appendString(data[1].replace("%http%", "http://"));
-                        } else
-                        {
+                        } else {
                             message.appendString("");
                         }
-                    } else if (data[0].equals("i"))
-                    {
+                    } else if (data[0].equals("i")) {
                         message.appendInt(Integer.valueOf(data[1]));
-                    } else if (data[0].equalsIgnoreCase("by"))
-                    {
+                    } else if (data[0].equalsIgnoreCase("by")) {
                         message.appendByte(Integer.valueOf(data[1]));
-                    } else if (data[0].equalsIgnoreCase("sh"))
-                    {
+                    } else if (data[0].equalsIgnoreCase("sh")) {
                         message.appendShort(Integer.valueOf(data[1]));
                     }
                 }
 
                 Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo("Admin");
 
-                if(habbo != null)
-                {
+                if (habbo != null) {
                     habbo.getClient().sendResponse(message);
                 }
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 gameClient.sendResponse(new GenericAlertComposer("Hey, what u doing m8."));
 
                 return false;
             }
         }
-
 
 
         //if(params.length >= 2)
@@ -499,8 +405,7 @@ public class TestCommand extends Command
         return true;
     }
 
-    public void testConcurrentClose() throws Exception
-    {
+    public void testConcurrentClose() throws Exception {
         HikariConfig config = new HikariConfig();
         config.setDataSourceClassName("com.zaxxer.hikari.mocks.StubDataSource");
 

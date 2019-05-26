@@ -11,39 +11,31 @@ import com.eu.habbo.messages.outgoing.wired.WiredEffectDataComposer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class InteractionWiredEffect extends InteractionWired
-{
+public abstract class InteractionWiredEffect extends InteractionWired {
     private int delay;
 
-    public InteractionWiredEffect(ResultSet set, Item baseItem) throws SQLException
-    {
+    public InteractionWiredEffect(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionWiredEffect(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionWiredEffect(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return true;
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
-        if (client != null)
-        {
-            if (room.hasRights(client.getHabbo()))
-            {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+        if (client != null) {
+            if (room.hasRights(client.getHabbo())) {
                 client.sendResponse(new WiredEffectDataComposer(this, room));
                 this.activateBox(room);
             }
@@ -51,43 +43,34 @@ public abstract class InteractionWiredEffect extends InteractionWired
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     public abstract boolean saveData(ClientMessage packet, GameClient gameClient);
 
-
-    protected void setDelay(int value)
-    {
-        this.delay = value;
-    }
-
-
-    public int getDelay()
-    {
+    public int getDelay() {
         return this.delay;
     }
 
+    protected void setDelay(int value) {
+        this.delay = value;
+    }
 
     public abstract WiredEffectType getType();
 
 
-    public boolean requiresTriggeringUser()
-    {
+    public boolean requiresTriggeringUser() {
         return false;
     }
 }

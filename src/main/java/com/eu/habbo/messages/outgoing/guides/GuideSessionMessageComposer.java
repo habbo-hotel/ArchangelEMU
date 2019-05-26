@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuideSessionMessageComposer extends MessageComposer
-{
+public class GuideSessionMessageComposer extends MessageComposer {
     private final GuideChatMessage message;
 
-    public GuideSessionMessageComposer(GuideChatMessage message)
-    {
+    public GuideSessionMessageComposer(GuideChatMessage message) {
         this.message = message;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuideSessionMessageComposer);
         this.response.appendString(this.message.message); //Message
         this.response.appendInt(this.message.userId);   //Sender ID

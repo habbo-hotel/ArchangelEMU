@@ -8,18 +8,15 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.List;
 
-public class RequestGuildBuyRoomsEvent extends MessageHandler
-{
+public class RequestGuildBuyRoomsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         List<Room> rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo());
 
         THashSet<Room> roomList = new THashSet<Room>();
 
-        for(Room room : rooms)
-        {
-            if(room.getGuildId() == 0)
+        for (Room room : rooms) {
+            if (room.getGuildId() == 0)
                 roomList.add(room);
         }
 

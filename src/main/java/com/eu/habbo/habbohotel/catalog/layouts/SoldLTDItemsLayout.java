@@ -6,16 +6,13 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SoldLTDItemsLayout extends CatalogPage
-{
-    public SoldLTDItemsLayout(ResultSet set) throws SQLException
-    {
+public class SoldLTDItemsLayout extends CatalogPage {
+    public SoldLTDItemsLayout(ResultSet set) throws SQLException {
         super(set);
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendString("sold_ltd_items");
         message.appendInt(3);
         message.appendString(super.getHeaderImage());

@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ClubCenterDataComposer extends MessageComposer
-{
+public class ClubCenterDataComposer extends MessageComposer {
     private final int streakDuration;
     private final String joinDate;
     private final double percentage;
@@ -14,8 +13,7 @@ public class ClubCenterDataComposer extends MessageComposer
     private final int spendBonus;
     private final int delay;
 
-    public ClubCenterDataComposer(int streakDuration, String joinDate, double percentage, int creditsSpend, int creditsBonus, int spendBonus, int delay)
-    {
+    public ClubCenterDataComposer(int streakDuration, String joinDate, double percentage, int creditsSpend, int creditsBonus, int spendBonus, int delay) {
         this.streakDuration = streakDuration;
         this.joinDate = joinDate;
         this.percentage = percentage;
@@ -26,8 +24,7 @@ public class ClubCenterDataComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ClubCenterDataComposer);
         this.response.appendInt(this.streakDuration); //streakduration in days
         this.response.appendString(this.joinDate); //joindate

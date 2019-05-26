@@ -5,23 +5,20 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionColorWheel;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 
-public class RandomDiceNumber implements Runnable
-{
+public class RandomDiceNumber implements Runnable {
     private final HabboItem item;
     private final Room room;
     private final int maxNumber;
     private int result;
 
-    public RandomDiceNumber(HabboItem item, Room room, int maxNumber)
-    {
+    public RandomDiceNumber(HabboItem item, Room room, int maxNumber) {
         this.item = item;
         this.room = room;
         this.maxNumber = maxNumber;
         this.result = -1;
     }
 
-    public RandomDiceNumber(Room room, HabboItem item, int result)
-    {
+    public RandomDiceNumber(Room room, HabboItem item, int result) {
         this.item = item;
         this.room = room;
         this.maxNumber = -1;
@@ -29,9 +26,8 @@ public class RandomDiceNumber implements Runnable
     }
 
     @Override
-    public void run()
-    {
-        if(this.result <= 0)
+    public void run() {
+        if (this.result <= 0)
             this.result = (Emulator.getRandom().nextInt(this.maxNumber) + 1);
 
         this.item.setExtradata(this.result + "");
@@ -39,9 +35,8 @@ public class RandomDiceNumber implements Runnable
         Emulator.getThreading().run(this.item);
 
         this.room.updateItem(this.item);
-        if(this.item instanceof InteractionColorWheel)
-        {
-            ((InteractionColorWheel)this.item).clearRunnable();
+        if (this.item instanceof InteractionColorWheel) {
+            ((InteractionColorWheel) this.item).clearRunnable();
         }
     }
 }

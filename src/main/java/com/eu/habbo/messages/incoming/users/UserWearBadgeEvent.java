@@ -8,29 +8,25 @@ import com.eu.habbo.messages.outgoing.users.UserBadgesComposer;
 
 import java.util.ArrayList;
 
-public class UserWearBadgeEvent extends MessageHandler
-{
+public class UserWearBadgeEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         BadgesComponent.resetSlots(this.client.getHabbo());
 
         ArrayList<HabboBadge> updatedBadges = new ArrayList<>();
         ArrayList<Integer> usedSlots = new ArrayList<>();
-        for(int i = 0; i < 5; i++)
-        {
+        for (int i = 0; i < 5; i++) {
             int slot = this.packet.readInt();
-            if(slot < 1 || slot > 5)
+            if (slot < 1 || slot > 5)
                 return;
 
             String badgeId = this.packet.readString();
 
-            if(badgeId.length() == 0)
+            if (badgeId.length() == 0)
                 continue;
 
             HabboBadge badge = this.client.getHabbo().getInventory().getBadgesComponent().getBadge(badgeId);
-            if(badge != null && !updatedBadges.contains(badge) && !usedSlots.contains(slot))
-            {
+            if (badge != null && !updatedBadges.contains(badge) && !usedSlots.contains(slot)) {
                 usedSlots.add(slot);
                 badge.setSlot(slot);
                 badge.needsUpdate(true);
@@ -39,12 +35,9 @@ public class UserWearBadgeEvent extends MessageHandler
             }
         }
 
-        if(this.client.getHabbo().getHabboInfo().getCurrentRoom() != null)
-        {
+        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserBadgesComposer(updatedBadges, this.client.getHabbo().getHabboInfo().getId()).compose());
-        }
-        else
-        {
+        } else {
             this.client.sendResponse(new UserBadgesComposer(updatedBadges, this.client.getHabbo().getHabboInfo().getId()));
         }
     }

@@ -7,27 +7,22 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class NewUserGiftComposer extends MessageComposer
-{
+public class NewUserGiftComposer extends MessageComposer {
     private final List<List<NewUserGift>> options;
 
-    public NewUserGiftComposer(List<List<NewUserGift>> options)
-    {
+    public NewUserGiftComposer(List<List<NewUserGift>> options) {
         this.options = options;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.NewUserGiftComposer);
         this.response.appendInt(this.options.size());
-        for (List<NewUserGift> option : this.options)
-        {
+        for (List<NewUserGift> option : this.options) {
             this.response.appendInt(1);
             this.response.appendInt(3);
             this.response.appendInt(option.size());
-            for (NewUserGift gift : option)
-            {
+            for (NewUserGift gift : option) {
                 gift.serialize(this.response);
             }
         }

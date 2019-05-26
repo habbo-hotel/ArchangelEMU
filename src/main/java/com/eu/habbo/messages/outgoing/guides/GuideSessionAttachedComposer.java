@@ -6,20 +6,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuideSessionAttachedComposer extends MessageComposer
-{
+public class GuideSessionAttachedComposer extends MessageComposer {
     private final GuideTour tour;
     private final boolean isHelper;
 
-    public GuideSessionAttachedComposer(GuideTour tour, boolean isHelper)
-    {
+    public GuideSessionAttachedComposer(GuideTour tour, boolean isHelper) {
         this.tour = tour;
         this.isHelper = isHelper;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         //:test 3549 b:1 i:1 s:abcd i:100
         this.response.init(Outgoing.GuideSessionAttachedComposer);
         this.response.appendBoolean(this.isHelper); //? //isHelper

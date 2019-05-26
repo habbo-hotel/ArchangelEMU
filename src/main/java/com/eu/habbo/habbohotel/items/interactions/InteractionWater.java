@@ -19,87 +19,71 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class InteractionWater extends InteractionDefault
-{
-    public InteractionWater(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionWater extends InteractionDefault {
+    public InteractionWater(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionWater(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionWater(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation)
-    {
+    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         super.onMove(room, oldLocation, newLocation);
 
         this.recalculate(room);
     }
 
     @Override
-    public void onPickUp(Room room)
-    {
+    public void onPickUp(Room room) {
         this.recalculate(room);
 
         Object[] empty = new Object[]{};
-        for (Habbo habbo : room.getHabbosOnItem(this))
-        {
-            try
-            {
+        for (Habbo habbo : room.getHabbosOnItem(this)) {
+            try {
                 this.onWalkOff(habbo.getRoomUnit(), room, empty);
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
 
             }
         }
 
-        for (Bot bot : room.getBotsOnItem(this))
-        {
-            try
-            {
+        for (Bot bot : room.getBotsOnItem(this)) {
+            try {
                 this.onWalkOff(bot.getRoomUnit(), room, empty);
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
         }
     }
 
     @Override
-    public void onPlace(Room room)
-    {
+    public void onPlace(Room room) {
         this.recalculate(room);
     }
 
-    public void refreshWaters(Room room)
-    {
-        if(room == null)
-        {
+    public void refreshWaters(Room room) {
+        if (room == null) {
             room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
         }
 
-        int _1  = 0;
-        int _2  = 0;
-        int _3  = 0;
-        int _4  = 0;
-        int _5  = 0;
-        int _6  = 0;
-        int _7  = 0;
-        int _8  = 0;
-        int _9  = 0;
+        int _1 = 0;
+        int _2 = 0;
+        int _3 = 0;
+        int _4 = 0;
+        int _5 = 0;
+        int _6 = 0;
+        int _7 = 0;
+        int _8 = 0;
+        int _9 = 0;
         int _10 = 0;
         int _11 = 0;
         int _12 = 0;
 
-        for(HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWaterItem.class))
-        {
+        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWaterItem.class)) {
             ((InteractionWaterItem) item).update();
         }
 
-        if (!this.getBaseItem().getName().equalsIgnoreCase("bw_water_2"))
-        {
+        if (!this.getBaseItem().getName().equalsIgnoreCase("bw_water_2")) {
             if (room.waterTiles.containsKey(this.getX() - 1) && room.waterTiles.get(this.getX() - 1).contains(this.getY() - 1))
                 _1 = 1;
             if (room.waterTiles.containsKey(this.getX()) && room.waterTiles.get(this.getX()).contains(this.getY() - 1))
@@ -127,31 +111,31 @@ public class InteractionWater extends InteractionDefault
         }
 
         //if (_1  == 0 && room.getLayout().isVoidTile((short)(this.getX() -1), (short) (this.getY() -1))) _1  = 1;
-        if (_2  == 0 && room.getLayout().isVoidTile(this.getX(), (short) (this.getY() - 1))) _2  = 1;
-        if (_3  == 0 && room.getLayout().isVoidTile((short) (this.getX() + 1), (short) (this.getY() - 1))) _3  = 1;
+        if (_2 == 0 && room.getLayout().isVoidTile(this.getX(), (short) (this.getY() - 1))) _2 = 1;
+        if (_3 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 1), (short) (this.getY() - 1))) _3 = 1;
         //if (_4  == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() - 1))) _4  = 1;
-        if (_5  == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), this.getY())) _5  = 1;
-        if (_6  == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), this.getY())) _6  = 1;
-        if (_7  == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), (short) (this.getY() + 1))) _7  = 1;
-        if (_8  == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() + 1))) _8  = 1;
+        if (_5 == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), this.getY())) _5 = 1;
+        if (_6 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), this.getY())) _6 = 1;
+        if (_7 == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), (short) (this.getY() + 1))) _7 = 1;
+        if (_8 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() + 1))) _8 = 1;
         //if (_9  == 0 && room.getLayout().isVoidTile((short)(this.getX() -1), (short) (this.getY() + 2))) _9 = 1;
         if (_10 == 0 && room.getLayout().isVoidTile(this.getX(), (short) (this.getY() + 2))) _10 = 1;
         if (_11 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 1), (short) (this.getY() + 2))) _11 = 1;
         //if (_12 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() + 2))) _12 = 1;
 
         int result = 0;
-        result |= _1  << 11;
-        result |= _2  << 10;
-        result |= _3  << 9;
-        result |= _4  << 8;
-        result |= _5  << 7;
-        result |= _6  << 6;
-        result |= _7  << 5;
-        result |= _8  << 4;
-        result |= _9  << 3;
+        result |= _1 << 11;
+        result |= _2 << 10;
+        result |= _3 << 9;
+        result |= _4 << 8;
+        result |= _5 << 7;
+        result |= _6 << 6;
+        result |= _7 << 5;
+        result |= _8 << 4;
+        result |= _9 << 3;
         result |= _10 << 2;
         result |= _11 << 1;
-        result |= _12     ;
+        result |= _12;
 
         this.setExtradata(result + "");
         this.needsUpdate(true);
@@ -159,65 +143,51 @@ public class InteractionWater extends InteractionDefault
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         Pet pet = room.getPet(roomUnit);
 
-        if (pet != null)
-        {
+        if (pet != null) {
             pet.getRoomUnit().setStatus(RoomUnitStatus.DIP, "0");
         }
     }
 
-    private void recalculate(Room room)
-    {
+    private void recalculate(Room room) {
         THashMap<Short, TIntArrayList> tiles = new THashMap<>();
 
-        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWater.class))
-        {
-            for (short i = 0; i < item.getBaseItem().getLength(); i++)
-            {
-                for (short j = 0; j < item.getBaseItem().getWidth(); j++)
-                {
-                    if (!tiles.containsKey((short)(item.getX() + i)))
-                    {
-                        tiles.put((short)(item.getX() + i), new TIntArrayList());
+        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWater.class)) {
+            for (short i = 0; i < item.getBaseItem().getLength(); i++) {
+                for (short j = 0; j < item.getBaseItem().getWidth(); j++) {
+                    if (!tiles.containsKey((short) (item.getX() + i))) {
+                        tiles.put((short) (item.getX() + i), new TIntArrayList());
                     }
 
-                    tiles.get((short)(item.getX() + i)).add(item.getY() + j);
+                    tiles.get((short) (item.getX() + i)).add(item.getY() + j);
                 }
             }
         }
 
         room.waterTiles = tiles;
 
-        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWater.class))
-        {
-            ((InteractionWater)item).refreshWaters(room);
+        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWater.class)) {
+            ((InteractionWater) item).refreshWaters(room);
         }
     }
 
     @Override
-    public boolean allowWiredResetState()
-    {
+    public boolean allowWiredResetState() {
         return false;
     }
 
     @Override
-    public boolean canToggle(Habbo habbo, Room room)
-    {
+    public boolean canToggle(Habbo habbo, Room room) {
         return false;
     }
 
     @Override
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation)
-    {
-        for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation)
-        {
-            for (HabboItem item : set.getValue())
-            {
-                if (!(item instanceof InteractionWater))
-                {
+    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation) {
+        for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation) {
+            for (HabboItem item : set.getValue()) {
+                if (!(item instanceof InteractionWater)) {
                     return false;
                 }
             }

@@ -17,26 +17,22 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredEffectMuteHabbo extends InteractionWiredEffect
-{
+public class WiredEffectMuteHabbo extends InteractionWiredEffect {
     private static final WiredEffectType type = WiredEffectType.MUTE_TRIGGER;
 
     private int length = 5;
     private String message = "";
 
-    public WiredEffectMuteHabbo(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectMuteHabbo(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectMuteHabbo(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectMuteHabbo(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -52,8 +48,7 @@ public class WiredEffectMuteHabbo extends InteractionWiredEffect
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
         this.length = packet.readInt();
         this.message = packet.readString();
@@ -64,15 +59,13 @@ public class WiredEffectMuteHabbo extends InteractionWiredEffect
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
-        if(roomUnit == null)
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if (roomUnit == null)
             return true;
 
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if (habbo != null)
-        {
+        if (habbo != null) {
             if (room.hasRights(habbo))
                 return false;
 
@@ -85,46 +78,38 @@ public class WiredEffectMuteHabbo extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.getDelay() + "\t" + this.length + "\t" + this.message;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split("\t");
 
-        if (data.length >= 3)
-        {
-            try
-            {
+        if (data.length >= 3) {
+            try {
                 this.setDelay(Integer.valueOf(data[0]));
                 this.length = Integer.valueOf(data[1]);
                 this.message = data[2];
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.setDelay(0);
         this.message = "";
         this.length = 0;
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public boolean requiresTriggeringUser()
-    {
+    public boolean requiresTriggeringUser() {
         return true;
     }
 }

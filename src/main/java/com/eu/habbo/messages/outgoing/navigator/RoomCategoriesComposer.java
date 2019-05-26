@@ -7,35 +7,28 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class RoomCategoriesComposer extends MessageComposer
-{
+public class RoomCategoriesComposer extends MessageComposer {
     private final List<RoomCategory> categories;
 
-    public RoomCategoriesComposer(List<RoomCategory> categories)
-    {
+    public RoomCategoriesComposer(List<RoomCategory> categories) {
         this.categories = categories;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomCategoriesComposer);
 
         this.response.appendInt(this.categories.size());
-        for(RoomCategory category : this.categories)
-        {
+        for (RoomCategory category : this.categories) {
             this.response.appendInt(category.getId());
             this.response.appendString(category.getCaption());
             this.response.appendBoolean(true); //Visible
             this.response.appendBoolean(false); //True = Disconnect?
             this.response.appendString(category.getCaption());
 
-            if (category.getCaption().startsWith("${"))
-            {
+            if (category.getCaption().startsWith("${")) {
                 this.response.appendString("");
-            }
-            else
-            {
+            } else {
                 this.response.appendString(category.getCaption());
             }
 

@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.guides;
 
-public enum GuardianVoteType
-{
+public enum GuardianVoteType {
     FORWARDED(-1),
     WAITING(0),
     ACCEPTABLY(1),
@@ -12,13 +11,11 @@ public enum GuardianVoteType
 
     private final int type;
 
-    GuardianVoteType(int type)
-    {
+    GuardianVoteType(int type) {
         this.type = type;
     }
 
-    public int getType()
-    {
+    public int getType() {
         return this.type;
     }
 

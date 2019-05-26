@@ -6,15 +6,13 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.users.ProfileFriendsComposer;
 
-public class RequestProfileFriendsEvent extends MessageHandler
-{
+public class RequestProfileFriendsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int userId = this.packet.readInt();
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
-        if(habbo != null)
+        if (habbo != null)
             this.client.sendResponse(new ProfileFriendsComposer(habbo));
         else
             this.client.sendResponse(new ProfileFriendsComposer(Messenger.getFriends(userId), userId));

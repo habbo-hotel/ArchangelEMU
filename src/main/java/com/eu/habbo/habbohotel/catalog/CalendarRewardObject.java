@@ -6,8 +6,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CalendarRewardObject
-{
+public class CalendarRewardObject {
     private final int id;
     private final String name;
     private final String customImage;
@@ -17,8 +16,7 @@ public class CalendarRewardObject
     private final String badge;
     private final int catalogItemId;
 
-    public CalendarRewardObject(ResultSet set) throws SQLException
-    {
+    public CalendarRewardObject(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.name = set.getString("name");
         this.customImage = set.getString("custom_image");
@@ -29,71 +27,57 @@ public class CalendarRewardObject
         this.catalogItemId = set.getInt("catalog_item_id");
     }
 
-    public void give(Habbo habbo)
-    {
-        if (this.credits > 0)
-        {
+    public void give(Habbo habbo) {
+        if (this.credits > 0) {
             habbo.giveCredits(this.credits);
         }
 
-        if (this.points > 0)
-        {
+        if (this.points > 0) {
             habbo.givePoints(this.pointsType, this.points);
         }
 
-        if (!this.badge.isEmpty())
-        {
+        if (!this.badge.isEmpty()) {
             habbo.addBadge(this.badge);
         }
 
-        if (this.catalogItemId > 0)
-        {
+        if (this.catalogItemId > 0) {
             CatalogItem item = this.getCatalogItem();
 
-            if (item != null)
-            {
+            if (item != null) {
                 Emulator.getGameEnvironment().getCatalogManager().purchaseItem(null, item, habbo, 1, "", true);
             }
         }
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public String getCustomImage()
-    {
+    public String getCustomImage() {
         return this.customImage;
     }
 
-    public int getCredits()
-    {
+    public int getCredits() {
         return this.credits;
     }
 
-    public int getPoints()
-    {
+    public int getPoints() {
         return this.points;
     }
 
-    public int getPointsType()
-    {
+    public int getPointsType() {
         return this.pointsType;
     }
 
-    public String getBadge()
-    {
+    public String getBadge() {
         return this.badge;
     }
 
-    public CatalogItem getCatalogItem()
-    {
+    public CatalogItem getCatalogItem() {
         return Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(this.catalogItemId);
     }
 }

@@ -15,52 +15,43 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredTriggerGameEnds extends InteractionWiredTrigger
-{
+public class WiredTriggerGameEnds extends InteractionWiredTrigger {
     private static final WiredTriggerType type = WiredTriggerType.GAME_ENDS;
 
-    public WiredTriggerGameEnds(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredTriggerGameEnds(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredTriggerGameEnds(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredTriggerGameEnds(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         return true;
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return "";
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
 
     }
 
     @Override
-    public WiredTriggerType getType()
-    {
+    public WiredTriggerType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -71,36 +62,28 @@ public class WiredTriggerGameEnds extends InteractionWiredTrigger
         message.appendInt(0);
         message.appendInt(this.getType().code);
 
-        if (!this.isTriggeredByRoomUnit())
-        {
+        if (!this.isTriggeredByRoomUnit()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getEffects(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredEffect>()
-            {
+            room.getRoomSpecialTypes().getEffects(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredEffect>() {
                 @Override
-                public boolean execute(InteractionWiredEffect object)
-                {
-                    if (object.requiresTriggeringUser())
-                    {
+                public boolean execute(InteractionWiredEffect object) {
+                    if (object.requiresTriggeringUser()) {
                         invalidTriggers.add(object.getBaseItem().getSpriteId());
                     }
                     return true;
                 }
             });
             message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers)
-            {
+            for (Integer i : invalidTriggers) {
                 message.appendInt(i);
             }
-        }
-        else
-        {
+        } else {
             message.appendInt(0);
         }
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         return true;
     }
 }

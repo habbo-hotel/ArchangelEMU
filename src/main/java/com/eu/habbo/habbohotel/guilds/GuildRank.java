@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.guilds;
 
-public enum GuildRank
-{
+public enum GuildRank {
     ADMIN(0),
     MOD(1),
     MEMBER(2),
@@ -10,19 +9,14 @@ public enum GuildRank
 
     public final int type;
 
-    GuildRank(int type)
-    {
+    GuildRank(int type) {
         this.type = type;
     }
 
-    public static GuildRank getRank(int type)
-    {
-        try
-        {
+    public static GuildRank getRank(int type) {
+        try {
             return values()[type];
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return MEMBER;
         }
     }

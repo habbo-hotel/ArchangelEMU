@@ -6,40 +6,30 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class ModToolIssueDefaultSanctionEvent extends MessageHandler
-{
+public class ModToolIssueDefaultSanctionEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL))
-        {
+    public void handle() throws Exception {
+        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             int issueId = this.packet.readInt();
             int unknown = this.packet.readInt();
             int category = this.packet.readInt();
 
             ModToolIssue issue = Emulator.getGameEnvironment().getModToolManager().getTicket(issueId);
 
-            if (issue.modId == this.client.getHabbo().getHabboInfo().getId())
-            {
+            if (issue.modId == this.client.getHabbo().getHabboInfo().getId()) {
                 CfhTopic modToolCategory = Emulator.getGameEnvironment().getModToolManager().getCfhTopic(category);
 
-                if (modToolCategory != null)
-                {
+                if (modToolCategory != null) {
                     ModToolPreset defaultSanction = modToolCategory.defaultSanction;
 
-                    if (defaultSanction != null)
-                    {
+                    if (defaultSanction != null) {
                         Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(issue.reportedId);
 
-                        if (defaultSanction.banLength > 0)
-                        {
+                        if (defaultSanction.banLength > 0) {
                             Emulator.getGameEnvironment().getModToolManager().ban(issue.reportedId, this.client.getHabbo(), defaultSanction.message, defaultSanction.banLength * 86400, ModToolBanType.ACCOUNT, modToolCategory.id);
-                        }
-                        else if (defaultSanction.muteLength > 0)
-                        {
+                        } else if (defaultSanction.muteLength > 0) {
 
-                            if (target != null)
-                            {
+                            if (target != null) {
                                 target.mute(defaultSanction.muteLength * 86400);
                             }
                         }
@@ -48,9 +38,7 @@ public class ModToolIssueDefaultSanctionEvent extends MessageHandler
 
                 issue.state = ModToolTicketState.CLOSED;
                 Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
-            }
-            else
-            {
+            } else {
                 this.client.getHabbo().alert(Emulator.getTexts().getValue("supporttools.not_ticket_owner"));
             }
         }

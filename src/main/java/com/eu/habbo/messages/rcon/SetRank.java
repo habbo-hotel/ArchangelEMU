@@ -4,23 +4,17 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.google.gson.Gson;
 
-public class SetRank extends RCONMessage<SetRank.JSONSetRank>
-{
+public class SetRank extends RCONMessage<SetRank.JSONSetRank> {
 
-    public SetRank()
-    {
+    public SetRank() {
         super(JSONSetRank.class);
     }
 
     @Override
-    public void handle(Gson gson, JSONSetRank object)
-    {
-        try
-        {
+    public void handle(Gson gson, JSONSetRank object) {
+        try {
             Emulator.getGameEnvironment().getHabboManager().setRank(object.user_id, object.rank);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             this.status = RCONMessage.SYSTEM_ERROR;
             this.message = "invalid rank";
             return;
@@ -30,14 +24,12 @@ public class SetRank extends RCONMessage<SetRank.JSONSetRank>
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(object.user_id);
 
-        if(habbo != null)
-        {
+        if (habbo != null) {
             this.message = "updated online user";
         }
     }
 
-    static class JSONSetRank
-    {
+    static class JSONSetRank {
 
         public int user_id;
 

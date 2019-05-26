@@ -6,15 +6,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Message implements Runnable
-{
+public class Message implements Runnable {
     private final int fromId;
     private final int toId;
-    private String message;
     private final int timestamp;
+    private String message;
 
-    public Message(int fromId, int toId, String message)
-    {
+    public Message(int fromId, int toId, String message) {
         this.fromId = fromId;
         this.toId = toId;
         this.message = message;
@@ -23,28 +21,22 @@ public class Message implements Runnable
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         //TODO Turn into scheduler
-        if(Messenger.SAVE_PRIVATE_CHATS)
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO chatlogs_private (user_from_id, user_to_id, message, timestamp) VALUES (?, ?, ?, ?)"))
-            {
+        if (Messenger.SAVE_PRIVATE_CHATS) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO chatlogs_private (user_from_id, user_to_id, message, timestamp) VALUES (?, ?, ?, ?)")) {
                 statement.setInt(1, this.fromId);
                 statement.setInt(2, this.toId);
                 statement.setString(3, this.message);
                 statement.setInt(4, this.timestamp);
                 statement.execute();
-            }
-            catch(SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
-    public int getToId()
-    {
+    public int getToId() {
         return this.toId;
     }
 
@@ -56,8 +48,7 @@ public class Message implements Runnable
         return this.message;
     }
 
-    public void setMessage(String message)
-    {
+    public void setMessage(String message) {
         this.message = message;
     }
 

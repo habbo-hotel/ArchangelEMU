@@ -9,29 +9,25 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.Map;
 
-public class GuardianVotingResultComposer extends MessageComposer
-{
+public class GuardianVotingResultComposer extends MessageComposer {
     private final GuardianTicket ticket;
     private final GuardianVote vote;
 
-    public GuardianVotingResultComposer(GuardianTicket ticket, GuardianVote vote)
-    {
+    public GuardianVotingResultComposer(GuardianTicket ticket, GuardianVote vote) {
         this.ticket = ticket;
         this.vote = vote;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuardianVotingResultComposer);
         this.response.appendInt(this.ticket.getVerdict().getType()); //Final Verdict
         this.response.appendInt(this.vote.type.getType()); //Your vote
 
         this.response.appendInt(this.ticket.getVotes().size() - 1); //Other votes count.
 
-        for(Map.Entry<Habbo, GuardianVote> set : this.ticket.getVotes().entrySet())
-        {
-            if(set.getValue().equals(this.vote))
+        for (Map.Entry<Habbo, GuardianVote> set : this.ticket.getVotes().entrySet()) {
+            if (set.getValue().equals(this.vote))
                 continue;
 
             this.response.appendInt(set.getValue().type.getType());

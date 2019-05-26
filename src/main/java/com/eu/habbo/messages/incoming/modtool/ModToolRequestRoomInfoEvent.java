@@ -7,25 +7,19 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.modtool.ModToolRoomInfoComposer;
 
-public class ModToolRequestRoomInfoEvent extends MessageHandler
-{
+public class ModToolRequestRoomInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL))
-        {
+    public void handle() throws Exception {
+        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             //int roomId = this.packet.readInt();
 
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
             //Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
-            if (room != null)
-            {
+            if (room != null) {
                 this.client.sendResponse(new ModToolRoomInfoComposer(room));
             }
-        }
-        else
-        {
+        } else {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.roominfo").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
         }
     }

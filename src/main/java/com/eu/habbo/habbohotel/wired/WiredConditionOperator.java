@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.wired;
 
-public enum WiredConditionOperator
-{
+public enum WiredConditionOperator {
     AND,
     OR
 }

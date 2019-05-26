@@ -10,29 +10,24 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 
 import java.sql.*;
 
-public class RoomBundleCommand extends Command
-{
-    public RoomBundleCommand()
-    {
+public class RoomBundleCommand extends Command {
+    public RoomBundleCommand() {
         super("cmd_bundle", Emulator.getTexts().getValue("commands.keys.cmd_bundle").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
         int parentId;
         int credits;
         int points;
         int pointsType;
 
-        if(params.length < 5)
-        {
+        if (params.length < 5) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_bundle.missing_params"), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
-        if(Emulator.getGameEnvironment().getCatalogManager().getCatalogPage("room_bundle_" + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId()) != null)
-        {
+        if (Emulator.getGameEnvironment().getCatalogManager().getCatalogPage("room_bundle_" + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId()) != null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_bundle.duplicate"), RoomChatMessageBubbles.ALERT);
             return true;
         }
@@ -44,10 +39,8 @@ public class RoomBundleCommand extends Command
 
         CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().createCatalogPage("Room Bundle: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getName(), "room_bundle_" + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), 0, CatalogPageLayouts.room_bundle, gameClient.getHabbo().getHabboInfo().getRank().getId(), parentId);
 
-        if(page instanceof RoomBundleLayout)
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO catalog_items (page_id, item_ids, catalog_name, cost_credits, cost_points, points_type ) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS))
-            {
+        if (page instanceof RoomBundleLayout) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO catalog_items (page_id, item_ids, catalog_name, cost_credits, cost_points, points_type ) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
                 statement.setInt(1, page.getId());
                 statement.setString(2, "");
                 statement.setString(3, "room_bundle");
@@ -56,29 +49,22 @@ public class RoomBundleCommand extends Command
                 statement.setInt(6, pointsType);
                 statement.execute();
 
-                try (ResultSet set = statement.getGeneratedKeys())
-                {
-                    if (set.next())
-                    {
-                        try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM catalog_items WHERE id = ?"))
-                        {
+                try (ResultSet set = statement.getGeneratedKeys()) {
+                    if (set.next()) {
+                        try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM catalog_items WHERE id = ?")) {
                             stmt.setInt(1, set.getInt(1));
-                            try (ResultSet st = stmt.executeQuery())
-                            {
-                                if (st.next())
-                                {
+                            try (ResultSet st = stmt.executeQuery()) {
+                                if (st.next()) {
                                     page.addItem(new CatalogItem(st));
                                 }
                             }
                         }
                     }
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
-            ((RoomBundleLayout)page).loadItems(gameClient.getHabbo().getHabboInfo().getCurrentRoom());
+            ((RoomBundleLayout) page).loadItems(gameClient.getHabbo().getHabboInfo().getCurrentRoom());
 
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_bundle").replace("%id%", page.getId() + ""), RoomChatMessageBubbles.ALERT);
         }

@@ -7,23 +7,19 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class NewNavigatorCategoryUserCountComposer extends MessageComposer
-{
+public class NewNavigatorCategoryUserCountComposer extends MessageComposer {
     public final List<RoomCategory> roomCategories;
 
-    public NewNavigatorCategoryUserCountComposer(List<RoomCategory> roomCategories)
-    {
+    public NewNavigatorCategoryUserCountComposer(List<RoomCategory> roomCategories) {
         this.roomCategories = roomCategories;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.NewNavigatorCategoryUserCountComposer);
         this.response.appendInt(this.roomCategories.size());
 
-        for (RoomCategory category : this.roomCategories)
-        {
+        for (RoomCategory category : this.roomCategories) {
             this.response.appendInt(0);
             this.response.appendInt(0);
             this.response.appendInt(200);

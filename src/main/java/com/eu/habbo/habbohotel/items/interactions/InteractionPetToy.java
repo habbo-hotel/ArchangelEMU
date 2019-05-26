@@ -14,31 +14,25 @@ import com.eu.habbo.threading.runnables.PetClearPosture;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionPetToy extends InteractionDefault
-{
-    public InteractionPetToy(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionPetToy extends InteractionDefault {
+    public InteractionPetToy(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
     }
 
-    public InteractionPetToy(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionPetToy(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.setExtradata("0");
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
         Pet pet = room.getPet(roomUnit);
 
-        if(pet != null)
-        {
-            if (pet.getEnergy() <= 35)
-            {
+        if (pet != null) {
+            if (pet.getEnergy() <= 35) {
                 return;
             }
 
@@ -50,11 +44,9 @@ public class InteractionPetToy extends InteractionDefault
             pet.getRoomUnit().setStatus(RoomUnitStatus.PLAY, "0");
             pet.packetUpdate = true;
             HabboItem item = this;
-            Emulator.getThreading().run(new Runnable()
-            {
+            Emulator.getThreading().run(new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     pet.addHappyness(25);
                     item.setExtradata("0");
                     room.updateItem(item);
@@ -67,22 +59,19 @@ public class InteractionPetToy extends InteractionDefault
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
         Pet pet = room.getPet(roomUnit);
 
-        if (pet != null)
-        {
+        if (pet != null) {
             this.setExtradata("0");
             room.updateItemState(this);
         }
     }
 
     @Override
-    public boolean allowWiredResetState()
-    {
+    public boolean allowWiredResetState() {
         return false;
     }
 }

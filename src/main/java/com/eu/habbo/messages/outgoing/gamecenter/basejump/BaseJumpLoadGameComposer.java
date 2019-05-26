@@ -6,26 +6,22 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class BaseJumpLoadGameComposer extends MessageComposer
-{
+public class BaseJumpLoadGameComposer extends MessageComposer {
     public static String FASTFOOD_KEY = "";
 
     private final GameClient client;
     private final int game;
 
-    public BaseJumpLoadGameComposer(GameClient client, int game)
-    {
+    public BaseJumpLoadGameComposer(GameClient client, int game) {
         this.client = client;
         this.game = game;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.BaseJumpLoadGameComposer);
 
-        if (this.game == 3)
-        {
+        if (this.game == 3) {
             this.response.appendInt(3);
             this.response.appendString("basejump");
             this.response.appendString(Emulator.getConfig().getValue("basejump.url"));
@@ -47,12 +43,6 @@ public class BaseJumpLoadGameComposer extends MessageComposer
             this.response.appendString("3002");
             this.response.appendString("socketPolicyPort");
             this.response.appendString("3002");
-
-
-
-
-
-
 
 
         }

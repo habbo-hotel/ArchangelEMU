@@ -18,25 +18,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredEffectResetTimers extends InteractionWiredEffect
-{
+public class WiredEffectResetTimers extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.RESET_TIMERS;
 
     private int delay = 0;
 
-    public WiredEffectResetTimers(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectResetTimers(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectResetTimers(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectResetTimers(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -49,36 +45,28 @@ public class WiredEffectResetTimers extends InteractionWiredEffect
         message.appendInt(this.getType().code);
         message.appendInt(this.getDelay());
 
-        if (this.requiresTriggeringUser())
-        {
+        if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>()
-            {
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
                 @Override
-                public boolean execute(InteractionWiredTrigger object)
-                {
-                    if (!object.isTriggeredByRoomUnit())
-                    {
+                public boolean execute(InteractionWiredTrigger object) {
+                    if (!object.isTriggeredByRoomUnit()) {
                         invalidTriggers.add(object.getBaseItem().getSpriteId());
                     }
                     return true;
                 }
             });
             message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers)
-            {
+            for (Integer i : invalidTriggers) {
                 message.appendInt(i);
             }
-        }
-        else
-        {
+        } else {
             message.appendInt(0);
         }
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
         packet.readString();
         packet.readInt();
@@ -89,46 +77,38 @@ public class WiredEffectResetTimers extends InteractionWiredEffect
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Emulator.getThreading().run(new WiredResetTimers(room), this.delay);
 
         return true;
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.delay + "";
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String data = set.getString("wired_data");
 
-        try
-        {
+        try {
             if (!data.equals(""))
                 this.delay = Integer.valueOf(data);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
         }
 
         this.setDelay(this.delay);
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.delay = 0;
         this.setDelay(0);
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 }

@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class FriendRequestComposer extends MessageComposer
-{
+public class FriendRequestComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public FriendRequestComposer(Habbo habbo)
-    {
+    public FriendRequestComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.FriendRequestComposer);
 
         this.response.appendInt(this.habbo.getHabboInfo().getId());

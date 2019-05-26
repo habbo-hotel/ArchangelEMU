@@ -9,27 +9,22 @@ import com.eu.habbo.habbohotel.wired.WiredConditionOperator;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionNotHabboIsDancing extends WiredConditionGroupMember
-{
-    public WiredConditionNotHabboIsDancing(ResultSet set, Item baseItem) throws SQLException
-    {
+public class WiredConditionNotHabboIsDancing extends WiredConditionGroupMember {
+    public WiredConditionNotHabboIsDancing(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredConditionNotHabboIsDancing(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredConditionNotHabboIsDancing(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         return roomUnit.getDanceType() == DanceType.NONE;
     }
 
     @Override
-    public WiredConditionOperator operator()
-    {
+    public WiredConditionOperator operator() {
         return WiredConditionOperator.OR;
     }
 }

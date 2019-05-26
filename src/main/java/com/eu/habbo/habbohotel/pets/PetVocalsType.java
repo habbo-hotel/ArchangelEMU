@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.pets;
 
-public enum PetVocalsType
-{
+public enum PetVocalsType {
     DISOBEY,
     DRINKING,
     EATING,

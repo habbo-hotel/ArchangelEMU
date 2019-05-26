@@ -10,25 +10,21 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionMonsterCrackable extends InteractionCrackable implements ICycleable
-{
+public class InteractionMonsterCrackable extends InteractionCrackable implements ICycleable {
     private int lastHealthChange = 0;
     private boolean respawn = false;
-    public InteractionMonsterCrackable(ResultSet set, Item baseItem) throws SQLException
-    {
+
+    public InteractionMonsterCrackable(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionMonsterCrackable(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionMonsterCrackable(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void cycle(Room room)
-    {
-        if (this.ticks > 0 && Emulator.getIntUnixTimestamp() - this.lastHealthChange > 30)
-        {
+    public void cycle(Room room) {
+        if (this.ticks > 0 && Emulator.getIntUnixTimestamp() - this.lastHealthChange > 30) {
             this.lastHealthChange = Emulator.getIntUnixTimestamp();
             this.ticks--;
             room.updateItem(this);
@@ -36,22 +32,19 @@ public class InteractionMonsterCrackable extends InteractionCrackable implements
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         if (room.isPublicRoom()) this.respawn = true;
 
         super.onClick(client, room, objects);
     }
 
     @Override
-    public boolean resetable()
-    {
+    public boolean resetable() {
         return this.respawn;
     }
 
     @Override
-    public void reset(Room room)
-    {
+    public void reset(Room room) {
         RoomTile tile = room.getRandomWalkableTile();
         this.setX(tile.x);
         this.setY(tile.y);
@@ -60,20 +53,17 @@ public class InteractionMonsterCrackable extends InteractionCrackable implements
     }
 
     @Override
-    public boolean allowAnyone()
-    {
+    public boolean allowAnyone() {
         return this.respawn;
     }
 
     @Override
-    public boolean isUsable()
-    {
+    public boolean isUsable() {
         return true;
     }
 
     @Override
-    protected boolean placeInRoom()
-    {
+    protected boolean placeInRoom() {
         return this.respawn;
     }
 }

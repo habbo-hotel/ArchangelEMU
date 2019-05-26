@@ -10,39 +10,32 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionBattleBanzaiTimer extends InteractionGameTimer
-{
-    public InteractionBattleBanzaiTimer(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionBattleBanzaiTimer extends InteractionGameTimer {
+    public InteractionBattleBanzaiTimer(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionBattleBanzaiTimer(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionBattleBanzaiTimer(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public Class<? extends Game> getGameType()
-    {
+    public Class<? extends Game> getGameType() {
         return BattleBanzaiGame.class;
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return false;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return false;
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 }

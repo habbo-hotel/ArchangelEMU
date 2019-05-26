@@ -10,24 +10,18 @@ import gnu.trove.procedure.TIntProcedure;
 
 import java.util.ArrayList;
 
-public class UserClothesComposer extends MessageComposer
-{
+public class UserClothesComposer extends MessageComposer {
     private final ArrayList<Integer> idList = new ArrayList<>();
     private final ArrayList<String> nameList = new ArrayList<>();
 
-    public UserClothesComposer(Habbo habbo)
-    {
-        habbo.getInventory().getWardrobeComponent().getClothing().forEach(new TIntProcedure()
-        {
+    public UserClothesComposer(Habbo habbo) {
+        habbo.getInventory().getWardrobeComponent().getClothing().forEach(new TIntProcedure() {
             @Override
-            public boolean execute(int value)
-            {
+            public boolean execute(int value) {
                 ClothItem item = Emulator.getGameEnvironment().getCatalogManager().clothing.get(value);
 
-                if (item != null)
-                {
-                    for (Integer j : item.setId)
-                    {
+                if (item != null) {
+                    for (Integer j : item.setId) {
                         UserClothesComposer.this.idList.add(j);
                     }
 
@@ -40,8 +34,7 @@ public class UserClothesComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UserClothesComposer);
         this.response.appendInt(this.idList.size());
         this.idList.forEach(this.response::appendInt);

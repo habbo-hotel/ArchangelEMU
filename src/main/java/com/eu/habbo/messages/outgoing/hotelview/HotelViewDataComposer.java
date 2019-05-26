@@ -4,20 +4,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class HotelViewDataComposer extends MessageComposer
-{
+public class HotelViewDataComposer extends MessageComposer {
     private final String data;
     private final String key;
 
-    public HotelViewDataComposer(String data, String key)
-    {
+    public HotelViewDataComposer(String data, String key) {
         this.data = data;
         this.key = key;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.HotelViewDataComposer);
 
         this.response.appendString(this.data);

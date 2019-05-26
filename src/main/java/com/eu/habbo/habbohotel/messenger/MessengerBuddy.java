@@ -25,10 +25,8 @@ public class MessengerBuddy implements Runnable, ISerialize {
     private boolean inRoom;
     private int userOne = 0;
 
-    public MessengerBuddy(ResultSet set)
-    {
-        try
-        {
+    public MessengerBuddy(ResultSet set) {
+        try {
             this.id = set.getInt("id");
             this.username = set.getString("username");
             this.gender = HabboGender.valueOf(set.getString("gender"));
@@ -38,39 +36,30 @@ public class MessengerBuddy implements Runnable, ISerialize {
             this.relation = (short) set.getInt("relation");
             this.userOne = set.getInt("user_one_id");
             this.inRoom = false;
-            if(this.online == 1)
-            {
+            if (this.online == 1) {
                 Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(this.username);
 
-                if(habbo != null)
-                {
+                if (habbo != null) {
                     this.inRoom = habbo.getHabboInfo().getCurrentRoom() != null;
                 }
             }
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public MessengerBuddy(ResultSet set, boolean value)
-    {
-        try
-        {
+    public MessengerBuddy(ResultSet set, boolean value) {
+        try {
             this.id = set.getInt("id");
             this.username = set.getString("username");
             this.relation = 0;
             this.userOne = 0;
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public MessengerBuddy(int id, String username, String look, Short relation, int userOne)
-    {
+    public MessengerBuddy(int id, String username, String look, Short relation, int userOne) {
         this.id = id;
         this.username = username;
         this.gender = HabboGender.M;
@@ -81,8 +70,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
         this.userOne = userOne;
     }
 
-    public MessengerBuddy(Habbo habbo, int userOne)
-    {
+    public MessengerBuddy(Habbo habbo, int userOne) {
         this.id = habbo.getHabboInfo().getId();
         this.username = habbo.getHabboInfo().getUsername();
         this.gender = habbo.getHabboInfo().getGender();
@@ -94,89 +82,72 @@ public class MessengerBuddy implements Runnable, ISerialize {
         this.inRoom = habbo.getHabboInfo().getCurrentRoom() != null;
     }
 
-    public void setRelation(int relation)
-    {
-        this.relation = (short)relation;
-        Emulator.getThreading().run(this);
-    }
-
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public String getUsername()
-    {
+    public String getUsername() {
         return this.username;
     }
 
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public HabboGender getGender()
-    {
+    public HabboGender getGender() {
         return this.gender;
     }
 
-    public void setGender(HabboGender gender)
-    {
+    public void setGender(HabboGender gender) {
         this.gender = gender;
     }
 
-    public int getOnline()
-    {
+    public int getOnline() {
         return this.online;
     }
 
-    public String getLook()
-    {
+    public void setOnline(boolean value) {
+        this.online = (value ? 1 : 0);
+    }
+
+    public String getLook() {
         return this.look;
     }
 
-    public void setLook(String look)
-    {
+    public void setLook(String look) {
         this.look = look;
     }
 
-    public String getMotto()
-    {
+    public String getMotto() {
         return this.motto;
     }
 
-    public short getRelation()
-    {
+    public short getRelation() {
         return this.relation;
     }
 
-    public boolean inRoom()
-    {
+    public void setRelation(int relation) {
+        this.relation = (short) relation;
+        Emulator.getThreading().run(this);
+    }
+
+    public boolean inRoom() {
         return this.inRoom;
     }
 
-    public void inRoom(boolean value)
-    {
+    public void inRoom(boolean value) {
         this.inRoom = value;
-    }
-
-    public void setOnline(boolean value)
-    {
-        this.online = (value ? 1 : 0);
     }
 
     @Override
     public void run() {
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE messenger_friendships SET relation = ? WHERE user_one_id = ? AND user_two_id = ?"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE messenger_friendships SET relation = ? WHERE user_one_id = ? AND user_two_id = ?")) {
             statement.setInt(1, this.relation);
             statement.setInt(2, this.userOne);
             statement.setInt(3, this.id);
             statement.execute();
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
@@ -184,14 +155,13 @@ public class MessengerBuddy implements Runnable, ISerialize {
     public void onMessageReceived(Habbo from, String message) {
         Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(this.id);
 
-        if(habbo == null)
+        if (habbo == null)
             return;
 
         Message chatMessage = new Message(from.getHabboInfo().getId(), this.id, message);
         Emulator.getThreading().run(chatMessage);
 
-        if (WordFilter.ENABLED_FRIENDCHAT)
-        {
+        if (WordFilter.ENABLED_FRIENDCHAT) {
             chatMessage.setMessage(Emulator.getGameEnvironment().getWordFilter().filter(chatMessage.getMessage(), from));
         }
 

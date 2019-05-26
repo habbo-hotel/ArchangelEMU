@@ -10,30 +10,23 @@ import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ReloadRoomCommand extends Command
-{
-    public ReloadRoomCommand()
-    {
+public class ReloadRoomCommand extends Command {
+    public ReloadRoomCommand() {
         super("cmd_reload_room", Emulator.getTexts().getValue("commands.keys.cmd_reload_room").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
-        Emulator.getThreading().run(new Runnable()
-        {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        Emulator.getThreading().run(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
-                if (room != null)
-                {
+                if (room != null) {
                     Collection<Habbo> habbos = new ArrayList<>(room.getHabbos());
                     Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
                     room = Emulator.getGameEnvironment().getRoomManager().loadRoom(room.getId());
                     ServerMessage message = new ForwardToRoomComposer(room.getId()).compose();
-                    for(Habbo habbo : habbos)
-                    {
+                    for (Habbo habbo : habbos) {
                         habbo.getClient().sendResponse(message);
                     }
                 }

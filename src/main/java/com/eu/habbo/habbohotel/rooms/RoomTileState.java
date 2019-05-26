@@ -1,8 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
 
-public enum RoomTileState
-{
+public enum RoomTileState {
 
     OPEN,
 

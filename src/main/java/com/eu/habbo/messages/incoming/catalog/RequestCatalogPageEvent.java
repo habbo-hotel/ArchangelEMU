@@ -6,28 +6,21 @@ import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.CatalogPageComposer;
 
-public class RequestCatalogPageEvent extends MessageHandler
-{
+public class RequestCatalogPageEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int catalogPageId = this.packet.readInt();
         int unknown = this.packet.readInt();
         String mode = this.packet.readString();
 
         CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().catalogPages.get(catalogPageId);
 
-        if (catalogPageId > 0 && page != null)
-        {
-            if (page.getRank() <= this.client.getHabbo().getHabboInfo().getRank().getId() && page.isEnabled())
-            {
+        if (catalogPageId > 0 && page != null) {
+            if (page.getRank() <= this.client.getHabbo().getHabboInfo().getRank().getId() && page.isEnabled()) {
                 this.client.sendResponse(new CatalogPageComposer(page, this.client.getHabbo(), mode));
-            }
-            else
-            {
-                if(!page.isVisible())
-                {
+            } else {
+                if (!page.isVisible()) {
                     ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.catalog.page").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%pagename%", page.getCaption()));
                 }
             }

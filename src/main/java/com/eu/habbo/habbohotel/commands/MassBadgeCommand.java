@@ -14,42 +14,33 @@ import gnu.trove.map.hash.THashMap;
 
 import java.util.Map;
 
-public class MassBadgeCommand extends Command
-{
-    public MassBadgeCommand()
-    {
+public class MassBadgeCommand extends Command {
+    public MassBadgeCommand() {
         super("cmd_massbadge", Emulator.getTexts().getValue("commands.keys.cmd_massbadge").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
-        if(params.length == 2)
-        {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (params.length == 2) {
             String badge;
 
             badge = params[1];
 
-            if(!badge.isEmpty())
-            {
+            if (!badge.isEmpty()) {
                 THashMap<String, String> keys = new THashMap<>();
                 keys.put("display", "BUBBLE");
                 keys.put("image", "${image.library.url}album1584/" + badge + ".gif");
                 keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
                 ServerMessage message = new BubbleAlertComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys).compose();
 
-                for(Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet())
-                {
+                for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
                     Habbo habbo = set.getValue();
 
-                    if(habbo.isOnline())
-                    {
-                        if (habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && !habbo.getInventory().getBadgesComponent().hasBadge(badge))
-                        {
+                    if (habbo.isOnline()) {
+                        if (habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && !habbo.getInventory().getBadgesComponent().hasBadge(badge)) {
                             HabboBadge b = BadgesComponent.createBadge(badge, habbo);
 
-                            if (b != null)
-                            {
+                            if (b != null) {
                                 habbo.getClient().sendResponse(new AddUserBadgeComposer(b));
 
                                 habbo.getClient().sendResponse(message);

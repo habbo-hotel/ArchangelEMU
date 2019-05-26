@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuildManageComposer extends MessageComposer
-{
+public class GuildManageComposer extends MessageComposer {
     private final Guild guild;
 
-    public GuildManageComposer(Guild guild)
-    {
+    public GuildManageComposer(Guild guild) {
         this.guild = guild;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuildManageComposer);
         this.response.appendInt(1);
         this.response.appendInt(guild.getRoomId());
@@ -40,21 +37,19 @@ public class GuildManageComposer extends MessageComposer
         int req = 5 - data.length;
         int i = 0;
 
-        for(String s : data)
-        {
+        for (String s : data) {
             this.response.appendInt((s.length() >= 6 ? Integer.parseInt(s.substring(0, 3)) : Integer.parseInt(s.substring(0, 2))));
             this.response.appendInt((s.length() >= 6 ? Integer.parseInt(s.substring(3, 5)) : Integer.parseInt(s.substring(2, 4))));
 
-            if(s.length() < 5)
+            if (s.length() < 5)
                 this.response.appendInt(0);
-            else if(s.length() >= 6)
+            else if (s.length() >= 6)
                 this.response.appendInt(Integer.parseInt(s.substring(5, 6)));
             else
                 this.response.appendInt(Integer.parseInt(s.substring(4, 5)));
         }
 
-        while(i != req)
-        {
+        while (i != req) {
             this.response.appendInt(0);
             this.response.appendInt(0);
             this.response.appendInt(0);

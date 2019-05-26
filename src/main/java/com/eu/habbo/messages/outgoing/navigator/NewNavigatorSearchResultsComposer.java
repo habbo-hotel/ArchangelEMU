@@ -7,30 +7,26 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class NewNavigatorSearchResultsComposer extends MessageComposer
-{
+public class NewNavigatorSearchResultsComposer extends MessageComposer {
     private final String searchCode;
     private final String searchQuery;
     private final List<SearchResultList> resultList;
 
-    public NewNavigatorSearchResultsComposer(String searchCode, String searchQuery, List<SearchResultList> resultList)
-    {
-        this.searchCode  = searchCode;
+    public NewNavigatorSearchResultsComposer(String searchCode, String searchQuery, List<SearchResultList> resultList) {
+        this.searchCode = searchCode;
         this.searchQuery = searchQuery;
-        this.resultList  = resultList;
+        this.resultList = resultList;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.NewNavigatorSearchResultsComposer);
         this.response.appendString(this.searchCode);
         this.response.appendString(this.searchQuery);
 
         this.response.appendInt(this.resultList.size()); //Count
 
-        for (SearchResultList item : this.resultList)
-        {
+        for (SearchResultList item : this.resultList) {
             item.serialize(this.response);
         }
 

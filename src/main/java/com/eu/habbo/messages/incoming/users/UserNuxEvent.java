@@ -8,10 +8,8 @@ import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserNuxEvent extends MessageHandler
-{
-    public static Map<Integer, String> keys = new HashMap<Integer, String>()
-    {
+public class UserNuxEvent extends MessageHandler {
+    public static Map<Integer, String> keys = new HashMap<Integer, String>() {
         {
             this.put(1, "BOTTOM_BAR_RECEPTION");
             this.put(2, "BOTTOM_BAR_NAVIGATOR");
@@ -26,30 +24,23 @@ public class UserNuxEvent extends MessageHandler
             this.put(11, "BOTTOM_BAR_NAVIGATOR");
         }
     };
-    @Override
-    public void handle() throws Exception
-    {
-        handle(this.client.getHabbo());
-    }
 
-    public static void handle(Habbo habbo)
-    {
+    public static void handle(Habbo habbo) {
         habbo.getHabboStats().nux = true;
         int step = habbo.getHabboStats().nuxStep++;
 
-        if (keys.containsKey(step))
-        {
+        if (keys.containsKey(step)) {
             habbo.getClient().sendResponse(new NuxAlertComposer("helpBubble/add/" + keys.get(step) + "/" + Emulator.getTexts().getValue("nux.step." + step)));
-        }
-        else if (!habbo.getHabboStats().nuxReward)
-        {
+        } else if (!habbo.getHabboStats().nuxReward) {
 
 
-
-        }
-        else
-        {
+        } else {
             habbo.getClient().sendResponse(new NuxAlertComposer("nux/lobbyoffer/show"));
         }
+    }
+
+    @Override
+    public void handle() throws Exception {
+        handle(this.client.getHabbo());
     }
 }

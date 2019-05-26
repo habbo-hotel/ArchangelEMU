@@ -4,8 +4,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 
-public class GamePlayer
-{
+public class GamePlayer {
 
     private final Habbo habbo;
 
@@ -16,42 +15,37 @@ public class GamePlayer
     private int score;
 
 
-    public GamePlayer(Habbo habbo, GameTeamColors teamColor)
-    {
+    public GamePlayer(Habbo habbo, GameTeamColors teamColor) {
         this.habbo = habbo;
         this.teamColor = teamColor;
     }
 
 
-    public void reset()
-    {
+    public void reset() {
         this.score = 0;
     }
 
 
-    public synchronized void addScore(int amount)
-    {
-        if (habbo.getHabboInfo().getGamePlayer() != null || this.habbo.getHabboInfo().getCurrentRoom().getGame(this.habbo.getHabboInfo().getCurrentGame()).getTeamForHabbo(this.habbo) != null){
+    public synchronized void addScore(int amount) {
+        if (habbo.getHabboInfo().getGamePlayer() != null || this.habbo.getHabboInfo().getCurrentRoom().getGame(this.habbo.getHabboInfo().getCurrentGame()).getTeamForHabbo(this.habbo) != null) {
             if (habbo.getHabboInfo().getGamePlayer() != null && this.habbo.getHabboInfo().getCurrentRoom().getGame(this.habbo.getHabboInfo().getCurrentGame()).getTeamForHabbo(this.habbo) != null) {
                 this.score += amount;
-                WiredHandler.handle(WiredTriggerType.SCORE_ACHIEVED, this.habbo.getRoomUnit(), this.habbo.getHabboInfo().getCurrentRoom(), new Object[]{this.habbo.getHabboInfo().getCurrentRoom().getGame(this.habbo.getHabboInfo().getCurrentGame()).getTeamForHabbo(this.habbo).getTotalScore(), amount});}
+                WiredHandler.handle(WiredTriggerType.SCORE_ACHIEVED, this.habbo.getRoomUnit(), this.habbo.getHabboInfo().getCurrentRoom(), new Object[]{this.habbo.getHabboInfo().getCurrentRoom().getGame(this.habbo.getHabboInfo().getCurrentGame()).getTeamForHabbo(this.habbo).getTotalScore(), amount});
+            }
         }
     }
 
-    public Habbo getHabbo()
-    {
+    public Habbo getHabbo() {
         return this.habbo;
     }
 
 
-    public GameTeamColors getTeamColor()
-    {
+    public GameTeamColors getTeamColor() {
         return this.teamColor;
     }
 
 
-    public int getScore()
-    {
+    public int getScore() {
         return this.score;
     }
 }

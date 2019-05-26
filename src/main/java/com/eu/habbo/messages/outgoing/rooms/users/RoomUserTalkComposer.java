@@ -5,21 +5,18 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUserTalkComposer extends MessageComposer
-{
+public class RoomUserTalkComposer extends MessageComposer {
     private final RoomChatMessage roomChatMessage;
 
-    public RoomUserTalkComposer(RoomChatMessage roomChatMessage)
-    {
+    public RoomUserTalkComposer(RoomChatMessage roomChatMessage) {
         this.roomChatMessage = roomChatMessage;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomUserTalkComposer);
 
-        if(this.roomChatMessage.getMessage().isEmpty())
+        if (this.roomChatMessage.getMessage().isEmpty())
             return null;
 
         this.roomChatMessage.serialize(this.response);

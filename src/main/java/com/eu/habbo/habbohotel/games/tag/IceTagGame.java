@@ -6,44 +6,36 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.icetag.InteractionIc
 import com.eu.habbo.habbohotel.rooms.Room;
 
 
-
-public class IceTagGame extends TagGame
-{
+public class IceTagGame extends TagGame {
     private static final int MALE_SKATES = 38;
     private static final int FEMALE_SKATES = 39;
 
-    public IceTagGame(Room room)
-    {
+    public IceTagGame(Room room) {
         super(GameTeam.class, TagGamePlayer.class, room);
     }
 
     @Override
-    public Class<? extends InteractionTagPole> getTagPole()
-    {
+    public Class<? extends InteractionTagPole> getTagPole() {
         return InteractionIceTagPole.class;
     }
 
     @Override
-    public int getMaleEffect()
-    {
+    public int getMaleEffect() {
         return MALE_SKATES;
     }
 
     @Override
-    public int getMaleTaggerEffect()
-    {
+    public int getMaleTaggerEffect() {
         return MALE_SKATES + 7;
     }
 
     @Override
-    public int getFemaleEffect()
-    {
+    public int getFemaleEffect() {
         return FEMALE_SKATES;
     }
 
     @Override
-    public int getFemaleTaggerEffect()
-    {
+    public int getFemaleTaggerEffect() {
         return FEMALE_SKATES + 7;
     }
 }

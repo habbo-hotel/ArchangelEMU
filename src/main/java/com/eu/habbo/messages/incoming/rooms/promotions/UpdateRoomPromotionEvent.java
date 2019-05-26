@@ -8,12 +8,10 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
 
 
-public class UpdateRoomPromotionEvent extends MessageHandler
-{
+public class UpdateRoomPromotionEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
 
         int id = this.packet.readInt();
         String promotionName = this.packet.readString();
@@ -21,15 +19,13 @@ public class UpdateRoomPromotionEvent extends MessageHandler
 
         Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(id);
 
-        if (room == null || room.getOwnerId() != this.client.getHabbo().getHabboInfo().getId() || !this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER))
-        {
+        if (room == null || room.getOwnerId() != this.client.getHabbo().getHabboInfo().getId() || !this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
             return;
         }
 
         RoomPromotion roomPromotion = room.getPromotion();
 
-        if (roomPromotion != null)
-        {
+        if (roomPromotion != null) {
 
             roomPromotion.setTitle(promotionName);
             roomPromotion.setDescription(promotionDescription);

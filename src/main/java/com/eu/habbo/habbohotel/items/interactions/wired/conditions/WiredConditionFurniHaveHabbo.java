@@ -22,43 +22,37 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 
-public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition
-{
+public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.FURNI_HAVE_HABBO;
 
     protected boolean all;
     protected THashSet<HabboItem> items;
 
-    public WiredConditionFurniHaveHabbo(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredConditionFurniHaveHabbo(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.items = new THashSet<>();
     }
 
-    public WiredConditionFurniHaveHabbo(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredConditionFurniHaveHabbo(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.items = new THashSet<>();
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.items.clear();
         this.all = false;
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         this.refresh();
 
-        if(this.items.isEmpty())
+        if (this.items.isEmpty())
             return true;
 
         THashMap<HabboItem, THashSet<RoomTile>> tiles = new THashMap<>();
-        for(HabboItem item : this.items)
-        {
+        for (HabboItem item : this.items) {
             tiles.put(item, room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
         }
 
@@ -66,34 +60,25 @@ public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition
         Collection<Bot> bots = room.getCurrentBots().valueCollection();
         Collection<Pet> pets = room.getCurrentPets().valueCollection();
 
-        for (Map.Entry<HabboItem, THashSet<RoomTile>> set : tiles.entrySet())
-        {
+        for (Map.Entry<HabboItem, THashSet<RoomTile>> set : tiles.entrySet()) {
             boolean found = false;
-            for (Habbo habbo : habbos)
-            {
-                if (set.getValue().contains(habbo.getRoomUnit().getCurrentLocation()))
-                {
+            for (Habbo habbo : habbos) {
+                if (set.getValue().contains(habbo.getRoomUnit().getCurrentLocation())) {
                     found = true;
                 }
             }
 
-            if (!found)
-            {
-                for (Bot bot : bots)
-                {
-                    if (set.getValue().contains(bot.getRoomUnit().getCurrentLocation()))
-                    {
+            if (!found) {
+                for (Bot bot : bots) {
+                    if (set.getValue().contains(bot.getRoomUnit().getCurrentLocation())) {
                         found = true;
                     }
                 }
             }
 
-            if (!found)
-            {
-                for (Pet pet : pets)
-                {
-                    if (set.getValue().contains(pet.getRoomUnit().getCurrentLocation()))
-                    {
+            if (!found) {
+                for (Pet pet : pets) {
+                    if (set.getValue().contains(pet.getRoomUnit().getCurrentLocation())) {
                         found = true;
                     }
                 }
@@ -106,14 +91,12 @@ public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         this.refresh();
 
         StringBuilder data = new StringBuilder((this.all ? "1" : "0") + ":");
 
-        for(HabboItem item : this.items)
-        {
+        for (HabboItem item : this.items) {
             data.append(item.getId()).append(";");
         }
 
@@ -121,25 +104,21 @@ public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
 
         String[] data = set.getString("wired_data").split(":");
 
-        if(data.length >= 1)
-        {
+        if (data.length >= 1) {
             this.all = (data[0].equals("1"));
 
-            if(data.length == 2)
-            {
+            if (data.length == 2) {
                 String[] items = data[1].split(";");
 
-                for (String s : items)
-                {
+                for (String s : items) {
                     HabboItem item = room.getHabboItem(Integer.valueOf(s));
 
-                    if(item != null)
+                    if (item != null)
                         this.items.add(item);
                 }
             }
@@ -147,21 +126,19 @@ public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition
     }
 
     @Override
-    public WiredConditionType getType()
-    {
+    public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         this.refresh();
 
         message.appendBoolean(false);
         message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
         message.appendInt(this.items.size());
 
-        for(HabboItem item : this.items)
+        for (HabboItem item : this.items)
             message.appendInt(item.getId());
 
         message.appendInt(this.getBaseItem().getSpriteId());
@@ -176,8 +153,7 @@ public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         this.items.clear();
 
         int count;
@@ -189,13 +165,11 @@ public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
-        if(room != null)
-        {
-            for (int i = 0; i < count; i++)
-            {
+        if (room != null) {
+            for (int i = 0; i < count; i++) {
                 HabboItem item = room.getHabboItem(packet.readInt());
 
-                if(item != null)
+                if (item != null)
                     this.items.add(item);
             }
 
@@ -205,26 +179,20 @@ public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition
         return false;
     }
 
-    private void refresh()
-    {
+    private void refresh() {
         THashSet<HabboItem> items = new THashSet<>();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-        if(room == null)
-        {
+        if (room == null) {
             items.addAll(this.items);
-        }
-        else
-        {
-            for (HabboItem item : this.items)
-            {
+        } else {
+            for (HabboItem item : this.items) {
                 if (room.getHabboItem(item.getId()) == null)
                     items.add(item);
             }
         }
 
-        for(HabboItem item : items)
-        {
+        for (HabboItem item : items) {
             this.items.remove(item);
         }
     }

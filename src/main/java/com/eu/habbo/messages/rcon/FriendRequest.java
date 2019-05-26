@@ -11,40 +11,29 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.messages.outgoing.friends.FriendRequestComposer;
 import com.google.gson.Gson;
 
-public class FriendRequest extends RCONMessage<FriendRequest.JSON>
-{
-    public FriendRequest()
-    {
+public class FriendRequest extends RCONMessage<FriendRequest.JSON> {
+    public FriendRequest() {
         super(FriendRequest.JSON.class);
     }
 
     @Override
-    public void handle(Gson gson, JSON json)
-    {
-        if (!Messenger.friendRequested(json.user_id, json.target_id))
-        {
+    public void handle(Gson gson, JSON json) {
+        if (!Messenger.friendRequested(json.user_id, json.target_id)) {
             Messenger.makeFriendRequest(json.user_id, json.target_id);
 
             Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.target_id);
-            if (target != null)
-            {
+            if (target != null) {
                 Habbo from = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.user_id);
 
-                if (from != null)
-                {
+                if (from != null) {
                     target.getClient().sendResponse(new FriendRequestComposer(from));
-                }
-                else
-                {
+                } else {
                     final HabboInfo info = HabboManager.getOfflineHabboInfo(json.user_id);
 
-                    if (info != null)
-                    {
-                        target.getClient().sendResponse(new MessageComposer()
-                        {
+                    if (info != null) {
+                        target.getClient().sendResponse(new MessageComposer() {
                             @Override
-                            public ServerMessage compose()
-                            {
+                            public ServerMessage compose() {
                                 this.response.init(Outgoing.FriendRequestComposer);
                                 this.response.appendInt(info.getId());
                                 this.response.appendString(info.getUsername());
@@ -58,8 +47,7 @@ public class FriendRequest extends RCONMessage<FriendRequest.JSON>
         }
     }
 
-    static class JSON
-    {
+    static class JSON {
 
         public int user_id;
 

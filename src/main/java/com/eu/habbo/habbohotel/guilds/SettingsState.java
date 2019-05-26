@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.guilds;
 
-public enum SettingsState
-{
+public enum SettingsState {
     EVERYONE(0),
     MEMBERS(1),
     ADMINS(2),
@@ -9,17 +8,13 @@ public enum SettingsState
 
     public final int state;
 
-    SettingsState(int state)
-    {
+    SettingsState(int state) {
         this.state = state;
     }
 
-    public static SettingsState fromValue(int state)
-    {
-        try
-        {
-            switch (state)
-            {
+    public static SettingsState fromValue(int state) {
+        try {
+            switch (state) {
                 case 0:
                     return EVERYONE;
                 case 1:
@@ -29,9 +24,7 @@ public enum SettingsState
                 case 3:
                     return OWNER;
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
         }
 
         return EVERYONE;

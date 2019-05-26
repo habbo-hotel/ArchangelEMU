@@ -5,27 +5,21 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ItemStateComposer extends MessageComposer
-{
+public class ItemStateComposer extends MessageComposer {
     private final HabboItem item;
 
-    public ItemStateComposer(HabboItem item)
-    {
+    public ItemStateComposer(HabboItem item) {
         this.item = item;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ItemStateComposer);
         this.response.appendInt(this.item.getId());
-        try
-        {
+        try {
             int state = Integer.valueOf(this.item.getExtradata());
             this.response.appendInt(state);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             this.response.appendInt(0);
         }
 

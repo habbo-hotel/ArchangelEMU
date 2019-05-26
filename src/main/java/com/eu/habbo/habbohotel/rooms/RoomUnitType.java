@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.rooms;
 
-public enum RoomUnitType
-{
+public enum RoomUnitType {
     USER(1),
     BOT(4),
     PET(2),
@@ -9,13 +8,11 @@ public enum RoomUnitType
 
     private final int typeId;
 
-    RoomUnitType(int typeId)
-    {
+    RoomUnitType(int typeId) {
         this.typeId = typeId;
     }
 
-    public int getTypeId()
-    {
+    public int getTypeId() {
         return this.typeId;
     }
 }

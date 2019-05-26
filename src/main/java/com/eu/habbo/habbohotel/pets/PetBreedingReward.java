@@ -3,8 +3,7 @@ package com.eu.habbo.habbohotel.pets;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PetBreedingReward
-{
+public class PetBreedingReward {
 
     public final int petType;
 
@@ -14,8 +13,7 @@ public class PetBreedingReward
 
     public final int breed;
 
-    public PetBreedingReward(ResultSet set) throws SQLException
-    {
+    public PetBreedingReward(ResultSet set) throws SQLException {
         this.petType = set.getInt("pet_type");
         this.rarityLevel = set.getInt("rarity_level");
         this.breed = set.getInt("breed");

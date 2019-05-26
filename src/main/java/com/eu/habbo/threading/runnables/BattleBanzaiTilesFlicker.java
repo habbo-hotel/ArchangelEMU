@@ -7,8 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
 
-public class BattleBanzaiTilesFlicker implements Runnable
-{
+public class BattleBanzaiTilesFlicker implements Runnable {
     private final THashSet<HabboItem> items;
     private final GameTeamColors color;
     private final Room room;
@@ -16,40 +15,32 @@ public class BattleBanzaiTilesFlicker implements Runnable
     private boolean on = false;
     private int count = 0;
 
-    public BattleBanzaiTilesFlicker(THashSet<HabboItem> items, GameTeamColors color, Room room)
-    {
+    public BattleBanzaiTilesFlicker(THashSet<HabboItem> items, GameTeamColors color, Room room) {
         this.items = items;
         this.color = color;
         this.room = room;
     }
 
     @Override
-    public void run()
-    {
-        if(this.items == null || this.room == null)
+    public void run() {
+        if (this.items == null || this.room == null)
             return;
 
         int state = 0;
-        if(this.on)
-        {
+        if (this.on) {
             state = (this.color.type * 3) + 5;
             this.on = false;
-        }
-        else
-        {
+        } else {
             this.on = true;
         }
 
-        for(HabboItem item : this.items)
-        {
+        for (HabboItem item : this.items) {
             item.setExtradata(state + "");
             this.room.updateItem(item);
         }
 
-        if(this.count == 5)
-        {
-            for(HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class))
-            {
+        if (this.count == 5) {
+            for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
                 item.setExtradata("0");
                 this.room.updateItemState(item);
             }

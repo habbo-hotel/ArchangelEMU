@@ -8,13 +8,12 @@ import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigCompo
 
 public class UpdateCatalogCommand extends Command {
 
-    public UpdateCatalogCommand()
-    {
+    public UpdateCatalogCommand() {
         super("cmd_update_catalogue", Emulator.getTexts().getValue("commands.keys.cmd_update_catalogue").split(";"));
     }
+
     @Override
-    public boolean handle(GameClient gameClient, String[] params)
-    {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getCatalogManager().initialize();
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new CatalogUpdatedComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new CatalogModeComposer(0));

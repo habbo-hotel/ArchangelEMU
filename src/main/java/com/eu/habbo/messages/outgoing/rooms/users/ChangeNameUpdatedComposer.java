@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ChangeNameUpdatedComposer extends MessageComposer
-{
+public class ChangeNameUpdatedComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public ChangeNameUpdatedComposer(Habbo habbo)
-    {
+    public ChangeNameUpdatedComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ChangeNameUpdateComposer);
         this.response.appendInt(0);
         this.response.appendString(this.habbo.getHabboInfo().getUsername());

@@ -9,43 +9,32 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class SetMotto extends RCONMessage<SetMotto.SetMottoJSON>
-{
-    public SetMotto()
-    {
+public class SetMotto extends RCONMessage<SetMotto.SetMottoJSON> {
+    public SetMotto() {
         super(SetMottoJSON.class);
     }
 
     @Override
-    public void handle(Gson gson, SetMottoJSON json)
-    {
+    public void handle(Gson gson, SetMottoJSON json) {
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.user_id);
 
-        if (habbo != null)
-        {
+        if (habbo != null) {
             habbo.getHabboInfo().setMotto(json.motto);
             habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
-        }
-        else
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-            {
-                try (PreparedStatement statement = connection.prepareStatement("UPDATE users SET motto = ? WHERE id = ? LIMIT 1"))
-                {
+        } else {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement("UPDATE users SET motto = ? WHERE id = ? LIMIT 1")) {
                     statement.setString(1, json.motto);
                     statement.setInt(2, json.user_id);
                     statement.execute();
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logErrorLine(e);
             }
         }
     }
 
-    static class SetMottoJSON
-    {
+    static class SetMottoJSON {
 
         public int user_id;
 

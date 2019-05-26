@@ -7,22 +7,18 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.friends.RemoveFriendComposer;
 import gnu.trove.list.array.TIntArrayList;
 
-public class RemoveFriendEvent extends MessageHandler
-{
+public class RemoveFriendEvent extends MessageHandler {
 
     private final TIntArrayList removedFriends;
 
-    public RemoveFriendEvent()
-    {
+    public RemoveFriendEvent() {
         this.removedFriends = new TIntArrayList();
     }
 
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int count = this.packet.readInt();
-        for(int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             int habboId = this.packet.readInt();
             this.removedFriends.add(habboId);
 
@@ -31,8 +27,7 @@ public class RemoveFriendEvent extends MessageHandler
 
             Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(habboId);
 
-            if(habbo != null)
-            {
+            if (habbo != null) {
                 habbo.getMessenger().removeBuddy(this.client.getHabbo());
                 habbo.getClient().sendResponse(new RemoveFriendComposer(this.client.getHabbo().getHabboInfo().getId()));
             }

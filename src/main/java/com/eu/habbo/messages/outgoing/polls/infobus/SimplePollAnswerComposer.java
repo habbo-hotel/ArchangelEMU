@@ -4,15 +4,13 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class SimplePollAnswerComposer extends MessageComposer
-{
+public class SimplePollAnswerComposer extends MessageComposer {
     private final int userId;
     private final String choice;
     private final int no;
     private final int yes;
 
-    public SimplePollAnswerComposer(int userId, String choice, int no, int yes)
-    {
+    public SimplePollAnswerComposer(int userId, String choice, int no, int yes) {
         this.userId = userId;
         this.choice = choice;
         this.no = no;
@@ -20,8 +18,7 @@ public class SimplePollAnswerComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.SimplePollAnswerComposer);
         this.response.appendInt(this.userId);
         this.response.appendString(this.choice);

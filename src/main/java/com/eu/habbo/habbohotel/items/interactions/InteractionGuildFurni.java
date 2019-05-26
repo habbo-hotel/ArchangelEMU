@@ -1,40 +1,33 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionGuildFurni extends InteractionDefault
-{
+public class InteractionGuildFurni extends InteractionDefault {
     private int guildId;
 
-    public InteractionGuildFurni(ResultSet set, Item baseItem) throws SQLException
-    {
+    public InteractionGuildFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.guildId = set.getInt("guild_id");
     }
 
-    public InteractionGuildFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionGuildFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.guildId = 0;
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(this.guildId);
 
-        if(guild != null)
-        {
+        if (guild != null) {
             serverMessage.appendInt(2 + (this.isLimited() ? 256 : 0));
             serverMessage.appendInt(5);
             serverMessage.appendString(this.getExtradata());
@@ -44,14 +37,11 @@ public class InteractionGuildFurni extends InteractionDefault
             serverMessage.appendString(Emulator.getGameEnvironment().getGuildManager().getBackgroundColor(guild.getColorTwo()).valueA);
 
             super.serializeExtradata(serverMessage);
-        }
-        else
-        {
+        } else {
             serverMessage.appendInt((this.isLimited() ? 256 : 0));
             serverMessage.appendString(this.getExtradata());
 
-            if(this.isLimited())
-            {
+            if (this.isLimited()) {
                 serverMessage.appendInt(10);
                 serverMessage.appendInt(100);
             }
@@ -59,30 +49,25 @@ public class InteractionGuildFurni extends InteractionDefault
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return this.getBaseItem().allowWalk();
     }
 
-    public int getGuildId()
-    {
+    public int getGuildId() {
         return this.guildId;
     }
 
-    public void setGuildId(int guildId)
-    {
+    public void setGuildId(int guildId) {
         this.guildId = guildId;
     }
 
     @Override
-    public boolean allowWiredResetState()
-    {
+    public boolean allowWiredResetState() {
         return true;
     }
 }

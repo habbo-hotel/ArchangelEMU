@@ -55,13 +55,11 @@ import com.eu.habbo.messages.incoming.wired.WiredEffectSaveDataEvent;
 import com.eu.habbo.messages.incoming.wired.WiredTriggerSaveDataEvent;
 import gnu.trove.map.hash.THashMap;
 
-public class PacketManager_1006
-{
+public class PacketManager_1006 {
 
     private final THashMap<Integer, Class<? extends MessageHandler>> incoming;
 
-    public PacketManager_1006()
-    {
+    public PacketManager_1006() {
         this.incoming = new THashMap<>();
 
         this.registerCatalog();
@@ -84,21 +82,17 @@ public class PacketManager_1006
         this.registerAmbassadors();
     }
 
-    void registerHandler(Integer header, Class<? extends MessageHandler> handler)
-    {
+    void registerHandler(Integer header, Class<? extends MessageHandler> handler) {
         this.incoming.putIfAbsent(header, handler);
     }
 
-    public void handlePacket(GameClient client, ClientMessage packet)
-    {
-        if(client == null)
+    public void handlePacket(GameClient client, ClientMessage packet) {
+        if (client == null)
             return;
 
-        try
-        {
-            if(this.isRegistered(packet.getMessageId()))
-            {
-                if(Emulator.getConfig().getBoolean("debug.show.packets"))
+        try {
+            if (this.isRegistered(packet.getMessageId())) {
+                if (Emulator.getConfig().getBoolean("debug.show.packets"))
                     Emulator.getLogging().logPacketLine("[CLIENT][" + packet.getMessageId() + "] => " + packet.getMessageBody());
 
                 MessageHandler handler = this.incoming.get(packet.getMessageId()).newInstance();
@@ -108,32 +102,25 @@ public class PacketManager_1006
 
                 handler.handle();
 
-            }
-            else
-            {
-                if(Emulator.getConfig().getBoolean("debug.show.packets"))
+            } else {
+                if (Emulator.getConfig().getBoolean("debug.show.packets"))
                     Emulator.getLogging().logPacketLine("[CLIENT][UNDEFINED][" + packet.getMessageId() + "] => " + packet.getMessageBody());
             }
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }
 
-    boolean isRegistered(int header)
-    {
+    boolean isRegistered(int header) {
         return this.incoming.containsKey(header);
     }
 
-    private void registerAmbassadors()
-    {
+    private void registerAmbassadors() {
         this.registerHandler(Incoming.AmbassadorAlertCommandEvent, AmbassadorAlertCommandEvent.class);
         this.registerHandler(Incoming.AmbassadorVisitCommandEvent, AmbassadorVisitCommandEvent.class);
     }
 
-    private void registerCatalog()
-    {
+    private void registerCatalog() {
         this.registerHandler(Incoming.RequestRecylerLogicEvent, RequestRecyclerLogicEvent.class);
         this.registerHandler(Incoming.RequestDiscountEvent, RequestDiscountEvent.class);
         this.registerHandler(Incoming.RequestGiftConfigurationEvent, RequestGiftConfigurationEvent.class);
@@ -162,8 +149,7 @@ public class PacketManager_1006
         this.registerHandler(Incoming.CatalogSearchedItemEvent, CatalogSearchedItemEvent.class);
     }
 
-    private void registerHandshake()
-    {
+    private void registerHandshake() {
         this.registerHandler(Incoming.ReleaseVersionEvent, ReleaseVersionEvent.class);
         this.registerHandler(Incoming.GenerateSecretKeyEvent, GenerateSecretKeyEvent.class);
         this.registerHandler(Incoming.RequestBannerToken, RequestBannerToken.class);
@@ -173,8 +159,7 @@ public class PacketManager_1006
         this.registerHandler(Incoming.PingEvent, PingEvent.class);
     }
 
-    private void registerFriends()
-    {
+    private void registerFriends() {
         this.registerHandler(Incoming.RequestFriendsEvent, RequestFriendsEvent.class);
         this.registerHandler(Incoming.ChangeRelationEvent, ChangeRelationEvent.class);
         this.registerHandler(Incoming.RemoveFriendEvent, RemoveFriendEvent.class);
@@ -184,13 +169,12 @@ public class PacketManager_1006
         this.registerHandler(Incoming.FriendPrivateMessageEvent, FriendPrivateMessageEvent.class);
         this.registerHandler(Incoming.RequestFriendRequestEvent, RequestFriendRequestsEvent.class);
         this.registerHandler(Incoming.StalkFriendEvent, StalkFriendEvent.class);
-        this.registerHandler(Incoming.RequestInitFriendsEvent , RequestInitFriendsEvent.class);
+        this.registerHandler(Incoming.RequestInitFriendsEvent, RequestInitFriendsEvent.class);
         this.registerHandler(Incoming.FindNewFriendsEvent, FindNewFriendsEvent.class);
         this.registerHandler(Incoming.InviteFriendsEvent, InviteFriendsEvent.class);
     }
 
-    private void registerUsers()
-    {
+    private void registerUsers() {
         this.registerHandler(Incoming.RequestUserDataEvent, RequestUserDataEvent.class);
         this.registerHandler(Incoming.RequestUserCreditsEvent, RequestUserCreditsEvent.class);
         this.registerHandler(Incoming.RequestUserClubEvent, RequestUserClubEvent.class);
@@ -210,8 +194,7 @@ public class PacketManager_1006
         this.registerHandler(Incoming.SavePreferOldChatEvent, SavePreferOldChatEvent.class);
     }
 
-    private void registerNavigator()
-    {
+    private void registerNavigator() {
         this.registerHandler(Incoming.RequestRoomCategoriesEvent, RequestRoomCategoriesEvent.class);
         this.registerHandler(Incoming.RequestPublicRoomsEvent, RequestPublicRoomsEvent.class);
         this.registerHandler(Incoming.RequestPopularRoomsEvent, RequestPopularRoomsEvent.class);
@@ -234,24 +217,21 @@ public class PacketManager_1006
         this.registerHandler(Incoming.NewNavigatorActionEvent, NewNavigatorActionEvent.class);
     }
 
-    private void registerHotelview()
-    {
+    private void registerHotelview() {
         this.registerHandler(Incoming.HotelViewEvent, HotelViewEvent.class);
         this.registerHandler(Incoming.HotelViewRequestBonusRareEvent, HotelViewRequestBonusRareEvent.class);
         this.registerHandler(Incoming.RequestNewsListEvent, RequestNewsListEvent.class);
         this.registerHandler(Incoming.HotelViewDataEvent, HotelViewDataEvent.class);
     }
 
-    private void registerInventory()
-    {
+    private void registerInventory() {
         this.registerHandler(Incoming.RequestInventoryBadgesEvent, RequestInventoryBadgesEvent.class);
         this.registerHandler(Incoming.RequestInventoryBotsEvent, RequestInventoryBotsEvent.class);
         this.registerHandler(Incoming.RequestInventoryItemsEvent, RequestInventoryItemsEvent.class);
         this.registerHandler(Incoming.RequestInventoryPetsEvent, RequestInventoryPetsEvent.class);
     }
 
-    void registerRooms()
-    {
+    void registerRooms() {
         this.registerHandler(Incoming.RequestRoomLoadEvent, RequestRoomLoadEvent.class);
         this.registerHandler(Incoming.RequestHeightmapEvent, RequestRoomHeightmapEvent.class);
         this.registerHandler(Incoming.RequestRoomHeightmapEvent, RequestRoomHeightmapEvent.class);
@@ -324,15 +304,13 @@ public class PacketManager_1006
         this.registerHandler(Incoming.JukeBoxEventTwo, JukeBoxEventTwo.class);
     }
 
-    void registerPolls()
-    {
+    void registerPolls() {
         this.registerHandler(Incoming.CancelPollEvent, CancelPollEvent.class);
         this.registerHandler(Incoming.GetPollDataEvent, GetPollDataEvent.class);
         this.registerHandler(Incoming.AnswerPollEvent, AnswerPollEvent.class);
     }
 
-    void registerModTool()
-    {
+    void registerModTool() {
         this.registerHandler(Incoming.ModToolRequestRoomInfoEvent, ModToolRequestRoomInfoEvent.class);
         this.registerHandler(Incoming.ModToolRequestRoomChatlogEvent, ModToolRequestRoomChatlogEvent.class);
         this.registerHandler(Incoming.ModToolRequestUserInfoEvent, ModToolRequestUserInfoEvent.class);
@@ -353,8 +331,7 @@ public class PacketManager_1006
         this.registerHandler(Incoming.ReportEvent, ReportEvent.class);
     }
 
-    void registerTrading()
-    {
+    void registerTrading() {
         this.registerHandler(Incoming.TradeStartEvent, TradeStartEvent.class);
         this.registerHandler(Incoming.TradeOfferItemEvent, TradeOfferItemEvent.class);
         this.registerHandler(Incoming.TradeCancelOfferItemEvent, TradeCancelOfferItemEvent.class);
@@ -364,8 +341,7 @@ public class PacketManager_1006
         this.registerHandler(Incoming.TradeCloseEvent, TradeCloseEvent.class);
     }
 
-    void registerGuilds()
-    {
+    void registerGuilds() {
         this.registerHandler(Incoming.RequestGuildBuyRoomsEvent, RequestGuildBuyRoomsEvent.class);
         this.registerHandler(Incoming.RequestGuildPartsEvent, RequestGuildPartsEvent.class);
         this.registerHandler(Incoming.RequestGuildBuyEvent, RequestGuildBuyEvent.class);
@@ -390,8 +366,7 @@ public class PacketManager_1006
         this.registerHandler(Incoming.GuildDeleteEvent, GuildDeleteEvent.class);
     }
 
-    void registerPets()
-    {
+    void registerPets() {
         this.registerHandler(Incoming.RequestPetInformationEvent, RequestPetInformationEvent.class);
         this.registerHandler(Incoming.PetPickupEvent, PetPickupEvent.class);
         this.registerHandler(Incoming.ScratchPetEvent, ScratchPetEvent.class);
@@ -401,29 +376,25 @@ public class PacketManager_1006
         this.registerHandler(Incoming.HorseRideEvent, PetRideEvent.class);
     }
 
-    void registerWired()
-    {
+    void registerWired() {
         this.registerHandler(Incoming.WiredTriggerSaveDataEvent, WiredTriggerSaveDataEvent.class);
         this.registerHandler(Incoming.WiredEffectSaveDataEvent, WiredEffectSaveDataEvent.class);
         this.registerHandler(Incoming.WiredConditionSaveDataEvent, WiredConditionSaveDataEvent.class);
     }
 
-    void registerUnknown()
-    {
+    void registerUnknown() {
         this.registerHandler(Incoming.RequestResolutionEvent, RequestResolutionEvent.class);
         this.registerHandler(Incoming.RequestTalenTrackEvent, RequestTalentTrackEvent.class); //TODO
         this.registerHandler(Incoming.UnknownEvent1, UnknownEvent1.class);
     }
 
-    void registerFloorPlanEditor()
-    {
+    void registerFloorPlanEditor() {
         this.registerHandler(Incoming.FloorPlanEditorSaveEvent, FloorPlanEditorSaveEvent.class);
         this.registerHandler(Incoming.FloorPlanEditorRequestBlockedTilesEvent, FloorPlanEditorRequestBlockedTilesEvent.class);
         this.registerHandler(Incoming.FloorPlanEditorRequestDoorSettingsEvent, FloorPlanEditorRequestDoorSettingsEvent.class);
     }
 
-    void registerAchievements()
-    {
+    void registerAchievements() {
         this.registerHandler(Incoming.RequestAchievementsEvent, RequestAchievementsEvent.class);
     }
 }
