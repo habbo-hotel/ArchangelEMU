@@ -405,6 +405,8 @@ public class BattleBanzaiGame extends Game
 
     public void refreshCounters(GameTeamColors teamColors)
     {
+        if (!this.teams.containsKey(teamColors)) return;
+
         int totalScore = this.teams.get(teamColors).getTotalScore();
 
         THashMap<Integer, InteractionBattleBanzaiScoreboard> scoreBoards = this.room.getRoomSpecialTypes().getBattleBanzaiScoreboards(teamColors);
