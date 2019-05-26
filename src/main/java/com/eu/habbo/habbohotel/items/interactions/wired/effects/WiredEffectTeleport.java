@@ -131,7 +131,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect
 
         // makes a temporary effect
         room.sendComposer(new RoomUserEffectComposer(roomUnit, 4).compose());
-        Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), WiredHandler.TELEPORT_DELAY);
+        Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), WiredHandler.TELEPORT_DELAY + 1000);
 
         if (tile.state == RoomTileState.INVALID || tile.state == RoomTileState.BLOCKED) {
             RoomTile alternativeTile = null;
