@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.pets.actions;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetAction;
 import com.eu.habbo.habbohotel.pets.PetTasks;
@@ -20,7 +21,7 @@ public class ActionStay extends PetAction {
         pet.clearPosture();
 
         pet.getRoomUnit().setCanWalk(false);
-
+        pet.setStayStartedAt(Emulator.getIntUnixTimestamp());
         pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
 
         return true;

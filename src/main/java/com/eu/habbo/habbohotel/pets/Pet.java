@@ -46,6 +46,7 @@ public class Pet implements ISerialize, Runnable {
     private int gestureTickTimeout = Emulator.getIntUnixTimestamp();
     private int randomActionTickTimeout = Emulator.getIntUnixTimestamp();
     private int postureTimeout = Emulator.getIntUnixTimestamp();
+    private int stayStartedAt = 0;
     private int idleCommandTicks = 0;
     private int freeCommandTicks = -1;
 
@@ -276,6 +277,11 @@ public class Pet implements ISerialize, Runnable {
 
                     this.tickTimeout = time;
                 }
+
+                if (this.task == PetTasks.STAY && Emulator.getIntUnixTimestamp() - this.stayStartedAt >= 120) {
+                    this.task = null;
+                    this.getRoomUnit().setCanWalk(true);
+                }
             } else {
                 int timeout = Emulator.getRandom().nextInt(10) * 2;
                 this.roomUnit.setWalkTimeOut(timeout < 20 ? 20 + time : timeout + time);
@@ -330,6 +336,12 @@ public class Pet implements ISerialize, Runnable {
 
     public void handleCommand(PetCommand command, Habbo habbo, String[] data) {
         this.idleCommandTicks = 0;
+
+        if (this.task == PetTasks.STAY) {
+            this.stayStartedAt = 0;
+            this.task = null;
+            this.getRoomUnit().setCanWalk(true);
+        }
 
         command.handle(this, habbo, data);
 
@@ -730,5 +742,13 @@ public class Pet implements ISerialize, Runnable {
         this.roomUnit = null;
         this.room = null;
         this.needsUpdate = true;
+    }
+
+    public int getStayStartedAt() {
+        return stayStartedAt;
+    }
+
+    public void setStayStartedAt(int stayStartedAt) {
+        this.stayStartedAt = stayStartedAt;
     }
 }
