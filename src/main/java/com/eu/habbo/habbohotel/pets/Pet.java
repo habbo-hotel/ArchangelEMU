@@ -535,7 +535,7 @@ public class Pet implements ISerialize, Runnable {
         this.level++;
         this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
         this.addHappyness(100);
-        this.roomUnit.setStatus(RoomUnitStatus.GESTURE, "exp");
+        this.roomUnit.setStatus(RoomUnitStatus.GESTURE, PetGestures.LVLUP.getKey());
         this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
         AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
         this.room.sendComposer(new PetLevelUpdatedComposer(this).compose());
