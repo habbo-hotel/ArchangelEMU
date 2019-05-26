@@ -230,7 +230,7 @@ public class InteractionTeleport extends HabboItem
 
         this.roomUnitID = -1;
         habbo.getRoomUnit().isTeleporting = true;
-        room.scheduledTasks.add(new TeleportActionOne(this, room, habbo.getClient()));
+        Emulator.getThreading().run(new TeleportActionOne(this, room, habbo.getClient()), 500);
     }
 
     @Override
