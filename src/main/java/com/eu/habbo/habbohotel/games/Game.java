@@ -142,6 +142,13 @@ public abstract class Game implements Runnable {
 
         this.saveScores();
 
+        int totalPointsGained = this.teams.values().stream().mapToInt(GameTeam::getTotalScore).sum();
+
+        Habbo roomOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.room.getOwnerId());
+        if (roomOwner != null) {
+            AchievementManager.progressAchievement(roomOwner, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GameAuthorExperience"), totalPointsGained);
+        }
+
         GameTeam winningTeam = null;
         for (GameTeam team : this.teams.values()) {
             if (winningTeam == null || team.getTotalScore() > winningTeam.getTotalScore()) {
@@ -152,6 +159,11 @@ public abstract class Game implements Runnable {
         if (winningTeam != null) {
             for (GamePlayer player : winningTeam.getMembers()) {
                 WiredHandler.handleCustomTrigger(WiredTriggerTeamWins.class, player.getHabbo().getRoomUnit(), this.room, new Object[]{this});
+
+                Habbo winner = player.getHabbo();
+                if (winner != null) {
+                    AchievementManager.progressAchievement(roomOwner, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GamePlayerExperience"));
+                }
             }
 
             for (GameTeam team : this.teams.values()) {
