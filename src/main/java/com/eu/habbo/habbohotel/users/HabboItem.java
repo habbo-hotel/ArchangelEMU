@@ -17,6 +17,7 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.util.Pair;
 
@@ -339,6 +340,11 @@ public abstract class HabboItem implements Runnable, IEventTriggers
             return;
 
         WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, roomUnit, room, new Object[]{this});
+
+        if ((this.getBaseItem().allowSit() || this.getBaseItem().allowLay()) && roomUnit.getDanceType() != DanceType.NONE) {
+            roomUnit.setDanceType(DanceType.NONE);
+            room.sendComposer(new RoomUserDanceComposer(roomUnit).compose());
+        }
     }
 
     @Override
