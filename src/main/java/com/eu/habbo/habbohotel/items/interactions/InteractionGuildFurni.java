@@ -35,16 +35,14 @@ public class InteractionGuildFurni extends InteractionDefault {
             serverMessage.appendString(guild.getBadge());
             serverMessage.appendString(Emulator.getGameEnvironment().getGuildManager().getSymbolColor(guild.getColorOne()).valueA);
             serverMessage.appendString(Emulator.getGameEnvironment().getGuildManager().getBackgroundColor(guild.getColorTwo()).valueA);
-
-            super.serializeExtradata(serverMessage);
         } else {
             serverMessage.appendInt((this.isLimited() ? 256 : 0));
             serverMessage.appendString(this.getExtradata());
+        }
 
-            if (this.isLimited()) {
-                serverMessage.appendInt(10);
-                serverMessage.appendInt(100);
-            }
+        if (this.isLimited()) {
+            serverMessage.appendInt(this.getLimitedSells());
+            serverMessage.appendInt(this.getLimitedStack());
         }
     }
 
