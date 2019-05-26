@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
+import com.eu.habbo.plugin.events.users.UserIdleEvent;
 
 public class RoomUserWalkEvent extends MessageHandler {
     @Override
@@ -48,6 +49,18 @@ public class RoomUserWalkEvent extends MessageHandler {
 
                         if (habbo.getHabboInfo().getCurrentRoom() == null || habbo.getHabboInfo().getCurrentRoom().getLayout() == null)
                             return;
+
+                        if (roomUnit.isIdle()) {
+                            UserIdleEvent event = new UserIdleEvent(habbo, UserIdleEvent.IdleReason.WALKED, false);
+                            Emulator.getPluginManager().fireEvent(event);
+
+                            if (!event.isCancelled()) {
+                                if (!event.idle) {
+                                    roomUnit.getRoom().unIdle(habbo);
+                                    roomUnit.resetIdleTimer();
+                                }
+                            }
+                        }
 
                         RoomTile tile = habbo.getHabboInfo().getCurrentRoom().getLayout().getTile((short) x, (short) y);
 
