@@ -1,7 +1,9 @@
 package com.eu.habbo.threading.runnables;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 
@@ -28,6 +30,7 @@ public class BanzaiRandomTeleport implements Runnable
         this.toItem.setExtradata("0");
         this.room.updateItem(this.item);
         this.room.updateItem(this.toItem);
+        this.habbo.setRotation(RoomUserRotation.fromValue(Emulator.getRandom().nextInt(8)));
         this.room.teleportRoomUnitToItem(this.habbo, this.toItem);
     }
 }
