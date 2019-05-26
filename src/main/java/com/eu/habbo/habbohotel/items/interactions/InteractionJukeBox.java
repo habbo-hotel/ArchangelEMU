@@ -63,7 +63,7 @@ public class InteractionJukeBox extends HabboItem
                     room.getTraxManager().stop();
                 } else
                 {
-                    room.getTraxManager().play(0);
+                    room.getTraxManager().play(0, client.getHabbo());
                 }
             }
         }

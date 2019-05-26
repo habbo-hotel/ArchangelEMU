@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.Disposable;
+import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.items.SoundTrack;
 import com.eu.habbo.habbohotel.items.interactions.InteractionJukeBox;
 import com.eu.habbo.habbohotel.items.interactions.InteractionMusicDisc;
@@ -26,6 +27,8 @@ public class TraxManager implements Disposable
     private int startedTimestamp = 0;
     private InteractionMusicDisc currentlyPlaying = null;
     private int playingIndex = 0;
+    private int cycleStartedTimestamp = 0;
+    private Habbo starter = null;
 
     private boolean disposed = false;
 
@@ -79,6 +82,11 @@ public class TraxManager implements Disposable
 
     public void play(int index)
     {
+        this.play(index, null);
+    }
+
+    public void play(int index, Habbo starter)
+    {
         if (this.currentlyPlaying == null)
         {
             for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionJukeBox.class))
@@ -99,6 +107,11 @@ public class TraxManager implements Disposable
                 this.room.setJukeBoxActive(true);
                 this.startedTimestamp = Emulator.getIntUnixTimestamp();
                 this.playingIndex = index;
+
+                if (starter != null) {
+                    this.starter = starter;
+                    this.cycleStartedTimestamp = Emulator.getIntUnixTimestamp();
+                }
             }
 
             this.room.sendComposer(new JukeBoxNowPlayingMessageComposer(Emulator.getGameEnvironment().getItemManager().getSoundTrack(this.currentlyPlaying.getSongId()), this.playingIndex, 0).compose());
@@ -111,9 +124,15 @@ public class TraxManager implements Disposable
 
     public void stop()
     {
+        if (this.starter != null && this.cycleStartedTimestamp > 0) {
+            AchievementManager.progressAchievement(this.starter, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MusicPlayer"), (Emulator.getIntUnixTimestamp() - cycleStartedTimestamp) / 60);
+        }
+
         this.room.setJukeBoxActive(false);
         this.currentlyPlaying = null;
         this.startedTimestamp = 0;
+        this.cycleStartedTimestamp = 0;
+        this.starter = null;
         this.playingIndex = 0;
 
         for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionJukeBox.class))
