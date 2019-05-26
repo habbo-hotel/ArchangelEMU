@@ -37,7 +37,7 @@ public class GuildMembersComposer extends MessageComposer {
         this.response.appendString(this.guild.getName());
         this.response.appendInt(this.guild.getRoomId());
         this.response.appendString(this.guild.getBadge());
-        this.response.appendInt(this.guild.getMemberCount());
+        this.response.appendInt(this.level == 3 ? this.guild.getRequestCount() : this.guild.getMemberCount());
         this.response.appendInt(this.members.size());
 
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
