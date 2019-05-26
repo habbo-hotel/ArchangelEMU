@@ -11,10 +11,9 @@ public class ModToolRequestRoomInfoEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
-            //int roomId = this.packet.readInt();
+            int roomId = this.packet.readInt();
 
-            Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-            //Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
             if (room != null) {
                 this.client.sendResponse(new ModToolRoomInfoComposer(room));

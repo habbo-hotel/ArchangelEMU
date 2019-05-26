@@ -323,6 +323,24 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
                 AchievementManager.progressAchievement(this.getUserId(), roomDecoAchievement, difference);
             }
         }
+
+        Achievement roomDecoUniqueAchievement = Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoFurniTypeCount");
+
+        int uniqueFurniCollecterProgress;
+        if (owner == null) {
+            uniqueFurniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.getUserId(), roomDecoUniqueAchievement);
+        } else {
+            uniqueFurniCollecterProgress = owner.getHabboStats().getAchievementProgress(roomDecoUniqueAchievement);
+        }
+
+        int uniqueDifference = room.getUserUniqueFurniCount(this.getUserId()) - uniqueFurniCollecterProgress;
+        if (uniqueDifference > 0) {
+            if (owner != null) {
+                AchievementManager.progressAchievement(owner, roomDecoUniqueAchievement, uniqueDifference);
+            } else {
+                AchievementManager.progressAchievement(this.getUserId(), roomDecoUniqueAchievement, uniqueDifference);
+            }
+        }
     }
 
     public void onPickUp(Room room) {

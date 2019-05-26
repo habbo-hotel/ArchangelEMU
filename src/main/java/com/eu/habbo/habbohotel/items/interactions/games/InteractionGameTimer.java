@@ -138,6 +138,8 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
 
         this.setExtradata(this.timeNow + "\t" + this.baseTime);
         room.updateItem(this);
+
+        super.onPlace(room);
     }
 
     @Override

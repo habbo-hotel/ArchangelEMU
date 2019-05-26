@@ -40,5 +40,7 @@ public class InteractionBlackHole extends InteractionGate {
                 AchievementManager.progressAchievement(this.getUserId(), holeCountAchievement, holeDifference);
             }
         }
+
+        super.onPlace(room);
     }
 }

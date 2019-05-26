@@ -88,6 +88,10 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
 
                 if (habbo != null) {
                     habbo.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(this.message.replace("%user%", habbo.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + ""), habbo, habbo, RoomChatMessageBubbles.WIRED)));
+
+                    if (habbo.getRoomUnit().isIdle()) {
+                        habbo.getRoomUnit().getRoom().unIdle(habbo);
+                    }
                     return true;
                 }
             } else {

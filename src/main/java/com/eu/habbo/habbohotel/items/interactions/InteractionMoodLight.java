@@ -55,6 +55,8 @@ public class InteractionMoodLight extends HabboItem {
                 }
             }
         }
+
+        super.onPlace(room);
     }
 
     @Override
