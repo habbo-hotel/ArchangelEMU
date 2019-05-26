@@ -12,7 +12,7 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionGuildFurni extends HabboItem
+public class InteractionGuildFurni extends InteractionDefault
 {
     private int guildId;
 
@@ -68,45 +68,6 @@ public class InteractionGuildFurni extends HabboItem
     public boolean isWalkable()
     {
         return this.getBaseItem().allowWalk();
-    }
-
-    @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
-        super.onClick(client, room, objects);
-
-        if (objects.length > 0)
-        {
-            if (objects[0] instanceof Integer && room != null)
-            {
-                if(this.getExtradata().length() == 0)
-                    this.setExtradata("0");
-
-                if(this.getBaseItem().getStateCount() > 1)
-                {
-                    this.setExtradata("" + (Integer.valueOf(this.getExtradata()) + 1) % this.getBaseItem().getStateCount());
-                    this.needsUpdate(true);
-                    room.updateItemState(this);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
-    }
-
-    @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
-        super.onWalkOn(roomUnit, room, objects);
-    }
-
-    @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
-        super.onWalkOff(roomUnit, room, objects);
     }
 
     public int getGuildId()
