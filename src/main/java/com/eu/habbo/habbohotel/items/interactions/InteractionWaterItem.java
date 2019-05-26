@@ -25,6 +25,7 @@ public class InteractionWaterItem extends InteractionDefault {
     @Override
     public void onPlace(Room room) {
         this.update();
+        super.onPlace(room);
     }
 
     @Override

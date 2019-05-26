@@ -59,6 +59,7 @@ public class InteractionWater extends InteractionDefault {
     @Override
     public void onPlace(Room room) {
         this.recalculate(room);
+        super.onPlace(room);
     }
 
     public void refreshWaters(Room room) {

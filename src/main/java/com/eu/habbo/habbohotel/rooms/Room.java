@@ -3994,6 +3994,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return this.furniOwnerCount.get(userId);
     }
 
+    public int getUserUniqueFurniCount(int userId) {
+        THashSet<Item> items = new THashSet<>();
+
+        for (HabboItem item : this.roomItems.valueCollection()) {
+            if (!items.contains(item.getBaseItem()) && item.getUserId() == userId) items.add(item.getBaseItem());
+        }
+
+        return items.size();
+    }
+
     public void ejectUserFurni(int userId) {
         THashSet<HabboItem> items = new THashSet<>();
 

@@ -143,6 +143,7 @@ public class InteractionWiredHighscore extends HabboItem {
     @Override
     public void onPlace(Room room) {
         this.reloadData(room);
+        super.onPlace(room);
     }
 
     @Override
