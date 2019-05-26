@@ -29,7 +29,7 @@ public class RedeemClothingEvent extends MessageHandler
         {
             HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
 
-            if(item.getUserId() == this.client.getHabbo().getHabboInfo().getId())
+            if(item != null && item.getUserId() == this.client.getHabbo().getHabboInfo().getId())
             {
                 if(item instanceof InteractionClothing)
                 {

@@ -806,6 +806,8 @@ public class RoomUnit
     }
 
     public boolean canOverrideTile(RoomTile tile) {
+        if (tile == null || room == null || room.getLayout() == null) return false;
+
         int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
         return this.overridableTiles.contains(tileIndex);
     }
