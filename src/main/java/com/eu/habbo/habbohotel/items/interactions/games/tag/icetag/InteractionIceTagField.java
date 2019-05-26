@@ -44,4 +44,15 @@ public class InteractionIceTagField extends InteractionTagField {
             this.stepTimes.remove(habbo);
         }
     }
+
+    @Override
+    public void onPlace(Room room) {
+        super.onPlace(room);
+
+        Habbo itemOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId());
+
+        if (itemOwner != null) {
+            AchievementManager.progressAchievement(itemOwner, Emulator.getGameEnvironment().getAchievementManager().getAchievement("TagA"));
+        }
+    }
 }
