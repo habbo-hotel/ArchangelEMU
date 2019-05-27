@@ -144,12 +144,29 @@ public class InteractionWater extends InteractionDefault {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+        super.onWalkOn(roomUnit, room, objects);
+
         Pet pet = room.getPet(roomUnit);
 
-        if (pet != null) {
-            pet.getRoomUnit().setStatus(RoomUnitStatus.DIP, "0");
+        if(pet == null)
+            return;
+
+        if (!pet.getRoomUnit().hasStatus(RoomUnitStatus.SWIM)) {
+            pet.getRoomUnit().setStatus(RoomUnitStatus.SWIM, "");
         }
+    }
+
+    @Override
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+        super.onWalkOff(roomUnit, room, objects);
+
+        Pet pet = room.getPet(roomUnit);
+
+        if(pet == null)
+            return;
+
+        pet.getRoomUnit().removeStatus(RoomUnitStatus.SWIM);
     }
 
     private void recalculate(Room room) {
