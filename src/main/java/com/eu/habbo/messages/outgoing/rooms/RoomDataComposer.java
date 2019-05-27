@@ -11,20 +11,20 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class RoomDataComposer extends MessageComposer {
     private final Room room;
     private final Habbo habbo;
-    private final boolean publicRoom;
-    private final boolean unknown;
+    private final boolean roomForward;
+    private final boolean enterRoom;
 
-    public RoomDataComposer(Room room, Habbo habbo, boolean boolA, boolean boolB) {
+    public RoomDataComposer(Room room, Habbo habbo, boolean roomForward, boolean enterRoom) {
         this.room = room;
         this.habbo = habbo;
-        this.publicRoom = boolA;
-        this.unknown = boolB;
+        this.roomForward = roomForward;
+        this.enterRoom = enterRoom;
     }
 
     @Override
     public ServerMessage compose() {
         this.response.init(Outgoing.RoomDataComposer);
-        this.response.appendBoolean(this.unknown);
+        this.response.appendBoolean(this.enterRoom);
         this.response.appendInt(this.room.getId());
         this.response.appendString(this.room.getName());
         if (this.room.isPublicRoom()) {
@@ -92,10 +92,10 @@ public class RoomDataComposer extends MessageComposer {
             this.response.appendInt((this.room.getPromotion().getEndTimestamp() - Emulator.getIntUnixTimestamp()) / 60);
         }
 
-        this.response.appendBoolean(this.publicRoom);
-        this.response.appendBoolean(this.room.isStaffPromotedRoom()); //staffpicked
-        this.response.appendBoolean(this.room.isPublicRoom()); //ispublicroom
-        this.response.appendBoolean(this.room.isMuted()); //isroommuted
+        this.response.appendBoolean(this.roomForward);
+        this.response.appendBoolean(this.room.isStaffPromotedRoom()); // staffpicked
+        this.response.appendBoolean(this.room.hasGuild() && Emulator.getGameEnvironment().getGuildManager().getGuildMember(this.room.getGuildId(), this.habbo.getHabboInfo().getId()) != null); // is group member
+        this.response.appendBoolean(this.room.isMuted()); // isroommuted
 
         this.response.appendInt(this.room.getMuteOption());
         this.response.appendInt(this.room.getKickOption());

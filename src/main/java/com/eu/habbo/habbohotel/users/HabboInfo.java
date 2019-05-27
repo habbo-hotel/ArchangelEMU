@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
+import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Rank;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.RideablePet;
@@ -14,11 +15,9 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.procedure.TIntIntProcedure;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class HabboInfo implements Runnable {
@@ -51,6 +50,7 @@ public class HabboInfo implements Runnable {
     private String photoJSON;
     private int webPublishTimestamp;
     private String machineID;
+    private HashSet<NavigatorSavedSearch> savedSearches = new HashSet<>();
 
     public HabboInfo(ResultSet set) {
         try {
@@ -83,6 +83,7 @@ public class HabboInfo implements Runnable {
         }
 
         this.loadCurrencies();
+        this.loadSavedSearches();
     }
 
     private void loadCurrencies() {
@@ -118,6 +119,57 @@ public class HabboInfo implements Runnable {
                 }
             });
             statement.executeBatch();
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+    }
+
+    private void loadSavedSearches() {
+        this.savedSearches = new HashSet<>();
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_saved_searches WHERE user_id = ?")) {
+            statement.setInt(1, this.id);
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    this.savedSearches.add(new NavigatorSavedSearch(set.getString("search_code"), set.getString("filter"), set.getInt("id")));
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+    }
+
+    public void addSavedSearch(NavigatorSavedSearch search) {
+        this.savedSearches.add(search);
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_saved_searches (search_code, filter, user_id) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, search.getSearchCode());
+            statement.setString(2, search.getFilter());
+            statement.setInt(3, this.id);
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating saved search failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    search.setId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating saved search failed, no ID found.");
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+    }
+
+    public void deleteSavedSearch(NavigatorSavedSearch search) {
+        this.savedSearches.remove(search);
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM users_saved_searches WHERE id = ?")) {
+            statement.setInt(1, search.getId());
+            statement.execute();
         } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
@@ -416,6 +468,10 @@ public class HabboInfo implements Runnable {
 
     public void setMachineID(String machineID) {
         this.machineID = machineID;
+    }
+
+    public HashSet<NavigatorSavedSearch> getSavedSearches() {
+        return this.savedSearches;
     }
 
     @Override

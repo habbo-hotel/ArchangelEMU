@@ -58,8 +58,12 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler {
             return;
         }
 
-        if (filter == null && category != null) {
+        if (filter == null) {
             filter = Emulator.getGameEnvironment().getNavigatorManager().filters.get("hotel_view");
+        }
+
+        if (category == null) {
+            category = Emulator.getGameEnvironment().getRoomManager().getCategoryBySafeCaption("hotel_view");
         }
 
         if (filter == null)

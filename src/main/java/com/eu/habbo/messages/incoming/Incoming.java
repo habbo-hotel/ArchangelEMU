@@ -285,6 +285,8 @@ public class Incoming {
     public static final int UnbanRoomUserEvent = 992;
     public static final int RoomUserBanEvent = 1477;
     public static final int RequestNavigatorSettingsEvent = 1782;
+    public static final int AddSavedSearchEvent = 2226;
+    public static final int DeleteSavedSearchEvent = 1954;
     public static final int SaveWindowSettingsEvent = 3159;
     public static final int GetHabboGuildBadgesMessageEvent = 21;
 

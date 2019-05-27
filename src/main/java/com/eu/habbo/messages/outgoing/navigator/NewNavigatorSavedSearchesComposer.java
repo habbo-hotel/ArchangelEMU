@@ -1,34 +1,31 @@
 package com.eu.habbo.messages.outgoing.navigator;
 
+import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
+import java.util.HashSet;
+
 public class NewNavigatorSavedSearchesComposer extends MessageComposer {
+    private final HashSet<NavigatorSavedSearch> searches;
+
+    public NewNavigatorSavedSearchesComposer(HashSet<NavigatorSavedSearch> searches) {
+        this.searches = searches;
+    }
+
     @Override
     public ServerMessage compose() {
         this.response.init(Outgoing.NewNavigatorSavedSearchesComposer);
-        this.response.appendInt(4);
+        this.response.appendInt(this.searches.size());
 
-        this.response.appendInt(1);
-        this.response.appendString("official");
-        this.response.appendString("");
-        this.response.appendString("");
+        for (NavigatorSavedSearch search : this.searches) {
+            this.response.appendInt(search.getId());
+            this.response.appendString(search.getSearchCode());
+            this.response.appendString(search.getFilter() == null ? "" : search.getFilter());
+            this.response.appendString("");
+        }
 
-        this.response.appendInt(2);
-        this.response.appendString("recommended");
-        this.response.appendString("");
-        this.response.appendString("");
-
-        this.response.appendInt(3);
-        this.response.appendString("my");
-        this.response.appendString("");
-        this.response.appendString("");
-
-        this.response.appendInt(4);
-        this.response.appendString("favorites");
-        this.response.appendString("");
-        this.response.appendString("");
         return this.response;
     }
 }

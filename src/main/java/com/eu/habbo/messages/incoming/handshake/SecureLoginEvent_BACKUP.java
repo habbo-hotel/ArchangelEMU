@@ -70,7 +70,7 @@ public class SecureLoginEvent_BACKUP extends MessageHandler {
                 this.client.sendResponse(new NewNavigatorMetaDataComposer());
                 this.client.sendResponse(new NewNavigatorLiftedRoomsComposer());
                 this.client.sendResponse(new NewNavigatorCollapsedCategoriesComposer());
-                this.client.sendResponse(new NewNavigatorSavedSearchesComposer());
+                this.client.sendResponse(new NewNavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
                 this.client.sendResponse(new NewNavigatorEventCategoriesComposer());
                 //this.client.sendResponse(new HotelViewComposer());
                 //this.client.sendResponse(new UserHomeRoomComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), this.client.getHabbo().getHabboInfo().getHomeRoom()));

@@ -124,7 +124,7 @@ public class SecureLoginEvent extends MessageHandler {
                 this.client.sendResponse(new NewNavigatorMetaDataComposer());
                 this.client.sendResponse(new NewNavigatorLiftedRoomsComposer());
                 this.client.sendResponse(new NewNavigatorCollapsedCategoriesComposer());
-                this.client.sendResponse(new NewNavigatorSavedSearchesComposer());
+                this.client.sendResponse(new NewNavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
                 this.client.sendResponse(new NewNavigatorEventCategoriesComposer());
                 this.client.sendResponse(new InventoryRefreshComposer());
                 //this.client.sendResponse(new ForumsTestComposer());
