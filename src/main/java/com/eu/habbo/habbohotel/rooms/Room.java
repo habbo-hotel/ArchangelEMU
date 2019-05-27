@@ -3426,6 +3426,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     @Deprecated
     public HabboItem getLowestChair(int x, int y) {
+        if (this.layout == null) return null;
+
         RoomTile tile = this.layout.getTile((short) x, (short) y);
 
         if (tile != null) {
