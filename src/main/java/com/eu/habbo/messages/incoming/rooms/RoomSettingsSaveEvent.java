@@ -38,7 +38,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 RoomState state = RoomState.values()[this.packet.readInt() % RoomState.values().length];
 
                 String password = this.packet.readString();
-                if (state == RoomState.PASSWORD && password.isEmpty()) {
+                if (state == RoomState.PASSWORD && password.isEmpty() && (room.getPassword() == null || room.getPassword().isEmpty())) {
                     this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.PASSWORD_REQUIRED, ""));
                     return;
                 }
@@ -75,7 +75,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 room.setName(name);
                 room.setDescription(description);
                 room.setState(state);
-                room.setPassword(password);
+                if (!password.isEmpty()) room.setPassword(password);
                 room.setUsersMax(usersMax);
 
 
