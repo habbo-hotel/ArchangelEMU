@@ -153,6 +153,9 @@ public class NavigatorManager {
             case "categories":
                 rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsPromoted();
                 break;
+            case "with_friends":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithFriendsIn(habbo, 25);
+                break;
             default:
                 return null;
         }

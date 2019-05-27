@@ -42,6 +42,12 @@ public class NavigatorUserFilter extends NavigatorFilter {
             i++;
         }
 
+        List<Room> friendRooms = Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("with_friends", habbo);
+        if (!friendRooms.isEmpty()) {
+            resultLists.add(new SearchResultList(i, "with_friends", "", SearchAction.NONE, habbo.getHabboStats().navigatorWindowSettings.getListModeForCategory("with_friends"), habbo.getHabboStats().navigatorWindowSettings.getDisplayModeForCategory("with_friends"), friendRooms, true, true, DisplayOrder.ORDER_NUM, i));
+            i++;
+        }
+
         List<Room> rightRooms = Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("with_rights", habbo);
         if (!rightRooms.isEmpty()) {
             resultLists.add(new SearchResultList(i, "with_rights", "", SearchAction.NONE, habbo.getHabboStats().navigatorWindowSettings.getListModeForCategory("with_rights"), habbo.getHabboStats().navigatorWindowSettings.getDisplayModeForCategory("with_rights"), rightRooms, true, true, DisplayOrder.ORDER_NUM, i));

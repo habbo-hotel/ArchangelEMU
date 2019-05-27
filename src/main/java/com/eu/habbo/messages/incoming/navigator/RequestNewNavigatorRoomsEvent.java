@@ -18,6 +18,7 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler {
         String query = this.packet.readString();
 
         if (view.equals("query")) view = "hotel_view";
+        if (view.equals("groups")) view = "hotel_view";
 
         NavigatorFilter filter = Emulator.getGameEnvironment().getNavigatorManager().filters.get(view);
         RoomCategory category = Emulator.getGameEnvironment().getRoomManager().getCategoryBySafeCaption(view);
