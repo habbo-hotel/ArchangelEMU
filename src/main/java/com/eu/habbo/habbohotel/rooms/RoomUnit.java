@@ -173,6 +173,8 @@ public class RoomUnit {
 
             Deque<RoomTile> peekPath = room.getLayout().findPath(this.currentLocation, this.path.peek(), this.goalLocation, this);
             if (peekPath.size() >= 3) {
+                if (path.isEmpty()) return true;
+
                 path.pop();
                 //peekPath.pop(); //Start
                 peekPath.removeLast(); //End
