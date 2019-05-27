@@ -31,6 +31,8 @@ public abstract class TagGame extends Game {
 
     @EventHandler
     public static void onUserLookAtPoint(RoomUnitLookAtPointEvent event) {
+        if (event.room == null || event.roomUnit == null || event.location == null) return;
+
         if (RoomLayout.tilesAdjecent(event.roomUnit.getCurrentLocation(), event.location)) {
             Habbo habbo = event.room.getHabbo(event.roomUnit);
 
