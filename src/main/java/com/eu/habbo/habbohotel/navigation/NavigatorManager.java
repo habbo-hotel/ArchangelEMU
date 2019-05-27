@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.navigation;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.map.hash.THashMap;
 
 import java.lang.reflect.Method;
@@ -9,6 +10,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -120,5 +123,42 @@ public class NavigatorManager {
         }
 
         return null;
+    }
+
+    public List<Room> getRoomsForCategory(String category, Habbo habbo) {
+        List<Room> rooms = new ArrayList<>();
+
+        switch (category) {
+            case "my":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(habbo);
+                break;
+            case "favorites":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsFavourite(habbo);
+                break;
+            case "history_freq":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsVisited(habbo, false, 10);
+                break;
+            case "my_groups":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getGroupRooms(habbo, 25);
+                break;
+            case "with_rights":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithRights(habbo);
+                break;
+            case "official-root":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getPublicRooms();
+                break;
+            case "popular":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getPopularRooms(Emulator.getConfig().getInt("hotel.navigator.popular.amount"));
+                break;
+            case "categories":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsPromoted();
+                break;
+            default:
+                return null;
+        }
+
+        Collections.sort(rooms);
+
+        return rooms;
     }
 }

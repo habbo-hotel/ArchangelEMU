@@ -19,32 +19,30 @@ public class NavigatorUserFilter extends NavigatorFilter {
     public List<SearchResultList> getResult(Habbo habbo) {
         int i = 0;
         List<SearchResultList> resultLists = new ArrayList<>();
-        List<Room> rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(habbo);
-        Collections.sort(rooms);
+
+        List<Room> rooms = Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("my", habbo);
         resultLists.add(new SearchResultList(i, "my", "", SearchAction.NONE, habbo.getHabboStats().navigatorWindowSettings.getListModeForCategory("my"), habbo.getHabboStats().navigatorWindowSettings.getDisplayModeForCategory("my"), rooms, true, true, DisplayOrder.ORDER_NUM, i));
         i++;
 
-        List<Room> favoriteRooms = Emulator.getGameEnvironment().getRoomManager().getRoomsFavourite(habbo);
-
+        List<Room> favoriteRooms = Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("favorites", habbo);
         if (!favoriteRooms.isEmpty()) {
-            Collections.sort(favoriteRooms);
             resultLists.add(new SearchResultList(i, "favorites", "", SearchAction.NONE, habbo.getHabboStats().navigatorWindowSettings.getListModeForCategory("favorites"), habbo.getHabboStats().navigatorWindowSettings.getDisplayModeForCategory("favorites"), favoriteRooms, true, true, DisplayOrder.ORDER_NUM, i));
             i++;
         }
 
-        List<Room> frequentlyVisited = Emulator.getGameEnvironment().getRoomManager().getRoomsVisited(habbo, false, 10);
+        List<Room> frequentlyVisited = Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("history_freq", habbo);
         if (!frequentlyVisited.isEmpty()) {
             resultLists.add(new SearchResultList(i, "history_freq", "", SearchAction.NONE, habbo.getHabboStats().navigatorWindowSettings.getListModeForCategory("history_freq"), habbo.getHabboStats().navigatorWindowSettings.getDisplayModeForCategory("history_freq"), frequentlyVisited, true, true, DisplayOrder.ORDER_NUM, i));
             i++;
         }
 
-        List<Room> groupRooms = Emulator.getGameEnvironment().getRoomManager().getGroupRooms(habbo, 25);
+        List<Room> groupRooms = Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("my_groups", habbo);
         if (!groupRooms.isEmpty()) {
             resultLists.add(new SearchResultList(i, "my_groups", "", SearchAction.NONE, habbo.getHabboStats().navigatorWindowSettings.getListModeForCategory("my_groups"), habbo.getHabboStats().navigatorWindowSettings.getDisplayModeForCategory("my_groups"), groupRooms, true, true, DisplayOrder.ORDER_NUM, i));
             i++;
         }
 
-        List<Room> rightRooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithRights(habbo);
+        List<Room> rightRooms = Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("with_rights", habbo);
         if (!rightRooms.isEmpty()) {
             resultLists.add(new SearchResultList(i, "with_rights", "", SearchAction.NONE, habbo.getHabboStats().navigatorWindowSettings.getListModeForCategory("with_rights"), habbo.getHabboStats().navigatorWindowSettings.getDisplayModeForCategory("with_rights"), rightRooms, true, true, DisplayOrder.ORDER_NUM, i));
         }

@@ -17,8 +17,21 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler {
         String view = this.packet.readString();
         String query = this.packet.readString();
 
+        if (view.equals("query")) view = "hotel_view";
+
         NavigatorFilter filter = Emulator.getGameEnvironment().getNavigatorManager().filters.get(view);
         RoomCategory category = Emulator.getGameEnvironment().getRoomManager().getCategoryBySafeCaption(view);
+
+        if (filter == null) {
+            List<Room> rooms = Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory(view, this.client.getHabbo());
+
+            if (rooms != null) {
+                List<SearchResultList> resultLists = new ArrayList<>();
+                resultLists.add(new SearchResultList(0, view, query, SearchAction.NONE, this.client.getHabbo().getHabboStats().navigatorWindowSettings.getListModeForCategory(view, ListMode.LIST), this.client.getHabbo().getHabboStats().navigatorWindowSettings.getDisplayModeForCategory(view, DisplayMode.VISIBLE), rooms, true, true, DisplayOrder.ACTIVITY, -1));
+                this.client.sendResponse(new NewNavigatorSearchResultsComposer(view, query, resultLists));
+                return;
+            }
+        }
 
         String filterField = "anything";
         String part = query;
