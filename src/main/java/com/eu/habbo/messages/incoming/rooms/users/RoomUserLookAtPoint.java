@@ -40,6 +40,9 @@ public class RoomUserLookAtPoint extends MessageHandler {
         if (roomUnit.cmdLay || roomUnit.hasStatus(RoomUnitStatus.LAY))
             return;
 
+        if (roomUnit.isIdle())
+            return;
+
         int x = this.packet.readInt();
         int y = this.packet.readInt();
 
@@ -50,17 +53,6 @@ public class RoomUserLookAtPoint extends MessageHandler {
 
         if (tile != null) {
             roomUnit.lookAtPoint(tile);
-
-            UserIdleEvent event = new UserIdleEvent(habbo, UserIdleEvent.IdleReason.WALKED, false);
-            Emulator.getPluginManager().fireEvent(event);
-
-            if (!event.isCancelled()) {
-                if (!event.idle) {
-                    room.unIdle(habbo);
-                }
-            }
-
-            room.sendComposer(new RoomUserStatusComposer(roomUnit).compose());
         }
     }
 }
