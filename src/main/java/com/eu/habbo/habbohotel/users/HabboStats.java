@@ -326,7 +326,7 @@ public class HabboStats implements Runnable {
                 statement.setString(31, this.allowTrade ? "1" : "0");
                 statement.setInt(32, this.forumPostsCount);
                 statement.setInt(33, this.uiFlags);
-                
+
                 statement.setInt(34, this.habboInfo.getId());
                 statement.executeUpdate();
             }

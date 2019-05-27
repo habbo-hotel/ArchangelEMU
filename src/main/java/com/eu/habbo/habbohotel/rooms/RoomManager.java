@@ -54,6 +54,7 @@ import gnu.trove.set.hash.THashSet;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class RoomManager {
     private static final int page = 0;
@@ -1267,6 +1268,25 @@ public class RoomManager {
         } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
+
+        return rooms;
+    }
+
+    public ArrayList<Room> getRoomsWithFriendsIn(Habbo habbo, int limit) {
+        final ArrayList<Room> rooms = new ArrayList<>();
+
+        for (MessengerBuddy buddy : habbo.getMessenger().getFriends().values()) {
+            Habbo friend = Emulator.getGameEnvironment().getHabboManager().getHabbo(buddy.getId());
+
+            if (friend == null || friend.getHabboInfo() == null) continue;
+
+            Room room = friend.getHabboInfo().getCurrentRoom();
+            if (room != null) rooms.add(room);
+
+            if (rooms.size() >= limit) break;
+        }
+
+        Collections.sort(rooms);
 
         return rooms;
     }
