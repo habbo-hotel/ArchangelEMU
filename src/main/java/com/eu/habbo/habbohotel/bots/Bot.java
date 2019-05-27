@@ -6,10 +6,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserShoutComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTalkComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.plugin.events.bots.BotChatEvent;
 import com.eu.habbo.plugin.events.bots.BotShoutEvent;
 import com.eu.habbo.plugin.events.bots.BotTalkEvent;
@@ -206,6 +203,10 @@ public class Bot implements Runnable {
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
             this.room.botChat(new RoomUserTalkComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.BOT_RENTABLE)).compose());
+
+            if (message.equals("o/") || message.equals("_o/")) {
+                this.room.sendComposer(new RoomUserActionComposer(this.roomUnit, RoomUserAction.WAVE).compose());
+            }
         }
     }
 
@@ -217,6 +218,10 @@ public class Bot implements Runnable {
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
             this.room.botChat(new RoomUserShoutComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.BOT_RENTABLE)).compose());
+
+            if (message.equals("o/") || message.equals("_o/")) {
+                this.room.sendComposer(new RoomUserActionComposer(this.roomUnit, RoomUserAction.WAVE).compose());
+            }
         }
     }
 
