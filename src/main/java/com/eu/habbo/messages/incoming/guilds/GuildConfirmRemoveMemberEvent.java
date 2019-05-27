@@ -18,7 +18,7 @@ public class GuildConfirmRemoveMemberEvent extends MessageHandler {
 
         if (guild != null) {
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
-            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN) || this.client.getHabbo().hasPermission("acc_guild_admin")) {
+            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || (member != null && member.getRank().equals(GuildRank.ADMIN)) || this.client.getHabbo().hasPermission("acc_guild_admin")) {
                 Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());
                 int count = 0;
                 if (room != null) {
