@@ -575,6 +575,7 @@ public class Pet implements ISerialize, Runnable {
 
     public void scratched(Habbo habbo) {
         this.addHappyness(10);
+        this.addExperience(10);
         this.addRespect();
 
         if (habbo != null) {
