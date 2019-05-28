@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGuildGate;
+import com.eu.habbo.habbohotel.items.interactions.InteractionTeleport;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.DanceType;
@@ -332,7 +333,13 @@ public class RoomUnit {
             this.resetIdleTimer();
 
             if (habbo != null) {
-                if (this.canLeaveRoomByDoor && next.x == room.getLayout().getDoorX() && next.y == room.getLayout().getDoorY() && (!room.isPublicRoom()) || (room.isPublicRoom() && Emulator.getConfig().getBoolean("hotel.room.public.doortile.kick"))) {
+                HabboItem topItem = this.room.getTopItemAt(next.x, next.y);
+
+                boolean isAtDoor = next.x == room.getLayout().getDoorX() && next.y == room.getLayout().getDoorY();
+                boolean publicRoomKicks = !room.isPublicRoom() || Emulator.getConfig().getBoolean("hotel.room.public.doortile.kick");
+                boolean invalidated = topItem != null && topItem.invalidatesToRoomKick();
+
+                if (this.canLeaveRoomByDoor && isAtDoor && publicRoomKicks && !invalidated) {
                     Emulator.getThreading().run(new RoomUnitKick(habbo, room, false), 500);
                 }
             }

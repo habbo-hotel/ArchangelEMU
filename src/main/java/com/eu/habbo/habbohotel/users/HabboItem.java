@@ -462,4 +462,6 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
     public void setFromGift(boolean fromGift) {
         isFromGift = fromGift;
     }
+
+    public boolean invalidatesToRoomKick() { return false; }
 }

@@ -216,4 +216,9 @@ public class InteractionTeleport extends HabboItem {
     public boolean isUsable() {
         return true;
     }
+
+    @Override
+    public boolean invalidatesToRoomKick() {
+        return true;
+    }
 }
