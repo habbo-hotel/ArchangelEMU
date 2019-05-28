@@ -156,6 +156,9 @@ public class NavigatorManager {
             case "with_friends":
                 rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithFriendsIn(habbo, 25);
                 break;
+            case "highest_score":
+                rooms = Emulator.getGameEnvironment().getRoomManager().getTopRatedRooms(25);
+                break;
             default:
                 return null;
         }

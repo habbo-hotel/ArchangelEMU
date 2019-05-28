@@ -1236,14 +1236,20 @@ public class RoomManager {
     public List<Room> getGroupRooms(Habbo habbo, int limit) {
         final ArrayList<Room> rooms = new ArrayList<>();
 
-        for (Guild guild : Emulator.getGameEnvironment().getGuildManager().getGuilds(habbo.getHabboInfo().getId())) {
-            if (guild.getOwnerId() != habbo.getHabboInfo().getId()) {
-                Room room = this.getRoom(guild.getRoomId());
-
-                if (room != null) {
-                    rooms.add(room);
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT rooms.* FROM rooms INNER JOIN guilds_members ON guilds_members.guild_id = rooms.guild_id WHERE guilds_members.user_id = ? AND level_id != 3")) {
+            statement.setInt(1, habbo.getHabboInfo().getId());
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    if (this.activeRooms.containsKey(set.getInt("id"))) {
+                        rooms.add(this.activeRooms.get(set.getInt("id")));
+                    } else {
+                        rooms.add(new Room(set));
+                    }
                 }
             }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
 
         Collections.sort(rooms);
@@ -1287,6 +1293,29 @@ public class RoomManager {
         }
 
         Collections.sort(rooms);
+
+        return rooms;
+    }
+
+    public List<Room> getTopRatedRooms(int limit) {
+        final ArrayList<Room> rooms = new ArrayList<>();
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms ORDER BY score DESC LIMIT ?")) {
+            statement.setInt(1, limit);
+
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    if (this.activeRooms.containsKey(set.getInt("id"))) {
+                        rooms.add(this.activeRooms.get(set.getInt("id")));
+                    } else {
+                        rooms.add(new Room(set));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
 
         return rooms;
     }
