@@ -956,8 +956,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         message.appendInt(this.score);
         message.appendInt(0);
         message.appendInt(this.category);
-        message.appendInt(this.tags.split(";").length);
-        for (String s : this.tags.split(";")) {
+
+        String[] tags = Arrays.stream(this.tags.split(";")).filter(t -> !t.isEmpty()).toArray(String[]::new);
+        message.appendInt(tags.length);
+        for (String s : tags) {
             message.appendString(s);
         }
 
