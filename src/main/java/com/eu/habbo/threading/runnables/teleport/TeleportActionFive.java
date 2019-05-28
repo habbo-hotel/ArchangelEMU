@@ -2,9 +2,11 @@ package com.eu.habbo.threading.runnables.teleport;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
@@ -54,5 +56,15 @@ class TeleportActionFive implements Runnable {
         this.room.updateItem(this.currentTeleport);
 
         Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), 1000);
+
+        HabboItem teleportTile = this.room.getTopItemAt(unit.getX(), unit.getY());
+
+        if (teleportTile != null && teleportTile instanceof InteractionTeleportTile && teleportTile != this.currentTeleport) {
+            try {
+                teleportTile.onWalkOn(unit, this.room, new Object[]{});
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
