@@ -19,8 +19,9 @@ public class GuildMembersComposer extends MessageComposer {
     private final int level;
     private final String searchValue;
     private final boolean isAdmin;
+    private final int totalCount;
 
-    public GuildMembersComposer(Guild guild, ArrayList<GuildMember> members, Habbo session, int pageId, int level, String searchValue, boolean isAdmin) {
+    public GuildMembersComposer(Guild guild, ArrayList<GuildMember> members, Habbo session, int pageId, int level, String searchValue, boolean isAdmin, int totalCount) {
         this.guild = guild;
         this.members = members;
         this.session = session;
@@ -28,6 +29,7 @@ public class GuildMembersComposer extends MessageComposer {
         this.level = level;
         this.searchValue = searchValue;
         this.isAdmin = isAdmin;
+        this.totalCount = totalCount;
     }
 
     @Override
@@ -37,7 +39,7 @@ public class GuildMembersComposer extends MessageComposer {
         this.response.appendString(this.guild.getName());
         this.response.appendInt(this.guild.getRoomId());
         this.response.appendString(this.guild.getBadge());
-        this.response.appendInt(this.level == 3 ? this.guild.getRequestCount() : this.guild.getMemberCount());
+        this.response.appendInt(this.totalCount);
         this.response.appendInt(this.members.size());
 
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
