@@ -129,9 +129,9 @@ public class BotSaveSettingsEvent extends MessageHandler {
 
                 case 5:
                     String name = this.packet.readString();
-                    boolean invalidName = name.length() > BotManager.MAXIMUM_NAME_LENGTH;
+                    boolean invalidName = name.length() > BotManager.MAXIMUM_NAME_LENGTH || name.contains("<") || name.contains(">");
                     if (!invalidName) {
-                        String filteredName = Emulator.getGameEnvironment().getWordFilter().filter(Jsoup.parse(name).text(), null);
+                        String filteredName = Emulator.getGameEnvironment().getWordFilter().filter(name, null);
                         invalidName = !name.equalsIgnoreCase(filteredName);
                         if (!invalidName) {
                             BotSavedNameEvent nameEvent = new BotSavedNameEvent(bot, name);
