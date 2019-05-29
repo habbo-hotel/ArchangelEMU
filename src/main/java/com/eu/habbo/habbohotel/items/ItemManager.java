@@ -272,7 +272,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_cnd_not_freeze", WiredConditionNotFreezeGameActive.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_rank", WiredConditionHabboHasRank.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_not_rank", WiredConditionHabboNotRank.class));
-            this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_diamonds", WiredConditionHabboHasDiamonds.class));
+        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_diamonds", WiredConditionHabboHasDiamonds.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_credits", WiredConditionHabboHasCredits.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_duckets", WiredConditionHabboHasDuckets.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_has_diamonds", WiredConditionNotHabboHasDiamonds.class));
