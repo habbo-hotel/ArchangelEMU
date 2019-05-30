@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.handshake;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Messenger;
+import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboManager;
@@ -148,6 +149,17 @@ public class SecureLoginEvent extends MessageHandler {
                 }
 
                 Messenger.checkFriendSizeProgress(habbo);
+
+                if (!habbo.getHabboStats().hasGottenDefaultSavedSearches) {
+                    habbo.getHabboStats().hasGottenDefaultSavedSearches = true;
+                    Emulator.getThreading().run(habbo.getHabboStats());
+
+                    habbo.getHabboInfo().addSavedSearch(new NavigatorSavedSearch("official-root", ""));
+                    habbo.getHabboInfo().addSavedSearch(new NavigatorSavedSearch("my", ""));
+                    habbo.getHabboInfo().addSavedSearch(new NavigatorSavedSearch("favorites", ""));
+
+                    this.client.sendResponse(new NewNavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
+                }
             } else {
                 Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
             }
