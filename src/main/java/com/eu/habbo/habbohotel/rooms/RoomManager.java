@@ -577,6 +577,8 @@ public class RoomManager {
 
         if (habbo.getRoomUnit() != null) {
             habbo.getRoomUnit().setRoom(null);
+            habbo.getRoomUnit().getCurrentLocation().removeUnit(habbo.getRoomUnit());
+            habbo.getRoomUnit().getRoom().sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
         }
 
         habbo.setRoomUnit(new RoomUnit());
