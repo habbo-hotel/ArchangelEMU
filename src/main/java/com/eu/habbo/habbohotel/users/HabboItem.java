@@ -180,7 +180,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
     }
 
     public void setZ(double z) {
-        if (z > 9999) return;
+        if (z > 9999 || z < -9999) return;
         this.z = z;
     }
 
@@ -246,7 +246,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
                     statement.setString(3, this.wallPosition);
                     statement.setInt(4, this.x);
                     statement.setInt(5, this.y);
-                    statement.setDouble(6, Math.min(9999, Math.round(this.z * Math.pow(10, 6)) / Math.pow(10, 6)));
+                    statement.setDouble(6, Math.max(-9999, Math.min(9999, Math.round(this.z * Math.pow(10, 6)) / Math.pow(10, 6))));
                     statement.setInt(7, this.rotation);
                     statement.setString(8, this instanceof InteractionGuildGate ? "" : this.getDatabaseExtraData());
                     statement.setString(9, this.limitedStack + ":" + this.limitedSells);
