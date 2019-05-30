@@ -120,7 +120,7 @@ public class PluginManager {
         InteractionRoller.NO_RULES = Emulator.getConfig().getBoolean("hotel.room.rollers.norules");
         RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB = Emulator.getConfig().getBoolean("hotel.navigator.populartab.publics");
 
-        ChangeNameCheckUsernameEvent.VALID_CHARACTERS = Emulator.getConfig().getValue("allowed.usernamename.characters", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-=!?@:,.");
+        ChangeNameCheckUsernameEvent.VALID_CHARACTERS = Emulator.getConfig().getValue("allowed.username.characters", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-=!?@:,.");
 
         if (Emulator.isReady) {
             Emulator.getGameEnvironment().getCreditsScheduler().reloadConfig();
