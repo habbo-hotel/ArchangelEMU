@@ -8,3 +8,6 @@ CREATE TABLE `users_saved_searches`  (
 
 ALTER TABLE `users_settings`
 ADD COLUMN `ui_flags` int(11) NOT NULL DEFAULT 1 AFTER `forums_post_count`;
+
+ALTER TABLE `users_settings`
+ADD COLUMN `has_gotten_default_saved_searches` tinyint(1) NOT NULL DEFAULT 0 AFTER `ui_flags`;
