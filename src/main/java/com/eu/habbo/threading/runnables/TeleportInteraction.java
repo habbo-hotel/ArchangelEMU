@@ -67,7 +67,7 @@ class TeleportInteraction extends Thread {
 
                 if (this.room != this.targetRoom) {
                     Emulator.getGameEnvironment().getRoomManager().logExit(this.client.getHabbo());
-                    this.room.removeHabbo(this.client.getHabbo());
+                    this.room.removeHabbo(this.client.getHabbo(), true);
                     Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), this.targetRoom);
                 }
 

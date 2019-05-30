@@ -617,7 +617,7 @@ public class RoomManager {
 
         habbo.getRoomUnit().setInRoom(true);
         if (habbo.getHabboInfo().getCurrentRoom() != room && habbo.getHabboInfo().getCurrentRoom() != null) {
-            habbo.getHabboInfo().getCurrentRoom().removeHabbo(habbo);
+            habbo.getHabboInfo().getCurrentRoom().removeHabbo(habbo, true);
         } else if (!habbo.getHabboStats().blockFollowing && habbo.getHabboInfo().getCurrentRoom() == null) {
             habbo.getMessenger().connectionChanged(habbo, true, true);
         }
@@ -1503,7 +1503,7 @@ public class RoomManager {
 
         if (habbo != null) {
             if (habbo.getHabboInfo().getCurrentRoom() == room) {
-                room.removeHabbo(habbo);
+                room.removeHabbo(habbo, true);
                 habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
             }
         }
