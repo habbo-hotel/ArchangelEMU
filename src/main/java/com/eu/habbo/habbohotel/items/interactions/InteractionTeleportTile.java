@@ -38,7 +38,7 @@ public class InteractionTeleportTile extends InteractionTeleport {
 
                 if (!habbo.getRoomUnit().isTeleporting) {
                     habbo.getRoomUnit().setGoalLocation(habbo.getRoomUnit().getCurrentLocation());
-                    this.startTeleport(room, habbo);
+                    this.startTeleport(room, habbo, 1000);
                 }
             }
         }
