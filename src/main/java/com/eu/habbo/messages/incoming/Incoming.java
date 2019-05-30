@@ -290,6 +290,8 @@ public class Incoming {
     public static final int SaveWindowSettingsEvent = 3159;
     public static final int GetHabboGuildBadgesMessageEvent = 21;
     public static final int UpdateUIFlagsEvent = 2313;
+    public static final int ReportThreadEvent = 534;
+    public static final int ReportCommentEvent = 1412;
 
     public static final int RequestCraftingRecipesEvent = 1173;
     public static final int RequestCraftingRecipesAvailableEvent = 3086;

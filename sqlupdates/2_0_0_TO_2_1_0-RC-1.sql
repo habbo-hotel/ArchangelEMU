@@ -11,3 +11,8 @@ ADD COLUMN `ui_flags` int(11) NOT NULL DEFAULT 1 AFTER `forums_post_count`;
 
 ALTER TABLE `users_settings`
 ADD COLUMN `has_gotten_default_saved_searches` tinyint(1) NOT NULL DEFAULT 0 AFTER `ui_flags`;
+
+ALTER TABLE `support_tickets`
+ADD COLUMN `group_id` int(11) NOT NULL AFTER `category`,
+ADD COLUMN `thread_id` int(11) NOT NULL AFTER `group_id`,
+ADD COLUMN `comment_id` int(11) NOT NULL AFTER `thread_id`;
