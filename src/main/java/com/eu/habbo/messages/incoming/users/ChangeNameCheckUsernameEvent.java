@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChangeNameCheckUsernameEvent extends MessageHandler {
-    public static final String VALID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-=!?@:,.";
+    public static String VALID_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-=!?@:,.";
 
     @Override
     public void handle() throws Exception {
@@ -28,8 +28,7 @@ public class ChangeNameCheckUsernameEvent extends MessageHandler {
         int errorCode = ChangeNameCheckResultComposer.AVAILABLE;
 
         List<String> suggestions = new ArrayList<>(4);
-        if (false) {
-        } else if (name.length() < 3) {
+        if (name.length() < 3) {
             errorCode = ChangeNameCheckResultComposer.TOO_SHORT;
         } else if (name.length() > 15) {
             errorCode = ChangeNameCheckResultComposer.TOO_LONG;
@@ -42,7 +41,7 @@ public class ChangeNameCheckUsernameEvent extends MessageHandler {
         } else if (!Emulator.getGameEnvironment().getWordFilter().filter(name, this.client.getHabbo()).equalsIgnoreCase(name)) {
             errorCode = ChangeNameCheckResultComposer.NOT_VALID;
         } else {
-            String checkName = name.toUpperCase();
+            String checkName = name;
             for (char c : VALID_CHARACTERS.toCharArray()) {
                 checkName = checkName.replace(c + "", "");
             }
