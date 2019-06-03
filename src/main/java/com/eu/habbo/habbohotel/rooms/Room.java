@@ -4588,19 +4588,19 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         THashSet<RoomUnit> units = new THashSet<>();
 
         for (Habbo habbo : this.currentHabbos.values()) {
-            if (habbo != null && habbo.getRoomUnit() != null && habbo.getRoomUnit().getRoom().getId() == this.getId()) {
+            if (habbo != null && habbo.getRoomUnit() != null && habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom().getId() == this.getId()) {
                 units.add(habbo.getRoomUnit());
             }
         }
 
         for (Pet pet : this.currentPets.valueCollection()) {
-            if (pet != null && pet.getRoomUnit() != null && pet.getRoomUnit().getRoom().getId() == this.getId()) {
+            if (pet != null && pet.getRoomUnit() != null && pet.getRoomUnit().getRoom() != null && pet.getRoomUnit().getRoom().getId() == this.getId()) {
                 units.add(pet.getRoomUnit());
             }
         }
 
         for (Bot bot : this.currentBots.valueCollection()) {
-            if (bot != null && bot.getRoomUnit() != null && bot.getRoomUnit().getRoom().getId() == this.getId()) {
+            if (bot != null && bot.getRoomUnit() != null && bot.getRoomUnit().getRoom() != null && bot.getRoomUnit().getRoom().getId() == this.getId()) {
                 units.add(bot.getRoomUnit());
             }
         }

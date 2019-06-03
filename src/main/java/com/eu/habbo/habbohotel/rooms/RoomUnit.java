@@ -333,7 +333,7 @@ public class RoomUnit {
             this.resetIdleTimer();
 
             if (habbo != null) {
-                HabboItem topItem = this.room.getTopItemAt(next.x, next.y);
+                HabboItem topItem = room.getTopItemAt(next.x, next.y);
 
                 boolean isAtDoor = next.x == room.getLayout().getDoorX() && next.y == room.getLayout().getDoorY();
                 boolean publicRoomKicks = !room.isPublicRoom() || Emulator.getConfig().getBoolean("hotel.room.public.doortile.kick");
