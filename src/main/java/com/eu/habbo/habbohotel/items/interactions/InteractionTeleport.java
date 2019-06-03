@@ -204,12 +204,16 @@ public class InteractionTeleport extends HabboItem {
     }
 
     public void startTeleport(Room room, Habbo habbo) {
+        this.startTeleport(room, habbo, 500);
+    }
+
+    public void startTeleport(Room room, Habbo habbo, int delay) {
         if (habbo.getRoomUnit().isTeleporting)
             return;
 
         this.roomUnitID = -1;
         habbo.getRoomUnit().isTeleporting = true;
-        Emulator.getThreading().run(new TeleportActionOne(this, room, habbo.getClient()), 500);
+        Emulator.getThreading().run(new TeleportActionOne(this, room, habbo.getClient()), delay);
     }
 
     @Override

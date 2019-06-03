@@ -25,6 +25,9 @@ public class ModToolIssue implements ISerialize {
     public volatile String modName = "";
     public String message;
     public ArrayList<ModToolChatLog> chatLogs = null;
+    public int groupId = -1;
+    public int threadId = -1;
+    public int commentId = -1;
 
     public ModToolIssue(ResultSet set) throws SQLException {
         this.id = set.getInt("id");

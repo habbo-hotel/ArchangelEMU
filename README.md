@@ -11,11 +11,10 @@ TheGeneral's own words were "dont like it then dont use it". We did not like wha
 Arcturus Morningstar is released under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.txt).
 
 ## Versions ##
-Stable Version: **2.0.0**
+![image](https://img.shields.io/badge/VERSION-2.1.0-orange.svg?style=for-the-badge&logo=appveyor)
+![image](https://img.shields.io/badge/STATUS-unstable-critical.svg?style=for-the-badge&logo=appveyor)
 
-Compiled Download: https://git.krews.org/morningstar/Arcturus-Community/releases
-
-UnStable Version: **2.1.0**
+Compiled Download: Has not yet reached a Release Candidate.
 
 Client build: **PRODUCTION-201611291003-338511768**
 

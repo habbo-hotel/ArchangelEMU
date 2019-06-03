@@ -576,6 +576,12 @@ public class RoomManager {
         habbo.getClient().sendResponse(new HideDoorbellComposer(""));
 
         if (habbo.getRoomUnit() != null) {
+            Room existingRoom = habbo.getRoomUnit().getRoom();
+            if (existingRoom != null) {
+                if (habbo.getRoomUnit().getCurrentLocation() != null)
+                    habbo.getRoomUnit().getCurrentLocation().removeUnit(habbo.getRoomUnit());
+                habbo.getRoomUnit().getRoom().sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
+            }
             habbo.getRoomUnit().setRoom(null);
         }
 
@@ -617,7 +623,7 @@ public class RoomManager {
 
         habbo.getRoomUnit().setInRoom(true);
         if (habbo.getHabboInfo().getCurrentRoom() != room && habbo.getHabboInfo().getCurrentRoom() != null) {
-            habbo.getHabboInfo().getCurrentRoom().removeHabbo(habbo);
+            habbo.getHabboInfo().getCurrentRoom().removeHabbo(habbo, true);
         } else if (!habbo.getHabboStats().blockFollowing && habbo.getHabboInfo().getCurrentRoom() == null) {
             habbo.getMessenger().connectionChanged(habbo, true, true);
         }
@@ -1503,7 +1509,7 @@ public class RoomManager {
 
         if (habbo != null) {
             if (habbo.getHabboInfo().getCurrentRoom() == room) {
-                room.removeHabbo(habbo);
+                room.removeHabbo(habbo, true);
                 habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
             }
         }
