@@ -2147,6 +2147,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return null;
     }
 
+    public ConcurrentSet<Game> getGames() {
+        return this.games;
+    }
+
     public int getUserCount() {
         return this.currentHabbos.size();
     }

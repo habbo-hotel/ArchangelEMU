@@ -21,3 +21,5 @@ ALTER TABLE `pet_actions`
 ADD COLUMN `can_swim` enum('1','0') NULL DEFAULT '0' AFTER `random_actions`;
 
 UPDATE `pet_actions` SET `can_swim` = '1' WHERE `pet_type` = 9 OR `pet_type` = 14 OR `pet_type` = 23 OR `pet_type` = 24 OR `pet_type` = 25 OR `pet_type` = 28 OR `pet_type` = 29 OR `pet_type` = 30 OR `pet_type` = 32;
+
+UPDATE `items_base` SET `customparams` = '30,60,120,180,300,600', `interaction_type` = 'game_timer', `interaction_modes_count` = 1 WHERE `item_name` IN ('fball_counter','bb_counter','es_counter');

@@ -211,4 +211,8 @@ public class Item {
     public double[] getMultiHeights() {
         return this.multiHeights;
     }
+
+    public String getCustomParams() {
+        return customParams;
+    }
 }
