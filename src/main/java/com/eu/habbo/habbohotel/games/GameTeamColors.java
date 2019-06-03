@@ -2,19 +2,12 @@ package com.eu.habbo.habbohotel.games;
 
 public enum GameTeamColors {
 
-    RED(0),
+    NONE(0),
 
-
-    GREEN(1),
-
-
-    BLUE(2),
-
-
-    YELLOW(3),
-
-
-    NONE(4),
+    RED(1),
+    GREEN(2),
+    BLUE(3),
+    YELLOW(4),
 
     ONE(5),
     TWO(6),
@@ -41,6 +34,6 @@ public enum GameTeamColors {
             }
         }
 
-        return RED;
+        return NONE;
     }
 }
