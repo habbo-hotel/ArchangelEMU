@@ -143,11 +143,10 @@ public class BattleBanzaiGame extends Game {
 
             if (total >= this.tileCount && this.tileCount != 0) {
                 for (InteractionGameTimer timer : room.getRoomSpecialTypes().getGameTimers().values()) {
-                    if (timer.isRunning())
-                        timer.setRunning(false);
+                    if (timer.isRunning()) {
+                        timer.endGame(room);
+                    }
                 }
-
-                InteractionGameTimer.endGames(room, true);
             }
         } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
