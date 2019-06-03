@@ -16,3 +16,8 @@ ALTER TABLE `support_tickets`
 ADD COLUMN `group_id` int(11) NOT NULL AFTER `category`,
 ADD COLUMN `thread_id` int(11) NOT NULL AFTER `group_id`,
 ADD COLUMN `comment_id` int(11) NOT NULL AFTER `thread_id`;
+
+ALTER TABLE `pet_actions`
+ADD COLUMN `can_swim` enum('1','0') NULL DEFAULT '0' AFTER `random_actions`;
+
+UPDATE `pet_actions` SET `can_swim` = '1' WHERE `pet_type` = 9 OR `pet_type` = 14 OR `pet_type` = 23 OR `pet_type` = 24 OR `pet_type` = 25 OR `pet_type` = 28 OR `pet_type` = 29 OR `pet_type` = 30 OR `pet_type` = 32;
