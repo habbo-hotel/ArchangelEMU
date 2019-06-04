@@ -16,16 +16,20 @@ public class MoodLightTurnOnEvent extends MessageHandler {
             return;
 
         for (HabboItem moodLight : room.getRoomSpecialTypes().getItemsOfType(InteractionMoodLight.class)) {
-            //Enabled, preset id, background only ? 2 : 1, color, intensity
+            // enabled ? 2 : 1, preset id, background only ? 2 : 1, color, intensity
 
-
-            moodLight.setExtradata("2,1,2,#FF00FF,255");
+            String extradata = "2,1,2,#FF00FF,255";
             for (RoomMoodlightData data : room.getMoodlightData().valueCollection()) {
                 if (data.isEnabled()) {
-                    moodLight.setExtradata(data.toString());
+                    extradata = data.toString();
                     break;
                 }
             }
+
+            RoomMoodlightData adjusted = RoomMoodlightData.fromString(extradata);
+            if (RoomMoodlightData.fromString(moodLight.getExtradata()).isEnabled()) adjusted.disable();
+            moodLight.setExtradata(adjusted.toString());
+
             moodLight.needsUpdate(true);
             room.updateItem(moodLight);
             Emulator.getThreading().run(moodLight);
