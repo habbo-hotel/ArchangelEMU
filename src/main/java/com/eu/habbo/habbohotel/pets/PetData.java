@@ -31,6 +31,7 @@ public class PetData implements Comparable<PetData> {
     public String[] actionsTired;
     public String[] actionsRandom;
     public THashMap<PetVocalsType, THashSet<PetVocal>> petVocals;
+    public boolean canSwim;
     private int type;
     private String name;
     private List<PetCommand> petCommands;
@@ -51,6 +52,7 @@ public class PetData implements Comparable<PetData> {
         this.actionsHappy = set.getString("happy_actions").split(";");
         this.actionsTired = set.getString("tired_actions").split(";");
         this.actionsRandom = set.getString("random_actions").split(";");
+        this.canSwim = set.getString("can_swim").equalsIgnoreCase("1");
 
         this.reset();
     }

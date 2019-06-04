@@ -25,7 +25,6 @@ import com.eu.habbo.habbohotel.items.interactions.games.football.scoreboards.Int
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeBlock;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeExitTile;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeTile;
-import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeTimer;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.gates.InteractionFreezeGateBlue;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.gates.InteractionFreezeGateGreen;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.gates.InteractionFreezeGateRed;
@@ -168,11 +167,11 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("effect_vendingmachine", InteractionEffectVendingMachine.class));
         this.interactionsList.add(new ItemInteraction("crackable_monster", InteractionMonsterCrackable.class));
         this.interactionsList.add(new ItemInteraction("snowboard_slope", InteractionSnowboardSlope.class));
-        this.interactionsList.add(new ItemInteraction("timer", InteractionGameTimer.class));
         this.interactionsList.add(new ItemInteraction("pressureplate_group", InteractionGroupPressurePlate.class));
         this.interactionsList.add(new ItemInteraction("effect_tile_group", InteractionEffectTile.class));
         this.interactionsList.add(new ItemInteraction("crackable_subscription_box", InteractionRedeemableSubscriptionBox.class));
 
+        this.interactionsList.add(new ItemInteraction("game_timer", InteractionGameTimer.class));
 
         this.interactionsList.add(new ItemInteraction("wf_trg_walks_on_furni", WiredTriggerHabboWalkOnFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_walks_off_furni", WiredTriggerHabboWalkOffFurni.class));
@@ -292,9 +291,6 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_highscore", InteractionWiredHighscore.class));
 
 
-        //battlebanzai_pyramid
-        //battlebanzai_puck extends pushable
-        this.interactionsList.add(new ItemInteraction("battlebanzai_timer", InteractionBattleBanzaiTimer.class));
         this.interactionsList.add(new ItemInteraction("battlebanzai_tile", InteractionBattleBanzaiTile.class));
         this.interactionsList.add(new ItemInteraction("battlebanzai_random_teleport", InteractionBattleBanzaiTeleporter.class));
         this.interactionsList.add(new ItemInteraction("battlebanzai_sphere", InteractionBattleBanzaiSphere.class));
@@ -316,7 +312,6 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("freeze_block", InteractionFreezeBlock.class));
         this.interactionsList.add(new ItemInteraction("freeze_tile", InteractionFreezeTile.class));
         this.interactionsList.add(new ItemInteraction("freeze_exit", InteractionFreezeExitTile.class));
-        this.interactionsList.add(new ItemInteraction("freeze_timer", InteractionFreezeTimer.class));
 
 
         this.interactionsList.add(new ItemInteraction("freeze_gate_blue", InteractionFreezeGateBlue.class));

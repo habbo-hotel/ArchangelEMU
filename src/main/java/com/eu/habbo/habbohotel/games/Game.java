@@ -129,8 +129,6 @@ public abstract class Game implements Runnable {
             Emulator.getPluginManager().fireEvent(gameStartedEvent);
         }
 
-        WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, this.room, new Object[]{this});
-
         for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
             item.setExtradata("0");
             this.room.updateItem(item);
