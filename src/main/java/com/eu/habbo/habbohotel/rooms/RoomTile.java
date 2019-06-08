@@ -47,6 +47,20 @@ public class RoomTile {
         this.units = tile.units;
     }
 
+    public RoomTile()
+    {
+        x = 0;
+        y = 0;
+        z = 0;
+        this.stackHeight = 0;
+        this.state = RoomTileState.INVALID;
+        this.allowStack = false;
+        this.diagonally = false;
+        this.gCosts = 0;
+        this.hCosts = 0;
+        this.units = null;
+    }
+
     public double getStackHeight() {
         return this.stackHeight;
     }
