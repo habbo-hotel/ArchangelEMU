@@ -227,17 +227,15 @@ public class RoomUnit {
 
             //if(!(this.path.size() == 0 && canSitNextTile))
             {
-                if (!room.tileWalkable(next.x, next.y) && !overrideChecks) {
+                if (!room.tileWalkable(next)) {
                     this.room = room;
                     this.findPath();
 
-                    if (!this.path.isEmpty()) {
-                        next = this.path.pop();
-                        item = room.getTopItemAt(next.x, next.y);
-                    } else {
+                    if (this.path.isEmpty()) {
                         this.status.remove(RoomUnitStatus.MOVE);
                         return false;
                     }
+                    next = (RoomTile)this.path.pop();
 
                 }
             }
@@ -465,14 +463,15 @@ public class RoomUnit {
 
     public void setGoalLocation(RoomTile goalLocation) {
         if (goalLocation != null) {
-            if (goalLocation.state != RoomTileState.INVALID) {
+      //      if (goalLocation.state != RoomTileState.INVALID) {
                 this.setGoalLocation(goalLocation, false);
             }
-        }
+    //}
     }
 
     public void setGoalLocation(RoomTile goalLocation, boolean noReset) {
-        if (Emulator.getPluginManager().isRegistered(RoomUnitSetGoalEvent.class, false)) {
+        if (Emulator.getPluginManager().isRegistered(RoomUnitSetGoalEvent.class, false))
+        {
             Event event = new RoomUnitSetGoalEvent(this.room, this, goalLocation);
             Emulator.getPluginManager().fireEvent(event);
 
@@ -480,16 +479,18 @@ public class RoomUnit {
                 return;
         }
 
+        /// Set start location
         this.startLocation = this.currentLocation;
 
         if (goalLocation != null && !noReset) {
             this.goalLocation = goalLocation;
-            this.findPath();
+            this.findPath(); ///< Quadral: this is where we start formulating a path
             if (!this.path.isEmpty()) {
                 this.tilesWalked = 0;
                 this.cmdSit = false;
             } else {
                 this.goalLocation = this.currentLocation;
+
             }
         }
     }
@@ -524,8 +525,11 @@ public class RoomUnit {
         this.room = room;
     }
 
-    public void findPath() {
-        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation))) {
+    public void findPath()
+    {
+        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation)))
+        {
+
             this.path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation, this);
         }
     }

@@ -97,12 +97,6 @@ public final class Emulator {
 
             Emulator.runtime = Runtime.getRuntime();
             Emulator.config = new ConfigurationManager("config.ini");
-
-            if (Emulator.getConfig().getValue("username").isEmpty()) {
-                Emulator.getLogging().logErrorLine("Please make sure you enter your forum login details!");
-                Thread.sleep(2000);
-            }
-
             Emulator.database = new Database(Emulator.getConfig());
             Emulator.config.loaded = true;
             Emulator.config.loadFromDatabase();
@@ -123,12 +117,6 @@ public final class Emulator {
             Emulator.rconServer.initializePipeline();
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
-            // Removed Wesleys Camera Server lol.
-            /* if (Emulator.getConfig().getBoolean("camera.enabled"))
-            {
-                Emulator.getThreading().run(new CameraClientAutoReconnect());
-            }
-            */
             Emulator.getLogging().logStart("Habbo Hotel Emulator has succesfully loaded.");
             Emulator.getLogging().logStart("You're running: " + Emulator.version);
             Emulator.getLogging().logStart("System launched in: " + (System.nanoTime() - startTime) / 1e6 + "ms. Using: " + (Runtime.getRuntime().availableProcessors() * 2) + " threads!");
