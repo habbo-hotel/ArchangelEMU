@@ -68,4 +68,60 @@ DROP PROCEDURE IF EXISTS DEFAULT_YTTV_PLAYLISTS;
 ALTER TABLE `permissions`
 ADD COLUMN `cmd_update_youtube_playlists` enum('0','1') NOT NULL DEFAULT '0';
 INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.keys.cmd_update_youtube_playlists', 'update_youtube;update_youtube_playlists')
-INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.succes.cmd_update_youtube_playlists', 'YouTube playlists have been refreshed!')
+INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.succes.cmd_update_youtube_playlists', 'YouTube playlists have been refreshed!');
+
+DROP PROCEDURE IF EXISTS UPDATE_TEAM_WIREDS;
+DELIMITER ;;
+
+CREATE PROCEDURE UPDATE_TEAM_WIREDS()
+BEGIN
+    IF (SELECT COUNT(*) FROM emulator_settings WHERE `key` = 'team.wired.update.rc-1') = 0 THEN
+        INSERT INTO emulator_settings (`key`, `value`) VALUES ('team.wired.update.rc-1', 'DO NOT REMOVE THIS SETTING!');
+
+        UPDATE
+            items
+        INNER JOIN
+            items_base
+            ON
+                items.item_id = items_base.id
+        SET items.wired_data = CONCAT(
+            SUBSTRING_INDEX(items.wired_data, ';', 2),
+            ';',
+            CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(items.wired_data, ';', 3), ';', -1) AS SIGNED INTEGER) + 1,
+            ';',
+            SUBSTRING_INDEX(SUBSTRING_INDEX(items.wired_data, ';', 4), ';', -1)
+        )
+        WHERE
+            items_base.interaction_type = 'wf_act_give_score_tm';
+
+
+        UPDATE
+            items
+        INNER JOIN
+            items_base
+            ON
+                items.item_id = items_base.id
+        SET items.wired_data = CONCAT(
+            SUBSTRING_INDEX(items.wired_data, '\t', 1),
+            '\t',
+            CAST(SUBSTRING_INDEX(items.wired_data, '\t', -1) AS SIGNED INTEGER) + 1
+        )
+        WHERE
+            items_base.interaction_type = 'wf_act_join_team';
+
+        UPDATE
+            items
+        INNER JOIN
+            items_base
+            ON
+                items.item_id = items_base.id
+        SET items.wired_data = CAST(items.wired_data AS SIGNED INTEGER) + 1
+        WHERE
+            items_base.interaction_type = 'wf_cnd_actor_in_team' OR items_base.interaction_type = 'wf_cnd_not_in_team';
+    END IF;
+END;
+;;
+DELIMITER ;
+
+CALL UPDATE_TEAM_WIREDS();
+DROP PROCEDURE IF EXISTS UPDATE_TEAM_WIREDS;
