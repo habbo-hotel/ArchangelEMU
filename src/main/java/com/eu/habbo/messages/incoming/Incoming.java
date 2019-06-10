@@ -305,9 +305,9 @@ public class Incoming {
     public static final int RoomFavoriteEvent = 3817;
     public static final int RoomUnFavoriteEvent = 309;
 
-    public static final int YoutubeRequestPlayListEvent = 336;
-    public static final int YoutubeRequestNextVideoEvent = 3005;
-    public static final int YoutubeRequestVideoDataEvent = 2069;
+    public static final int YoutubeRequestPlaylists = 336;
+    public static final int YoutubeRequestStateChange = 3005;
+    public static final int YoutubeRequestPlaylistChange = 2069;
 
     public static final int EditRoomPromotionMessageEvent = 3707;
     public static final int HotelViewRequestBadgeRewardEvent = 2318;

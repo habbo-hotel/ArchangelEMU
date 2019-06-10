@@ -1,102 +1,173 @@
 package com.eu.habbo.habbohotel.items;
 
 import com.eu.habbo.Emulator;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import gnu.trove.map.hash.THashMap;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class YoutubeManager {
-    public THashMap<Integer, ArrayList<YoutubeItem>> playLists = new THashMap<>();
-    public THashMap<Integer, YoutubeItem> videos = new THashMap<>();
+    public class YoutubeVideo {
+        private final String id;
+        private final int duration;
+
+        YoutubeVideo(String id, int duration) {
+            this.id = id;
+            this.duration = duration;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
+    }
+
+    public class YoutubePlaylist {
+        private final String id;
+        private final String name;
+        private final String description;
+        private final ArrayList<YoutubeVideo> videos;
+
+        YoutubePlaylist(String id, String name, String description, ArrayList<YoutubeVideo> videos) {
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.videos = videos;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public ArrayList<YoutubeVideo> getVideos() {
+            return videos;
+        }
+    }
+
+    private THashMap<Integer, ArrayList<YoutubePlaylist>> playlists = new THashMap<>();
+    private THashMap<String, YoutubePlaylist> playlistCache = new THashMap<>();
 
     public void load() {
-        this.videos.clear();
-        this.playLists.clear();
+        this.playlists.clear();
+        this.playlistCache.clear();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (Statement statement = connection.createStatement()) {
-                try (ResultSet set = statement.executeQuery("SELECT * FROM youtube_items")) {
-                    while (set.next()) {
-                        this.videos.put(set.getInt("id"), new YoutubeItem(set));
-                    }
-                }
+        long millis = System.currentTimeMillis();
 
-                try (ResultSet set = statement.executeQuery("SELECT * FROM youtube_playlists ORDER BY `order` ASC")) {
-                    while (set.next()) {
-                        if (!this.playLists.containsKey(set.getInt("item_id"))) {
-                            this.playLists.put(set.getInt("item_id"), new ArrayList<>());
+        ExecutorService youtubeDataLoaderPool = Executors.newFixedThreadPool(10);
+
+        Emulator.getLogging().logStart("YouTube Manager -> Loading...");
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM youtube_playlists")) {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    final int itemId = set.getInt("item_id");
+                    final String playlistId = set.getString("playlist_id");
+
+                    youtubeDataLoaderPool.submit(() -> {
+                        ArrayList<YoutubePlaylist> playlists = this.playlists.getOrDefault(itemId, new ArrayList<>());
+
+                        YoutubePlaylist playlist = this.playlistCache.containsKey(playlistId) ? this.playlistCache.get(playlistId) : this.getPlaylistDataById(playlistId);
+                        if (playlist != null) {
+                            playlists.add(playlist);
+
+                            this.playlistCache.put(playlistId, playlist);
+                        } else {
+                            Emulator.getLogging().logErrorLine("Failed to load YouTube playlist: " + playlistId);
                         }
 
-                        YoutubeItem item = this.videos.get(set.getInt("video_id"));
-
-                        if (item != null) {
-                            this.playLists.get(set.getInt("item_id")).add(item);
-                        }
-                    }
+                        this.playlists.put(itemId, playlists);
+                    });
                 }
             }
         } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
-    }
 
-    public ArrayList<YoutubeItem> getPlaylist(Item item) {
-        if (this.playLists.containsKey(item.getId())) {
-            return this.playLists.get(item.getId());
+        youtubeDataLoaderPool.shutdown();
+        try {
+            youtubeDataLoaderPool.awaitTermination(60, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        return new ArrayList<>();
+        Emulator.getLogging().logStart("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
-    public YoutubeItem getVideo(Item item, String video) {
-        if (this.playLists.contains(item.getId())) {
-            for (YoutubeItem v : this.playLists.get(item.getId())) {
-                if (v.video.equalsIgnoreCase(video)) {
-                    return v;
+    private YoutubePlaylist getPlaylistDataById(String playlistId) {
+        try {
+            URL myUrl = new URL("https://www.youtube.com/playlist?list=" + playlistId);
+
+            HttpsURLConnection conn = (HttpsURLConnection) myUrl.openConnection();
+            conn.setRequestProperty("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+            conn.setRequestProperty("accept-language", "en-GB,en-US;q=0.9,en;q=0.8");
+            conn.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3731.0 Safari/537.36");
+
+            InputStream is = conn.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+
+            YoutubePlaylist playlist = null;
+
+            String inputLine;
+            while ((inputLine = br.readLine()) != null) {
+                if (inputLine.contains("window[\"ytInitialData\"]")) {
+                    JsonObject obj = new JsonParser().parse(inputLine.substring(inputLine.indexOf("{")).replace(";", "")).getAsJsonObject();
+
+                    JsonObject meta = obj.get("microformat").getAsJsonObject().get("microformatDataRenderer").getAsJsonObject();
+                    String name = meta.get("title").getAsString();
+                    String description = meta.get("description").getAsString();
+
+                    ArrayList<YoutubeVideo> videos = new ArrayList<>();
+
+                    JsonArray rawVideos = obj.get("contents").getAsJsonObject().get("twoColumnBrowseResultsRenderer").getAsJsonObject().get("tabs").getAsJsonArray().get(0).getAsJsonObject().get("tabRenderer").getAsJsonObject().get("content").getAsJsonObject().get("sectionListRenderer").getAsJsonObject().get("contents").getAsJsonArray().get(0).getAsJsonObject().get("itemSectionRenderer").getAsJsonObject().get("contents").getAsJsonArray().get(0).getAsJsonObject().get("playlistVideoListRenderer").getAsJsonObject().get("contents").getAsJsonArray();
+
+                    for (JsonElement rawVideo : rawVideos) {
+                        JsonObject videoData = rawVideo.getAsJsonObject().get("playlistVideoRenderer").getAsJsonObject();
+                        if (!videoData.has("lengthSeconds")) continue; // removed videos
+                        videos.add(new YoutubeVideo(videoData.get("videoId").getAsString(), Integer.valueOf(videoData.get("lengthSeconds").getAsString())));
+                    }
+
+                    playlist = new YoutubePlaylist(playlistId, name, description, videos);
+
+                    break;
                 }
             }
+
+            br.close();
+
+            return playlist;
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
         }
 
         return null;
     }
 
-    public String getPreviewImage(Item item) {
-        if (this.playLists.contains(item.getId())) {
-            if (!this.playLists.get(item.getId()).isEmpty()) {
-                return this.playLists.get(item.getId()).get(0).video;
-            }
-        }
-
-        return "";
-    }
-
-    public YoutubeItem getVideo(Item item, int index) {
-        if (this.playLists.containsKey(item.getId())) {
-            return this.playLists.get(item.getId()).get(index);
-        }
-
-        return null;
-    }
-
-    public class YoutubeItem {
-        public final int id;
-        public final String video;
-        public final String title;
-        public final String description;
-        public final int startTime;
-        public final int endTime;
-
-        public YoutubeItem(ResultSet set) throws SQLException {
-            this.id = set.getInt("id");
-            this.video = set.getString("video");
-            this.title = set.getString("title");
-            this.description = set.getString("description");
-            this.startTime = set.getInt("start_time");
-            this.endTime = set.getInt("end_time");
-        }
+    public ArrayList<YoutubePlaylist> getPlaylistsForItemId(int itemId) {
+        return this.playlists.get(itemId);
     }
 }
