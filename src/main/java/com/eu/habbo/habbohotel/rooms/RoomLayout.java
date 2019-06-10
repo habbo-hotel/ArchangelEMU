@@ -253,42 +253,29 @@ public class RoomLayout {
         return this.roomTiles[x][y].state == RoomTileState.INVALID;
     }
 
-    public RoomTileState getStateAt(short x, short y) {
-        return this.roomTiles[x][y].state;
-    }
-
     public String getRelativeMap() {
         return this.heightmap.replace("\r\n", "\r");
-    }
+    }//re
 
+    /// Pathfinder Reworked By Quadral, thanks buddy!! You Saved Morningstar <3
     public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit) {
+        if (this.room == null || !this.room.isLoaded() || oldTile == null || newTile == null || oldTile.equals(newTile) || newTile.state == RoomTileState.INVALID)
+            return new LinkedList<>();
         LinkedList<RoomTile> openList = new LinkedList<>();
-        try {
-            if (this.room == null || !this.room.isLoaded() || oldTile == null || newTile == null || oldTile.equals(newTile) || newTile.state == RoomTileState.INVALID)
-                return openList;
+        List<RoomTile> closedList = new LinkedList<>();
+        RoomTile current;
+        openList.add(oldTile.copy());
+        while (!openList.isEmpty()) {
+            current = this.lowestFInOpen(openList);
+            if ((current.x == newTile.x) && (current.y == newTile.y)) {
+                return this.calcPath(this.findTile(openList, oldTile.x, oldTile.y), current);
 
-            List<RoomTile> closedList = new LinkedList<>();
-
-            openList.add(oldTile.copy());
-
-            long startMillis = System.currentTimeMillis();
-            while (true) {
-                if (System.currentTimeMillis() - startMillis > 50) {
-                    return new LinkedList<>();
-                }
-
-                RoomTile current = this.lowestFInOpen(openList);
-                openList.remove(current);
-
-                if ((current.x == newTile.x) && (current.y == newTile.y)) {
-                    return this.calcPath(this.findTile(openList, oldTile.x, oldTile.y), current);
-                }
-
-                List<RoomTile> adjacentNodes = this.getAdjacent(openList, current, newTile);
-
-                for (RoomTile currentAdj : adjacentNodes) {
-                    if (closedList.contains(currentAdj)) continue;
-
+            }
+            closedList.add(current);
+            openList.remove(current);
+            List<RoomTile> adjacentNodes = this.getAdjacent(openList, current, newTile);
+            for (RoomTile currentAdj : adjacentNodes) {
+                if (closedList.contains(currentAdj)) continue;
                     if (roomUnit.canOverrideTile(currentAdj) || (currentAdj.state != RoomTileState.BLOCKED && currentAdj.x == doorX && currentAdj.y == doorY)) {
                         currentAdj.setPrevious(current);
                         currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
@@ -296,50 +283,31 @@ public class RoomLayout {
                         openList.add(currentAdj);
                         continue;
                     }
-
-                    //If the tile is sitable or layable and its not our goal tile, we cannot walk over it.
-                    if (!currentAdj.equals(goalLocation) && (currentAdj.state == RoomTileState.BLOCKED || currentAdj.state == RoomTileState.SIT || currentAdj.state == RoomTileState.LAY)) {
-                        closedList.add(currentAdj);
-                        openList.remove(currentAdj);
-                        continue;
-                    }
-                    ////if (!room.getLayout().tileWalkable((short) currentAdj.x, (short) currentAdj.y)) continue;
-
-                    //Height difference.
-                    double height = currentAdj.getStackHeight() - current.getStackHeight();
-
-                    //If we are not allowed to fall and the height difference is bigger than the maximum stepheight, continue.
-                    if (!ALLOW_FALLING && height < -MAXIMUM_STEP_HEIGHT) continue;
-
-                    //If the step difference is bigger than the maximum step height, continue.
-                    if (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT) continue;
-
-                    //Check if the tile has habbos.
-                    if (currentAdj.hasUnits() && (!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
-                        closedList.add(currentAdj);
-                        openList.remove(currentAdj);
-                        continue;
-                    }
-
-                    //if (room.hasPetsAt(currentAdj.x, currentAdj.y)) continue;
-
-                    if (!openList.contains(currentAdj)) {
-                        currentAdj.setPrevious(current);
-                        currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
-                        currentAdj.setgCosts(current);
-                        openList.add(currentAdj);
-                    } else if (currentAdj.getgCosts() > currentAdj.calculategCosts(current)) {
-                        currentAdj.setPrevious(current);
-                        currentAdj.setgCosts(current);
-                    }
+                if ((currentAdj.state == RoomTileState.BLOCKED) || ((currentAdj.state == RoomTileState.SIT || currentAdj.state == RoomTileState.LAY) && !currentAdj.equals(goalLocation))) {
+                    closedList.add(currentAdj);
+                    openList.remove(currentAdj);
+                    continue;
                 }
-                if (openList.isEmpty()) {
-                    return new LinkedList<>();
+                double height = currentAdj.getStackHeight() - current.getStackHeight();
+                if (!ALLOW_FALLING && height < -MAXIMUM_STEP_HEIGHT) continue;
+                if (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT) continue;
+                if (currentAdj.hasUnits() && (!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
+                    closedList.add(currentAdj);
+                    openList.remove(currentAdj);
+                    continue;
+                }
+                if (!openList.contains(currentAdj)) {
+                    currentAdj.setPrevious(current);
+                    currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
+                    currentAdj.setgCosts(current);
+                    openList.add(currentAdj);
+                } else if (currentAdj.getgCosts() > currentAdj.calculategCosts(current)) {
+                    currentAdj.setPrevious(current);
+                    currentAdj.setgCosts(current);
                 }
             }
-        } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
         }
+       // System.out.println("Invalid Path.");
         return new LinkedList<>();
     }
 
@@ -605,8 +573,6 @@ public class RoomLayout {
     }
 
     public boolean fitsOnMap(RoomTile tile, int width, int length, int rotation) {
-        THashSet<RoomTile> pointList = new THashSet<>(width * length, 0.1f);
-
         if (tile != null) {
             if (rotation == 0 || rotation == 4) {
                 for (short i = tile.x; i <= (tile.x + (width - 1)); i++) {
