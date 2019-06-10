@@ -107,7 +107,7 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
         message.appendInt(3);
         message.appendInt(this.points);
         message.appendInt(this.count);
-        message.appendInt(this.teamColor.type + 1);
+        message.appendInt(this.teamColor.type);
         message.appendInt(0);
         message.appendInt(this.getType().code);
         message.appendInt(this.getDelay());

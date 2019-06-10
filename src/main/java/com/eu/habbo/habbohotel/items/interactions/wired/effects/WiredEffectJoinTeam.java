@@ -90,7 +90,7 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
         message.appendInt(this.getId());
         message.appendString("");
         message.appendInt(1);
-        message.appendInt(this.teamColor.type + 1);
+        message.appendInt(this.teamColor.type);
         message.appendInt(0);
         message.appendInt(this.getType().code);
         message.appendInt(this.getDelay());

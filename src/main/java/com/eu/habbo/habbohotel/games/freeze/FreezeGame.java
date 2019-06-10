@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FreezeGame extends Game {
-    public static final int effectId = 40;
+    public static final int effectId = 39;
 
     public static int POWER_UP_POINTS;
     public static int POWER_UP_CHANCE;

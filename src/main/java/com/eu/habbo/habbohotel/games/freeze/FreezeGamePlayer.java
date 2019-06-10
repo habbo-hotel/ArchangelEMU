@@ -195,7 +195,7 @@ public class FreezeGamePlayer extends GamePlayer {
             return 0;
 
         if (!this.isFrozen()) {
-            int effectId = 40;
+            int effectId = FreezeGame.effectId;
 
             effectId += super.getTeamColor().type;
 

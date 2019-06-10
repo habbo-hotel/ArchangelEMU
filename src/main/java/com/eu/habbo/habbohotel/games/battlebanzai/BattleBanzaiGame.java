@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class BattleBanzaiGame extends Game {
 
-    public static final int effectId = 33;
+    public static final int effectId = 32;
 
 
     public static final int POINTS_HIJACK_TILE = Emulator.getConfig().getInt("hotel.banzai.points.tile.steal", 0);
@@ -136,7 +136,7 @@ public class BattleBanzaiGame extends Game {
 
             if (highestScore != null) {
                 for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
-                    item.setExtradata((highestScore.teamColor.type + 3) + "");
+                    item.setExtradata((highestScore.teamColor.type + 2) + "");
                     this.room.updateItemState(item);
                 }
             }
@@ -179,7 +179,7 @@ public class BattleBanzaiGame extends Game {
             }
 
             for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
-                item.setExtradata((7 + winningTeam.teamColor.type) + "");
+                item.setExtradata((6 + winningTeam.teamColor.type) + "");
                 this.room.updateItemState(item);
             }
 
@@ -263,7 +263,7 @@ public class BattleBanzaiGame extends Game {
                     tileItem.ifPresent(habboItem -> {
                         this.tileLocked(teamColor, habboItem, habbo, true);
 
-                        habboItem.setExtradata((2 + (teamColor.type * 3) + 3) + "");
+                        habboItem.setExtradata((2 + (teamColor.type * 3)) + "");
                         this.room.updateItem(habboItem);
                     });
                 }
@@ -373,7 +373,7 @@ public class BattleBanzaiGame extends Game {
         if (!this.gameTiles.contains(tile.getId())) return;
 
         int check = state - (habbo.getHabboInfo().getGamePlayer().getTeamColor().type * 3);
-        if (check == 3 || check == 4) {
+        if (check == 0 || check == 1) {
             state++;
 
             if (state % 3 == 2) {
@@ -383,7 +383,7 @@ public class BattleBanzaiGame extends Game {
                 habbo.getHabboInfo().getGamePlayer().addScore(BattleBanzaiGame.POINTS_FILL_TILE);
             }
         } else {
-            state = (habbo.getHabboInfo().getGamePlayer().getTeamColor().type * 3) + 3;
+            state = habbo.getHabboInfo().getGamePlayer().getTeamColor().type * 3;
 
             habbo.getHabboInfo().getGamePlayer().addScore(BattleBanzaiGame.POINTS_HIJACK_TILE);
         }

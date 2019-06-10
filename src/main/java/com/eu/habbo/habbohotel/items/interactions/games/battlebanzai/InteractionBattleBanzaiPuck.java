@@ -165,7 +165,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
                         }
                     }
 
-                    this.setExtradata(team.teamColor.type + 1 + "");
+                    this.setExtradata(team.teamColor.type + "");
                     room.updateItemState(this);
                 }
             }

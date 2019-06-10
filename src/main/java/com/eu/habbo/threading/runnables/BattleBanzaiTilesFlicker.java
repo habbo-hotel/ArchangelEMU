@@ -28,7 +28,7 @@ public class BattleBanzaiTilesFlicker implements Runnable {
 
         int state = 0;
         if (this.on) {
-            state = (this.color.type * 3) + 5;
+            state = (this.color.type * 3) + 2;
             this.on = false;
         } else {
             this.on = true;
