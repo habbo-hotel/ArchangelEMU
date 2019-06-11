@@ -20,7 +20,7 @@ public class WiredConditionHabboIsDancing extends WiredConditionGroupMember {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        return roomUnit.getDanceType() != DanceType.NONE;
+        return roomUnit != null && roomUnit.getDanceType() != DanceType.NONE;
     }
 
     @Override
