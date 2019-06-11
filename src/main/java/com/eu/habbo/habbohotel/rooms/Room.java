@@ -3633,7 +3633,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public RoomTile getRandomWalkableTile() {
         for (int i = 0; i < 10; i++) {
             RoomTile tile = this.layout.getTile((short) (Math.random() * this.layout.getMapSizeX()), (short) (Math.random() * this.layout.getMapSizeY()));
-            if (tile.isWalkable()) {
+            if (tile != null && tile.isWalkable()) {
                 return tile;
             }
         }
