@@ -3994,6 +3994,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (item.getBaseItem().getType() == FurnitureType.FLOOR) {
+            if (this.layout == null) return;
+
             this.updateTiles(this.getLayout().getTilesAt(this.layout.getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
         }
     }
