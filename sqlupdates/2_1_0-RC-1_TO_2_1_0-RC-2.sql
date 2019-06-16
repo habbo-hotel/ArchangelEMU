@@ -6,3 +6,5 @@ INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.error.cmd_add_you
 INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.error.cmd_add_youtube_playlist.no_base_item', 'A base item with that ID could not be found.');
 INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.error.cmd_add_youtube_playlist.failed_playlist', 'Error: unable to fetch the given YouTube playlist.');
 INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.succes.cmd_add_youtube_playlist', 'The playlist has been added successfully!');
+
+UPDATE `emulator_texts` SET `value` = 'Superwired Usage Information. Possible reward types:<br/>badge: BADGE CODE<br/>Credits: credits#amount<br/>Pixels: pixels#amount<br/>Points: points#amount<br/>Respect: respect#amount<br/>Furniture: furni#FurnitureID<br/>Catalog Item: cata#CatalogItemID' WHERE `key` = 'hotel.wired.superwired.info';
