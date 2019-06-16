@@ -590,7 +590,9 @@ public class CatalogManager {
     }
 
     public CatalogPage getCatalogPage(String captionSafe) {
-        return this.catalogPages.valueCollection().stream().filter(p -> p.getPageName().equalsIgnoreCase(captionSafe)).findAny().orElse(null);
+        return this.catalogPages.valueCollection().stream()
+                .filter(p -> p != null && p.getPageName() != null && p.getPageName().equalsIgnoreCase(captionSafe))
+                .findAny().orElse(null);
     }
 
 
