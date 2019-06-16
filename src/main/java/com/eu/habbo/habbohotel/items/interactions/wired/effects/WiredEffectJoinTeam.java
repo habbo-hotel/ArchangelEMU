@@ -118,7 +118,7 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
     @Override
     public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
-        this.teamColor = GameTeamColors.values()[packet.readInt() - 1];
+        this.teamColor = GameTeamColors.values()[packet.readInt()];
         int unknownInt = packet.readInt();
         packet.readString();
         this.setDelay(packet.readInt());

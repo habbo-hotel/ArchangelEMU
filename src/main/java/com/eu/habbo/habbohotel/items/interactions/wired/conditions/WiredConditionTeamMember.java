@@ -86,7 +86,7 @@ public class WiredConditionTeamMember extends InteractionWiredCondition {
     public boolean saveData(ClientMessage packet) {
         packet.readInt();
 
-        this.teamColor = GameTeamColors.values()[packet.readInt() - 1];
+        this.teamColor = GameTeamColors.values()[packet.readInt()];
 
         return true;
     }
