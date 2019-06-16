@@ -276,6 +276,8 @@ public class CommandHandler {
         addCommand(new UpdateWordFilterCommand());
         addCommand(new UserInfoCommand());
         addCommand(new WordQuizCommand());
+        addCommand(new UpdateYoutubePlaylistsCommand());
+        addCommand(new AddYoutubePlaylistCommand());
 
         addCommand(new TestCommand());
     }

@@ -90,11 +90,9 @@ public class YoutubeManager {
                     youtubeDataLoaderPool.submit(() -> {
                         ArrayList<YoutubePlaylist> playlists = this.playlists.getOrDefault(itemId, new ArrayList<>());
 
-                        YoutubePlaylist playlist = this.playlistCache.containsKey(playlistId) ? this.playlistCache.get(playlistId) : this.getPlaylistDataById(playlistId);
+                        YoutubePlaylist playlist = this.getPlaylistDataById(playlistId);
                         if (playlist != null) {
                             playlists.add(playlist);
-
-                            this.playlistCache.put(playlistId, playlist);
                         } else {
                             Emulator.getLogging().logErrorLine("Failed to load YouTube playlist: " + playlistId);
                         }
@@ -117,7 +115,9 @@ public class YoutubeManager {
         Emulator.getLogging().logStart("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
-    private YoutubePlaylist getPlaylistDataById(String playlistId) {
+    public YoutubePlaylist getPlaylistDataById(String playlistId) {
+        if (this.playlistCache.containsKey(playlistId)) return this.playlistCache.get(playlistId);
+
         try {
             URL myUrl = new URL("https://www.youtube.com/playlist?list=" + playlistId);
 
@@ -159,6 +159,8 @@ public class YoutubeManager {
 
             br.close();
 
+            this.playlistCache.put(playlistId, playlist);
+
             return playlist;
         } catch (java.io.IOException e) {
             e.printStackTrace();
@@ -169,5 +171,9 @@ public class YoutubeManager {
 
     public ArrayList<YoutubePlaylist> getPlaylistsForItemId(int itemId) {
         return this.playlists.get(itemId);
+    }
+
+    public void addPlaylistToItem(int itemId, YoutubePlaylist playlist) {
+        this.playlists.computeIfAbsent(itemId, k -> new ArrayList<>()).add(playlist);
     }
 }

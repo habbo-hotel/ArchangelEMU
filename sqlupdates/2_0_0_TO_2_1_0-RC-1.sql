@@ -67,7 +67,7 @@ DROP PROCEDURE IF EXISTS DEFAULT_YTTV_PLAYLISTS;
 
 ALTER TABLE `permissions`
 ADD COLUMN `cmd_update_youtube_playlists` enum('0','1') NOT NULL DEFAULT '0';
-INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.keys.cmd_update_youtube_playlists', 'update_youtube;update_youtube_playlists')
+INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.keys.cmd_update_youtube_playlists', 'update_youtube;update_youtube_playlists');
 INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('commands.succes.cmd_update_youtube_playlists', 'YouTube playlists have been refreshed!');
 
 DROP PROCEDURE IF EXISTS UPDATE_TEAM_WIREDS;
