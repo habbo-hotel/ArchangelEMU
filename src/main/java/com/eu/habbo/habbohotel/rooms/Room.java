@@ -3931,10 +3931,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void makeSit(Habbo habbo) {
-        if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.SIT)) {
+        if (habbo.getRoomUnit() == null) return;
+
+        if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.SIT) || !habbo.getRoomUnit().canForcePosture()) {
             return;
         }
-
 
         this.dance(habbo, DanceType.NONE);
         habbo.getRoomUnit().cmdSit = true;

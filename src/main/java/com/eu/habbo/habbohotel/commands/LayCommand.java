@@ -14,6 +14,9 @@ public class LayCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (gameClient.getHabbo().getRoomUnit() == null || !gameClient.getHabbo().getRoomUnit().canForcePosture())
+            return true;
+
         gameClient.getHabbo().getRoomUnit().cmdLay = true;
         gameClient.getHabbo().getHabboInfo().getCurrentRoom().updateHabbo(gameClient.getHabbo());
         gameClient.getHabbo().getRoomUnit().cmdSit = true;
