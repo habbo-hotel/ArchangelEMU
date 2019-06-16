@@ -4,6 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGuildGate;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleport;
+import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
+import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.DanceType;
@@ -721,5 +723,13 @@ public class RoomUnit {
 
     public void setCanLeaveRoomByDoor(boolean canLeaveRoomByDoor) {
         this.canLeaveRoomByDoor = canLeaveRoomByDoor;
+    }
+
+    public boolean canForcePosture() {
+        if (this.room == null) return false;
+
+        HabboItem topItem = this.room.getTopItemAt(this.getX(), this.getY());
+
+        return topItem == null || (!(topItem instanceof InteractionWater) && !(topItem instanceof InteractionWaterItem));
     }
 }
