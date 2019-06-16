@@ -589,24 +589,8 @@ public class CatalogManager {
         return this.catalogPages.get(pageId);
     }
 
-    public CatalogPage getCatalogPage(final String captionSafe) {
-        final CatalogPage[] page = {null};
-
-        synchronized (this.catalogPages) {
-            this.catalogPages.forEachValue(new TObjectProcedure<CatalogPage>() {
-                @Override
-                public boolean execute(CatalogPage object) {
-                    if (object.getPageName().equalsIgnoreCase(captionSafe)) {
-                        page[0] = object;
-                        return false;
-                    }
-
-                    return true;
-                }
-            });
-
-            return page[0];
-        }
+    public CatalogPage getCatalogPage(String captionSafe) {
+        return this.catalogPages.valueCollection().stream().filter(p -> p.getPageName().equalsIgnoreCase(captionSafe)).findAny().orElse(null);
     }
 
 
