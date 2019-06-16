@@ -53,7 +53,6 @@ public class TestCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        if (true) return true;
         if (params[1].equalsIgnoreCase("ut")) {
             RoomTile tile = gameClient.getHabbo().getRoomUnit().getCurrentLocation();
             gameClient.getHabbo().getHabboInfo().getCurrentRoom().updateTile(tile);

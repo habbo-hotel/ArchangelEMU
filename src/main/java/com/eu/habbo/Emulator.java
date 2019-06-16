@@ -149,7 +149,7 @@ public final class Emulator {
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-            while (!isShuttingDown && isReady) {
+            while (!isShuttingDown && isReady && reader.ready()) {
                 try {
 
                     String line = reader.readLine();

@@ -31,6 +31,21 @@ public class UserActivityEvent extends MessageHandler {
             case "forum.can.moderate.seen":
                 AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModForumCanModerateSeen"));
                 break;
+            case "room.settings.doormode.seen":
+                AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModDoorModeSeen"));
+                break;
+            case "room.settings.walkthrough.seen":
+                AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModWalkthroughSeen"));
+                break;
+            case "room.settings.chat.scrollspeed.seen":
+                AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModChatScrollSpeedSeen"));
+                break;
+            case "room.settings.chat.hearrange.seen":
+                AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModChatHearRangeSeen"));
+                break;
+            case "room.settings.chat.floodfilter.seen":
+                AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModChatFloodFilterSeen"));
+                break;
         }
     }
 }

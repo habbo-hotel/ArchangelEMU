@@ -152,7 +152,7 @@ public class InteractionWater extends InteractionDefault {
         if(pet == null)
             return;
 
-        if (!pet.getRoomUnit().hasStatus(RoomUnitStatus.SWIM)) {
+        if (!pet.getRoomUnit().hasStatus(RoomUnitStatus.SWIM) && pet.getPetData().canSwim) {
             pet.getRoomUnit().setStatus(RoomUnitStatus.SWIM, "");
         }
     }
@@ -212,5 +212,14 @@ public class InteractionWater extends InteractionDefault {
         }
 
         return super.canStackAt(room, itemsAtLocation);
+    }
+
+    @Override
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
+        if (!super.canWalkOn(roomUnit, room, objects)) return false;
+
+        Pet pet = room.getPet(roomUnit);
+
+        return pet == null || pet.getPetData().canSwim;
     }
 }

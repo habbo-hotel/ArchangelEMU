@@ -558,7 +558,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         RoomTileState result = RoomTileState.OPEN;
         HabboItem lowestItem = null;
         HabboItem lowestChair = this.getLowestChair(tile);
-        for (HabboItem item : this.getItemsAt(tile)) {
+        THashSet<HabboItem> items = this.getItemsAt(tile);
+        if (items == null) return RoomTileState.INVALID;
+        for (HabboItem item : items) {
             if (exclude != null && item == exclude) continue;
 
             if (lowestChair != null && item.getZ() > lowestChair.getZ() + 1.5) {
