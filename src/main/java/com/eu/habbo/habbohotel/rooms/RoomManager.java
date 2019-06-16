@@ -988,9 +988,7 @@ public class RoomManager {
 
         for (Room room : this.activeRooms.values()) {
             if (room.getUserCount() > 0) {
-                if (!RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB && room.isPublicRoom()) continue;
-
-                rooms.add(room);
+                if (!room.isPublicRoom() || RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB) rooms.add(room);
             }
         }
 
