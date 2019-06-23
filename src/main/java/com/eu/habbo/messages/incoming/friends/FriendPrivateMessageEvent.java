@@ -25,6 +25,8 @@ public class FriendPrivateMessageEvent extends MessageHandler {
         if (buddy == null)
             return;
 
+        if (message.length() > 255) message = message.substring(0, 255);
+
         UserFriendChatEvent event = new UserFriendChatEvent(this.client.getHabbo(), buddy, message);
         if (Emulator.getPluginManager().fireEvent(event).isCancelled())
             return;
