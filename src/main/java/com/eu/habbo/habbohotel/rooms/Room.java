@@ -3065,6 +3065,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         Rectangle show = this.roomSpecialTypes.tentAt(habbo.getRoomUnit().getCurrentLocation());
 
+        roomChatMessage.setMessage(roomChatMessage.getMessage().trim());
+
         if (chatType == RoomChatType.WHISPER) {
             if (roomChatMessage.getTargetHabbo() == null) {
                 return;
