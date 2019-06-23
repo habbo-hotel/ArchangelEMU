@@ -13,6 +13,7 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.RoomUnitTeleport;
+import com.eu.habbo.threading.runnables.SendRoomUnitEffectComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -106,6 +107,7 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
                         int currentEffect = bot.getRoomUnit().getEffectId();
 
                         room.giveEffect(bot.getRoomUnit(), 4, -1);
+                        Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, bot.getRoomUnit()), WiredHandler.TELEPORT_DELAY + 1000);
                         Emulator.getThreading().run(new RoomUnitTeleport(bot.getRoomUnit(), room, item.getX(), item.getY(), item.getZ() + item.getBaseItem().getHeight() + (item.getBaseItem().allowSit() ? -0.50 : 0D), currentEffect), WiredHandler.TELEPORT_DELAY);
                         break;
                     } else {
