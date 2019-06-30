@@ -83,7 +83,7 @@ public class PetManager {
     }
 
     public static int getLevel(int experience) {
-        int index = 0;
+        int index = -1;
 
         for (int i = 0; i < experiences.length; i++) {
             if (experiences[i] > experience) {
@@ -92,6 +92,7 @@ public class PetManager {
             }
         }
 
+        if(index == -1) { index = experiences.length; }
         return index + 1;
     }
 

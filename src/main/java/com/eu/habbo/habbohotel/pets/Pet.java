@@ -518,7 +518,7 @@ public class Pet implements ISerialize, Runnable {
         if (this.room != null) {
             this.room.sendComposer(new RoomPetExperienceComposer(this, amount).compose());
 
-            if (this.level < PetManager.experiences.length + 1 && this.experience >= PetManager.experiences[this.level - 1]) {
+            if(this.level < PetManager.experiences.length + 1 && this.experience >= PetManager.experiences[this.level - 1]) {
                 this.levelUp();
             }
         }
@@ -526,20 +526,20 @@ public class Pet implements ISerialize, Runnable {
 
 
     protected void levelUp() {
-        if (this.level >= PetManager.experiences.length)
-            return;
+            if (this.level >= PetManager.experiences.length + 1)
+                return;
 
-        if (this.experience < PetManager.experiences[this.level]) {
-            this.experience = PetManager.experiences[this.level];
+            if (this.experience > PetManager.experiences[this.level - 1]) {
+                this.experience = PetManager.experiences[this.level - 1];
+            }
+            this.level++;
+            this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
+            this.addHappyness(100);
+            this.roomUnit.setStatus(RoomUnitStatus.GESTURE, "exp");
+            this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
+            AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
+            this.room.sendComposer(new PetLevelUpdatedComposer(this).compose());
         }
-        this.level++;
-        this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
-        this.addHappyness(100);
-        this.roomUnit.setStatus(RoomUnitStatus.GESTURE, PetGestures.LVLUP.getKey());
-        this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
-        AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
-        this.room.sendComposer(new PetLevelUpdatedComposer(this).compose());
-    }
 
 
     public void addThirst(int amount) {
