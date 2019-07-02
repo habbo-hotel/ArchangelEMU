@@ -25,7 +25,6 @@ UPDATE `pet_actions` SET `can_swim` = '1' WHERE `pet_type` = 9 OR `pet_type` = 1
 UPDATE `items_base` SET `customparams` = '30,60,120,180,300,600', `interaction_type` = 'game_timer', `interaction_modes_count` = 1 WHERE `item_name` IN ('fball_counter','bb_counter','es_counter');
 
 ALTER TABLE `youtube_playlists`
-DROP COLUMN `order`,
 CHANGE COLUMN `video_id` `playlist_id` varchar(255) NOT NULL COMMENT 'YouTube playlist ID' AFTER `item_id`;
 
 DROP TABLE `youtube_items`;

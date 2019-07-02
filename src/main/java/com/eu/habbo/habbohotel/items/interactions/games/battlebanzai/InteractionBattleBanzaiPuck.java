@@ -127,7 +127,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
         if (room == null || from == null || to == null) return false;
 
         HabboItem topItem = room.getTopItemAt(to.x, to.y, this);
-        return topItem != null && topItem instanceof InteractionBattleBanzaiTile;
+        return topItem != null;
         //return !(!room.getLayout().tileWalkable(to.x, to.y) || (topItem != null && (!topItem.getBaseItem().setAllowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
     }
 
@@ -156,15 +156,11 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
                 GameTeam team = game.getTeamForHabbo(habbo);
                 if (team != null) {
                     HabboItem item = room.getTopItemAt(to.x, to.y);
-
-                    if (item instanceof InteractionBattleBanzaiTile) {
                         try {
                             item.onWalkOn(kicker, room, null);
                         } catch (Exception e) {
                             return;
                         }
-                    }
-
                     this.setExtradata(team.teamColor.type + "");
                     room.updateItemState(this);
                 }
@@ -185,7 +181,6 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
 
     @Override
     public boolean canStillMove(Room room, RoomTile from, RoomTile to, RoomUserRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
-        HabboItem topItem = room.getTopItemAt(to.x, to.y);
-        return to.state == RoomTileState.OPEN && to.isWalkable() && topItem instanceof InteractionBattleBanzaiTile;
+        return to.state == RoomTileState.OPEN && to.isWalkable();
     }
 }
