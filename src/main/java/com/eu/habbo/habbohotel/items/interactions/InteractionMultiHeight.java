@@ -17,16 +17,17 @@ import gnu.trove.set.hash.THashSet;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionMultiHeight extends HabboItem
-{
-    public InteractionMultiHeight(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+public class InteractionMultiHeight extends HabboItem {
+    public InteractionMultiHeight(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
+    public InteractionMultiHeight(ResultSet set, Item baseItem) throws SQLException {
+        super(set, baseItem);
+    }
+
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
@@ -34,44 +35,32 @@ public class InteractionMultiHeight extends HabboItem
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
-    public InteractionMultiHeight(ResultSet set, Item baseItem) throws SQLException
-    {
-        super(set, baseItem);
-    }
-
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return this.getBaseItem().allowWalk();
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if (client != null)
-        {
+        if (client != null) {
             if (!room.hasRights(client.getHabbo()) && !(objects.length >= 2 && objects[1] instanceof WiredEffectType && objects[1] == WiredEffectType.TOGGLE_STATE))
                 return;
         }
 
-        if (objects.length > 0)
-        {
-            if (objects[0] instanceof Integer && room != null)
-            {
+        if (objects.length > 0) {
+            if (objects[0] instanceof Integer && room != null) {
                 this.needsUpdate(true);
 
-                if(this.getExtradata().length() == 0)
+                if (this.getExtradata().length() == 0)
                     this.setExtradata("0");
 
-                if(this.getBaseItem().getMultiHeights().length > 0)
-                {
+                if (this.getBaseItem().getMultiHeights().length > 0) {
                     this.setExtradata("" + (Integer.valueOf(this.getExtradata()) + 1) % (this.getBaseItem().getMultiHeights().length));
                     this.needsUpdate(true);
                     room.updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()));
@@ -79,26 +68,20 @@ public class InteractionMultiHeight extends HabboItem
                     //room.sendComposer(new UpdateStackHeightComposer(this.getX(), this.getY(), this.getBaseItem().getMultiHeights()[Integer.valueOf(this.getExtradata())] * 256.0D).compose());
                 }
 
-                if(this.isWalkable())
-                {
+                if (this.isWalkable()) {
                     THashSet<Habbo> habbos = room.getHabbosOnItem(this);
                     THashSet<RoomUnit> updatedUnits = new THashSet<>();
-                    for (Habbo habbo : habbos)
-                    {
-                        if(habbo.getRoomUnit() == null)
+                    for (Habbo habbo : habbos) {
+                        if (habbo.getRoomUnit() == null)
                             continue;
 
-                        if(habbo.getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
+                        if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
                             continue;
 
-                        if (this.getBaseItem().getMultiHeights().length >= 0)
-                        {
-                            if (this.getBaseItem().allowSit())
-                            {
+                        if (this.getBaseItem().getMultiHeights().length >= 0) {
+                            if (this.getBaseItem().allowSit()) {
                                 habbo.getRoomUnit().setStatus(RoomUnitStatus.SIT, this.getBaseItem().getMultiHeights()[(this.getExtradata().isEmpty() ? 0 : Integer.valueOf(this.getExtradata()) % (this.getBaseItem().getMultiHeights().length))] * 1.0D + "");
-                            }
-                            else
-                            {
+                            } else {
                                 habbo.getRoomUnit().setZ(habbo.getRoomUnit().getCurrentLocation().getStackHeight());
                                 habbo.getRoomUnit().setPreviousLocationZ(habbo.getRoomUnit().getZ());
                             }
@@ -113,33 +96,25 @@ public class InteractionMultiHeight extends HabboItem
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        if (roomUnit != null)
-        {
-            if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
-            {
-                if (roomUnit.getRoomUnitType().equals(RoomUnitType.USER))
-                {
+        if (roomUnit != null) {
+            if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
+                if (roomUnit.getRoomUnitType().equals(RoomUnitType.USER)) {
                     Habbo habbo = room.getHabbo(roomUnit);
 
-                    if (habbo != null)
-                    {
-                        if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM())
-                        {
+                    if (habbo != null) {
+                        if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
                             room.giveEffect(habbo, this.getBaseItem().getEffectM(), -1);
                             return;
                         }
 
-                        if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF())
-                        {
+                        if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF()) {
                             room.giveEffect(habbo, this.getBaseItem().getEffectF(), -1);
                         }
                     }
@@ -149,28 +124,21 @@ public class InteractionMultiHeight extends HabboItem
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        if (roomUnit != null)
-        {
-            if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
-            {
-                if (roomUnit.getRoomUnitType().equals(RoomUnitType.USER))
-                {
+        if (roomUnit != null) {
+            if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
+                if (roomUnit.getRoomUnitType().equals(RoomUnitType.USER)) {
                     Habbo habbo = room.getHabbo(roomUnit);
 
-                    if (habbo != null)
-                    {
-                        if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0)
-                        {
+                    if (habbo != null) {
+                        if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0) {
                             room.giveEffect(habbo, 0, -1);
                             return;
                         }
 
-                        if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0)
-                        {
+                        if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0) {
                             room.giveEffect(habbo, 0, -1);
                         }
                     }
@@ -180,8 +148,7 @@ public class InteractionMultiHeight extends HabboItem
     }
 
     @Override
-    public boolean allowWiredResetState()
-    {
+    public boolean allowWiredResetState() {
         return true;
     }
 }

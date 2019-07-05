@@ -9,39 +9,32 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionTagPole extends HabboItem
-{
-    public InteractionTagPole(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionTagPole extends HabboItem {
+    public InteractionTagPole(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionTagPole(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionTagPole(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return false;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return false;
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
@@ -49,8 +42,7 @@ public class InteractionTagPole extends HabboItem
     }
 
     @Override
-    public void onPickUp(Room room)
-    {
+    public void onPickUp(Room room) {
         this.setExtradata("0");
     }
 }

@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomSettingsUpdatedComposer extends MessageComposer
-{
+public class RoomSettingsUpdatedComposer extends MessageComposer {
     private final Room room;
 
-    public RoomSettingsUpdatedComposer(Room room)
-    {
+    public RoomSettingsUpdatedComposer(Room room) {
         this.room = room;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomSettingsUpdatedComposer);
         this.response.appendInt(this.room.getId());
         return this.response;

@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class BullyReportedMessageComposer extends MessageComposer
-{
+public class BullyReportedMessageComposer extends MessageComposer {
     public static final int RECEIVED = 0;
     public static final int IGNORED = 1;
     public static final int NO_CHAT = 2;
@@ -14,14 +13,12 @@ public class BullyReportedMessageComposer extends MessageComposer
 
     private final int code;
 
-    public BullyReportedMessageComposer(int code)
-    {
+    public BullyReportedMessageComposer(int code) {
         this.code = code;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.BullyReportedMessageComposer);
         this.response.appendInt(this.code);
         return this.response;

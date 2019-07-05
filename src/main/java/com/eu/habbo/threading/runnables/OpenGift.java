@@ -1,14 +1,12 @@
 package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGift;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryUpdateItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.PresentItemOpenedComposer;
@@ -18,32 +16,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-public class OpenGift implements Runnable
-{
+public class OpenGift implements Runnable {
     private final HabboItem item;
     private final Habbo habbo;
     private final Room room;
 
-    public OpenGift(HabboItem item, Habbo habbo, Room room)
-    {
+    public OpenGift(HabboItem item, Habbo habbo, Room room) {
         this.item = item;
         this.habbo = habbo;
         this.room = room;
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             HabboItem inside = null;
 
             THashSet<HabboItem> items = ((InteractionGift) this.item).loadItems();
-            for (HabboItem i : items)
-            {
-                if(inside == null)
+            for (HabboItem i : items) {
+                if (inside == null)
                     inside = i;
 
                 i.setUserId(this.habbo.getHabboInfo().getId());
@@ -56,8 +48,7 @@ public class OpenGift implements Runnable
             this.habbo.getInventory().getItemsComponent().addItems(items);
 
             RoomTile tile = this.room.getLayout().getTile(this.item.getX(), this.item.getY());
-            if (tile != null)
-            {
+            if (tile != null) {
                 this.room.updateTile(tile);
             }
 
@@ -72,26 +63,30 @@ public class OpenGift implements Runnable
                 switch (item.getBaseItem().getType()) {
                     case WALL:
                     case FLOOR:
-                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI)) unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI, new ArrayList<>());
+                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI))
+                            unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI, new ArrayList<>());
 
                         unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI).add(item.getGiftAdjustedId());
 
                         break;
 
                     case BADGE:
-                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BADGE)) unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BADGE, new ArrayList<>());
+                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BADGE))
+                            unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BADGE, new ArrayList<>());
 
                         unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.BADGE).add(item.getId()); // badges cannot be placed so no need for gift adjusted ID
                         break;
 
                     case PET:
-                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.PET)) unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.PET, new ArrayList<>());
+                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.PET))
+                            unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.PET, new ArrayList<>());
 
                         unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.PET).add(item.getGiftAdjustedId());
                         break;
 
                     case ROBOT:
-                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BOT)) unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BOT, new ArrayList<>());
+                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BOT))
+                            unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BOT, new ArrayList<>());
 
                         unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.BOT).add(item.getGiftAdjustedId());
                         break;
@@ -100,14 +95,11 @@ public class OpenGift implements Runnable
 
             this.habbo.getClient().sendResponse(new AddHabboItemComposer(unseenItems));
 
-            if (inside != null)
-            {
+            if (inside != null) {
                 this.habbo.getClient().sendResponse(new InventoryUpdateItemComposer(inside));
                 this.habbo.getClient().sendResponse(new PresentItemOpenedComposer(inside, "", false));
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }

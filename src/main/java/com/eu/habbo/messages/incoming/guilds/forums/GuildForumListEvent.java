@@ -34,7 +34,7 @@ public class GuildForumListEvent extends MessageHandler {
                 break;
         }
 
-        if(guilds != null) {
+        if (guilds != null) {
             this.client.sendResponse(new GuildForumListComposer(guilds, this.client.getHabbo(), mode, offset));
         }
     }
@@ -46,20 +46,17 @@ public class GuildForumListEvent extends MessageHandler {
                 "FROM `guilds_forums_threads` " +
                 "LEFT JOIN `guilds` ON `guilds`.`id` = `guilds_forums_threads`.`guild_id` " +
                 "GROUP BY `guilds`.`id` " +
-                "ORDER BY `post_count` DESC LIMIT 100"))
-        {
+                "ORDER BY `post_count` DESC LIMIT 100")) {
             ResultSet set = statement.executeQuery();
 
-            while(set.next()) {
+            while (set.next()) {
                 Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(set.getInt("id"));
 
-                if(guild != null) {
+                if (guild != null) {
                     guilds.add(guild);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
             this.client.sendResponse(new ConnectionErrorComposer(500));
         }
@@ -72,21 +69,18 @@ public class GuildForumListEvent extends MessageHandler {
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT `guilds`.`id` FROM `guilds_members` " +
                 "LEFT JOIN `guilds` ON `guilds`.`id` = `guilds_members`.`guild_id` " +
-                "WHERE `guilds_members`.`user_id` = ? AND `guilds`.`forum` = '1'"))
-        {
+                "WHERE `guilds_members`.`user_id` = ? AND `guilds`.`forum` = '1'")) {
             statement.setInt(1, userId);
             ResultSet set = statement.executeQuery();
 
-            while(set.next()) {
+            while (set.next()) {
                 Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(set.getInt("id"));
 
-                if(guild != null) {
+                if (guild != null) {
                     guilds.add(guild);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
             this.client.sendResponse(new ConnectionErrorComposer(500));
         }

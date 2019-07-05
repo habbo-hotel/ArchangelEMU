@@ -7,29 +7,23 @@ import com.eu.habbo.plugin.HabboPlugin;
 
 import java.util.Collections;
 
-public class PluginsCommand extends Command
-{
-    public PluginsCommand()
-    {
+public class PluginsCommand extends Command {
+    public PluginsCommand() {
         super("cmd_plugins", Emulator.getTexts().getValue("commands.keys.cmd_plugins").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
         StringBuilder message = new StringBuilder("Plugins (" + Emulator.getPluginManager().getPlugins().size() + ")\r");
 
-        for (HabboPlugin plugin : Emulator.getPluginManager().getPlugins())
-        {
+        for (HabboPlugin plugin : Emulator.getPluginManager().getPlugins()) {
             message.append("\r").append(plugin.configuration.name).append(" By ").append(plugin.configuration.author);
         }
 
 
-        if (Emulator.getConfig().getBoolean("commands.plugins.oldstyle"))
-        {
+        if (Emulator.getConfig().getBoolean("commands.plugins.oldstyle")) {
             gameClient.sendResponse(new MessagesForYouComposer(Collections.singletonList(message.toString())));
-        } else
-        {
+        } else {
             gameClient.getHabbo().alert(message.toString());
         }
 

@@ -5,8 +5,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.util.Map;
 
-public class CreditsScheduler extends Scheduler
-{
+public class CreditsScheduler extends Scheduler {
 
     public static boolean IGNORE_HOTEL_VIEW;
 
@@ -22,36 +21,29 @@ public class CreditsScheduler extends Scheduler
     }
 
     public void reloadConfig() {
-        if(Emulator.getConfig().getBoolean("hotel.auto.credits.enabled"))
-        {
-            IGNORE_HOTEL_VIEW   = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.hotelview");
-            IGNORE_IDLED        = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.idled");
-            CREDITS             = Emulator.getConfig().getInt("hotel.auto.credits.amount");
+        if (Emulator.getConfig().getBoolean("hotel.auto.credits.enabled")) {
+            IGNORE_HOTEL_VIEW = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.hotelview");
+            IGNORE_IDLED = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.idled");
+            CREDITS = Emulator.getConfig().getInt("hotel.auto.credits.amount");
             if (this.disposed) {
                 this.disposed = false;
                 this.run();
             }
-        }
-        else
-        {
+        } else {
             this.disposed = true;
         }
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         super.run();
 
         Habbo habbo;
-        for(Map.Entry<Integer, Habbo> map : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet())
-        {
+        for (Map.Entry<Integer, Habbo> map : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
             habbo = map.getValue();
 
-            try
-            {
-                if (habbo != null)
-                {
+            try {
+                if (habbo != null) {
                     if (habbo.getHabboInfo().getCurrentRoom() == null && IGNORE_HOTEL_VIEW)
                         continue;
 
@@ -60,21 +52,17 @@ public class CreditsScheduler extends Scheduler
 
                     habbo.giveCredits(CREDITS);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Emulator.getLogging().logErrorLine(e);
             }
         }
     }
 
-    public boolean isDisposed()
-    {
+    public boolean isDisposed() {
         return this.disposed;
     }
 
-    public void setDisposed(boolean disposed)
-    {
+    public void setDisposed(boolean disposed) {
         this.disposed = disposed;
     }
 }

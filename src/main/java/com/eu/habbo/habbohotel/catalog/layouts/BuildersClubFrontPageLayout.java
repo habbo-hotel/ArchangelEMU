@@ -7,16 +7,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class BuildersClubFrontPageLayout extends CatalogPage
-{
-    public BuildersClubFrontPageLayout(ResultSet set) throws SQLException
-    {
+public class BuildersClubFrontPageLayout extends CatalogPage {
+    public BuildersClubFrontPageLayout(ResultSet set) throws SQLException {
         super(set);
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendString("builders_club_frontpage");
         message.appendInt(3);
         message.appendString(super.getHeaderImage());

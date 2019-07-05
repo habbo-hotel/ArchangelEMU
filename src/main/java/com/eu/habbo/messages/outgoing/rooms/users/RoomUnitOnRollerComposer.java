@@ -9,8 +9,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUnitOnRollerComposer extends MessageComposer
-{
+public class RoomUnitOnRollerComposer extends MessageComposer {
     private final RoomUnit roomUnit;
     private final HabboItem roller;
     private final RoomTile oldLocation;
@@ -19,8 +18,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer
     private final double newZ;
     private final Room room;
 
-    public RoomUnitOnRollerComposer(RoomUnit roomUnit, HabboItem roller, RoomTile oldLocation, double oldZ, RoomTile newLocation, double newZ, Room room)
-    {
+    public RoomUnitOnRollerComposer(RoomUnit roomUnit, HabboItem roller, RoomTile oldLocation, double oldZ, RoomTile newLocation, double newZ, Room room) {
         this.roomUnit = roomUnit;
         this.roller = roller;
         this.oldLocation = oldLocation;
@@ -30,8 +28,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer
         this.room = room;
     }
 
-    public RoomUnitOnRollerComposer(RoomUnit roomUnit, RoomTile newLocation, Room room)
-    {
+    public RoomUnitOnRollerComposer(RoomUnit roomUnit, RoomTile newLocation, Room room) {
         this.roomUnit = roomUnit;
         this.roller = null;
         this.oldLocation = this.roomUnit.getCurrentLocation();
@@ -42,9 +39,8 @@ public class RoomUnitOnRollerComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
-        if(!this.room.isLoaded())
+    public ServerMessage compose() {
+        if (!this.room.isLoaded())
             return null;
 
         this.response.init(Outgoing.ObjectOnRollerComposer);
@@ -59,8 +55,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer
         this.response.appendString(this.oldZ + "");
         this.response.appendString(this.newZ + "");
 
-        if (this.roller != null)
-        {
+        if (this.roller != null) {
             RoomTile rollerTile = room.getLayout().getTile(this.roller.getX(), this.roller.getY());
 
             Emulator.getThreading().run(() -> {
@@ -71,9 +66,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer
                     RoomUnitOnRollerComposer.this.roomUnit.sitUpdate = true;
                 }
             }, this.room.getRollerSpeed() == 0 ? 250 : 500);
-        }
-        else
-        {
+        } else {
             this.roomUnit.setLocation(this.newLocation);
             this.roomUnit.setZ(this.newZ);
         }

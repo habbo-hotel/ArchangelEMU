@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PetLevelUpComposer extends MessageComposer
-{
+public class PetLevelUpComposer extends MessageComposer {
     private final Pet pet;
 
-    public PetLevelUpComposer(Pet pet)
-    {
+    public PetLevelUpComposer(Pet pet) {
         this.pet = pet;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PetLevelUpComposer);
         this.response.appendInt(this.pet.getId());
         this.response.appendString(this.pet.getName());

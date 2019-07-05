@@ -5,8 +5,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuildForumAddCommentComposer extends MessageComposer
-{
+public class GuildForumAddCommentComposer extends MessageComposer {
     private final ForumThreadComment comment;
 
     public GuildForumAddCommentComposer(ForumThreadComment comment) {
@@ -14,8 +13,7 @@ public class GuildForumAddCommentComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuildForumAddCommentComposer);
         this.response.appendInt(this.comment.getThread().getGuildId()); //guild_id
         this.response.appendInt(this.comment.getThreadId()); //thread_id

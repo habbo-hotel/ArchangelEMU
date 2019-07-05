@@ -11,22 +11,18 @@ import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildRefreshMembersListComposer;
 import com.eu.habbo.plugin.events.guilds.GuildRemovedMemberEvent;
 
-public class GuildRemoveMemberEvent extends MessageHandler
-{
+public class GuildRemoveMemberEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int guildId = this.packet.readInt();
         int userId = this.packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
 
-        if (guild != null)
-        {
+        if (guild != null) {
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
-            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN) || this.client.getHabbo().hasPermission("acc_guild_admin"))
-            {
+            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN) || this.client.getHabbo().hasPermission("acc_guild_admin")) {
                 Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
                 GuildRemovedMemberEvent removedMemberEvent = new GuildRemovedMemberEvent(guild, userId, habbo);
                 Emulator.getPluginManager().fireEvent(removedMemberEvent);
@@ -36,31 +32,26 @@ public class GuildRemoveMemberEvent extends MessageHandler
                 Emulator.getGameEnvironment().getGuildManager().removeMember(guild, userId);
                 guild.decreaseMemberCount();
 
-                if (userId != this.client.getHabbo().getHabboInfo().getId())
-                {
+                if (userId != this.client.getHabbo().getHabboInfo().getId()) {
                     this.client.sendResponse(new GuildRefreshMembersListComposer(guild));
                 }
 
                 Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());
 
-                if (habbo != null)
-                {
+                if (habbo != null) {
                     habbo.getHabboStats().removeGuild(guild.getId());
                     if (habbo.getHabboStats().guild == guildId)
                         habbo.getHabboStats().guild = 0;
 
-                    if (room != null && habbo.getHabboInfo().getCurrentRoom() == room)
-                    {
+                    if (room != null && habbo.getHabboInfo().getCurrentRoom() == room) {
                         room.refreshRightsForHabbo(habbo);
                     }
 
                     habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, null));
                 }
 
-                if (room != null)
-                {
-                    if (room.getGuildId() == guildId)
-                    {
+                if (room != null) {
+                    if (room.getGuildId() == guildId) {
                         room.ejectUserFurni(userId);
                     }
                 }

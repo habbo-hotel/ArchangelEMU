@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ItemExtraDataComposer extends MessageComposer
-{
+public class ItemExtraDataComposer extends MessageComposer {
     private final HabboItem item;
 
-    public ItemExtraDataComposer(HabboItem item)
-    {
+    public ItemExtraDataComposer(HabboItem item) {
         this.item = item;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ItemExtraDataComposer);
         this.response.appendString(this.item.getId() + "");
         this.item.serializeExtradata(this.response);

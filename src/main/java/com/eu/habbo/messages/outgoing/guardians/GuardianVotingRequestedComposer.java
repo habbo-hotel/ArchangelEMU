@@ -9,18 +9,15 @@ import gnu.trove.map.hash.TIntIntHashMap;
 
 import java.util.Calendar;
 
-public class GuardianVotingRequestedComposer extends MessageComposer
-{
+public class GuardianVotingRequestedComposer extends MessageComposer {
     private final GuardianTicket ticket;
 
-    public GuardianVotingRequestedComposer(GuardianTicket ticket)
-    {
+    public GuardianVotingRequestedComposer(GuardianTicket ticket) {
         this.ticket = ticket;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         TIntIntHashMap mappedUsers = new TIntIntHashMap();
         mappedUsers.put(this.ticket.getReported().getHabboInfo().getId(), 0);
 
@@ -35,10 +32,8 @@ public class GuardianVotingRequestedComposer extends MessageComposer
 
         fullMessage.append("\r");
 
-        for(ModToolChatLog chatLog : this.ticket.getChatLogs())
-        {
-            if(!mappedUsers.containsKey(chatLog.habboId))
-            {
+        for (ModToolChatLog chatLog : this.ticket.getChatLogs()) {
+            if (!mappedUsers.containsKey(chatLog.habboId)) {
                 mappedUsers.put(chatLog.habboId, mappedUsers.size());
             }
 

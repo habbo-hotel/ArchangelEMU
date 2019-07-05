@@ -14,18 +14,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoomTrade
-{
+public class RoomTrade {
     //Configuration. Loaded from database & updated accordingly.
     public static boolean TRADING_ENABLED = true;
     public static boolean TRADING_REQUIRES_PERK = true;
 
     private final List<RoomTradeUser> users;
-    private boolean tradeCompleted;
     private final Room room;
+    private boolean tradeCompleted;
 
-    public RoomTrade(Habbo userOne, Habbo userTwo, Room room)
-    {
+    public RoomTrade(Habbo userOne, Habbo userTwo, Room room) {
         this.users = new ArrayList<>();
         this.tradeCompleted = false;
 
@@ -34,35 +32,29 @@ public class RoomTrade
         this.room = room;
     }
 
-    public void start()
-    {
+    public void start() {
         this.initializeTradeStatus();
         this.openTrade();
     }
 
-    protected void initializeTradeStatus()
-    {
-        for(RoomTradeUser roomTradeUser : this.users)
-        {
-            if(!roomTradeUser.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.TRADING))
-            {
+    protected void initializeTradeStatus() {
+        for (RoomTradeUser roomTradeUser : this.users) {
+            if (!roomTradeUser.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.TRADING)) {
                 roomTradeUser.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.TRADING, "");
-                if(!roomTradeUser.getHabbo().getRoomUnit().isWalking())
+                if (!roomTradeUser.getHabbo().getRoomUnit().isWalking())
                     this.room.sendComposer(new RoomUserStatusComposer(roomTradeUser.getHabbo().getRoomUnit()).compose());
             }
         }
     }
 
-    protected void openTrade()
-    {
+    protected void openTrade() {
         this.sendMessageToUsers(new TradeStartComposer(this));
     }
 
-    public void offerItem(Habbo habbo, HabboItem item)
-    {
+    public void offerItem(Habbo habbo, HabboItem item) {
         RoomTradeUser user = this.getRoomTradeUserForHabbo(habbo);
 
-        if(user.getItems().contains(item))
+        if (user.getItems().contains(item))
             return;
 
         habbo.getInventory().getItemsComponent().removeHabboItem(item);
@@ -71,15 +63,12 @@ public class RoomTrade
         this.clearAccepted();
         this.updateWindow();
     }
-    
-    public void offerMultipleItems(Habbo habbo, THashSet<HabboItem> items)
-    {
+
+    public void offerMultipleItems(Habbo habbo, THashSet<HabboItem> items) {
         RoomTradeUser user = this.getRoomTradeUserForHabbo(habbo);
 
-        for(HabboItem item : items) 
-        {
-            if(!user.getItems().contains(item)) 
-            {
+        for (HabboItem item : items) {
+            if (!user.getItems().contains(item)) {
                 habbo.getInventory().getItemsComponent().removeHabboItem(item);
                 user.getItems().add(item);
             }
@@ -89,11 +78,10 @@ public class RoomTrade
         this.updateWindow();
     }
 
-    public void removeItem(Habbo habbo, HabboItem item)
-    {
+    public void removeItem(Habbo habbo, HabboItem item) {
         RoomTradeUser user = this.getRoomTradeUserForHabbo(habbo);
 
-        if(!user.getItems().contains(item))
+        if (!user.getItems().contains(item))
             return;
 
         habbo.getInventory().getItemsComponent().addItem(item);
@@ -103,42 +91,35 @@ public class RoomTrade
         this.updateWindow();
     }
 
-    public void accept(Habbo habbo, boolean value)
-    {
+    public void accept(Habbo habbo, boolean value) {
         RoomTradeUser user = this.getRoomTradeUserForHabbo(habbo);
 
         user.setAccepted(value);
 
         this.sendMessageToUsers(new TradeAcceptedComposer(user));
         boolean accepted = true;
-        for(RoomTradeUser roomTradeUser : this.users)
-        {
-            if(!roomTradeUser.getAccepted())
+        for (RoomTradeUser roomTradeUser : this.users) {
+            if (!roomTradeUser.getAccepted())
                 accepted = false;
         }
-        if(accepted)
-        {
+        if (accepted) {
             this.sendMessageToUsers(new TradingWaitingConfirmComposer());
         }
     }
 
-    public void confirm(Habbo habbo)
-    {
+    public void confirm(Habbo habbo) {
         RoomTradeUser user = this.getRoomTradeUserForHabbo(habbo);
 
         user.confirm();
 
         this.sendMessageToUsers(new TradeAcceptedComposer(user));
         boolean accepted = true;
-        for(RoomTradeUser roomTradeUser : this.users)
-        {
-            if(!roomTradeUser.getConfirmed())
+        for (RoomTradeUser roomTradeUser : this.users) {
+            if (!roomTradeUser.getConfirmed())
                 accepted = false;
         }
-        if(accepted)
-        {
-            if (this.tradeItems())
-            {
+        if (accepted) {
+            if (this.tradeItems()) {
                 this.closeWindow();
                 this.sendMessageToUsers(new TradeCompleteComposer());
             }
@@ -147,14 +128,10 @@ public class RoomTrade
         }
     }
 
-    boolean tradeItems()
-    {
-        for(RoomTradeUser roomTradeUser : this.users)
-        {
-            for(HabboItem item : roomTradeUser.getItems())
-            {
-                if(roomTradeUser.getHabbo().getInventory().getItemsComponent().getHabboItem(item.getId()) != null)
-                {
+    boolean tradeItems() {
+        for (RoomTradeUser roomTradeUser : this.users) {
+            for (HabboItem item : roomTradeUser.getItems()) {
+                if (roomTradeUser.getHabbo().getInventory().getItemsComponent().getHabboItem(item.getId()) != null) {
                     this.sendMessageToUsers(new TradeClosedComposer(roomTradeUser.getHabbo().getRoomUnit().getId(), TradeClosedComposer.ITEMS_NOT_FOUND));
                     return false;
                 }
@@ -164,16 +141,13 @@ public class RoomTrade
         RoomTradeUser userOne = this.users.get(0);
         RoomTradeUser userTwo = this.users.get(1);
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
 
             int tradeId = 0;
 
             boolean logTrades = Emulator.getConfig().getBoolean("hotel.log.trades");
-            if (logTrades)
-            {
-                try (PreparedStatement statement = connection.prepareStatement("INSERT INTO room_trade_log (user_one_id, user_two_id, user_one_ip, user_two_ip, timestamp, user_one_item_count, user_two_item_count) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS))
-                {
+            if (logTrades) {
+                try (PreparedStatement statement = connection.prepareStatement("INSERT INTO room_trade_log (user_one_id, user_two_id, user_one_ip, user_two_ip, timestamp, user_one_item_count, user_two_item_count) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
                     statement.setInt(1, userOne.getHabbo().getHabboInfo().getId());
                     statement.setInt(2, userTwo.getHabbo().getHabboInfo().getId());
                     statement.setString(3, userOne.getHabbo().getHabboInfo().getIpLogin());
@@ -182,10 +156,8 @@ public class RoomTrade
                     statement.setInt(6, userOne.getItems().size());
                     statement.setInt(7, userTwo.getItems().size());
                     statement.executeUpdate();
-                    try (ResultSet generatedKeys = statement.getGeneratedKeys())
-                    {
-                        if (generatedKeys.next())
-                        {
+                    try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
                             tradeId = generatedKeys.getInt(1);
                         }
                     }
@@ -195,19 +167,15 @@ public class RoomTrade
             int userOneId = userOne.getHabbo().getHabboInfo().getId();
             int userTwoId = userTwo.getHabbo().getHabboInfo().getId();
 
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ? WHERE id = ? LIMIT 1"))
-            {
-                try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO room_trade_log_items (id, item_id, user_id) VALUES (?, ?, ?)"))
-                {
-                    for (HabboItem item : userOne.getItems())
-                    {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ? WHERE id = ? LIMIT 1")) {
+                try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO room_trade_log_items (id, item_id, user_id) VALUES (?, ?, ?)")) {
+                    for (HabboItem item : userOne.getItems()) {
                         item.setUserId(userTwoId);
                         statement.setInt(1, userTwoId);
                         statement.setInt(2, item.getId());
                         statement.addBatch();
 
-                        if (logTrades)
-                        {
+                        if (logTrades) {
                             stmt.setInt(1, tradeId);
                             stmt.setInt(2, item.getId());
                             stmt.setInt(3, userOneId);
@@ -215,15 +183,13 @@ public class RoomTrade
                         }
                     }
 
-                    for (HabboItem item : userTwo.getItems())
-                    {
+                    for (HabboItem item : userTwo.getItems()) {
                         item.setUserId(userOneId);
                         statement.setInt(1, userOneId);
                         statement.setInt(2, item.getId());
                         statement.addBatch();
 
-                        if (logTrades)
-                        {
+                        if (logTrades) {
                             stmt.setInt(1, tradeId);
                             stmt.setInt(2, item.getId());
                             stmt.setInt(3, userTwoId);
@@ -231,17 +197,14 @@ public class RoomTrade
                         }
                     }
 
-                    if (logTrades)
-                    {
+                    if (logTrades) {
                         stmt.executeBatch();
                     }
                 }
 
                 statement.executeBatch();
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
@@ -262,39 +225,32 @@ public class RoomTrade
         return true;
     }
 
-    protected void clearAccepted()
-    {
-        for(RoomTradeUser user : this.users)
-        {
+    protected void clearAccepted() {
+        for (RoomTradeUser user : this.users) {
             user.setAccepted(false);
         }
     }
 
-    protected void updateWindow()
-    {
+    protected void updateWindow() {
         this.sendMessageToUsers(new TradeUpdateComposer(this));
     }
 
-    private void returnItems()
-    {
-        for (RoomTradeUser user : this.users)
-        {
+    private void returnItems() {
+        for (RoomTradeUser user : this.users) {
             user.putItemsIntoInventory();
         }
     }
-    private void closeWindow()
-    {
+
+    private void closeWindow() {
         this.removeStatusses();
         this.sendMessageToUsers(new TradeCloseWindowComposer());
     }
 
-    public void stopTrade(Habbo habbo)
-    {
+    public void stopTrade(Habbo habbo) {
         this.removeStatusses();
         this.clearAccepted();
         this.returnItems();
-        for (RoomTradeUser user : this.users)
-        {
+        for (RoomTradeUser user : this.users) {
             user.clearItems();
         }
         this.updateWindow();
@@ -302,13 +258,11 @@ public class RoomTrade
         this.room.stopTrade(this);
     }
 
-    private void removeStatusses()
-    {
-        for(RoomTradeUser user : this.users)
-        {
+    private void removeStatusses() {
+        for (RoomTradeUser user : this.users) {
             Habbo habbo = user.getHabbo();
 
-            if(habbo == null)
+            if (habbo == null)
                 continue;
 
             habbo.getRoomUnit().removeStatus(RoomUnitStatus.TRADING);
@@ -316,26 +270,21 @@ public class RoomTrade
         }
     }
 
-    public RoomTradeUser getRoomTradeUserForHabbo(Habbo habbo)
-    {
-        for(RoomTradeUser roomTradeUser : this.users)
-        {
-            if(roomTradeUser.getHabbo() == habbo)
+    public RoomTradeUser getRoomTradeUserForHabbo(Habbo habbo) {
+        for (RoomTradeUser roomTradeUser : this.users) {
+            if (roomTradeUser.getHabbo() == habbo)
                 return roomTradeUser;
         }
         return null;
     }
 
-    public void sendMessageToUsers(MessageComposer message)
-    {
-        for(RoomTradeUser roomTradeUser : this.users)
-        {
+    public void sendMessageToUsers(MessageComposer message) {
+        for (RoomTradeUser roomTradeUser : this.users) {
             roomTradeUser.getHabbo().getClient().sendResponse(message);
         }
     }
 
-    public List<RoomTradeUser> getRoomTradeUsers()
-    {
+    public List<RoomTradeUser> getRoomTradeUsers() {
         return this.users;
     }
 }

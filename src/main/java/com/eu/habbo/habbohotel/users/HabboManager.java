@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolBan;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.permissions.Rank;
-import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigComposer;
@@ -25,16 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class HabboManager
-{
+public class HabboManager {
     //Configuration. Loaded from database & updated accordingly.
     public static String WELCOME_MESSAGE = "";
     public static boolean NAMECHANGE_ENABLED = false;
 
     private final ConcurrentHashMap<Integer, Habbo> onlineHabbos;
 
-    public HabboManager()
-    {
+    public HabboManager() {
         long millis = System.currentTimeMillis();
 
         this.onlineHabbos = new ConcurrentHashMap<>();
@@ -42,27 +39,55 @@ public class HabboManager
         Emulator.getLogging().logStart("Habbo Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
-    public void addHabbo(Habbo habbo)
-    {
+    public static HabboInfo getOfflineHabboInfo(int id) {
+        HabboInfo info = null;
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE id = ? LIMIT 1")) {
+            statement.setInt(1, id);
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    info = new HabboInfo(set);
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+
+        return info;
+    }
+
+    public static HabboInfo getOfflineHabboInfo(String username) {
+        HabboInfo info = null;
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE username = ? LIMIT 1")) {
+            statement.setString(1, username);
+
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    info = new HabboInfo(set);
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+
+        return info;
+    }
+
+    public void addHabbo(Habbo habbo) {
         this.onlineHabbos.put(habbo.getHabboInfo().getId(), habbo);
     }
 
-    public void removeHabbo(Habbo habbo)
-    {
+    public void removeHabbo(Habbo habbo) {
         this.onlineHabbos.remove(habbo.getHabboInfo().getId());
     }
 
-    public Habbo getHabbo(int id)
-    {
+    public Habbo getHabbo(int id) {
         return this.onlineHabbos.get(id);
     }
 
-    public Habbo getHabbo(String username)
-    {
-        synchronized (this.onlineHabbos)
-        {
-            for (Map.Entry<Integer, Habbo> map : this.onlineHabbos.entrySet())
-            {
+    public Habbo getHabbo(String username) {
+        synchronized (this.onlineHabbos) {
+            for (Map.Entry<Integer, Habbo> map : this.onlineHabbos.entrySet()) {
                 if (map.getValue().getHabboInfo().getUsername().equalsIgnoreCase(username))
                     return map.getValue();
             }
@@ -71,80 +96,61 @@ public class HabboManager
         return null;
     }
 
-    public Habbo loadHabbo(String sso)
-    {
+    public Habbo loadHabbo(String sso) {
         Habbo habbo;
         int userId = 0;
 
-        try(Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT id FROM users WHERE auth_ticket = ? LIMIT 1"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT id FROM users WHERE auth_ticket = ? LIMIT 1")) {
             statement.setString(1, sso);
-            try (ResultSet s = statement.executeQuery())
-            {
-                if (s.next())
-                {
+            try (ResultSet s = statement.executeQuery()) {
+                if (s.next()) {
                     userId = s.getInt("id");
                 }
             }
             statement.close();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         habbo = this.cloneCheck(userId);
-        if (habbo != null)
-        {
+        if (habbo != null) {
             habbo.alert(Emulator.getTexts().getValue("loggedin.elsewhere"));
             Emulator.getGameServer().getGameClientManager().disposeClient(habbo.getClient());
             habbo = null;
         }
 
         ModToolBan ban = Emulator.getGameEnvironment().getModToolManager().checkForBan(userId);
-        if (ban != null)
-        {
+        if (ban != null) {
             return null;
         }
 
 
-        try(Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE auth_ticket = ? LIMIT 1"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE auth_ticket = ? LIMIT 1")) {
             statement.setString(1, sso);
-            try (ResultSet set = statement.executeQuery())
-            {
-                if (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
                     habbo = new Habbo(set);
 
-                    if (habbo.getHabboInfo().firstVisit)
-                    {
+                    if (habbo.getHabboInfo().firstVisit) {
                         Emulator.getPluginManager().fireEvent(new UserRegisteredEvent(habbo));
                     }
 
-                    if (!Emulator.debugging)
-                    {
-                        try (PreparedStatement stmt = connection.prepareStatement("UPDATE users SET auth_ticket = ? WHERE id = ? LIMIT 1"))
-                        {
+                    if (!Emulator.debugging) {
+                        try (PreparedStatement stmt = connection.prepareStatement("UPDATE users SET auth_ticket = ? WHERE id = ? LIMIT 1")) {
                             stmt.setString(1, "");
                             stmt.setInt(2, habbo.getHabboInfo().getId());
                             stmt.execute();
-                        } catch (SQLException e)
-                        {
+                        } catch (SQLException e) {
                             Emulator.getLogging().logSQLException(e);
                         }
                     }
                 }
             }
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Emulator.getLogging().logErrorLine(ex);
         }
 
@@ -152,164 +158,76 @@ public class HabboManager
     }
 
     public HabboInfo getHabboInfo(int id) {
-        if(this.getHabbo(id) == null) {
+        if (this.getHabbo(id) == null) {
             return getOfflineHabboInfo(id);
         }
         return this.getHabbo(id).getHabboInfo();
     }
 
-    public static HabboInfo getOfflineHabboInfo(int id)
-    {
-        HabboInfo info = null;
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE id = ? LIMIT 1"))
-        {
-            statement.setInt(1, id);
-            try (ResultSet set = statement.executeQuery())
-            {
-                if (set.next())
-                {
-                    info = new HabboInfo(set);
-                }
-            }
-        }
-        catch(SQLException e)
-        {
-            Emulator.getLogging().logSQLException(e);
-        }
-
-        return info;
-    }
-
-    public static HabboInfo getOfflineHabboInfo(String username)
-    {
-        HabboInfo info = null;
-
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE username = ? LIMIT 1"))
-        {
-            statement.setString(1, username);
-
-            try (ResultSet set = statement.executeQuery())
-            {
-                if (set.next())
-                {
-                    info = new HabboInfo(set);
-                }
-            }
-        }
-        catch(SQLException e)
-        {
-            Emulator.getLogging().logSQLException(e);
-        }
-
-        return info;
-    }
-
-    public int getOnlineCount()
-    {
+    public int getOnlineCount() {
         return this.onlineHabbos.size();
     }
 
-    public Habbo cloneCheck(int id)
-    {
+    public Habbo cloneCheck(int id) {
         return Emulator.getGameServer().getGameClientManager().getHabbo(id);
     }
 
-    public void sendPacketToHabbosWithPermission(ServerMessage message, String perm)
-    {
-        synchronized (this.onlineHabbos)
-        {
-            for(Habbo habbo : this.onlineHabbos.values())
-            {
-                if(habbo.hasPermission(perm))
-                {
+    public void sendPacketToHabbosWithPermission(ServerMessage message, String perm) {
+        synchronized (this.onlineHabbos) {
+            for (Habbo habbo : this.onlineHabbos.values()) {
+                if (habbo.hasPermission(perm)) {
                     habbo.getClient().sendResponse(message);
                 }
             }
         }
     }
 
-    public ConcurrentHashMap<Integer, Habbo> getOnlineHabbos()
-    {
+    public ConcurrentHashMap<Integer, Habbo> getOnlineHabbos() {
         return this.onlineHabbos;
     }
 
-    public synchronized void dispose()
-    {
-
-
-
-
-
-
-
-
-
-
-
-
+    public synchronized void dispose() {
 
 
 //
 
 
-
-
-
-
-
-
-
-
-
-
         Emulator.getLogging().logShutdownLine("Habbo Manager -> Disposed!");
     }
 
-    public ArrayList<HabboInfo> getCloneAccounts(Habbo habbo, int limit)
-    {
+    public ArrayList<HabboInfo> getCloneAccounts(Habbo habbo, int limit) {
         ArrayList<HabboInfo> habboInfo = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE ip_register = ? OR ip_current = ? AND id != ? ORDER BY id DESC LIMIT ?"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE ip_register = ? OR ip_current = ? AND id != ? ORDER BY id DESC LIMIT ?")) {
             statement.setString(1, habbo.getHabboInfo().getIpRegister());
             statement.setString(2, habbo.getClient().getChannel().remoteAddress().toString());
             statement.setInt(3, habbo.getHabboInfo().getId());
             statement.setInt(4, limit);
 
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     habboInfo.add(new HabboInfo(set));
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return habboInfo;
     }
 
-    public List<Map.Entry<Integer, String>> getNameChanges(int userId, int limit)
-    {
+    public List<Map.Entry<Integer, String>> getNameChanges(int userId, int limit) {
         List<Map.Entry<Integer, String>> nameChanges = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT timestamp, new_name FROM namechange_log WHERE user_id = ? ORDER by timestamp DESC LIMIT ?"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT timestamp, new_name FROM namechange_log WHERE user_id = ? ORDER by timestamp DESC LIMIT ?")) {
             statement.setInt(1, userId);
             statement.setInt(2, limit);
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     nameChanges.add(new AbstractMap.SimpleEntry<>(set.getInt("timestamp"), set.getString("new_name")));
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
@@ -317,36 +235,30 @@ public class HabboManager
     }
 
 
-    public void setRank(int userId, int rankId) throws Exception
-    {
+    public void setRank(int userId, int rankId) throws Exception {
         Habbo habbo = this.getHabbo(userId);
 
-        if (!Emulator.getGameEnvironment().getPermissionsManager().rankExists(rankId))
-        {
+        if (!Emulator.getGameEnvironment().getPermissionsManager().rankExists(rankId)) {
             throw new Exception("Rank ID (" + rankId + ") does not exist");
         }
         Rank newRank = Emulator.getGameEnvironment().getPermissionsManager().getRank(rankId);
-        if(habbo != null && habbo.getHabboStats() != null)
-        {
+        if (habbo != null && habbo.getHabboStats() != null) {
             Rank oldRank = habbo.getHabboInfo().getRank();
-            if (!oldRank.getBadge().isEmpty())
-            {
+            if (!oldRank.getBadge().isEmpty()) {
                 habbo.deleteBadge(habbo.getInventory().getBadgesComponent().getBadge(oldRank.getBadge()));
                 //BadgesComponent.deleteBadge(userId, oldRank.getBadge()); // unnecessary as Habbo.deleteBadge does this
             }
 
             habbo.getHabboInfo().setRank(newRank);
 
-            if (!newRank.getBadge().isEmpty())
-            {
+            if (!newRank.getBadge().isEmpty()) {
                 habbo.addBadge(newRank.getBadge());
             }
 
             habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
             habbo.getClient().sendResponse(new UserPerksComposer(habbo));
 
-            if (habbo.hasPermission(Permission.ACC_SUPPORTTOOL))
-            {
+            if (habbo.hasPermission(Permission.ACC_SUPPORTTOOL)) {
                 habbo.getClient().sendResponse(new ModToolComposer(habbo));
             }
             habbo.getHabboInfo().run();
@@ -358,17 +270,12 @@ public class HabboManager
             habbo.getClient().sendResponse(new GiftConfigurationComposer());
             habbo.getClient().sendResponse(new RecyclerLogicComposer());
             habbo.alert(Emulator.getTexts().getValue("commands.generic.cmd_give_rank.new_rank").replace("id", newRank.getName()));
-        }
-        else
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET `rank` = ? WHERE id = ? LIMIT 1"))
-            {
+        } else {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET `rank` = ? WHERE id = ? LIMIT 1")) {
                 statement.setInt(1, rankId);
                 statement.setInt(2, userId);
                 statement.execute();
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
@@ -376,30 +283,22 @@ public class HabboManager
         Emulator.getPluginManager().fireEvent(new UserRankChangedEvent(habbo));
     }
 
-    public void giveCredits(int userId, int credits)
-    {
+    public void giveCredits(int userId, int credits) {
         Habbo habbo = this.getHabbo(userId);
-        if (habbo != null)
-        {
+        if (habbo != null) {
             habbo.giveCredits(credits);
-        }
-        else
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement= connection.prepareStatement("UPDATE users SET credits = credits + ? WHERE id = ? LIMIT 1"))
-            {
+        } else {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET credits = credits + ? WHERE id = ? LIMIT 1")) {
                 statement.setInt(1, credits);
                 statement.setInt(2, userId);
                 statement.execute();
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
-    public void staffAlert(String message)
-    {
+    public void staffAlert(String message) {
         message = Emulator.getTexts().getValue("commands.generic.cmd_staffalert.title") + "\r\n" + message;
         ServerMessage msg = new GenericAlertComposer(message).compose();
         Emulator.getGameEnvironment().getHabboManager().sendPacketToHabbosWithPermission(msg, "cmd_staffalert");

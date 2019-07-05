@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.rooms;
 
-public enum FurnitureMovementError
-{
+public enum FurnitureMovementError {
     NONE(""),
     NO_RIGHTS("${room.error.cant_set_not_owner}"),
     INVALID_MOVE("${room.error.cant_set_item}"),
@@ -15,10 +14,9 @@ public enum FurnitureMovementError
     MAX_DIMMERS("${room.error.max_dimmers}"),
     MAX_SOUNDFURNI("${room.errors.max_soundfurni}");
 
-    FurnitureMovementError(String errorCode)
-    {
+    public final String errorCode;
+
+    FurnitureMovementError(String errorCode) {
         this.errorCode = errorCode;
     }
-
-    public final String errorCode;
 }

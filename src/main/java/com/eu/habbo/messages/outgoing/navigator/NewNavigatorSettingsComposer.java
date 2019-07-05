@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class NewNavigatorSettingsComposer extends MessageComposer
-{
+public class NewNavigatorSettingsComposer extends MessageComposer {
     private final HabboNavigatorWindowSettings windowSettings;
 
-    public NewNavigatorSettingsComposer(HabboNavigatorWindowSettings windowSettings)
-    {
+    public NewNavigatorSettingsComposer(HabboNavigatorWindowSettings windowSettings) {
         this.windowSettings = windowSettings;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.NewNavigatorSettingsComposer);
         this.response.appendInt(this.windowSettings.x);
         this.response.appendInt(this.windowSettings.y);

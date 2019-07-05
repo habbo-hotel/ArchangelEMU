@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.pets;
 
-public enum PetGestures
-{
+public enum PetGestures {
     THIRSTY("thr"),
     TIRED("trd"),
     PLAYFULL("plf"),
@@ -16,13 +15,11 @@ public enum PetGestures
 
     private final String key;
 
-    PetGestures(String key)
-    {
+    PetGestures(String key) {
         this.key = key;
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return this.key;
     }
 }

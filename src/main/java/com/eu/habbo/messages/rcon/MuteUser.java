@@ -8,49 +8,35 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class MuteUser extends RCONMessage<MuteUser.JSON>
-{
-    public MuteUser()
-    {
+public class MuteUser extends RCONMessage<MuteUser.JSON> {
+    public MuteUser() {
         super(MuteUser.JSON.class);
     }
 
     @Override
-    public void handle(Gson gson, JSON json)
-    {
+    public void handle(Gson gson, JSON json) {
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.user_id);
 
-        if (habbo != null)
-        {
-            if (json.duration == 0)
-            {
+        if (habbo != null) {
+            if (json.duration == 0) {
                 habbo.unMute();
-            }
-            else
-            {
+            } else {
                 habbo.mute(json.duration);
             }
-        }
-        else
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET mute_end_timestamp = ? WHERE user_id = ? LIMIT 1"))
-            {
+        } else {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET mute_end_timestamp = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, Emulator.getIntUnixTimestamp() + json.duration);
                 statement.setInt(2, json.user_id);
-                if (statement.executeUpdate() == 0)
-                {
+                if (statement.executeUpdate() == 0) {
                     this.status = HABBO_NOT_FOUND;
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
-    static class JSON
-    {
+    static class JSON {
 
         public int user_id;
 

@@ -4,20 +4,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class FavoriteRoomChangedComposer extends MessageComposer
-{
+public class FavoriteRoomChangedComposer extends MessageComposer {
     private final int roomId;
     private final boolean favorite;
 
-    public FavoriteRoomChangedComposer(int roomId, boolean favorite)
-    {
+    public FavoriteRoomChangedComposer(int roomId, boolean favorite) {
         this.roomId = roomId;
         this.favorite = favorite;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.FavoriteRoomChangedComposer);
         this.response.appendInt(this.roomId);
         this.response.appendBoolean(this.favorite);

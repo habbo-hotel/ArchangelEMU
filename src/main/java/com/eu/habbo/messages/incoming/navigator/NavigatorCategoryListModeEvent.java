@@ -5,11 +5,9 @@ import com.eu.habbo.habbohotel.navigation.ListMode;
 import com.eu.habbo.habbohotel.rooms.RoomCategory;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class NavigatorCategoryListModeEvent extends MessageHandler
-{
+public class NavigatorCategoryListModeEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         String category = this.packet.readString();
         int viewMode = this.packet.readInt();
 

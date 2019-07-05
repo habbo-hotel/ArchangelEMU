@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RemoveBotComposer extends MessageComposer
-{
+public class RemoveBotComposer extends MessageComposer {
     private final Bot bot;
 
-    public RemoveBotComposer(Bot bot)
-    {
+    public RemoveBotComposer(Bot bot) {
         this.bot = bot;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RemoveBotComposer);
         this.response.appendInt(this.bot.getId());
         return this.response;

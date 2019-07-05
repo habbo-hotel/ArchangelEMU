@@ -5,8 +5,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.util.Map;
 
-public class PointsScheduler extends Scheduler
-{
+public class PointsScheduler extends Scheduler {
 
     public static boolean IGNORE_HOTEL_VIEW;
 
@@ -16,43 +15,59 @@ public class PointsScheduler extends Scheduler
 
     private static int POINTS;
 
-    public PointsScheduler()
-    {
+    public PointsScheduler() {
         super(Emulator.getConfig().getInt("hotel.auto.points.interval"));
         this.reloadConfig();
     }
 
+    public static boolean isIgnoreHotelView() {
+        return IGNORE_HOTEL_VIEW;
+    }
+
+    public static void setIgnoreHotelView(boolean ignoreHotelView) {
+        IGNORE_HOTEL_VIEW = ignoreHotelView;
+    }
+
+    public static boolean isIgnoreIdled() {
+        return IGNORE_IDLED;
+    }
+
+    public static void setIgnoreIdled(boolean ignoreIdled) {
+        IGNORE_IDLED = ignoreIdled;
+    }
+
+    public static int getPOINTS() {
+        return POINTS;
+    }
+
+    public static void setPOINTS(int POINTS) {
+        PointsScheduler.POINTS = POINTS;
+    }
+
     public void reloadConfig() {
-        if(Emulator.getConfig().getBoolean("hotel.auto.points.enabled"))
-        {
-            IGNORE_HOTEL_VIEW   = Emulator.getConfig().getBoolean("hotel.auto.points.ignore.hotelview");
-            IGNORE_IDLED        = Emulator.getConfig().getBoolean("hotel.auto.points.ignore.idled");
-            POINTS              = Emulator.getConfig().getInt("hotel.auto.points.amount");
+        if (Emulator.getConfig().getBoolean("hotel.auto.points.enabled")) {
+            IGNORE_HOTEL_VIEW = Emulator.getConfig().getBoolean("hotel.auto.points.ignore.hotelview");
+            IGNORE_IDLED = Emulator.getConfig().getBoolean("hotel.auto.points.ignore.idled");
+            POINTS = Emulator.getConfig().getInt("hotel.auto.points.amount");
             if (this.disposed) {
                 this.disposed = false;
                 this.run();
             }
-        }
-        else
-        {
+        } else {
             this.disposed = true;
         }
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         super.run();
 
         Habbo habbo;
-        for(Map.Entry<Integer, Habbo> map : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet())
-        {
+        for (Map.Entry<Integer, Habbo> map : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
             habbo = map.getValue();
 
-            try
-            {
-                if (habbo != null)
-                {
+            try {
+                if (habbo != null) {
                     if (habbo.getHabboInfo().getCurrentRoom() == null && IGNORE_HOTEL_VIEW)
                         continue;
 
@@ -61,51 +76,17 @@ public class PointsScheduler extends Scheduler
 
                     habbo.givePoints(POINTS);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Emulator.getLogging().logErrorLine(e);
             }
         }
     }
 
-    public static boolean isIgnoreHotelView()
-    {
-        return IGNORE_HOTEL_VIEW;
-    }
-
-    public static void setIgnoreHotelView(boolean ignoreHotelView)
-    {
-        IGNORE_HOTEL_VIEW = ignoreHotelView;
-    }
-
-    public static boolean isIgnoreIdled()
-    {
-        return IGNORE_IDLED;
-    }
-
-    public static void setIgnoreIdled(boolean ignoreIdled)
-    {
-        IGNORE_IDLED = ignoreIdled;
-    }
-
-    public static int getPOINTS()
-    {
-        return POINTS;
-    }
-
-    public static void setPOINTS(int POINTS)
-    {
-        PointsScheduler.POINTS = POINTS;
-    }
-
-    public boolean isDisposed()
-    {
+    public boolean isDisposed() {
         return this.disposed;
     }
 
-    public void setDisposed(boolean disposed)
-    {
+    public void setDisposed(boolean disposed) {
         this.disposed = disposed;
     }
 }

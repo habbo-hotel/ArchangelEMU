@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PetPackageNameValidationComposer extends MessageComposer
-{
+public class PetPackageNameValidationComposer extends MessageComposer {
     public static final int CLOSE_WIDGET = 0;
     public static final int NAME_TOO_SHORT = 1;
     public static final int NAME_TOO_LONG = 2;
@@ -16,16 +15,14 @@ public class PetPackageNameValidationComposer extends MessageComposer
     private final int errorCode;
     private final String errorString;
 
-    public PetPackageNameValidationComposer(int itemId, int errorCode, String errorString)
-    {
+    public PetPackageNameValidationComposer(int itemId, int errorCode, String errorString) {
         this.itemId = itemId;
         this.errorCode = errorCode;
         this.errorString = errorString;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PetPackageNameValidationComposer);
         this.response.appendInt(this.itemId);
         this.response.appendInt(this.errorCode);

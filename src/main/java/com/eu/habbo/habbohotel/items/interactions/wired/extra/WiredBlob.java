@@ -13,33 +13,26 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredBlob extends InteractionDefault
-{
-    public WiredBlob(ResultSet set, Item baseItem) throws SQLException
-    {
+public class WiredBlob extends InteractionDefault {
+    public WiredBlob(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredBlob(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredBlob(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        if (this.getExtradata().equals("0"))
-        {
+        if (this.getExtradata().equals("0")) {
             Habbo habbo = room.getHabbo(roomUnit);
 
-            if (habbo != null && habbo.getHabboInfo().getCurrentGame() != null)
-            {
+            if (habbo != null && habbo.getHabboInfo().getCurrentGame() != null) {
                 int points = Emulator.getConfig().getInt("hotel.item.wiredblob." + this.getBaseItem().getName());
 
-                if (points == 0)
-                {
+                if (points == 0) {
                     Emulator.getConfig().register("hotel.item.wiredblob." + this.getBaseItem().getName(), "3000");
                     points = 1;
                 }
@@ -47,28 +40,23 @@ public class WiredBlob extends InteractionDefault
                 boolean triggered = false;
                 Game game = room.getGame(habbo.getHabboInfo().getCurrentGame());
 
-                if (game != null)
-                {
+                if (game != null) {
                     GameTeam team = game.getTeamForHabbo(habbo);
 
-                    if (team != null)
-                    {
+                    if (team != null) {
                         team.addTeamScore(points);
                         triggered = true;
-                    } else
-                    {
+                    } else {
                         GamePlayer player = habbo.getHabboInfo().getGamePlayer();
 
-                        if (player != null)
-                        {
+                        if (player != null) {
                             player.addScore(points);
                             triggered = true;
                         }
                     }
                 }
 
-                if (triggered)
-                {
+                if (triggered) {
                     this.setExtradata("1");
                     room.updateItem(this);
                 }

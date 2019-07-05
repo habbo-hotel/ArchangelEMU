@@ -17,43 +17,37 @@ import gnu.trove.set.hash.THashSet;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredEffectRaiseFurni extends InteractionWiredEffect
-{
+public class WiredEffectRaiseFurni extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.TELEPORT;
 
     private THashSet<HabboItem> items = new THashSet<>();
 
     private int offset = 0;
 
-    public WiredEffectRaiseFurni(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectRaiseFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectRaiseFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectRaiseFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         THashSet<HabboItem> items = new THashSet<>();
 
-        for(HabboItem item : this.items)
-        {
-            if(item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
+        for (HabboItem item : this.items) {
+            if (item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
                 items.add(item);
         }
 
-        for(HabboItem item : items)
-        {
+        for (HabboItem item : items) {
             this.items.remove(item);
         }
         message.appendBoolean(false);
         message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
         message.appendInt(this.items.size());
-        for(HabboItem item : this.items)
+        for (HabboItem item : this.items)
             message.appendInt(item.getId());
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
@@ -67,8 +61,7 @@ public class WiredEffectRaiseFurni extends InteractionWiredEffect
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
         packet.readString();
 
@@ -76,8 +69,7 @@ public class WiredEffectRaiseFurni extends InteractionWiredEffect
 
         int count = packet.readInt();
 
-        for(int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt()));
         }
 
@@ -87,20 +79,17 @@ public class WiredEffectRaiseFurni extends InteractionWiredEffect
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
-        for(HabboItem item : this.items)
-        {
-            if(item.getRoomId() == 0)
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        for (HabboItem item : this.items) {
+            if (item.getRoomId() == 0)
                 continue;
 
-            double offsetZ = (((0.1) * this.offset))  % 127;
+            double offsetZ = (((0.1) * this.offset)) % 127;
             room.sendComposer(new FloorItemOnRollerComposer(item, null, room.getLayout().getTile(item.getX(), item.getY()), offsetZ, room).compose());
             room.updateHabbosAt(item.getX(), item.getY());
         }
@@ -109,14 +98,11 @@ public class WiredEffectRaiseFurni extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         StringBuilder wiredData = new StringBuilder(this.offset + "\t");
 
-        if(this.items != null && !this.items.isEmpty())
-        {
-            for (HabboItem item : this.items)
-            {
+        if (this.items != null && !this.items.isEmpty()) {
+            for (HabboItem item : this.items) {
                 wiredData.append(item.getId()).append(";");
             }
         }
@@ -125,28 +111,21 @@ public class WiredEffectRaiseFurni extends InteractionWiredEffect
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items = new THashSet<>();
         String wiredData = set.getString("wired_data");
 
-        if(wiredData.contains("\t"))
-        {
+        if (wiredData.contains("\t")) {
             String[] data = wiredData.split("\t");
 
-            try
-            {
+            try {
                 this.offset = Integer.valueOf(data[0]);
+            } catch (Exception e) {
             }
-            catch (Exception e)
-            {}
 
-            if (data.length >= 2)
-            {
-                if (data[1].contains(";"))
-                {
-                    for (String s : data[1].split(";"))
-                    {
+            if (data.length >= 2) {
+                if (data[1].contains(";")) {
+                    for (String s : data[1].split(";")) {
                         HabboItem item = room.getHabboItem(Integer.valueOf(s));
 
                         if (item != null)
@@ -158,8 +137,7 @@ public class WiredEffectRaiseFurni extends InteractionWiredEffect
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.offset = 0;
         this.items.clear();
         this.setDelay(0);

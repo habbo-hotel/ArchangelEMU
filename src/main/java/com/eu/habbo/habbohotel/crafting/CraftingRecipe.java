@@ -7,20 +7,17 @@ import gnu.trove.map.hash.THashMap;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CraftingRecipe
-{
+public class CraftingRecipe {
     private final int id;
     private final String name;
     private final Item reward;
     private final boolean secret;
     private final String achievement;
     private final boolean limited;
+    private final THashMap<Item, Integer> ingredients;
     private int remaining;
 
-    private final THashMap<Item, Integer> ingredients;
-
-    public CraftingRecipe(ResultSet set) throws SQLException
-    {
+    public CraftingRecipe(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.name = set.getString("product_name");
         this.reward = Emulator.getGameEnvironment().getItemManager().getItem(set.getInt("reward"));
@@ -32,15 +29,12 @@ public class CraftingRecipe
         this.ingredients = new THashMap<>();
     }
 
-    public boolean canBeCrafted()
-    {
+    public boolean canBeCrafted() {
         return !this.limited || this.remaining > 0;
     }
 
-    public synchronized boolean decrease()
-    {
-        if (this.remaining > 0)
-        {
+    public synchronized boolean decrease() {
+        if (this.remaining > 0) {
             this.remaining--;
             return true;
         }
@@ -48,58 +42,47 @@ public class CraftingRecipe
         return false;
     }
 
-    public void addIngredient(Item item, int amount)
-    {
+    public void addIngredient(Item item, int amount) {
         this.ingredients.put(item, amount);
     }
 
-    public int getAmountNeeded(Item item)
-    {
+    public int getAmountNeeded(Item item) {
         return this.ingredients.get(item);
     }
 
-    public boolean hasIngredient(Item item)
-    {
+    public boolean hasIngredient(Item item) {
         return this.ingredients.containsKey(item);
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public Item getReward()
-    {
+    public Item getReward() {
         return this.reward;
     }
 
-    public boolean isSecret()
-    {
+    public boolean isSecret() {
         return this.secret;
     }
 
-    public String getAchievement()
-    {
+    public String getAchievement() {
         return this.achievement;
     }
 
-    public boolean isLimited()
-    {
+    public boolean isLimited() {
         return this.limited;
     }
 
-    public THashMap<Item, Integer> getIngredients()
-    {
+    public THashMap<Item, Integer> getIngredients() {
         return this.ingredients;
     }
 
-    public int getRemaining()
-    {
+    public int getRemaining() {
         return this.remaining;
     }
 }

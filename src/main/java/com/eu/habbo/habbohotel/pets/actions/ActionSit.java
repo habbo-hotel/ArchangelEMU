@@ -7,18 +7,14 @@ import com.eu.habbo.habbohotel.pets.PetVocalsType;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 
-public class ActionSit extends PetAction
-{
-    public ActionSit()
-    {
+public class ActionSit extends PetAction {
+    public ActionSit() {
         super(PetTasks.SIT, true);
     }
 
     @Override
-    public boolean apply(Pet pet, Habbo habbo, String[] data)
-    {
-        if (pet.getTask() != PetTasks.SIT && !pet.getRoomUnit().hasStatus(RoomUnitStatus.SIT))
-        {
+    public boolean apply(Pet pet, Habbo habbo, String[] data) {
+        if (pet.getTask() != PetTasks.SIT && !pet.getRoomUnit().hasStatus(RoomUnitStatus.SIT)) {
             pet.getRoomUnit().setStatus(RoomUnitStatus.SIT, pet.getRoom().getStackHeight(pet.getRoomUnit().getX(), pet.getRoomUnit().getY(), false) - 0.50 + "");
 
             if (pet.getHappyness() > 75)

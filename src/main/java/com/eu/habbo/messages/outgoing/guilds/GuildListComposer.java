@@ -8,24 +8,20 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
 
-public class GuildListComposer extends MessageComposer
-{
+public class GuildListComposer extends MessageComposer {
     private final THashSet<Guild> guilds;
     private final Habbo habbo;
 
-    public GuildListComposer(THashSet<Guild> guilds, Habbo habbo)
-    {
+    public GuildListComposer(THashSet<Guild> guilds, Habbo habbo) {
         this.guilds = guilds;
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuildListComposer);
         this.response.appendInt(this.guilds.size());
-        for(Guild guild : this.guilds)
-        {
+        for (Guild guild : this.guilds) {
             this.response.appendInt(guild.getId());
             this.response.appendString(guild.getName());
             this.response.appendString(guild.getBadge());

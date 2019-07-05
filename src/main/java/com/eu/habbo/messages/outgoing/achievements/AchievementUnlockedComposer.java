@@ -7,20 +7,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class AchievementUnlockedComposer extends MessageComposer
-{
+public class AchievementUnlockedComposer extends MessageComposer {
     private final Achievement achievement;
     private final Habbo habbo;
 
-    public AchievementUnlockedComposer(Habbo habbo, Achievement achievement)
-    {
+    public AchievementUnlockedComposer(Habbo habbo, Achievement achievement) {
         this.achievement = achievement;
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.AchievementUnlockedComposer);
 
         AchievementLevel level = this.achievement.getLevelForProgress(this.habbo.getHabboStats().getAchievementProgress(this.achievement));

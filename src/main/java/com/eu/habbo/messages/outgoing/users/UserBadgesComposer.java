@@ -7,27 +7,22 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.ArrayList;
 
-public class UserBadgesComposer extends MessageComposer
-{
+public class UserBadgesComposer extends MessageComposer {
     private final ArrayList<HabboBadge> badges;
     private final int habbo;
 
-    public UserBadgesComposer(ArrayList<HabboBadge> badges, int habbo)
-    {
+    public UserBadgesComposer(ArrayList<HabboBadge> badges, int habbo) {
         this.badges = badges;
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UserBadgesComposer);
         this.response.appendInt(this.habbo);
-        synchronized (this.badges)
-        {
+        synchronized (this.badges) {
             this.response.appendInt(this.badges.size());
-            for (HabboBadge badge : this.badges)
-            {
+            for (HabboBadge badge : this.badges) {
                 this.response.appendInt(badge.getSlot());
                 this.response.appendString(badge.getCode());
             }

@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class WiredRewardAlertComposer extends MessageComposer
-{
+public class WiredRewardAlertComposer extends MessageComposer {
     public static final int LIMITED_NO_MORE_AVAILABLE = 0;
     public static final int REWARD_ALREADY_RECEIVED = 1;
     public static final int REWARD_ALREADY_RECEIVED_THIS_TODAY = 2;
@@ -18,14 +17,12 @@ public class WiredRewardAlertComposer extends MessageComposer
 
     private final int code;
 
-    public WiredRewardAlertComposer(int code)
-    {
+    public WiredRewardAlertComposer(int code) {
         this.code = code;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.WiredRewardAlertComposer);
         this.response.appendInt(this.code);
         return this.response;

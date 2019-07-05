@@ -17,6 +17,7 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.util.Pair;
 
@@ -27,8 +28,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class HabboItem implements Runnable, IEventTriggers
-{
+public abstract class HabboItem implements Runnable, IEventTriggers {
     private int id;
     private int userId;
     private int roomId;
@@ -45,8 +45,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers
     private boolean needsDelete = false;
     private boolean isFromGift = false;
 
-    public HabboItem(ResultSet set, Item baseItem) throws SQLException
-    {
+    public HabboItem(ResultSet set, Item baseItem) throws SQLException {
         this.id = set.getInt("id");
         this.userId = set.getInt("user_id");
         this.roomId = set.getInt("room_id");
@@ -59,15 +58,13 @@ public abstract class HabboItem implements Runnable, IEventTriggers
         this.extradata = set.getString("extra_data");
 
         String ltdData = set.getString("limited_data");
-        if (!ltdData.isEmpty())
-        {
+        if (!ltdData.isEmpty()) {
             this.limitedStack = Integer.parseInt(set.getString("limited_data").split(":")[0]);
             this.limitedSells = Integer.parseInt(set.getString("limited_data").split(":")[1]);
         }
     }
 
-    public HabboItem(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public HabboItem(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         this.id = id;
         this.userId = userId;
         this.roomId = 0;
@@ -82,10 +79,12 @@ public abstract class HabboItem implements Runnable, IEventTriggers
         this.limitedStack = limitedStack;
     }
 
-    public void serializeFloorData(ServerMessage serverMessage)
-    {
-        try
-        {
+    public static RoomTile getSquareInFront(RoomLayout roomLayout, HabboItem item) {
+        return roomLayout.getTileInFront(roomLayout.getTile(item.getX(), item.getY()), item.getRotation());
+    }
+
+    public void serializeFloorData(ServerMessage serverMessage) {
+        try {
             serverMessage.appendInt(this.getId());
             serverMessage.appendInt(this.baseItem.getSpriteId());
             serverMessage.appendInt(this.x);
@@ -96,29 +95,24 @@ public abstract class HabboItem implements Runnable, IEventTriggers
             serverMessage.appendString((this.getBaseItem().getInteractionType().getType() == InteractionTrophy.class || this.getBaseItem().getInteractionType().getType() == InteractionCrackable.class || this.getBaseItem().getName().toLowerCase().equals("gnome_box")) ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? Item.getCurrentHeight(this) + "" : ""));
             //serverMessage.appendString( ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? Item.getCurrentHeight(this) : ""));
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }
 
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
-        if(this.isLimited())
-        {
+    public void serializeExtradata(ServerMessage serverMessage) {
+        if (this.isLimited()) {
             serverMessage.appendInt(this.getLimitedSells());
             serverMessage.appendInt(this.getLimitedStack());
         }
     }
 
-    public void serializeWallData(ServerMessage serverMessage)
-    {
+    public void serializeWallData(ServerMessage serverMessage) {
         serverMessage.appendString(this.getId() + "");
         serverMessage.appendInt(this.baseItem.getSpriteId());
         serverMessage.appendString(this.wallPosition);
 
-        if(this instanceof InteractionPostIt)
+        if (this instanceof InteractionPostIt)
             serverMessage.appendString(this.extradata.split(" ")[0]);
         else
             serverMessage.appendString(this.extradata);
@@ -127,8 +121,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers
         serverMessage.appendInt(this.getUserId());
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
@@ -138,93 +131,76 @@ public abstract class HabboItem implements Runnable, IEventTriggers
         return this.id;
     }
 
-    public int getUserId()
-    {
+    public int getUserId() {
         return this.userId;
     }
 
-    public void setUserId(int userId)
-    {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public int getRoomId()
-    {
+    public int getRoomId() {
         return this.roomId;
     }
 
-    public void setRoomId(int roomId)
-    {
+    public void setRoomId(int roomId) {
         this.roomId = roomId;
     }
 
-    public Item getBaseItem()
-    {
+    public Item getBaseItem() {
         return this.baseItem;
     }
 
-    public String getWallPosition()
-    {
+    public String getWallPosition() {
         return this.wallPosition;
     }
 
-    public void setWallPosition(String wallPosition)
-    {
+    public void setWallPosition(String wallPosition) {
         this.wallPosition = wallPosition;
     }
 
-    public short getX()
-    {
+    public short getX() {
         return this.x;
     }
 
-    public void setX(short x)
-    {
+    public void setX(short x) {
         this.x = x;
     }
 
-    public short getY()
-    {
+    public short getY() {
         return this.y;
     }
 
-    public void setY(short y)
-    {
+    public void setY(short y) {
         this.y = y;
     }
 
-    public double getZ()
-    {
+    public double getZ() {
         return this.z;
     }
 
-    public void setZ(double z)
-    {
+    public void setZ(double z) {
+        if (z > 9999 || z < -9999) return;
         this.z = z;
     }
 
-    public int getRotation()
-    {
+    public int getRotation() {
         return this.rotation;
     }
 
-    public void setRotation(int rotation)
-    {
-        this.rotation = (byte)(rotation % 8);
+    public void setRotation(int rotation) {
+        this.rotation = (byte) (rotation % 8);
     }
 
-    public String getExtradata()
-    {
+    public String getExtradata() {
         return this.extradata;
     }
 
-    public void setExtradata(String extradata)
-    {
+    public void setExtradata(String extradata) {
         this.extradata = extradata;
     }
 
-    public boolean needsUpdate()
-    {
+    public boolean needsUpdate() {
         return this.needsUpdate;
     }
 
@@ -232,65 +208,51 @@ public abstract class HabboItem implements Runnable, IEventTriggers
         return needsDelete;
     }
 
-    public void needsUpdate(boolean value)
-    {
+    public void needsUpdate(boolean value) {
         this.needsUpdate = value;
     }
 
-    public void needsDelete(boolean value)
-    {
+    public void needsDelete(boolean value) {
         this.needsDelete = value;
     }
 
-    public boolean isLimited()
-    {
+    public boolean isLimited() {
         return this.limitedStack > 0;
     }
 
-    public int getLimitedStack()
-    {
+    public int getLimitedStack() {
         return this.limitedStack;
     }
 
-    public int getLimitedSells()
-    {
+    public int getLimitedSells() {
         return this.limitedSells;
     }
 
     @Override
-    public void run()
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-        {
-            if (this.needsDelete)
-            {
+    public void run() {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+            if (this.needsDelete) {
                 this.needsUpdate = false;
                 this.needsDelete = false;
 
-                try (PreparedStatement statement = connection.prepareStatement("DELETE FROM items WHERE id = ?"))
-                {
+                try (PreparedStatement statement = connection.prepareStatement("DELETE FROM items WHERE id = ?")) {
                     statement.setInt(1, this.getId());
                     statement.execute();
                 }
-            }
-            else if (this.needsUpdate)
-            {
-                try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ?, room_id = ?, wall_pos = ?, x = ?, y = ?, z = ?, rot = ?, extra_data = ?, limited_data = ? WHERE id = ?"))
-                {
+            } else if (this.needsUpdate) {
+                try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ?, room_id = ?, wall_pos = ?, x = ?, y = ?, z = ?, rot = ?, extra_data = ?, limited_data = ? WHERE id = ?")) {
                     statement.setInt(1, this.userId);
                     statement.setInt(2, this.roomId);
                     statement.setString(3, this.wallPosition);
                     statement.setInt(4, this.x);
                     statement.setInt(5, this.y);
-                    statement.setDouble(6, this.z);
+                    statement.setDouble(6, Math.max(-9999, Math.min(9999, Math.round(this.z * Math.pow(10, 6)) / Math.pow(10, 6))));
                     statement.setInt(7, this.rotation);
                     statement.setString(8, this instanceof InteractionGuildGate ? "" : this.getDatabaseExtraData());
                     statement.setString(9, this.limitedStack + ":" + this.limitedSells);
                     statement.setInt(10, this.id);
                     statement.execute();
-                }
-                catch (SQLException e)
-                {
+                } catch (SQLException e) {
                     Emulator.getLogging().logSQLException(e);
                     Emulator.getLogging().logErrorLine("SQLException trying to save HabboItem: " + this.toString());
                 }
@@ -298,16 +260,9 @@ public abstract class HabboItem implements Runnable, IEventTriggers
                 this.needsUpdate = false;
             }
 
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
-    }
-
-    public static RoomTile getSquareInFront(RoomLayout roomLayout, HabboItem item)
-    {
-        return roomLayout.getTileInFront(roomLayout.getTile(item.getX(), item.getY()), item.getRotation());
     }
 
     public abstract boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects);
@@ -315,14 +270,10 @@ public abstract class HabboItem implements Runnable, IEventTriggers
     public abstract boolean isWalkable();
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
-        if(client != null && this.getBaseItem().getType() == FurnitureType.FLOOR)
-        {
-            if (objects != null && objects.length >= 2)
-            {
-                if (objects[1] instanceof WiredEffectType)
-                {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+        if (client != null && this.getBaseItem().getType() == FurnitureType.FLOOR) {
+            if (objects != null && objects.length >= 2) {
+                if (objects[1] instanceof WiredEffectType) {
                     return;
                 }
             }
@@ -333,102 +284,103 @@ public abstract class HabboItem implements Runnable, IEventTriggers
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         if (objects != null && objects.length >= 1 && objects[0] instanceof InteractionWired)
             return;
 
         WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, roomUnit, room, new Object[]{this});
+
+        if ((this.getBaseItem().allowSit() || this.getBaseItem().allowLay()) && roomUnit.getDanceType() != DanceType.NONE) {
+            roomUnit.setDanceType(DanceType.NONE);
+            room.sendComposer(new RoomUserDanceComposer(roomUnit).compose());
+        }
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         WiredHandler.handle(WiredTriggerType.WALKS_OFF_FURNI, roomUnit, room, new Object[]{this});
     }
 
     public abstract void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception;
 
 
-    public void onPlace(Room room)
-    {
+    public void onPlace(Room room) {
         //TODO: IMPORTANT: MAKE THIS GENERIC. (HOLES, ICE SKATE PATCHES, BLACK HOLE, BUNNY RUN FIELD, FOOTBALL FIELD)
         Achievement roomDecoAchievement = Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoFurniCount");
         Habbo owner = room.getHabbo(this.getUserId());
 
         int furniCollecterProgress;
-        if (owner == null)
-        {
+        if (owner == null) {
             furniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.getUserId(), roomDecoAchievement);
-        }
-        else
-        {
+        } else {
             furniCollecterProgress = owner.getHabboStats().getAchievementProgress(roomDecoAchievement);
         }
 
         int difference = room.getUserFurniCount(this.getUserId()) - furniCollecterProgress;
-        if (difference > 0)
-        {
-            if (owner != null)
-            {
+        if (difference > 0) {
+            if (owner != null) {
                 AchievementManager.progressAchievement(owner, roomDecoAchievement, difference);
-            }
-            else
-            {
+            } else {
                 AchievementManager.progressAchievement(this.getUserId(), roomDecoAchievement, difference);
             }
         }
+
+        Achievement roomDecoUniqueAchievement = Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoFurniTypeCount");
+
+        int uniqueFurniCollecterProgress;
+        if (owner == null) {
+            uniqueFurniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.getUserId(), roomDecoUniqueAchievement);
+        } else {
+            uniqueFurniCollecterProgress = owner.getHabboStats().getAchievementProgress(roomDecoUniqueAchievement);
+        }
+
+        int uniqueDifference = room.getUserUniqueFurniCount(this.getUserId()) - uniqueFurniCollecterProgress;
+        if (uniqueDifference > 0) {
+            if (owner != null) {
+                AchievementManager.progressAchievement(owner, roomDecoUniqueAchievement, uniqueDifference);
+            } else {
+                AchievementManager.progressAchievement(this.getUserId(), roomDecoUniqueAchievement, uniqueDifference);
+            }
+        }
     }
 
-    public void onPickUp(Room room)
-    {
-        if(this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
-        {
-            for (Habbo habbo : room.getHabbosOnItem(this))
-            {
-                if (this.getBaseItem().getEffectM() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.M) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM())
-                {
+    public void onPickUp(Room room) {
+        if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
+            for (Habbo habbo : room.getHabbosOnItem(this)) {
+                if (this.getBaseItem().getEffectM() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.M) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM()) {
                     room.giveEffect(habbo, 0, -1);
                 }
 
-                if (this.getBaseItem().getEffectF() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.F) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF())
-                {
+                if (this.getBaseItem().getEffectF() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.F) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF()) {
                     room.giveEffect(habbo, 0, -1);
                 }
             }
 
-            for (Bot bot : room.getBotsAt(room.getLayout().getTile(this.getX(), this.getY())))
-            {
-                if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM())
-                {
+            for (Bot bot : room.getBotsAt(room.getLayout().getTile(this.getX(), this.getY()))) {
+                if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM()) {
                     room.giveEffect(bot.getRoomUnit(), 0, -1);
                 }
 
-                if (this.getBaseItem().getEffectF() > 0 && bot.getGender().equals(HabboGender.F) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF())
-                {
+                if (this.getBaseItem().getEffectF() > 0 && bot.getGender().equals(HabboGender.F) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF()) {
                     room.giveEffect(bot.getRoomUnit(), 0, -1);
                 }
             }
         }
     }
 
-    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation)
-    {
-        if(this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
-        {
+    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
+        if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
             List<Habbo> oldHabbos = new ArrayList<>();
             List<Habbo> newHabbos = new ArrayList<>();
             List<Bot> oldBots = new ArrayList<>();
             List<Bot> newBots = new ArrayList<>();
 
-            for (RoomTile tile : room.getLayout().getTilesAt(oldLocation, this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))
-            {
+            for (RoomTile tile : room.getLayout().getTilesAt(oldLocation, this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation())) {
                 oldHabbos.addAll(room.getHabbosAt(tile));
                 oldBots.addAll(room.getBotsAt(tile));
             }
 
-            for (RoomTile tile : room.getLayout().getTilesAt(oldLocation, this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))
-            {
+            for (RoomTile tile : room.getLayout().getTilesAt(oldLocation, this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation())) {
                 newHabbos.addAll(room.getHabbosAt(tile));
                 newBots.addAll(room.getBotsAt(tile));
             }
@@ -436,83 +388,66 @@ public abstract class HabboItem implements Runnable, IEventTriggers
             oldHabbos.removeAll(newHabbos);
             oldBots.removeAll(newBots);
 
-            for (Habbo habbo : oldHabbos)
-            {
-                if (this.getBaseItem().getEffectM() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.M) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM())
-                {
+            for (Habbo habbo : oldHabbos) {
+                if (this.getBaseItem().getEffectM() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.M) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM()) {
                     room.giveEffect(habbo, 0, -1);
                 }
 
-                if (this.getBaseItem().getEffectF() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.F) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF())
-                {
+                if (this.getBaseItem().getEffectF() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.F) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF()) {
                     room.giveEffect(habbo, 0, -1);
                 }
             }
 
-            for (Habbo habbo : newHabbos)
-            {
-                if (this.getBaseItem().getEffectM() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.M) && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM())
-                {
+            for (Habbo habbo : newHabbos) {
+                if (this.getBaseItem().getEffectM() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.M) && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
                     room.giveEffect(habbo, this.getBaseItem().getEffectM(), -1);
                 }
 
-                if (this.getBaseItem().getEffectF() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.F) && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF())
-                {
+                if (this.getBaseItem().getEffectF() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.F) && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF()) {
                     room.giveEffect(habbo, this.getBaseItem().getEffectF(), -1);
                 }
             }
 
-            for (Bot bot : oldBots)
-            {
-                if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM())
-                {
+            for (Bot bot : oldBots) {
+                if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM()) {
                     room.giveEffect(bot.getRoomUnit(), 0, -1);
                 }
 
-                if (this.getBaseItem().getEffectF() > 0 && bot.getGender().equals(HabboGender.F) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF())
-                {
+                if (this.getBaseItem().getEffectF() > 0 && bot.getGender().equals(HabboGender.F) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF()) {
                     room.giveEffect(bot.getRoomUnit(), 0, -1);
                 }
             }
 
-            for (Bot bot : newBots)
-            {
-                if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM())
-                {
+            for (Bot bot : newBots) {
+                if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
                     room.giveEffect(bot.getRoomUnit(), this.getBaseItem().getEffectM(), -1);
                 }
 
-                if (this.getBaseItem().getEffectF() > 0 && bot.getGender().equals(HabboGender.F) && bot.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF())
-                {
+                if (this.getBaseItem().getEffectF() > 0 && bot.getGender().equals(HabboGender.F) && bot.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF()) {
                     room.giveEffect(bot.getRoomUnit(), this.getBaseItem().getEffectF(), -1);
                 }
             }
         }
     }
 
-    public String getDatabaseExtraData()
-    {
+    public String getDatabaseExtraData() {
         return this.getExtradata();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ID: " + this.id + ", BaseID: " + this.getBaseItem().getId() + ", X: " + this.x + ", Y: " + this.y + ", Z: " + this.z + ", Extradata: " + this.extradata;
     }
 
-    public boolean allowWiredResetState()
-    {
+    public boolean allowWiredResetState() {
         return false;
     }
 
-    public boolean isUsable()
-    {
+    public boolean isUsable() {
         return this.baseItem.getStateCount() > 1;
     }
 
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation)
-    {
+    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation) {
         return true;
     }
 
@@ -523,4 +458,6 @@ public abstract class HabboItem implements Runnable, IEventTriggers
     public void setFromGift(boolean fromGift) {
         isFromGift = fromGift;
     }
+
+    public boolean invalidatesToRoomKick() { return false; }
 }

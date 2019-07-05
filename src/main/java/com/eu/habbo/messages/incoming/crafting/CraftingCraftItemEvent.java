@@ -18,33 +18,26 @@ import gnu.trove.procedure.TObjectProcedure;
 
 import java.util.Map;
 
-public class CraftingCraftItemEvent extends MessageHandler
-{
+public class CraftingCraftItemEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int craftingTable = this.packet.readInt();
         HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(craftingTable);
         CraftingAltar altar = Emulator.getGameEnvironment().getCraftingManager().getAltar(item.getBaseItem());
         CraftingRecipe recipe = altar.getRecipe(this.packet.readString());
 
-        if (recipe != null)
-        {
-            if (!recipe.canBeCrafted())
-            {
+        if (recipe != null) {
+            if (!recipe.canBeCrafted()) {
                 this.client.sendResponse(new AlertLimitedSoldOutComposer());
                 return;
             }
 
             TIntObjectHashMap<HabboItem> toRemove = new TIntObjectHashMap<>();
-            for (Map.Entry<Item, Integer> set : recipe.getIngredients().entrySet())
-            {
-                for (int i = 0; i < set.getValue(); i++)
-                {
+            for (Map.Entry<Item, Integer> set : recipe.getIngredients().entrySet()) {
+                for (int i = 0; i < set.getValue(); i++) {
                     HabboItem habboItem = this.client.getHabbo().getInventory().getItemsComponent().getAndRemoveHabboItem(set.getKey());
 
-                    if (habboItem == null)
-                    {
+                    if (habboItem == null) {
                         return;
                     }
 
@@ -54,26 +47,21 @@ public class CraftingCraftItemEvent extends MessageHandler
 
             HabboItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(this.client.getHabbo().getHabboInfo().getId(), recipe.getReward(), 0, 0, "");
 
-            if (rewardItem != null)
-            {
-                if (recipe.isLimited())
-                {
+            if (rewardItem != null) {
+                if (recipe.isLimited()) {
                     recipe.decrease();
                 }
 
-                if (!recipe.getAchievement().isEmpty())
-                {
+                if (!recipe.getAchievement().isEmpty()) {
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement(recipe.getAchievement()));
                 }
 
                 this.client.sendResponse(new CraftingResultComposer(recipe));
                 this.client.getHabbo().getInventory().getItemsComponent().addItem(rewardItem);
                 this.client.sendResponse(new AddHabboItemComposer(rewardItem));
-                toRemove.forEachValue(new TObjectProcedure<HabboItem>()
-                {
+                toRemove.forEachValue(new TObjectProcedure<HabboItem>() {
                     @Override
-                    public boolean execute(HabboItem object)
-                    {
+                    public boolean execute(HabboItem object) {
                         CraftingCraftItemEvent.this.client.sendResponse(new RemoveHabboItemComposer(object.getGiftAdjustedId()));
                         return true;
                     }

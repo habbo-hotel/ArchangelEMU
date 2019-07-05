@@ -1,21 +1,13 @@
 package com.eu.habbo.habbohotel.games;
 
-public enum GameTeamColors
-{
+public enum GameTeamColors {
 
-    RED(0),
+    NONE(0),
 
-
-    GREEN(1),
-
-
-    BLUE(2),
-
-
-    YELLOW(3),
-
-
-    NONE(4),
+    RED(1),
+    GREEN(2),
+    BLUE(3),
+    YELLOW(4),
 
     ONE(5),
     TWO(6),
@@ -31,21 +23,17 @@ public enum GameTeamColors
 
     public final int type;
 
-    GameTeamColors(int type)
-    {
+    GameTeamColors(int type) {
         this.type = type;
     }
 
-    public static GameTeamColors fromType(int type)
-    {
-        for (GameTeamColors teamColors : values())
-        {
-            if (teamColors.type == type)
-            {
+    public static GameTeamColors fromType(int type) {
+        for (GameTeamColors teamColors : values()) {
+            if (teamColors.type == type) {
                 return teamColors;
             }
         }
 
-        return RED;
+        return NONE;
     }
 }

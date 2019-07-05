@@ -12,18 +12,16 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 
-class TeleportInteraction extends Thread
-{
-    private int state;
+class TeleportInteraction extends Thread {
     private final Room room;
-    private Room targetRoom;
     private final GameClient client;
     private final HabboItem teleportOne;
+    private int state;
+    private Room targetRoom;
     private HabboItem teleportTwo;
 
     @Deprecated
-    public TeleportInteraction(Room room, GameClient client, HabboItem teleportOne)
-    {
+    public TeleportInteraction(Room room, GameClient client, HabboItem teleportOne) {
         this.room = room;
         this.client = client;
         this.teleportOne = teleportOne;
@@ -33,43 +31,33 @@ class TeleportInteraction extends Thread
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
-            if (this.state == 5)
-            {
+    public void run() {
+        try {
+            if (this.state == 5) {
                 this.teleportTwo.setExtradata("1");
                 this.targetRoom.updateItem(this.teleportTwo);
                 this.room.updateItem(this.teleportOne);
                 RoomTile tile = HabboItem.getSquareInFront(this.room.getLayout(), this.teleportTwo);
-                if (tile != null)
-                {
+                if (tile != null) {
                     this.client.getHabbo().getRoomUnit().setGoalLocation(tile);
                 }
                 Emulator.getThreading().run(this.teleportTwo, 500);
                 Emulator.getThreading().run(this.teleportOne, 500);
-            } else if (this.state == 4)
-            {
+            } else if (this.state == 4) {
                 int[] data = Emulator.getGameEnvironment().getItemManager().getTargetTeleportRoomId(this.teleportOne);
-                if (data.length == 2 && data[0] != 0)
-                {
-                    if (this.room.getId() == data[0])
-                    {
+                if (data.length == 2 && data[0] != 0) {
+                    if (this.room.getId() == data[0]) {
                         this.targetRoom = this.room;
                         this.teleportTwo = this.room.getHabboItem(data[1]);
 
-                        if (this.teleportTwo == null)
-                        {
+                        if (this.teleportTwo == null) {
                             this.teleportTwo = this.teleportOne;
                         }
-                    } else
-                    {
+                    } else {
                         this.targetRoom = Emulator.getGameEnvironment().getRoomManager().loadRoom(data[0]);
                         this.teleportTwo = this.targetRoom.getHabboItem(data[1]);
                     }
-                } else
-                {
+                } else {
                     this.targetRoom = this.room;
                     this.teleportTwo = this.teleportOne;
                 }
@@ -77,10 +65,9 @@ class TeleportInteraction extends Thread
                 this.teleportOne.setExtradata("2");
                 this.teleportTwo.setExtradata("2");
 
-                if (this.room != this.targetRoom)
-                {
+                if (this.room != this.targetRoom) {
                     Emulator.getGameEnvironment().getRoomManager().logExit(this.client.getHabbo());
-                    this.room.removeHabbo(this.client.getHabbo());
+                    this.room.removeHabbo(this.client.getHabbo(), true);
                     Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), this.targetRoom);
                 }
 
@@ -99,14 +86,12 @@ class TeleportInteraction extends Thread
                 this.state = 5;
 
                 Emulator.getThreading().run(this, 500);
-            } else if (this.state == 3)
-            {
+            } else if (this.state == 3) {
                 this.teleportOne.setExtradata("0");
                 this.room.updateItem(this.teleportOne);
                 this.state = 4;
                 Emulator.getThreading().run(this, 500);
-            } else if (this.state == 2)
-            {
+            } else if (this.state == 2) {
                 this.client.getHabbo().getRoomUnit().setGoalLocation(this.room.getLayout().getTile(this.teleportOne.getX(), this.teleportOne.getY()));
                 this.client.getHabbo().getRoomUnit().setRotation(RoomUserRotation.values()[this.newRotation(this.teleportOne.getRotation())]);
                 this.client.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.MOVE, this.teleportOne.getX() + "," + this.teleportOne.getY() + "," + this.teleportOne.getZ());
@@ -115,12 +100,10 @@ class TeleportInteraction extends Thread
                 this.state = 3;
 
                 Emulator.getThreading().run(this, 500);
-            } else if (this.state == 1)
-            {
+            } else if (this.state == 1) {
                 RoomTile loc = HabboItem.getSquareInFront(this.room.getLayout(), this.teleportOne);
 
-                if (this.client.getHabbo().getRoomUnit().getX() == loc.x && this.client.getHabbo().getRoomUnit().getY() == loc.y)
-                {
+                if (this.client.getHabbo().getRoomUnit().getX() == loc.x && this.client.getHabbo().getRoomUnit().getY() == loc.y) {
                     this.teleportOne.setExtradata("1");
                     this.room.updateItem(this.teleportOne);
                     this.state = 2;
@@ -128,18 +111,15 @@ class TeleportInteraction extends Thread
                     Emulator.getThreading().run(this, 250);
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }
 
-    private int newRotation(int rotation)
-    {
-        if(rotation == 4)
+    private int newRotation(int rotation) {
+        if (rotation == 4)
             return 0;
-        if(rotation == 6)
+        if (rotation == 6)
             return 2;
         else
             return rotation + 4;

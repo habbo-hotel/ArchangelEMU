@@ -8,25 +8,20 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionHabboHasCredits extends WiredConditionHabboHasEffect
-{
-    public WiredConditionHabboHasCredits(ResultSet set, Item baseItem) throws SQLException
-    {
+public class WiredConditionHabboHasCredits extends WiredConditionHabboHasEffect {
+    public WiredConditionHabboHasCredits(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredConditionHabboHasCredits(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredConditionHabboHasCredits(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if (habbo != null)
-        {
+        if (habbo != null) {
             return habbo.getHabboInfo().getCredits() >= this.effectId;
         }
 

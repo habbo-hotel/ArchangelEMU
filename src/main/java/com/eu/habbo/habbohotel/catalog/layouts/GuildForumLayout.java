@@ -6,16 +6,13 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class GuildForumLayout extends CatalogPage
-{
-    public GuildForumLayout(ResultSet set) throws SQLException
-    {
+public class GuildForumLayout extends CatalogPage {
+    public GuildForumLayout(ResultSet set) throws SQLException {
         super(set);
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendString("guild_forum");
         message.appendInt(2);
         message.appendString(super.getHeaderImage());

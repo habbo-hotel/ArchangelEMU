@@ -13,6 +13,7 @@ import java.sql.*;
 
 public class ForumThreadComment implements Runnable, ISerialize {
 
+    private static THashMap<Integer, ForumThreadComment> forumCommentsCache = new THashMap<>();
     private final int commentId;
     private final int threadId;
     private final int userId;
@@ -22,7 +23,6 @@ public class ForumThreadComment implements Runnable, ISerialize {
     private int adminId;
     private int index;
     private boolean needsUpdate;
-    private static THashMap<Integer, ForumThreadComment> forumCommentsCache = new THashMap<>();
 
     public ForumThreadComment(int commentId, int threadId, int userId, String message, int createdAt, ForumThreadState state, int adminId) {
         this.commentId = commentId;
@@ -51,21 +51,19 @@ public class ForumThreadComment implements Runnable, ISerialize {
     public static ForumThreadComment getById(int id) {
         ForumThreadComment foundComment = forumCommentsCache.get(id);
 
-        if(foundComment != null)
+        if (foundComment != null)
             return foundComment;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM `guilds_forums_comments` WHERE `id` = ? LIMIT 1"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM `guilds_forums_comments` WHERE `id` = ? LIMIT 1")) {
             statement.setInt(1, id);
-            ResultSet set = statement.executeQuery();
 
-            while(set.next()) {
-                foundComment = new ForumThreadComment(set);
-                cacheComment(foundComment);
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    foundComment = new ForumThreadComment(set);
+                    cacheComment(foundComment);
+                }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
@@ -78,6 +76,37 @@ public class ForumThreadComment implements Runnable, ISerialize {
 
     public static void clearCache() {
         forumCommentsCache.clear();
+    }
+
+    public static ForumThreadComment create(ForumThread thread, Habbo poster, String message) throws Exception {
+        ForumThreadComment createdComment = null;
+
+        if (Emulator.getPluginManager().fireEvent(new GuildForumThreadCommentBeforeCreated(thread, poster, message)).isCancelled())
+            return null;
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO `guilds_forums_comments`(`thread_id`, `user_id`, `message`, `created_at`) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS)) {
+            int timestamp = Emulator.getIntUnixTimestamp();
+
+            statement.setInt(1, thread.getThreadId());
+            statement.setInt(2, poster.getHabboInfo().getId());
+            statement.setString(3, message);
+            statement.setInt(4, timestamp);
+
+            if (statement.executeUpdate() < 1)
+                return null;
+
+            ResultSet set = statement.getGeneratedKeys();
+            if (set.next()) {
+                int commentId = set.getInt(1);
+                createdComment = new ForumThreadComment(commentId, thread.getThreadId(), poster.getHabboInfo().getId(), message, timestamp, ForumThreadState.OPEN, 0);
+
+                Emulator.getPluginManager().fireEvent(new GuildForumThreadCommentCreated(createdComment));
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+
+        return createdComment;
     }
 
     public int getCommentId() {
@@ -160,55 +189,18 @@ public class ForumThreadComment implements Runnable, ISerialize {
 
     @Override
     public void run() {
-        if(!this.needsUpdate)
+        if (!this.needsUpdate)
             return;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds_forums_comments` SET `state` = ?, `admin_id` = ? WHERE `id` = ?;"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds_forums_comments` SET `state` = ?, `admin_id` = ? WHERE `id` = ?;")) {
             statement.setInt(1, this.state.getStateId());
             statement.setInt(2, this.adminId);
             statement.setInt(3, this.commentId);
             statement.execute();
 
             this.needsUpdate = false;
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
-    }
-
-    public static ForumThreadComment create(ForumThread thread, Habbo poster, String message) throws Exception {
-        ForumThreadComment createdComment = null;
-
-        if(Emulator.getPluginManager().fireEvent(new GuildForumThreadCommentBeforeCreated(thread, poster, message)).isCancelled())
-            return null;
-
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO `guilds_forums_comments`(`thread_id`, `user_id`, `message`, `created_at`) VALUES (?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS))
-        {
-            int timestamp = Emulator.getIntUnixTimestamp();
-
-            statement.setInt(1, thread.getThreadId());
-            statement.setInt(2, poster.getHabboInfo().getId());
-            statement.setString(3, message);
-            statement.setInt(4, timestamp);
-
-            if(statement.executeUpdate() < 1)
-                return null;
-
-            ResultSet set = statement.getGeneratedKeys();
-            if(set.next()) {
-                int commentId = set.getInt(1);
-                createdComment = new ForumThreadComment(commentId, thread.getThreadId(), poster.getHabboInfo().getId(), message, timestamp, ForumThreadState.OPEN, 0);
-
-                Emulator.getPluginManager().fireEvent(new GuildForumThreadCommentCreated(createdComment));
-            }
-        }
-        catch (SQLException e)
-        {
-            Emulator.getLogging().logSQLException(e);
-        }
-
-        return createdComment;
     }
 }

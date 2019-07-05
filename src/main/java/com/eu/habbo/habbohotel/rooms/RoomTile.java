@@ -1,32 +1,26 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoomTile
-{
+public class RoomTile {
     public final short x;
     public final short y;
     public final short z;
+    private final THashSet<RoomUnit> units;
     public RoomTileState state;
-
     private double stackHeight;
     private boolean allowStack = true;
-
     private RoomTile previous = null;
     private boolean diagonally;
     private short gCosts;
     private short hCosts;
 
-    private final THashSet<RoomUnit> units;
 
-
-    public RoomTile(short x, short y, short z, RoomTileState state, boolean allowStack)
-    {
+    public RoomTile(short x, short y, short z, RoomTileState state, boolean allowStack) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -36,8 +30,7 @@ public class RoomTile
         this.units = new THashSet<>();
     }
 
-    public RoomTile(RoomTile tile)
-    {
+    public RoomTile(RoomTile tile) {
         this.x = tile.x;
         this.y = tile.y;
         this.z = tile.z;
@@ -48,62 +41,62 @@ public class RoomTile
         this.gCosts = tile.gCosts;
         this.hCosts = tile.hCosts;
 
-        if (this.state == RoomTileState.INVALID)
-        {
+        if (this.state == RoomTileState.INVALID) {
             this.allowStack = false;
         }
         this.units = tile.units;
     }
 
-    public double getStackHeight()
+    public RoomTile()
     {
+        x = 0;
+        y = 0;
+        z = 0;
+        this.stackHeight = 0;
+        this.state = RoomTileState.INVALID;
+        this.allowStack = false;
+        this.diagonally = false;
+        this.gCosts = 0;
+        this.hCosts = 0;
+        this.units = null;
+    }
+
+    public double getStackHeight() {
         return this.stackHeight;
     }
 
-    public void setStackHeight(double stackHeight)
-    {
-        if (this.state == RoomTileState.INVALID)
-        {
+    public void setStackHeight(double stackHeight) {
+        if (this.state == RoomTileState.INVALID) {
             this.stackHeight = Short.MAX_VALUE;
             this.allowStack = false;
             return;
         }
 
-        if (stackHeight >= 0 && stackHeight != Short.MAX_VALUE)
-        {
+        if (stackHeight >= 0 && stackHeight != Short.MAX_VALUE) {
             this.stackHeight = stackHeight;
             this.allowStack = true;
-        }
-        else
-        {
+        } else {
             this.allowStack = false;
             this.stackHeight = this.z;
         }
     }
 
-    public boolean getAllowStack()
-    {
-        if (this.state == RoomTileState.INVALID)
-        {
+    public boolean getAllowStack() {
+        if (this.state == RoomTileState.INVALID) {
             return false;
         }
 
         return this.allowStack;
     }
 
-    public void setAllowStack(boolean allowStack)
-    {
+    public void setAllowStack(boolean allowStack) {
         this.allowStack = allowStack;
     }
 
-    public short relativeHeight()
-    {
-        if (this.state == RoomTileState.INVALID)
-        {
+    public short relativeHeight() {
+        if (this.state == RoomTileState.INVALID) {
             return Short.MAX_VALUE;
-        }
-        else if (!this.allowStack && (this.state == RoomTileState.BLOCKED || this.state == RoomTileState.SIT))
-        {
+        } else if (!this.allowStack && (this.state == RoomTileState.BLOCKED || this.state == RoomTileState.SIT)) {
             return 64 * 256;
         }
 
@@ -111,102 +104,83 @@ public class RoomTile
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        return o instanceof RoomTile       &&
+    public boolean equals(Object o) {
+        return o instanceof RoomTile &&
                 ((RoomTile) o).x == this.x &&
                 ((RoomTile) o).y == this.y;
     }
 
-    public RoomTile copy()
-    {
+    public RoomTile copy() {
         return new RoomTile(this);
     }
 
-    public double distance(RoomTile roomTile)
-    {
+    public double distance(RoomTile roomTile) {
         double x = this.x - roomTile.x;
         double y = this.y - roomTile.y;
         return Math.sqrt(x * x + y * y);
     }
 
-    public void isDiagonally(boolean isDiagonally)
-    {
+    public void isDiagonally(boolean isDiagonally) {
         this.diagonally = isDiagonally;
     }
 
-    public RoomTile getPrevious()
-    {
+    public RoomTile getPrevious() {
         return this.previous;
     }
 
-    public void setPrevious(RoomTile previous)
-    {
+    public void setPrevious(RoomTile previous) {
         this.previous = previous;
     }
 
-    public int getfCosts()
-    {
+    public int getfCosts() {
         return this.gCosts + this.hCosts;
     }
 
-    public int getgCosts()
-    {
+    public int getgCosts() {
         return this.gCosts;
     }
 
-    private void setgCosts(short gCosts)
-    {
-        this.gCosts = gCosts;
-    }
-
-    void setgCosts(RoomTile previousRoomTile, int basicCost)
-    {
-        this.setgCosts((short)(previousRoomTile.getgCosts() + basicCost));
-    }
-
-    public void setgCosts(RoomTile previousRoomTile)
-    {
+    public void setgCosts(RoomTile previousRoomTile) {
         this.setgCosts(previousRoomTile, this.diagonally ? RoomLayout.DIAGONALMOVEMENTCOST : RoomLayout.BASICMOVEMENTCOST);
     }
 
-    public int calculategCosts(RoomTile previousRoomTile)
-    {
-        if (this.diagonally)
-        {
+    private void setgCosts(short gCosts) {
+        this.gCosts = gCosts;
+    }
+
+    void setgCosts(RoomTile previousRoomTile, int basicCost) {
+        this.setgCosts((short) (previousRoomTile.getgCosts() + basicCost));
+    }
+
+    public int calculategCosts(RoomTile previousRoomTile) {
+        if (this.diagonally) {
             return previousRoomTile.getgCosts() + 14;
         }
 
         return previousRoomTile.getgCosts() + 10;
     }
 
-    public void sethCosts(RoomTile parent)
-    {
-        this.hCosts = (short)((Math.abs(this.x - parent.x) + Math.abs(this.y - parent.y)) * (parent.diagonally ? RoomLayout.DIAGONALMOVEMENTCOST : RoomLayout.BASICMOVEMENTCOST));
+    public void sethCosts(RoomTile parent) {
+        this.hCosts = (short) ((Math.abs(this.x - parent.x) + Math.abs(this.y - parent.y)) * (parent.diagonally ? RoomLayout.DIAGONALMOVEMENTCOST : RoomLayout.BASICMOVEMENTCOST));
     }
 
-    public String toString()
-    {
+    public String toString() {
         return "RoomTile (" + this.x + ", " + this.y + ", " + this.z + "): h: " + this.hCosts + " g: " + this.gCosts + " f: " + this.getfCosts();
     }
 
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return this.state == RoomTileState.OPEN;
     }
 
-    public RoomTileState getState()
-    {
+    public RoomTileState getState() {
         return this.state;
     }
 
-    public void setState(RoomTileState state)
-    {
+    public void setState(RoomTileState state) {
         this.state = state;
     }
 
-    public boolean is(short x, short y)
-    {
+    public boolean is(short x, short y) {
         return this.x == x && this.y == y;
     }
 

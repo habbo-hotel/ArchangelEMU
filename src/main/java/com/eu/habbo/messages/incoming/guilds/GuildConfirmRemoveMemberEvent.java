@@ -8,25 +8,20 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.GuildConfirmRemoveMemberComposer;
 
-public class GuildConfirmRemoveMemberEvent extends MessageHandler
-{
+public class GuildConfirmRemoveMemberEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int guildId = this.packet.readInt();
         int userId = this.packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if (guild != null)
-        {
+        if (guild != null) {
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
-            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN) || this.client.getHabbo().hasPermission("acc_guild_admin"))
-            {
+            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || (member != null && member.getRank().equals(GuildRank.ADMIN)) || this.client.getHabbo().hasPermission("acc_guild_admin")) {
                 Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());
                 int count = 0;
-                if (room != null)
-                {
+                if (room != null) {
                     count = room.getUserFurniCount(userId);
                 }
                 this.client.sendResponse(new GuildConfirmRemoveMemberComposer(userId, count));

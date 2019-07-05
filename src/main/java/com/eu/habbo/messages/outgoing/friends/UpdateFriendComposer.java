@@ -7,30 +7,25 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UpdateFriendComposer extends MessageComposer
-{
+public class UpdateFriendComposer extends MessageComposer {
     private MessengerBuddy buddy;
 
     private Habbo habbo;
 
-    public UpdateFriendComposer(MessengerBuddy buddy)
-    {
+    public UpdateFriendComposer(MessengerBuddy buddy) {
         this.buddy = buddy;
     }
 
 
-    public UpdateFriendComposer(Habbo habbo)
-    {
+    public UpdateFriendComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
 
         this.response.init(Outgoing.UpdateFriendComposer);
-        if(this.buddy != null)
-        {
+        if (this.buddy != null) {
             this.response.appendInt(0);
             this.response.appendInt(1);
             this.response.appendInt(0);
@@ -48,9 +43,7 @@ public class UpdateFriendComposer extends MessageComposer
             this.response.appendBoolean(false);
             this.response.appendBoolean(false);
             this.response.appendShort(this.buddy.getRelation());
-        }
-        else
-        {
+        } else {
             this.response.appendInt(0);
             this.response.appendInt(1);
             this.response.appendInt(0);

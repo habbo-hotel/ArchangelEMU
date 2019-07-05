@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.rooms;
 
-public enum RoomUnitEffect
-{
+public enum RoomUnitEffect {
     //(\w+)\s(\w+)\s(\w+)
     //\2\(\1\),
     NONE(0),
@@ -202,26 +201,22 @@ public enum RoomUnitEffect
     CROSSTRAINER(195);
 
     private int id;
-    RoomUnitEffect(int id)
-    {
+
+    RoomUnitEffect(int id) {
         this.id = id;
     }
 
-    public int getId()
-    {
-        return this.id;
-    }
-
-    public static RoomUnitEffect fromId(int id)
-    {
-        for (RoomUnitEffect effect : RoomUnitEffect.values())
-        {
-            if (effect.id == id)
-            {
+    public static RoomUnitEffect fromId(int id) {
+        for (RoomUnitEffect effect : RoomUnitEffect.values()) {
+            if (effect.id == id) {
                 return effect;
             }
         }
 
         return RoomUnitEffect.NONE;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }

@@ -9,28 +9,24 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.ArrayList;
 
-public class GuardianVotingVotesComposer extends MessageComposer
-{
+public class GuardianVotingVotesComposer extends MessageComposer {
     private final GuardianTicket ticket;
     private final Habbo guardian;
 
-    public GuardianVotingVotesComposer(GuardianTicket ticket, Habbo guardian)
-    {
+    public GuardianVotingVotesComposer(GuardianTicket ticket, Habbo guardian) {
         this.ticket = ticket;
         this.guardian = guardian;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuardianVotingVotesComposer);
 
         ArrayList<GuardianVote> votes = this.ticket.getSortedVotes(this.guardian);
 
         this.response.appendInt(votes.size());
 
-        for(GuardianVote vote : votes)
-        {
+        for (GuardianVote vote : votes) {
             this.response.appendInt(vote.type.getType());
         }
 

@@ -6,20 +6,18 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayListComposer;
 
-public class YoutubeRequestPlayListEvent extends MessageHandler
-{
+public class YoutubeRequestPlaylists extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null)
-        {
+        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
 
-            if (item instanceof InteractionYoutubeTV)
-            {
-                this.client.sendResponse(new YoutubeDisplayListComposer(itemId, Emulator.getGameEnvironment().getItemManager().getYoutubeManager().getPlaylist(item.getBaseItem())));
+            if (item instanceof InteractionYoutubeTV) {
+                InteractionYoutubeTV tv = (InteractionYoutubeTV) item;
+
+                this.client.sendResponse(new YoutubeDisplayListComposer(itemId, Emulator.getGameEnvironment().getItemManager().getYoutubeManager().getPlaylistsForItemId(item.getBaseItem().getId()), tv.currentPlaylist));
             }
         }
     }

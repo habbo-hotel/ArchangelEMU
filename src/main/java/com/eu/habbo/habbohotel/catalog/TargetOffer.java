@@ -8,8 +8,7 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class TargetOffer
-{
+public class TargetOffer {
     public static int ACTIVE_TARGET_OFFER_ID = 0;
 
     private final int id;
@@ -26,8 +25,7 @@ public class TargetOffer
     private final String icon;
     private final String[] vars;
 
-    public TargetOffer(ResultSet set) throws SQLException
-    {
+    public TargetOffer(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.identifier = set.getString("offer_code");
         this.priceInCredits = set.getInt("credits");
@@ -43,8 +41,7 @@ public class TargetOffer
         this.catalogItem = set.getInt("catalog_item");
     }
 
-    public void serialize(ServerMessage message, HabboOfferPurchase purchase)
-    {
+    public void serialize(ServerMessage message, HabboOfferPurchase purchase) {
         message.appendInt(purchase.getState());
         message.appendInt(this.id);
         message.appendString(this.identifier);
@@ -60,74 +57,60 @@ public class TargetOffer
         message.appendString(this.icon);
         message.appendInt(0);
         message.appendInt(this.vars.length);
-        for (String variable : this.vars)
-        {
+        for (String variable : this.vars) {
             message.appendString(variable);
         }
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public String getIdentifier()
-    {
+    public String getIdentifier() {
         return this.identifier;
     }
 
-    public int getPriceInCredits()
-    {
+    public int getPriceInCredits() {
         return this.priceInCredits;
     }
 
-    public int getPriceInActivityPoints()
-    {
+    public int getPriceInActivityPoints() {
         return this.priceInActivityPoints;
     }
 
-    public int getActivityPointsType()
-    {
+    public int getActivityPointsType() {
         return this.activityPointsType;
     }
 
-    public int getPurchaseLimit()
-    {
+    public int getPurchaseLimit() {
         return this.purchaseLimit;
     }
 
-    public int getExpirationTime()
-    {
+    public int getExpirationTime() {
         return this.expirationTime;
     }
 
-    public String getTitle()
-    {
+    public String getTitle() {
         return this.title;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.description;
     }
 
-    public String getImageUrl()
-    {
+    public String getImageUrl() {
         return this.imageUrl;
     }
 
-    public String getIcon()
-    {
+    public String getIcon() {
         return this.icon;
     }
 
-    public String[] getVars()
-    {
+    public String[] getVars() {
         return this.vars;
     }
 
-    public int getCatalogItem()
-    {
+    public int getCatalogItem() {
         return this.catalogItem;
     }
 }

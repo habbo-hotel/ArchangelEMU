@@ -9,30 +9,11 @@ import gnu.trove.set.hash.THashSet;
 import java.util.List;
 import java.util.Map;
 
-public class AddHabboItemComposer extends MessageComposer
-{
-    public enum AddHabboItemCategory {
-        OWNED_FURNI(1),
-        RENTED_FURNI(2),
-        PET(3),
-        BADGE(4),
-        BOT(5),
-        GAME(6);
-
-        public final int number;
-
-        AddHabboItemCategory(int number)
-        {
-            this.number = number;
-        }
-    }
-
+public class AddHabboItemComposer extends MessageComposer {
     private THashSet<HabboItem> itemsList;
     private HabboItem item;
-
     private int[] ids;
     private AddHabboItemCategory category;
-
     private Map<AddHabboItemCategory, List<Integer>> entries;
 
     public AddHabboItemComposer(THashSet<HabboItem> itemsList) {
@@ -60,8 +41,7 @@ public class AddHabboItemComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.AddHabboItemComposer);
 
         if (this.ids != null) {
@@ -98,5 +78,20 @@ public class AddHabboItemComposer extends MessageComposer
         }
 
         return this.response;
+    }
+
+    public enum AddHabboItemCategory {
+        OWNED_FURNI(1),
+        RENTED_FURNI(2),
+        PET(3),
+        BADGE(4),
+        BOT(5),
+        GAME(6);
+
+        public final int number;
+
+        AddHabboItemCategory(int number) {
+            this.number = number;
+        }
     }
 }

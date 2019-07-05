@@ -4,20 +4,17 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
 
-public class RoomTradeUser
-{
-    private int userId;
+public class RoomTradeUser {
     private final Habbo habbo;
+    private final THashSet<HabboItem> items;
+    private int userId;
     private boolean accepted;
     private boolean confirmed;
-    private final THashSet<HabboItem> items;
 
-    public RoomTradeUser(Habbo habbo)
-    {
+    public RoomTradeUser(Habbo habbo) {
         this.habbo = habbo;
 
-        if (this.habbo != null)
-        {
+        if (this.habbo != null) {
             this.userId = this.habbo.getHabboInfo().getId();
         }
 
@@ -26,52 +23,41 @@ public class RoomTradeUser
         this.items = new THashSet<>();
     }
 
-    public int getUserId()
-    {
+    public int getUserId() {
         return this.userId;
     }
 
-    public void setUserId(int userId)
-    {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public Habbo getHabbo()
-    {
+    public Habbo getHabbo() {
         return this.habbo;
     }
 
-    public boolean getAccepted()
-    {
+    public boolean getAccepted() {
         return this.accepted;
     }
 
-    public boolean getConfirmed()
-    {
-        return this.confirmed;
-    }
-
-    public void setAccepted(boolean value)
-    {
+    public void setAccepted(boolean value) {
         this.accepted = value;
     }
 
-    public void confirm()
-    {
+    public boolean getConfirmed() {
+        return this.confirmed;
+    }
+
+    public void confirm() {
         this.confirmed = true;
     }
 
-    public void addItem(HabboItem item)
-    {
+    public void addItem(HabboItem item) {
         this.items.add(item);
     }
 
-    public HabboItem getItem(int itemId)
-    {
-        for (HabboItem item : this.items)
-        {
-            if (item.getId() == itemId)
-            {
+    public HabboItem getItem(int itemId) {
+        for (HabboItem item : this.items) {
+            if (item.getId() == itemId) {
                 return item;
             }
         }
@@ -79,18 +65,15 @@ public class RoomTradeUser
         return null;
     }
 
-    public THashSet<HabboItem> getItems()
-    {
+    public THashSet<HabboItem> getItems() {
         return this.items;
     }
 
-    public void putItemsIntoInventory()
-    {
+    public void putItemsIntoInventory() {
         this.habbo.getInventory().getItemsComponent().addItems(this.items);
     }
 
-    public void clearItems()
-    {
+    public void clearItems() {
         this.items.clear();
     }
 }

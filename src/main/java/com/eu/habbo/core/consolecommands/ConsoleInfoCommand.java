@@ -5,21 +5,18 @@ import com.eu.habbo.habbohotel.catalog.CatalogManager;
 
 import java.util.concurrent.TimeUnit;
 
-public class ConsoleInfoCommand extends ConsoleCommand
-{
-    public ConsoleInfoCommand()
-    {
+public class ConsoleInfoCommand extends ConsoleCommand {
+    public ConsoleInfoCommand() {
         super("info", "Show current statistics.");
     }
 
     @Override
-    public void handle(String[] args) throws Exception
-    {
+    public void handle(String[] args) throws Exception {
         int seconds = Emulator.getIntUnixTimestamp() - Emulator.getTimeStarted();
         int day = (int) TimeUnit.SECONDS.toDays(seconds);
-        long hours = TimeUnit.SECONDS.toHours(seconds) - (day *24);
-        long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds)* 60);
-        long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) *60);
+        long hours = TimeUnit.SECONDS.toHours(seconds) - (day * 24);
+        long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds) * 60);
+        long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) * 60);
 
         System.out.println("Emulator version: " + Emulator.version);
         System.out.println("Emulator build: " + Emulator.build);

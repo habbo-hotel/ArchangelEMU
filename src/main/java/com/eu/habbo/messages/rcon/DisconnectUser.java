@@ -4,35 +4,26 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.google.gson.Gson;
 
-public class DisconnectUser extends RCONMessage<DisconnectUser.DisconnectUserJSON>
-{
+public class DisconnectUser extends RCONMessage<DisconnectUser.DisconnectUserJSON> {
 
-    public DisconnectUser()
-    {
+    public DisconnectUser() {
         super(DisconnectUserJSON.class);
     }
 
     @Override
-    public void handle(Gson gson, DisconnectUserJSON json)
-    {
+    public void handle(Gson gson, DisconnectUserJSON json) {
         Habbo target;
 
-        if (json.user_id >= 0)
-        {
+        if (json.user_id >= 0) {
             target = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.user_id);
-        }
-        else if (!json.username.isEmpty())
-        {
+        } else if (!json.username.isEmpty()) {
             target = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.username);
-        }
-        else
-        {
+        } else {
             this.status = RCONMessage.HABBO_NOT_FOUND;
             return;
         }
 
-        if(target == null)
-        {
+        if (target == null) {
             this.status = RCONMessage.STATUS_ERROR;
             this.message = Emulator.getTexts().getValue("commands.error.cmd_disconnect.user_offline");
             return;
@@ -42,8 +33,7 @@ public class DisconnectUser extends RCONMessage<DisconnectUser.DisconnectUserJSO
         this.message = Emulator.getTexts().getValue("commands.succes.cmd_disconnect.disconnected").replace("%user%", target.getHabboInfo().getUsername());
     }
 
-    static class DisconnectUserJSON
-    {
+    static class DisconnectUserJSON {
 
         public int user_id = -1;
 

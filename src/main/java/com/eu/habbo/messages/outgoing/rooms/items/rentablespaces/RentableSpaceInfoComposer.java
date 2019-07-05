@@ -8,8 +8,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RentableSpaceInfoComposer extends MessageComposer
-{
+public class RentableSpaceInfoComposer extends MessageComposer {
     public static final int SPACE_ALREADY_RENTED = 100;
     public static final int SPACE_EXTEND_NOT_RENTED = 101;
     public static final int SPACE_EXTEND_NOT_RENTED_BY_YOU = 102;
@@ -26,24 +25,21 @@ public class RentableSpaceInfoComposer extends MessageComposer
     private final HabboItem item;
     private final int errorCode;
 
-    public RentableSpaceInfoComposer(Habbo habbo, HabboItem item)
-    {
+    public RentableSpaceInfoComposer(Habbo habbo, HabboItem item) {
         this.habbo = habbo;
         this.item = item;
         this.errorCode = 0;
     }
 
-    public RentableSpaceInfoComposer(Habbo habbo, HabboItem item, int errorCode)
-    {
+    public RentableSpaceInfoComposer(Habbo habbo, HabboItem item, int errorCode) {
         this.habbo = habbo;
         this.item = item;
         this.errorCode = errorCode;
     }
 
     @Override
-    public ServerMessage compose()
-    {
-        if(!(this.item instanceof InteractionRentableSpace))
+    public ServerMessage compose() {
+        if (!(this.item instanceof InteractionRentableSpace))
             return null;
 
         this.response.init(Outgoing.RentableSpaceInfoComposer);

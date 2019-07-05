@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
-public class PollQuestion implements ISerialize, Comparable<PollQuestion>
-{
+public class PollQuestion implements ISerialize, Comparable<PollQuestion> {
 
     public final int id;
 
@@ -35,8 +34,7 @@ public class PollQuestion implements ISerialize, Comparable<PollQuestion>
 
     private ArrayList<PollQuestion> subQuestions;
 
-    public PollQuestion(ResultSet set) throws SQLException
-    {
+    public PollQuestion(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.parentId = set.getInt("parent_id");
         this.type = set.getInt("type");
@@ -49,23 +47,19 @@ public class PollQuestion implements ISerialize, Comparable<PollQuestion>
 
         String opts = set.getString("options");
 
-        if(this.type == 1 || this.type == 2)
-        {
-            for (int i = 0; i < opts.split(";").length; i++)
-            {
+        if (this.type == 1 || this.type == 2) {
+            for (int i = 0; i < opts.split(";").length; i++) {
                 this.options.put(i, new String[]{opts.split(";")[i].split(":")[0], opts.split(";")[i].split(":")[1]});
             }
         }
     }
 
-    public void addSubQuestion(PollQuestion pollQuestion)
-    {
+    public void addSubQuestion(PollQuestion pollQuestion) {
         this.subQuestions.add(pollQuestion);
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendInt(this.id);
         message.appendInt(this.order);
         message.appendInt(this.type);
@@ -74,31 +68,26 @@ public class PollQuestion implements ISerialize, Comparable<PollQuestion>
         message.appendInt(0);
         message.appendInt(this.options.size());
 
-        if (this.type == 1 || this.type == 2)
-        {
-            for (Map.Entry<Integer, String[]> set : this.options.entrySet())
-            {
+        if (this.type == 1 || this.type == 2) {
+            for (Map.Entry<Integer, String[]> set : this.options.entrySet()) {
                 message.appendString(set.getValue()[0]);
                 message.appendString(set.getValue()[1]);
                 message.appendInt(set.getKey());
             }
         }
 
-        if (this.parentId <= 0)
-        {
+        if (this.parentId <= 0) {
             Collections.sort(this.subQuestions);
             message.appendInt(this.subQuestions.size());
 
-            for (PollQuestion q : this.subQuestions)
-            {
+            for (PollQuestion q : this.subQuestions) {
                 q.serialize(message);
             }
         }
     }
 
     @Override
-    public int compareTo(PollQuestion o)
-    {
+    public int compareTo(PollQuestion o) {
         return this.order - o.order;
     }
 }

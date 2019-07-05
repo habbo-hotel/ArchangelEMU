@@ -8,24 +8,21 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 
-public class FreezeThrowSnowball implements Runnable
-{
+public class FreezeThrowSnowball implements Runnable {
     public final Habbo habbo;
     public final InteractionFreezeTile targetTile;
     public final Room room;
     public final int radius;
 
-    public FreezeThrowSnowball(Habbo habbo, HabboItem targetTile, Room room)
-    {
+    public FreezeThrowSnowball(Habbo habbo, HabboItem targetTile, Room room) {
         this.habbo = habbo;
         this.targetTile = (InteractionFreezeTile) targetTile;
         this.room = room;
-        this.radius = ((FreezeGamePlayer)habbo.getHabboInfo().getGamePlayer()).getExplosionBoost();
+        this.radius = ((FreezeGamePlayer) habbo.getHabboInfo().getGamePlayer()).getExplosionBoost();
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         ((FreezeGamePlayer) this.habbo.getHabboInfo().getGamePlayer()).takeSnowball();
         this.targetTile.setExtradata((this.radius + 1) * 1000 + "");
         this.room.updateItem(this.targetTile);

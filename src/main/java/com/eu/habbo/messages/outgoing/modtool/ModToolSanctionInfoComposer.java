@@ -4,11 +4,9 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ModToolSanctionInfoComposer extends MessageComposer
-{
+public class ModToolSanctionInfoComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ModToolSanctionInfoComposer);
         this.response.appendBoolean(false); //Has Last Sanction.
         this.response.appendBoolean(false); //Is probabtion.

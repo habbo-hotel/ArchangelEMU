@@ -17,20 +17,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfirmChangeNameEvent extends MessageHandler
-{
+public class ConfirmChangeNameEvent extends MessageHandler {
     public static final List<String> changingUsernames = new ArrayList<>(2);
 
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         if (!this.client.getHabbo().getHabboStats().allowNameChange)
             return;
 
         String name = this.packet.readString();
 
-        if (name.equalsIgnoreCase(this.client.getHabbo().getHabboInfo().getUsername()))
-        {
+        if (name.equalsIgnoreCase(this.client.getHabbo().getHabboInfo().getUsername())) {
             this.client.getHabbo().getHabboStats().allowNameChange = false;
             this.client.sendResponse(new ChangeNameUpdatedComposer(this.client.getHabbo()));
             this.client.sendResponse(new RoomUserNameChangedComposer(this.client.getHabbo()).compose());
@@ -38,14 +35,11 @@ public class ConfirmChangeNameEvent extends MessageHandler
             return;
         }
 
-        if (name.equals(this.client.getHabbo().getHabboStats().changeNameChecked))
-        {
+        if (name.equals(this.client.getHabbo().getHabboStats().changeNameChecked)) {
             HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(name);
 
-            if (habboInfo == null)
-            {
-                synchronized (changingUsernames)
-                {
+            if (habboInfo == null) {
+                synchronized (changingUsernames) {
                     if (changingUsernames.contains(name))
                         return;
 
@@ -58,47 +52,37 @@ public class ConfirmChangeNameEvent extends MessageHandler
                 this.client.getHabbo().getHabboInfo().run();
 
                 Emulator.getPluginManager().fireEvent(new UserNameChangedEvent(this.client.getHabbo(), oldName));
-                for (Room room : Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()))
-                {
+                for (Room room : Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo())) {
                     room.setOwnerName(name);
                     room.setNeedsUpdate(true);
                     room.save();
                 }
 
-                synchronized (changingUsernames)
-                {
+                synchronized (changingUsernames) {
                     changingUsernames.remove(name);
                 }
 
                 this.client.sendResponse(new ChangeNameUpdatedComposer(this.client.getHabbo()));
 
-                if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null)
-                {
+                if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserNameChangedComposer(this.client.getHabbo()).compose());
-                }
-                else
-                {
+                } else {
                     this.client.sendResponse(new RoomUserNameChangedComposer(this.client.getHabbo()).compose());
                 }
 
                 this.client.getHabbo().getMessenger().connectionChanged(this.client.getHabbo(), true, this.client.getHabbo().getHabboInfo().getCurrentRoom() != null);
                 this.client.getHabbo().getClient().sendResponse(new UserDataComposer(this.client.getHabbo()));
 
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO namechange_log (user_id, old_name, new_name, timestamp) VALUES (?, ?, ?, ?) "))
-                {
+                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO namechange_log (user_id, old_name, new_name, timestamp) VALUES (?, ?, ?, ?) ")) {
                     statement.setInt(1, this.client.getHabbo().getHabboInfo().getId());
                     statement.setString(2, oldName);
                     statement.setString(3, name);
                     statement.setInt(4, Emulator.getIntUnixTimestamp());
                     statement.execute();
-                }
-                catch (SQLException e)
-                {
+                } catch (SQLException e) {
                     Emulator.getLogging().logSQLException(e);
                 }
-            }
-            else
-            {
+            } else {
                 this.client.sendResponse(new ChangeNameCheckResultComposer(ChangeNameCheckResultComposer.TAKEN_WITH_SUGGESTIONS, name, new ArrayList<>()));
             }
         }

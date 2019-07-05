@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class JukeBoxPlayListAddSongComposer extends MessageComposer
-{
+public class JukeBoxPlayListAddSongComposer extends MessageComposer {
     private final SoundTrack track;
 
-    public JukeBoxPlayListAddSongComposer(SoundTrack track)
-    {
+    public JukeBoxPlayListAddSongComposer(SoundTrack track) {
         this.track = track;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.JukeBoxPlayListAddSongComposer);
         this.response.appendInt(this.track.getId());
         this.response.appendInt(this.track.getLength() * 1000);

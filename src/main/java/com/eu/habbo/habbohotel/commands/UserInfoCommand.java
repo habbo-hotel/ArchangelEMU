@@ -7,24 +7,19 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 import gnu.trove.iterator.TIntIntIterator;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class UserInfoCommand extends Command
-{
-    public UserInfoCommand()
-    {
+public class UserInfoCommand extends Command {
+    public UserInfoCommand() {
         super("cmd_userinfo", Emulator.getTexts().getValue("commands.keys.cmd_userinfo").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
-        if(params.length < 2)
-        {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (params.length < 2) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_userinfo.forgot_username"), RoomChatMessageBubbles.ALERT);
             return true;
         }
@@ -32,13 +27,11 @@ public class UserInfoCommand extends Command
         Habbo onlineHabbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[1]);
         HabboInfo habbo = (onlineHabbo != null ? onlineHabbo.getHabboInfo() : null);
 
-        if(habbo == null)
-        {
+        if (habbo == null) {
             habbo = HabboManager.getOfflineHabboInfo(params[1]);
         }
 
-        if(habbo == null)
-        {
+        if (habbo == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_userinfo.not_found").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
             return true;
         }
@@ -58,8 +51,7 @@ public class UserInfoCommand extends Command
 
         message.append(Emulator.getTexts().getValue("command.cmd_userinfo.total_bans")).append(": ").append(Emulator.getGameEnvironment().getModToolManager().totalBans(habbo.getId())).append("\r");
         message.append(Emulator.getTexts().getValue("command.cmd_userinfo.banned")).append(": ").append(Emulator.getTexts().getValue(ban != null ? "generic.yes" : "generic.no")).append("\r\r");
-        if (ban != null)
-        {
+        if (ban != null) {
             message.append("<b>").append(Emulator.getTexts().getValue("command.cmd_userinfo.ban_info")).append("</b>\r");
             message.append(ban.listInfo()).append("\r");
         }
@@ -68,14 +60,10 @@ public class UserInfoCommand extends Command
         message.append(Emulator.getTexts().getValue("command.cmd_userinfo.credits")).append(": ").append(habbo.getCredits()).append("\r");
         TIntIntIterator iterator = habbo.getCurrencies().iterator();
 
-        for(int i = habbo.getCurrencies().size(); i-- > 0;)
-        {
-            try
-            {
+        for (int i = habbo.getCurrencies().size(); i-- > 0; ) {
+            try {
                 iterator.advance();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 break;
             }
 
@@ -85,25 +73,20 @@ public class UserInfoCommand extends Command
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<Map.Entry<Integer, String>> nameChanges = Emulator.getGameEnvironment().getHabboManager().getNameChanges(habbo.getId(), 3);
-        if (!nameChanges.isEmpty())
-        {
+        if (!nameChanges.isEmpty()) {
             message.append("\r<b>Latest name changes:<b><br/>");
-            for (Map.Entry<Integer, String> entry : nameChanges)
-            {
+            for (Map.Entry<Integer, String> entry : nameChanges) {
                 message.append(format.format(new Date((long) entry.getKey() * 1000L))).append(" : ").append(entry.getValue()).append("<br/>");
             }
         }
 
-        if(onlineHabbo != null)
-        {
+        if (onlineHabbo != null) {
             message.append("\r" + "<b>Other accounts (");
 
             ArrayList<HabboInfo> users = Emulator.getGameEnvironment().getHabboManager().getCloneAccounts(onlineHabbo, 10);
-            users.sort(new Comparator<HabboInfo>()
-            {
+            users.sort(new Comparator<HabboInfo>() {
                 @Override
-                public int compare(HabboInfo o1, HabboInfo o2)
-                {
+                public int compare(HabboInfo o1, HabboInfo o2) {
                     return o1.getId() - o2.getId();
                 }
             });
@@ -113,12 +96,11 @@ public class UserInfoCommand extends Command
 
             message.append("<b>Username,\tID,\tDate register,\tDate last online</b>\r");
 
-            for(HabboInfo info : users)
-            {
+            for (HabboInfo info : users) {
                 message.append(info.getUsername()).append(",\t").append(info.getId()).append(",\t").append(format.format(new Date((long) info.getAccountCreated() * 1000L))).append(",\t").append(format.format(new Date((long) info.getLastOnline() * 1000L))).append("\r");
             }
         }
-                gameClient.getHabbo().alert(message.toString());
+        gameClient.getHabbo().alert(message.toString());
 
         return true;
     }

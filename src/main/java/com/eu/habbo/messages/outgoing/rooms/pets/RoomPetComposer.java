@@ -8,24 +8,20 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 
-public class RoomPetComposer extends MessageComposer implements TIntObjectProcedure<Pet>
-{
+public class RoomPetComposer extends MessageComposer implements TIntObjectProcedure<Pet> {
     private final TIntObjectMap<Pet> pets;
 
-    public RoomPetComposer(Pet pet)
-    {
+    public RoomPetComposer(Pet pet) {
         this.pets = new TIntObjectHashMap<>();
         this.pets.put(pet.getId(), pet);
     }
 
-    public RoomPetComposer(TIntObjectMap<Pet> pets)
-    {
+    public RoomPetComposer(TIntObjectMap<Pet> pets) {
         this.pets = pets;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomUsersComposer);
         this.response.appendInt(this.pets.size());
         this.pets.forEachEntry(this);
@@ -33,17 +29,13 @@ public class RoomPetComposer extends MessageComposer implements TIntObjectProced
     }
 
     @Override
-    public boolean execute(int a, Pet pet)
-    {
+    public boolean execute(int a, Pet pet) {
         this.response.appendInt(pet.getId());
         this.response.appendString(pet.getName());
         this.response.appendString("");
-        if(pet instanceof IPetLook)
-        {
-            this.response.appendString(((IPetLook)pet).getLook());
-        }
-        else
-        {
+        if (pet instanceof IPetLook) {
+            this.response.appendString(((IPetLook) pet).getLook());
+        } else {
             this.response.appendString(pet.getPetData().getType() + " " + pet.getRace() + " " + pet.getColor() + " " + ((pet instanceof HorsePet ? (((HorsePet) pet).hasSaddle() ? "3" : "2") + " 2 " + ((HorsePet) pet).getHairStyle() + " " + ((HorsePet) pet).getHairColor() + " 3 " + ((HorsePet) pet).getHairStyle() + " " + ((HorsePet) pet).getHairColor() + (((HorsePet) pet).hasSaddle() ? " 4 9 0" : "") : pet instanceof MonsterplantPet ? (((MonsterplantPet) pet).look.isEmpty() ? "2 1 8 6 0 -1 -1" : ((MonsterplantPet) pet).look) : "2 2 -1 0 3 -1 0")));
         }
         this.response.appendInt(pet.getRoomUnit().getId());

@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.rooms;
 
-public enum RoomUserRotation
-{
+public enum RoomUserRotation {
     NORTH(0),
     NORTH_EAST(1),
     EAST(2),
@@ -13,13 +12,30 @@ public enum RoomUserRotation
 
     private final int direction;
 
-    RoomUserRotation(int direction)
-    {
+    RoomUserRotation(int direction) {
         this.direction = direction;
     }
 
-    public int getValue()
-    {
+    public static RoomUserRotation fromValue(int rotation) {
+        rotation %= 8;
+        for (RoomUserRotation rot : values()) {
+            if (rot.getValue() == rotation) {
+                return rot;
+            }
+        }
+
+        return NORTH;
+    }
+
+    public static RoomUserRotation counterClockwise(RoomUserRotation rotation) {
+        return fromValue(rotation.getValue() + 7);
+    }
+
+    public static RoomUserRotation clockwise(RoomUserRotation rotation) {
+        return fromValue(rotation.getValue() + 9);
+    }
+
+    public int getValue() {
         return this.direction;
     }
 
@@ -43,29 +59,5 @@ public enum RoomUserRotation
                 return RoomUserRotation.SOUTH_EAST;
         }
         return null;
-    }
-
-    public static RoomUserRotation fromValue(int rotation)
-    {
-        rotation %= 8;
-        for (RoomUserRotation rot : values())
-        {
-            if (rot.getValue() == rotation)
-            {
-                return rot;
-            }
-        }
-
-        return NORTH;
-    }
-
-    public static RoomUserRotation counterClockwise(RoomUserRotation rotation)
-    {
-        return fromValue(rotation.getValue() + 7);
-    }
-
-    public static RoomUserRotation clockwise(RoomUserRotation rotation)
-    {
-        return fromValue(rotation.getValue() + 9);
     }
 }

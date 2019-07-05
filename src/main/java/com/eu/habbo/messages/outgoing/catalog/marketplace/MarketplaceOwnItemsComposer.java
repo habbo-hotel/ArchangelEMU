@@ -8,30 +8,23 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class MarketplaceOwnItemsComposer extends MessageComposer
-{
+public class MarketplaceOwnItemsComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public MarketplaceOwnItemsComposer(Habbo habbo)
-    {
+    public MarketplaceOwnItemsComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.MarketplaceOwnItemsComposer);
         this.response.appendInt(this.habbo.getInventory().getSoldPriceTotal());
         this.response.appendInt(this.habbo.getInventory().getMarketplaceItems().size());
 
-        for(MarketPlaceOffer offer : this.habbo.getInventory().getMarketplaceItems())
-        {
-            try
-            {
-                if (offer.getState() == MarketPlaceState.OPEN)
-                {
-                    if ((offer.getTimestamp() + 172800) - Emulator.getIntUnixTimestamp() <= 0)
-                    {
+        for (MarketPlaceOffer offer : this.habbo.getInventory().getMarketplaceItems()) {
+            try {
+                if (offer.getState() == MarketPlaceState.OPEN) {
+                    if ((offer.getTimestamp() + 172800) - Emulator.getIntUnixTimestamp() <= 0) {
                         offer.setState(MarketPlaceState.CLOSED);
                         Emulator.getThreading().run(offer);
                     }
@@ -42,17 +35,12 @@ public class MarketplaceOwnItemsComposer extends MessageComposer
                 this.response.appendInt(offer.getType());
                 this.response.appendInt(offer.getItemId());
 
-                if (offer.getType() == 3)
-                {
+                if (offer.getType() == 3) {
                     this.response.appendInt(offer.getLimitedNumber());
                     this.response.appendInt(offer.getLimitedStack());
-                }
-                else if (offer.getType() == 2)
-                {
+                } else if (offer.getType() == 2) {
                     this.response.appendString("");
-                }
-                else
-                {
+                } else {
                     this.response.appendInt(0);
                     this.response.appendString("");
                 }
@@ -65,9 +53,7 @@ public class MarketplaceOwnItemsComposer extends MessageComposer
                     this.response.appendInt(0);
 
                 this.response.appendInt(0);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Emulator.getLogging().logErrorLine(e);
             }
         }

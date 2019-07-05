@@ -13,39 +13,34 @@ import gnu.trove.set.hash.THashSet;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionPressurePlate extends HabboItem
-{
-    public InteractionPressurePlate(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionPressurePlate extends HabboItem {
+    public InteractionPressurePlate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
+        this.setExtradata("0");
     }
 
-    public InteractionPressurePlate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionPressurePlate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.setExtradata("0");
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return true;
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
@@ -53,51 +48,42 @@ public class InteractionPressurePlate extends HabboItem
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Emulator.getThreading().run(new Runnable()
-        {
+        Emulator.getThreading().run(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 updateState(room);
             }
         }, 100);
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        Emulator.getThreading().run(new Runnable()
-        {
+        Emulator.getThreading().run(new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 updateState(room);
             }
         }, 100);
     }
 
     @Override
-    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation)
-    {
+    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         super.onMove(room, oldLocation, newLocation);
 
         updateState(room);
     }
 
-    public void updateState(Room room)
-    {
+    public void updateState(Room room) {
         boolean occupied = false;
 
         if (room == null || room.getLayout() == null || this.getBaseItem() == null) return;
@@ -110,17 +96,14 @@ public class InteractionPressurePlate extends HabboItem
 
         if (tiles == null) return;
 
-        for (RoomTile tile : tiles)
-        {
+        for (RoomTile tile : tiles) {
             boolean hasHabbos = room.hasHabbosAt(tile.x, tile.y);
-            if (!hasHabbos && this.requiresAllTilesOccupied())
-            {
+            if (!hasHabbos && this.requiresAllTilesOccupied()) {
                 occupied = false;
                 break;
             }
 
-            if (hasHabbos)
-            {
+            if (hasHabbos) {
                 occupied = true;
             }
         }
@@ -130,13 +113,11 @@ public class InteractionPressurePlate extends HabboItem
     }
 
     @Override
-    public boolean allowWiredResetState()
-    {
+    public boolean allowWiredResetState() {
         return true;
     }
 
-    public boolean requiresAllTilesOccupied()
-    {
+    public boolean requiresAllTilesOccupied() {
         return false;
     }
 

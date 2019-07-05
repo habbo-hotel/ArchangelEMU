@@ -4,8 +4,7 @@ import com.google.gson.*;
 
 import java.lang.reflect.Type;
 
-public abstract class RCONMessage<T>
-{
+public abstract class RCONMessage<T> {
 
     public final static int STATUS_OK = 0;
 
@@ -23,22 +22,17 @@ public abstract class RCONMessage<T>
 
 
     public final Class<T> type;
-
-    public RCONMessage(Class<T> type)
-    {
-        this.type = type;
-    }
-
-
-    public abstract void handle(Gson gson, T json);
-
     public int status = STATUS_OK;
     public String message = "";
 
-    public static class RCONMessageSerializer implements JsonSerializer<RCONMessage>
-    {
-        public JsonElement serialize(final RCONMessage rconMessage, final Type type, final JsonSerializationContext context)
-        {
+    public RCONMessage(Class<T> type) {
+        this.type = type;
+    }
+
+    public abstract void handle(Gson gson, T json);
+
+    public static class RCONMessageSerializer implements JsonSerializer<RCONMessage> {
+        public JsonElement serialize(final RCONMessage rconMessage, final Type type, final JsonSerializationContext context) {
             JsonObject result = new JsonObject();
             result.add("status", new JsonPrimitive(rconMessage.status));
             result.add("message", new JsonPrimitive(rconMessage.message));

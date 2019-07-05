@@ -12,18 +12,15 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import java.util.concurrent.TimeUnit;
 
-public abstract class Server
-{
+public abstract class Server {
+    protected final ServerBootstrap serverBootstrap;
+    protected final EventLoopGroup bossGroup;
+    protected final EventLoopGroup workerGroup;
     private final String name;
     private final String host;
     private final int port;
 
-    protected final ServerBootstrap serverBootstrap;
-    protected final EventLoopGroup bossGroup;
-    protected final EventLoopGroup workerGroup;
-
-    public Server(String name, String host, int port, int bossGroupThreads, int workerGroupThreads) throws Exception
-    {
+    public Server(String name, String host, int port, int bossGroupThreads, int workerGroupThreads) throws Exception {
         this.name = name;
         this.host = host;
         this.port = port;
@@ -33,8 +30,7 @@ public abstract class Server
         this.serverBootstrap = new ServerBootstrap();
     }
 
-    public void initializePipeline()
-    {
+    public void initializePipeline() {
         this.serverBootstrap.group(this.bossGroup, this.workerGroup);
         this.serverBootstrap.channel(NioServerSocketChannel.class);
         this.serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);
@@ -45,61 +41,48 @@ public abstract class Server
         this.serverBootstrap.childOption(ChannelOption.ALLOCATOR, new UnpooledByteBufAllocator(false));
     }
 
-    public void connect()
-    {
+    public void connect() {
         ChannelFuture channelFuture = this.serverBootstrap.bind(this.host, this.port);
 
-        while (!channelFuture.isDone())
-        {}
+        while (!channelFuture.isDone()) {
+        }
 
-        if (!channelFuture.isSuccess())
-        {
+        if (!channelFuture.isSuccess()) {
             Emulator.getLogging().logShutdownLine("Failed to connect to the host (" + this.host + ":" + this.port + ")@" + this.name);
             System.exit(0);
-        }
-        else
-        {
+        } else {
             Emulator.getLogging().logStart("Started GameServer on " + this.host + ":" + this.port + "@" + this.name);
         }
     }
 
-    public void stop()
-    {
+    public void stop() {
         Emulator.getLogging().logShutdownLine("Stopping " + this.name);
-        try
-        {
+        try {
             this.workerGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
             this.bossGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine("Exception during " + this.name + " shutdown... HARD STOP");
         }
         Emulator.getLogging().logShutdownLine("GameServer Stopped!");
     }
 
-    public ServerBootstrap getServerBootstrap()
-    {
+    public ServerBootstrap getServerBootstrap() {
         return this.serverBootstrap;
     }
 
-    public EventLoopGroup getBossGroup()
-    {
+    public EventLoopGroup getBossGroup() {
         return this.bossGroup;
     }
 
-    public EventLoopGroup getWorkerGroup()
-    {
+    public EventLoopGroup getWorkerGroup() {
         return this.workerGroup;
     }
 
-    public String getHost()
-    {
+    public String getHost() {
         return this.host;
     }
 
-    public int getPort()
-    {
+    public int getPort() {
         return this.port;
     }
 }

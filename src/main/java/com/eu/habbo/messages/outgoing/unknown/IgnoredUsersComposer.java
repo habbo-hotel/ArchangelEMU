@@ -4,11 +4,9 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class IgnoredUsersComposer extends MessageComposer
-{
+public class IgnoredUsersComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.IgnoredUsersComposer);
         this.response.appendInt(0);
         return this.response;

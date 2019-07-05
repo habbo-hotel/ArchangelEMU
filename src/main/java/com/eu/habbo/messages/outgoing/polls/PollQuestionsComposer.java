@@ -6,26 +6,22 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PollQuestionsComposer extends MessageComposer
-{
+public class PollQuestionsComposer extends MessageComposer {
     private final Poll poll;
 
-    public PollQuestionsComposer(Poll poll)
-    {
+    public PollQuestionsComposer(Poll poll) {
         this.poll = poll;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PollQuestionsComposer);
 
         this.response.appendInt(this.poll.id);
         this.response.appendString(this.poll.title);
         this.response.appendString(this.poll.thanksMessage);
         this.response.appendInt(this.poll.getQuestions().size());
-        for (PollQuestion question : this.poll.getQuestions())
-        {
+        for (PollQuestion question : this.poll.getQuestions()) {
             question.serialize(this.response);
         }
 

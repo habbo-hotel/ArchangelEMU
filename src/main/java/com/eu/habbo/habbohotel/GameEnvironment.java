@@ -22,8 +22,10 @@ import com.eu.habbo.habbohotel.polls.PollManager;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboManager;
 
-public class GameEnvironment
-{
+public class GameEnvironment {
+    public CreditsScheduler creditsScheduler;
+    public PixelScheduler pixelScheduler;
+    public PointsScheduler pointsScheduler;
     private HabboManager habboManager;
     private NavigatorManager navigatorManager;
     private GuildManager guildManager;
@@ -42,49 +44,43 @@ public class GameEnvironment
     private CraftingManager craftingManager;
     private PollManager pollManager;
 
-    public CreditsScheduler creditsScheduler;
-    public PixelScheduler pixelScheduler;
-    public PointsScheduler pointsScheduler;
-
-    public void load() throws Exception
-    {
+    public void load() throws Exception {
         Emulator.getLogging().logStart("GameEnvironment -> Loading...");
 
         this.permissionsManager = new PermissionsManager();
-        this.habboManager       = new HabboManager();
-        this.hotelViewManager   = new HotelViewManager();
-        this.itemManager        = new ItemManager();
+        this.habboManager = new HabboManager();
+        this.hotelViewManager = new HotelViewManager();
+        this.itemManager = new ItemManager();
         this.itemManager.load();
-        this.botManager         = new BotManager();
-        this.petManager         = new PetManager();
-        this.guildManager       = new GuildManager();
-        this.catalogManager     = new CatalogManager();
-        this.roomManager        = new RoomManager();
-        this.navigatorManager   = new NavigatorManager();
-        this.commandHandler     = new CommandHandler();
-        this.modToolManager     = new ModToolManager();
+        this.botManager = new BotManager();
+        this.petManager = new PetManager();
+        this.guildManager = new GuildManager();
+        this.catalogManager = new CatalogManager();
+        this.roomManager = new RoomManager();
+        this.navigatorManager = new NavigatorManager();
+        this.commandHandler = new CommandHandler();
+        this.modToolManager = new ModToolManager();
         this.achievementManager = new AchievementManager();
         this.achievementManager.reload();
-        this.guideManager       = new GuideManager();
-        this.wordFilter         = new WordFilter();
-        this.craftingManager    = new CraftingManager();
-        this.pollManager        = new PollManager();
+        this.guideManager = new GuideManager();
+        this.wordFilter = new WordFilter();
+        this.craftingManager = new CraftingManager();
+        this.pollManager = new PollManager();
 
         this.roomManager.loadPublicRooms();
         this.navigatorManager.loadNavigator();
 
-        this.creditsScheduler   = new CreditsScheduler();
+        this.creditsScheduler = new CreditsScheduler();
         Emulator.getThreading().run(this.creditsScheduler);
-        this.pixelScheduler     = new PixelScheduler();
+        this.pixelScheduler = new PixelScheduler();
         Emulator.getThreading().run(this.pixelScheduler);
-        this.pointsScheduler    = new PointsScheduler();
+        this.pointsScheduler = new PointsScheduler();
         Emulator.getThreading().run(this.pointsScheduler);
 
         Emulator.getLogging().logStart("GameEnvironment -> Loaded!");
     }
 
-    public void dispose()
-    {
+    public void dispose() {
         this.pointsScheduler.setDisposed(true);
         this.pixelScheduler.setDisposed(true);
         this.creditsScheduler.setDisposed(true);
@@ -99,88 +95,71 @@ public class GameEnvironment
         Emulator.getLogging().logShutdownLine("GameEnvironment -> Disposed!");
     }
 
-    public HabboManager getHabboManager()
-    {
+    public HabboManager getHabboManager() {
         return this.habboManager;
     }
 
-    public NavigatorManager getNavigatorManager()
-    {
+    public NavigatorManager getNavigatorManager() {
         return this.navigatorManager;
     }
 
-    public GuildManager getGuildManager()
-    {
+    public GuildManager getGuildManager() {
         return this.guildManager;
     }
 
-    public ItemManager getItemManager()
-    {
+    public ItemManager getItemManager() {
         return this.itemManager;
     }
 
-    public CatalogManager getCatalogManager()
-    {
+    public CatalogManager getCatalogManager() {
         return this.catalogManager;
     }
 
-    public HotelViewManager getHotelViewManager()
-    {
+    public HotelViewManager getHotelViewManager() {
         return this.hotelViewManager;
     }
 
-    public RoomManager getRoomManager()
-    {
+    public RoomManager getRoomManager() {
         return this.roomManager;
     }
 
-    public CommandHandler getCommandHandler()
-    {
+    public CommandHandler getCommandHandler() {
         return this.commandHandler;
     }
 
-    public PermissionsManager getPermissionsManager()
-    {
+    public PermissionsManager getPermissionsManager() {
         return this.permissionsManager;
     }
 
-    public BotManager getBotManager()
-    {
+    public BotManager getBotManager() {
         return this.botManager;
     }
 
-    public ModToolManager getModToolManager()
-    {
+    public ModToolManager getModToolManager() {
         return this.modToolManager;
     }
 
-    public PetManager getPetManager()
-    {
+    public PetManager getPetManager() {
         return this.petManager;
     }
 
-    public AchievementManager getAchievementManager()
-    {
+    public AchievementManager getAchievementManager() {
         return this.achievementManager;
     }
 
-    public GuideManager getGuideManager()
-    {
+    public GuideManager getGuideManager() {
         return this.guideManager;
     }
 
-    public WordFilter getWordFilter()
-    {
+    public WordFilter getWordFilter() {
         return this.wordFilter;
     }
 
-    public CraftingManager getCraftingManager()
-    {
+    public CraftingManager getCraftingManager() {
         return this.craftingManager;
     }
 
-    public PollManager getPollManager()
-    {
+    public PollManager getPollManager() {
         return this.pollManager;
     }
 

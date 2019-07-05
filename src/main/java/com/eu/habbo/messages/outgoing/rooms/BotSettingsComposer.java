@@ -5,39 +5,33 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class BotSettingsComposer extends MessageComposer
-{
+public class BotSettingsComposer extends MessageComposer {
     private final Bot bot;
     private final int settingId;
 
-    public BotSettingsComposer(Bot bot, int settingId)
-    {
+    public BotSettingsComposer(Bot bot, int settingId) {
         this.bot = bot;
         this.settingId = settingId;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.BotSettingsComposer);
         this.response.appendInt(-this.bot.getId());
         this.response.appendInt(this.settingId);
 
-        switch(this.settingId)
-        {
-            case 1: this.response.appendString(""); break;
+        switch (this.settingId) {
+            case 1:
+                this.response.appendString("");
+                break;
             case 2:
                 StringBuilder data = new StringBuilder();
 
-                if (this.bot.hasChat())
-                {
-                    for (String s : this.bot.getChatLines())
-                    {
+                if (this.bot.hasChat()) {
+                    for (String s : this.bot.getChatLines()) {
                         data.append(s).append("\r");
                     }
-                }
-                else
-                {
+                } else {
                     data.append(Bot.NO_CHAT_SET);
                 }
 
@@ -47,12 +41,18 @@ public class BotSettingsComposer extends MessageComposer
                 data.append(";#;").append(this.bot.isChatRandom() ? "true" : "false");
                 this.response.appendString(data.toString());
                 break;
-            case 3: this.response.appendString(""); break;
-            case 4: this.response.appendString(""); break;
+            case 3:
+                this.response.appendString("");
+                break;
+            case 4:
+                this.response.appendString("");
+                break;
             case 5:
                 this.response.appendString(this.bot.getName());
                 break;
-            case 6: this.response.appendString(""); break;
+            case 6:
+                this.response.appendString("");
+                break;
             case 9:
                 this.response.appendString(this.bot.getMotto());
                 break;

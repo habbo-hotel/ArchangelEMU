@@ -7,24 +7,20 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
 
-public class InventoryBotsComposer extends MessageComposer
-{
+public class InventoryBotsComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public InventoryBotsComposer(Habbo habbo)
-    {
+    public InventoryBotsComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.InventoryBotsComposer);
 
         THashMap<Integer, Bot> userBots = this.habbo.getInventory().getBotsComponent().getBots();
         this.response.appendInt(userBots.size());
-        for(Bot bot : userBots.values())
-        {
+        for (Bot bot : userBots.values()) {
             this.response.appendInt(bot.getId());
             this.response.appendString(bot.getName());
             this.response.appendString(bot.getMotto());

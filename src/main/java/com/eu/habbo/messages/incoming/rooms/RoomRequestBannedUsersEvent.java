@@ -6,17 +6,14 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.RoomBannedUsersComposer;
 
-public class RoomRequestBannedUsersEvent extends MessageHandler
-{
+public class RoomRequestBannedUsersEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int roomId = this.packet.readInt();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
-        if(room != null)
-        {
+        if (room != null) {
             this.client.sendResponse(new RoomBannedUsersComposer(room));
         }
 

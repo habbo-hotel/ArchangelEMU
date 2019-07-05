@@ -11,8 +11,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
 
 import java.util.LinkedList;
 
-public class RoomUnitTeleport implements Runnable
-{
+public class RoomUnitTeleport implements Runnable {
     private RoomUnit roomUnit;
     private Room room;
     private int x;
@@ -21,8 +20,7 @@ public class RoomUnitTeleport implements Runnable
 
     private int newEffect;
 
-    public RoomUnitTeleport(RoomUnit roomUnit, Room room, int x, int y, double z, int newEffect)
-    {
+    public RoomUnitTeleport(RoomUnit roomUnit, Room room, int x, int y, double z, int newEffect) {
         this.roomUnit = roomUnit;
         this.room = room;
         this.x = x;
@@ -32,22 +30,17 @@ public class RoomUnitTeleport implements Runnable
     }
 
     @Override
-    public void run()
-    {
-        if(roomUnit == null || roomUnit.getRoom() == null)
+    public void run() {
+        if (roomUnit == null || roomUnit.getRoom() == null)
             return;
 
         RoomTile t = this.room.getLayout().getTile((short) this.x, (short) this.y);
 
         HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
-        if (topItem != null)
-        {
-            try
-            {
+        if (topItem != null) {
+            try {
                 topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Emulator.getLogging().logErrorLine(e);
             }
         }
@@ -62,5 +55,13 @@ public class RoomUnitTeleport implements Runnable
         this.room.sendComposer(teleportMessage);
 
         this.room.updateHabbosAt(t.x, t.y);
+
+        topItem = room.getTopItemAt(x, y);
+        if (topItem != null && roomUnit.getCurrentLocation().equals(room.getLayout().getTile((short) x, (short) y))) {
+            try {
+                topItem.onWalkOn(roomUnit, room, new Object[]{});
+            } catch (Exception e) {
+            }
+        }
     }
 }

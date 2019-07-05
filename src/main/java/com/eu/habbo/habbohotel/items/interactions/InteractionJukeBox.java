@@ -10,21 +10,17 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionJukeBox extends HabboItem
-{
-    public InteractionJukeBox(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionJukeBox extends HabboItem {
+    public InteractionJukeBox(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionJukeBox(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionJukeBox(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
@@ -32,61 +28,49 @@ public class InteractionJukeBox extends HabboItem
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return false;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return false;
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if (client != null && objects.length == 1)
-        {
-            if ((Integer)objects[0] == 0)
-            {
-                if (room.getTraxManager().isPlaying())
-                {
+        if (client != null && objects.length == 1) {
+            if ((Integer) objects[0] == 0) {
+                if (room.getTraxManager().isPlaying()) {
                     room.getTraxManager().stop();
-                } else
-                {
-                    room.getTraxManager().play(0);
+                } else {
+                    room.getTraxManager().play(0, client.getHabbo());
                 }
             }
         }
     }
 
     @Override
-    public void onPickUp(Room room)
-    {
+    public void onPickUp(Room room) {
         super.onPickUp(room);
         this.setExtradata("0");
 
-        if (room.getTraxManager().isPlaying() && room.getRoomSpecialTypes().getItemsOfType(InteractionJukeBox.class).isEmpty())
-        {
+        if (room.getTraxManager().isPlaying() && room.getRoomSpecialTypes().getItemsOfType(InteractionJukeBox.class).isEmpty()) {
             room.getTraxManager().clearPlayList();
         }
     }
 
     @Override
-    public void onPlace(Room room)
-    {
+    public void onPlace(Room room) {
         super.onPlace(room);
-        if (room.getTraxManager().isPlaying())
-        {
+        if (room.getTraxManager().isPlaying()) {
             this.setExtradata("1");
         }
     }

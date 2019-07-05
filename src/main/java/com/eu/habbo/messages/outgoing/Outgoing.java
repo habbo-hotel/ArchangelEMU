@@ -1,7 +1,6 @@
 package com.eu.habbo.messages.outgoing;
 
-public class Outgoing
-{
+public class Outgoing {
     public static final int PetStatusUpdateComposer = 1907;//error 404
 
     public final static int CfhTopicsMessageComposer = 325;
@@ -61,13 +60,13 @@ public class Outgoing
     public final static int GuildRefreshMembersListComposer = 2445;
     public final static int UserPerksComposer = 2586;
     public final static int UserCitizinShipComposer = 1203;
-    public final static int PublicRoomsComposer =-1;//error 404
+    public final static int PublicRoomsComposer = -1;//error 404
     public final static int MarketplaceOffersComposer = 680;
     public final static int ModToolComposer = 2696;
     public final static int UserBadgesComposer = 1087;
     public final static int GuildManageComposer = 3965;
-    public final static int RemoveFriendComposer =-1;//error 404
-    public final static int BannerTokenComposer =-1;//error 404
+    public final static int RemoveFriendComposer = -1;//error 404
+    public final static int BannerTokenComposer = -1;//error 404
     public final static int UserDataComposer = 2725;
     public final static int UserSearchResultComposer = 973;
     public final static int ModToolUserRoomVisitsComposer = 1752;
@@ -365,7 +364,7 @@ public class Outgoing
     public final static int CompetitionEntrySubmitResultComposer = 1177; // PRODUCTION-201611291003-338511768
     public final static int ExtendClubMessageComposer = 3964; // PRODUCTION-201611291003-338511768
     public final static int HotelViewConcurrentUsersComposer = 2737; // PRODUCTION-201611291003-338511768
-    public final static int InventoryAddEffectComposer =-1;//error 404
+    public final static int InventoryAddEffectComposer = -1;//error 404
     public final static int TalentLevelUpdateComposer = 638; // PRODUCTION-201611291003-338511768
     public final static int BullyReportedMessageComposer = 3285; // PRODUCTION-201611291003-338511768
     public final static int UnknownQuestComposer3 = 1122; // PRODUCTION-201611291003-338511768
@@ -396,9 +395,6 @@ public class Outgoing
     public final static int QuestComposer = 230; // PRODUCTION-201611291003-338511768
     public final static int ModToolSanctionDataComposer = 2782; // PRODUCTION-201611291003-338511768
     public final static int RoomEventMessageComposer = 2274;
-
-
-
 
 
     public final static int JukeBoxMySongsComposer = 2602; // PRODUCTION-201611291003-338511768
@@ -459,7 +455,7 @@ public class Outgoing
     public final static int UnknownComposer_2601 = 1663; // PRODUCTION-201611291003-338511768
     public final static int UnknownComposer_2621 = 1927; // PRODUCTION-201611291003-338511768
     public final static int UnknownComposer_2698 = 563; // PRODUCTION-201611291003-338511768
-//    2699;
+    //    2699;
 //    2748;
 //    2773;
 //    2964;
@@ -473,7 +469,7 @@ public class Outgoing
 //    3291;
 //    3334;
     public final static int HabboWayQuizComposer1 = 3379;
-//    3391;
+    //    3391;
 //    3427;
 //    347;
 //    3509;
@@ -481,19 +477,19 @@ public class Outgoing
 //    3581;
 //    3684;
     public final static int YouTradingDisabledComposer = 3058; // PRODUCTION-201611291003-338511768
-//    3707;
+    //    3707;
 //    3745;
 //    3759;
 //    3782;
     public final static int RoomFloorThicknessUpdatedComposer = 3786;
-//    3822;
+    //    3822;
     public final static int CameraPurchaseSuccesfullComposer = 2783; // PRODUCTION-201611291003-338511768
     public final static int CameraCompetitionStatusComposer = 133; // PRODUCTION-201611291003-338511768
-//    3986;
+    //    3986;
 //    467;
 //    549;
     public final static int CameraURLComposer = 3696; // PRODUCTION-201611291003-338511768
-//    608;
+    //    608;
 //    624;
 //    675;
     public final static int HotelViewCatalogPageExpiringComposer = 690;
@@ -518,7 +514,7 @@ public class Outgoing
     public final static int UnknownCatalogPageOfferComposer = 1889;
     public final static int NuxAlertComposer = 2023;
     public final static int HotelViewExpiringCatalogPageCommposer = 2515;
-    public final static int UnknownHabboWayQuizComposer =2772;
+    public final static int UnknownHabboWayQuizComposer = 2772;
     public final static int PetLevelUpdatedComposer = 2824;
     public final static int QuestExpiredComposer = 3027;
     public final static int UnknownTradeComposer = 3128;

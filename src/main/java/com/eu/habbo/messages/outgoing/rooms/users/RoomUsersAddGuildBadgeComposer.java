@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUsersAddGuildBadgeComposer extends MessageComposer
-{
+public class RoomUsersAddGuildBadgeComposer extends MessageComposer {
     private final Guild guild;
 
-    public RoomUsersAddGuildBadgeComposer(Guild guild)
-    {
+    public RoomUsersAddGuildBadgeComposer(Guild guild) {
         this.guild = guild;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomUsersGuildBadgesComposer);
         this.response.appendInt(1);
         this.response.appendInt(this.guild.getId());

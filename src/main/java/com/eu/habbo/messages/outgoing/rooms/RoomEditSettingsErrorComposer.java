@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomEditSettingsErrorComposer extends MessageComposer
-{
+public class RoomEditSettingsErrorComposer extends MessageComposer {
     public final static int PASSWORD_REQUIRED = 5;
     public final static int ROOM_NAME_MISSING = 7;
     public final static int ROOM_NAME_BADWORDS = 8;
@@ -18,16 +17,14 @@ public class RoomEditSettingsErrorComposer extends MessageComposer
     private final int errorCode;
     private final String info;
 
-    public RoomEditSettingsErrorComposer(int roomId, int errorCode, String info)
-    {
+    public RoomEditSettingsErrorComposer(int roomId, int errorCode, String info) {
         this.roomId = roomId;
         this.errorCode = errorCode;
         this.info = info;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomEditSettingsErrorComposer);
         this.response.appendInt(this.roomId);
         this.response.appendInt(this.errorCode);

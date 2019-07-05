@@ -5,40 +5,33 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.bunnyrun.InteractionBunnyrunPole;
 import com.eu.habbo.habbohotel.rooms.Room;
 
-public class BunnyrunGame extends TagGame
-{
-    public BunnyrunGame(Room room)
-    {
+public class BunnyrunGame extends TagGame {
+    public BunnyrunGame(Room room) {
         super(GameTeam.class, TagGamePlayer.class, room);
     }
 
     @Override
-    public Class<? extends InteractionTagPole> getTagPole()
-    {
+    public Class<? extends InteractionTagPole> getTagPole() {
         return InteractionBunnyrunPole.class;
     }
 
     @Override
-    public int getMaleEffect()
-    {
+    public int getMaleEffect() {
         return 0;
     }
 
     @Override
-    public int getMaleTaggerEffect()
-    {
+    public int getMaleTaggerEffect() {
         return 68;
     }
 
     @Override
-    public int getFemaleEffect()
-    {
+    public int getFemaleEffect() {
         return 0;
     }
 
     @Override
-    public int getFemaleTaggerEffect()
-    {
+    public int getFemaleTaggerEffect() {
         return 68;
     }
 }

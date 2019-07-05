@@ -4,21 +4,17 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 
 import java.util.List;
 
-public class RoomUnitWalkToLocation implements Runnable
-{
+public class RoomUnitWalkToLocation implements Runnable {
     private RoomUnit walker;
     private RoomTile goalTile;
     private Room room;
     private List<Runnable> targetReached;
     private List<Runnable> failedReached;
 
-    public RoomUnitWalkToLocation(RoomUnit walker, RoomTile goalTile, Room room, List<Runnable> targetReached, List<Runnable> failedReached)
-    {
+    public RoomUnitWalkToLocation(RoomUnit walker, RoomTile goalTile, Room room, List<Runnable> targetReached, List<Runnable> failedReached) {
         this.walker = walker;
         this.goalTile = goalTile;
         this.room = room;
@@ -27,19 +23,18 @@ public class RoomUnitWalkToLocation implements Runnable
     }
 
     @Override
-    public void run()  {
-        if(this.goalTile == null || this.walker == null || this.room == null || this.walker.getRoom() == null || this.walker.getRoom().getId() != this.room.getId()) {
+    public void run() {
+        if (this.goalTile == null || this.walker == null || this.room == null || this.walker.getRoom() == null || this.walker.getRoom().getId() != this.room.getId()) {
             onFail();
             return;
         }
 
-        if(!this.walker.getGoal().equals(this.goalTile)) {
+        if (!this.walker.getGoal().equals(this.goalTile)) {
             onFail();
             return;
         }
 
-        if(this.walker.getCurrentLocation().equals(this.goalTile))
-        {
+        if (this.walker.getCurrentLocation().equals(this.goalTile)) {
             onSuccess();
             return;
         }
@@ -48,12 +43,12 @@ public class RoomUnitWalkToLocation implements Runnable
     }
 
     private void onSuccess() {
-        for(Runnable r : this.targetReached)
+        for (Runnable r : this.targetReached)
             Emulator.getThreading().run(r);
     }
 
     private void onFail() {
-        for(Runnable r : this.failedReached)
+        for (Runnable r : this.failedReached)
             Emulator.getThreading().run(r);
     }
 }

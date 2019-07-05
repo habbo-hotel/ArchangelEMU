@@ -2,53 +2,50 @@ package com.eu.habbo.messages.incoming.rooms.pets;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.threading.runnables.RoomUnitRidePet;
+
 import java.util.List;
 
-public class PetRideEvent extends MessageHandler
-{
+public class PetRideEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int petId = this.packet.readInt();
         Habbo habbo = this.client.getHabbo();
         Room room = habbo.getHabboInfo().getCurrentRoom();
 
-        if(room == null)
+        if (room == null)
             return;
 
         Pet pet = room.getPet(petId);
 
-        if(!(pet instanceof RideablePet))
+        if (!(pet instanceof RideablePet))
             return;
 
-        RideablePet rideablePet = (RideablePet)pet;
+        RideablePet rideablePet = (RideablePet) pet;
 
         //dismount
-        if(habbo.getHabboInfo().getRiding() != null)
-        {
+        if (habbo.getHabboInfo().getRiding() != null) {
             habbo.getHabboInfo().dismountPet();
             return;
         }
 
         // someone is already on it
-        if(rideablePet.getRider() != null)
+        if (rideablePet.getRider() != null)
             return;
 
         // check if able to ride
-        if(!rideablePet.anyoneCanRide() && habbo.getHabboInfo().getId() != rideablePet.getUserId())
+        if (!rideablePet.anyoneCanRide() && habbo.getHabboInfo().getId() != rideablePet.getUserId())
             return;
 
         List<RoomTile> availableTiles = room.getLayout().getWalkableTilesAround(pet.getRoomUnit().getCurrentLocation());
 
         // if cant reach it then cancel
-        if(availableTiles.isEmpty())
+        if (availableTiles.isEmpty())
             return;
 
         RoomTile goalTile = availableTiles.get(0);

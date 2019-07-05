@@ -16,154 +16,101 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PetData implements Comparable<PetData>
-{
-
-    private int type;
-
-
-    private String name;
-
+public class PetData implements Comparable<PetData> {
 
     public static final String BLINK = "eyb";
-
-
     public static final String SPEAK = "spk";
-
-
     public static final String EAT = "eat";
     public static final String PLAYFUL = "pla";
-
-
-    public String[] actionsHappy;
-
-
-    public String[] actionsTired;
-
-
-    public String[] actionsRandom;
-
-
-    private List<PetCommand> petCommands;
-
-
-    private List<Item> nestItems;
-
-
-    private List<Item> foodItems;
-
-
-    private List<Item> drinkItems;
-
-
-    private List<Item> toyItems;
-
-
     public static final List<Item> generalDrinkItems = new ArrayList<>();
-
-
     public static final List<Item> generalFoodItems = new ArrayList<>();
-
-
     public static final List<Item> generalNestItems = new ArrayList<>();
-
-
     public static final List<Item> generalToyItems = new ArrayList<>();
-
-
-    public THashMap<PetVocalsType, THashSet<PetVocal>> petVocals;
-
-
     public static final THashMap<PetVocalsType, THashSet<PetVocal>> generalPetVocals = new THashMap<>();
-
-
+    public String[] actionsHappy;
+    public String[] actionsTired;
+    public String[] actionsRandom;
+    public THashMap<PetVocalsType, THashSet<PetVocal>> petVocals;
+    public boolean canSwim;
+    private int type;
+    private String name;
+    private List<PetCommand> petCommands;
+    private List<Item> nestItems;
+    private List<Item> foodItems;
+    private List<Item> drinkItems;
+    private List<Item> toyItems;
     private int offspringType;
 
-    public PetData(ResultSet set) throws SQLException
-    {
+    public PetData(ResultSet set) throws SQLException {
         this.load(set);
     }
 
-    public void load(ResultSet set) throws SQLException
-    {
+    public void load(ResultSet set) throws SQLException {
         this.type = set.getInt("pet_type");
         this.name = set.getString("pet_name");
         this.offspringType = set.getInt("offspring_type");
         this.actionsHappy = set.getString("happy_actions").split(";");
         this.actionsTired = set.getString("tired_actions").split(";");
         this.actionsRandom = set.getString("random_actions").split(";");
+        this.canSwim = set.getString("can_swim").equalsIgnoreCase("1");
 
         this.reset();
     }
 
-    public void setPetCommands(List<PetCommand> petCommands)
-    {
-        this.petCommands = petCommands;
-    }
-
-    public List<PetCommand> getPetCommands()
-    {
+    public List<PetCommand> getPetCommands() {
         return this.petCommands;
     }
 
+    public void setPetCommands(List<PetCommand> petCommands) {
+        this.petCommands = petCommands;
+    }
 
-    public int getType()
-    {
+    public int getType() {
         return this.type;
     }
 
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
 
-    public int getOffspringType()
-    {
+    public int getOffspringType() {
         return this.offspringType;
     }
 
 
-    public void addNest(Item nest)
-    {
-        if(nest != null)
+    public void addNest(Item nest) {
+        if (nest != null)
             this.nestItems.add(nest);
     }
 
 
-    public List<Item> getNests()
-    {
+    public List<Item> getNests() {
         return this.nestItems;
     }
 
 
-    public boolean haveNest(HabboItem nest)
-    {
+    public boolean haveNest(HabboItem nest) {
         return this.haveNest(nest.getBaseItem());
     }
 
 
-    boolean haveNest(Item nest)
-    {
+    boolean haveNest(Item nest) {
         return PetData.generalNestItems.contains(nest) || this.nestItems.contains(nest);
     }
 
 
-    public HabboItem randomNest(THashSet<InteractionNest> items)
-    {
+    public HabboItem randomNest(THashSet<InteractionNest> items) {
         List<HabboItem> nestList = new ArrayList<>();
 
-        for(InteractionNest nest : items)
-        {
-            if(this.haveNest(nest))
-            {
+        for (InteractionNest nest : items) {
+            if (this.haveNest(nest)) {
                 nestList.add(nest);
             }
         }
 
-        if(!nestList.isEmpty())
-        {
+        if (!nestList.isEmpty()) {
             Collections.shuffle(nestList);
 
             return nestList.get(0);
@@ -173,44 +120,36 @@ public class PetData implements Comparable<PetData>
     }
 
 
-    public void addFoodItem(Item food)
-    {
+    public void addFoodItem(Item food) {
         this.foodItems.add(food);
     }
 
 
-    public List<Item> getFoodItems()
-    {
+    public List<Item> getFoodItems() {
         return this.foodItems;
     }
 
 
-    public boolean haveFoodItem(HabboItem food)
-    {
+    public boolean haveFoodItem(HabboItem food) {
         return this.haveFoodItem(food.getBaseItem());
     }
 
 
-    boolean haveFoodItem(Item food)
-    {
+    boolean haveFoodItem(Item food) {
         return this.foodItems.contains(food) || PetData.generalFoodItems.contains(food);
     }
 
 
-    public HabboItem randomFoodItem(THashSet<InteractionPetFood> items)
-    {
+    public HabboItem randomFoodItem(THashSet<InteractionPetFood> items) {
         List<HabboItem> foodList = new ArrayList<>();
 
-        for(InteractionPetFood food : items)
-        {
-            if(this.haveFoodItem(food))
-            {
+        for (InteractionPetFood food : items) {
+            if (this.haveFoodItem(food)) {
                 foodList.add(food);
             }
         }
 
-        if(!foodList.isEmpty())
-        {
+        if (!foodList.isEmpty()) {
             Collections.shuffle(foodList);
             return foodList.get(0);
         }
@@ -219,44 +158,36 @@ public class PetData implements Comparable<PetData>
     }
 
 
-    public void addDrinkItem(Item item)
-    {
+    public void addDrinkItem(Item item) {
         this.drinkItems.add(item);
     }
 
 
-    public List<Item> getDrinkItems()
-    {
+    public List<Item> getDrinkItems() {
         return this.drinkItems;
     }
 
 
-    public boolean haveDrinkItem(HabboItem item)
-    {
+    public boolean haveDrinkItem(HabboItem item) {
         return this.haveDrinkItem(item.getBaseItem());
     }
 
 
-    boolean haveDrinkItem(Item item)
-    {
+    boolean haveDrinkItem(Item item) {
         return this.drinkItems.contains(item) || PetData.generalDrinkItems.contains(item);
     }
 
 
-    public HabboItem randomDrinkItem(THashSet<InteractionPetDrink> items)
-    {
+    public HabboItem randomDrinkItem(THashSet<InteractionPetDrink> items) {
         List<HabboItem> drinkList = new ArrayList<>();
 
-        for(InteractionPetDrink drink : items)
-        {
-            if(this.haveDrinkItem(drink))
-            {
+        for (InteractionPetDrink drink : items) {
+            if (this.haveDrinkItem(drink)) {
                 drinkList.add(drink);
             }
         }
 
-        if(!drinkList.isEmpty())
-        {
+        if (!drinkList.isEmpty()) {
             Collections.shuffle(drinkList);
             return drinkList.get(0);
         }
@@ -265,44 +196,36 @@ public class PetData implements Comparable<PetData>
     }
 
 
-    public void addToyItem(Item toy)
-    {
+    public void addToyItem(Item toy) {
         this.toyItems.add(toy);
     }
 
 
-    public List<Item> getToyItems()
-    {
+    public List<Item> getToyItems() {
         return this.toyItems;
     }
 
 
-    public boolean haveToyItem(HabboItem toy)
-    {
+    public boolean haveToyItem(HabboItem toy) {
         return this.haveToyItem(toy.getBaseItem());
     }
 
 
-    public boolean haveToyItem(Item toy)
-    {
+    public boolean haveToyItem(Item toy) {
         return this.toyItems.contains(toy) || PetData.generalToyItems.contains(toy);
     }
 
 
-    public HabboItem randomToyItem(THashSet<InteractionPetToy> toys)
-    {
+    public HabboItem randomToyItem(THashSet<InteractionPetToy> toys) {
         List<HabboItem> toyList = new ArrayList<>();
 
-        for(InteractionPetToy toy : toys)
-        {
-            if(this.haveToyItem(toy))
-            {
+        for (InteractionPetToy toy : toys) {
+            if (this.haveToyItem(toy)) {
                 toyList.add(toy);
             }
         }
 
-        if(!toyList.isEmpty())
-        {
+        if (!toyList.isEmpty()) {
             Collections.shuffle(toyList);
             return toyList.get(0);
         }
@@ -311,31 +234,28 @@ public class PetData implements Comparable<PetData>
     }
 
 
-    public PetVocal randomVocal(PetVocalsType type)
-    {
+    public PetVocal randomVocal(PetVocalsType type) {
         //TODO: Remove this useless copying.
         List<PetVocal> vocals = new ArrayList<>();
 
-        if(this.petVocals.get(type) != null)
+        if (this.petVocals.get(type) != null)
             vocals.addAll(this.petVocals.get(type));
 
-        if(PetData.generalPetVocals.get(type) != null)
+        if (PetData.generalPetVocals.get(type) != null)
             vocals.addAll(PetData.generalPetVocals.get(type));
 
-        if(vocals.isEmpty())
+        if (vocals.isEmpty())
             return null;
 
         return vocals.get(Emulator.getRandom().nextInt(vocals.size()));
     }
 
     @Override
-    public int compareTo(PetData o)
-    {
+    public int compareTo(PetData o) {
         return this.getType() - o.getType();
     }
 
-    public void reset()
-    {
+    public void reset() {
         this.petCommands = new ArrayList<>();
         this.nestItems = new ArrayList<>();
         this.foodItems = new ArrayList<>();
@@ -344,15 +264,12 @@ public class PetData implements Comparable<PetData>
 
         this.petVocals = new THashMap<>();
 
-        for(PetVocalsType type : PetVocalsType.values())
-        {
+        for (PetVocalsType type : PetVocalsType.values()) {
             this.petVocals.put(type, new THashSet<>());
         }
 
-        if(PetData.generalPetVocals.isEmpty())
-        {
-            for(PetVocalsType type : PetVocalsType.values())
-            {
+        if (PetData.generalPetVocals.isEmpty()) {
+            for (PetVocalsType type : PetVocalsType.values()) {
                 PetData.generalPetVocals.put(type, new THashSet<>());
             }
         }

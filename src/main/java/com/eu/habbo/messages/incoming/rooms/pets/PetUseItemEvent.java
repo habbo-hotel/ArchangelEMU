@@ -15,103 +15,78 @@ import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetHorseFigureComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
-public class PetUseItemEvent extends MessageHandler
-{
+public class PetUseItemEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-        if(room == null)
+        if (room == null)
             return;
 
         HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
 
-        if(item == null)
+        if (item == null)
             return;
 
         int petId = this.packet.readInt();
         Pet pet = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(petId);
 
-        if(pet instanceof HorsePet)
-        {
-            if(item.getBaseItem().getName().toLowerCase().startsWith("horse_dye"))
-            {
+        if (pet instanceof HorsePet) {
+            if (item.getBaseItem().getName().toLowerCase().startsWith("horse_dye")) {
                 int race = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
                 int raceType = (race * 4) - 2;
 
-                if(race >= 13 && race <= 17)
+                if (race >= 13 && race <= 17)
                     raceType = ((2 + race) * 4) + 1;
 
-                if(race == 0)
+                if (race == 0)
                     raceType = 0;
 
                 pet.setRace(raceType);
                 ((HorsePet) pet).needsUpdate = true;
-            }
-            else if(item.getBaseItem().getName().toLowerCase().startsWith("horse_hairdye"))
-            {
+            } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_hairdye")) {
                 int splittedHairdye = Integer.valueOf(item.getBaseItem().getName().toLowerCase().split("_")[2]);
                 int newHairdye = 48;
 
-                if(splittedHairdye == 0)
-                {
+                if (splittedHairdye == 0) {
                     newHairdye = -1;
-                }
-                else if(splittedHairdye == 1)
-                {
+                } else if (splittedHairdye == 1) {
                     newHairdye = 1;
-                }
-                else if(splittedHairdye >= 13 && splittedHairdye <= 17)
-                {
+                } else if (splittedHairdye >= 13 && splittedHairdye <= 17) {
                     newHairdye = 68 + splittedHairdye;
-                }
-                else
-                {
+                } else {
                     newHairdye += splittedHairdye;
                 }
 
                 ((HorsePet) pet).setHairColor(newHairdye);
                 ((HorsePet) pet).needsUpdate = true;
-            }
-            else if(item.getBaseItem().getName().toLowerCase().startsWith("horse_hairstyle"))
-            {
+            } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_hairstyle")) {
                 int splittedHairstyle = Integer.valueOf(item.getBaseItem().getName().toLowerCase().split("_")[2]);
                 int newHairstyle = 100;
 
-                if(splittedHairstyle == 0)
-                {
+                if (splittedHairstyle == 0) {
                     newHairstyle = -1;
-                }
-                else
-                {
+                } else {
                     newHairstyle += splittedHairstyle;
                 }
 
                 ((HorsePet) pet).setHairStyle(newHairstyle);
                 ((HorsePet) pet).needsUpdate = true;
-            }
-            else if(item.getBaseItem().getName().toLowerCase().startsWith("horse_saddle"))
-            {
+            } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_saddle")) {
                 ((HorsePet) pet).hasSaddle(true);
                 ((HorsePet) pet).needsUpdate = true;
             }
 
-            if(((HorsePet) pet).needsUpdate)
-            {
+            if (((HorsePet) pet).needsUpdate) {
                 Emulator.getThreading().run(pet);
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomPetHorseFigureComposer((HorsePet) pet).compose());
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RemoveFloorItemComposer(item).compose());
                 Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
             }
-        }
-        else if (pet instanceof MonsterplantPet)
-        {
-            if (item.getBaseItem().getName().equalsIgnoreCase("mnstr_revival"))
-            {
-                if (((MonsterplantPet) pet).isDead())
-                {
+        } else if (pet instanceof MonsterplantPet) {
+            if (item.getBaseItem().getName().equalsIgnoreCase("mnstr_revival")) {
+                if (((MonsterplantPet) pet).isDead()) {
                     ((MonsterplantPet) pet).setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.timeToLive);
                     pet.getRoomUnit().clearStatus();
                     pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "rev");
@@ -126,11 +101,8 @@ public class PetUseItemEvent extends MessageHandler
                     pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                 }
-            }
-            else if (item.getBaseItem().getName().equalsIgnoreCase("mnstr_fert"))
-            {
-                if (!((MonsterplantPet) pet).isFullyGrown())
-                {
+            } else if (item.getBaseItem().getName().equalsIgnoreCase("mnstr_fert")) {
+                if (!((MonsterplantPet) pet).isFullyGrown()) {
                     pet.setCreated(pet.getCreated() - MonsterplantPet.growTime);
                     pet.getRoomUnit().clearStatus();
                     pet.cycle();
@@ -145,16 +117,13 @@ public class PetUseItemEvent extends MessageHandler
                     pet.cycle();
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                 }
-            }
-            else if (item.getBaseItem().getName().startsWith("mnstr_rebreed"))
-            {
-                if (((MonsterplantPet) pet).isFullyGrown() && !((MonsterplantPet) pet).canBreed())
-                {
+            } else if (item.getBaseItem().getName().startsWith("mnstr_rebreed")) {
+                if (((MonsterplantPet) pet).isFullyGrown() && !((MonsterplantPet) pet).canBreed()) {
                     if (
-                            (item.getBaseItem().getName().equalsIgnoreCase("mnstr_rebreed")   && ((MonsterplantPet) pet).getRarity() <= 5) ||
-                            (item.getBaseItem().getName().equalsIgnoreCase("mnstr_rebreed_2") && ((MonsterplantPet) pet).getRarity() >= 6 && ((MonsterplantPet) pet).getRarity() <= 8) ||
-                            (item.getBaseItem().getName().equalsIgnoreCase("mnstr_rebreed_3") && ((MonsterplantPet) pet).getRarity() >= 9)
-                        )
+                            (item.getBaseItem().getName().equalsIgnoreCase("mnstr_rebreed") && ((MonsterplantPet) pet).getRarity() <= 5) ||
+                                    (item.getBaseItem().getName().equalsIgnoreCase("mnstr_rebreed_2") && ((MonsterplantPet) pet).getRarity() >= 6 && ((MonsterplantPet) pet).getRarity() <= 8) ||
+                                    (item.getBaseItem().getName().equalsIgnoreCase("mnstr_rebreed_3") && ((MonsterplantPet) pet).getRarity() >= 9)
+                            )
 
                     {
                         ((MonsterplantPet) pet).setCanBreed(true);

@@ -7,11 +7,11 @@ import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceState;
 import com.eu.habbo.habbohotel.users.inventory.*;
 import gnu.trove.set.hash.THashSet;
 
-public class HabboInventory
-{
+public class HabboInventory {
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_ITEMS = 10000;
-
+    private final THashSet<MarketPlaceOffer> items;
+    private final Habbo habbo;
     private WardrobeComponent wardrobeComponent;
     private BadgesComponent badgesComponent;
     private BotsComponent botsComponent;
@@ -19,131 +19,96 @@ public class HabboInventory
     private ItemsComponent itemsComponent;
     private PetsComponent petsComponent;
 
-    private final THashSet<MarketPlaceOffer> items;
-    private final Habbo habbo;
-
-    public HabboInventory(Habbo habbo)
-    {
+    public HabboInventory(Habbo habbo) {
         this.habbo = habbo;
-        try
-        {
+        try {
             this.badgesComponent = new BadgesComponent(this.habbo);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
-        try
-        {
+        try {
             this.botsComponent = new BotsComponent(this.habbo);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
-        try
-        {
+        try {
             this.effectsComponent = new EffectsComponent(this.habbo);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
-        try
-        {
+        try {
             this.itemsComponent = new ItemsComponent(this, this.habbo);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
-        try
-        {
+        try {
             this.petsComponent = new PetsComponent(this.habbo);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
-        try
-        {
+        try {
             this.wardrobeComponent = new WardrobeComponent(this.habbo);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
         this.items = MarketPlace.getOwnOffers(this.habbo);
     }
 
-    public WardrobeComponent getWardrobeComponent()
-    {
+    public WardrobeComponent getWardrobeComponent() {
         return this.wardrobeComponent;
     }
 
-    public void setWardrobeComponent(WardrobeComponent wardrobeComponent)
-    {
+    public void setWardrobeComponent(WardrobeComponent wardrobeComponent) {
         this.wardrobeComponent = wardrobeComponent;
     }
 
-    public BadgesComponent getBadgesComponent()
-    {
+    public BadgesComponent getBadgesComponent() {
         return this.badgesComponent;
     }
 
-    public void setBadgesComponent(BadgesComponent badgesComponent)
-    {
+    public void setBadgesComponent(BadgesComponent badgesComponent) {
         this.badgesComponent = badgesComponent;
     }
 
-    public BotsComponent getBotsComponent()
-    {
+    public BotsComponent getBotsComponent() {
         return this.botsComponent;
     }
 
-    public void setBotsComponent(BotsComponent botsComponent)
-    {
+    public void setBotsComponent(BotsComponent botsComponent) {
         this.botsComponent = botsComponent;
     }
 
-    public EffectsComponent getEffectsComponent()
-    {
+    public EffectsComponent getEffectsComponent() {
         return this.effectsComponent;
     }
 
-    public void setEffectsComponent(EffectsComponent effectsComponent)
-    {
+    public void setEffectsComponent(EffectsComponent effectsComponent) {
         this.effectsComponent = effectsComponent;
     }
 
-    public ItemsComponent getItemsComponent()
-    {
+    public ItemsComponent getItemsComponent() {
         return this.itemsComponent;
     }
 
-    public void setItemsComponent(ItemsComponent itemsComponent)
-    {
+    public void setItemsComponent(ItemsComponent itemsComponent) {
         this.itemsComponent = itemsComponent;
     }
 
-    public PetsComponent getPetsComponent()
-    {
+    public PetsComponent getPetsComponent() {
         return this.petsComponent;
     }
 
-    public void setPetsComponent(PetsComponent petsComponent)
-    {
+    public void setPetsComponent(PetsComponent petsComponent) {
         this.petsComponent = petsComponent;
     }
 
-    public void dispose()
-    {
+    public void dispose() {
         this.badgesComponent.dispose();
         this.botsComponent.dispose();
         this.effectsComponent.dispose();
@@ -159,47 +124,38 @@ public class HabboInventory
         this.wardrobeComponent = null;
     }
 
-    public void addMarketplaceOffer(MarketPlaceOffer marketPlaceOffer)
-    {
+    public void addMarketplaceOffer(MarketPlaceOffer marketPlaceOffer) {
         this.items.add(marketPlaceOffer);
     }
 
-    public void removeMarketplaceOffer(MarketPlaceOffer marketPlaceOffer)
-    {
+    public void removeMarketplaceOffer(MarketPlaceOffer marketPlaceOffer) {
         this.items.remove(marketPlaceOffer);
     }
 
-    public THashSet<MarketPlaceOffer> getMarketplaceItems()
-    {
+    public THashSet<MarketPlaceOffer> getMarketplaceItems() {
         return this.items;
     }
 
-    public int getSoldPriceTotal()
-    {
+    public int getSoldPriceTotal() {
         int i = 0;
-        for(MarketPlaceOffer offer : this.items)
-        {
-            if(offer.getState().equals(MarketPlaceState.SOLD))
-            {
-                i+= offer.getPrice();
+        for (MarketPlaceOffer offer : this.items) {
+            if (offer.getState().equals(MarketPlaceState.SOLD)) {
+                i += offer.getPrice();
             }
         }
         return i;
     }
 
-    public MarketPlaceOffer getOffer(int id)
-    {
-        for(MarketPlaceOffer offer : this.items)
-        {
-            if(offer.getOfferId() == id)
+    public MarketPlaceOffer getOffer(int id) {
+        for (MarketPlaceOffer offer : this.items) {
+            if (offer.getOfferId() == id)
                 return offer;
         }
 
         return null;
     }
 
-    public Habbo getHabbo()
-    {
+    public Habbo getHabbo() {
         return this.habbo;
     }
 }

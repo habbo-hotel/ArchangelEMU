@@ -4,20 +4,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PetBreedingCompleted extends MessageComposer
-{
+public class PetBreedingCompleted extends MessageComposer {
     private final int type;
     private final int race;
 
-    public PetBreedingCompleted(int type, int race)
-    {
+    public PetBreedingCompleted(int type, int race) {
         this.type = type;
         this.race = race;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PetBreedingCompleted);
         this.response.appendInt(this.type);
         this.response.appendInt(this.race);

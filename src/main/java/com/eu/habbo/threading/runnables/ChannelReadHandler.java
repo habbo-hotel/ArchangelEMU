@@ -8,39 +8,32 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
-public class ChannelReadHandler implements Runnable
-{
+public class ChannelReadHandler implements Runnable {
     private final ChannelHandlerContext ctx;
     private final Object msg;
 
-    public ChannelReadHandler(ChannelHandlerContext ctx, Object msg)
-    {
+    public ChannelReadHandler(ChannelHandlerContext ctx, Object msg) {
         this.ctx = ctx;
         this.msg = msg;
     }
 
-    public void run()
-    {
+    public void run() {
         ByteBuf m = (ByteBuf) this.msg;
         int length = m.readInt();
         short header = m.readShort();
         GameClient client = this.ctx.channel().attr(GameClientManager.CLIENT).get();
 
-        if (client != null)
-        {
+        if (client != null) {
             int count = 0;
             int timestamp = Emulator.getIntUnixTimestamp();
-            if (timestamp - client.lastPacketCounterCleared > 1)
-            {
+            if (timestamp - client.lastPacketCounterCleared > 1) {
                 client.incomingPacketCounter.clear();
                 client.lastPacketCounterCleared = timestamp;
-            } else
-            {
+            } else {
                 count = client.incomingPacketCounter.getOrDefault(header, 0);
             }
 
-            if (count <= 10)
-            {
+            if (count <= 10) {
                 count++;
                 client.incomingPacketCounter.put((int) header, count);
                 ByteBuf body = Unpooled.wrappedBuffer(m.readBytes(m.readableBytes()));

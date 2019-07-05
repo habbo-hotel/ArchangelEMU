@@ -8,29 +8,23 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
-public class ActionEat extends PetAction
-{
-    public ActionEat()
-    {
+public class ActionEat extends PetAction {
+    public ActionEat() {
         super(null, true);
 
         this.statusToSet.add(RoomUnitStatus.EAT);
     }
 
     @Override
-    public boolean apply(Pet pet, Habbo habbo, String[] data)
-    {
+    public boolean apply(Pet pet, Habbo habbo, String[] data) {
         //Eat
-        if(pet.getLevelHunger() > 40)
-        {
+        if (pet.getLevelHunger() > 40) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.HUNGRY));
             Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.EAT, null, false), 500);
             pet.eat();
 
             return true;
-        }
-        else
-        {
+        } else {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
             return false;
         }

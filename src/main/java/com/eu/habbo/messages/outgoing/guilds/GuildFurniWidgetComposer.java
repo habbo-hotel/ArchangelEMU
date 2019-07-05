@@ -8,22 +8,19 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuildFurniWidgetComposer extends MessageComposer
-{
+public class GuildFurniWidgetComposer extends MessageComposer {
     private final HabboItem item;
     private final Guild guild;
     private final Habbo habbo;
 
-    public GuildFurniWidgetComposer(Habbo habbo, Guild guild, HabboItem item)
-    {
+    public GuildFurniWidgetComposer(Habbo habbo, Guild guild, HabboItem item) {
         this.habbo = habbo;
         this.item = item;
         this.guild = guild;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuildFurniWidgetComposer);
         this.response.appendInt(item.getId());
         this.response.appendInt(this.guild.getId());

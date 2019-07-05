@@ -25,24 +25,20 @@ import java.net.InetSocketAddress;
 import java.sql.ResultSet;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class Habbo implements Runnable
-{
-    private GameClient client;
-
+public class Habbo implements Runnable {
     private final HabboInfo habboInfo;
     private final HabboStats habboStats;
     private final Messenger messenger;
     private final HabboInventory habboInventory;
+    private GameClient client;
     private RoomUnit roomUnit;
 
     private volatile boolean update;
     private volatile boolean disconnected = false;
     private volatile boolean disconnecting = false;
 
-    public Habbo(ResultSet set)
-    {
+    public Habbo(ResultSet set) {
         this.client = null;
         this.habboInfo = new HabboInfo(set);
         this.habboStats = HabboStats.load(this.habboInfo);
@@ -57,78 +53,63 @@ public class Habbo implements Runnable
         this.update = false;
     }
 
-    public boolean isOnline()
-    {
+    public boolean isOnline() {
         return this.habboInfo.isOnline();
     }
 
-    void isOnline(boolean value)
-    {
+    void isOnline(boolean value) {
         this.habboInfo.setOnline(value);
         this.update();
     }
 
-    void update()
-    {
+    void update() {
         this.update = true;
         this.run();
     }
 
-    void needsUpdate(boolean value)
-    {
+    void needsUpdate(boolean value) {
         this.update = value;
     }
 
-    boolean needsUpdate()
-    {
+    boolean needsUpdate() {
         return this.update;
     }
 
-    public Messenger getMessenger()
-    {
+    public Messenger getMessenger() {
         return this.messenger;
     }
 
-    public HabboInfo getHabboInfo()
-    {
+    public HabboInfo getHabboInfo() {
         return this.habboInfo;
     }
 
-    public HabboStats getHabboStats()
-    {
+    public HabboStats getHabboStats() {
         return this.habboStats;
     }
 
-    public HabboInventory getInventory()
-    {
+    public HabboInventory getInventory() {
         return this.habboInventory;
     }
 
-    public RoomUnit getRoomUnit()
-    {
+    public RoomUnit getRoomUnit() {
         return this.roomUnit;
     }
 
-    public void setRoomUnit(RoomUnit roomUnit)
-    {
+    public void setRoomUnit(RoomUnit roomUnit) {
         this.roomUnit = roomUnit;
     }
 
-    public GameClient getClient()
-    {
+    public GameClient getClient() {
         return this.client;
     }
 
-    public void setClient(GameClient client)
-    {
+    public void setClient(GameClient client) {
         this.client = client;
     }
 
 
-    public void connect()
-    {
-        if (!Emulator.getConfig().getBoolean("networking.tcp.proxy"))
-        {
+    public void connect() {
+        if (!Emulator.getConfig().getBoolean("networking.tcp.proxy")) {
             this.habboInfo.setIpLogin(((InetSocketAddress) this.client.getChannel().remoteAddress()).getAddress().getHostAddress());
         }
 
@@ -142,11 +123,9 @@ public class Habbo implements Runnable
     }
 
 
-    public synchronized void disconnect()
-    {
-        if (!Emulator.isShuttingDown)
-        {
-            if(Emulator.getPluginManager().fireEvent(new UserDisconnectEvent(this)).isCancelled()) return;
+    public synchronized void disconnect() {
+        if (!Emulator.isShuttingDown) {
+            if (Emulator.getPluginManager().fireEvent(new UserDisconnectEvent(this)).isCancelled()) return;
         }
 
         if (this.disconnected || this.disconnecting)
@@ -154,28 +133,22 @@ public class Habbo implements Runnable
 
         this.disconnecting = true;
 
-        try
-        {
-            if (this.getHabboInfo().getCurrentRoom() != null)
-            {
+        try {
+            if (this.getHabboInfo().getCurrentRoom() != null) {
                 Emulator.getGameEnvironment().getRoomManager().leaveRoom(this, this.getHabboInfo().getCurrentRoom());
             }
-            if (this.getHabboInfo().getRoomQueueId() > 0)
-            {
+            if (this.getHabboInfo().getRoomQueueId() > 0) {
                 Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getHabboInfo().getRoomQueueId());
 
-                if (room != null)
-                {
+                if (room != null) {
                     room.removeFromQueue(this);
                 }
             }
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
-        try
-        {
+        try {
             Emulator.getGameEnvironment().getGuideManager().userLogsOut(this);
             this.isOnline(false);
             this.needsUpdate(true);
@@ -187,12 +160,10 @@ public class Habbo implements Runnable
             AchievementManager.saveAchievements(this);
 
             this.habboStats.dispose();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
             return;
-        } finally
-        {
+        } finally {
             Emulator.getGameEnvironment().getRoomManager().unloadRoomsForHabbo(this);
             Emulator.getGameEnvironment().getHabboManager().removeHabbo(this);
         }
@@ -201,30 +172,25 @@ public class Habbo implements Runnable
     }
 
     @Override
-    public void run()
-    {
-        if (this.needsUpdate())
-        {
+    public void run() {
+        if (this.needsUpdate()) {
             this.habboInfo.run();
             this.needsUpdate(false);
         }
     }
 
 
-    public boolean hasPermission(String key)
-    {
+    public boolean hasPermission(String key) {
         return this.hasPermission(key, false);
     }
 
 
-    public boolean hasPermission(String key, boolean hasRoomRights)
-    {
+    public boolean hasPermission(String key, boolean hasRoomRights) {
         return Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this, key, hasRoomRights);
     }
 
 
-    public void giveCredits(int credits)
-    {
+    public void giveCredits(int credits) {
         if (credits == 0)
             return;
 
@@ -237,8 +203,7 @@ public class Habbo implements Runnable
     }
 
 
-    public void givePixels(int pixels)
-    {
+    public void givePixels(int pixels) {
         if (pixels == 0)
             return;
 
@@ -252,14 +217,12 @@ public class Habbo implements Runnable
     }
 
 
-    public void givePoints(int points)
-    {
+    public void givePoints(int points) {
         this.givePoints(Emulator.getConfig().getInt("seasonal.primary.type"), points);
     }
 
 
-    public void givePoints(int type, int points)
-    {
+    public void givePoints(int type, int points) {
         if (points == 0)
             return;
 
@@ -272,145 +235,119 @@ public class Habbo implements Runnable
     }
 
 
-    public void whisper(String message)
-    {
+    public void whisper(String message) {
         this.whisper(message, this.habboStats.chatColor);
     }
 
 
-    public void whisper(String message, RoomChatMessageBubbles bubble)
-    {
-        if (this.getRoomUnit().isInRoom())
-        {
+    public void whisper(String message, RoomChatMessageBubbles bubble) {
+        if (this.getRoomUnit().isInRoom()) {
             this.client.sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(message, this.client.getHabbo().getRoomUnit(), bubble)));
         }
     }
 
 
-    public void talk(String message)
-    {
+    public void talk(String message) {
         this.talk(message, this.habboStats.chatColor);
     }
 
 
-    public void talk(String message, RoomChatMessageBubbles bubble)
-    {
-        if (this.getRoomUnit().isInRoom())
-        {
+    public void talk(String message, RoomChatMessageBubbles bubble) {
+        if (this.getRoomUnit().isInRoom()) {
             this.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserTalkComposer(new RoomChatMessage(message, this.client.getHabbo().getRoomUnit(), bubble)).compose());
         }
     }
 
 
-    public void shout(String message)
-    {
+    public void shout(String message) {
         this.shout(message, this.habboStats.chatColor);
     }
 
 
-    public void shout(String message, RoomChatMessageBubbles bubble)
-    {
-        if (this.getRoomUnit().isInRoom())
-        {
+    public void shout(String message, RoomChatMessageBubbles bubble) {
+        if (this.getRoomUnit().isInRoom()) {
             this.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserShoutComposer(new RoomChatMessage(message, this.client.getHabbo().getRoomUnit(), bubble)).compose());
         }
     }
 
 
-    public void alert(String message)
-    {
-        if (Emulator.getConfig().getBoolean("hotel.alert.oldstyle"))
-        {
+    public void alert(String message) {
+        if (Emulator.getConfig().getBoolean("hotel.alert.oldstyle")) {
             this.client.sendResponse(new MessagesForYouComposer(new String[]{message}));
-        }
-        else
-        {
+        } else {
             this.client.sendResponse(new GenericAlertComposer(message));
         }
     }
 
 
-    public void alert(String[] messages)
-    {
+    public void alert(String[] messages) {
         this.client.sendResponse(new MessagesForYouComposer(messages));
     }
 
 
-    public void alertWithUrl(String message, String url)
-    {
+    public void alertWithUrl(String message, String url) {
         this.client.sendResponse(new StaffAlertWithLinkComposer(message, url));
     }
 
 
-    public void goToRoom(int id)
-    {
+    public void goToRoom(int id) {
         this.client.sendResponse(new ForwardToRoomComposer(id));
     }
 
 
-    public void addFurniture(HabboItem item)
-    {
+    public void addFurniture(HabboItem item) {
         this.habboInventory.getItemsComponent().addItem(item);
         this.client.sendResponse(new AddHabboItemComposer(item));
         this.client.sendResponse(new InventoryRefreshComposer());
     }
 
 
-    public void addFurniture(THashSet<HabboItem> items)
-    {
+    public void addFurniture(THashSet<HabboItem> items) {
         this.habboInventory.getItemsComponent().addItems(items);
         this.client.sendResponse(new AddHabboItemComposer(items));
         this.client.sendResponse(new InventoryRefreshComposer());
     }
 
 
-    public void removeFurniture(HabboItem item)
-    {
+    public void removeFurniture(HabboItem item) {
         this.habboInventory.getItemsComponent().removeHabboItem(item);
         this.client.sendResponse(new RemoveHabboItemComposer(item.getId()));
     }
 
 
-    public void addBot(Bot bot)
-    {
+    public void addBot(Bot bot) {
         this.habboInventory.getBotsComponent().addBot(bot);
         this.client.sendResponse(new AddBotComposer(bot));
     }
 
 
-    public void removeBot(Bot bot)
-    {
+    public void removeBot(Bot bot) {
         this.habboInventory.getBotsComponent().removeBot(bot);
         this.client.sendResponse(new RemoveBotComposer(bot));
     }
 
 
-    public void deleteBot(Bot bot)
-    {
+    public void deleteBot(Bot bot) {
         this.removeBot(bot);
         bot.getRoom().removeBot(bot);
         Emulator.getGameEnvironment().getBotManager().deleteBot(bot);
     }
 
 
-    public void addPet(Pet pet)
-    {
+    public void addPet(Pet pet) {
         this.habboInventory.getPetsComponent().addPet(pet);
         this.client.sendResponse(new AddPetComposer(pet));
     }
 
 
-    public void removePet(Pet pet)
-    {
+    public void removePet(Pet pet) {
         this.habboInventory.getPetsComponent().removePet(pet);
         this.client.sendResponse(new RemovePetComposer(pet));
     }
 
 
-    public boolean addBadge(String code)
-    {
-        if (this.habboInventory.getBadgesComponent().getBadge(code) == null)
-        {
+    public boolean addBadge(String code) {
+        if (this.habboInventory.getBadgesComponent().getBadge(code) == null) {
             HabboBadge badge = BadgesComponent.createBadge(code, this);
             this.habboInventory.getBadgesComponent().addBadge(badge);
             this.client.sendResponse(new AddUserBadgeComposer(badge));
@@ -429,62 +366,49 @@ public class Habbo implements Runnable
     }
 
 
-    public void deleteBadge(HabboBadge badge)
-    {
-        if (badge != null)
-        {
+    public void deleteBadge(HabboBadge badge) {
+        if (badge != null) {
             this.habboInventory.getBadgesComponent().removeBadge(badge);
             BadgesComponent.deleteBadge(this.getHabboInfo().getId(), badge.getCode());
             this.client.sendResponse(new InventoryBadgesComposer(this));
         }
     }
 
-    public void mute(int seconds)
-    {
-        if (!this.hasPermission("acc_no_mute"))
-        {
+    public void mute(int seconds) {
+        if (!this.hasPermission("acc_no_mute")) {
             int remaining = this.habboStats.addMuteTime(seconds);
             this.client.sendResponse(new FloodCounterComposer(remaining));
             this.client.sendResponse(new MutedWhisperComposer(remaining));
 
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-            if (room != null)
-            {
+            if (room != null) {
                 room.sendComposer(new RoomUserIgnoredComposer(this, RoomUserIgnoredComposer.MUTED).compose());
             }
         }
     }
 
-    public void unMute()
-    {
+    public void unMute() {
         this.habboStats.unMute();
         this.client.sendResponse(new FloodCounterComposer(3));
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-        if (room != null)
-        {
+        if (room != null) {
             room.sendComposer(new RoomUserIgnoredComposer(this, RoomUserIgnoredComposer.UNIGNORED).compose());
         }
     }
 
-    public int noobStatus()
-    {
+    public int noobStatus() {
 
-            return 1;
+        return 1;
 
     }
 
-    public void clearCaches()
-    {
+    public void clearCaches() {
         int timestamp = Emulator.getIntUnixTimestamp();
         THashMap<Integer, List<Integer>> newLog = new THashMap<>();
-        for (Map.Entry<Integer, List<Integer>> ltdLog : this.habboStats.ltdPurchaseLog.entrySet())
-        {
-            for (Integer time : ltdLog.getValue())
-            {
-                if (time > timestamp)
-                {
-                    if (!newLog.containsKey(ltdLog.getKey()))
-                    {
+        for (Map.Entry<Integer, List<Integer>> ltdLog : this.habboStats.ltdPurchaseLog.entrySet()) {
+            for (Integer time : ltdLog.getValue()) {
+                if (time > timestamp) {
+                    if (!newLog.containsKey(ltdLog.getKey())) {
                         newLog.put(ltdLog.getKey(), new ArrayList<>());
                     }
 
@@ -497,9 +421,8 @@ public class Habbo implements Runnable
     }
 
 
-    public void respect(Habbo target)
-    {
-        if(target != null && target != this.client.getHabbo())
+    public void respect(Habbo target) {
+        if (target != null && target != this.client.getHabbo())
 
         {
             target.getHabboStats().respectPointsReceived++;

@@ -10,21 +10,17 @@ import com.eu.habbo.threading.runnables.RoomUnitWalkToRoomUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoomUserGiveHandItemEvent extends MessageHandler
-{
+public class RoomUserGiveHandItemEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int userId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if(room != null)
-        {
+        if (room != null) {
             Habbo target = room.getHabbo(userId);
 
-            if(target != null)
-            {
+            if (target != null) {
                 List<Runnable> executable = new ArrayList<>();
                 executable.add(new HabboGiveHandItemToHabbo(this.client.getHabbo(), target));
                 Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(this.client.getHabbo().getRoomUnit(), target.getRoomUnit(), this.client.getHabbo().getHabboInfo().getCurrentRoom(), executable, executable));

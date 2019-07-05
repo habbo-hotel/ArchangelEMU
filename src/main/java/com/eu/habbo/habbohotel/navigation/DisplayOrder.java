@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.navigation;
 
-public enum DisplayOrder
-{
+public enum DisplayOrder {
     ORDER_NUM,
     ACTIVITY
 }

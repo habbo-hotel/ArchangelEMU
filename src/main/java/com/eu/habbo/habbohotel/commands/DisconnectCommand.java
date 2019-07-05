@@ -5,38 +5,31 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 
-public class DisconnectCommand extends Command
-{
-    public DisconnectCommand()
-    {
+public class DisconnectCommand extends Command {
+    public DisconnectCommand() {
         super("cmd_disconnect", Emulator.getTexts().getValue("commands.keys.cmd_disconnect").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
-        if(params.length < 2)
-        {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (params.length < 2) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_disconnect.forgot_username"), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
-        if(params[1].toLowerCase().equals(gameClient.getHabbo().getHabboInfo().getUsername().toLowerCase()))
-        {
+        if (params[1].toLowerCase().equals(gameClient.getHabbo().getHabboInfo().getUsername().toLowerCase())) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_disconnect.disconnect_self"), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
         Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[1]);
 
-        if(target == null)
-        {
+        if (target == null) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_disconnect.user_offline"), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
-        if (target.getHabboInfo().getRank().getId() > gameClient.getHabbo().getHabboInfo().getRank().getId())
-        {
+        if (target.getHabboInfo().getRank().getId() > gameClient.getHabbo().getHabboInfo().getRank().getId()) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_disconnect.higher_rank"), RoomChatMessageBubbles.ALERT);
             return true;
         }

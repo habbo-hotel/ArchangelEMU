@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class WiredOpenComposer extends MessageComposer
-{
+public class WiredOpenComposer extends MessageComposer {
     private final HabboItem item;
 
-    public WiredOpenComposer(HabboItem item)
-    {
+    public WiredOpenComposer(HabboItem item) {
         this.item = item;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.WiredOpenComposer);
         this.response.appendInt(this.item.getId());
         return this.response;

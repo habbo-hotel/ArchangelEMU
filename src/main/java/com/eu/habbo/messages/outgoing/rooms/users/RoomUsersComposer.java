@@ -10,38 +10,32 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.Collection;
 
-public class RoomUsersComposer extends MessageComposer
-{
+public class RoomUsersComposer extends MessageComposer {
     private Habbo habbo;
     private Collection<Habbo> habbos;
     private Bot bot;
     private Collection<Bot> bots;
 
-    public RoomUsersComposer(Habbo habbo)
-    {
+    public RoomUsersComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
-    public RoomUsersComposer(Collection<Habbo> habbos)
-    {
+    public RoomUsersComposer(Collection<Habbo> habbos) {
         this.habbos = habbos;
     }
 
-    public RoomUsersComposer(Bot bot)
-    {
+    public RoomUsersComposer(Bot bot) {
         this.bot = bot;
     }
 
-    public RoomUsersComposer(Collection<Bot> bots, boolean isBot)
-    {
+    public RoomUsersComposer(Collection<Bot> bots, boolean isBot) {
         this.bots = bots;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomUsersComposer);
-        if(this.habbo != null) {
+        if (this.habbo != null) {
             this.response.appendInt(1);
             this.response.appendInt(this.habbo.getHabboInfo().getId());
             this.response.appendString(this.habbo.getHabboInfo().getUsername());
@@ -58,11 +52,10 @@ public class RoomUsersComposer extends MessageComposer
             this.response.appendInt(this.habbo.getHabboStats().guild != 0 ? 1 : -1);
 
             String name = "";
-            if(this.habbo.getHabboStats().guild != 0)
-            {
+            if (this.habbo.getHabboStats().guild != 0) {
                 Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(this.habbo.getHabboStats().guild);
 
-                if(g != null)
+                if (g != null)
                     name = g.getName();
             }
             this.response.appendString(name);
@@ -70,14 +63,10 @@ public class RoomUsersComposer extends MessageComposer
             this.response.appendString("");
             this.response.appendInt(this.habbo.getHabboStats().getAchievementScore());
             this.response.appendBoolean(true);
-        }
-        else if(this.habbos != null)
-        {
+        } else if (this.habbos != null) {
             this.response.appendInt(this.habbos.size());
-            for (Habbo habbo : this.habbos)
-            {
-                if (habbo != null)
-                {
+            for (Habbo habbo : this.habbos) {
+                if (habbo != null) {
                     this.response.appendInt(habbo.getHabboInfo().getId());
                     this.response.appendString(habbo.getHabboInfo().getUsername());
                     this.response.appendString(habbo.getHabboInfo().getMotto());
@@ -92,8 +81,7 @@ public class RoomUsersComposer extends MessageComposer
                     this.response.appendInt(habbo.getHabboStats().guild != 0 ? habbo.getHabboStats().guild : -1);
                     this.response.appendInt(habbo.getHabboStats().guild != 0 ? habbo.getHabboStats().guild : -1);
                     String name = "";
-                    if (habbo.getHabboStats().guild != 0)
-                    {
+                    if (habbo.getHabboStats().guild != 0) {
                         Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(habbo.getHabboStats().guild);
 
                         if (g != null)
@@ -105,9 +93,7 @@ public class RoomUsersComposer extends MessageComposer
                     this.response.appendBoolean(true);
                 }
             }
-        }
-        else if(this.bot != null)
-        {
+        } else if (this.bot != null) {
             this.response.appendInt(1);
             this.response.appendInt(0 - this.bot.getId());
             this.response.appendString(this.bot.getName());
@@ -133,12 +119,9 @@ public class RoomUsersComposer extends MessageComposer
             this.response.appendShort(7);
             this.response.appendShort(8);
             this.response.appendShort(9);
-        }
-        else if(this.bots != null)
-        {
+        } else if (this.bots != null) {
             this.response.appendInt(this.bots.size());
-            for(Bot bot : this.bots)
-            {
+            for (Bot bot : this.bots) {
                 this.response.appendInt(0 - bot.getId());
                 this.response.appendString(bot.getName());
                 this.response.appendString(bot.getMotto());

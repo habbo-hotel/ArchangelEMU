@@ -22,13 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class MonsterplantPet extends Pet implements IPetLook
-{
-    public static int growTime = (30 * 60);
-    public static int timeToLive = (3 * 24 * 60 * 60); //3 days
-
-    public static final Map<Integer, Pair<String, Integer>> bodyRarity = new LinkedHashMap<Integer, Pair<String, Integer>>()
-    {
+public class MonsterplantPet extends Pet implements IPetLook {
+    public static final Map<Integer, Pair<String, Integer>> bodyRarity = new LinkedHashMap<Integer, Pair<String, Integer>>() {
         {
             this.put(1, new Pair<>("Blungon", 0));
             this.put(5, new Pair<>("Squarg", 0));
@@ -44,9 +39,7 @@ public class MonsterplantPet extends Pet implements IPetLook
             this.put(12, new Pair<>("Snozzle", 5)); //Rarity???
         }
     };
-
-    public static final Map<Integer, Pair<String, Integer>> colorRarity = new LinkedHashMap<Integer, Pair<String, Integer>>()
-    {
+    public static final Map<Integer, Pair<String, Integer>> colorRarity = new LinkedHashMap<Integer, Pair<String, Integer>>() {
         {
             this.put(0, new Pair<>("Aenueus", 0));
             this.put(9, new Pair<>("Fulvus", 0));
@@ -61,29 +54,25 @@ public class MonsterplantPet extends Pet implements IPetLook
             this.put(4, new Pair<>("Cyaneus", 5));
         }
     };
-
     public static final ArrayList<Pair<String, Integer>> indexedBody = new ArrayList<>(MonsterplantPet.bodyRarity.values());
-
     public static final ArrayList<Pair<String, Integer>> indexedColors = new ArrayList<>(MonsterplantPet.colorRarity.values());
-
-    private int type;
-    private int hue;
+    public static int growTime = (30 * 60);
+    public static int timeToLive = (3 * 24 * 60 * 60); //3 days
     private final int nose;
     private final int noseColor;
     private final int eyes;
     private final int eyesColor;
     private final int mouth;
     private final int mouthColor;
+    public String look;
+    private int type;
+    private int hue;
     private int deathTimestamp = Emulator.getIntUnixTimestamp() + timeToLive;
     private boolean canBreed = true;
     private boolean publiclyBreedable = false;
-
     private int growthStage = 0;
 
-    public String look;
-
-    public MonsterplantPet(ResultSet set) throws SQLException
-    {
+    public MonsterplantPet(ResultSet set) throws SQLException {
         super(set);
         this.type = set.getInt("mp_type");
         this.hue = set.getInt("mp_color");
@@ -98,8 +87,7 @@ public class MonsterplantPet extends Pet implements IPetLook
         this.canBreed = set.getString("mp_breedable").equals("1");
     }
 
-    public MonsterplantPet(int userId, int type, int hue, int nose, int noseColor, int mouth, int mouthColor, int eyes, int eyesColor)
-    {
+    public MonsterplantPet(int userId, int type, int hue, int nose, int noseColor, int mouth, int mouthColor, int eyes, int eyesColor) {
         super(16, 0, "", "", userId);
 
         this.type = type;
@@ -113,17 +101,14 @@ public class MonsterplantPet extends Pet implements IPetLook
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         String name = "Unknownis";
 
-        if (colorRarity.containsKey(this.hue))
-        {
+        if (colorRarity.containsKey(this.hue)) {
             name = colorRarity.get(this.hue).getKey();
         }
 
-        if (bodyRarity.containsKey(this.type))
-        {
+        if (bodyRarity.containsKey(this.type)) {
             name += " " + bodyRarity.get(this.type).getKey();
         }
 
@@ -131,14 +116,11 @@ public class MonsterplantPet extends Pet implements IPetLook
     }
 
     @Override
-    public void run()
-    {
-        if(this.needsUpdate)
-        {
+    public void run() {
+        if (this.needsUpdate) {
             super.run();
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET mp_type = ?, mp_color = ?, mp_nose = ?, mp_eyes = ?, mp_mouth = ?, mp_nose_color = ?, mp_eyes_color = ?, mp_mouth_color = ?, mp_death_timestamp = ?, mp_breedable = ?, mp_allow_breed = ? WHERE id = ?"))
-            {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET mp_type = ?, mp_color = ?, mp_nose = ?, mp_eyes = ?, mp_mouth = ?, mp_nose_color = ?, mp_eyes_color = ?, mp_mouth_color = ?, mp_death_timestamp = ?, mp_breedable = ?, mp_allow_breed = ? WHERE id = ?")) {
                 statement.setInt(1, this.type);
                 statement.setInt(2, this.hue);
                 statement.setInt(3, this.nose);
@@ -152,59 +134,44 @@ public class MonsterplantPet extends Pet implements IPetLook
                 statement.setString(11, this.publiclyBreedable ? "1" : "0");
                 statement.setInt(12, this.id);
                 statement.execute();
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
     @Override
-    public void cycle()
-    {
-        if (this.room != null && this.roomUnit != null)
-        {
-            if (this.isDead())
-            {
+    public void cycle() {
+        if (this.room != null && this.roomUnit != null) {
+            if (this.isDead()) {
                 this.roomUnit.removeStatus(RoomUnitStatus.GESTURE);
 
-                if (!this.roomUnit.hasStatus(RoomUnitStatus.RIP))
-                {
+                if (!this.roomUnit.hasStatus(RoomUnitStatus.RIP)) {
                     AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantGardenOfDeath"));
                 }
 
                 this.roomUnit.clearStatus();
                 this.roomUnit.setStatus(RoomUnitStatus.RIP, "");
                 this.packetUpdate = true;
-            }
-            else
-            {
+            } else {
                 int difference = Emulator.getIntUnixTimestamp() - this.created + 1;
-                if (difference >= growTime)
-                {
+                if (difference >= growTime) {
                     this.growthStage = 7;
                     boolean clear = false;
-                    for (RoomUnitStatus s : this.roomUnit.getStatusMap().keySet())
-                    {
-                        if (s.equals(RoomUnitStatus.GROW))
-                        {
+                    for (RoomUnitStatus s : this.roomUnit.getStatusMap().keySet()) {
+                        if (s.equals(RoomUnitStatus.GROW)) {
                             clear = true;
                         }
                     }
 
-                    if (clear)
-                    {
+                    if (clear) {
                         this.roomUnit.clearStatus();
                         this.packetUpdate = true;
                     }
-                }
-                else
-                {
+                } else {
                     int g = (int) Math.ceil(difference / (growTime / 7.0));
 
-                    if (g > this.growthStage)
-                    {
+                    if (g > this.growthStage) {
                         this.growthStage = g;
                         this.roomUnit.clearStatus();
                         this.roomUnit.setStatus(RoomUnitStatus.fromString("grw" + this.growthStage), "");
@@ -212,8 +179,7 @@ public class MonsterplantPet extends Pet implements IPetLook
                     }
                 }
 
-                if (Emulator.getRandom().nextInt(1000) < 10)
-                {
+                if (Emulator.getRandom().nextInt(1000) < 10) {
                     super.updateGesture(Emulator.getIntUnixTimestamp());
                     this.packetUpdate = true;
                 }
@@ -223,36 +189,31 @@ public class MonsterplantPet extends Pet implements IPetLook
         super.cycle();
     }
 
-    public int getType()
-    {
+    public int getType() {
         return this.type;
     }
 
-    public int getRarity()
-    {
-        if (bodyRarity.containsKey(this.type) && colorRarity.containsKey(this.hue))
-        {
+    public int getRarity() {
+        if (bodyRarity.containsKey(this.type) && colorRarity.containsKey(this.hue)) {
             return bodyRarity.get(this.type).getValue() + colorRarity.get(this.hue).getValue();
         }
         return 0;
     }
 
     @Override
-    public String getLook()
-    {
+    public String getLook() {
         return "16 0 FFFFFF " +
                 "5 " +
                 "0 -1 10 " +
-                "1 " + this.type  + " " + this.hue        + " " +
+                "1 " + this.type + " " + this.hue + " " +
                 "2 " + this.mouth + " " + this.mouthColor + " " +
-                "3 " + this.nose  + " " + this.noseColor  + " " +
-                "4 " + this.eyes  + " " + this.eyesColor;
+                "3 " + this.nose + " " + this.noseColor + " " +
+                "4 " + this.eyes + " " + this.eyesColor;
     }
 
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendInt(this.getId());
         message.appendString(this.getName());
         message.appendInt(this.petData.getType());
@@ -260,89 +221,75 @@ public class MonsterplantPet extends Pet implements IPetLook
         message.appendString(this.getLook().substring(5));
         message.appendInt(this.getRarity());
         message.appendInt(5);
-            message.appendInt(0);
-            message.appendInt(-1);
-            message.appendInt(10);
-            message.appendInt(1);
-            message.appendInt(this.type);
-            message.appendInt(this.hue);
-            message.appendInt(2);
-            message.appendInt(this.mouth);
-            message.appendInt(this.mouthColor);
-            message.appendInt(3);
-            message.appendInt(this.nose);
-            message.appendInt(this.noseColor);
-            message.appendInt(4);
-            message.appendInt(this.eyes);
-            message.appendInt(this.eyesColor);
+        message.appendInt(0);
+        message.appendInt(-1);
+        message.appendInt(10);
+        message.appendInt(1);
+        message.appendInt(this.type);
+        message.appendInt(this.hue);
+        message.appendInt(2);
+        message.appendInt(this.mouth);
+        message.appendInt(this.mouthColor);
+        message.appendInt(3);
+        message.appendInt(this.nose);
+        message.appendInt(this.noseColor);
+        message.appendInt(4);
+        message.appendInt(this.eyes);
+        message.appendInt(this.eyesColor);
 
         message.appendInt(this.growthStage);
     }
 
-    public int remainingTimeToLive()
-    {
+    public int remainingTimeToLive() {
         return Math.max(0, this.deathTimestamp - Emulator.getIntUnixTimestamp());
     }
 
-    public boolean isDead()
-    {
+    public boolean isDead() {
         return Emulator.getIntUnixTimestamp() >= this.deathTimestamp;
     }
 
-    public void setDeathTimestamp(int deathTimestamp)
-    {
+    public void setDeathTimestamp(int deathTimestamp) {
         this.deathTimestamp = deathTimestamp;
     }
 
-    public int getGrowthStage()
-    {
+    public int getGrowthStage() {
         return this.growthStage;
     }
 
-    public int remainingGrowTime()
-    {
-        if (this.growthStage == 7)
-        {
+    public int remainingGrowTime() {
+        if (this.growthStage == 7) {
             return 0;
         }
 
         return Math.max(0, growTime - (Emulator.getIntUnixTimestamp() - this.created));
     }
 
-    public boolean isFullyGrown()
-    {
+    public boolean isFullyGrown() {
         return this.growthStage == 7;
     }
 
-    public boolean canBreed()
-    {
+    public boolean canBreed() {
         return this.canBreed;
     }
 
-    public void setCanBreed(boolean canBreed)
-    {
+    public void setCanBreed(boolean canBreed) {
         this.canBreed = canBreed;
     }
 
-    public boolean breedable()
-    {
+    public boolean breedable() {
         return this.isFullyGrown() && this.canBreed && !this.isDead();
     }
 
-    public boolean isPubliclyBreedable()
-    {
+    public boolean isPubliclyBreedable() {
         return this.publiclyBreedable;
     }
 
-    public void setPubliclyBreedable(boolean isPubliclyBreedable)
-    {
+    public void setPubliclyBreedable(boolean isPubliclyBreedable) {
         this.publiclyBreedable = isPubliclyBreedable;
     }
 
-    public void breed(MonsterplantPet pet)
-    {
-        if (this.canBreed && pet.canBreed)
-        {
+    public void breed(MonsterplantPet pet) {
+        if (this.canBreed && pet.canBreed) {
             this.canBreed = false;
             this.publiclyBreedable = false;
 
@@ -363,27 +310,21 @@ public class MonsterplantPet extends Pet implements IPetLook
             Habbo ownerOne = this.room.getHabbo(this.getUserId());
             Habbo ownerTwo = null;
 
-            if (this.getUserId() != pet.getUserId())
-            {
+            if (this.getUserId() != pet.getUserId()) {
                 ownerTwo = this.room.getHabbo(pet.getUserId());
             }
 
             Item seedBase;
 
-            if (this.getRarity() < 8 || pet.getRarity() < 8 || Emulator.getRandom().nextInt(100) > this.getRarity() + pet.getRarity())
-            {
+            if (this.getRarity() < 8 || pet.getRarity() < 8 || Emulator.getRandom().nextInt(100) > this.getRarity() + pet.getRarity()) {
                 seedBase = Emulator.getGameEnvironment().getItemManager().getItem(Emulator.getConfig().getInt("monsterplant.seed.item_id"));
-            }
-            else
-            {
+            } else {
                 seedBase = Emulator.getGameEnvironment().getItemManager().getItem(Emulator.getConfig().getInt("monsterplant.seed_rare.item_id"));
             }
 
-            if (seedBase != null)
-            {
+            if (seedBase != null) {
                 HabboItem seed;
-                if (ownerOne != null)
-                {
+                if (ownerOne != null) {
                     AchievementManager.progressAchievement(ownerOne, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantBreeder"), 5);
                     seed = Emulator.getGameEnvironment().getItemManager().createItem(ownerOne.getHabboInfo().getId(), seedBase, 0, 0, "");
                     ownerOne.getInventory().getItemsComponent().addItem(seed);
@@ -391,8 +332,7 @@ public class MonsterplantPet extends Pet implements IPetLook
                     ownerOne.getClient().sendResponse(new InventoryRefreshComposer());
                 }
 
-                if (ownerTwo != null)
-                {
+                if (ownerTwo != null) {
                     AchievementManager.progressAchievement(ownerTwo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantBreeder"), 5);
                     seed = Emulator.getGameEnvironment().getItemManager().createItem(ownerTwo.getHabboInfo().getId(), seedBase, 0, 0, "");
                     ownerTwo.getInventory().getItemsComponent().addItem(seed);
@@ -404,15 +344,13 @@ public class MonsterplantPet extends Pet implements IPetLook
     }
 
     @Override
-    public int getMaxEnergy()
-    {
+    public int getMaxEnergy() {
         return MonsterplantPet.timeToLive;
     }
+
     @Override
-    public int getEnergy()
-    {
-        if (this.isDead())
-        {
+    public int getEnergy() {
+        if (this.isDead()) {
             return 100;
         }
 
@@ -420,18 +358,17 @@ public class MonsterplantPet extends Pet implements IPetLook
     }
 
     @Override
-    public void scratched(Habbo habbo)
-    {
+    public void scratched(Habbo habbo) {
         AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantTreater"), 5);
         this.setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.timeToLive);
+        this.addHappyness(10);
         this.addExperience(10);
         this.room.sendComposer(new PetStatusUpdateComposer(this).compose());
         this.room.sendComposer(new RoomPetRespectComposer(this, RoomPetRespectComposer.PET_TREATED).compose());
     }
 
     @Override
-    public boolean canWalk()
-    {
+    public boolean canWalk() {
         return false;
     }
 }

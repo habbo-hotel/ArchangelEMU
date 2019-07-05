@@ -10,24 +10,19 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.AddWallItemComposer;
 
-public class PostItPlaceEvent extends MessageHandler
-{
+public class PostItPlaceEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
         String location = this.packet.readString();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if(room != null)
-        {
-            if (room.hasRights(this.client.getHabbo()) || !room.getRoomSpecialTypes().getItemsOfType(InteractionStickyPole.class).isEmpty())
-            {
+        if (room != null) {
+            if (room.hasRights(this.client.getHabbo()) || !room.getRoomSpecialTypes().getItemsOfType(InteractionStickyPole.class).isEmpty()) {
                 HabboItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
 
-                if (item instanceof InteractionPostIt)
-                {
+                if (item instanceof InteractionPostIt) {
                     room.addHabboItem(item);
                     item.setExtradata("FFFF33");
                     item.setRoomId(this.client.getHabbo().getHabboInfo().getCurrentRoom().getId());
@@ -40,8 +35,7 @@ public class PostItPlaceEvent extends MessageHandler
                     item.setFromGift(false);
                     Emulator.getThreading().run(item);
 
-                    if (room.getOwnerId() != this.client.getHabbo().getHabboInfo().getId())
-                    {
+                    if (room.getOwnerId() != this.client.getHabbo().getHabboInfo().getId()) {
                         AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("NotesReceived"));
                         AchievementManager.progressAchievement(this.client.getHabbo().getHabboInfo().getId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("NotesLeft"));
                     }

@@ -3,18 +3,16 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 
-public class SnowWarsCompose1 extends MessageComposer
-{
+public class SnowWarsCompose1 extends MessageComposer {
     private final int header;
 
-    public SnowWarsCompose1(int header)
-    {
+    public SnowWarsCompose1(int header) {
         this.header = header;
     }
+
     //:test 1604 i:1 s:a i:10 i:2 i:3 i:4 s:1 i:3 i:10 i:1 s:Admin s:%look% s:M i:0 i:0 i:0 i:0
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(this.header);
         this.response.appendInt(1);
         this.response.appendString("SnowStorm level " + 9);

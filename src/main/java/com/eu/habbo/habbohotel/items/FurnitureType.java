@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.items;
 
-public enum FurnitureType
-{
+public enum FurnitureType {
     FLOOR("S"),
     WALL("I"),
     EFFECT("E"),
@@ -12,15 +11,12 @@ public enum FurnitureType
 
     public final String code;
 
-    FurnitureType(String code)
-    {
+    FurnitureType(String code) {
         this.code = code;
     }
 
-    public static FurnitureType fromString(String code)
-    {
-        switch (code.toUpperCase())
-        {
+    public static FurnitureType fromString(String code) {
+        switch (code.toUpperCase()) {
             case "S":
                 return FLOOR;
             case "I":

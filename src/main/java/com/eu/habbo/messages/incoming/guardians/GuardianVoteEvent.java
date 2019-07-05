@@ -5,33 +5,23 @@ import com.eu.habbo.habbohotel.guides.GuardianTicket;
 import com.eu.habbo.habbohotel.guides.GuardianVoteType;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class GuardianVoteEvent extends MessageHandler
-{
+public class GuardianVoteEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int voteType = this.packet.readInt();
 
         GuardianTicket ticket = Emulator.getGameEnvironment().getGuideManager().getTicketForGuardian(this.client.getHabbo());
 
-        if(ticket != null)
-        {
+        if (ticket != null) {
             GuardianVoteType type = GuardianVoteType.NOT_VOTED;
 
-            if(voteType == 0)
-            {
+            if (voteType == 0) {
                 type = GuardianVoteType.ACCEPTABLY;
-            }
-            else if(voteType == 1)
-            {
+            } else if (voteType == 1) {
                 type = GuardianVoteType.BADLY;
-            }
-            else if(voteType == 2)
-            {
+            } else if (voteType == 2) {
                 type = GuardianVoteType.AWFULLY;
-            }
-            else
-            {
+            } else {
                 Emulator.getLogging().logErrorLine("Uknown vote type: " + voteType);
             }
 

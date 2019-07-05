@@ -7,32 +7,30 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.ArrayList;
 
-public class YoutubeDisplayListComposer extends MessageComposer
-{
-    public final int itemId;
-    public final ArrayList<YoutubeManager.YoutubeItem> items;
+public class YoutubeDisplayListComposer extends MessageComposer {
+    private final int itemId;
+    private final ArrayList<YoutubeManager.YoutubePlaylist> playlists;
+    private final YoutubeManager.YoutubePlaylist currentPlaylist;
 
-    public YoutubeDisplayListComposer(int itemId, ArrayList<YoutubeManager.YoutubeItem> items)
-    {
+    public YoutubeDisplayListComposer(int itemId, ArrayList<YoutubeManager.YoutubePlaylist> playlists, YoutubeManager.YoutubePlaylist currentPlaylist) {
         this.itemId = itemId;
-        this.items = items;
+        this.playlists = playlists;
+        this.currentPlaylist = currentPlaylist;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.YoutubeDisplayListComposer);
         this.response.appendInt(this.itemId);
-        this.response.appendInt(this.items.size());
+        this.response.appendInt(this.playlists.size());
 
-        for (YoutubeManager.YoutubeItem item : this.items)
-        {
-            this.response.appendString(item.video);
-            this.response.appendString(item.title);
-            this.response.appendString(item.description);
+        for (YoutubeManager.YoutubePlaylist item : this.playlists) {
+            this.response.appendString(item.getId()); // playlist ID
+            this.response.appendString(item.getName()); // playlist title
+            this.response.appendString(item.getDescription()); // playlist description
         }
 
-        this.response.appendString("");
+        this.response.appendString(this.currentPlaylist == null ? "" : this.currentPlaylist.getId()); // current playlist ID
         return this.response;
     }
 }

@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.wired;
 
-public enum WiredEffectType
-{
+public enum WiredEffectType {
     TOGGLE_STATE(0),
     RESET_TIMERS(1),
     MATCH_SSHOT(3),
@@ -31,8 +30,7 @@ public enum WiredEffectType
 
     public final int code;
 
-    WiredEffectType(int code)
-    {
+    WiredEffectType(int code) {
         this.code = code;
     }
 }

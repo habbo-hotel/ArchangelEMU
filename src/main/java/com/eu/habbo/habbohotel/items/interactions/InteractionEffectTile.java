@@ -11,81 +11,64 @@ import com.eu.habbo.habbohotel.users.HabboGender;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionEffectTile extends InteractionPressurePlate
-{
-    public InteractionEffectTile(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionEffectTile extends InteractionPressurePlate {
+    public InteractionEffectTile(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionEffectTile(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionEffectTile(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return true;
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalk(roomUnit, room, objects);
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        if (roomUnit.getRoomUnitType() == RoomUnitType.USER)
-        {
+        if (roomUnit.getRoomUnitType() == RoomUnitType.USER) {
             Habbo habbo = room.getHabbo(roomUnit);
 
-            if (habbo != null)
-            {
+            if (habbo != null) {
                 this.giveEffect(room, roomUnit, habbo.getHabboInfo().getGender());
             }
-        }
-        else if (roomUnit.getRoomUnitType() == RoomUnitType.BOT)
-        {
+        } else if (roomUnit.getRoomUnitType() == RoomUnitType.BOT) {
             Bot bot = room.getBot(roomUnit);
 
-            if (bot != null)
-            {
+            if (bot != null) {
                 this.giveEffect(room, roomUnit, bot.getGender());
             }
         }
     }
 
-    private void giveEffect(Room room, RoomUnit roomUnit, HabboGender gender)
-    {
-        if (gender.equals(HabboGender.M))
-        {
+    private void giveEffect(Room room, RoomUnit roomUnit, HabboGender gender) {
+        if (gender.equals(HabboGender.M)) {
             room.giveEffect(roomUnit, this.getBaseItem().getEffectM(), -1);
-        } else
-        {
+        } else {
             room.giveEffect(roomUnit, this.getBaseItem().getEffectF(), -1);
         }
     }
 
     @Override
-    public boolean isUsable()
-    {
+    public boolean isUsable() {
         return false;
     }
 }

@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PetErrorComposer extends MessageComposer
-{
+public class PetErrorComposer extends MessageComposer {
     public static final int ROOM_ERROR_PETS_FORBIDDEN_IN_HOTEL = 0;
     public static final int ROOM_ERROR_PETS_FORBIDDEN_IN_FLAT = 1;
     public static final int ROOM_ERROR_MAX_PETS = 2;
@@ -15,14 +14,12 @@ public class PetErrorComposer extends MessageComposer
 
     private final int errorCode;
 
-    public PetErrorComposer(int errorCode)
-    {
+    public PetErrorComposer(int errorCode) {
         this.errorCode = errorCode;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PetErrorComposer);
         this.response.appendInt(this.errorCode);
         return this.response;

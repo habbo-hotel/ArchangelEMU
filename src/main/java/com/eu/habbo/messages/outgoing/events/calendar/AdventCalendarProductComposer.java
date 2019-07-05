@@ -5,20 +5,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class AdventCalendarProductComposer extends MessageComposer
-{
+public class AdventCalendarProductComposer extends MessageComposer {
     public final boolean visible;
     public final CalendarRewardObject rewardObject;
 
-    public AdventCalendarProductComposer(boolean visible, CalendarRewardObject rewardObject)
-    {
+    public AdventCalendarProductComposer(boolean visible, CalendarRewardObject rewardObject) {
         this.visible = visible;
         this.rewardObject = rewardObject;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.AdventCalendarProductComposer);
         this.response.appendBoolean(this.visible);
         this.response.appendString(this.rewardObject.getName());

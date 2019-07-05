@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.catalog.marketplace;
 
-public enum MarketPlaceState
-{
+public enum MarketPlaceState {
 
     OPEN(1),
 
@@ -13,27 +12,25 @@ public enum MarketPlaceState
 
     private final int state;
 
-    MarketPlaceState(int state)
-    {
+    MarketPlaceState(int state) {
         this.state = state;
     }
 
-    public int getState()
-    {
-        return this.state;
-    }
-
-
-    public static MarketPlaceState getType(int type)
-    {
-        switch(type)
-        {
-            case 1: return OPEN;
-            case 2: return SOLD;
-            case 3: return CLOSED;
+    public static MarketPlaceState getType(int type) {
+        switch (type) {
+            case 1:
+                return OPEN;
+            case 2:
+                return SOLD;
+            case 3:
+                return CLOSED;
         }
 
         return CLOSED;
+    }
+
+    public int getState() {
+        return this.state;
     }
 
 }

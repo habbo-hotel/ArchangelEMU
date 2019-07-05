@@ -8,20 +8,16 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class PrivateRoomsComposer extends MessageComposer
-{
+public class PrivateRoomsComposer extends MessageComposer {
     private final List<Room> rooms;
 
-    public PrivateRoomsComposer(List<Room> rooms)
-    {
+    public PrivateRoomsComposer(List<Room> rooms) {
         this.rooms = rooms;
     }
 
     @Override
-    public ServerMessage compose()
-    {
-        try
-        {
+    public ServerMessage compose() {
+        try {
             this.response.init(Outgoing.PrivateRoomsComposer);
 
             this.response.appendInt(2);
@@ -45,9 +41,7 @@ public class PrivateRoomsComposer extends MessageComposer
             this.response.appendInt(1);
             this.response.appendString("E");
             return this.response;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
         return null;

@@ -13,16 +13,13 @@ import gnu.trove.procedure.TIntIntProcedure;
 
 import java.util.ArrayList;
 
-public class RedeemCommand extends Command
-{
-    public RedeemCommand()
-    {
+public class RedeemCommand extends Command {
+    public RedeemCommand() {
         super("cmd_redeem", Emulator.getTexts().getValue("commands.keys.cmd_redeem").split(";"));
     }
 
     @Override
-    public boolean handle(final GameClient gameClient, String[] params) throws Exception
-    {
+    public boolean handle(final GameClient gameClient, String[] params) throws Exception {
         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getActiveTradeForHabbo(gameClient.getHabbo()) != null)
             return false;
         ArrayList<HabboItem> items = new ArrayList<>();
@@ -32,32 +29,22 @@ public class RedeemCommand extends Command
 
         TIntIntMap points = new TIntIntHashMap();
 
-        for(HabboItem item : gameClient.getHabbo().getInventory().getItemsComponent().getItemsAsValueCollection())
-        {
-            if (item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_"))
-            {
-                if (item.getUserId() == gameClient.getHabbo().getHabboInfo().getId())
-                {
+        for (HabboItem item : gameClient.getHabbo().getInventory().getItemsComponent().getItemsAsValueCollection()) {
+            if (item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_")) {
+                if (item.getUserId() == gameClient.getHabbo().getHabboInfo().getId()) {
                     items.add(item);
-                    if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_"))
-                    {
-                        try
-                        {
+                    if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_")) {
+                        try {
                             credits += Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
-                        } catch (Exception e)
-                        {
+                        } catch (Exception e) {
                         }
 
-                    } else if (item.getBaseItem().getName().startsWith("PF_"))
-                    {
-                        try
-                        {
+                    } else if (item.getBaseItem().getName().startsWith("PF_")) {
+                        try {
                             pixels += Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
-                        } catch (Exception e)
-                        {
+                        } catch (Exception e) {
                         }
-                    } else if (item.getBaseItem().getName().startsWith("DF_"))
-                    {
+                    } else if (item.getBaseItem().getName().startsWith("DF_")) {
                         int pointsType;
                         int pointsAmount;
 
@@ -65,14 +52,11 @@ public class RedeemCommand extends Command
                         pointsAmount = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
 
                         points.adjustOrPutValue(pointsType, pointsAmount, pointsAmount);
-                    } else if (item.getBaseItem().getName().startsWith("CF_diamond_"))
-                    {
-                        try
-                        {
+                    } else if (item.getBaseItem().getName().startsWith("CF_diamond_")) {
+                        try {
                             int amount = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
                             points.adjustOrPutValue(5, amount, amount);
-                        } catch (Exception e)
-                        {
+                        } catch (Exception e) {
                         }
                     }
                 }
@@ -80,8 +64,7 @@ public class RedeemCommand extends Command
         }
 
         TIntObjectHashMap<HabboItem> deleted = new TIntObjectHashMap<>();
-        for(HabboItem item : items)
-        {
+        for (HabboItem item : items) {
             gameClient.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
             deleted.put(item.getId(), item);
         }
@@ -97,19 +80,15 @@ public class RedeemCommand extends Command
         message[0] += Emulator.getTexts().getValue("generic.credits");
         message[0] += ": " + credits;
 
-        if(pixels > 0)
-        {
+        if (pixels > 0) {
             message[0] += ", " + Emulator.getTexts().getValue("generic.pixels");
             message[0] += ": " + pixels + "";
         }
 
-        if(!points.isEmpty())
-        {
-            points.forEachEntry(new TIntIntProcedure()
-            {
+        if (!points.isEmpty()) {
+            points.forEachEntry(new TIntIntProcedure() {
                 @Override
-                public boolean execute(int a, int b)
-                {
+                public boolean execute(int a, int b) {
                     gameClient.getHabbo().givePoints(a, b);
                     message[0] += " ," + Emulator.getTexts().getValue("seasonal.name." + a) + ": " + b;
                     return true;

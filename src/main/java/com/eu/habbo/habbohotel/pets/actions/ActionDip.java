@@ -8,16 +8,13 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
 
-public class ActionDip extends PetAction
-{
-    public ActionDip()
-    {
+public class ActionDip extends PetAction {
+    public ActionDip() {
         super(null, true);
     }
 
     @Override
-    public boolean apply(Pet pet, Habbo habbo, String[] data)
-    {
+    public boolean apply(Pet pet, Habbo habbo, String[] data) {
         THashSet<HabboItem> waterItems = pet.getRoom().getRoomSpecialTypes().getItemsOfType(InteractionWater.class);
 
         if (waterItems.isEmpty())

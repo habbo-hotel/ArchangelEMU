@@ -4,18 +4,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ModToolIssueResponseAlertComposer extends MessageComposer
-{
+public class ModToolIssueResponseAlertComposer extends MessageComposer {
     private final String message;
 
-    public ModToolIssueResponseAlertComposer(String message)
-    {
+    public ModToolIssueResponseAlertComposer(String message) {
         this.message = message;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ModToolIssueResponseAlertComposer);
         this.response.appendString(this.message);
         return this.response;

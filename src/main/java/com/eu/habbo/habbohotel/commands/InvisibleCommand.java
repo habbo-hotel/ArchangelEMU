@@ -3,10 +3,7 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
@@ -14,16 +11,13 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.threading.runnables.RoomUnitTeleport;
 
-public class InvisibleCommand extends Command
-{
-    public InvisibleCommand()
-    {
-        super("cmd_invisible",  Emulator.getTexts().getValue("commands.keys.cmd_invisible").split(";"));
+public class InvisibleCommand extends Command {
+    public InvisibleCommand() {
+        super("cmd_invisible", Emulator.getTexts().getValue("commands.keys.cmd_invisible").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
         RoomUnit roomUnit = gameClient.getHabbo().getRoomUnit();
 
         if (roomUnit.isInvisible()) {

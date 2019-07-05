@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.rooms;
 
-public enum RoomUserAction
-{
+public enum RoomUserAction {
     NONE(0),
     WAVE(1),
     BLOW_KISS(2),
@@ -12,26 +11,22 @@ public enum RoomUserAction
     THUMB_UP(7);
 
     private final int action;
-    RoomUserAction(int action)
-    {
+
+    RoomUserAction(int action) {
         this.action = action;
     }
 
-    public int getAction()
-    {
-        return this.action;
-    }
-
-    public static RoomUserAction fromValue(int value)
-    {
-        for (RoomUserAction action : RoomUserAction.values())
-        {
-            if (action.getAction() == value)
-            {
+    public static RoomUserAction fromValue(int value) {
+        for (RoomUserAction action : RoomUserAction.values()) {
+            if (action.getAction() == value) {
                 return action;
             }
         }
 
         return NONE;
+    }
+
+    public int getAction() {
+        return this.action;
     }
 }

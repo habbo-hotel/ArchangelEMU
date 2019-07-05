@@ -9,28 +9,22 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectProcedure;
 
-public class InventoryAchievementsComposer extends MessageComposer
-{
+public class InventoryAchievementsComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.InventoryAchievementsComposer);
 
-        synchronized (Emulator.getGameEnvironment().getAchievementManager().getAchievements())
-        {
+        synchronized (Emulator.getGameEnvironment().getAchievementManager().getAchievements()) {
             THashMap<String, Achievement> achievements = Emulator.getGameEnvironment().getAchievementManager().getAchievements();
 
             this.response.appendInt(achievements.size());
-            achievements.forEachValue(new TObjectProcedure<Achievement>()
-            {
+            achievements.forEachValue(new TObjectProcedure<Achievement>() {
                 @Override
-                public boolean execute(Achievement achievement)
-                {
+                public boolean execute(Achievement achievement) {
                     InventoryAchievementsComposer.this.response.appendString((achievement.name.startsWith("ACH_") ? achievement.name.replace("ACH_", "") : achievement.name));
                     InventoryAchievementsComposer.this.response.appendInt(achievement.levels.size());
 
-                    for (AchievementLevel level : achievement.levels.values())
-                    {
+                    for (AchievementLevel level : achievement.levels.values()) {
                         InventoryAchievementsComposer.this.response.appendInt(level.level);
                         InventoryAchievementsComposer.this.response.appendInt(level.progress);
                     }

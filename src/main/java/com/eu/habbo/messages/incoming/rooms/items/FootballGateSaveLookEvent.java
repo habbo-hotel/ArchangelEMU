@@ -5,33 +5,30 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class FootballGateSaveLookEvent extends MessageHandler
-{
+public class FootballGateSaveLookEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if(room == null || this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())
+        if (room == null || this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())
             return;
 
         HabboItem item = room.getHabboItem(this.packet.readInt());
-        if(!(item instanceof InteractionFootballGate))
+        if (!(item instanceof InteractionFootballGate))
             return;
 
         String gender = this.packet.readString();
         String look = this.packet.readString();
 
-        switch(gender.toLowerCase())
-        {
+        switch (gender.toLowerCase()) {
             default:
             case "m":
-                ((InteractionFootballGate)item).setFigureM(look);
+                ((InteractionFootballGate) item).setFigureM(look);
                 room.updateItem(item);
                 break;
 
             case "f":
-                ((InteractionFootballGate)item).setFigureF(look);
+                ((InteractionFootballGate) item).setFigureF(look);
                 room.updateItem(item);
                 break;
         }

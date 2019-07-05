@@ -6,20 +6,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class WiredConditionDataComposer extends MessageComposer
-{
+public class WiredConditionDataComposer extends MessageComposer {
     private final InteractionWiredCondition condition;
     private final Room room;
 
-    public WiredConditionDataComposer(InteractionWiredCondition condition, Room room)
-    {
+    public WiredConditionDataComposer(InteractionWiredCondition condition, Room room) {
         this.condition = condition;
         this.room = room;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.WiredConditionDataComposer);
         this.condition.serializeWiredData(this.response, this.room);
         this.condition.needsUpdate(true);

@@ -7,17 +7,13 @@ import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class ModToolReleaseTicketEvent extends MessageHandler
-{
+public class ModToolReleaseTicketEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if(this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL))
-        {
+    public void handle() throws Exception {
+        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             int count = this.packet.readInt();
 
-            while (count != 0)
-            {
+            while (count != 0) {
                 count--;
 
                 int ticketId = this.packet.readInt();
@@ -36,9 +32,7 @@ public class ModToolReleaseTicketEvent extends MessageHandler
 
                 Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
             }
-        }
-        else
-        {
+        } else {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.ticket.release").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
         }
     }

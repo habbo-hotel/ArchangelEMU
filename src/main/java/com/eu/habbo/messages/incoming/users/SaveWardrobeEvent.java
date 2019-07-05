@@ -6,25 +6,20 @@ import com.eu.habbo.habbohotel.users.inventory.WardrobeComponent;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.users.UserSavedWardrobeEvent;
 
-public class SaveWardrobeEvent extends MessageHandler
-{
+public class SaveWardrobeEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int slotId = this.packet.readInt();
         String look = this.packet.readString();
         String gender = this.packet.readString();
 
         WardrobeComponent.WardrobeItem wardrobeItem;
-        if(this.client.getHabbo().getInventory().getWardrobeComponent().getLooks().containsKey(slotId))
-        {
+        if (this.client.getHabbo().getInventory().getWardrobeComponent().getLooks().containsKey(slotId)) {
             wardrobeItem = this.client.getHabbo().getInventory().getWardrobeComponent().getLooks().get(slotId);
             wardrobeItem.setGender(HabboGender.valueOf(gender));
             wardrobeItem.setLook(look);
             wardrobeItem.setNeedsUpdate(true);
-        }
-        else
-        {
+        } else {
             wardrobeItem = this.client.getHabbo().getInventory().getWardrobeComponent().createLook(this.client.getHabbo(), slotId, look);
             wardrobeItem.setNeedsInsert(true);
         }

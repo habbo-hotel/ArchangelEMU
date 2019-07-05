@@ -12,36 +12,29 @@ import com.eu.habbo.messages.outgoing.guilds.GuildMembersComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildRefreshMembersListComposer;
 import com.eu.habbo.plugin.events.guilds.GuildDeclinedMembershipEvent;
 
-public class GuildDeclineMembershipEvent extends MessageHandler
-{
+public class GuildDeclineMembershipEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int guildId = this.packet.readInt();
         int userId = this.packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if (guild != null)
-        {
+        if (guild != null) {
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
-            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN) || this.client.getHabbo().hasPermission("acc_guild_admin"))
-            {
+            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN) || this.client.getHabbo().hasPermission("acc_guild_admin")) {
                 guild.decreaseRequestCount();
                 Emulator.getGameEnvironment().getGuildManager().removeMember(guild, userId);
-                this.client.sendResponse(new GuildMembersComposer(guild, Emulator.getGameEnvironment().getGuildManager().getGuildMembers(guild, 0, 0, ""), this.client.getHabbo(), 0, 0, "", true));
+                this.client.sendResponse(new GuildMembersComposer(guild, Emulator.getGameEnvironment().getGuildManager().getGuildMembers(guild, 0, 0, ""), this.client.getHabbo(), 0, 0, "", true, Emulator.getGameEnvironment().getGuildManager().getGuildMembersCount(guild, 0, 0, "")));
                 this.client.sendResponse(new GuildRefreshMembersListComposer(guild));
 
                 Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
                 Emulator.getPluginManager().fireEvent(new GuildDeclinedMembershipEvent(guild, userId, habbo, this.client.getHabbo()));
 
-                if (habbo != null)
-                {
+                if (habbo != null) {
                     Room room = habbo.getHabboInfo().getCurrentRoom();
-                    if (room != null)
-                    {
-                        if (room.getGuildId() == guildId)
-                        {
+                    if (room != null) {
+                        if (room.getGuildId() == guildId) {
                             habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, null));
                         }
                     }

@@ -12,13 +12,11 @@ public enum SupportUserAlertedReason {
 
     private final int code;
 
-    SupportUserAlertedReason(int code)
-    {
+    SupportUserAlertedReason(int code) {
         this.code = code;
     }
 
-    public int getCode()
-    {
+    public int getCode() {
         return this.code;
     }
 }

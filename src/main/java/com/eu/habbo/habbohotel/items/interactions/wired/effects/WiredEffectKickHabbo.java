@@ -23,47 +23,40 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredEffectKickHabbo extends InteractionWiredEffect
-{
+public class WiredEffectKickHabbo extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.KICK_USER;
 
     private String message = "";
 
-    public WiredEffectKickHabbo(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectKickHabbo(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectKickHabbo(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectKickHabbo(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
-        if(room == null)
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if (room == null)
             return false;
 
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo != null)
-        {
-            if (habbo.hasPermission(Permission.ACC_UNKICKABLE))
-            {
+        if (habbo != null) {
+            if (habbo.hasPermission(Permission.ACC_UNKICKABLE)) {
                 habbo.whisper(Emulator.getTexts().getValue("hotel.wired.kickexception.unkickable"));
                 return true;
             }
 
-            if (habbo.getHabboInfo().getId() == room.getOwnerId())
-            {
+            if (habbo.getHabboInfo().getId() == room.getOwnerId()) {
                 habbo.whisper(Emulator.getTexts().getValue("hotel.wired.kickexception.owner"));
                 return true;
             }
 
             room.giveEffect(habbo, 4, 2);
 
-            if(!this.message.isEmpty())
+            if (!this.message.isEmpty())
                 habbo.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(this.message, habbo, habbo, RoomChatMessageBubbles.ALERT)));
 
             Emulator.getThreading().run(new RoomUnitKick(habbo, room, true), 2000);
@@ -75,51 +68,41 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.getDelay() + "\t" + this.message;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
-        try
-        {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+        try {
             String[] data = set.getString("wired_data").split("\t");
 
-            if (data.length >= 1)
-            {
+            if (data.length >= 1) {
                 this.setDelay(Integer.valueOf(data[0]));
 
-                if (data.length >= 2)
-                {
+                if (data.length >= 2) {
                     this.message = data[1];
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             this.message = "";
             this.setDelay(0);
         }
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.message = "";
         this.setDelay(0);
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -131,36 +114,28 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect
         message.appendInt(this.getType().code);
         message.appendInt(this.getDelay());
 
-        if (this.requiresTriggeringUser())
-        {
+        if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>()
-            {
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
                 @Override
-                public boolean execute(InteractionWiredTrigger object)
-                {
-                    if (!object.isTriggeredByRoomUnit())
-                    {
+                public boolean execute(InteractionWiredTrigger object) {
+                    if (!object.isTriggeredByRoomUnit()) {
                         invalidTriggers.add(object.getBaseItem().getSpriteId());
                     }
                     return true;
                 }
             });
             message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers)
-            {
+            for (Integer i : invalidTriggers) {
                 message.appendInt(i);
             }
-        }
-        else
-        {
+        } else {
             message.appendInt(0);
         }
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
         this.message = packet.readString();
         packet.readInt();
@@ -170,8 +145,7 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect
     }
 
     @Override
-    public boolean requiresTriggeringUser()
-    {
+    public boolean requiresTriggeringUser() {
         return true;
     }
 }

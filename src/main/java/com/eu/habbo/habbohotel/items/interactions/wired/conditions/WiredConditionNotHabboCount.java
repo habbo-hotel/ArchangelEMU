@@ -11,61 +11,52 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionNotHabboCount extends InteractionWiredCondition
-{
+public class WiredConditionNotHabboCount extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.NOT_USER_COUNT;
 
     private int lowerLimit = 10;
     private int upperLimit = 20;
 
-    public WiredConditionNotHabboCount(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredConditionNotHabboCount(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredConditionNotHabboCount(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredConditionNotHabboCount(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         int count = room.getUserCount();
 
         return count < this.lowerLimit || count > this.upperLimit;
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.lowerLimit + ":" + this.upperLimit;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split(":");
         this.lowerLimit = Integer.valueOf(data[0]);
         this.upperLimit = Integer.valueOf(data[1]);
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.upperLimit = 0;
         this.lowerLimit = 20;
     }
 
     @Override
-    public WiredConditionType getType()
-    {
+    public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -73,8 +64,8 @@ public class WiredConditionNotHabboCount extends InteractionWiredCondition
         message.appendInt(this.getId());
         message.appendString("");
         message.appendInt(2);
-            message.appendInt(this.lowerLimit);
-            message.appendInt(this.upperLimit);
+        message.appendInt(this.lowerLimit);
+        message.appendInt(this.upperLimit);
         message.appendInt(0);
         message.appendInt(this.getType().code);
         message.appendInt(0);
@@ -82,8 +73,7 @@ public class WiredConditionNotHabboCount extends InteractionWiredCondition
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         packet.readInt();
 
         this.lowerLimit = packet.readInt();

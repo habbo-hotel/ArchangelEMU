@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PetPackageComposer extends MessageComposer
-{
+public class PetPackageComposer extends MessageComposer {
     private final HabboItem item;
 
-    public PetPackageComposer(HabboItem item)
-    {
+    public PetPackageComposer(HabboItem item) {
         this.item = item;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.LeprechaunStarterBundleComposer);
         this.response.appendInt(this.item.getId());
         return this.response;

@@ -9,101 +9,70 @@ import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.users.UserCreditsComposer;
 import com.eu.habbo.messages.outgoing.users.UserCurrencyComposer;
-import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.furniture.FurnitureRedeemedEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
-import gnu.trove.set.hash.THashSet;
 
-import java.util.ArrayList;
-
-public class RedeemItemEvent extends MessageHandler
-{
+public class RedeemItemEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if(room != null)
-        {
+        if (room != null) {
             HabboItem item = room.getHabboItem(itemId);
 
-            if(item != null && this.client.getHabbo().getHabboInfo().getId() == item.getUserId())
-            {
+            if (item != null && this.client.getHabbo().getHabboInfo().getId() == item.getUserId()) {
                 boolean furnitureRedeemEventRegistered = Emulator.getPluginManager().isRegistered(FurnitureRedeemedEvent.class, true);
                 FurnitureRedeemedEvent furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), 0, FurnitureRedeemedEvent.CREDITS);
 
-                if(item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_"))
-                {
-                    if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_"))
-                    {
+                if (item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_")) {
+                    if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_")) {
                         int credits;
-                        try
-                        {
+                        try {
                             credits = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             Emulator.getLogging().logErrorLine("Failed to parse redeemable furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_<amount>");
                             return;
                         }
 
                         furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), credits, FurnitureRedeemedEvent.CREDITS);
-                    }
-                    else if (item.getBaseItem().getName().startsWith("PF_"))
-                    {
+                    } else if (item.getBaseItem().getName().startsWith("PF_")) {
                         int pixels;
 
-                        try
-                        {
+                        try {
                             pixels = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             Emulator.getLogging().logErrorLine("Failed to parse redeemable pixel furniture: " + item.getBaseItem().getName() + ". Must be in format of PF_<amount>");
                             return;
                         }
 
                         furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), pixels, FurnitureRedeemedEvent.PIXELS);
-                    }
-                    else if (item.getBaseItem().getName().startsWith("DF_"))
-                    {
+                    } else if (item.getBaseItem().getName().startsWith("DF_")) {
                         int pointsType;
                         int points;
 
-                        try
-                        {
+                        try {
                             pointsType = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             Emulator.getLogging().logErrorLine("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
                             return;
                         }
 
-                        try
-                        {
+                        try {
                             points = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             Emulator.getLogging().logErrorLine("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
                             return;
                         }
 
                         furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), points, pointsType);
-                    }
-                    else if (item.getBaseItem().getName().startsWith("CF_diamond_"))
-                    {
+                    } else if (item.getBaseItem().getName().startsWith("CF_diamond_")) {
                         int points;
 
-                        try
-                        {
+                        try {
                             points = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             Emulator.getLogging().logErrorLine("Failed to parse redeemable diamonds furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_diamond_<amount>");
                             return;
                         }
@@ -111,18 +80,17 @@ public class RedeemItemEvent extends MessageHandler
                         furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), points, FurnitureRedeemedEvent.DIAMONDS);
                     }
 
-                    if(furnitureRedeemEventRegistered)
-                    {
+                    if (furnitureRedeemEventRegistered) {
                         Emulator.getPluginManager().fireEvent(furniRedeemEvent);
 
-                        if(furniRedeemEvent.isCancelled())
+                        if (furniRedeemEvent.isCancelled())
                             return;
                     }
 
-                    if(furniRedeemEvent.amount < 1)
+                    if (furniRedeemEvent.amount < 1)
                         return;
 
-                    if(room.getHabboItem(item.getId()) == null) // plugins may cause a lag between which time the item can be removed from the room
+                    if (room.getHabboItem(item.getId()) == null) // plugins may cause a lag between which time the item can be removed from the room
                         return;
 
                     room.removeHabboItem(item);
@@ -133,7 +101,7 @@ public class RedeemItemEvent extends MessageHandler
                     room.sendComposer(new UpdateStackHeightComposer(item.getX(), item.getY(), t.relativeHeight()).compose());
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 
-                    switch(furniRedeemEvent.currencyID) {
+                    switch (furniRedeemEvent.currencyID) {
                         case FurnitureRedeemedEvent.CREDITS:
                             this.client.getHabbo().getHabboInfo().addCredits(furniRedeemEvent.amount);
                             this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));

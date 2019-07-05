@@ -4,18 +4,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PongComposer extends MessageComposer
-{
+public class PongComposer extends MessageComposer {
     private final int id;
 
-    public PongComposer(int id)
-    {
+    public PongComposer(int id) {
         this.id = id;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PongComposer);
         this.response.appendInt(this.id);
         return this.response;

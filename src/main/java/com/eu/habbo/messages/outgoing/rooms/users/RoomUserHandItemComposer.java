@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUserHandItemComposer extends MessageComposer
-{
+public class RoomUserHandItemComposer extends MessageComposer {
     private final RoomUnit roomUnit;
 
-    public RoomUserHandItemComposer(RoomUnit roomUnit)
-    {
+    public RoomUserHandItemComposer(RoomUnit roomUnit) {
         this.roomUnit = roomUnit;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomUserHandItemComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.roomUnit.getHandItem());

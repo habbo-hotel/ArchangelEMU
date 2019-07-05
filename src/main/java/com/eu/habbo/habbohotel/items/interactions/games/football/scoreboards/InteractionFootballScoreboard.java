@@ -13,60 +13,48 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class InteractionFootballScoreboard extends InteractionGameScoreboard
-{
+public class InteractionFootballScoreboard extends InteractionGameScoreboard {
     private int score;
 
-    public InteractionFootballScoreboard(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException
-    {
+    public InteractionFootballScoreboard(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException {
         super(set, baseItem, teamColor);
 
-        try
-        {
+        try {
             this.score = Integer.parseInt(this.getExtradata());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             this.score = 0;
         }
     }
 
-    public InteractionFootballScoreboard(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor)
-    {
+    public InteractionFootballScoreboard(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
         super(id, userId, item, extradata, limitedStack, limitedSells, teamColor);
 
-        try
-        {
+        try {
             this.score = Integer.parseInt(extradata);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             this.score = 0;
         }
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return false;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return false;
     }
 
 
-    public int changeScore(int amount)
-    {
+    public int changeScore(int amount) {
         this.score += amount;
 
-        if(this.score > 99) {
+        if (this.score > 99) {
             this.score = 0;
         }
 
-        if(this.score < 0) {
+        if (this.score < 0) {
             this.score = 99;
         }
 
@@ -74,23 +62,25 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard
         this.needsUpdate(true);
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-        if(room != null)
-        {
+        if (room != null) {
             room.updateItem(this);
         }
 
         return this.score;
     }
 
-    public void setScore(int amount)
-    {
+    public int getScore() {
+        return this.score;
+    }
+
+    public void setScore(int amount) {
         this.score = amount;
 
-        if(this.score > 99) {
+        if (this.score > 99) {
             this.score = 0;
         }
 
-        if(this.score < 0) {
+        if (this.score < 0) {
             this.score = 99;
         }
 
@@ -98,36 +88,25 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard
         this.needsUpdate(true);
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-        if(room != null)
-        {
+        if (room != null) {
             room.updateItem(this);
         }
-    }
-
-    public int getScore()
-    {
-        return this.score;
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if(objects.length >= 1 && objects[0] instanceof Integer && client != null && !(objects.length >= 2 && objects[1] instanceof WiredEffectType))
-        {
-            int state = (Integer)objects[0];
+        if (objects.length >= 1 && objects[0] instanceof Integer && client != null && !(objects.length >= 2 && objects[1] instanceof WiredEffectType)) {
+            int state = (Integer) objects[0];
 
-            switch (state)
-            {
-                case 1:
-                {
+            switch (state) {
+                case 1: {
                     this.changeScore(1);
                 }
                 break;
 
-                case 2:
-                {
+                case 2: {
                     this.changeScore(-1);
                 }
                 break;
@@ -136,28 +115,23 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard
                     this.setScore(0);
                     break;
             }
-        }
-        else
-        {
+        } else {
             this.changeScore(1);
         }
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 }

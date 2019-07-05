@@ -7,24 +7,20 @@ import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 
-public class BattleBanzaiGameTeam extends GameTeam
-{
-    public BattleBanzaiGameTeam(GameTeamColors teamColor)
-    {
+public class BattleBanzaiGameTeam extends GameTeam {
+    public BattleBanzaiGameTeam(GameTeamColors teamColor) {
         super(teamColor);
     }
 
     @Override
-    public void addMember(GamePlayer gamePlayer)
-    {
+    public void addMember(GamePlayer gamePlayer) {
         super.addMember(gamePlayer);
 
         gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(gamePlayer.getHabbo(), BattleBanzaiGame.effectId + this.teamColor.type, -1);
     }
 
     @Override
-    public void removeMember(GamePlayer gamePlayer)
-    {
+    public void removeMember(GamePlayer gamePlayer) {
         Game game = gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().getGame(gamePlayer.getHabbo().getHabboInfo().getCurrentGame());
         Room room = gamePlayer.getHabbo().getRoomUnit().getRoom();
 
@@ -33,7 +29,7 @@ public class BattleBanzaiGameTeam extends GameTeam
 
         super.removeMember(gamePlayer);
 
-        if(room != null && room.getRoomSpecialTypes() != null) {
+        if (room != null && room.getRoomSpecialTypes() != null) {
             for (InteractionGameGate gate : room.getRoomSpecialTypes().getBattleBanzaiGates().values()) {
                 gate.updateState(game, 5);
             }

@@ -36,18 +36,36 @@ public class Item {
 
     private ItemInteraction interactionType;
 
-    public Item(ResultSet set) throws SQLException
-    {
+    public Item(ResultSet set) throws SQLException {
         this.load(set);
     }
 
-    public void update(ResultSet set) throws SQLException
-    {
+    public static boolean isPet(Item item) {
+        return item.getName().toLowerCase().startsWith("a0 pet");
+    }
+
+    public static double getCurrentHeight(HabboItem item) {
+        if (item instanceof InteractionMultiHeight && item.getBaseItem().getMultiHeights().length > 0) {
+            if (item.getExtradata().isEmpty()) {
+                item.setExtradata("0");
+            }
+
+            try {
+                int index = Integer.valueOf(item.getExtradata()) % (item.getBaseItem().getMultiHeights().length);
+                return item.getBaseItem().getMultiHeights()[(item.getExtradata().isEmpty() ? 0 : index)];
+            } catch (Exception e) {
+
+            }
+        }
+
+        return item.getBaseItem().getHeight();
+    }
+
+    public void update(ResultSet set) throws SQLException {
         this.load(set);
     }
 
-    private void load(ResultSet set) throws SQLException
-    {
+    private void load(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.spriteId = set.getInt("sprite_id");
         this.name = set.getString("item_name");
@@ -56,8 +74,7 @@ public class Item {
         this.width = set.getShort("width");
         this.length = set.getShort("length");
         this.height = set.getDouble("stack_height");
-        if (this.height == 0)
-        {
+        if (this.height == 0) {
             this.height = 1e-6;
         }
         this.allowStack = set.getBoolean("allow_stack");
@@ -76,180 +93,126 @@ public class Item {
         this.effectM = set.getShort("effect_id_male");
         this.effectF = set.getShort("effect_id_female");
         this.customParams = set.getString("customparams");
-        if(!set.getString("vending_ids").isEmpty())
-        {
+        if (!set.getString("vending_ids").isEmpty()) {
             this.vendingItems = new TIntArrayList();
             String[] vendingIds = set.getString("vending_ids").replace(";", ",").split(",");
-            for (String s : vendingIds)
-            {
+            for (String s : vendingIds) {
                 this.vendingItems.add(Integer.valueOf(s.replace(" ", "")));
             }
         }
 
         //if(this.interactionType.getType() == InteractionMultiHeight.class || this.interactionType.getType().isAssignableFrom(InteractionMultiHeight.class))
         {
-            if(set.getString("multiheight").contains(";"))
-            {
+            if (set.getString("multiheight").contains(";")) {
                 String[] s = set.getString("multiheight").split(";");
                 this.multiHeights = new double[s.length];
 
-                for(int i = 0; i < s.length; i++)
-                {
+                for (int i = 0; i < s.length; i++) {
                     this.multiHeights[i] = Double.parseDouble(s[i]);
                 }
-            }
-            else
-            {
+            } else {
                 this.multiHeights = new double[0];
             }
         }
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public int getSpriteId()
-    {
+    public int getSpriteId() {
         return this.spriteId;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public String getFullName()
-    {
+    public String getFullName() {
         return this.fullName;
     }
 
-    public FurnitureType getType()
-    {
+    public FurnitureType getType() {
         return this.type;
     }
 
-    public int getWidth()
-    {
+    public int getWidth() {
         return this.width;
     }
 
-    public int getLength()
-    {
+    public int getLength() {
         return this.length;
     }
 
-    public double getHeight()
-    {
+    public double getHeight() {
         return this.height;
     }
 
-    public boolean allowStack()
-    {
+    public boolean allowStack() {
         return this.allowStack;
     }
 
-    public boolean allowWalk()
-    {
+    public boolean allowWalk() {
         return this.allowWalk;
     }
 
-    public boolean allowSit()
-    {
+    public boolean allowSit() {
         return this.allowSit;
     }
 
-    public boolean allowLay()
-    {
+    public boolean allowLay() {
         return this.allowLay;
     }
 
-    public boolean allowRecyle()
-    {
+    public boolean allowRecyle() {
         return this.allowRecyle;
     }
 
-    public boolean allowTrade()
-    {
+    public boolean allowTrade() {
         return this.allowTrade;
     }
 
-    public boolean allowMarketplace()
-    {
+    public boolean allowMarketplace() {
         return this.allowMarketplace;
     }
 
-    public boolean allowGift()
-    {
+    public boolean allowGift() {
         return this.allowGift;
     }
 
-    public boolean allowInventoryStack()
-    {
+    public boolean allowInventoryStack() {
         return this.allowInventoryStack;
     }
 
-    public int getStateCount()
-    {
+    public int getStateCount() {
         return this.stateCount;
     }
 
-    public int getEffectM()
-    {
+    public int getEffectM() {
         return this.effectM;
     }
 
-    public int getEffectF()
-    {
+    public int getEffectF() {
         return this.effectF;
     }
 
-    public ItemInteraction getInteractionType()
-    {
+    public ItemInteraction getInteractionType() {
         return this.interactionType;
     }
 
-    public TIntArrayList getVendingItems()
-    {
+    public TIntArrayList getVendingItems() {
         return this.vendingItems;
     }
 
-    public int getRandomVendingItem()
-    {
+    public int getRandomVendingItem() {
         return this.vendingItems.get(Emulator.getRandom().nextInt(this.vendingItems.size()));
     }
 
-    public double[] getMultiHeights()
-    {
+    public double[] getMultiHeights() {
         return this.multiHeights;
     }
 
-    public static boolean isPet(Item item)
-    {
-        return item.getName().toLowerCase().startsWith("a0 pet");
-    }
-
-    public static double getCurrentHeight(HabboItem item)
-    {
-        if(item instanceof InteractionMultiHeight && item.getBaseItem().getMultiHeights().length > 0)
-        {
-            if (item.getExtradata().isEmpty())
-            {
-                item.setExtradata("0");
-            }
-
-            try
-            {
-                int index = Integer.valueOf(item.getExtradata()) % (item.getBaseItem().getMultiHeights().length);
-                return item.getBaseItem().getMultiHeights()[(item.getExtradata().isEmpty() ? 0 : index)];
-            }
-            catch (Exception e)
-            {
-
-            }
-        }
-
-        return item.getBaseItem().getHeight();
+    public String getCustomParams() {
+        return customParams;
     }
 }

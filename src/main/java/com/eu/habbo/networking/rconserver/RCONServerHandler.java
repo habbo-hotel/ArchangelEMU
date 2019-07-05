@@ -11,17 +11,13 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
-public class RCONServerHandler extends ChannelInboundHandlerAdapter
-{
+public class RCONServerHandler extends ChannelInboundHandlerAdapter {
     @Override
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception
-    {
+    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         String adress = ctx.channel().remoteAddress().toString().split(":")[0].replace("/", "");
 
-        for(String s : Emulator.getRconServer().allowedAdresses)
-        {
-            if(s.equalsIgnoreCase(adress))
-            {
+        for (String s : Emulator.getRconServer().allowedAdresses) {
+            if (s.equalsIgnoreCase(adress)) {
                 return;
             }
         }
@@ -31,8 +27,7 @@ public class RCONServerHandler extends ChannelInboundHandlerAdapter
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception
-    {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf data = (ByteBuf) msg;
 
         byte[] d = new byte[data.readableBytes()];
@@ -41,18 +36,13 @@ public class RCONServerHandler extends ChannelInboundHandlerAdapter
         Gson gson = new Gson();
         String response = "ERROR";
         String key = "";
-        try
-        {
+        try {
             JsonObject object = gson.fromJson(message, JsonObject.class);
             key = object.get("key").getAsString();
             response = Emulator.getRconServer().handle(ctx, key, object.get("data").toString());
-        }
-        catch (ArrayIndexOutOfBoundsException e)
-        {
+        } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("[" + Logging.ANSI_RED + "RCON" + Logging.ANSI_RESET + "] Unknown RCON Message: " + key);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logDebugLine("[RCON] Not JSON: " + message);
             e.printStackTrace();
         }

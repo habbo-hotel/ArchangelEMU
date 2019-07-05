@@ -9,18 +9,15 @@ import com.eu.habbo.messages.outgoing.generic.alerts.PetErrorComposer;
 import com.eu.habbo.messages.outgoing.inventory.RemovePetComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 
-public class PetPlaceEvent extends MessageHandler
-{
+public class PetPlaceEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if(room == null)
+        if (room == null)
             return;
 
-        if(this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId() && !room.isAllowPets() && !(this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermission("acc_placefurni")))
-        {
+        if (this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId() && !room.isAllowPets() && !(this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermission("acc_placefurni"))) {
             this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_PETS_FORBIDDEN_IN_FLAT));
             return;
         }
@@ -29,12 +26,10 @@ public class PetPlaceEvent extends MessageHandler
 
         Pet pet = this.client.getHabbo().getInventory().getPetsComponent().getPet(petId);
 
-        if(pet == null)
-        {
+        if (pet == null) {
             return;
         }
-        if(room.getCurrentPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasPermission("acc_unlimited_pets"))
-        {
+        if (room.getCurrentPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasPermission("acc_unlimited_pets")) {
             this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_MAX_PETS));
             return;
         }
@@ -45,35 +40,28 @@ public class PetPlaceEvent extends MessageHandler
         RoomTile tile;
         RoomTile playerTile = this.client.getHabbo().getRoomUnit().getCurrentLocation();
 
-        if ((x == 0 && y == 0) || !room.isOwner(this.client.getHabbo()))
-        {
+        if ((x == 0 && y == 0) || !room.isOwner(this.client.getHabbo())) {
             //Place the pet in front of the player.
             tile = room.getLayout().getTileInFront(this.client.getHabbo().getRoomUnit().getCurrentLocation(), this.client.getHabbo().getRoomUnit().getBodyRotation().getValue());
 
-            if (tile == null || !tile.isWalkable())
-            {
+            if (tile == null || !tile.isWalkable()) {
                 this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_PETS_NO_FREE_TILES));
             }
 
             //Check if tile exists and is walkable. Else place it in the current location the Habbo is standing.
-            if (tile == null || !tile.isWalkable())
-            {
+            if (tile == null || !tile.isWalkable()) {
                 tile = playerTile;
 
                 //If the current tile is not walkable, place it at the door.
-                if (tile == null || !tile.isWalkable())
-                {
+                if (tile == null || !tile.isWalkable()) {
                     tile = room.getLayout().getDoorTile();
                 }
             }
-        }
-        else
-        {
+        } else {
             tile = room.getLayout().getTile((short) x, (short) y);
         }
 
-        if(tile == null || !tile.isWalkable() || !tile.getAllowStack())
-        {
+        if (tile == null || !tile.isWalkable() || !tile.getAllowStack()) {
             this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_PETS_SELECTED_TILE_NOT_FREE));
             return;
         }
@@ -81,8 +69,7 @@ public class PetPlaceEvent extends MessageHandler
         pet.setRoom(room);
         RoomUnit roomUnit = pet.getRoomUnit();
 
-        if(roomUnit == null)
-        {
+        if (roomUnit == null) {
             roomUnit = new RoomUnit();
         }
 
@@ -92,8 +79,7 @@ public class PetPlaceEvent extends MessageHandler
         roomUnit.setZ(tile.getStackHeight());
         roomUnit.setStatus(RoomUnitStatus.SIT, "0");
         roomUnit.setRoomUnitType(RoomUnitType.PET);
-        if (playerTile != null)
-        {
+        if (playerTile != null) {
             roomUnit.lookAtPoint(playerTile);
         }
         pet.setRoomUnit(roomUnit);

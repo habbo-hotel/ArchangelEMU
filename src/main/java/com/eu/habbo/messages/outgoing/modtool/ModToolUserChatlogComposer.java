@@ -9,30 +9,26 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class ModToolUserChatlogComposer extends MessageComposer
-{
+public class ModToolUserChatlogComposer extends MessageComposer {
     public static SimpleDateFormat format = new SimpleDateFormat("HH:mm");
     private final ArrayList<ModToolRoomVisit> set;
     private final int userId;
     private final String username;
 
-    public ModToolUserChatlogComposer(ArrayList<ModToolRoomVisit> set, int userId, String username)
-    {
+    public ModToolUserChatlogComposer(ArrayList<ModToolRoomVisit> set, int userId, String username) {
         this.set = set;
         this.userId = userId;
         this.username = username;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ModToolUserChatlogComposer);
         this.response.appendInt(this.userId);
         this.response.appendString(this.username);
         this.response.appendInt(this.set.size());
 
-        for(ModToolRoomVisit visit : this.set)
-        {
+        for (ModToolRoomVisit visit : this.set) {
             this.response.appendByte(1);
             this.response.appendShort(2);
             this.response.appendString("roomName");
@@ -43,8 +39,7 @@ public class ModToolUserChatlogComposer extends MessageComposer
             this.response.appendInt(visit.roomId);
 
             this.response.appendShort(visit.chat.size());
-            for(ModToolChatLog chatLog : visit.chat)
-            {
+            for (ModToolChatLog chatLog : visit.chat) {
                 this.response.appendString(format.format(chatLog.timestamp * 1000L));
                 this.response.appendInt(chatLog.habboId);
                 this.response.appendString(chatLog.username);

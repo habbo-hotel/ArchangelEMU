@@ -10,39 +10,32 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionFootballGoal extends InteractionGameTeamItem
-{
-    public InteractionFootballGoal(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException
-    {
+public class InteractionFootballGoal extends InteractionGameTeamItem {
+    public InteractionFootballGoal(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException {
         super(set, baseItem, teamColor);
     }
 
-    public InteractionFootballGoal(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor)
-    {
+    public InteractionFootballGoal(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
         super(id, userId, item, extradata, limitedStack, limitedSells, teamColor);
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return true;
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 

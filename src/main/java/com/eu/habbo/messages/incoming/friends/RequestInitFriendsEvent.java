@@ -7,11 +7,9 @@ import com.eu.habbo.messages.outgoing.friends.MessengerInitComposer;
 
 import java.util.ArrayList;
 
-public class RequestInitFriendsEvent extends MessageHandler
-{
+public class RequestInitFriendsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         ArrayList<ServerMessage> messages = new ArrayList<>();
 //
         messages.add(new MessengerInitComposer(this.client.getHabbo()).compose());

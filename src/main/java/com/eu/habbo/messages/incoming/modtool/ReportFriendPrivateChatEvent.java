@@ -13,13 +13,10 @@ import com.eu.habbo.threading.runnables.InsertModToolIssue;
 
 import java.util.ArrayList;
 
-public class ReportFriendPrivateChatEvent extends MessageHandler
-{
+public class ReportFriendPrivateChatEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if(!this.client.getHabbo().getHabboStats().allowTalk())
-        {
+    public void handle() throws Exception {
+        if (!this.client.getHabbo().getHabboStats().allowTalk()) {
             this.client.sendResponse(new HelperRequestDisabledComposer());
             return;
         }
@@ -32,19 +29,14 @@ public class ReportFriendPrivateChatEvent extends MessageHandler
 
         HabboInfo info;
         Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
-        if (target != null)
-        {
+        if (target != null) {
             info = target.getHabboInfo();
-        }
-        else
-        {
+        } else {
             info = HabboManager.getOfflineHabboInfo(userId);
         }
 
-        if (info != null)
-        {
-            for (int i = 0; i < count; i++)
-            {
+        if (info != null) {
+            for (int i = 0; i < count; i++) {
                 int chatUserId = this.packet.readInt();
                 String username = this.packet.readInt() == info.getId() ? info.getUsername() : this.client.getHabbo().getHabboInfo().getUsername();
 

@@ -17,22 +17,19 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-public class GuardianTicket
-{
+public class GuardianTicket {
+    private final THashMap<Habbo, GuardianVote> votes = new THashMap<>();
+    private final Habbo reporter;
+    private final Habbo reported;
+    private final Date date;
     private ArrayList<ModToolChatLog> chatLogs;
-    private  final THashMap<Habbo, GuardianVote> votes = new THashMap<>();
     private GuardianVoteType verdict;
     private int timeLeft = 120;
     private int resendCount = 0;
     private int checkSum = 0;
-    private final Habbo reporter;
-    private final Habbo reported;
-    private final Date date;
-
     private int guardianCount = 0; //TODO: Figure out what this was supposed to do.
 
-    public GuardianTicket(Habbo reporter, Habbo reported, ArrayList<ModToolChatLog> chatLogs)
-    {
+    public GuardianTicket(Habbo reporter, Habbo reported, ArrayList<ModToolChatLog> chatLogs) {
         this.chatLogs = chatLogs;
         Collections.sort(chatLogs);
         Emulator.getThreading().run(new GuardianVotingFinish(this), 120000);
@@ -43,8 +40,7 @@ public class GuardianTicket
     }
 
 
-    public void requestToVote(Habbo guardian)
-    {
+    public void requestToVote(Habbo guardian) {
         guardian.getClient().sendResponse(new GuardianNewReportReceivedComposer());
 
         this.votes.put(guardian, new GuardianVote(this.guardianCount, guardian));
@@ -53,12 +49,10 @@ public class GuardianTicket
     }
 
 
-    public void addGuardian(Habbo guardian)
-    {
+    public void addGuardian(Habbo guardian) {
         GuardianVote vote = this.votes.get(guardian);
 
-        if(vote != null && vote.type == GuardianVoteType.SEARCHING)
-        {
+        if (vote != null && vote.type == GuardianVoteType.SEARCHING) {
             guardian.getClient().sendResponse(new GuardianVotingRequestedComposer(this));
             vote.type = GuardianVoteType.WAITING;
             this.updateVotes();
@@ -66,15 +60,13 @@ public class GuardianTicket
     }
 
 
-    public void removeGuardian(Habbo guardian)
-    {
+    public void removeGuardian(Habbo guardian) {
         GuardianVote vote = this.getVoteForGuardian(guardian);
 
-        if(vote == null)
+        if (vote == null)
             return;
 
-        if(vote.type == GuardianVoteType.SEARCHING || vote.type == GuardianVoteType.WAITING)
-        {
+        if (vote.type == GuardianVoteType.SEARCHING || vote.type == GuardianVoteType.WAITING) {
             this.getVoteForGuardian(guardian).type = GuardianVoteType.NOT_VOTED;
         }
 
@@ -86,8 +78,7 @@ public class GuardianTicket
     }
 
 
-    public void vote(Habbo guardian, GuardianVoteType vote)
-    {
+    public void vote(Habbo guardian, GuardianVoteType vote) {
         this.votes.get(guardian).type = vote;
 
         this.updateVotes();
@@ -98,13 +89,10 @@ public class GuardianTicket
     }
 
 
-    public void updateVotes()
-    {
-        synchronized (this.votes)
-        {
-            for(Map.Entry<Habbo, GuardianVote> set : this.votes.entrySet())
-            {
-                if(set.getValue().type == GuardianVoteType.WAITING || set.getValue().type == GuardianVoteType.NOT_VOTED || set.getValue().ignore || set.getValue().type == GuardianVoteType.SEARCHING)
+    public void updateVotes() {
+        synchronized (this.votes) {
+            for (Map.Entry<Habbo, GuardianVote> set : this.votes.entrySet()) {
+                if (set.getValue().type == GuardianVoteType.WAITING || set.getValue().type == GuardianVoteType.NOT_VOTED || set.getValue().ignore || set.getValue().type == GuardianVoteType.SEARCHING)
                     continue;
 
                 set.getKey().getClient().sendResponse(new GuardianVotingVotesComposer(this, set.getKey()));
@@ -113,13 +101,10 @@ public class GuardianTicket
     }
 
 
-    public void finish()
-    {
+    public void finish() {
         int votedCount = this.getVotedCount();
-        if(votedCount < Emulator.getConfig().getInt("guardians.minimum.votes"))
-        {
-            if(this.votes.size() >= Emulator.getConfig().getInt("guardians.maximum.guardians.total") || this.resendCount == Emulator.getConfig().getInt("guardians.maximum.resends"))
-            {
+        if (votedCount < Emulator.getConfig().getInt("guardians.minimum.votes")) {
+            if (this.votes.size() >= Emulator.getConfig().getInt("guardians.maximum.guardians.total") || this.resendCount == Emulator.getConfig().getInt("guardians.maximum.resends")) {
                 this.verdict = GuardianVoteType.FORWARDED;
 
                 Emulator.getGameEnvironment().getGuideManager().closeTicket(this);
@@ -136,33 +121,27 @@ public class GuardianTicket
                 Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
 
                 this.reporter.getClient().sendResponse(new BullyReportClosedComposer(BullyReportClosedComposer.CLOSED));
-            }
-            else
-            {
+            } else {
                 this.timeLeft = 30;
                 Emulator.getThreading().run(new GuardianVotingFinish(this), 10000);
                 this.resendCount++;
 
                 Emulator.getGameEnvironment().getGuideManager().findGuardians(this);
             }
-        }
-        else
-        {
+        } else {
             this.verdict = this.calculateVerdict();
 
-            for(Map.Entry<Habbo, GuardianVote> set : this.votes.entrySet())
-            {
-                if(set.getValue().type == GuardianVoteType.ACCEPTABLY ||
+            for (Map.Entry<Habbo, GuardianVote> set : this.votes.entrySet()) {
+                if (set.getValue().type == GuardianVoteType.ACCEPTABLY ||
                         set.getValue().type == GuardianVoteType.BADLY ||
-                        set.getValue().type == GuardianVoteType.AWFULLY)
-                {
+                        set.getValue().type == GuardianVoteType.AWFULLY) {
                     set.getKey().getClient().sendResponse(new GuardianVotingResultComposer(this, set.getValue()));
                 }
             }
 
             Emulator.getGameEnvironment().getGuideManager().closeTicket(this);
 
-            if(this.verdict == GuardianVoteType.ACCEPTABLY)
+            if (this.verdict == GuardianVoteType.ACCEPTABLY)
                 this.reporter.getClient().sendResponse(new BullyReportClosedComposer(BullyReportClosedComposer.MISUSE));
             else
                 this.reporter.getClient().sendResponse(new BullyReportClosedComposer(BullyReportClosedComposer.CLOSED));
@@ -170,35 +149,26 @@ public class GuardianTicket
     }
 
 
-    public boolean inProgress()
-    {
+    public boolean inProgress() {
         return this.verdict == null;
     }
 
 
-    public GuardianVoteType calculateVerdict()
-    {
+    public GuardianVoteType calculateVerdict() {
         int countAcceptably = 0;
         int countBadly = 0;
         int countAwfully = 0;
         int total = 0;
 
-        synchronized (this.votes)
-        {
-            for(Map.Entry<Habbo, GuardianVote> set : this.votes.entrySet())
-            {
+        synchronized (this.votes) {
+            for (Map.Entry<Habbo, GuardianVote> set : this.votes.entrySet()) {
                 GuardianVote vote = set.getValue();
 
-                if(vote.type == GuardianVoteType.ACCEPTABLY)
-                {
+                if (vote.type == GuardianVoteType.ACCEPTABLY) {
                     countAcceptably++;
-                }
-                else if(vote.type == GuardianVoteType.BADLY)
-                {
+                } else if (vote.type == GuardianVoteType.BADLY) {
                     countBadly++;
-                }
-                else if(vote.type == GuardianVoteType.AWFULLY)
-                {
+                } else if (vote.type == GuardianVoteType.AWFULLY) {
                     countAwfully++;
                 }
             }
@@ -208,81 +178,62 @@ public class GuardianTicket
         total += countBadly;
 
 
-
-
-
-
         return GuardianVoteType.BADLY;
     }
 
-    public GuardianVote getVoteForGuardian(Habbo guardian)
-    {
+    public GuardianVote getVoteForGuardian(Habbo guardian) {
         return this.votes.get(guardian);
     }
 
-    public THashMap<Habbo, GuardianVote> getVotes()
-    {
+    public THashMap<Habbo, GuardianVote> getVotes() {
         return this.votes;
     }
 
-    public int getTimeLeft()
-    {
+    public int getTimeLeft() {
         return this.timeLeft;
     }
 
-    public GuardianVoteType getVerdict()
-    {
+    public GuardianVoteType getVerdict() {
         return this.verdict;
     }
 
-    public ArrayList<ModToolChatLog> getChatLogs()
-    {
+    public ArrayList<ModToolChatLog> getChatLogs() {
         return this.chatLogs;
     }
 
-    public int getResendCount()
-    {
+    public int getResendCount() {
         return this.resendCount;
     }
 
-    public int getCheckSum()
-    {
+    public int getCheckSum() {
         return this.checkSum;
     }
 
-    public Habbo getReporter()
-    {
+    public Habbo getReporter() {
         return this.reporter;
     }
 
-    public Habbo getReported()
-    {
+    public Habbo getReported() {
         return this.reported;
     }
 
-    public Date getDate()
-    {
+    public Date getDate() {
         return this.date;
     }
 
-    public int getGuardianCount()
-    {
+    public int getGuardianCount() {
         return this.guardianCount;
     }
 
 
-    public ArrayList<GuardianVote> getSortedVotes(Habbo guardian)
-    {
-        synchronized (this.votes)
-        {
+    public ArrayList<GuardianVote> getSortedVotes(Habbo guardian) {
+        synchronized (this.votes) {
             ArrayList<GuardianVote> votes = new ArrayList<>(this.votes.values());
             Collections.sort(votes);
 
             GuardianVote v = null;
-            for(GuardianVote vote : votes)
-            {
-                if(vote.guardian == guardian)
-                {
+            for (GuardianVote vote : votes) {
+                if (vote.guardian == guardian) {
                     v = vote;
                     break;
                 }
@@ -294,14 +245,11 @@ public class GuardianTicket
     }
 
 
-    public int getVotedCount()
-    {
+    public int getVotedCount() {
         int count = 0;
-        synchronized (this.votes)
-        {
-            for(Map.Entry<Habbo, GuardianVote> set : this.votes.entrySet())
-            {
-                if(set.getValue().type == GuardianVoteType.ACCEPTABLY ||
+        synchronized (this.votes) {
+            for (Map.Entry<Habbo, GuardianVote> set : this.votes.entrySet()) {
+                if (set.getValue().type == GuardianVoteType.ACCEPTABLY ||
                         set.getValue().type == GuardianVoteType.BADLY ||
                         set.getValue().type == GuardianVoteType.AWFULLY)
                     count++;

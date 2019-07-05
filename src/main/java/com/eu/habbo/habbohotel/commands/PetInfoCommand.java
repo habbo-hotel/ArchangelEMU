@@ -5,33 +5,25 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 import gnu.trove.procedure.TIntObjectProcedure;
 
-public class PetInfoCommand extends Command
-{
-    public PetInfoCommand()
-    {
+public class PetInfoCommand extends Command {
+    public PetInfoCommand() {
         super("cmd_pet_info", Emulator.getTexts().getValue("commands.keys.cmd_pet_info").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
-        if(params.length > 1)
-        {
-            if(gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (params.length > 1) {
+            if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
                 return false;
 
             String name = params[1];
 
-            gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentPets().forEachEntry(new TIntObjectProcedure<Pet>()
-            {
+            gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentPets().forEachEntry(new TIntObjectProcedure<Pet>() {
                 @Override
-                public boolean execute(int a, Pet pet)
-                {
-                    if(pet.getName().equalsIgnoreCase(name))
-                    {
+                public boolean execute(int a, Pet pet) {
+                    if (pet.getName().equalsIgnoreCase(name)) {
                         gameClient.getHabbo().alert("" +
                                 Emulator.getTexts().getValue("commands.generic.cmd_pet_info.title") + ": " + pet.getName() + "\r\n" +
                                 Emulator.getTexts().getValue("generic.pet.id") + ": " + pet.getId() + "\r" +
@@ -45,7 +37,7 @@ public class PetInfoCommand extends Command
                                 Emulator.getTexts().getValue("generic.pet.happyness") + ": " + pet.getHappyness() + "\r" +
                                 Emulator.getTexts().getValue("generic.pet.level.thirst") + ": " + pet.levelThirst + "\r" +
                                 Emulator.getTexts().getValue("generic.pet.level.hunger") + ": " + pet.levelHunger + "\r" +
-                                Emulator.getTexts().getValue("generic.pet.current_action") + ": " + (pet.getTask() == null ? Emulator.getTexts().getValue("generic.nothing") :  pet.getTask().name()) + "\r" +
+                                Emulator.getTexts().getValue("generic.pet.current_action") + ": " + (pet.getTask() == null ? Emulator.getTexts().getValue("generic.nothing") : pet.getTask().name()) + "\r" +
                                 Emulator.getTexts().getValue("generic.can.walk") + ": " + (pet.getRoomUnit().canWalk() ? Emulator.getTexts().getValue("generic.yes") : Emulator.getTexts().getValue("generic.no")) + ""
                         );
                     }
@@ -53,9 +45,7 @@ public class PetInfoCommand extends Command
                     return true;
                 }
             });
-        }
-        else
-        {
+        } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_pet_info.pet_not_found"), RoomChatMessageBubbles.ALERT);
         }
         return true;

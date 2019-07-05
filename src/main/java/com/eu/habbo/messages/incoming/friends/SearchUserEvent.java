@@ -8,13 +8,11 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SearchUserEvent extends MessageHandler
-{
+public class SearchUserEvent extends MessageHandler {
     public static ConcurrentHashMap<String, THashSet<MessengerBuddy>> cachedResults = new ConcurrentHashMap<>();
 
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         if (System.currentTimeMillis() - this.client.getHabbo().getHabboStats().lastUsersSearched < 3000)
             return;
 
@@ -23,17 +21,14 @@ public class SearchUserEvent extends MessageHandler
         if (username.isEmpty())
             return;
 
-        if (username.length() > 15)
-        {
+        if (username.length() > 15) {
             username = username.substring(0, 15);
         }
 
-        if (this.client.getHabbo().getMessenger() != null)
-        {
+        if (this.client.getHabbo().getMessenger() != null) {
             THashSet<MessengerBuddy> buddies = cachedResults.get(username);
 
-            if (buddies == null)
-            {
+            if (buddies == null) {
                 buddies = Messenger.searchUsers(username);
                 cachedResults.put(username, buddies);
             }

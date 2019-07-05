@@ -8,8 +8,7 @@ import java.sql.SQLException;
 
 public class FrontpageLayout extends CatalogPage {
 
-    public FrontpageLayout(ResultSet set) throws SQLException
-    {
+    public FrontpageLayout(ResultSet set) throws SQLException {
         super(set);
     }
 

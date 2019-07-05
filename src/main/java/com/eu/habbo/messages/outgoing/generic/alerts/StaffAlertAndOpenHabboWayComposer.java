@@ -4,18 +4,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class StaffAlertAndOpenHabboWayComposer extends MessageComposer
-{
+public class StaffAlertAndOpenHabboWayComposer extends MessageComposer {
     private final String message;
 
-    public StaffAlertAndOpenHabboWayComposer(String message)
-    {
+    public StaffAlertAndOpenHabboWayComposer(String message) {
         this.message = message;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.StaffAlertAndOpenHabboWayComposer);
         this.response.appendString(this.message);
         return this.response;

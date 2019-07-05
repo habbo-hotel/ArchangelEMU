@@ -7,22 +7,18 @@ import org.apache.commons.math3.util.Pair;
 
 import java.util.List;
 
-public class UserClassificationComposer extends MessageComposer
-{
+public class UserClassificationComposer extends MessageComposer {
     private final List<Pair<Integer, Pair<String, String>>> info;
 
-    public UserClassificationComposer(List<Pair<Integer, Pair<String, String>>> info)
-    {
+    public UserClassificationComposer(List<Pair<Integer, Pair<String, String>>> info) {
         this.info = info;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UserClassificationComposer);
         this.response.appendInt(this.info.size());
-        for (Pair<Integer, Pair<String, String>> set : this.info)
-        {
+        for (Pair<Integer, Pair<String, String>> set : this.info) {
             this.response.appendInt(set.getKey());
             this.response.appendString(set.getValue().getKey());
             this.response.appendString(set.getValue().getValue());

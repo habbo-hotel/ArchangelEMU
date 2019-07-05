@@ -6,14 +6,11 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class RequestHeightmapEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if(this.client.getHabbo().getHabboInfo().getLoadingRoom() > 0)
-        {
+    public void handle() throws Exception {
+        if (this.client.getHabbo().getHabboInfo().getLoadingRoom() > 0) {
             Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.client.getHabbo().getHabboInfo().getLoadingRoom());
 
-            if(room != null)
-            {
+            if (room != null) {
                 Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), room);
 
             }

@@ -4,11 +4,9 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class NewNavigatorEventCategoriesComposer extends MessageComposer
-{
+public class NewNavigatorEventCategoriesComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.NewNavigatorEventCategoriesComposer);
         this.response.appendInt(11);
         this.response.appendInt(1);

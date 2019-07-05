@@ -9,16 +9,14 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
 import gnu.trove.set.hash.THashSet;
 
-public class FloorItemOnRollerComposer extends MessageComposer
-{
+public class FloorItemOnRollerComposer extends MessageComposer {
     private final HabboItem item;
     private final HabboItem roller;
     private final RoomTile newLocation;
     private final double heightOffset;
     private final Room room;
 
-    public FloorItemOnRollerComposer(HabboItem item, HabboItem roller, RoomTile newLocation, double heightOffset, Room room)
-    {
+    public FloorItemOnRollerComposer(HabboItem item, HabboItem roller, RoomTile newLocation, double heightOffset, Room room) {
         this.item = item;
         this.roller = roller;
         this.newLocation = newLocation;
@@ -27,8 +25,7 @@ public class FloorItemOnRollerComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         short oldX = this.item.getX();
         short oldY = this.item.getY();
 

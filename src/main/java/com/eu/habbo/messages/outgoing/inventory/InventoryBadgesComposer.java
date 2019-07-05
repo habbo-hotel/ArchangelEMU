@@ -7,19 +7,16 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
 
-public class InventoryBadgesComposer extends MessageComposer
-{
+public class InventoryBadgesComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public InventoryBadgesComposer(Habbo habbo)
-    {
+    public InventoryBadgesComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
-        if(this.habbo == null)
+    public ServerMessage compose() {
+        if (this.habbo == null)
             return null;
 
         THashSet<HabboBadge> equippedBadges = new THashSet<>();
@@ -27,19 +24,17 @@ public class InventoryBadgesComposer extends MessageComposer
         this.response.init(Outgoing.InventoryBadgesComposer);
 
         this.response.appendInt(this.habbo.getInventory().getBadgesComponent().getBadges().size());
-        for(HabboBadge badge : this.habbo.getInventory().getBadgesComponent().getBadges())
-        {
+        for (HabboBadge badge : this.habbo.getInventory().getBadgesComponent().getBadges()) {
             this.response.appendInt(badge.getId());
             this.response.appendString(badge.getCode());
 
-            if(badge.getSlot() > 0)
+            if (badge.getSlot() > 0)
                 equippedBadges.add(badge);
         }
 
         this.response.appendInt(equippedBadges.size());
 
-        for(HabboBadge badge : equippedBadges)
-        {
+        for (HabboBadge badge : equippedBadges) {
             this.response.appendInt(badge.getSlot());
             this.response.appendString(badge.getCode());
         }

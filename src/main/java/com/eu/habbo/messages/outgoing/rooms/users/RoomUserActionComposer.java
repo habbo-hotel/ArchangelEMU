@@ -6,20 +6,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUserActionComposer extends MessageComposer
-{
+public class RoomUserActionComposer extends MessageComposer {
     private RoomUserAction action;
     private RoomUnit roomUnit;
 
-    public RoomUserActionComposer(RoomUnit roomUnit, RoomUserAction action)
-    {
+    public RoomUserActionComposer(RoomUnit roomUnit, RoomUserAction action) {
         this.roomUnit = roomUnit;
         this.action = action;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomUserActionComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.action.getAction());

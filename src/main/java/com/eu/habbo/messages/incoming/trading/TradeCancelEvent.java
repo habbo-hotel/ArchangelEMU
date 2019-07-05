@@ -5,20 +5,18 @@ import com.eu.habbo.habbohotel.rooms.RoomTrade;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class TradeCancelEvent extends MessageHandler
-{
+public class TradeCancelEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         Habbo habbo = this.client.getHabbo();
         Room room = habbo.getHabboInfo().getCurrentRoom();
 
-        if(room == null)
+        if (room == null)
             return;
 
         RoomTrade trade = room.getActiveTradeForHabbo(habbo);
 
-        if(trade == null)
+        if (trade == null)
             return;
 
         trade.stopTrade(habbo);

@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuideSessionRequesterRoomComposer extends MessageComposer
-{
+public class GuideSessionRequesterRoomComposer extends MessageComposer {
     private final Room room;
 
-    public GuideSessionRequesterRoomComposer(Room room)
-    {
+    public GuideSessionRequesterRoomComposer(Room room) {
         this.room = room;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuideSessionRequesterRoomComposer);
         this.response.appendInt(this.room != null ? this.room.getId() : 0);
         return this.response;

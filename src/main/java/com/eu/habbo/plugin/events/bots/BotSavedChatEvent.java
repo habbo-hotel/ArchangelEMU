@@ -4,8 +4,7 @@ import com.eu.habbo.habbohotel.bots.Bot;
 
 import java.util.ArrayList;
 
-public class BotSavedChatEvent extends BotEvent
-{
+public class BotSavedChatEvent extends BotEvent {
 
     public boolean autoChat;
 
@@ -19,8 +18,7 @@ public class BotSavedChatEvent extends BotEvent
     public ArrayList<String> chat;
 
 
-    public BotSavedChatEvent(Bot bot, boolean autoChat, boolean randomChat, int chatDelay, ArrayList<String> chat)
-    {
+    public BotSavedChatEvent(Bot bot, boolean autoChat, boolean randomChat, int chatDelay, ArrayList<String> chat) {
         super(bot);
 
         this.autoChat = autoChat;

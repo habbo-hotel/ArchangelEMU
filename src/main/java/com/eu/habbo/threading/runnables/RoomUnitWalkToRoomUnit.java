@@ -9,8 +9,7 @@ import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 
 import java.util.List;
 
-public class RoomUnitWalkToRoomUnit implements Runnable
-{
+public class RoomUnitWalkToRoomUnit implements Runnable {
     private final int minDistance;
     private RoomUnit walker;
     private RoomUnit target;
@@ -20,8 +19,7 @@ public class RoomUnitWalkToRoomUnit implements Runnable
 
     private RoomTile goalTile = null;
 
-    public RoomUnitWalkToRoomUnit(RoomUnit walker, RoomUnit target, Room room, List<Runnable> targetReached, List<Runnable> failedReached)
-    {
+    public RoomUnitWalkToRoomUnit(RoomUnit walker, RoomUnit target, Room room, List<Runnable> targetReached, List<Runnable> failedReached) {
         this.walker = walker;
         this.target = target;
         this.room = room;
@@ -30,8 +28,7 @@ public class RoomUnitWalkToRoomUnit implements Runnable
         this.minDistance = 1;
     }
 
-    public RoomUnitWalkToRoomUnit(RoomUnit walker, RoomUnit target, Room room, List<Runnable> targetReached, List<Runnable> failedReached, int minDistance)
-    {
+    public RoomUnitWalkToRoomUnit(RoomUnit walker, RoomUnit target, Room room, List<Runnable> targetReached, List<Runnable> failedReached, int minDistance) {
         this.walker = walker;
         this.target = target;
         this.room = room;
@@ -41,37 +38,29 @@ public class RoomUnitWalkToRoomUnit implements Runnable
     }
 
     @Override
-    public void run()
-    {
-        if(this.goalTile == null)
-        {
+    public void run() {
+        if (this.goalTile == null) {
             this.findNewLocation();
             Emulator.getThreading().run(this, 500);
         }
 
-        if(this.goalTile == null)
+        if (this.goalTile == null)
             return;
 
-        if(this.walker.getGoal().equals(this.goalTile)) //Check if the goal is still the same. Chances are something is running the same task. If so we dump this task.
+        if (this.walker.getGoal().equals(this.goalTile)) //Check if the goal is still the same. Chances are something is running the same task. If so we dump this task.
         {
             //Check if arrived.
-            if(this.walker.getCurrentLocation().distance(this.goalTile) <= this.minDistance)
-            {
-                for(Runnable r : this.targetReached)
-                {
+            if (this.walker.getCurrentLocation().distance(this.goalTile) <= this.minDistance) {
+                for (Runnable r : this.targetReached) {
                     Emulator.getThreading().run(r);
 
                     WiredHandler.handle(WiredTriggerType.BOT_REACHED_AVTR, this.target, this.room, new Object[]{this.walker});
                 }
-            }
-            else
-            {
+            } else {
                 List<RoomTile> tiles = this.room.getLayout().getTilesAround(this.target.getCurrentLocation());
 
-                for(RoomTile t : tiles)
-                {
-                    if(t.equals(this.goalTile))
-                    {
+                for (RoomTile t : tiles) {
+                    if (t.equals(this.goalTile)) {
                         Emulator.getThreading().run(this, 500);
                         return;
                     }
@@ -84,21 +73,17 @@ public class RoomUnitWalkToRoomUnit implements Runnable
         }
     }
 
-    private void findNewLocation()
-    {
+    private void findNewLocation() {
         this.goalTile = this.room.getLayout().getTileInFront(this.target.getCurrentLocation(), this.target.getBodyRotation().getValue());
 
         if (this.goalTile == null)
             return;
 
-        if (!this.room.tileWalkable(this.goalTile))
-        {
+        if (!this.room.tileWalkable(this.goalTile)) {
             List<RoomTile> tiles = this.room.getLayout().getTilesAround(this.target.getCurrentLocation());
 
-            for (RoomTile t : tiles)
-            {
-                if (this.room.tileWalkable(t))
-                {
+            for (RoomTile t : tiles) {
+                if (this.room.tileWalkable(t)) {
                     this.goalTile = t;
 
                     break;
@@ -108,10 +93,8 @@ public class RoomUnitWalkToRoomUnit implements Runnable
 
         this.walker.setGoalLocation(this.goalTile);
 
-        if (this.walker.getPath().isEmpty() && this.failedReached != null)
-        {
-            for(Runnable r : this.failedReached)
-            {
+        if (this.walker.getPath().isEmpty() && this.failedReached != null) {
+            for (Runnable r : this.failedReached) {
                 Emulator.getThreading().run(r);
             }
         }

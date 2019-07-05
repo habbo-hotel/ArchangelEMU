@@ -16,21 +16,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class InteractionBattleBanzaiTile extends HabboItem
-{
-    public InteractionBattleBanzaiTile(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionBattleBanzaiTile extends HabboItem {
+    public InteractionBattleBanzaiTile(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
+        this.setExtradata("0");
     }
 
-    public InteractionBattleBanzaiTile(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionBattleBanzaiTile(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.setExtradata("0");
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
@@ -38,52 +36,47 @@ public class InteractionBattleBanzaiTile extends HabboItem
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return true;
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects)  throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        if(this.getExtradata().isEmpty())
+        if (this.getExtradata().isEmpty())
             this.setExtradata("0");
 
         int state = Integer.valueOf(this.getExtradata());
 
-        if(state % 3 == 2)
+        if (state % 3 == 2)
             return;
 
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo == null)
+        if (habbo == null)
             return;
 
-        if(this.isLocked())
+        if (this.isLocked())
             return;
 
-        if(habbo.getHabboInfo().getCurrentGame() != null && habbo.getHabboInfo().getCurrentGame().equals(BattleBanzaiGame.class))
-        {
-            BattleBanzaiGame game = ((BattleBanzaiGame)room.getGame(BattleBanzaiGame.class));
+        if (habbo.getHabboInfo().getCurrentGame() != null && habbo.getHabboInfo().getCurrentGame().equals(BattleBanzaiGame.class)) {
+            BattleBanzaiGame game = ((BattleBanzaiGame) room.getGame(BattleBanzaiGame.class));
 
-            if(game == null)
+            if (game == null)
                 return;
 
-            if(!game.state.equals(GameState.RUNNING))
+            if (!game.state.equals(GameState.RUNNING))
                 return;
 
             game.markTile(habbo, this, state);
@@ -91,19 +84,16 @@ public class InteractionBattleBanzaiTile extends HabboItem
 
     }
 
-    public boolean isLocked()
-    {
-        if(this.getExtradata().isEmpty())
+    public boolean isLocked() {
+        if (this.getExtradata().isEmpty())
             return false;
 
         return Integer.valueOf(this.getExtradata()) % 3 == 2;
     }
 
     @Override
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation)
-    {
-        for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation)
-        {
+    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation) {
+        for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation) {
             if (set.getValue() != null && !set.getValue().isEmpty()) return false;
         }
 

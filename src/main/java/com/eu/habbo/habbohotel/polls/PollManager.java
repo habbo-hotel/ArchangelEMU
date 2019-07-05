@@ -6,54 +6,53 @@ import gnu.trove.map.hash.THashMap;
 
 import java.sql.*;
 
-public class PollManager
-{
+public class PollManager {
     private final THashMap<Integer, Poll> activePolls = new THashMap<>();
 
-    public PollManager()
-    {
+    public PollManager() {
         this.loadPolls();
     }
 
+    public static boolean donePoll(Habbo habbo, int pollId) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT NULL FROM polls_answers WHERE poll_id = ? AND user_id = ? LIMIT 1")) {
+            statement.setInt(1, pollId);
+            statement.setInt(2, habbo.getHabboInfo().getId());
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.isBeforeFirst()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+        return false;
+    }
 
-    public void loadPolls()
-    {
-        synchronized (this.activePolls)
-        {
+    public void loadPolls() {
+        synchronized (this.activePolls) {
             this.activePolls.clear();
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-            {
-                try (Statement statement = connection.createStatement())
-                {
-                    try (ResultSet set = statement.executeQuery("SELECT * FROM polls"))
-                    {
-                        while (set.next())
-                        {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+                try (Statement statement = connection.createStatement()) {
+                    try (ResultSet set = statement.executeQuery("SELECT * FROM polls")) {
+                        while (set.next()) {
                             this.activePolls.put(set.getInt("id"), new Poll(set));
                         }
                     }
 
-                    try (ResultSet set = statement.executeQuery("SELECT * FROM polls_questions ORDER BY parent_id, `order` ASC"))
-                    {
-                        while (set.next())
-                        {
+                    try (ResultSet set = statement.executeQuery("SELECT * FROM polls_questions ORDER BY parent_id, `order` ASC")) {
+                        while (set.next()) {
                             Poll poll = this.getPoll(set.getInt("poll_id"));
 
-                            if (poll != null)
-                            {
+                            if (poll != null) {
                                 PollQuestion question = new PollQuestion(set);
 
-                                if (set.getInt("parent_id") <= 0)
-                                {
+                                if (set.getInt("parent_id") <= 0) {
                                     poll.addQuestion(question);
-                                }
-                                else
-                                {
+                                } else {
                                     PollQuestion parentQuestion = poll.getQuestion(set.getInt("parent_id"));
 
-                                    if (parentQuestion != null)
-                                    {
+                                    if (parentQuestion != null) {
                                         parentQuestion.addSubQuestion(question);
                                     }
                                 }
@@ -63,39 +62,13 @@ public class PollManager
                         }
                     }
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
-
-    public Poll getPoll(int pollId)
-    {
+    public Poll getPoll(int pollId) {
         return this.activePolls.get(pollId);
-    }
-
-
-    public static boolean donePoll(Habbo habbo, int pollId)
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT NULL FROM polls_answers WHERE poll_id = ? AND user_id = ? LIMIT 1"))
-        {
-            statement.setInt(1, pollId);
-            statement.setInt(2, habbo.getHabboInfo().getId());
-            try (ResultSet set = statement.executeQuery())
-            {
-                if (set.isBeforeFirst())
-                {
-                   return true;
-                }
-            }
-        }
-        catch (SQLException e)
-        {
-            Emulator.getLogging().logSQLException(e);
-        }
-        return false;
     }
 }

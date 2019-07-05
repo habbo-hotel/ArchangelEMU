@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GenericErrorMessagesComposer extends MessageComposer
-{
+public class GenericErrorMessagesComposer extends MessageComposer {
     public static final int AUTHENTICATION_FAILED = -3;
     public static final int CONNECTING_TO_THE_SERVER_FAILED = -400;
     public static final int KICKED_OUT_OF_THE_ROOM = 4008;
@@ -15,14 +14,12 @@ public class GenericErrorMessagesComposer extends MessageComposer
 
     private final int errorCode;
 
-    public GenericErrorMessagesComposer(int errorCode)
-    {
+    public GenericErrorMessagesComposer(int errorCode) {
         this.errorCode = errorCode;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GenericErrorMessages);
         this.response.appendInt(this.errorCode);
         return this.response;

@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class NewYearResolutionProgressComposer extends MessageComposer
-{
+public class NewYearResolutionProgressComposer extends MessageComposer {
     private final int stuffId;
     private final int achievementId;
     private final String achievementName;
@@ -13,8 +12,7 @@ public class NewYearResolutionProgressComposer extends MessageComposer
     private final int progressNeeded;
     private final int timeLeft;
 
-    public NewYearResolutionProgressComposer(int stuffId, int achievementId, String achievementName, int currentProgress, int progressNeeded, int timeLeft)
-    {
+    public NewYearResolutionProgressComposer(int stuffId, int achievementId, String achievementName, int currentProgress, int progressNeeded, int timeLeft) {
         this.stuffId = stuffId;
         this.achievementId = achievementId;
         this.achievementName = achievementName;
@@ -24,8 +22,7 @@ public class NewYearResolutionProgressComposer extends MessageComposer
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.NewYearResolutionProgressComposer);
         this.response.appendInt(this.stuffId);
         this.response.appendInt(this.achievementId);

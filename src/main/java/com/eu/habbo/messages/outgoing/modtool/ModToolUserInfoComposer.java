@@ -8,21 +8,17 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ModToolUserInfoComposer extends MessageComposer
-{
+public class ModToolUserInfoComposer extends MessageComposer {
     private final ResultSet set;
 
-    public ModToolUserInfoComposer(ResultSet set)
-    {
+    public ModToolUserInfoComposer(ResultSet set) {
         this.set = set;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ModToolUserInfoComposer);
-        try
-        {
+        try {
             this.response.appendInt(this.set.getInt("user_id"));
             this.response.appendString(this.set.getString("username"));
             this.response.appendString(this.set.getString("look"));
@@ -47,10 +43,8 @@ public class ModToolUserInfoComposer extends MessageComposer
                 this.response.appendInt(31);
             }
             return this.response;
-        }
-        catch (SQLException e)
-        {
-			Emulator.getLogging().logSQLException(e);
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
         return null;
     }

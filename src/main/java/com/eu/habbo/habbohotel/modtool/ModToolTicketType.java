@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.modtool;
 
-public enum ModToolTicketType
-{
+public enum ModToolTicketType {
     NORMAL(1),
     NORMAL_UNKNOWN(2),
     AUTOMATIC(3),
@@ -20,13 +19,11 @@ public enum ModToolTicketType
 
     private final int type;
 
-    ModToolTicketType(int type)
-    {
+    ModToolTicketType(int type) {
         this.type = type;
     }
 
-    public int getType()
-    {
+    public int getType() {
         return this.type;
     }
 }

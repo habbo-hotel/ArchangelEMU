@@ -5,30 +5,23 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PurchaseOKComposer extends MessageComposer
-{
+public class PurchaseOKComposer extends MessageComposer {
     private final CatalogItem catalogItem;
 
-    public PurchaseOKComposer(CatalogItem catalogItem)
-    {
+    public PurchaseOKComposer(CatalogItem catalogItem) {
         this.catalogItem = catalogItem;
     }
 
-    public PurchaseOKComposer()
-    {
+    public PurchaseOKComposer() {
         this.catalogItem = null;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PurchaseOKComposer);
-        if(this.catalogItem != null)
-        {
+        if (this.catalogItem != null) {
             this.catalogItem.serialize(this.response);
-        }
-        else
-        {
+        } else {
             this.response.appendInt(0);
             this.response.appendString("");
             this.response.appendBoolean(false);

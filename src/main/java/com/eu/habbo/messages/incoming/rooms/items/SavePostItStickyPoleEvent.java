@@ -10,51 +10,38 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 import java.time.LocalDate;
 
-public class SavePostItStickyPoleEvent extends MessageHandler
-{
+public class SavePostItStickyPoleEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
         this.packet.readString();
         String color = this.packet.readString();
-        if(itemId == -1234)
-        {
-            if(this.client.getHabbo().hasPermission("cmd_multi"))
-            {
+        if (itemId == -1234) {
+            if (this.client.getHabbo().hasPermission("cmd_multi")) {
                 String[] commands = this.packet.readString().split("\r");
 
-                for (String command : commands)
-                {
+                for (String command : commands) {
                     command = command.replace("<br>", "\r");
                     CommandHandler.handleCommand(this.client, command);
                 }
-            }
-            else
-            {
+            } else {
                 Emulator.getLogging().logUserLine("Scripter Alert! " + this.client.getHabbo().getHabboInfo().getUsername() + " | " + this.packet.readString());
             }
-        }
-        else
-        {
+        } else {
             String text = this.packet.readString();
 
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
             HabboItem sticky = room.getHabboItem(itemId);
 
-            if (sticky != null)
-            {
-                if (sticky.getUserId() == this.client.getHabbo().getHabboInfo().getId())
-                {
+            if (sticky != null) {
+                if (sticky.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
                     sticky.setUserId(room.getOwnerId());
 
-                    if (color.equalsIgnoreCase(PostItColor.YELLOW.hexColor))
-                    {
+                    if (color.equalsIgnoreCase(PostItColor.YELLOW.hexColor)) {
                         color = PostItColor.randomColorNotYellow().hexColor;
                     }
-                    if (!InteractionPostIt.STICKYPOLE_PREFIX_TEXT.isEmpty())
-                    {
+                    if (!InteractionPostIt.STICKYPOLE_PREFIX_TEXT.isEmpty()) {
                         text = InteractionPostIt.STICKYPOLE_PREFIX_TEXT.replace("\\r", "\r").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%timestamp%", LocalDate.now().toString()) + text;
                     }
 

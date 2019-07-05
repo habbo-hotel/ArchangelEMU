@@ -5,17 +5,14 @@ import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigComposer;
 import com.google.gson.Gson;
 
-public class UpdateCatalog extends RCONMessage<UpdateCatalog.JSONUpdateCatalog>
-{
+public class UpdateCatalog extends RCONMessage<UpdateCatalog.JSONUpdateCatalog> {
 
-    public UpdateCatalog()
-    {
+    public UpdateCatalog() {
         super(JSONUpdateCatalog.class);
     }
 
     @Override
-    public void handle(Gson gson, JSONUpdateCatalog json)
-    {
+    public void handle(Gson gson, JSONUpdateCatalog json) {
         Emulator.getGameEnvironment().getCatalogManager().initialize();
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new CatalogUpdatedComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new CatalogModeComposer(0));
@@ -26,7 +23,6 @@ public class UpdateCatalog extends RCONMessage<UpdateCatalog.JSONUpdateCatalog>
         Emulator.getGameEnvironment().getCraftingManager().reload();
     }
 
-    static class JSONUpdateCatalog
-    {
+    static class JSONUpdateCatalog {
     }
 }

@@ -13,67 +13,52 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WardrobeComponent
-{
+public class WardrobeComponent {
     private final THashMap<Integer, WardrobeItem> looks;
     private final TIntSet clothing;
 
-    public WardrobeComponent(Habbo habbo)
-    {
+    public WardrobeComponent(Habbo habbo) {
         this.looks = new THashMap<>();
         this.clothing = new TIntHashSet();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-        {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_wardrobe WHERE user_id = ?"))
-            {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_wardrobe WHERE user_id = ?")) {
                 statement.setInt(1, habbo.getHabboInfo().getId());
-                try (ResultSet set = statement.executeQuery())
-                {
-                    while (set.next())
-                    {
+                try (ResultSet set = statement.executeQuery()) {
+                    while (set.next()) {
                         this.looks.put(set.getInt("slot_id"), new WardrobeItem(set, habbo));
                     }
                 }
             }
 
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_clothing WHERE user_id = ?"))
-            {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_clothing WHERE user_id = ?")) {
                 statement.setInt(1, habbo.getHabboInfo().getId());
-                try (ResultSet set = statement.executeQuery())
-                {
-                    while (set.next())
-                    {
+                try (ResultSet set = statement.executeQuery()) {
+                    while (set.next()) {
                         int value = set.getInt("clothing_id");
 
                         this.clothing.add(value);
                     }
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public WardrobeItem createLook(Habbo habbo, int slotId, String look)
-    {
+    public WardrobeItem createLook(Habbo habbo, int slotId, String look) {
         return new WardrobeItem(habbo.getHabboInfo().getGender(), look, slotId, habbo);
     }
 
-    public THashMap<Integer, WardrobeItem> getLooks()
-    {
+    public THashMap<Integer, WardrobeItem> getLooks() {
         return this.looks;
     }
 
-    public TIntCollection getClothing()
-    {
+    public TIntCollection getClothing() {
         return this.clothing;
     }
 
-    public void dispose()
-    {
+    public void dispose() {
         this.looks.values().stream().filter(item -> item.needsInsert || item.needsUpdate).forEach(item -> {
             Emulator.getThreading().run(item);
         });
@@ -81,8 +66,7 @@ public class WardrobeComponent
         this.looks.clear();
     }
 
-    public class WardrobeItem implements Runnable
-    {
+    public class WardrobeItem implements Runnable {
         private int slotId;
         private HabboGender gender;
         private Habbo habbo;
@@ -90,78 +74,63 @@ public class WardrobeComponent
         private boolean needsInsert = false;
         private boolean needsUpdate = false;
 
-        private WardrobeItem(ResultSet set, Habbo habbo) throws SQLException
-        {
+        private WardrobeItem(ResultSet set, Habbo habbo) throws SQLException {
             this.gender = HabboGender.valueOf(set.getString("gender"));
             this.look = set.getString("look");
             this.slotId = set.getInt("slot_id");
             this.habbo = habbo;
         }
 
-        private WardrobeItem(HabboGender gender, String look, int slotId, Habbo habbo)
-        {
+        private WardrobeItem(HabboGender gender, String look, int slotId, Habbo habbo) {
             this.gender = gender;
             this.look = look;
             this.slotId = slotId;
             this.habbo = habbo;
         }
 
-        public HabboGender getGender()
-        {
+        public HabboGender getGender() {
             return this.gender;
         }
 
-        public void setGender(HabboGender gender)
-        {
+        public void setGender(HabboGender gender) {
             this.gender = gender;
         }
 
-        public Habbo getHabbo()
-        {
+        public Habbo getHabbo() {
             return this.habbo;
         }
 
-        public void setHabbo(Habbo habbo)
-        {
+        public void setHabbo(Habbo habbo) {
             this.habbo = habbo;
         }
 
-        public String getLook()
-        {
+        public String getLook() {
             return this.look;
         }
 
-        public void setLook(String look)
-        {
+        public void setLook(String look) {
             this.look = look;
         }
 
-        public void setNeedsInsert(boolean needsInsert)
-        {
+        public void setNeedsInsert(boolean needsInsert) {
             this.needsInsert = needsInsert;
         }
 
-        public void setNeedsUpdate(boolean needsUpdate)
-        {
+        public void setNeedsUpdate(boolean needsUpdate) {
             this.needsUpdate = needsUpdate;
         }
 
-        public int getSlotId()
-        {
+        public int getSlotId() {
             return this.slotId;
         }
 
         @Override
-        public void run()
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-            {
-                if(this.needsInsert)
-                {
+        public void run() {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+                if (this.needsInsert) {
                     this.needsInsert = false;
                     this.needsUpdate = false;
-                    try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_wardrobe (slot_id, look, user_id, gender) VALUES (?, ?, ?, ?)"))
-                    {
+                    try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_wardrobe (slot_id, look, user_id, gender) VALUES (?, ?, ?, ?)")) {
                         statement.setInt(1, this.slotId);
                         statement.setString(2, this.look);
                         statement.setInt(3, this.habbo.getHabboInfo().getId());
@@ -170,20 +139,16 @@ public class WardrobeComponent
                     }
                 }
 
-                if(this.needsUpdate)
-                {
+                if (this.needsUpdate) {
                     this.needsUpdate = false;
-                    try (PreparedStatement statement = connection.prepareStatement("UPDATE users_wardrobe SET look = ? WHERE slot_id = ? AND user_id = ?"))
-                    {
+                    try (PreparedStatement statement = connection.prepareStatement("UPDATE users_wardrobe SET look = ? WHERE slot_id = ? AND user_id = ?")) {
                         statement.setString(1, this.look);
                         statement.setInt(2, this.slotId);
                         statement.setInt(3, this.habbo.getHabboInfo().getId());
                         statement.execute();
                     }
                 }
-            }
-            catch(SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }

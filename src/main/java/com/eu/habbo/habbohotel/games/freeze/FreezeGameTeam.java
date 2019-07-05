@@ -7,16 +7,13 @@ import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 
-public class FreezeGameTeam extends GameTeam
-{
-    public FreezeGameTeam(GameTeamColors teamColor)
-    {
+public class FreezeGameTeam extends GameTeam {
+    public FreezeGameTeam(GameTeamColors teamColor) {
         super(teamColor);
     }
 
     @Override
-    public void removeMember(GamePlayer gamePlayer)
-    {
+    public void removeMember(GamePlayer gamePlayer) {
         Game game = gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().getGame(FreezeGame.class);
         Room room = gamePlayer.getHabbo().getRoomUnit().getRoom();
 
@@ -25,7 +22,7 @@ public class FreezeGameTeam extends GameTeam
 
         super.removeMember(gamePlayer);
 
-        if(room != null && room.getRoomSpecialTypes() != null) {
+        if (room != null && room.getRoomSpecialTypes() != null) {
             for (InteractionGameGate gate : room.getRoomSpecialTypes().getFreezeGates().values()) {
                 gate.updateState(game, 5);
             }
@@ -33,8 +30,7 @@ public class FreezeGameTeam extends GameTeam
     }
 
     @Override
-    public void addMember(GamePlayer gamePlayer)
-    {
+    public void addMember(GamePlayer gamePlayer) {
         super.addMember(gamePlayer);
 
         gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(gamePlayer.getHabbo(), FreezeGame.effectId + this.teamColor.type, -1);

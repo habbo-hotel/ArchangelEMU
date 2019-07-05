@@ -4,22 +4,19 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class HotelViewCatalogPageExpiringComposer extends MessageComposer
-{
+public class HotelViewCatalogPageExpiringComposer extends MessageComposer {
     private final String name;
     private final int time;
     private final String image;
 
-    public HotelViewCatalogPageExpiringComposer(String name, int time, String image)
-    {
+    public HotelViewCatalogPageExpiringComposer(String name, int time, String image) {
         this.name = name;
         this.time = time;
         this.image = image;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.HotelViewCatalogPageExpiringComposer);
         this.response.appendString(this.name);
         this.response.appendInt(this.time);

@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.rooms;
 
-public enum RoomChatMessageBubbles
-{
+public enum RoomChatMessageBubbles {
     NORMAL(0, "", true, true),
     ALERT(1, "", true, true),
     BOT(2, "", true, true),
@@ -54,42 +53,34 @@ public enum RoomChatMessageBubbles
     private final boolean overridable;
     private final boolean triggersTalkingFurniture;
 
-    RoomChatMessageBubbles(int type, String permission, boolean overridable, boolean triggersTalkingFurniture)
-    {
+    RoomChatMessageBubbles(int type, String permission, boolean overridable, boolean triggersTalkingFurniture) {
         this.type = type;
         this.permission = permission;
         this.overridable = overridable;
         this.triggersTalkingFurniture = triggersTalkingFurniture;
     }
 
-    public int getType()
-    {
+    public static RoomChatMessageBubbles getBubble(int bubbleId) {
+        try {
+            return values()[bubbleId];
+        } catch (Exception e) {
+            return NORMAL;
+        }
+    }
+
+    public int getType() {
         return this.type;
     }
 
-    public String getPermission()
-    {
+    public String getPermission() {
         return this.permission;
     }
 
-    public boolean isOverridable()
-    {
+    public boolean isOverridable() {
         return this.overridable;
     }
 
-    public boolean triggersTalkingFurniture()
-    {
+    public boolean triggersTalkingFurniture() {
         return this.triggersTalkingFurniture;
-    }
-    public static RoomChatMessageBubbles getBubble(int bubbleId)
-    {
-        try
-        {
-            return values()[bubbleId];
-        }
-        catch (Exception e)
-        {
-            return NORMAL;
-        }
     }
 }

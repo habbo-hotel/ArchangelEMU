@@ -13,53 +13,44 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredTriggerCollision extends InteractionWiredTrigger
-{
+public class WiredTriggerCollision extends InteractionWiredTrigger {
     private static final WiredTriggerType type = WiredTriggerType.COLLISION;
 
-    public WiredTriggerCollision(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredTriggerCollision(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredTriggerCollision(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredTriggerCollision(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         return stuff.length > 0 && stuff[0] instanceof HabboItem;
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return "";
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
 
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
 
     }
 
     @Override
-    public WiredTriggerType getType()
-    {
+    public WiredTriggerType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
         message.appendInt(0);
@@ -74,14 +65,12 @@ public class WiredTriggerCollision extends InteractionWiredTrigger
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         return true;
     }
 
     @Override
-    public boolean isTriggeredByRoomUnit()
-    {
+    public boolean isTriggeredByRoomUnit() {
         return true;
     }
 }

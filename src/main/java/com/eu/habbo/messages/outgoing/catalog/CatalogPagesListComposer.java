@@ -9,24 +9,20 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class CatalogPagesListComposer extends MessageComposer
-{
+public class CatalogPagesListComposer extends MessageComposer {
     private final Habbo habbo;
     private final String mode;
     private final boolean hasPermission;
 
-    public CatalogPagesListComposer(Habbo habbo, String mode)
-    {
+    public CatalogPagesListComposer(Habbo habbo, String mode) {
         this.habbo = habbo;
         this.mode = mode;
         this.hasPermission = this.habbo.hasPermission("acc_catalog_ids");
     }
 
     @Override
-    public ServerMessage compose()
-    {
-        try
-        {
+    public ServerMessage compose() {
+        try {
             List<CatalogPage> pages = Emulator.getGameEnvironment().getCatalogManager().getCatalogPages(-1, this.habbo);
 
             this.response.init(Outgoing.CatalogPagesListComposer);
@@ -39,8 +35,7 @@ public class CatalogPagesListComposer extends MessageComposer
             this.response.appendInt(0);
             this.response.appendInt(pages.size());
 
-            for (CatalogPage category : pages)
-            {
+            for (CatalogPage category : pages) {
                 this.append(category);
             }
 
@@ -48,17 +43,14 @@ public class CatalogPagesListComposer extends MessageComposer
             this.response.appendString(this.mode);
 
             return this.response;
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
         return null;
     }
 
-    private void append(CatalogPage category)
-    {
+    private void append(CatalogPage category) {
         List<CatalogPage> pagesList = Emulator.getGameEnvironment().getCatalogManager().getCatalogPages(category.getId(), this.habbo);
 
         this.response.appendBoolean(category.isVisible());
@@ -68,15 +60,13 @@ public class CatalogPagesListComposer extends MessageComposer
         this.response.appendString(category.getCaption() + (this.hasPermission ? " (" + category.getId() + ")" : ""));
         this.response.appendInt(category.getOfferIds().size());
 
-        for(int i : category.getOfferIds().toArray())
-        {
+        for (int i : category.getOfferIds().toArray()) {
             this.response.appendInt(i);
         }
 
         this.response.appendInt(pagesList.size());
 
-        for (CatalogPage page : pagesList)
-        {
+        for (CatalogPage page : pagesList) {
             this.append(page);
         }
     }

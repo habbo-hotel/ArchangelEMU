@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class MarketplaceItemPostedComposer extends MessageComposer
-{
+public class MarketplaceItemPostedComposer extends MessageComposer {
     public static final int POST_SUCCESS = 1;
     public static final int FAILED_TECHNICAL_ERROR = 2;
     public static final int MARKETPLACE_DISABLED = 3;
@@ -13,14 +12,12 @@ public class MarketplaceItemPostedComposer extends MessageComposer
 
     private final int code;
 
-    public MarketplaceItemPostedComposer(int code)
-    {
+    public MarketplaceItemPostedComposer(int code) {
         this.code = code;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.MarketplaceItemPostedComposer);
         this.response.appendInt(this.code);
         return this.response;

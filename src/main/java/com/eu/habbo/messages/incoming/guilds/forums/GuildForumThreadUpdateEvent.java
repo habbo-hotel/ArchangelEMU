@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.guilds.SettingsState;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
-import com.eu.habbo.habbohotel.guilds.forums.ForumThreadState;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadsComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.ThreadUpdatedMessageComposer;
@@ -23,7 +22,7 @@ public class GuildForumThreadUpdateEvent extends MessageHandler {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
         ForumThread thread = ForumThread.getById(threadId);
 
-        if(guild == null || thread == null) {
+        if (guild == null || thread == null) {
             this.client.sendResponse(new ConnectionErrorComposer(404));
             return;
         }
@@ -31,7 +30,7 @@ public class GuildForumThreadUpdateEvent extends MessageHandler {
         boolean isStaff = this.client.getHabbo().hasPermission("acc_modtool_ticket_q");
 
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
-        if(member == null) {
+        if (member == null) {
             this.client.sendResponse(new ConnectionErrorComposer(401));
             return;
         }
@@ -45,7 +44,7 @@ public class GuildForumThreadUpdateEvent extends MessageHandler {
 
         this.client.sendResponse(new ThreadUpdatedMessageComposer(guild, thread, this.client.getHabbo(), isPinned, isLocked));
 
-        if(isPinned) {
+        if (isPinned) {
             this.client.sendResponse(new GuildForumThreadsComposer(guild, 0));
         }
     }

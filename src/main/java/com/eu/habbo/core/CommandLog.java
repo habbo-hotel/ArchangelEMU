@@ -6,8 +6,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class CommandLog implements Loggable
-{
+public class CommandLog implements Loggable {
     public static final String insertQuery = "INSERT INTO commandlogs (`user_id`, `timestamp`, `command`, `params`, `succes`) VALUES (?, ?, ?, ?, ?)";
 
     private final int userId;
@@ -17,8 +16,7 @@ public class CommandLog implements Loggable
     private final boolean succes;
 
 
-    public CommandLog(int userId, Command command, String params, boolean succes)
-    {
+    public CommandLog(int userId, Command command, String params, boolean succes) {
         this.userId = userId;
         this.command = command;
         this.params = params;
@@ -26,8 +24,7 @@ public class CommandLog implements Loggable
     }
 
     @Override
-    public void log(PreparedStatement statement) throws SQLException
-    {
+    public void log(PreparedStatement statement) throws SQLException {
         statement.setInt(1, this.userId);
         statement.setInt(2, this.timestamp);
         statement.setString(3, this.command.getClass().getSimpleName());

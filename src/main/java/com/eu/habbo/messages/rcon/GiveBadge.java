@@ -8,25 +8,20 @@ import com.google.gson.Gson;
 
 import java.sql.*;
 
-public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON>
-{
+public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON> {
 
-    public GiveBadge()
-    {
+    public GiveBadge() {
         super(GiveBadgeJSON.class);
     }
 
     @Override
-    public void handle(Gson gson, GiveBadgeJSON json)
-    {
-        if (json.user_id == -1)
-        {
+    public void handle(Gson gson, GiveBadgeJSON json) {
+        if (json.user_id == -1) {
             this.status = RCONMessage.HABBO_NOT_FOUND;
             return;
         }
-        
-        if (json.badge.isEmpty())
-        {
+
+        if (json.badge.isEmpty()) {
             this.status = RCONMessage.SYSTEM_ERROR;
             return;
         }
@@ -34,14 +29,11 @@ public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON>
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.user_id);
 
         String username = json.user_id + "";
-        if(habbo != null)
-        {
+        if (habbo != null) {
             username = habbo.getHabboInfo().getUsername();
 
-            for (String badgeCode : json.badge.split(";"))
-            {
-                if (habbo.getInventory().getBadgesComponent().hasBadge(badgeCode))
-                {
+            for (String badgeCode : json.badge.split(";")) {
+                if (habbo.getInventory().getBadgesComponent().hasBadge(badgeCode)) {
                     this.status = RCONMessage.STATUS_ERROR;
                     this.message += Emulator.getTexts().getValue("commands.error.cmd_badge.already_owned").replace("%user%", username).replace("%badge%", badgeCode) + "\r";
                     continue;
@@ -56,32 +48,23 @@ public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON>
 
                 this.message = Emulator.getTexts().getValue("commands.succes.cmd_badge.given").replace("%user%", username).replace("%badge%", badgeCode);
             }
-        }
-        else
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-            {
-                for (String badgeCode : json.badge.split(";"))
-                {
+        } else {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+                for (String badgeCode : json.badge.split(";")) {
                     boolean found;
-                    try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(slot_id) FROM users_badges INNER JOIN users ON users.id = user_id WHERE users.id = ? AND badge_code = ? LIMIT 1"))
-                    {
+                    try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(slot_id) FROM users_badges INNER JOIN users ON users.id = user_id WHERE users.id = ? AND badge_code = ? LIMIT 1")) {
                         statement.setInt(1, json.user_id);
                         statement.setString(2, badgeCode);
-                        try (ResultSet set = statement.executeQuery())
-                        {
+                        try (ResultSet set = statement.executeQuery()) {
                             found = set.next();
                         }
                     }
 
-                    if (found)
-                    {
+                    if (found) {
                         this.status = RCONMessage.STATUS_ERROR;
                         this.message += Emulator.getTexts().getValue("commands.error.cmd_badge.already_owns").replace("%user%", username).replace("%badge%", badgeCode) + "\r";
-                    } else
-                    {
-                        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_badges VALUES (null, (SELECT id FROM users WHERE users.id = ? LIMIT 1), 0, ?)", Statement.RETURN_GENERATED_KEYS))
-                        {
+                    } else {
+                        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_badges VALUES (null, (SELECT id FROM users WHERE users.id = ? LIMIT 1), 0, ?)", Statement.RETURN_GENERATED_KEYS)) {
                             statement.setInt(1, json.user_id);
                             statement.setString(2, badgeCode);
                             statement.execute();
@@ -90,9 +73,7 @@ public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON>
                         this.message = Emulator.getTexts().getValue("commands.succes.cmd_badge.given").replace("%user%", username).replace("%badge%", badgeCode);
                     }
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
                 this.status = RCONMessage.STATUS_ERROR;
                 this.message = e.getMessage();
@@ -100,8 +81,7 @@ public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON>
         }
     }
 
-    static class GiveBadgeJSON
-    {
+    static class GiveBadgeJSON {
 
         public int user_id = -1;
 

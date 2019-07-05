@@ -7,25 +7,21 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class JukeBoxPlayListComposer extends MessageComposer
-{
+public class JukeBoxPlayListComposer extends MessageComposer {
     private final List<InteractionMusicDisc> songs;
     private final int totalLength;
 
-    public JukeBoxPlayListComposer(List<InteractionMusicDisc> songs, int totalLength)
-    {
+    public JukeBoxPlayListComposer(List<InteractionMusicDisc> songs, int totalLength) {
         this.songs = songs;
         this.totalLength = totalLength;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.JukeBoxPlayListComposer);
         this.response.appendInt(this.totalLength); //Dunno //TODO Total play length?
         this.response.appendInt(this.songs.size());
-        for (InteractionMusicDisc soundTrack : this.songs)
-        {
+        for (InteractionMusicDisc soundTrack : this.songs) {
             this.response.appendInt(soundTrack.getId());
             this.response.appendInt(soundTrack.getSongId());
         }

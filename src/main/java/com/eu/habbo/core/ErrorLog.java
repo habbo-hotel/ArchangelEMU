@@ -9,8 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 
-public class ErrorLog implements Loggable
-{
+public class ErrorLog implements Loggable {
     public final static String insertQuery = "INSERT INTO emulator_errors (timestamp, version, build_hash, type, stacktrace) VALUES (?, ?, ?, ?, ?)";
     public final String version;
     public final String buildHash;
@@ -19,8 +18,7 @@ public class ErrorLog implements Loggable
     public final String type;
     public final String stackTrace;
 
-    public ErrorLog(String type, Throwable e)
-    {
+    public ErrorLog(String type, Throwable e) {
 
         this.version = Emulator.version;
         this.buildHash = Emulator.version;
@@ -33,18 +31,15 @@ public class ErrorLog implements Loggable
         e.printStackTrace(pw);
         this.stackTrace = sw.toString();
 
-        try
-        {
+        try {
             pw.close();
             sw.close();
-        } catch (IOException e1)
-        {
+        } catch (IOException e1) {
             Emulator.getLogging().logErrorLine(e1);
         }
     }
 
-    public ErrorLog(String type, String message)
-    {
+    public ErrorLog(String type, String message) {
         this.version = Emulator.version;
         this.buildHash = Emulator.build;
 
@@ -54,8 +49,7 @@ public class ErrorLog implements Loggable
     }
 
     @Override
-    public void log(PreparedStatement statement) throws SQLException
-    {
+    public void log(PreparedStatement statement) throws SQLException {
         statement.setInt(1, this.timeStamp);
         statement.setString(2, this.version);
         statement.setString(3, this.buildHash);

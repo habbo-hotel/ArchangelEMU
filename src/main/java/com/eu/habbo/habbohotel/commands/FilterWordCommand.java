@@ -9,18 +9,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class FilterWordCommand extends Command
-{
-    public FilterWordCommand()
-    {
+public class FilterWordCommand extends Command {
+    public FilterWordCommand() {
         super("cmd_filterword", Emulator.getTexts().getValue("commands.keys.cmd_filterword").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
-        if (params.length < 2)
-        {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (params.length < 2) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_filterword.missing_word"));
             return true;
         }
@@ -28,21 +24,17 @@ public class FilterWordCommand extends Command
         String word = params[1];
 
         String replacement = WordFilter.DEFAULT_REPLACEMENT;
-        if (params.length == 3)
-        {
+        if (params.length == 3) {
             replacement = params[2];
         }
 
         WordFilterWord wordFilterWord = new WordFilterWord(word, replacement);
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO wordfilter (`key`, `replacement`) VALUES (?, ?)"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO wordfilter (`key`, `replacement`) VALUES (?, ?)")) {
             statement.setString(1, word);
             statement.setString(2, replacement);
             statement.execute();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_filterword.error"));
             return true;

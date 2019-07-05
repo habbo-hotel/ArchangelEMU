@@ -10,20 +10,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ModToolRoomChatlogComposer extends MessageComposer
-{
+public class ModToolRoomChatlogComposer extends MessageComposer {
     private final Room room;
     private final ArrayList<ModToolChatLog> chatlog;
 
-    public ModToolRoomChatlogComposer(Room room, ArrayList<ModToolChatLog> chatlog)
-    {
+    public ModToolRoomChatlogComposer(Room room, ArrayList<ModToolChatLog> chatlog) {
         this.room = room;
         this.chatlog = chatlog;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ModToolRoomChatlogComposer);
         this.response.appendByte(1);
         this.response.appendShort(2);
@@ -35,10 +32,9 @@ public class ModToolRoomChatlogComposer extends MessageComposer
         this.response.appendInt(this.room.getId());
 
         SimpleDateFormat formatDate = new SimpleDateFormat("HH:mm");
-        
+
         this.response.appendShort(this.chatlog.size());
-        for(ModToolChatLog line : this.chatlog)
-        {
+        for (ModToolChatLog line : this.chatlog) {
             this.response.appendString(formatDate.format(new Date((line.timestamp * 1000L))));
             this.response.appendInt(line.habboId);
             this.response.appendString(line.username);

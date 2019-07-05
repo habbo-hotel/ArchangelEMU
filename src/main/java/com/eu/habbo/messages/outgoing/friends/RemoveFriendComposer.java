@@ -5,30 +5,25 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.list.array.TIntArrayList;
 
-public class RemoveFriendComposer extends MessageComposer
-{
+public class RemoveFriendComposer extends MessageComposer {
     private final TIntArrayList unfriendIds;
 
-    public RemoveFriendComposer(TIntArrayList unfriendIds)
-    {
+    public RemoveFriendComposer(TIntArrayList unfriendIds) {
         this.unfriendIds = unfriendIds;
     }
 
-    public RemoveFriendComposer(int i)
-    {
+    public RemoveFriendComposer(int i) {
         this.unfriendIds = new TIntArrayList();
         this.unfriendIds.add(i);
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UpdateFriendComposer);
 
         this.response.appendInt(0);
         this.response.appendInt(this.unfriendIds.size());
-        for(int i = 0; i < this.unfriendIds.size(); i++)
-        {
+        for (int i = 0; i < this.unfriendIds.size(); i++) {
             this.response.appendInt(-1);
             this.response.appendInt(this.unfriendIds.get(i));
         }

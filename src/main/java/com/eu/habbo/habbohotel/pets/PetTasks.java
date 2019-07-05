@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.pets;
 
-public enum PetTasks
-{
+public enum PetTasks {
     NONE(""),
     FREE(""),
     SIT("sit"),
@@ -53,13 +52,11 @@ public enum PetTasks
 
     private final String status;
 
-    PetTasks(String status)
-    {
+    PetTasks(String status) {
         this.status = status;
     }
 
-    public String getStatus()
-    {
+    public String getStatus() {
         return this.status;
     }
 }

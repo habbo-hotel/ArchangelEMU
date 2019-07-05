@@ -6,27 +6,21 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 
-public class MovePetEvent extends MessageHandler
-{
+public class MovePetEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         Pet pet = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(this.packet.readInt());
 
-        if (pet != null)
-        {
+        if (pet != null) {
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-            if (room != null && room.hasRights(this.client.getHabbo()))
-            {
-                if (pet.getRoomUnit() != null)
-                {
+            if (room != null && room.hasRights(this.client.getHabbo())) {
+                if (pet.getRoomUnit() != null) {
                     int x = this.packet.readInt();
                     int y = this.packet.readInt();
 
-                    RoomTile tile = room.getLayout().getTile((short)x, (short)y);
+                    RoomTile tile = room.getLayout().getTile((short) x, (short) y);
 
-                    if (tile != null)
-                    {
+                    if (tile != null) {
                         pet.getRoomUnit().setLocation(tile);
                         pet.getRoomUnit().setPreviousLocation(tile);
                         pet.getRoomUnit().setZ(this.packet.readInt() + tile.z);

@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.catalog;
 
-public enum CatalogPageLayouts
-{
+public enum CatalogPageLayouts {
 
     default_3x3,
 

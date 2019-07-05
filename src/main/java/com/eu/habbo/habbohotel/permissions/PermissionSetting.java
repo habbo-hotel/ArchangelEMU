@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.permissions;
 
-public enum PermissionSetting
-{
+public enum PermissionSetting {
 
     DISALLOWED,
 
@@ -11,10 +10,8 @@ public enum PermissionSetting
 
     ROOM_OWNER;
 
-    public static PermissionSetting fromString(String value)
-    {
-        switch (value)
-        {
+    public static PermissionSetting fromString(String value) {
+        switch (value) {
             case "1":
                 return ALLOWED;
             case "2":

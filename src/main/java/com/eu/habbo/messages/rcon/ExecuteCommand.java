@@ -5,39 +5,31 @@ import com.eu.habbo.habbohotel.commands.CommandHandler;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.google.gson.Gson;
 
-public class ExecuteCommand extends RCONMessage<ExecuteCommand.JSONExecuteCommand>
-{
+public class ExecuteCommand extends RCONMessage<ExecuteCommand.JSONExecuteCommand> {
 
-    public ExecuteCommand()
-    {
+    public ExecuteCommand() {
         super(JSONExecuteCommand.class);
     }
 
     @Override
-    public void handle(Gson gson, JSONExecuteCommand json)
-    {
-        try
-        {
+    public void handle(Gson gson, JSONExecuteCommand json) {
+        try {
             Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(json.user_id);
 
-            if (habbo == null)
-            {
+            if (habbo == null) {
                 this.status = HABBO_NOT_FOUND;
                 return;
             }
 
 
             CommandHandler.handleCommand(habbo.getClient(), json.command);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             this.status = STATUS_ERROR;
             Emulator.getLogging().logErrorLine(e);
         }
     }
 
-    static class JSONExecuteCommand
-    {
+    static class JSONExecuteCommand {
 
         public int user_id;
 

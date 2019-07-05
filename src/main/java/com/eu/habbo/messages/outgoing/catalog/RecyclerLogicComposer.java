@@ -9,20 +9,16 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.Map;
 
-public class RecyclerLogicComposer extends MessageComposer
-{
+public class RecyclerLogicComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RecyclerLogicComposer);
         this.response.appendInt(Emulator.getGameEnvironment().getCatalogManager().prizes.size());
-        for(Map.Entry<Integer, THashSet<Item>> map : Emulator.getGameEnvironment().getCatalogManager().prizes.entrySet())
-        {
+        for (Map.Entry<Integer, THashSet<Item>> map : Emulator.getGameEnvironment().getCatalogManager().prizes.entrySet()) {
             this.response.appendInt(map.getKey());
             this.response.appendInt(Integer.valueOf(Emulator.getConfig().getValue("hotel.ecotron.rarity.chance." + map.getKey())));
             this.response.appendInt(map.getValue().size());
-            for(Item item : map.getValue())
-            {
+            for (Item item : map.getValue()) {
                 this.response.appendString(item.getName());
                 this.response.appendInt(1);
                 this.response.appendString(item.getType().code.toLowerCase());

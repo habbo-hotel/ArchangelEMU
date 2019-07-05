@@ -7,22 +7,18 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class ItemsDataUpdateComposer extends MessageComposer
-{
+public class ItemsDataUpdateComposer extends MessageComposer {
     private final List<HabboItem> items;
 
-    public ItemsDataUpdateComposer(List<HabboItem> items)
-    {
+    public ItemsDataUpdateComposer(List<HabboItem> items) {
         this.items = items;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ItemsDataUpdateComposer);
         this.response.appendInt(this.items.size());
-        for (HabboItem item : this.items)
-        {
+        for (HabboItem item : this.items) {
             item.serializeExtradata(this.response);
         }
         return this.response;

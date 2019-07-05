@@ -11,56 +11,47 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionNotHabboHasEffect extends InteractionWiredCondition
-{
+public class WiredConditionNotHabboHasEffect extends InteractionWiredCondition {
     private static final WiredConditionType type = WiredConditionType.NOT_ACTOR_WEARS_EFFECT;
 
     protected int effectId;
 
-    public WiredConditionNotHabboHasEffect(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredConditionNotHabboHasEffect(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredConditionNotHabboHasEffect(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredConditionNotHabboHasEffect(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         if (roomUnit == null) return false;
         return roomUnit.getEffectId() != this.effectId;
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.effectId + "";
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.effectId = Integer.valueOf(set.getString("wired_data"));
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.effectId = 0;
     }
 
     @Override
-    public WiredConditionType getType()
-    {
+    public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -75,8 +66,7 @@ public class WiredConditionNotHabboHasEffect extends InteractionWiredCondition
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         packet.readInt();
 
         this.effectId = packet.readInt();

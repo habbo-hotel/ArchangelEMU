@@ -7,11 +7,9 @@ import com.eu.habbo.messages.outgoing.navigator.RoomCategoriesComposer;
 
 import java.util.List;
 
-public class RequestRoomCategoriesEvent extends MessageHandler
-{
+public class RequestRoomCategoriesEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         List<RoomCategory> roomCategoryList = Emulator.getGameEnvironment().getRoomManager().roomCategoriesForHabbo(this.client.getHabbo());
         this.client.sendResponse(new RoomCategoriesComposer(roomCategoryList));
         //this.client.sendResponse(new NewNavigatorEventCategoriesComposer());

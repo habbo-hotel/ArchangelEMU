@@ -28,6 +28,72 @@ public class GuildForumDataComposer extends MessageComposer {
         this.habbo = habbo;
     }
 
+    public static void serializeForumData(ServerMessage response, Guild guild, Habbo habbo) {
+
+        final THashSet<ForumThread> forumThreads = ForumThread.getByGuildId(guild.getId());
+        int lastSeenAt = 0;
+
+        int totalComments = 0;
+        int newComments = 0;
+        int totalThreads = 0;
+        ForumThreadComment lastComment = null;
+
+        synchronized (forumThreads) {
+            for (ForumThread thread : forumThreads) {
+                totalThreads++;
+                totalComments += thread.getPostsCount();
+
+                ForumThreadComment comment = thread.getLastComment();
+                if (comment != null && (lastComment == null || lastComment.getCreatedAt() < comment.getCreatedAt())) {
+                    lastComment = comment;
+                }
+            }
+        }
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(
+                "SELECT COUNT(*) " +
+                        "FROM guilds_forums_threads A " +
+                        "JOIN ( " +
+                        "SELECT * " +
+                        "FROM `guilds_forums_comments` " +
+                        "WHERE `id` IN ( " +
+                        "SELECT id " +
+                        "FROM `guilds_forums_comments` B " +
+                        "ORDER BY B.`id` ASC " +
+                        ") " +
+                        "ORDER BY `id` DESC " +
+                        ") B ON A.`id` = B.`thread_id` " +
+                        "WHERE A.`guild_id` = ? AND B.`created_at` > ?"
+        )) {
+            statement.setInt(1, guild.getId());
+            statement.setInt(2, lastSeenAt);
+
+            ResultSet set = statement.executeQuery();
+            while (set.next()) {
+                newComments = set.getInt(1);
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+
+        response.appendInt(guild.getId());
+
+        response.appendString(guild.getName());
+        response.appendString(guild.getDescription());
+        response.appendString(guild.getBadge());
+
+        response.appendInt(totalThreads);
+        response.appendInt(0); //Rating
+
+        response.appendInt(totalComments); //Total comments
+        response.appendInt(newComments); //Unread comments
+
+        response.appendInt(lastComment != null ? lastComment.getThreadId() : -1);
+        response.appendInt(lastComment != null ? lastComment.getUserId() : -1);
+        response.appendString(lastComment != null && lastComment.getHabbo() != null ? lastComment.getHabbo().getHabboInfo().getUsername() : "");
+        response.appendInt(lastComment != null ? Emulator.getIntUnixTimestamp() - lastComment.getCreatedAt() : 0);
+    }
+
     @Override
     public ServerMessage compose() {
 
@@ -68,8 +134,7 @@ public class GuildForumDataComposer extends MessageComposer {
 
             if (guild.canModForum().state == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
                 errorModerate = "not_owner";
-            }
-            else if (!isAdmin && !isStaff) {
+            } else if (!isAdmin && !isStaff) {
                 errorModerate = "not_admin";
             }
 
@@ -84,81 +149,11 @@ public class GuildForumDataComposer extends MessageComposer {
             this.response.appendString(""); //citizen
             this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId()); //Forum Settings
             this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId() || isStaff); //Can Mod (staff)
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return new ConnectionErrorComposer(500).compose();
         }
 
         return this.response;
-    }
-
-    public static void serializeForumData(ServerMessage response, Guild guild, Habbo habbo) throws SQLException {
-
-        final THashSet<ForumThread> forumThreads = ForumThread.getByGuildId(guild.getId());
-        int lastSeenAt = 0;
-
-        int totalComments = 0;
-        int newComments = 0;
-        int totalThreads = 0;
-        ForumThreadComment lastComment = null;
-
-        synchronized (forumThreads) {
-            for (ForumThread thread : forumThreads) {
-                totalThreads++;
-                totalComments += thread.getPostsCount();
-
-                ForumThreadComment comment = thread.getLastComment();
-                if (comment != null && (lastComment == null || lastComment.getCreatedAt() < comment.getCreatedAt())) {
-                    lastComment = comment;
-                }
-            }
-        }
-
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(
-        "SELECT COUNT(*) " +
-            "FROM guilds_forums_threads A " +
-            "JOIN ( " +
-                "SELECT * " +
-                "FROM `guilds_forums_comments` " +
-                "WHERE `id` IN ( " +
-                    "SELECT id " +
-                    "FROM `guilds_forums_comments` B " +
-                    "ORDER BY B.`id` ASC " +
-                ") " +
-            "ORDER BY `id` DESC " +
-            ") B ON A.`id` = B.`thread_id` " +
-            "WHERE A.`guild_id` = ? AND B.`created_at` > ?"
-        ))
-        {
-            statement.setInt(1, guild.getId());
-            statement.setInt(2, lastSeenAt);
-
-            ResultSet set = statement.executeQuery();
-            while(set.next()) {
-                newComments = set.getInt(1);
-            }
-        }
-        catch (SQLException e)
-        {
-            Emulator.getLogging().logSQLException(e);
-        }
-
-        response.appendInt(guild.getId());
-
-        response.appendString(guild.getName());
-        response.appendString(guild.getDescription());
-        response.appendString(guild.getBadge());
-
-        response.appendInt(totalThreads);
-        response.appendInt(0); //Rating
-
-        response.appendInt(totalComments); //Total comments
-        response.appendInt(newComments); //Unread comments
-
-        response.appendInt(lastComment != null ? lastComment.getThreadId() : -1);
-        response.appendInt(lastComment != null ? lastComment.getUserId() : -1);
-        response.appendString(lastComment != null && lastComment.getHabbo() != null ? lastComment.getHabbo().getHabboInfo().getUsername() : "");
-        response.appendInt(lastComment != null ? Emulator.getIntUnixTimestamp() - lastComment.getCreatedAt() : 0);
     }
 }

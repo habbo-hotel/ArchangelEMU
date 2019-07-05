@@ -3,11 +3,9 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 
-public class SnowWarsOnStageStartComposer extends MessageComposer
-{
+public class SnowWarsOnStageStartComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(889);
         this.response.appendInt(0);
         this.response.appendString("snowwar_arena_0");

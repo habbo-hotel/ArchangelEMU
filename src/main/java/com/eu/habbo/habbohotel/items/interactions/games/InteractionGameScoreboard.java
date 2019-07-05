@@ -8,21 +8,19 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class InteractionGameScoreboard extends InteractionGameTeamItem
-{
-    protected InteractionGameScoreboard(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException
-    {
+public abstract class InteractionGameScoreboard extends InteractionGameTeamItem {
+    protected InteractionGameScoreboard(ResultSet set, Item baseItem, GameTeamColors teamColor) throws SQLException {
         super(set, baseItem, teamColor);
+        this.setExtradata("0");
     }
 
-    protected InteractionGameScoreboard(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor)
-    {
+    protected InteractionGameScoreboard(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
         super(id, userId, item, extradata, limitedStack, limitedSells, teamColor);
+        this.setExtradata("0");
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
@@ -30,8 +28,7 @@ public abstract class InteractionGameScoreboard extends InteractionGameTeamItem
     }
 
     @Override
-    public void onPickUp(Room room)
-    {
+    public void onPickUp(Room room) {
         this.setExtradata("0");
     }
 }

@@ -9,16 +9,13 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UserDataComposer;
 import com.eu.habbo.util.figure.FigureUtil;
 
-public class MimicCommand extends Command
-{
-    public MimicCommand()
-    {
+public class MimicCommand extends Command {
+    public MimicCommand() {
         super("cmd_mimic", Emulator.getTexts().getValue("commands.keys.cmd_mimic").split(";"));
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
         if (params.length == 2) {
             Habbo habbo = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[1]);
 
@@ -44,9 +41,7 @@ public class MimicCommand extends Command
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_mimic.copied").replace("%user%", params[1]).replace("%gender_name%", (habbo.getHabboInfo().getGender().equals(HabboGender.M) ? Emulator.getTexts().getValue("gender.him") : Emulator.getTexts().getValue("gender.her"))), RoomChatMessageBubbles.ALERT);
                 return true;
             }
-        }
-        else
-        {
+        } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mimic.not_found").replace("%user%", ""), RoomChatMessageBubbles.ALERT);
             return true;
         }

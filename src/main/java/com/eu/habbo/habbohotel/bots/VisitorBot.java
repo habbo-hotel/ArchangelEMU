@@ -11,36 +11,33 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class VisitorBot extends Bot
-{
+public class VisitorBot extends Bot {
     private static SimpleDateFormat DATE_FORMAT;
     private boolean showedLog = false;
     private THashSet<ModToolRoomVisit> visits = new THashSet<>(3);
 
-    public VisitorBot(ResultSet set) throws SQLException
-    {
+    public VisitorBot(ResultSet set) throws SQLException {
         super(set);
     }
 
-    public VisitorBot(Bot bot)
-    {
+    public VisitorBot(Bot bot) {
         super(bot);
     }
 
+    public static void initialise() {
+        DATE_FORMAT = new SimpleDateFormat(Emulator.getConfig().getValue("bots.visitor.dateformat"));
+    }
+
     @Override
-    public void onUserSay(final RoomChatMessage message)
-    {
-        if(!this.showedLog)
-        {
-            if(message.getMessage().equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes")))
-            {
+    public void onUserSay(final RoomChatMessage message) {
+        if (!this.showedLog) {
+            if (message.getMessage().equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes"))) {
                 this.showedLog = true;
 
                 String visitMessage = Emulator.getTexts().getValue("bots.visitor.list").replace("%count%", this.visits.size() + "");
 
                 StringBuilder list = new StringBuilder();
-                for(ModToolRoomVisit visit : this.visits)
-                {
+                for (ModToolRoomVisit visit : this.visits) {
                     list.append("\r");
                     list.append(visit.roomName).append(" ");
                     list.append(Emulator.getTexts().getValue("generic.time.at")).append(" ");
@@ -56,29 +53,18 @@ public class VisitorBot extends Bot
         }
     }
 
-    public void onUserEnter(Habbo habbo)
-    {
-        if(!this.showedLog)
-        {
-            if(habbo.getHabboInfo().getCurrentRoom() != null)
-            {
+    public void onUserEnter(Habbo habbo) {
+        if (!this.showedLog) {
+            if (habbo.getHabboInfo().getCurrentRoom() != null) {
                 this.visits = Emulator.getGameEnvironment().getModToolManager().getVisitsForRoom(habbo.getHabboInfo().getCurrentRoom(), 10, true, habbo.getHabboInfo().getLastOnline(), Emulator.getIntUnixTimestamp());
 
-                if(this.visits.isEmpty())
-                {
+                if (this.visits.isEmpty()) {
                     this.talk(Emulator.getTexts().getValue("bots.visitor.no_visits"));
-                }
-                else
-                {
+                } else {
                     this.talk(Emulator.getTexts().getValue("bots.visitor.visits").replace("%count%", this.visits.size() + "").replace("%positive%", Emulator.getTexts().getValue("generic.yes")));
                 }
             }
         }
-    }
-
-    public static void initialise()
-    {
-        DATE_FORMAT = new SimpleDateFormat(Emulator.getConfig().getValue("bots.visitor.dateformat"));
     }
 
 }

@@ -9,11 +9,9 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumDataComposer;
 import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 
-public class GuildForumUpdateSettingsEvent extends MessageHandler
-{
+public class GuildForumUpdateSettingsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int guildId = packet.readInt();
         int canRead = packet.readInt();
         int postMessages = packet.readInt();
@@ -22,12 +20,12 @@ public class GuildForumUpdateSettingsEvent extends MessageHandler
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if(guild == null) {
+        if (guild == null) {
             this.client.sendResponse(new ConnectionErrorComposer(404));
             return;
         }
 
-        if(guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId()) {
+        if (guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId()) {
             this.client.sendResponse(new ConnectionErrorComposer(403));
             return;
         }

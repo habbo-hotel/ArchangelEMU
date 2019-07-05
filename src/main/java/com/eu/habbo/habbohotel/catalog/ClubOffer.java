@@ -3,8 +3,7 @@ package com.eu.habbo.habbohotel.catalog;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ClubOffer
-{
+public class ClubOffer {
 
     private final int id;
 
@@ -29,8 +28,7 @@ public class ClubOffer
 
     private final boolean deal;
 
-    public ClubOffer(ResultSet set) throws SQLException
-    {
+    public ClubOffer(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.name = set.getString("name");
         this.days = set.getInt("days");
@@ -41,43 +39,35 @@ public class ClubOffer
         this.deal = set.getString("deal").equals("1");
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public int getDays()
-    {
+    public int getDays() {
         return this.days;
     }
 
-    public int getCredits()
-    {
+    public int getCredits() {
         return this.credits;
     }
 
-    public int getPoints()
-    {
+    public int getPoints() {
         return this.points;
     }
 
-    public int getPointsType()
-    {
+    public int getPointsType() {
         return this.pointsType;
     }
 
-    public boolean isVip()
-    {
+    public boolean isVip() {
         return this.vip;
     }
 
-    public boolean isDeal()
-    {
+    public boolean isDeal() {
         return this.deal;
     }
 }

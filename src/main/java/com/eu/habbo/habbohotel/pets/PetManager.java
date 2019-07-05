@@ -25,16 +25,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-public class PetManager
-{
-    public static final int[] experiences = new int[]{ 100, 200, 400, 600, 900, 1300, 1800, 2400, 3200, 4300, 5700, 7600, 10100, 13300, 17500, 23000, 30200, 39600, 51900};
-
-    private final THashMap<Integer, THashSet<PetRace>> petRaces;
-    private final THashMap<Integer, PetData> petData;
-    private final TIntIntMap breedingPetType;
-    private final THashMap<Integer, TIntObjectHashMap<ArrayList<PetBreedingReward>>> breedingReward;
-    public final THashMap<Integer, PetAction> petActions = new THashMap<Integer, PetAction>()
-    {
+public class PetManager {
+    public static final int[] experiences = new int[]{100, 200, 400, 600, 900, 1300, 1800, 2400, 3200, 4300, 5700, 7600, 10100, 13300, 17500, 23000, 30200, 39600, 51900};
+    static int[] skins = new int[]{0, 1, 6, 7};
+    public final THashMap<Integer, PetAction> petActions = new THashMap<Integer, PetAction>() {
         {
             this.put(0, new ActionFree());
             this.put(1, new ActionSit());
@@ -69,9 +63,13 @@ public class PetManager
 
         }
     };
+    private final THashMap<Integer, THashSet<PetRace>> petRaces;
+    private final THashMap<Integer, PetData> petData;
+    private final TIntIntMap breedingPetType;
+    private final THashMap<Integer, TIntObjectHashMap<ArrayList<PetBreedingReward>>> breedingReward;
 
-    public PetManager()
-    {
+
+    public PetManager() {
         long millis = System.currentTimeMillis();
 
         this.petRaces = new THashMap<>();
@@ -84,52 +82,99 @@ public class PetManager
         Emulator.getLogging().logStart("Pet Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
+    public static int getLevel(int experience) {
+        int index = -1;
 
-    public void reloadPetData()
-    {
+        for (int i = 0; i < experiences.length; i++) {
+            if (experiences[i] > experience) {
+                index = i;
+                break;
+            }
+        }
+
+        if(index == -1) { index = experiences.length; }
+        return index + 1;
+    }
+
+    public static int maxEnergy(int level) {
+        //TODO: Add energy calculation.
+        return 100 * level;
+    }
+
+    public static int randomBody(int minimumRarity) {
+        int randomRarity = random(Math.max(minimumRarity - 1, 0), MonsterplantPet.bodyRarity.size(), 2.0);
+        return MonsterplantPet.bodyRarity.get(MonsterplantPet.bodyRarity.keySet().toArray()[randomRarity]).getValue();
+    }
+
+    public static int randomColor(int minimumRarity) {
+        int randomRarity = random(Math.max(minimumRarity - 1, 0), MonsterplantPet.colorRarity.size(), 2.0);
+        return MonsterplantPet.colorRarity.get(MonsterplantPet.colorRarity.keySet().toArray()[randomRarity]).getValue();
+    }
+
+    public static int random(int low, int high, double bias) {
+        double r = Math.random();
+        r = Math.pow(r, bias);
+        return (int) (low + (high - low) * r);
+    }
+
+    public static Pet loadPet(ResultSet set) throws SQLException {
+        if (set.getInt("type") == 15)
+            return new HorsePet(set);
+        else if (set.getInt("type") == 16)
+            return new MonsterplantPet(set);
+        else if (set.getInt("type") == 26 || set.getInt("type") == 27)
+            return new GnomePet(set);
+        else
+            return new Pet(set);
+    }
+
+    public static NormalDistribution getNormalDistributionForBreeding(int levelOne, int levelTwo) {
+        return getNormalDistributionForBreeding((levelOne + levelTwo) / 2);
+    }
+
+    public static NormalDistribution getNormalDistributionForBreeding(double avgLevel) {
+        return new NormalDistribution(avgLevel, (20 - (avgLevel / 2)) / 2);
+    }
+
+    public void reloadPetData() {
         this.petRaces.clear();
         this.petData.clear();
         this.breedingPetType.clear();
         this.breedingReward.clear();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
             this.loadRaces(connection);
             this.loadPetData(connection);
             this.loadPetCommands(connection);
             this.loadPetBreeding(connection);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
             Emulator.getLogging().logErrorLine("Pet Manager -> Failed to load!");
         }
     }
 
-    private void loadRaces(Connection connection) throws SQLException
-    {
+    private void loadRaces(Connection connection) {
         this.petRaces.clear();
 
-        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_breeds ORDER BY race, color_one, color_two ASC"))
-        {
-            while(set.next())
-            {
-                if(this.petRaces.get(set.getInt("race")) == null)
+        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_breeds ORDER BY race, color_one, color_two ASC")) {
+            while (set.next()) {
+                if (this.petRaces.get(set.getInt("race")) == null)
                     this.petRaces.put(set.getInt("race"), new THashSet<>());
 
                 this.petRaces.get(set.getInt("race")).add(new PetRace(set));
             }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
     }
 
-    private void loadPetData(Connection connection) throws SQLException
-    {
-        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_actions ORDER BY pet_type ASC"))
-        {
-            while(set.next())
-            {
+    private void loadPetData(Connection connection) {
+        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_actions ORDER BY pet_type ASC")) {
+            while (set.next()) {
                 this.petData.put(set.getInt("pet_type"), new PetData(set));
             }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
 
         this.loadPetItems(connection);
@@ -137,173 +182,149 @@ public class PetManager
         this.loadPetVocals(connection);
     }
 
-    private void loadPetItems(Connection connection) throws SQLException
-    {
-        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_items"))
-        {
-            while(set.next())
-            {
+    private void loadPetItems(Connection connection) {
+        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_items")) {
+            while (set.next()) {
                 Item baseItem = Emulator.getGameEnvironment().getItemManager().getItem(set.getInt("item_id"));
 
-                if(baseItem != null)
-                {
-                    if(set.getInt("pet_id") == -1)
-                    {
-                        if(baseItem.getInteractionType().getType() == InteractionNest.class) PetData.generalNestItems.add(baseItem);
-                        else if(baseItem.getInteractionType().getType() == InteractionPetFood.class) PetData.generalFoodItems.add(baseItem);
-                        else if(baseItem.getInteractionType().getType() == InteractionPetDrink.class) PetData.generalDrinkItems.add(baseItem);
-                        else if(baseItem.getInteractionType().getType() == InteractionPetToy.class) PetData.generalToyItems.add(baseItem);
-                    }
-                    else
-                    {
+                if (baseItem != null) {
+                    if (set.getInt("pet_id") == -1) {
+                        if (baseItem.getInteractionType().getType() == InteractionNest.class)
+                            PetData.generalNestItems.add(baseItem);
+                        else if (baseItem.getInteractionType().getType() == InteractionPetFood.class)
+                            PetData.generalFoodItems.add(baseItem);
+                        else if (baseItem.getInteractionType().getType() == InteractionPetDrink.class)
+                            PetData.generalDrinkItems.add(baseItem);
+                        else if (baseItem.getInteractionType().getType() == InteractionPetToy.class)
+                            PetData.generalToyItems.add(baseItem);
+                    } else {
                         PetData data = this.getPetData(set.getInt("pet_id"));
 
-                        if(data != null)
-                        {
-                            if(baseItem.getInteractionType().getType() == InteractionNest.class) data.addNest(baseItem);
-                            else if(baseItem.getInteractionType().getType() == InteractionPetFood.class) data.addFoodItem(baseItem);
-                            else if(baseItem.getInteractionType().getType() == InteractionPetDrink.class) data.addDrinkItem(baseItem);
-                            else if(baseItem.getInteractionType().getType() == InteractionPetToy.class) data.addToyItem(baseItem);
+                        if (data != null) {
+                            if (baseItem.getInteractionType().getType() == InteractionNest.class)
+                                data.addNest(baseItem);
+                            else if (baseItem.getInteractionType().getType() == InteractionPetFood.class)
+                                data.addFoodItem(baseItem);
+                            else if (baseItem.getInteractionType().getType() == InteractionPetDrink.class)
+                                data.addDrinkItem(baseItem);
+                            else if (baseItem.getInteractionType().getType() == InteractionPetToy.class)
+                                data.addToyItem(baseItem);
                         }
                     }
                 }
             }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
     }
 
-    private void loadPetVocals(Connection connection) throws SQLException
-    {
-        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_vocals"))
-        {
-            while(set.next())
-            {
-                if(set.getInt("pet_id") >= 0)
-                {
-                    if (this.petData.containsKey(set.getInt("pet_id")))
-                    {
+    private void loadPetVocals(Connection connection) {
+        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_vocals")) {
+            while (set.next()) {
+                if (set.getInt("pet_id") >= 0) {
+                    if (this.petData.containsKey(set.getInt("pet_id"))) {
                         PetVocalsType petVocalsType = PetVocalsType.valueOf(set.getString("type").toUpperCase());
 
-                        if (petVocalsType != null)
-                        {
+                        if (petVocalsType != null) {
                             this.petData.get(set.getInt("pet_id")).petVocals.get(petVocalsType).add(new PetVocal(set.getString("message")));
-                        }
-                        else
-                        {
+                        } else {
                             Emulator.getLogging().logErrorLine("Unknown pet vocal type " + set.getString("type"));
                         }
-                    }
-                    else
-                    {
+                    } else {
                         Emulator.getLogging().logErrorLine("Missing pet_actions table entry for pet id " + set.getInt("pet_id"));
                     }
-                }
-                else
-                {
-                    if(!PetData.generalPetVocals.containsKey(PetVocalsType.valueOf(set.getString("type").toUpperCase())))
+                } else {
+                    if (!PetData.generalPetVocals.containsKey(PetVocalsType.valueOf(set.getString("type").toUpperCase())))
                         PetData.generalPetVocals.put(PetVocalsType.valueOf(set.getString("type").toUpperCase()), new THashSet<>());
 
                     PetData.generalPetVocals.get(PetVocalsType.valueOf(set.getString("type").toUpperCase())).add(new PetVocal(set.getString("message")));
                 }
             }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
     }
 
-    private void loadPetCommands(Connection connection) throws SQLException
-    {
+    private void loadPetCommands(Connection connection) {
         THashMap<Integer, PetCommand> commandsList = new THashMap<>();
-        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_commands_data"))
-        {
-            while(set.next())
-            {
-               commandsList.put(set.getInt("command_id"), new PetCommand(set, this.petActions.get(set.getInt("command_id"))));
+        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_commands_data")) {
+            while (set.next()) {
+                commandsList.put(set.getInt("command_id"), new PetCommand(set, this.petActions.get(set.getInt("command_id"))));
             }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
 
-        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_commands ORDER BY pet_id ASC"))
-        {
-            while(set.next())
-            {
+        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_commands ORDER BY pet_id ASC")) {
+            while (set.next()) {
                 PetData data = this.petData.get(set.getInt("pet_id"));
 
-                if(data != null)
-                {
+                if (data != null) {
                     data.getPetCommands().add(commandsList.get(set.getInt("command_id")));
                 }
             }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
     }
 
-    private void loadPetBreeding(Connection connection) throws SQLException
-    {
-        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_breeding"))
-        {
-            while (set.next())
-            {
+    private void loadPetBreeding(Connection connection) {
+        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_breeding")) {
+            while (set.next()) {
                 this.breedingPetType.put(set.getInt("pet_id"), set.getInt("offspring_id"));
             }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
 
-        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_breeding_races"))
-        {
-            while (set.next())
-            {
+        try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_breeding_races")) {
+            while (set.next()) {
                 PetBreedingReward reward = new PetBreedingReward(set);
-                if (!this.breedingReward.containsKey(reward.petType))
-                {
+                if (!this.breedingReward.containsKey(reward.petType)) {
                     this.breedingReward.put(reward.petType, new TIntObjectHashMap<>());
                 }
 
-                if (!this.breedingReward.get(reward.petType).containsKey(reward.rarityLevel))
-                {
+                if (!this.breedingReward.get(reward.petType).containsKey(reward.rarityLevel)) {
                     this.breedingReward.get(reward.petType).put(reward.rarityLevel, new ArrayList<>());
                 }
 
                 this.breedingReward.get(reward.petType).get(reward.rarityLevel).add(reward);
             }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public THashSet<PetRace> getBreeds(String petName)
-    {
-        if(!petName.startsWith("a0 pet"))
-        {
+    public THashSet<PetRace> getBreeds(String petName) {
+        if (!petName.startsWith("a0 pet")) {
             Emulator.getLogging().logErrorLine("Pet " + petName + " not found. Make sure it matches the pattern \"a0 pet<pet_id>\"!");
             return null;
         }
 
-        try
-        {
+        try {
             int petId = Integer.valueOf(petName.split("t")[1]);
             return this.petRaces.get(petId);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
 
         return null;
     }
 
-    public TIntObjectHashMap<ArrayList<PetBreedingReward>> getBreedingRewards(int petType)
-    {
+    public TIntObjectHashMap<ArrayList<PetBreedingReward>> getBreedingRewards(int petType) {
         return this.breedingReward.get(petType);
     }
 
-    public int getRarityForOffspring(Pet pet)
-    {
+    public int getRarityForOffspring(Pet pet) {
         final int[] rarityLevel = {0};
 
         TIntObjectHashMap<ArrayList<PetBreedingReward>> offspringList = this.breedingReward.get(pet.getPetData().getType());
 
-        offspringList.forEachEntry(new TIntObjectProcedure<ArrayList<PetBreedingReward>>()
-        {
+        offspringList.forEachEntry(new TIntObjectProcedure<ArrayList<PetBreedingReward>>() {
             @Override
-            public boolean execute(int i, ArrayList<PetBreedingReward> petBreedingRewards)
-            {
-                for (PetBreedingReward reward : petBreedingRewards)
-                {
-                    if (reward.breed == pet.getRace())
-                    {
+            public boolean execute(int i, ArrayList<PetBreedingReward> petBreedingRewards) {
+                for (PetBreedingReward reward : petBreedingRewards) {
+                    if (reward.breed == pet.getRace()) {
                         rarityLevel[0] = i;
                         return false;
                     }
@@ -316,54 +337,22 @@ public class PetManager
         return 4 - rarityLevel[0];
     }
 
-    public static int getLevel(int experience)
-    {
-        int index = 0;
-
-        for(int i = 0; i < experiences.length; i++)
-        {
-            if(experiences[i] > experience)
-            {
-                index = i;
-                break;
-            }
-        }
-
-        return index + 1;
-    }
-
-    public static int maxEnergy(int level)
-    {
-        //TODO: Add energy calculation.
-        return 100 * level;
-    }
-
-    public PetData getPetData(int type)
-    {
-        synchronized (this.petData)
-        {
-            if (this.petData.containsKey(type))
-            {
+    public PetData getPetData(int type) {
+        synchronized (this.petData) {
+            if (this.petData.containsKey(type)) {
                 return this.petData.get(type);
-            }
-            else
-            {
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-                {
+            } else {
+                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
                     Emulator.getLogging().logErrorLine("Missing petdata for type " + type + ". Adding this to the database...");
-                    try (PreparedStatement statement = connection.prepareStatement("INSERT INTO pet_actions (pet_type) VALUES (?)"))
-                    {
+                    try (PreparedStatement statement = connection.prepareStatement("INSERT INTO pet_actions (pet_type) VALUES (?)")) {
                         statement.setInt(1, type);
                         statement.execute();
                     }
 
-                    try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM pet_actions WHERE pet_type = ? LIMIT 1"))
-                    {
+                    try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM pet_actions WHERE pet_type = ? LIMIT 1")) {
                         statement.setInt(1, type);
-                        try (ResultSet set = statement.executeQuery())
-                        {
-                            if (set.next())
-                            {
+                        try (ResultSet set = statement.executeQuery()) {
+                            if (set.next()) {
                                 PetData petData = new PetData(set);
                                 this.petData.put(type, petData);
                                 Emulator.getLogging().logErrorLine("Missing petdata for type " + type + " added to the database!");
@@ -371,9 +360,7 @@ public class PetManager
                             }
                         }
                     }
-                }
-                catch (SQLException e)
-                {
+                } catch (SQLException e) {
                     Emulator.getLogging().logSQLException(e);
                 }
             }
@@ -382,14 +369,10 @@ public class PetManager
         return null;
     }
 
-    public PetData getPetData(String petName)
-    {
-        synchronized (this.petData)
-        {
-            for (Map.Entry<Integer, PetData> entry : this.petData.entrySet())
-            {
-                if (entry.getValue().getName().equalsIgnoreCase(petName))
-                {
+    public PetData getPetData(String petName) {
+        synchronized (this.petData) {
+            for (Map.Entry<Integer, PetData> entry : this.petData.entrySet()) {
+                if (entry.getValue().getName().equalsIgnoreCase(petName)) {
                     return entry.getValue();
                 }
             }
@@ -398,17 +381,14 @@ public class PetManager
         return null;
     }
 
-    public Collection<PetData> getPetData()
-    {
+    public Collection<PetData> getPetData() {
         return this.petData.values();
     }
 
-    public Pet createPet(Item item, String name, String race, String color, GameClient client)
-    {
+    public Pet createPet(Item item, String name, String race, String color, GameClient client) {
         int type = Integer.valueOf(item.getName().toLowerCase().replace("a0 pet", ""));
 
-        if (this.petData.containsKey(type))
-        {
+        if (this.petData.containsKey(type)) {
             Pet pet;
             if (type == 15)
                 pet = new HorsePet(type, Integer.valueOf(race), color, name, client.getHabbo().getHabboInfo().getId());
@@ -429,15 +409,12 @@ public class PetManager
         return null;
     }
 
-    public Pet createPet(int type, String name, GameClient client)
-    {
+    public Pet createPet(int type, String name, GameClient client) {
         return this.createPet(type, Emulator.getRandom().nextInt(this.petRaces.get(type).size() + 1), name, client);
     }
 
-    public Pet createPet(int type, int race, String name, GameClient client)
-    {
-        if (this.petData.containsKey(type))
-        {
+    public Pet createPet(int type, int race, String name, GameClient client) {
+        if (this.petData.containsKey(type)) {
             Pet pet = new Pet(type, race, "FFFFFF", name, client.getHabbo().getHabboInfo().getId());
             pet.needsUpdate = true;
             pet.run();
@@ -446,8 +423,7 @@ public class PetManager
         return null;
     }
 
-    public MonsterplantPet createMonsterplant(Room room, Habbo habbo, boolean rare, RoomTile t, int minimumRarity)
-    {
+    public MonsterplantPet createMonsterplant(Room room, Habbo habbo, boolean rare, RoomTile t, int minimumRarity) {
         MonsterplantPet pet = new MonsterplantPet(
                 habbo.getHabboInfo().getId(),   //Owner ID
                 randomBody(rare ? 4 : minimumRarity),
@@ -469,16 +445,15 @@ public class PetManager
         return pet;
     }
 
-    public Pet createGnome(String name, Room room, Habbo habbo)
-    {
+    public Pet createGnome(String name, Room room, Habbo habbo) {
         Pet pet = new GnomePet(26, 0, "FFFFFF", name, habbo.getHabboInfo().getId(),
                 "5 " +
-                "0 -1 " + this.randomGnomeSkinColor() + " " +
-                "1 10" + (1 + Emulator.getRandom().nextInt(2)) + " " + this.randomGnomeColor() + " " +
-                "2 201 " + this.randomGnomeColor() + " " +
-                "3 30" + (1 + Emulator.getRandom().nextInt(2)) + " " + this.randomGnomeColor() + " " +
-                "4 40" + Emulator.getRandom().nextInt(2) + " " + this.randomGnomeColor()
-                );
+                        "0 -1 " + this.randomGnomeSkinColor() + " " +
+                        "1 10" + (1 + Emulator.getRandom().nextInt(2)) + " " + this.randomGnomeColor() + " " +
+                        "2 201 " + this.randomGnomeColor() + " " +
+                        "3 30" + (1 + Emulator.getRandom().nextInt(2)) + " " + this.randomGnomeColor() + " " +
+                        "4 40" + Emulator.getRandom().nextInt(2) + " " + this.randomGnomeColor()
+        );
 
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
@@ -490,8 +465,7 @@ public class PetManager
         return pet;
     }
 
-    public Pet createLeprechaun(String name, Room room, Habbo habbo)
-    {
+    public Pet createLeprechaun(String name, Room room, Habbo habbo) {
         Pet pet = new GnomePet(27, 0, "FFFFFF", name, habbo.getHabboInfo().getId(),
                 "5 " +
                         "0 -1 0 " +
@@ -511,83 +485,32 @@ public class PetManager
         return pet;
     }
 
-    private int randomGnomeColor()
-    {
+    private int randomGnomeColor() {
         int color = 19;
 
-        while (color == 19 || color == 27)
-        {
+        while (color == 19 || color == 27) {
             color = Emulator.getRandom().nextInt(34);
         }
 
         return color;
     }
 
-    private int randomLeprechaunColor()
-    {
+    private int randomLeprechaunColor() {
         return Emulator.getRandom().nextInt(2) == 1 ? 19 : 27;
     }
 
-    static int[] skins = new int[]{0, 1, 6, 7};
-    private int randomGnomeSkinColor()
-    {
+    private int randomGnomeSkinColor() {
         return skins[Emulator.getRandom().nextInt(skins.length)];
     }
 
-    public static int randomBody(int minimumRarity)
-    {
-        int randomRarity = random(Math.max(minimumRarity - 1, 0), MonsterplantPet.bodyRarity.size(), 2.0);
-        return MonsterplantPet.bodyRarity.get(MonsterplantPet.bodyRarity.keySet().toArray()[randomRarity]).getValue();
-    }
-
-    public static int randomColor(int minimumRarity)
-    {
-        int randomRarity = random(Math.max(minimumRarity - 1, 0), MonsterplantPet.colorRarity.size(), 2.0);
-        return MonsterplantPet.colorRarity.get(MonsterplantPet.colorRarity.keySet().toArray()[randomRarity]).getValue();
-    }
-
-    public static int random(int low, int high, double bias)
-    {
-        double r = Math.random();
-        r = Math.pow(r, bias);
-        return (int) (low + (high - low) * r);
-    }
-
-    public static Pet loadPet(ResultSet set) throws SQLException
-    {
-        if(set.getInt("type") == 15)
-            return new HorsePet(set);
-        else if(set.getInt("type") == 16)
-            return new MonsterplantPet(set);
-        else if (set.getInt("type") == 26 || set.getInt("type") == 27)
-            return new GnomePet(set);
-        else
-            return new Pet(set);
-    }
-
-
-    public boolean deletePet(Pet pet)
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM users_pets WHERE id = ? LIMIT 1"))
-        {
+    public boolean deletePet(Pet pet) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM users_pets WHERE id = ? LIMIT 1")) {
             statement.setInt(1, pet.getId());
             return statement.execute();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         return false;
-    }
-
-    public static NormalDistribution getNormalDistributionForBreeding(int levelOne, int levelTwo)
-    {
-        return getNormalDistributionForBreeding((levelOne + levelTwo) / 2);
-    }
-
-    public static NormalDistribution getNormalDistributionForBreeding(double avgLevel)
-    {
-        return new NormalDistribution(avgLevel, (20 - (avgLevel / 2)) / 2);
     }
 }

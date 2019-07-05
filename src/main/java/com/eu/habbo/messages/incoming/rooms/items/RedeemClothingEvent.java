@@ -17,28 +17,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class RedeemClothingEvent extends MessageHandler
-{
+public class RedeemClothingEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
-        if(this.client.getHabbo().getHabboInfo().getCurrentRoom() != null &&
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().hasRights(this.client.getHabbo()))
-        {
+        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null &&
+                this.client.getHabbo().getHabboInfo().getCurrentRoom().hasRights(this.client.getHabbo())) {
             HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
 
-            if(item.getUserId() == this.client.getHabbo().getHabboInfo().getId())
-            {
-                if(item instanceof InteractionClothing)
-                {
+            if (item != null && item.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
+                if (item instanceof InteractionClothing) {
                     ClothItem clothing = Emulator.getGameEnvironment().getCatalogManager().getClothing(item.getBaseItem().getName());
 
-                    if (clothing != null)
-                    {
-                        if (!this.client.getHabbo().getInventory().getWardrobeComponent().getClothing().contains(clothing.id))
-                        {
+                    if (clothing != null) {
+                        if (!this.client.getHabbo().getInventory().getWardrobeComponent().getClothing().contains(clothing.id)) {
                             item.setRoomId(0);
                             RoomTile tile = this.client.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(item.getX(), item.getY());
                             this.client.getHabbo().getHabboInfo().getCurrentRoom().removeHabboItem(item);
@@ -47,14 +40,11 @@ public class RedeemClothingEvent extends MessageHandler
                             this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RemoveFloorItemComposer(item, true).compose());
                             Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 
-                            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_clothing (user_id, clothing_id) VALUES (?, ?)"))
-                            {
+                            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_clothing (user_id, clothing_id) VALUES (?, ?)")) {
                                 statement.setInt(1, this.client.getHabbo().getHabboInfo().getId());
                                 statement.setInt(2, clothing.id);
                                 statement.execute();
-                            }
-                            catch (SQLException e)
-                            {
+                            } catch (SQLException e) {
                                 Emulator.getLogging().logSQLException(e);
                             }
 
@@ -62,14 +52,10 @@ public class RedeemClothingEvent extends MessageHandler
                             this.client.sendResponse(new UserClothesComposer(this.client.getHabbo()));
                             this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FIGURESET_REDEEMED.key));
 
-                        }
-                        else
-                        {
+                        } else {
                             this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FIGURESET_OWNED_ALREADY.key));
                         }
-                    }
-                    else
-                    {
+                    } else {
                         Emulator.getLogging().logErrorLine("[Catalog] No definition in catalog_clothing found for clothing name " + item.getBaseItem().getName() + ". Could not redeem clothing!");
                     }
                 }

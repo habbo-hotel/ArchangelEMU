@@ -11,28 +11,23 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredTriggerScoreAchieved extends InteractionWiredTrigger
-{
+public class WiredTriggerScoreAchieved extends InteractionWiredTrigger {
     private static final WiredTriggerType type = WiredTriggerType.SCORE_ACHIEVED;
     private int score = 0;
 
-    public WiredTriggerScoreAchieved(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredTriggerScoreAchieved(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredTriggerScoreAchieved(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredTriggerScoreAchieved(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
-        if (stuff.length >= 2)
-        {
-            int points = (Integer)stuff[0];
-            int amountAdded = (Integer)stuff[1];
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if (stuff.length >= 2) {
+            int points = (Integer) stuff[0];
+            int amountAdded = (Integer) stuff[1];
 
             return points - amountAdded < this.score && points >= this.score;
         }
@@ -41,36 +36,30 @@ public class WiredTriggerScoreAchieved extends InteractionWiredTrigger
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.score + "";
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
-        try
-        {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+        try {
             this.score = Integer.valueOf(set.getString("wired_data"));
+        } catch (Exception e) {
         }
-        catch (Exception e){}
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.score = 0;
     }
 
     @Override
-    public WiredTriggerType getType()
-    {
+    public WiredTriggerType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -86,16 +75,14 @@ public class WiredTriggerScoreAchieved extends InteractionWiredTrigger
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         packet.readInt();
         this.score = packet.readInt();
         return true;
     }
 
     @Override
-    public boolean isTriggeredByRoomUnit()
-    {
+    public boolean isTriggeredByRoomUnit() {
         return true;
     }
 }

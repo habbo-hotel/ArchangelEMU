@@ -5,9 +5,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 import gnu.trove.set.hash.THashSet;
-import java.sql.SQLException;
+
 import java.util.Iterator;
 
 public class GuildForumListComposer extends MessageComposer {
@@ -36,22 +35,18 @@ public class GuildForumListComposer extends MessageComposer {
 
         this.response.appendInt(count);
 
-        for(int i = 0; i < index; i++) {
-            if(!it.hasNext())
+        for (int i = 0; i < index; i++) {
+            if (!it.hasNext())
                 break;
 
             it.next();
         }
 
-        for(int i = 0; i < count; i++) {
-            if(!it.hasNext())
+        for (int i = 0; i < count; i++) {
+            if (!it.hasNext())
                 break;
 
-            try {
-                GuildForumDataComposer.serializeForumData(this.response, it.next(), habbo);
-            } catch (SQLException e) {
-                return new ConnectionErrorComposer(500).compose();
-            }
+            GuildForumDataComposer.serializeForumData(this.response, it.next(), habbo);
         }
 
         return this.response;

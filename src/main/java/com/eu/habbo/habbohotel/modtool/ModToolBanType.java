@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.modtool;
 
-public enum ModToolBanType
-{
+public enum ModToolBanType {
     ACCOUNT("account"),
     MACHINE("machine"),
     SUPER("super"),
@@ -10,26 +9,21 @@ public enum ModToolBanType
 
     private final String type;
 
-    ModToolBanType(String type)
-    {
+    ModToolBanType(String type) {
         this.type = type;
     }
 
-    public String getType()
-    {
-        return this.type;
-    }
-
-    public static ModToolBanType fromString(String type)
-    {
-        for (ModToolBanType t : ModToolBanType.values())
-        {
-            if (t.type.equalsIgnoreCase(type))
-            {
+    public static ModToolBanType fromString(String type) {
+        for (ModToolBanType t : ModToolBanType.values()) {
+            if (t.type.equalsIgnoreCase(type)) {
                 return t;
             }
         }
 
         return UNKNOWN;
+    }
+
+    public String getType() {
+        return this.type;
     }
 }

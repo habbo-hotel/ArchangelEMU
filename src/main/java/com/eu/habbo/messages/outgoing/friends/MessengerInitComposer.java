@@ -6,27 +6,21 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class MessengerInitComposer extends MessageComposer
-{
+public class MessengerInitComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public MessengerInitComposer(Habbo habbo)
-    {
+    public MessengerInitComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.MessengerInitComposer);
-        if (this.habbo.hasPermission("acc_infinite_friends"))
-        {
+        if (this.habbo.hasPermission("acc_infinite_friends")) {
             this.response.appendInt(Integer.MAX_VALUE);
             this.response.appendInt(1337);
             this.response.appendInt(Integer.MAX_VALUE);
-        }
-        else
-        {
+        } else {
             this.response.appendInt(Messenger.MAXIMUM_FRIENDS);
             this.response.appendInt(1337);
             this.response.appendInt(Messenger.MAXIMUM_FRIENDS_HC);

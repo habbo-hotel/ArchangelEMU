@@ -4,28 +4,24 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
+import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Rank;
-import com.eu.habbo.habbohotel.pets.HorsePet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
-import com.eu.habbo.threading.runnables.RoomUnitRidePet;
-import com.eu.habbo.util.figure.FigureUtil;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.procedure.TIntIntProcedure;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
-public class HabboInfo implements Runnable
-{
+public class HabboInfo implements Runnable {
+    public boolean firstVisit = false;
     private String username;
     private String motto;
     private String look;
@@ -34,39 +30,30 @@ public class HabboInfo implements Runnable
     private String sso;
     private String ipRegister;
     private String ipLogin;
-
     private int id;
     private int accountCreated;
     private Rank rank;
-
     private int credits;
     private int lastOnline;
-
     private int homeRoom;
-
     private boolean online;
     private int loadingRoom;
     private Room currentRoom;
     private int roomQueueId;
-
     private RideablePet riding;
-
     private Class<? extends Game> currentGame;
     private TIntIntHashMap currencies;
     private GamePlayer gamePlayer;
-
     private int photoRoomId;
     private int photoTimestamp;
     private String photoURL;
     private String photoJSON;
     private int webPublishTimestamp;
     private String machineID;
-    public boolean firstVisit = false;
+    private HashSet<NavigatorSavedSearch> savedSearches = new HashSet<>();
 
-    public HabboInfo(ResultSet set)
-    {
-        try
-        {
+    public HabboInfo(ResultSet set) {
+        try {
             this.id = set.getInt("id");
             this.username = set.getString("username");
             this.motto = set.getString("motto");
@@ -78,8 +65,7 @@ public class HabboInfo implements Runnable
             this.ipLogin = set.getString("ip_current");
             this.rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(set.getInt("rank"));
 
-            if (this.rank == null)
-            {
+            if (this.rank == null) {
                 Emulator.getLogging().logErrorLine("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
                 Emulator.getLogging().logUserLine(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
                 this.rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(1);
@@ -92,127 +78,150 @@ public class HabboInfo implements Runnable
             this.machineID = set.getString("machine_id");
             this.online = false;
             this.currentRoom = null;
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
         this.loadCurrencies();
+        this.loadSavedSearches();
     }
 
-    private void loadCurrencies()
-    {
+    private void loadCurrencies() {
         this.currencies = new TIntIntHashMap();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_currency WHERE user_id = ?"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_currency WHERE user_id = ?")) {
             statement.setInt(1, this.id);
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     this.currencies.put(set.getInt("type"), set.getInt("amount"));
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    private void saveCurrencies()
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_currency (user_id, type, amount) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE amount = ?"))
-        {
-            this.currencies.forEachEntry(new TIntIntProcedure()
-            {
+    private void saveCurrencies() {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_currency (user_id, type, amount) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE amount = ?")) {
+            this.currencies.forEachEntry(new TIntIntProcedure() {
                 @Override
-                public boolean execute(int a, int b)
-                {
-                    try
-                    {
+                public boolean execute(int a, int b) {
+                    try {
                         statement.setInt(1, HabboInfo.this.getId());
                         statement.setInt(2, a);
                         statement.setInt(3, b);
                         statement.setInt(4, b);
                         statement.addBatch();
-                    }
-                    catch (SQLException e)
-                    {
+                    } catch (SQLException e) {
                         Emulator.getLogging().logSQLException(e);
                     }
                     return true;
                 }
             });
             statement.executeBatch();
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public int getCurrencyAmount(int type)
-    {
+    private void loadSavedSearches() {
+        this.savedSearches = new HashSet<>();
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_saved_searches WHERE user_id = ?")) {
+            statement.setInt(1, this.id);
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    this.savedSearches.add(new NavigatorSavedSearch(set.getString("search_code"), set.getString("filter"), set.getInt("id")));
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+    }
+
+    public void addSavedSearch(NavigatorSavedSearch search) {
+        this.savedSearches.add(search);
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_saved_searches (search_code, filter, user_id) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, search.getSearchCode());
+            statement.setString(2, search.getFilter());
+            statement.setInt(3, this.id);
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating saved search failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    search.setId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating saved search failed, no ID found.");
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+    }
+
+    public void deleteSavedSearch(NavigatorSavedSearch search) {
+        this.savedSearches.remove(search);
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM users_saved_searches WHERE id = ?")) {
+            statement.setInt(1, search.getId());
+            statement.execute();
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+    }
+
+    public int getCurrencyAmount(int type) {
         return this.currencies.get(type);
     }
 
-    public TIntIntHashMap getCurrencies()
-    {
+    public TIntIntHashMap getCurrencies() {
         return this.currencies;
     }
 
-    public void addCurrencyAmount(int type, int amount)
-    {
+    public void addCurrencyAmount(int type, int amount) {
         this.currencies.adjustOrPutValue(type, amount, amount);
         this.run();
     }
 
-    public void setCurrencyAmount(int type, int amount)
-    {
+    public void setCurrencyAmount(int type, int amount) {
         this.currencies.put(type, amount);
         this.run();
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public String getUsername()
-    {
+    public String getUsername() {
         return this.username;
     }
 
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getMotto()
-    {
+    public String getMotto() {
         return this.motto;
     }
 
-    public void setMotto(String motto)
-    {
+    public void setMotto(String motto) {
         this.motto = motto;
     }
 
-    public Rank getRank()
-    {
+    public Rank getRank() {
         return this.rank;
     }
 
-    public void setRank(Rank rank)
-    {
+    public void setRank(Rank rank) {
         this.rank = rank;
     }
 
-    public String getLook()
-    {
+    public String getLook() {
         return this.look;
     }
 
@@ -220,8 +229,7 @@ public class HabboInfo implements Runnable
         this.look = look;
     }
 
-    public HabboGender getGender()
-    {
+    public HabboGender getGender() {
         return this.gender;
     }
 
@@ -253,18 +261,15 @@ public class HabboInfo implements Runnable
         this.ipRegister = ipRegister;
     }
 
-    public String getIpLogin()
-    {
+    public String getIpLogin() {
         return this.ipLogin;
     }
 
-    public void setIpLogin(String ipLogin)
-    {
+    public void setIpLogin(String ipLogin) {
         this.ipLogin = ipLogin;
     }
 
-    public int getAccountCreated()
-    {
+    public int getAccountCreated() {
         return this.accountCreated;
     }
 
@@ -272,108 +277,92 @@ public class HabboInfo implements Runnable
         this.accountCreated = accountCreated;
     }
 
-    public boolean canBuy(CatalogItem item)
-    {
+    public boolean canBuy(CatalogItem item) {
         return this.credits >= item.getCredits() && this.getCurrencies().get(item.getPointsType()) >= item.getPoints();
     }
 
-    public int getCredits()
-    {
+    public int getCredits() {
         return this.credits;
     }
 
-    public void setCredits(int credits)
-    {
+    public void setCredits(int credits) {
         this.credits = credits;
         this.run();
     }
 
-    public void addCredits(int credits)
-    {
+    public void addCredits(int credits) {
         this.credits += credits;
         this.run();
     }
 
-    public int getPixels()
-    {
+    public int getPixels() {
         return this.getCurrencyAmount(0);
     }
 
-    public void setPixels(int pixels)
-    {
+    public void setPixels(int pixels) {
         this.setCurrencyAmount(0, pixels);
         this.run();
     }
 
-    public void addPixels(int pixels)
-    {
+    public void addPixels(int pixels) {
         this.addCurrencyAmount(0, pixels);
         this.run();
     }
 
-    public int getLastOnline()
-    {
+    public int getLastOnline() {
         return this.lastOnline;
     }
 
-    public void setLastOnline(int lastOnline)
-    {
+    public void setLastOnline(int lastOnline) {
         this.lastOnline = lastOnline;
     }
 
-    public int getHomeRoom()
-    {
+    public int getHomeRoom() {
         return this.homeRoom;
     }
 
-    public void setHomeRoom(int homeRoom)
-    {
+    public void setHomeRoom(int homeRoom) {
         this.homeRoom = homeRoom;
     }
 
-    public boolean isOnline()
-    {
+    public boolean isOnline() {
         return this.online;
     }
 
-    public void setOnline(boolean value)
-    {
+    public void setOnline(boolean value) {
         this.online = value;
     }
 
-    public int getLoadingRoom()
-    {
+    public int getLoadingRoom() {
         return this.loadingRoom;
     }
 
-    public void setLoadingRoom(int loadingRoom)
-    {
+    public void setLoadingRoom(int loadingRoom) {
         this.loadingRoom = loadingRoom;
     }
 
-    public Room getCurrentRoom()
-    {
+    public Room getCurrentRoom() {
         return this.currentRoom;
     }
 
-    public void setCurrentRoom(Room room)
-    {
+    public void setCurrentRoom(Room room) {
         this.currentRoom = room;
     }
 
-    public int getRoomQueueId()
-    {
+    public int getRoomQueueId() {
         return this.roomQueueId;
     }
 
-    public void setRoomQueueId(int roomQueueId)
-    {
+    public void setRoomQueueId(int roomQueueId) {
         this.roomQueueId = roomQueueId;
     }
 
-    public RideablePet getRiding()
-    {
+    public RideablePet getRiding() {
         return this.riding;
+    }
+
+    public void setRiding(RideablePet riding) {
+        this.riding = riding;
     }
 
     public void dismountPet() {
@@ -381,11 +370,11 @@ public class HabboInfo implements Runnable
     }
 
     public void dismountPet(boolean isRemoving) {
-        if(this.getRiding() == null)
+        if (this.getRiding() == null)
             return;
 
         Habbo habbo = this.getCurrentRoom().getHabbo(this.getId());
-        if(habbo == null)
+        if (habbo == null)
             return;
 
         RideablePet riding = this.getRiding();
@@ -395,11 +384,11 @@ public class HabboInfo implements Runnable
         this.setRiding(null);
 
         Room room = this.getCurrentRoom();
-        if(room != null)
+        if (room != null)
             room.giveEffect(habbo, 0, -1);
 
         RoomUnit roomUnit = habbo.getRoomUnit();
-        if(roomUnit == null)
+        if (roomUnit == null)
             return;
 
         roomUnit.setZ(riding.getRoomUnit().getZ());
@@ -413,103 +402,83 @@ public class HabboInfo implements Runnable
         roomUnit.statusUpdate(true);
     }
 
-    public void setRiding(RideablePet riding)
-    {
-        this.riding = riding;
-    }
-
-    public Class<? extends Game> getCurrentGame()
-    {
+    public Class<? extends Game> getCurrentGame() {
         return this.currentGame;
     }
 
-    public void setCurrentGame(Class<? extends Game> currentGame)
-    {
+    public void setCurrentGame(Class<? extends Game> currentGame) {
         this.currentGame = currentGame;
     }
 
-    public boolean isInGame()
-    {
+    public boolean isInGame() {
         return this.currentGame != null;
     }
 
-    public synchronized GamePlayer getGamePlayer()
-    {
+    public synchronized GamePlayer getGamePlayer() {
         return this.gamePlayer;
     }
 
-    public synchronized void setGamePlayer(GamePlayer gamePlayer)
-    {
+    public synchronized void setGamePlayer(GamePlayer gamePlayer) {
         this.gamePlayer = gamePlayer;
     }
 
-    public int getPhotoRoomId()
-    {
+    public int getPhotoRoomId() {
         return this.photoRoomId;
     }
 
-    public void setPhotoRoomId(int roomId)
-    {
+    public void setPhotoRoomId(int roomId) {
         this.photoRoomId = roomId;
     }
 
-    public int getPhotoTimestamp()
-    {
+    public int getPhotoTimestamp() {
         return this.photoTimestamp;
     }
 
-    public void setPhotoTimestamp(int photoTimestamp)
-    {
+    public void setPhotoTimestamp(int photoTimestamp) {
         this.photoTimestamp = photoTimestamp;
     }
 
-    public String getPhotoURL()
-    {
+    public String getPhotoURL() {
         return this.photoURL;
     }
 
-    public void setPhotoURL(String photoURL)
-    {
+    public void setPhotoURL(String photoURL) {
         this.photoURL = photoURL;
     }
 
-    public String getPhotoJSON()
-    {
+    public String getPhotoJSON() {
         return this.photoJSON;
     }
 
-    public void setPhotoJSON(String photoJSON)
-    {
+    public void setPhotoJSON(String photoJSON) {
         this.photoJSON = photoJSON;
     }
 
-    public int getWebPublishTimestamp()
-    {
+    public int getWebPublishTimestamp() {
         return this.webPublishTimestamp;
     }
 
-    public void setWebPublishTimestamp(int webPublishTimestamp)
-    {
+    public void setWebPublishTimestamp(int webPublishTimestamp) {
         this.webPublishTimestamp = webPublishTimestamp;
     }
 
-    public String getMachineID()
-    {
+    public String getMachineID() {
         return this.machineID;
     }
 
-    public void setMachineID(String machineID)
-    {
+    public void setMachineID(String machineID) {
         this.machineID = machineID;
     }
 
+    public HashSet<NavigatorSavedSearch> getSavedSearches() {
+        return this.savedSearches;
+    }
+
     @Override
-    public void run()
-    {
+    public void run() {
         this.saveCurrencies();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET motto = ?, online = ?, look = ?, gender = ?, credits = ?, last_login = ?, last_online = ?, home_room = ?, ip_current = ?, `rank` = ?, machine_id = ?, username = ? WHERE id = ?"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET motto = ?, online = ?, look = ?, gender = ?, credits = ?, last_login = ?, last_online = ?, home_room = ?, ip_current = ?, `rank` = ?, machine_id = ?, username = ? WHERE id = ?")) {
             statement.setString(1, this.motto);
             statement.setString(2, this.online ? "1" : "0");
             statement.setString(3, this.look);
@@ -524,21 +493,18 @@ public class HabboInfo implements Runnable
             statement.setString(12, this.username);
             statement.setInt(13, this.id);
             statement.executeUpdate();
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    public int getBonusRarePoints()
-    {
+    public int getBonusRarePoints() {
         return this.getCurrencyAmount(Emulator.getConfig().getInt("hotelview.promotional.points.type"));
     }
 
     public HabboStats getHabboStats() {
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getId());
-        if(habbo != null) {
+        if (habbo != null) {
             return habbo.getHabboStats();
         }
 

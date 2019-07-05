@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class EffectsListAddComposer extends MessageComposer
-{
+public class EffectsListAddComposer extends MessageComposer {
     public final EffectsComponent.HabboEffect effect;
 
-    public EffectsListAddComposer(EffectsComponent.HabboEffect effect)
-    {
+    public EffectsListAddComposer(EffectsComponent.HabboEffect effect) {
         this.effect = effect;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.EffectsListAddComposer);
         this.response.appendInt(this.effect.effect); //Type
         this.response.appendInt(0); //Unknown Costume?

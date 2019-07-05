@@ -18,8 +18,7 @@ public class RoomCategory implements Comparable<RoomCategory> {
     private ListMode displayMode;
     private int order;
 
-    public RoomCategory(ResultSet set) throws SQLException
-    {
+    public RoomCategory(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.minRank = set.getInt("min_rank");
         this.caption = set.getString("caption");
@@ -39,13 +38,11 @@ public class RoomCategory implements Comparable<RoomCategory> {
         return this.minRank;
     }
 
-    public String getCaption()
-    {
+    public String getCaption() {
         return this.caption;
     }
 
-    public String getCaptionSave()
-    {
+    public String getCaptionSave() {
         return this.captionSave;
     }
 
@@ -53,23 +50,19 @@ public class RoomCategory implements Comparable<RoomCategory> {
         return this.canTrade;
     }
 
-    public int getMaxUserCount()
-    {
+    public int getMaxUserCount() {
         return this.maxUserCount;
     }
 
-    public boolean isPublic()
-    {
+    public boolean isPublic() {
         return this.official;
     }
 
-    public ListMode getDisplayMode()
-    {
+    public ListMode getDisplayMode() {
         return this.displayMode;
     }
 
-    public int getOrder()
-    {
+    public int getOrder() {
         return this.order;
     }
 

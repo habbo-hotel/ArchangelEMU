@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.navigation;
 
-public enum DisplayMode
-{
+public enum DisplayMode {
     VISIBLE,
     COLLAPSED
 }

@@ -3,8 +3,7 @@ package com.eu.habbo.plugin.events.users;
 import com.eu.habbo.habbohotel.items.interactions.wired.effects.WiredEffectGiveReward;
 import com.eu.habbo.habbohotel.users.Habbo;
 
-public class UserWiredRewardReceived extends UserEvent
-{
+public class UserWiredRewardReceived extends UserEvent {
 
     public final WiredEffectGiveReward wiredEffectGiveReward;
 
@@ -15,8 +14,7 @@ public class UserWiredRewardReceived extends UserEvent
     public String value;
 
 
-    public UserWiredRewardReceived(Habbo habbo, WiredEffectGiveReward wiredEffectGiveReward, String type, String value)
-    {
+    public UserWiredRewardReceived(Habbo habbo, WiredEffectGiveReward wiredEffectGiveReward, String type, String value) {
         super(habbo);
 
         this.wiredEffectGiveReward = wiredEffectGiveReward;

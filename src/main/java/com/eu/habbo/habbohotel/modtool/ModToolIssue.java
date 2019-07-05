@@ -9,8 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class ModToolIssue implements ISerialize
-{
+public class ModToolIssue implements ISerialize {
     public int id;
     public volatile ModToolTicketState state;
     public volatile ModToolTicketType type;
@@ -26,9 +25,11 @@ public class ModToolIssue implements ISerialize
     public volatile String modName = "";
     public String message;
     public ArrayList<ModToolChatLog> chatLogs = null;
+    public int groupId = -1;
+    public int threadId = -1;
+    public int commentId = -1;
 
-    public ModToolIssue(ResultSet set) throws SQLException
-    {
+    public ModToolIssue(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.state = ModToolTicketState.getState(set.getInt("state"));
         this.timestamp = set.getInt("timestamp");
@@ -43,15 +44,13 @@ public class ModToolIssue implements ISerialize
         this.type = ModToolTicketType.values()[set.getInt("type") - 1];
         this.category = set.getInt("category");
 
-        if(this.modId <= 0)
-        {
+        if (this.modId <= 0) {
             this.modName = "";
             this.state = ModToolTicketState.OPEN;
         }
     }
 
-    public ModToolIssue(int senderId, String senderUserName, int reportedId, String reportedUsername, int reportedRoomId, String message, ModToolTicketType type)
-    {
+    public ModToolIssue(int senderId, String senderUserName, int reportedId, String reportedUsername, int reportedRoomId, String message, ModToolTicketType type) {
         this.state = ModToolTicketState.OPEN;
         this.timestamp = Emulator.getIntUnixTimestamp();
         this.priority = 0;
@@ -66,8 +65,7 @@ public class ModToolIssue implements ISerialize
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendInt(this.id); //ID
         message.appendInt(this.state.getState()); //STATE
         message.appendInt(this.type.getType()); //TYPE
@@ -84,24 +82,19 @@ public class ModToolIssue implements ISerialize
         message.appendString(this.message);
         message.appendInt(0);
 
-        if (this.chatLogs != null)
-        {
+        if (this.chatLogs != null) {
             message.appendInt(this.chatLogs.size());
-            for (ModToolChatLog chatLog : this.chatLogs)
-            {
+            for (ModToolChatLog chatLog : this.chatLogs) {
                 message.appendString(chatLog.message);
                 message.appendInt(0);
                 message.appendInt(chatLog.message.length());
             }
-        }
-        else
-        {
+        } else {
             message.appendInt(0);
         }
     }
 
-    public void updateInDatabase()
-    {
+    public void updateInDatabase() {
         Emulator.getThreading().run(new UpdateModToolIssue(this));
     }
 }

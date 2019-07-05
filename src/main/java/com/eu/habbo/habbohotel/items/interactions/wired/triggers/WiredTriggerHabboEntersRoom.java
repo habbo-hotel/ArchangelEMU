@@ -12,31 +12,25 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger
-{
+public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger {
     public static final WiredTriggerType type = WiredTriggerType.ENTER_ROOM;
 
     private String username = "";
 
-    public WiredTriggerHabboEntersRoom(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredTriggerHabboEntersRoom(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredTriggerHabboEntersRoom(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredTriggerHabboEntersRoom(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo != null)
-        {
-            if(this.username.length() > 0)
-            {
+        if (habbo != null) {
+            if (this.username.length() > 0) {
                 return habbo.getHabboInfo().getUsername().equalsIgnoreCase(this.username);
             }
 
@@ -46,32 +40,27 @@ public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger
     }
 
     @Override
-    public String getWiredData()
-    {
+    public String getWiredData() {
         return this.username;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.username = set.getString("wired_data");
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.username = "";
     }
 
     @Override
-    public WiredTriggerType getType()
-    {
+    public WiredTriggerType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -86,8 +75,7 @@ public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger
     }
 
     @Override
-    public boolean saveData(ClientMessage packet)
-    {
+    public boolean saveData(ClientMessage packet) {
         packet.readInt();
         this.username = packet.readString();
 
@@ -95,8 +83,7 @@ public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger
     }
 
     @Override
-    public boolean isTriggeredByRoomUnit()
-    {
+    public boolean isTriggeredByRoomUnit() {
         return true;
     }
 }

@@ -5,11 +5,9 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class ToggleWallItemEvent extends MessageHandler
-{
+public class ToggleWallItemEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if (room == null)
@@ -23,7 +21,7 @@ public class ToggleWallItemEvent extends MessageHandler
         if (item == null)
             return;
 
-        if(item.getBaseItem().getName().equalsIgnoreCase("poster"))
+        if (item.getBaseItem().getName().equalsIgnoreCase("poster"))
             return;
 
         item.needsUpdate(true);

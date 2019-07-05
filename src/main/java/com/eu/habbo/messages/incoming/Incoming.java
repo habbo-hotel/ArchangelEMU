@@ -1,7 +1,6 @@
 package com.eu.habbo.messages.incoming;
 
-public class Incoming
-{
+public class Incoming {
     public static final int ChangeNameCheckUsernameEvent = 3950;
     public static final int ConfirmChangeNameEvent = 2977;
     public static final int ActivateEffectEvent = 2959;
@@ -286,8 +285,13 @@ public class Incoming
     public static final int UnbanRoomUserEvent = 992;
     public static final int RoomUserBanEvent = 1477;
     public static final int RequestNavigatorSettingsEvent = 1782;
+    public static final int AddSavedSearchEvent = 2226;
+    public static final int DeleteSavedSearchEvent = 1954;
     public static final int SaveWindowSettingsEvent = 3159;
     public static final int GetHabboGuildBadgesMessageEvent = 21;
+    public static final int UpdateUIFlagsEvent = 2313;
+    public static final int ReportThreadEvent = 534;
+    public static final int ReportCommentEvent = 1412;
 
     public static final int RequestCraftingRecipesEvent = 1173;
     public static final int RequestCraftingRecipesAvailableEvent = 3086;
@@ -301,9 +305,9 @@ public class Incoming
     public static final int RoomFavoriteEvent = 3817;
     public static final int RoomUnFavoriteEvent = 309;
 
-    public static final int YoutubeRequestPlayListEvent = 336;
-    public static final int YoutubeRequestNextVideoEvent = 3005;
-    public static final int YoutubeRequestVideoDataEvent = 2069;
+    public static final int YoutubeRequestPlaylists = 336;
+    public static final int YoutubeRequestStateChange = 3005;
+    public static final int YoutubeRequestPlaylistChange = 2069;
 
     public static final int EditRoomPromotionMessageEvent = 3707;
     public static final int HotelViewRequestBadgeRewardEvent = 2318;

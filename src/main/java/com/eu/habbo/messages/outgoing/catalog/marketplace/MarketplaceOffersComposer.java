@@ -8,39 +8,30 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class MarketplaceOffersComposer extends MessageComposer
-{
+public class MarketplaceOffersComposer extends MessageComposer {
     private final List<MarketPlaceOffer> offers;
 
-    public MarketplaceOffersComposer(List<MarketPlaceOffer> offers)
-    {
+    public MarketplaceOffersComposer(List<MarketPlaceOffer> offers) {
         this.offers = offers;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.MarketplaceOffersComposer);
         int total = 0;
         this.response.appendInt(this.offers.size());
 
-        for(MarketPlaceOffer offer : this.offers)
-        {
+        for (MarketPlaceOffer offer : this.offers) {
             this.response.appendInt(offer.getOfferId());
             this.response.appendInt(1);
             this.response.appendInt(offer.getType());
             this.response.appendInt(offer.getItemId());
-            if(offer.getType() == 3)
-            {
+            if (offer.getType() == 3) {
                 this.response.appendInt(offer.getLimitedNumber());
                 this.response.appendInt(offer.getLimitedStack());
-            }
-            else if (offer.getType() == 2)
-            {
+            } else if (offer.getType() == 2) {
                 this.response.appendString("");
-            }
-            else
-            {
+            } else {
                 this.response.appendInt(0);
                 this.response.appendString("");
             }

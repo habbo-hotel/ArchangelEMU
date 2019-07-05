@@ -43,7 +43,7 @@ public class ThreadUpdatedMessageComposer extends MessageComposer {
 
         if (this.habbo.getHabboInfo().getId() != guild.getOwnerId() ||
                 guild.canModForum().state == 2 && (Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo).getRank() == GuildRank.ADMIN
-                || Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo).getRank() == GuildRank.MOD)
+                        || Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo).getRank() == GuildRank.MOD)
                 || this.habbo.hasPermission("acc_modtool_ticket_q")) {
             this.thread.setPinned(isPinned);
             this.thread.setLocked(isLocked);

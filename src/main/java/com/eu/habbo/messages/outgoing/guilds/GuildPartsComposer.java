@@ -6,45 +6,38 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuildPartsComposer extends MessageComposer
-{
+public class GuildPartsComposer extends MessageComposer {
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GroupPartsComposer);
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getBases().size());
-        for(GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBases())
-        {
+        for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBases()) {
             this.response.appendInt(part.id);
             this.response.appendString(part.valueA);
             this.response.appendString(part.valueB);
         }
 
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getSymbols().size());
-        for(GuildPart part : Emulator.getGameEnvironment().getGuildManager().getSymbols())
-        {
+        for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getSymbols()) {
             this.response.appendInt(part.id);
             this.response.appendString(part.valueA);
             this.response.appendString(part.valueB);
         }
 
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getBaseColors().size());
-        for(GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBaseColors())
-        {
+        for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBaseColors()) {
             this.response.appendInt(part.id);
             this.response.appendString(part.valueA);
         }
 
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getSymbolColors().size());
-        for(GuildPart part : Emulator.getGameEnvironment().getGuildManager().getSymbolColors())
-        {
+        for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getSymbolColors()) {
             this.response.appendInt(part.id);
             this.response.appendString(part.valueA);
         }
 
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getBackgroundColors().size());
-        for(GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBackgroundColors())
-        {
+        for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBackgroundColors()) {
             this.response.appendInt(part.id);
             this.response.appendString(part.valueA);
         }

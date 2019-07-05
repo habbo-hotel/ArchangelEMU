@@ -6,14 +6,11 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 
 import java.util.List;
 
-class CameraDecoder extends ByteToMessageDecoder
-{
+class CameraDecoder extends ByteToMessageDecoder {
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> objects)
-    {
+    protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> objects) {
         int readerIndex = byteBuf.readerIndex();
-        if(byteBuf.readableBytes() < 6)
-        {
+        if (byteBuf.readableBytes() < 6) {
             byteBuf.readerIndex(readerIndex);
             return;
         }
@@ -21,8 +18,7 @@ class CameraDecoder extends ByteToMessageDecoder
         int length = byteBuf.readInt();
         byteBuf.readerIndex(readerIndex);
 
-        if(byteBuf.readableBytes() < (length))
-        {
+        if (byteBuf.readableBytes() < (length)) {
             byteBuf.readerIndex(readerIndex);
             return;
         }

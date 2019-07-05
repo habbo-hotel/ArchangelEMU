@@ -4,18 +4,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class IsFirstLoginOfDayComposer extends MessageComposer
-{
+public class IsFirstLoginOfDayComposer extends MessageComposer {
     private final boolean isFirstLoginOfDay;
 
-    public IsFirstLoginOfDayComposer(boolean isFirstLoginOfDay)
-    {
+    public IsFirstLoginOfDayComposer(boolean isFirstLoginOfDay) {
         this.isFirstLoginOfDay = isFirstLoginOfDay;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.IsFirstLoginOfDayComposer);
         this.response.appendBoolean(this.isFirstLoginOfDay);
         return this.response;

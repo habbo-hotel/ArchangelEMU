@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.games.*;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiSphere;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiTile;
-import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiTimer;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.gates.InteractionBattleBanzaiGate;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.scoreboards.InteractionBattleBanzaiScoreboard;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -14,11 +13,8 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserActionComposer;
 import com.eu.habbo.threading.runnables.BattleBanzaiTilesFlicker;
-import gnu.trove.impl.hash.THash;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
@@ -26,10 +22,9 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-public class BattleBanzaiGame extends Game
-{
+public class BattleBanzaiGame extends Game {
 
-    public static final int effectId = 33;
+    public static final int effectId = 32;
 
 
     public static final int POINTS_HIJACK_TILE = Emulator.getConfig().getInt("hotel.banzai.points.tile.steal", 0);
@@ -41,18 +36,12 @@ public class BattleBanzaiGame extends Game
     public static final int POINTS_LOCK_TILE = Emulator.getConfig().getInt("hotel.banzai.points.tile.lock", 1);
 
     private static final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Emulator.getConfig().getInt("hotel.banzai.fill.threads", 2));
-
+    private final THashMap<GameTeamColors, THashSet<HabboItem>> lockedTiles;
+    private final THashMap<Integer, HabboItem> gameTiles;
     private int tileCount;
-
     private int countDown;
 
-
-    private final THashMap<GameTeamColors, THashSet<HabboItem>> lockedTiles;
-
-    private final THashMap<Integer, HabboItem> gameTiles;
-
-    public BattleBanzaiGame(Room room)
-    {
+    public BattleBanzaiGame(Room room) {
         super(BattleBanzaiGameTeam.class, BattleBanzaiGamePlayer.class, room, true);
 
         this.lockedTiles = new THashMap<>();
@@ -62,25 +51,21 @@ public class BattleBanzaiGame extends Game
     }
 
     @Override
-    public void initialise()
-    {
-        if(!this.state.equals(GameState.IDLE))
+    public void initialise() {
+        if (!this.state.equals(GameState.IDLE))
             return;
 
         this.countDown = 3;
 
         this.resetMap();
 
-        synchronized (this.teams)
-        {
-            for (GameTeam t : this.teams.values())
-            {
+        synchronized (this.teams) {
+            for (GameTeam t : this.teams.values()) {
                 t.initialise();
             }
         }
 
-        for(HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class))
-        {
+        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
             item.setExtradata("1");
             this.room.updateItemState(item);
         }
@@ -89,15 +74,13 @@ public class BattleBanzaiGame extends Game
     }
 
     @Override
-    public boolean addHabbo(Habbo habbo, GameTeamColors teamColor)
-    {
+    public boolean addHabbo(Habbo habbo, GameTeamColors teamColor) {
         return super.addHabbo(habbo, teamColor);
     }
 
     @Override
-    public void start()
-    {
-        if(!this.state.equals(GameState.IDLE))
+    public void start() {
+        if (!this.state.equals(GameState.IDLE))
             return;
 
         super.start();
@@ -108,28 +91,22 @@ public class BattleBanzaiGame extends Game
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             if (this.state.equals(GameState.IDLE))
                 return;
 
-            if(this.countDown > 0)
-            {
+            if (this.countDown > 0) {
                 this.countDown--;
 
-                if(this.countDown == 0)
-                {
-                    for(HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class))
-                    {
+                if (this.countDown == 0) {
+                    for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
                         item.setExtradata("2");
                         this.room.updateItemState(item);
                     }
                 }
 
-                if(this.countDown > 1)
-                {
+                if (this.countDown > 1) {
                     Emulator.getThreading().run(this, 500);
 
                     return;
@@ -141,49 +118,37 @@ public class BattleBanzaiGame extends Game
             if (this.state.equals(GameState.PAUSED)) return;
 
             int total = 0;
-            synchronized (this.lockedTiles)
-            {
-                for (Map.Entry<GameTeamColors, THashSet<HabboItem>> set : this.lockedTiles.entrySet())
-                {
+            synchronized (this.lockedTiles) {
+                for (Map.Entry<GameTeamColors, THashSet<HabboItem>> set : this.lockedTiles.entrySet()) {
                     total += set.getValue().size();
                 }
             }
 
             GameTeam highestScore = null;
 
-            synchronized (this.teams)
-            {
-                for (Map.Entry<GameTeamColors, GameTeam> set : this.teams.entrySet())
-                {
-                    if (highestScore == null || highestScore.getTotalScore() < set.getValue().getTotalScore())
-                    {
+            synchronized (this.teams) {
+                for (Map.Entry<GameTeamColors, GameTeam> set : this.teams.entrySet()) {
+                    if (highestScore == null || highestScore.getTotalScore() < set.getValue().getTotalScore()) {
                         highestScore = set.getValue();
                     }
                 }
             }
 
-            if(highestScore != null)
-            {
-                for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class))
-                {
-                    item.setExtradata((highestScore.teamColor.type + 3) + "");
+            if (highestScore != null) {
+                for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
+                    item.setExtradata((highestScore.teamColor.type + 2) + "");
                     this.room.updateItemState(item);
                 }
             }
 
-            if(total >= this.tileCount && this.tileCount != 0)
-            {
-                for(InteractionGameTimer timer : room.getRoomSpecialTypes().getGameTimers().values())
-                {
-                    if(timer.isRunning())
-                        timer.setRunning(false);
+            if (total >= this.tileCount && this.tileCount != 0) {
+                for (InteractionGameTimer timer : room.getRoomSpecialTypes().getGameTimers().values()) {
+                    if (timer.isRunning()) {
+                        timer.endGame(room);
+                    }
                 }
-
-                InteractionGameTimer.endGames(room, true);
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }
@@ -192,37 +157,29 @@ public class BattleBanzaiGame extends Game
     public void onEnd() {
         GameTeam winningTeam = null;
 
-        for (GameTeam team : this.teams.values())
-        {
-            for(GamePlayer player : team.getMembers())
-            {
-                if (player.getScore() > 0)
-                {
+        for (GameTeam team : this.teams.values()) {
+            for (GamePlayer player : team.getMembers()) {
+                if (player.getScore() > 0) {
                     AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallPlayer"));
                     AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallQuestCompleted"));
                 }
             }
 
-            if (winningTeam == null || team.getTotalScore() > winningTeam.getTotalScore())
-            {
+            if (winningTeam == null || team.getTotalScore() > winningTeam.getTotalScore()) {
                 winningTeam = team;
             }
         }
 
-        if (winningTeam != null)
-        {
-            for (GamePlayer player : winningTeam.getMembers())
-            {
-                if (player.getScore() > 0)
-                {
+        if (winningTeam != null) {
+            for (GamePlayer player : winningTeam.getMembers()) {
+                if (player.getScore() > 0) {
                     this.room.sendComposer(new RoomUserActionComposer(player.getHabbo().getRoomUnit(), RoomUserAction.WAVE).compose());
                     AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallWinner"));
                 }
             }
 
-            for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class))
-            {
-                item.setExtradata((7 + winningTeam.teamColor.type) + "");
+            for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
+                item.setExtradata((6 + winningTeam.teamColor.type) + "");
                 this.room.updateItemState(item);
             }
 
@@ -233,16 +190,13 @@ public class BattleBanzaiGame extends Game
     }
 
     @Override
-    public void stop()
-    {
+    public void stop() {
         super.stop();
 
         this.refreshGates();
 
-        for (HabboItem tile : this.gameTiles.values())
-        {
-            if (tile.getExtradata().equals("1"))
-            {
+        for (HabboItem tile : this.gameTiles.values()) {
+            if (tile.getExtradata().equals("1")) {
                 tile.setExtradata("0");
                 this.room.updateItem(tile);
             }
@@ -251,20 +205,17 @@ public class BattleBanzaiGame extends Game
     }
 
 
-    private synchronized void resetMap()
-    {
-        for (HabboItem item : this.room.getFloorItems())
-        {
-            if (item instanceof InteractionBattleBanzaiTile)
-            {
+    private synchronized void resetMap() {
+        this.tileCount = 0;
+        for (HabboItem item : this.room.getFloorItems()) {
+            if (item instanceof InteractionBattleBanzaiTile) {
                 item.setExtradata("1");
                 this.room.updateItemState(item);
                 this.tileCount++;
                 this.gameTiles.put(item.getId(), item);
             }
 
-            if (item instanceof InteractionBattleBanzaiScoreboard)
-            {
+            if (item instanceof InteractionBattleBanzaiScoreboard) {
                 item.setExtradata("0");
                 this.room.updateItemState(item);
             }
@@ -272,25 +223,20 @@ public class BattleBanzaiGame extends Game
     }
 
 
-    public void tileLocked(GameTeamColors teamColor, HabboItem item, Habbo habbo)
-    {
+    public void tileLocked(GameTeamColors teamColor, HabboItem item, Habbo habbo) {
         this.tileLocked(teamColor, item, habbo, false);
     }
 
-    public void tileLocked(GameTeamColors teamColor, HabboItem item, Habbo habbo, boolean doNotCheckFill)
-    {
-        if(item instanceof InteractionBattleBanzaiTile)
-        {
-            if(!this.lockedTiles.containsKey(teamColor))
-            {
+    public void tileLocked(GameTeamColors teamColor, HabboItem item, Habbo habbo, boolean doNotCheckFill) {
+        if (item instanceof InteractionBattleBanzaiTile) {
+            if (!this.lockedTiles.containsKey(teamColor)) {
                 this.lockedTiles.put(teamColor, new THashSet<>());
             }
 
             this.lockedTiles.get(teamColor).add(item);
         }
 
-        if(habbo != null)
-        {
+        if (habbo != null) {
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallTilesLocked"));
         }
 
@@ -299,7 +245,7 @@ public class BattleBanzaiGame extends Game
         final int x = item.getX();
         final int y = item.getY();
 
-        final List<List<RoomTile>> filledAreas =  new ArrayList<>();
+        final List<List<RoomTile>> filledAreas = new ArrayList<>();
         final THashSet<HabboItem> lockedTiles = new THashSet<>(this.lockedTiles.get(teamColor));
 
         executor.execute(() -> {
@@ -310,34 +256,30 @@ public class BattleBanzaiGame extends Game
 
             Optional<List<RoomTile>> largestAreaOfAll = filledAreas.stream().filter(Objects::nonNull).max(Comparator.comparing(List::size));
 
-            if (largestAreaOfAll.isPresent())
-            {
-                for (RoomTile tile: largestAreaOfAll.get())
-                {
+            if (largestAreaOfAll.isPresent()) {
+                for (RoomTile tile : largestAreaOfAll.get()) {
                     Optional<HabboItem> tileItem = this.gameTiles.values().stream().filter(i -> i.getX() == tile.x && i.getY() == tile.y && i instanceof InteractionBattleBanzaiTile).findAny();
 
                     tileItem.ifPresent(habboItem -> {
                         this.tileLocked(teamColor, habboItem, habbo, true);
 
-                        habboItem.setExtradata((2 + (teamColor.type * 3) + 3) + "");
+                        habboItem.setExtradata((2 + (teamColor.type * 3)) + "");
                         this.room.updateItem(habboItem);
                     });
                 }
 
                 this.refreshCounters(teamColor);
-                if (habbo != null)
-                {
+                if (habbo != null) {
                     habbo.getHabboInfo().getGamePlayer().addScore(BattleBanzaiGame.POINTS_LOCK_TILE * largestAreaOfAll.get().size());
                 }
             }
         });
     }
 
-    private List<RoomTile> floodFill(int x, int y, THashSet<HabboItem> lockedTiles, List<RoomTile> stack, GameTeamColors color)
-    {
+    private List<RoomTile> floodFill(int x, int y, THashSet<HabboItem> lockedTiles, List<RoomTile> stack, GameTeamColors color) {
         if (this.isOutOfBounds(x, y) || this.isForeignLockedTile(x, y, color)) return null;
 
-        RoomTile tile = this.room.getLayout().getTile((short)x, (short)y);
+        RoomTile tile = this.room.getLayout().getTile((short) x, (short) y);
 
         if (this.hasLockedTileAtCoordinates(x, y, lockedTiles) || stack.contains(tile)) return stack;
 
@@ -357,28 +299,23 @@ public class BattleBanzaiGame extends Game
 
     }
 
-    private boolean hasLockedTileAtCoordinates(int x, int y, THashSet<HabboItem> lockedTiles)
-    {
-        for (HabboItem item : lockedTiles)
-        {
+    private boolean hasLockedTileAtCoordinates(int x, int y, THashSet<HabboItem> lockedTiles) {
+        for (HabboItem item : lockedTiles) {
             if (item.getX() == x && item.getY() == y) return true;
         }
 
         return false;
     }
 
-    private boolean isOutOfBounds(int x, int y)
-    {
-        for (HabboItem item : this.gameTiles.values())
-        {
+    private boolean isOutOfBounds(int x, int y) {
+        for (HabboItem item : this.gameTiles.values()) {
             if (item.getX() == x && item.getY() == y) return false;
         }
 
         return true;
     }
 
-    private boolean isForeignLockedTile(int x, int y, GameTeamColors color)
-    {
+    private boolean isForeignLockedTile(int x, int y, GameTeamColors color) {
         for (HashMap.Entry<GameTeamColors, THashSet<HabboItem>> lockedTilesForColor : this.lockedTiles.entrySet()) {
             if (lockedTilesForColor.getKey() == color) continue;
 
@@ -390,11 +327,9 @@ public class BattleBanzaiGame extends Game
         return false;
     }
 
-    public void refreshCounters()
-    {
-        for(GameTeam team : this.teams.values())
-        {
-            if(team.getMembers().isEmpty())
+    public void refreshCounters() {
+        for (GameTeam team : this.teams.values()) {
+            if (team.getMembers().isEmpty())
                 continue;
 
             this.refreshCounters(team.teamColor);
@@ -402,22 +337,21 @@ public class BattleBanzaiGame extends Game
     }
 
 
-    public void refreshCounters(GameTeamColors teamColors)
-    {
+    public void refreshCounters(GameTeamColors teamColors) {
+        if (!this.teams.containsKey(teamColors)) return;
+
         int totalScore = this.teams.get(teamColors).getTotalScore();
 
         THashMap<Integer, InteractionBattleBanzaiScoreboard> scoreBoards = this.room.getRoomSpecialTypes().getBattleBanzaiScoreboards(teamColors);
 
-        for (InteractionBattleBanzaiScoreboard scoreboard : scoreBoards.values())
-        {
-            if(scoreboard.getExtradata().isEmpty())
-            {
+        for (InteractionBattleBanzaiScoreboard scoreboard : scoreBoards.values()) {
+            if (scoreboard.getExtradata().isEmpty()) {
                 scoreboard.setExtradata("0");
             }
 
             int oldScore = Integer.valueOf(scoreboard.getExtradata());
 
-            if(oldScore == totalScore)
+            if (oldScore == totalScore)
                 continue;
 
             scoreboard.setExtradata(totalScore + "");
@@ -425,40 +359,31 @@ public class BattleBanzaiGame extends Game
         }
     }
 
-    private void refreshGates()
-    {
+    private void refreshGates() {
         Collection<InteractionBattleBanzaiGate> gates = this.room.getRoomSpecialTypes().getBattleBanzaiGates().values();
         THashSet<RoomTile> tilesToUpdate = new THashSet<>(gates.size());
-        for (HabboItem item : gates)
-        {
+        for (HabboItem item : gates) {
             tilesToUpdate.add(this.room.getLayout().getTile(item.getX(), item.getY()));
         }
 
         this.room.updateTiles(tilesToUpdate);
     }
 
-    public void markTile(Habbo habbo, InteractionBattleBanzaiTile tile, int state)
-    {
+    public void markTile(Habbo habbo, InteractionBattleBanzaiTile tile, int state) {
         if (!this.gameTiles.contains(tile.getId())) return;
 
         int check = state - (habbo.getHabboInfo().getGamePlayer().getTeamColor().type * 3);
-        if(check == 3 || check == 4)
-        {
+        if (check == 0 || check == 1) {
             state++;
 
-            if(state % 3 == 2)
-            {
+            if (state % 3 == 2) {
                 habbo.getHabboInfo().getGamePlayer().addScore(BattleBanzaiGame.POINTS_LOCK_TILE);
                 this.tileLocked(habbo.getHabboInfo().getGamePlayer().getTeamColor(), tile, habbo);
-            }
-            else
-            {
+            } else {
                 habbo.getHabboInfo().getGamePlayer().addScore(BattleBanzaiGame.POINTS_FILL_TILE);
             }
-        }
-        else
-        {
-            state = (habbo.getHabboInfo().getGamePlayer().getTeamColor().type * 3) + 3;
+        } else {
+            state = habbo.getHabboInfo().getGamePlayer().getTeamColor().type * 3;
 
             habbo.getHabboInfo().getGamePlayer().addScore(BattleBanzaiGame.POINTS_HIJACK_TILE);
         }

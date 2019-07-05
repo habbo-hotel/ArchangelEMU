@@ -6,18 +6,14 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.guilds.GuildChangedBadgeEvent;
 
-public class GuildChangeBadgeEvent extends MessageHandler
-{
+public class GuildChangeBadgeEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         int guildId = this.packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
-        if (guild != null)
-        {
-            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission("acc_guild_admin"))
-            {
+        if (guild != null) {
+            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission("acc_guild_admin")) {
                 Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
 
                 if (room == null || room.getId() != guild.getRoomId())
@@ -29,17 +25,14 @@ public class GuildChangeBadgeEvent extends MessageHandler
 
                 byte base = 1;
 
-                while (base < count)
-                {
+                while (base < count) {
                     int id = this.packet.readInt();
                     int color = this.packet.readInt();
                     int pos = this.packet.readInt();
 
-                    if (base == 1)
-                    {
+                    if (base == 1) {
                         badge += "b";
-                    } else
-                    {
+                    } else {
                         badge += "s";
                     }
 
@@ -60,8 +53,7 @@ public class GuildChangeBadgeEvent extends MessageHandler
                 guild.setBadge(badgeEvent.badge);
                 guild.needsUpdate = true;
 
-                if (Emulator.getConfig().getBoolean("imager.internal.enabled"))
-                {
+                if (Emulator.getConfig().getBoolean("imager.internal.enabled")) {
                     Emulator.getBadgeImager().generate(guild);
                 }
 

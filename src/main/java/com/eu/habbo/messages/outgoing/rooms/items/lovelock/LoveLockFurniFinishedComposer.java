@@ -5,18 +5,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class LoveLockFurniFinishedComposer extends MessageComposer
-{
+public class LoveLockFurniFinishedComposer extends MessageComposer {
     private final InteractionLoveLock loveLock;
 
-    public LoveLockFurniFinishedComposer(InteractionLoveLock loveLock)
-    {
+    public LoveLockFurniFinishedComposer(InteractionLoveLock loveLock) {
         this.loveLock = loveLock;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.LoveLockFurniFinishedComposer);
         this.response.appendInt(this.loveLock.getId());
         return this.response;

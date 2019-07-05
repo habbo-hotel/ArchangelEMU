@@ -7,8 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Guild implements Runnable
-{
+public class Guild implements Runnable {
+    public boolean needsUpdate;
+    public int lastRequested = Emulator.getIntUnixTimestamp();
     private int id;
     private int ownerId;
     private String ownerName;
@@ -30,11 +31,7 @@ public class Guild implements Runnable
     private SettingsState postThreads = SettingsState.ADMINS;
     private SettingsState modForum = SettingsState.ADMINS;
 
-    public boolean needsUpdate;
-    public int lastRequested = Emulator.getIntUnixTimestamp();
-
-    public Guild(ResultSet set) throws SQLException
-    {
+    public Guild(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.ownerId = set.getInt("user_id");
         this.ownerName = set.getString("username");
@@ -57,8 +54,7 @@ public class Guild implements Runnable
         this.requestCount = 0;
     }
 
-    public Guild(int ownerId, String ownerName, int roomId, String roomName, String name, String description, int colorOne, int colorTwo, String badge)
-    {
+    public Guild(int ownerId, String ownerName, int roomId, String roomName, String name, String description, int colorOne, int colorTwo, String badge) {
         this.id = 0;
         this.ownerId = ownerId;
         this.ownerName = ownerName;
@@ -75,47 +71,34 @@ public class Guild implements Runnable
         this.dateCreated = Emulator.getIntUnixTimestamp();
     }
 
-    public void loadMemberCount()
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection())
-        {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(id) as count FROM guilds_members WHERE level_id < 3 AND guild_id = ?"))
-            {
+    public void loadMemberCount() {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(id) as count FROM guilds_members WHERE level_id < 3 AND guild_id = ?")) {
                 statement.setInt(1, this.id);
-                try (ResultSet set = statement.executeQuery())
-                {
-                    if (set.next())
-                    {
+                try (ResultSet set = statement.executeQuery()) {
+                    if (set.next()) {
                         this.memberCount = set.getInt(1);
                     }
                 }
             }
 
-            try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(id) as count FROM guilds_members WHERE level_id = 3 AND guild_id = ?"))
-            {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(id) as count FROM guilds_members WHERE level_id = 3 AND guild_id = ?")) {
                 statement.setInt(1, this.id);
-                try (ResultSet set = statement.executeQuery())
-                {
-                    if (set.next())
-                    {
+                try (ResultSet set = statement.executeQuery()) {
+                    if (set.next()) {
                         this.requestCount = set.getInt(1);
                     }
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
     @Override
-    public void run()
-    {
-        if(this.needsUpdate)
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds SET name = ?, description = ?, state = ?, rights = ?, color_one = ?, color_two = ?, badge = ?, read_forum = ?, post_messages = ?, post_threads = ?, mod_forum = ?, forum = ? WHERE id = ?"))
-            {
+    public void run() {
+        if (this.needsUpdate) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds SET name = ?, description = ?, state = ?, rights = ?, color_one = ?, color_two = ?, badge = ?, read_forum = ?, post_messages = ?, post_threads = ?, mod_forum = ?, forum = ? WHERE id = ?")) {
                 statement.setString(1, this.name);
                 statement.setString(2, this.description);
                 statement.setInt(3, this.state.state);
@@ -132,201 +115,161 @@ public class Guild implements Runnable
                 statement.execute();
 
                 this.needsUpdate = false;
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public void setId(int id)
-    {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getOwnerName()
-    {
+    public String getOwnerName() {
         return this.ownerName;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getDescription()
-    {
+    public String getDescription() {
         return this.description;
     }
 
-    public void setDescription(String description)
-    {
+    public void setDescription(String description) {
         this.description = description;
     }
 
-    public int getRoomId()
-    {
+    public int getRoomId() {
         return this.roomId;
     }
 
-    public String getRoomName()
-    {
+    public String getRoomName() {
         return this.roomName;
     }
 
-    public void setRoomName(String roomName)
-    {
+    public void setRoomName(String roomName) {
         this.roomName = roomName;
     }
 
-    public GuildState getState()
-    {
+    public GuildState getState() {
         return this.state;
     }
 
-    public void setState(GuildState state)
-    {
+    public void setState(GuildState state) {
         this.state = state;
     }
 
-    public boolean getRights()
-    {
+    public boolean getRights() {
         return this.rights;
     }
 
-    public void setRights(boolean rights)
-    {
+    public void setRights(boolean rights) {
         this.rights = rights;
     }
 
-    public int getColorOne()
-    {
+    public int getColorOne() {
         return this.colorOne;
     }
 
-    public void setColorOne(int colorOne)
-    {
+    public void setColorOne(int colorOne) {
         this.colorOne = colorOne;
     }
 
-    public int getColorTwo()
-    {
+    public int getColorTwo() {
         return this.colorTwo;
     }
 
-    public void setColorTwo(int colorTwo)
-    {
+    public void setColorTwo(int colorTwo) {
         this.colorTwo = colorTwo;
     }
 
-    public String getBadge()
-    {
+    public String getBadge() {
         return this.badge;
     }
 
-    public void setBadge(String badge)
-    {
+    public void setBadge(String badge) {
         this.badge = badge;
     }
 
-    public int getOwnerId()
-    {
+    public int getOwnerId() {
         return this.ownerId;
     }
 
-    public int getDateCreated()
-    {
+    public int getDateCreated() {
         return dateCreated;
     }
 
-    public int getMemberCount()
-    {
+    public int getMemberCount() {
         return this.memberCount;
     }
 
-    public void increaseMemberCount()
-    {
+    public void increaseMemberCount() {
         this.memberCount++;
     }
 
-    public void decreaseMemberCount()
-    {
+    public void decreaseMemberCount() {
         this.memberCount--;
     }
 
-    public int getRequestCount()
-    {
+    public int getRequestCount() {
         return this.requestCount;
     }
 
-    public void increaseRequestCount()
-    {
+    public void increaseRequestCount() {
         this.requestCount++;
     }
 
-    public void decreaseRequestCount()
-    {
+    public void decreaseRequestCount() {
         this.requestCount--;
     }
 
-    public boolean hasForum()
-    {
+    public boolean hasForum() {
         return this.forum;
     }
 
-    public void setForum(boolean forum)
-    {
+    public void setForum(boolean forum) {
         this.forum = forum;
     }
 
-    public SettingsState canReadForum()
-    {
+    public SettingsState canReadForum() {
         return this.readForum;
     }
 
-    public void setReadForum(SettingsState readForum)
-    {
+    public void setReadForum(SettingsState readForum) {
         this.readForum = readForum;
     }
 
-    public SettingsState canPostMessages()
-    {
+    public SettingsState canPostMessages() {
         return this.postMessages;
     }
 
-    public void setPostMessages(SettingsState postMessages)
-    {
+    public void setPostMessages(SettingsState postMessages) {
         this.postMessages = postMessages;
     }
 
-    public SettingsState canPostThreads()
-    {
+    public SettingsState canPostThreads() {
         return this.postThreads;
     }
 
-    public void setPostThreads(SettingsState postThreads)
-    {
+    public void setPostThreads(SettingsState postThreads) {
         this.postThreads = postThreads;
     }
 
-    public SettingsState canModForum()
-    {
+    public SettingsState canModForum() {
         return this.modForum;
     }
 
-    public void setModForum(SettingsState modForum)
-    {
+    public void setModForum(SettingsState modForum) {
         this.modForum = modForum;
     }
 }

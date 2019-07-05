@@ -6,20 +6,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuildFavoriteRoomUserUpdateComposer extends MessageComposer
-{
+public class GuildFavoriteRoomUserUpdateComposer extends MessageComposer {
     private RoomUnit roomUnit;
     private Guild guild;
 
-    public GuildFavoriteRoomUserUpdateComposer(RoomUnit roomUnit, Guild guild)
-    {
+    public GuildFavoriteRoomUserUpdateComposer(RoomUnit roomUnit, Guild guild) {
         this.roomUnit = roomUnit;
         this.guild = guild;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.GuildFavoriteRoomUserUpdateComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.guild.getId());

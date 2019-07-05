@@ -8,26 +8,21 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class TradeUpdateComposer extends MessageComposer
-{
+public class TradeUpdateComposer extends MessageComposer {
     private final RoomTrade roomTrade;
 
-    public TradeUpdateComposer(RoomTrade roomTrade)
-    {
+    public TradeUpdateComposer(RoomTrade roomTrade) {
         this.roomTrade = roomTrade;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.TradeUpdateComposer);
-        for(RoomTradeUser roomTradeUser : this.roomTrade.getRoomTradeUsers())
-        {
+        for (RoomTradeUser roomTradeUser : this.roomTrade.getRoomTradeUsers()) {
             this.response.appendInt(roomTradeUser.getUserId());
             this.response.appendInt(roomTradeUser.getItems().size());
 
-            for(HabboItem item : roomTradeUser.getItems())
-            {
+            for (HabboItem item : roomTradeUser.getItems()) {
                 this.response.appendInt(item.getId());
                 this.response.appendString(item.getBaseItem().getType().code);
                 this.response.appendInt(item.getId());
@@ -39,7 +34,7 @@ public class TradeUpdateComposer extends MessageComposer
                 this.response.appendInt(0);
                 this.response.appendInt(0);
 
-                if(item.getBaseItem().getType() == FurnitureType.FLOOR)
+                if (item.getBaseItem().getType() == FurnitureType.FLOOR)
                     this.response.appendInt(0);
             }
 

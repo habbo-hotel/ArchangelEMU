@@ -4,9 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GameState;
-import com.eu.habbo.habbohotel.games.battlebanzai.BattleBanzaiGame;
-import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
-import com.eu.habbo.habbohotel.games.wired.WiredGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -17,124 +14,180 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Map;
 
-public abstract class InteractionGameTimer extends HabboItem implements Runnable
-{
+public class InteractionGameTimer extends HabboItem implements Runnable {
+    private int[] TIMER_INTERVAL_STEPS = new int[] { 30, 60, 120, 180, 300, 600 };
+
     private int baseTime = 0;
     private int timeNow = 0;
     private boolean isRunning = false;
     private boolean isPaused = false;
+    private boolean threadActive = false;
 
-    public InteractionGameTimer(ResultSet set, Item baseItem) throws SQLException
-    {
+    public enum InteractionGameTimerAction {
+        START_STOP(1),
+        INCREASE_TIME(2);
+
+        private int action;
+
+        InteractionGameTimerAction(int action) {
+            this.action = action;
+        }
+
+        public int getAction() {
+            return action;
+        }
+
+        public static InteractionGameTimerAction getByAction(int action) {
+            if (action == 1) return START_STOP;
+            if (action == 2) return INCREASE_TIME;
+
+            return START_STOP;
+        }
+    }
+
+    public InteractionGameTimer(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
 
-        String[] data = set.getString("extra_data").split("\t");
+        parseCustomParams(baseItem);
 
-        if (data.length >= 2)
-        {
-            this.baseTime = Integer.valueOf(data[1]);
+        try {
+            String[] data = set.getString("extra_data").split("\t");
+
+            if (data.length >= 2) {
+                this.baseTime = Integer.valueOf(data[1]);
+                this.timeNow = this.baseTime;
+            }
+
+            if (data.length >= 1) {
+                this.setExtradata(data[0] + "\t0");
+            }
+        }
+        catch (Exception e) {
+            this.baseTime = TIMER_INTERVAL_STEPS[0];
             this.timeNow = this.baseTime;
         }
-
-        if (data.length >= 1)
-        {
-            this.setExtradata(data[0]);
-        }
     }
 
-    public InteractionGameTimer(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionGameTimer(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+
+        parseCustomParams(item);
     }
 
-    @Override
-    public void run() {
-        if(this.needsUpdate() || this.needsDelete()) {
-            super.run();
+    public void parseCustomParams(Item baseItem) {
+        try {
+            String[] intervalSteps = baseItem.getCustomParams().split(",");
+            int[] finalSteps = new int[intervalSteps.length];
+            for (int i = 0; i < intervalSteps.length; i++) {
+                finalSteps[i] = Integer.parseInt(intervalSteps[i]);
+            }
+            TIMER_INTERVAL_STEPS = finalSteps;
         }
-
-        if(this.getRoomId() == 0)
-            return;
-
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-
-        if(room == null || !this.isRunning || this.isPaused)
-            return;
-
-        if(this.timeNow > 0) {
-            Emulator.getThreading().run(this, 1000);
-            this.timeNow--;
-            room.updateItem(this);
-        }
-        else {
-            this.isRunning = false;
-            this.isPaused = false;
-            endGamesIfLastTimer(room);
+        catch (Exception e) {
+            Emulator.getLogging().logErrorLine(e);
         }
     }
 
-    public static void endGamesIfLastTimer(Room room) {
-        boolean gamesActive = false;
-        for (InteractionGameTimer timer : room.getRoomSpecialTypes().getGameTimers().values()) {
-            if (timer.isRunning())
-                gamesActive = true;
-        }
+    public void endGame(Room room) {
+        this.isRunning = false;
+        this.isPaused = false;
 
-        if (!gamesActive) {
-            endGames(room);
-        }
-    }
-
-    public static void endGames(Room room) {
-        endGames(room, false);
-    }
-
-    public static void endGames(Room room, boolean overrideTriggerWired) {
-
-        boolean triggerWired = false;
-
-        //end existing games
-        for (Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
-            Game game = InteractionGameTimer.getOrCreateGame(room, gameClass);
-            if (!game.state.equals(GameState.IDLE)) {
-                triggerWired = true;
+        for (Game game : room.getGames()) {
+            if (!game.getState().equals(GameState.IDLE)) {
                 game.onEnd();
                 game.stop();
             }
         }
+    }
 
-        if(triggerWired) {
+    private void createNewGame(Room room) {
+        for(Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
+            Game existingGame = room.getGame(gameClass);
+
+            if (existingGame != null) {
+                existingGame.initialise();
+            } else {
+                try {
+                    Game game = gameClass.getDeclaredConstructor(Room.class).newInstance(room);
+                    room.addGame(game);
+                    game.initialise();
+                } catch (Exception e) {
+                    Emulator.getLogging().logErrorLine(e);
+                }
+            }
+        }
+    }
+
+    private void pause(Room room) {
+        for (Game game : room.getGames()) {
+            game.pause();
+        }
+    }
+
+    private void unpause(Room room) {
+        for (Game game : room.getGames()) {
+            game.unpause();
+        }
+    }
+
+    @Override
+    public void run() {
+        if (this.needsUpdate() || this.needsDelete()) {
+            super.run();
+        }
+
+        if (this.getRoomId() == 0) {
+            this.threadActive = false;
+            return;
+        }
+
+        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+
+        if (room == null || !this.isRunning || this.isPaused) {
+            this.threadActive = false;
+            return;
+        }
+
+        if (this.timeNow > 0) {
+            this.threadActive = true;
+            Emulator.getThreading().run(this, 1000);
+            this.timeNow--;
+            room.updateItem(this);
+        } else {
+            this.threadActive = false;
+            this.endGame(room);
             WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, room, new Object[]{});
         }
     }
 
     @Override
-    public void onPickUp(Room room)
-    {
-        this.setExtradata("0");
+    public void onPickUp(Room room) {
+        this.endGame(room);
+
+        this.setExtradata(this.baseTime + "\t" + this.baseTime);
+        this.needsUpdate(true);
     }
 
     @Override
-    public void onPlace(Room room)
-    {
-        if(this.baseTime == 0) {
-            this.baseTime = 30;
-            this.timeNow = this.baseTime;
+    public void onPlace(Room room) {
+        if (this.baseTime < this.TIMER_INTERVAL_STEPS[0]) {
+            this.baseTime = this.TIMER_INTERVAL_STEPS[0];
         }
+
+        this.timeNow = this.baseTime;
 
         this.setExtradata(this.timeNow + "\t" + this.baseTime);
         room.updateItem(this);
+        this.needsUpdate(true);
+
+        super.onPlace(room);
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString("" + timeNow);
 
@@ -142,136 +195,96 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return false;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return false;
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
-        if(this.getExtradata().isEmpty())
-        {
-            this.setExtradata("0");
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+        if (this.getExtradata().isEmpty()) {
+            this.setExtradata("0\t" + this.TIMER_INTERVAL_STEPS[0]);
         }
 
         // if wired triggered it
-        if (objects.length >= 2 && objects[1] instanceof WiredEffectType && !this.isRunning)
-        {
-            endGamesIfLastTimer(room);
+        if (objects.length >= 2 && objects[1] instanceof WiredEffectType) {
+            if(!(!this.isRunning || this.isPaused))
+                return;
 
-            for(Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
-                Game game = getOrCreateGame(room, gameClass);
-                if(!game.isRunning) {
-                    game.initialise();
-                }
+            boolean wasPaused = this.isPaused;
+            this.endGame(room);
+
+            if(wasPaused) {
+                WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, room, new Object[]{});
             }
 
-            timeNow = this.baseTime;
-            this.isRunning = true;
-            room.updateItem(this);
-            WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, room, new Object[] { });
+            this.createNewGame(room);
 
-            Emulator.getThreading().run(this);
-        }
-        else if(client != null)
-        {
+            this.timeNow = this.baseTime;
+            this.isRunning = true;
+            this.isPaused = false;
+
+            room.updateItem(this);
+            WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, room, new Object[]{});
+
+            if (!this.threadActive) {
+                this.threadActive = true;
+                Emulator.getThreading().run(this, 1000);
+            }
+        } else if (client != null) {
             if (!(room.hasRights(client.getHabbo()) || client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)))
                 return;
 
-            int state = 1;
+            InteractionGameTimerAction state = InteractionGameTimerAction.START_STOP;
 
-            if(objects.length >= 1 && objects[0] instanceof Integer) {
-                state = (Integer) objects[0];
+            if (objects.length >= 1 && objects[0] instanceof Integer) {
+                state = InteractionGameTimerAction.getByAction((int) objects[0]);
             }
 
-            switch (state)
-            {
-                case 1:
-                    if(this.isRunning) {
+            switch (state) {
+                case START_STOP:
+                    if (this.isRunning) { // a game has been started
                         this.isPaused = !this.isPaused;
+                        if (this.isPaused) {
+                            this.pause(room);
+                        } else {
+                            this.unpause(room);
 
-                        boolean allPaused = this.isPaused;
-                        for(InteractionGameTimer timer : room.getRoomSpecialTypes().getGameTimers().values()) {
-                            if(!timer.isPaused)
-                                allPaused = false;
-                        }
-
-                        for(Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
-                            Game game = getOrCreateGame(room, gameClass);
-                            if(allPaused) {
-                                game.pause();
-                            }
-                            else {
-                                game.unpause();
+                            if (!this.threadActive) {
+                                this.threadActive = true;
+                                Emulator.getThreading().run(this);
                             }
                         }
-
-                        if(!this.isPaused) {
-                            this.isRunning = true;
-                            timeNow = this.baseTime;
-                            room.updateItem(this);
-                            Emulator.getThreading().run(this);
-                        }
-                    }
-
-                    if(!this.isRunning) {
-                        endGamesIfLastTimer(room);
-
-                        for(Class<? extends Game> gameClass : Emulator.getGameEnvironment().getRoomManager().getGameTypes()) {
-                            Game game = getOrCreateGame(room, gameClass);
-                            game.initialise();
-                        }
-
-                        WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, room, new Object[] { });
-                        this.isRunning = true;
-                        timeNow = this.baseTime;
-                        room.updateItem(this);
-                        Emulator.getThreading().run(this);
-                    }
-                    break;
-
-                case 2:
-                    if(!this.isRunning) {
-                        this.increaseTimer(room);
-                        return;
-                    }
-
-                    if(this.isPaused) {
+                    } else {
                         this.isPaused = false;
-                        this.isRunning = false;
-
-                        timeNow = this.baseTime;
+                        this.isRunning = true;
+                        this.timeNow = this.baseTime;
                         room.updateItem(this);
 
-                        endGamesIfLastTimer(room);
+                        this.createNewGame(room);
+                        WiredHandler.handle(WiredTriggerType.GAME_STARTS, null, room, new Object[]{this});
+
+                        if (!this.threadActive) {
+                            this.threadActive = true;
+                            Emulator.getThreading().run(this, 1000);
+                        }
                     }
 
                     break;
 
-                case 3:
-
-                    this.isPaused = false;
-                    this.isRunning = false;
-
-                    timeNow = this.baseTime;
-                    room.updateItem(this);
-
-                    boolean gamesActive = false;
-                    for (InteractionGameTimer timer : room.getRoomSpecialTypes().getGameTimers().values()) {
-                        if (timer.isRunning())
-                            gamesActive = true;
+                case INCREASE_TIME:
+                    if (!this.isRunning) {
+                        this.increaseTimer(room);
+                    } else if (this.isPaused) {
+                        this.endGame(room);
+                        this.increaseTimer(room);
+                        WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, room, new Object[]{});
                     }
 
-                    if (!gamesActive) {
-                        endGames(room);
-                    }
                     break;
             }
         }
@@ -280,47 +293,31 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
-    public static Game getOrCreateGame(Room room, Class<? extends Game> gameClass)
-    {
-        Game game = (gameClass.cast(room.getGame(gameClass)));
-
-        if (game == null)  {
-            try {
-                game = gameClass.getDeclaredConstructor(Room.class).newInstance(room);
-                room.addGame(game);
-            } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
-            }
-        }
-
-        return game;
-    }
-
-    private void increaseTimer(Room room)
-    {
-        if(this.isRunning)
+    private void increaseTimer(Room room) {
+        if (this.isRunning)
             return;
 
-        this.needsUpdate(true);
+        int baseTime = -1;
 
-        switch(this.baseTime)
-        {
-            case 0:     this.baseTime = 30; break;
-            case 30:    this.baseTime = 60; break;
-            case 60:    this.baseTime = 120; break;
-            case 120:   this.baseTime = 180; break;
-            case 180:   this.baseTime = 300; break;
-            case 300:   this.baseTime = 600; break;
-            //case 600:   this.baseTime = 0; break;
+        if (this.timeNow != this.baseTime) {
+            baseTime = this.baseTime;
+        } else {
+            for (int step : this.TIMER_INTERVAL_STEPS) {
+                if (this.timeNow < step) {
+                    baseTime = step;
+                    break;
+                }
+            }
 
-            default:
-                this.baseTime = 30;
+            if (baseTime == -1) baseTime = this.TIMER_INTERVAL_STEPS[0];
         }
+
+        this.baseTime = baseTime;
+        this.setExtradata(this.timeNow + "\t" + this.baseTime);
 
         this.timeNow = this.baseTime;
         room.updateItem(this);
@@ -328,16 +325,12 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
     }
 
     @Override
-    public String getDatabaseExtraData()
-    {
-        return this.getExtradata() + "\t" + this.baseTime;
+    public String getDatabaseExtraData() {
+        return this.getExtradata();
     }
 
-    public abstract Class<? extends Game> getGameType();
-
     @Override
-    public boolean allowWiredResetState()
-    {
+    public boolean allowWiredResetState() {
         return true;
     }
 
@@ -347,13 +340,5 @@ public abstract class InteractionGameTimer extends HabboItem implements Runnable
 
     public void setRunning(boolean running) {
         isRunning = running;
-    }
-
-    public int getTimeNow() {
-        return timeNow;
-    }
-
-    public void setTimeNow(int timeNow) {
-        this.timeNow = timeNow;
     }
 }

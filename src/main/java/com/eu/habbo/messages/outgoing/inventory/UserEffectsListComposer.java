@@ -8,28 +8,22 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.procedure.TObjectProcedure;
 
-public class UserEffectsListComposer extends MessageComposer
-{
+public class UserEffectsListComposer extends MessageComposer {
     public final Habbo habbo;
 
-    public UserEffectsListComposer(Habbo habbo)
-    {
+    public UserEffectsListComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UserEffectsListComposer);
 
-        synchronized (this.habbo.getInventory().getEffectsComponent().effects)
-        {
+        synchronized (this.habbo.getInventory().getEffectsComponent().effects) {
             this.response.appendInt(this.habbo.getInventory().getEffectsComponent().effects.size());
-            this.habbo.getInventory().getEffectsComponent().effects.forEachValue(new TObjectProcedure<EffectsComponent.HabboEffect>()
-            {
+            this.habbo.getInventory().getEffectsComponent().effects.forEachValue(new TObjectProcedure<EffectsComponent.HabboEffect>() {
                 @Override
-                public boolean execute(EffectsComponent.HabboEffect effect)
-                {
+                public boolean execute(EffectsComponent.HabboEffect effect) {
                     UserEffectsListComposer.this.response.appendInt(effect.effect);
                     UserEffectsListComposer.this.response.appendInt(0);
                     UserEffectsListComposer.this.response.appendInt(effect.duration);

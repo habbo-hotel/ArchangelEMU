@@ -8,33 +8,24 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.google.gson.Gson;
 
-public class SendRoomBundle extends RCONMessage<SendRoomBundle.JSON>
-{
-    public SendRoomBundle()
-    {
+public class SendRoomBundle extends RCONMessage<SendRoomBundle.JSON> {
+    public SendRoomBundle() {
         super(JSON.class);
     }
 
     @Override
-    public void handle(Gson gson, JSON json)
-    {
-        if (json.catalog_page > 0 && json.user_id > 0)
-        {
+    public void handle(Gson gson, JSON json) {
+        if (json.catalog_page > 0 && json.user_id > 0) {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.user_id);
             CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(json.catalog_page);
 
-            if ((page instanceof RoomBundleLayout))
-            {
-                if (habbo != null)
-                {
+            if ((page instanceof RoomBundleLayout)) {
+                if (habbo != null) {
                     ((RoomBundleLayout) page).buyRoom(habbo);
-                }
-                else
-                {
+                } else {
                     HabboInfo info = HabboManager.getOfflineHabboInfo(json.user_id);
 
-                    if (info != null)
-                    {
+                    if (info != null) {
                         ((RoomBundleLayout) page).buyRoom(null, json.user_id, info.getUsername());
                     }
                 }
@@ -42,8 +33,7 @@ public class SendRoomBundle extends RCONMessage<SendRoomBundle.JSON>
         }
     }
 
-    static class JSON
-    {
+    static class JSON {
 
         public int user_id;
 

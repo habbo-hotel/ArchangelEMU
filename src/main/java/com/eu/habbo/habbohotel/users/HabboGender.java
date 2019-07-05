@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.users;
 
-public enum HabboGender
-{
+public enum HabboGender {
     M,
     F
 }

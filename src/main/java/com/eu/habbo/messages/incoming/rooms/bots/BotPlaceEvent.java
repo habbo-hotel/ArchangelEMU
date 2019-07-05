@@ -5,19 +5,17 @@ import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class BotPlaceEvent extends MessageHandler
-{
+public class BotPlaceEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if(room == null)
+        if (room == null)
             return;
 
         Bot bot = this.client.getHabbo().getInventory().getBotsComponent().getBot(this.packet.readInt());
 
-        if(bot == null)
+        if (bot == null)
             return;
 
         int x = this.packet.readInt();

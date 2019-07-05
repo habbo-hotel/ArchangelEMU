@@ -6,26 +6,21 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 
-public class RoomUsersGuildBadgesComposer extends MessageComposer
-{
+public class RoomUsersGuildBadgesComposer extends MessageComposer {
     private final THashMap<Integer, String> guildBadges;
 
-    public RoomUsersGuildBadgesComposer(THashMap<Integer, String> guildBadges)
-    {
+    public RoomUsersGuildBadgesComposer(THashMap<Integer, String> guildBadges) {
         this.guildBadges = guildBadges;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomUsersGuildBadgesComposer);
         this.response.appendInt(this.guildBadges.size());
 
-        this.guildBadges.forEachEntry(new TObjectObjectProcedure<Integer, String>()
-        {
+        this.guildBadges.forEachEntry(new TObjectObjectProcedure<Integer, String>() {
             @Override
-            public boolean execute(Integer guildId, String badge)
-            {
+            public boolean execute(Integer guildId, String badge) {
                 RoomUsersGuildBadgesComposer.this.response.appendInt(guildId);
                 RoomUsersGuildBadgesComposer.this.response.appendString(badge);
                 return true;

@@ -8,8 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitEvent;
 import gnu.trove.set.hash.THashSet;
 
-public class WiredStackTriggeredEvent extends RoomUnitEvent
-{
+public class WiredStackTriggeredEvent extends RoomUnitEvent {
 
     public final InteractionWiredTrigger trigger;
 
@@ -20,8 +19,7 @@ public class WiredStackTriggeredEvent extends RoomUnitEvent
     public final THashSet<InteractionWiredCondition> conditions;
 
 
-    public WiredStackTriggeredEvent(Room room, RoomUnit roomUnit, InteractionWiredTrigger trigger, THashSet<InteractionWiredEffect> effects, THashSet<InteractionWiredCondition> conditions)
-    {
+    public WiredStackTriggeredEvent(Room room, RoomUnit roomUnit, InteractionWiredTrigger trigger, THashSet<InteractionWiredEffect> effects, THashSet<InteractionWiredCondition> conditions) {
         super(room, roomUnit);
 
         this.trigger = trigger;

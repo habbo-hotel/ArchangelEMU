@@ -4,8 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PetBreedingStartFailedComposer extends MessageComposer
-{
+public class PetBreedingStartFailedComposer extends MessageComposer {
     public final static int NO_NESTS = 0;
     public final static int NO_SUITABLE_NESTS = 1;
     public final static int NEST_FULL = 2;
@@ -16,14 +15,12 @@ public class PetBreedingStartFailedComposer extends MessageComposer
 
     private final int reason;
 
-    public PetBreedingStartFailedComposer(int reason)
-    {
+    public PetBreedingStartFailedComposer(int reason) {
         this.reason = reason;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.PetBreedingStartFailedComposer);
         this.response.appendInt(this.reason);
         return this.response;

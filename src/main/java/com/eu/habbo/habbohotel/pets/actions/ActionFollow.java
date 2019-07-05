@@ -9,10 +9,8 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.threading.runnables.PetFollowHabbo;
 
-public class ActionFollow extends PetAction
-{
-    public ActionFollow()
-    {
+public class ActionFollow extends PetAction {
+    public ActionFollow() {
         super(PetTasks.FOLLOW, true);
         this.statusToRemove.add(RoomUnitStatus.MOVE);
         this.statusToRemove.add(RoomUnitStatus.LAY);
@@ -20,13 +18,12 @@ public class ActionFollow extends PetAction
     }
 
     @Override
-    public boolean apply(Pet pet, Habbo habbo, String[] data)
-    {
+    public boolean apply(Pet pet, Habbo habbo, String[] data) {
         pet.clearPosture();
 
         Emulator.getThreading().run(new PetFollowHabbo(pet, habbo, 0));
 
-        if(pet.getHappyness() > 75)
+        if (pet.getHappyness() > 75)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         else
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

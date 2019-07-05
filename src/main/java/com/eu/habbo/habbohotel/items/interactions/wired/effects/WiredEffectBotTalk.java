@@ -16,27 +16,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class WiredEffectBotTalk extends InteractionWiredEffect
-{
+public class WiredEffectBotTalk extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.BOT_TALK;
 
     private int mode;
     private String botName = "";
     private String message = "";
 
-    public WiredEffectBotTalk(ResultSet set, Item baseItem) throws SQLException
-    {
+    public WiredEffectBotTalk(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredEffectBotTalk(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public WiredEffectBotTalk(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room)
-    {
+    public void serializeWiredData(ServerMessage message, Room room) {
         message.appendBoolean(false);
         message.appendInt(5);
         message.appendInt(0);
@@ -52,16 +48,14 @@ public class WiredEffectBotTalk extends InteractionWiredEffect
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient)
-    {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) {
         packet.readInt();
 
         this.mode = packet.readInt();
 
         String[] data = packet.readString().split(((char) 9) + "");
 
-        if(data.length == 2)
-        {
+        if (data.length == 2) {
             this.botName = data[0];
             this.message = data[1];
         }
@@ -73,20 +67,17 @@ public class WiredEffectBotTalk extends InteractionWiredEffect
     }
 
     @Override
-    public WiredEffectType getType()
-    {
+    public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff)
-    {
+    public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         String message = this.message;
 
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if(habbo != null)
-        {
+        if (habbo != null) {
             message = message.replace(Emulator.getTexts().getValue("wired.variable.username"), habbo.getHabboInfo().getUsername())
                     .replace(Emulator.getTexts().getValue("wired.variable.credits"), habbo.getHabboInfo().getCredits() + "")
                     .replace(Emulator.getTexts().getValue("wired.variable.pixels"), habbo.getHabboInfo().getPixels() + "")
@@ -94,9 +85,8 @@ public class WiredEffectBotTalk extends InteractionWiredEffect
         }
         List<Bot> bots = room.getBots(this.botName);
 
-        for(Bot bot : bots)
-        {
-            if(this.mode == 1)
+        for (Bot bot : bots) {
+            if (this.mode == 1)
                 bot.shout(message);
             else
                 bot.talk(message);
@@ -105,19 +95,16 @@ public class WiredEffectBotTalk extends InteractionWiredEffect
     }
 
     @Override
-    public String getWiredData()
-    {
-        return this.getDelay() + "" + ((char)9) + "" +  this.mode + "" + ((char)9) + "" + this.botName + "" + ((char)9) + "" + this.message;
+    public String getWiredData() {
+        return this.getDelay() + "" + ((char) 9) + "" + this.mode + "" + ((char) 9) + "" + this.botName + "" + ((char) 9) + "" + this.message;
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException
-    {
+    public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String d = set.getString("wired_data");
-        String[] data = d.split(((char)9) + "");
+        String[] data = d.split(((char) 9) + "");
 
-        if(data.length == 4)
-        {
+        if (data.length == 4) {
             this.setDelay(Integer.valueOf(data[0]));
             this.mode = data[1].equalsIgnoreCase("1") ? 1 : 0;
             this.botName = data[2];
@@ -126,47 +113,39 @@ public class WiredEffectBotTalk extends InteractionWiredEffect
     }
 
     @Override
-    public void onPickUp()
-    {
+    public void onPickUp() {
         this.mode = 0;
         this.botName = "";
         this.message = "";
         this.setDelay(0);
     }
 
-    public int getMode()
-    {
+    public int getMode() {
         return this.mode;
     }
 
-    public void setMode(int mode)
-    {
+    public void setMode(int mode) {
         this.mode = mode;
     }
 
-    public String getBotName()
-    {
+    public String getBotName() {
         return this.botName;
     }
 
-    public void setBotName(String botName)
-    {
+    public void setBotName(String botName) {
         this.botName = botName;
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return this.message;
     }
 
-    public void setMessage(String message)
-    {
+    public void setMessage(String message) {
         this.message = message;
     }
 
     @Override
-    protected long requiredCooldown()
-    {
+    protected long requiredCooldown() {
         return 500;
     }
 }

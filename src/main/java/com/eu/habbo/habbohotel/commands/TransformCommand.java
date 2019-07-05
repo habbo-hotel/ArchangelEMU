@@ -12,59 +12,46 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class TransformCommand extends Command
-{
-    protected TransformCommand()
-    {
+public class TransformCommand extends Command {
+    protected TransformCommand() {
         super("cmd_transform", new String[]{"transform"});
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception
-    {
-        if (params.length == 1)
-        {
+    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+        if (params.length == 1) {
             StringBuilder petNames = new StringBuilder();
             petNames.append(Emulator.getTexts().getValue("commands.generic.cmd_transform.title"));
             petNames.append("\r------------------------------------------------------------------------------\r");
             ArrayList<PetData> petData = new ArrayList<>(Emulator.getGameEnvironment().getPetManager().getPetData());
             Collections.sort(petData);
             String line = Emulator.getTexts().getValue("commands.generic.cmd_transform.line");
-            for (PetData p : petData)
-            {
+            for (PetData p : petData) {
                 petNames.append(line.replace("%id%", p.getType() + "").replace("%name%", p.getName())).append("\r");
             }
 
             gameClient.sendResponse(new MessagesForYouComposer(new String[]{petNames.toString()}));
             return true;
-        }
-        else
-        {
+        } else {
             String petName = params[1];
             PetData petData = Emulator.getGameEnvironment().getPetManager().getPetData(petName);
 
             int race = 0;
 
-            if (params.length >= 3)
-            {
-                try
-                {
+            if (params.length >= 3) {
+                try {
                     race = Integer.valueOf(params[2]);
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     return true;
                 }
             }
 
             String color = "FFFFFF";
-            if (params.length >= 4)
-            {
+            if (params.length >= 4) {
                 color = params[3];
             }
 
-            if (petData != null)
-            {
+            if (petData != null) {
                 RoomUnit roomUnit = gameClient.getHabbo().getRoomUnit();
                 roomUnit.setRoomUnitType(RoomUnitType.PET);
                 gameClient.getHabbo().getHabboStats().cache.put("pet_type", petData);
@@ -72,9 +59,7 @@ public class TransformCommand extends Command
                 gameClient.getHabbo().getHabboStats().cache.put("pet_color", color);
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserRemoveComposer(gameClient.getHabbo().getRoomUnit()).compose());
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserPetComposer(petData.getType(), race, color, gameClient.getHabbo()).compose());
-            }
-            else
-            {
+            } else {
                 //Pet Not Found
                 return true;
             }

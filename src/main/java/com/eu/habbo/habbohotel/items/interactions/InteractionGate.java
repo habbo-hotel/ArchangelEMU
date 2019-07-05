@@ -11,84 +11,72 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionGate extends HabboItem
-{
-    public InteractionGate(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionGate extends HabboItem {
+    public InteractionGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
         super.serializeExtradata(serverMessage);
     }
 
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return true;
     }
 
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return this.getExtradata().equals("1");
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
         boolean isWired = (objects.length >= 2 && objects[1] instanceof WiredEffectType && objects[1] == WiredEffectType.TOGGLE_STATE);
         if (client != null && !room.hasRights(client.getHabbo()) && !isWired)
             return;
 
-        if(!isWired && !room.getHabbosAt(this.getX(), this.getY()).isEmpty())
+        if (!isWired && !room.getHabbosAt(this.getX(), this.getY()).isEmpty())
             return;
 
-        if(this.getExtradata().length() == 0)
+        if (this.getExtradata().length() == 0)
             this.setExtradata("0");
 
-        this.setExtradata((Integer.valueOf(this.getExtradata()) + 1 ) % 2 + "");
+        this.setExtradata((Integer.valueOf(this.getExtradata()) + 1) % 2 + "");
         room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
         this.needsUpdate(true);
         room.updateItemState(this);
     }
 
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
     }
 
     @Override
-    public boolean allowWiredResetState()
-    {
+    public boolean allowWiredResetState() {
         return true;
     }
 
     @Override
-    public boolean isUsable()
-    {
+    public boolean isUsable() {
         return true;
     }
 }

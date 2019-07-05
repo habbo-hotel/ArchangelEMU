@@ -8,45 +8,35 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class GivePoints extends RCONMessage<GivePoints.JSONGivePoints>
-{
+public class GivePoints extends RCONMessage<GivePoints.JSONGivePoints> {
 
-    public GivePoints()
-    {
+    public GivePoints() {
         super(JSONGivePoints.class);
     }
 
     @Override
-    public void handle(Gson gson, JSONGivePoints object)
-    {
+    public void handle(Gson gson, JSONGivePoints object) {
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(object.user_id);
 
-        if (habbo != null)
-        {
+        if (habbo != null) {
             habbo.givePoints(object.type, object.points);
-        }
-        else
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_currency (`user_id`, `type`, `amount`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE amount = amount + ?"))
-            {
+        } else {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_currency (`user_id`, `type`, `amount`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE amount = amount + ?")) {
                 statement.setInt(1, object.user_id);
                 statement.setInt(2, object.type);
                 statement.setInt(3, object.points);
                 statement.setInt(4, object.points);
                 statement.execute();
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 this.status = RCONMessage.SYSTEM_ERROR;
-				Emulator.getLogging().logSQLException(e);
+                Emulator.getLogging().logSQLException(e);
             }
 
             this.message = "offline";
         }
     }
 
-    static class JSONGivePoints
-    {
+    static class JSONGivePoints {
 
         public int user_id;
 

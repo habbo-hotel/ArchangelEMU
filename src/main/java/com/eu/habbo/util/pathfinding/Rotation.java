@@ -1,9 +1,7 @@
 package com.eu.habbo.util.pathfinding;
 
-public class Rotation
-{
-    public static int Calculate(int X1, int Y1, int X2, int Y2)
-    {
+public class Rotation {
+    public static int Calculate(int X1, int Y1, int X2, int Y2) {
         int Rotation = 0;
         if ((X1 > X2) && (Y1 > Y2)) {
             Rotation = 7;

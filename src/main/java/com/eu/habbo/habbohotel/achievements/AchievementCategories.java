@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.achievements;
 
-public enum AchievementCategories
-{
+public enum AchievementCategories {
 
     IDENTITY,
 

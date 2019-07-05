@@ -7,36 +7,30 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
 
-public class UserSearchResultComposer extends MessageComposer
-{
+public class UserSearchResultComposer extends MessageComposer {
     private final THashSet<MessengerBuddy> users;
     private final THashSet<MessengerBuddy> friends;
     private final Habbo habbo;
 
-    public UserSearchResultComposer(THashSet<MessengerBuddy> users, THashSet<MessengerBuddy> friends, Habbo habbo)
-    {
+    public UserSearchResultComposer(THashSet<MessengerBuddy> users, THashSet<MessengerBuddy> friends, Habbo habbo) {
         this.users = users;
         this.friends = friends;
         this.habbo = habbo;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.UserSearchResultComposer);
         THashSet<MessengerBuddy> u = new THashSet<>();
 
-        for(MessengerBuddy buddy : this.users)
-        {
-            if(!buddy.getUsername().equals(this.habbo.getHabboInfo().getUsername()) && !this.inFriendList(buddy))
-            {
+        for (MessengerBuddy buddy : this.users) {
+            if (!buddy.getUsername().equals(this.habbo.getHabboInfo().getUsername()) && !this.inFriendList(buddy)) {
                 u.add(buddy);
             }
         }
 
         this.response.appendInt(this.friends.size());
-        for(MessengerBuddy buddy : this.friends)
-        {
+        for (MessengerBuddy buddy : this.friends) {
             this.response.appendInt(buddy.getId());
             this.response.appendString(buddy.getUsername());
             this.response.appendString(buddy.getMotto());
@@ -49,8 +43,7 @@ public class UserSearchResultComposer extends MessageComposer
         }
 
         this.response.appendInt(u.size());
-        for(MessengerBuddy buddy : u)
-        {
+        for (MessengerBuddy buddy : u) {
             this.response.appendInt(buddy.getId());
             this.response.appendString(buddy.getUsername());
             this.response.appendString(buddy.getMotto());
@@ -65,11 +58,9 @@ public class UserSearchResultComposer extends MessageComposer
         return this.response;
     }
 
-    private boolean inFriendList(MessengerBuddy buddy)
-    {
-        for(MessengerBuddy friend : this.friends)
-        {
-            if(friend.getUsername().equals(buddy.getUsername()))
+    private boolean inFriendList(MessengerBuddy buddy) {
+        for (MessengerBuddy friend : this.friends) {
+            if (friend.getUsername().equals(buddy.getUsername()))
                 return true;
         }
 

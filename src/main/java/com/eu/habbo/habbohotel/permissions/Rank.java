@@ -6,27 +6,16 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-public class Rank
-{
+public class Rank {
 
     private final int id;
 
 
     private final int level;
-
-
-    private String name;
-
-
-    private String badge;
-
-
     private final THashMap<String, Permission> permissions;
-
-
     private final THashMap<String, String> variables;
-
-
+    private String name;
+    private String badge;
     private int roomEffect;
 
 
@@ -41,8 +30,7 @@ public class Rank
 
     private boolean hasPrefix;
 
-    public Rank(ResultSet set) throws SQLException
-    {
+    public Rank(ResultSet set) throws SQLException {
         this.permissions = new THashMap<>();
         this.variables = new THashMap<>();
         this.id = set.getInt("id");
@@ -51,8 +39,7 @@ public class Rank
         this.load(set);
     }
 
-    public void load(ResultSet set) throws SQLException
-    {
+    public void load(ResultSet set) throws SQLException {
         ResultSetMetaData meta = set.getMetaData();
         this.name = set.getString("rank_name");
         this.badge = set.getString("badge");
@@ -61,24 +48,18 @@ public class Rank
         this.prefix = set.getString("prefix");
         this.prefixColor = set.getString("prefix_color");
         this.hasPrefix = !this.prefix.isEmpty();
-        for (int i = 1; i < meta.getColumnCount() + 1; i++)
-        {
+        for (int i = 1; i < meta.getColumnCount() + 1; i++) {
             String columnName = meta.getColumnName(i);
-            if (columnName.startsWith("cmd_") || columnName.startsWith("acc_"))
-            {
+            if (columnName.startsWith("cmd_") || columnName.startsWith("acc_")) {
                 this.permissions.put(meta.getColumnName(i), new Permission(columnName, PermissionSetting.fromString(set.getString(i))));
-            }
-            else
-            {
+            } else {
                 this.variables.put(meta.getColumnName(i), set.getString(i));
             }
         }
     }
 
-    public boolean hasPermission(String key, boolean isRoomOwner)
-    {
-        if (this.permissions.containsKey(key))
-        {
+    public boolean hasPermission(String key, boolean isRoomOwner) {
+        if (this.permissions.containsKey(key)) {
             Permission permission = this.permissions.get(key);
 
             return permission.setting == PermissionSetting.ALLOWED || permission.setting == PermissionSetting.ROOM_OWNER && isRoomOwner;
@@ -89,60 +70,49 @@ public class Rank
     }
 
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
 
-    public int getLevel()
-    {
+    public int getLevel() {
         return this.level;
     }
 
 
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
-    public String getBadge()
-    {
+    public String getBadge() {
         return this.badge;
     }
 
-    public THashMap<String, Permission> getPermissions()
-    {
+    public THashMap<String, Permission> getPermissions() {
         return this.permissions;
     }
 
-    public THashMap<String, String> getVariables()
-    {
+    public THashMap<String, String> getVariables() {
         return this.variables;
     }
 
-    public int getRoomEffect()
-    {
+    public int getRoomEffect() {
         return this.roomEffect;
     }
 
-    public boolean isLogCommands()
-    {
+    public boolean isLogCommands() {
         return this.logCommands;
     }
 
-    public String getPrefix()
-    {
+    public String getPrefix() {
         return this.prefix;
     }
 
-    public String getPrefixColor()
-    {
+    public String getPrefixColor() {
         return this.prefixColor;
     }
 
-    public boolean hasPrefix()
-    {
+    public boolean hasPrefix() {
         return this.hasPrefix;
     }
 }

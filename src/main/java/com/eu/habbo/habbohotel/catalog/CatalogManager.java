@@ -43,288 +43,257 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CatalogManager
-{
+public class CatalogManager {
 
-    public final TIntObjectMap<CatalogPage> catalogPages;
-
-
-    public final TIntObjectMap<CatalogFeaturedPage> catalogFeaturedPages;
-
-
-    public final THashMap<Integer, THashSet<Item>> prizes;
-
-
-    public final THashMap<Integer, Integer> giftWrappers;
-
-
-    public final THashMap<Integer, Integer> giftFurnis;
-
-
-    public final THashSet<CatalogItem> clubItems;
-
-
-    public final THashMap<Integer, ClubOffer> clubOffers;
-
-
-    public final THashMap<Integer, TargetOffer> targetOffers;
-
-
-    public final THashMap<Integer, ClothItem> clothing;
-
-
-    public final TIntIntHashMap offerDefs;
-
-
-    private final List<Voucher> vouchers;
-
-
-    public final Item ecotronItem;
-
-
-    public final THashMap<Integer, CatalogLimitedConfiguration> limitedNumbers;
-
-
-    public static int catalogItemAmount;
-
-
-    public static int PURCHASE_COOLDOWN = 1;
-
-
-    public static boolean SORT_USING_ORDERNUM = false;
-
-    public final THashMap<Integer, CalendarRewardObject> calendarRewards;
-
-
-    public static final THashMap<String, Class<? extends CatalogPage>> pageDefinitions = new THashMap<String, Class<? extends CatalogPage>>(CatalogPageLayouts.values().length)
-    {
+    public static final THashMap<String, Class<? extends CatalogPage>> pageDefinitions = new THashMap<String, Class<? extends CatalogPage>>(CatalogPageLayouts.values().length) {
         {
-            for (CatalogPageLayouts layout : CatalogPageLayouts.values())
-            {
-                switch(layout)
-                {
+            for (CatalogPageLayouts layout : CatalogPageLayouts.values()) {
+                switch (layout) {
                     case frontpage:
-                        this.put(layout.name().toLowerCase(), FrontpageLayout.class); break;
+                        this.put(layout.name().toLowerCase(), FrontpageLayout.class);
+                        break;
                     case badge_display:
-                        this.put(layout.name().toLowerCase(), BadgeDisplayLayout.class); break;
+                        this.put(layout.name().toLowerCase(), BadgeDisplayLayout.class);
+                        break;
                     case spaces_new:
-                        this.put(layout.name().toLowerCase(), SpacesLayout.class); break;
+                        this.put(layout.name().toLowerCase(), SpacesLayout.class);
+                        break;
                     case trophies:
-                        this.put(layout.name().toLowerCase(), TrophiesLayout.class); break;
+                        this.put(layout.name().toLowerCase(), TrophiesLayout.class);
+                        break;
                     case bots:
-                        this.put(layout.name().toLowerCase(), BotsLayout.class); break;
+                        this.put(layout.name().toLowerCase(), BotsLayout.class);
+                        break;
                     case club_buy:
-                        this.put(layout.name().toLowerCase(), ClubBuyLayout.class); break;
+                        this.put(layout.name().toLowerCase(), ClubBuyLayout.class);
+                        break;
                     case club_gift:
-                        this.put(layout.name().toLowerCase(), ClubGiftsLayout.class); break;
+                        this.put(layout.name().toLowerCase(), ClubGiftsLayout.class);
+                        break;
                     case sold_ltd_items:
-                        this.put(layout.name().toLowerCase(), SoldLTDItemsLayout.class); break;
+                        this.put(layout.name().toLowerCase(), SoldLTDItemsLayout.class);
+                        break;
                     case single_bundle:
-                        this.put(layout.name().toLowerCase(), SingleBundle.class); break;
+                        this.put(layout.name().toLowerCase(), SingleBundle.class);
+                        break;
                     case roomads:
-                        this.put(layout.name().toLowerCase(), RoomAdsLayout.class); break;
-                    case recycler:                      if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
-                        this.put(layout.name().toLowerCase(), RecyclerLayout.class); break;
-                    case recycler_info:                 if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
-                        this.put(layout.name().toLowerCase(), RecyclerInfoLayout.class);
-                    case recycler_prizes:               if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
-                        this.put(layout.name().toLowerCase(), RecyclerPrizesLayout.class); break;
-                    case marketplace:                   if (Emulator.getConfig().getBoolean("hotel.marketplace.enabled"))
-                        this.put(layout.name().toLowerCase(), MarketplaceLayout.class); break;
-                    case marketplace_own_items:         if (Emulator.getConfig().getBoolean("hotel.marketplace.enabled"))
-                        this.put(layout.name().toLowerCase(), MarketplaceOwnItems.class); break;
+                        this.put(layout.name().toLowerCase(), RoomAdsLayout.class);
+                        break;
+                    case recycler:
+                        if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
+                            this.put(layout.name().toLowerCase(), RecyclerLayout.class);
+                        break;
+                    case recycler_info:
+                        if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
+                            this.put(layout.name().toLowerCase(), RecyclerInfoLayout.class);
+                    case recycler_prizes:
+                        if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
+                            this.put(layout.name().toLowerCase(), RecyclerPrizesLayout.class);
+                        break;
+                    case marketplace:
+                        if (Emulator.getConfig().getBoolean("hotel.marketplace.enabled"))
+                            this.put(layout.name().toLowerCase(), MarketplaceLayout.class);
+                        break;
+                    case marketplace_own_items:
+                        if (Emulator.getConfig().getBoolean("hotel.marketplace.enabled"))
+                            this.put(layout.name().toLowerCase(), MarketplaceOwnItems.class);
+                        break;
                     case info_duckets:
-                        this.put(layout.name().toLowerCase(), InfoDucketsLayout.class); break;
+                        this.put(layout.name().toLowerCase(), InfoDucketsLayout.class);
+                        break;
                     case info_pets:
-                        this.put(layout.name().toLowerCase(), InfoPetsLayout.class); break;
+                        this.put(layout.name().toLowerCase(), InfoPetsLayout.class);
+                        break;
                     case info_rentables:
-                        this.put(layout.name().toLowerCase(), InfoRentablesLayout.class); break;
+                        this.put(layout.name().toLowerCase(), InfoRentablesLayout.class);
+                        break;
                     case info_loyalty:
-                        this.put(layout.name().toLowerCase(), InfoLoyaltyLayout.class); break;
+                        this.put(layout.name().toLowerCase(), InfoLoyaltyLayout.class);
+                        break;
                     case loyalty_vip_buy:
-                        this.put(layout.name().toLowerCase(), LoyaltyVipBuyLayout.class); break;
+                        this.put(layout.name().toLowerCase(), LoyaltyVipBuyLayout.class);
+                        break;
                     case guilds:
-                        this.put(layout.name().toLowerCase(), GuildFrontpageLayout.class); break;
+                        this.put(layout.name().toLowerCase(), GuildFrontpageLayout.class);
+                        break;
                     case guild_furni:
-                        this.put(layout.name().toLowerCase(), GuildFurnitureLayout.class); break;
+                        this.put(layout.name().toLowerCase(), GuildFurnitureLayout.class);
+                        break;
                     case guild_forum:
-                        this.put(layout.name().toLowerCase(), GuildForumLayout.class); break;
+                        this.put(layout.name().toLowerCase(), GuildForumLayout.class);
+                        break;
                     case pets:
-                        this.put(layout.name().toLowerCase(), PetsLayout.class); break;
+                        this.put(layout.name().toLowerCase(), PetsLayout.class);
+                        break;
                     case pets2:
-                        this.put(layout.name().toLowerCase(), Pets2Layout.class); break;
+                        this.put(layout.name().toLowerCase(), Pets2Layout.class);
+                        break;
                     case pets3:
-                        this.put(layout.name().toLowerCase(), Pets3Layout.class); break;
+                        this.put(layout.name().toLowerCase(), Pets3Layout.class);
+                        break;
                     case soundmachine:
-                        this.put(layout.name().toLowerCase(), TraxLayout.class); break;
+                        this.put(layout.name().toLowerCase(), TraxLayout.class);
+                        break;
                     case default_3x3_color_grouping:
-                        this.put(layout.name().toLowerCase(), ColorGroupingLayout.class); break;
+                        this.put(layout.name().toLowerCase(), ColorGroupingLayout.class);
+                        break;
                     case recent_purchases:
-                        this.put(layout.name().toLowerCase(), RecentPurchasesLayout.class); break;
+                        this.put(layout.name().toLowerCase(), RecentPurchasesLayout.class);
+                        break;
                     case room_bundle:
-                        this.put(layout.name().toLowerCase(), RoomBundleLayout.class); break;
+                        this.put(layout.name().toLowerCase(), RoomBundleLayout.class);
+                        break;
                     case petcustomization:
-                        this.put(layout.name().toLowerCase(), PetCustomizationLayout.class); break;
+                        this.put(layout.name().toLowerCase(), PetCustomizationLayout.class);
+                        break;
                     case vip_buy:
-                        this.put(layout.name().toLowerCase(), VipBuyLayout.class); break;
+                        this.put(layout.name().toLowerCase(), VipBuyLayout.class);
+                        break;
                     case frontpage_featured:
-                        this.put(layout.name().toLowerCase(), FrontPageFeaturedLayout.class); break;
+                        this.put(layout.name().toLowerCase(), FrontPageFeaturedLayout.class);
+                        break;
                     case builders_club_addons:
-                        this.put(layout.name().toLowerCase(), BuildersClubAddonsLayout.class); break;
+                        this.put(layout.name().toLowerCase(), BuildersClubAddonsLayout.class);
+                        break;
                     case builders_club_frontpage:
-                        this.put(layout.name().toLowerCase(), BuildersClubFrontPageLayout.class); break;
+                        this.put(layout.name().toLowerCase(), BuildersClubFrontPageLayout.class);
+                        break;
                     case builders_club_loyalty:
-                        this.put(layout.name().toLowerCase(), BuildersClubLoyaltyLayout.class); break;
+                        this.put(layout.name().toLowerCase(), BuildersClubLoyaltyLayout.class);
+                        break;
                     case default_3x3:
                     default:
-                        this.put("default_3x3", Default_3x3Layout.class); break;
+                        this.put("default_3x3", Default_3x3Layout.class);
+                        break;
                 }
             }
         }
     };
+    public static int catalogItemAmount;
+    public static int PURCHASE_COOLDOWN = 1;
+    public static boolean SORT_USING_ORDERNUM = false;
+    public final TIntObjectMap<CatalogPage> catalogPages;
+    public final TIntObjectMap<CatalogFeaturedPage> catalogFeaturedPages;
+    public final THashMap<Integer, THashSet<Item>> prizes;
+    public final THashMap<Integer, Integer> giftWrappers;
+    public final THashMap<Integer, Integer> giftFurnis;
+    public final THashSet<CatalogItem> clubItems;
+    public final THashMap<Integer, ClubOffer> clubOffers;
+    public final THashMap<Integer, TargetOffer> targetOffers;
+    public final THashMap<Integer, ClothItem> clothing;
+    public final TIntIntHashMap offerDefs;
+    public final Item ecotronItem;
+    public final THashMap<Integer, CatalogLimitedConfiguration> limitedNumbers;
+    public final THashMap<Integer, CalendarRewardObject> calendarRewards;
+    private final List<Voucher> vouchers;
 
-    public CatalogManager()
-    {
-        long millis                 = System.currentTimeMillis();
-        this.catalogPages           = TCollections.synchronizedMap(new TIntObjectHashMap<>());
-        this.catalogFeaturedPages   = new TIntObjectHashMap<>();
-        this.prizes                 = new THashMap<>();
-        this.giftWrappers           = new THashMap<>();
-        this.giftFurnis             = new THashMap<>();
-        this.clubItems              = new THashSet<>();
-        this.clubOffers             = new THashMap<>();
-        this.targetOffers           = new THashMap<>();
-        this.clothing               = new THashMap<>();
-        this.offerDefs              = new TIntIntHashMap();
-        this.vouchers               = new ArrayList<>();
-        this.limitedNumbers         = new THashMap<>();
-        this.calendarRewards        = new THashMap<>();
+    public CatalogManager() {
+        long millis = System.currentTimeMillis();
+        this.catalogPages = TCollections.synchronizedMap(new TIntObjectHashMap<>());
+        this.catalogFeaturedPages = new TIntObjectHashMap<>();
+        this.prizes = new THashMap<>();
+        this.giftWrappers = new THashMap<>();
+        this.giftFurnis = new THashMap<>();
+        this.clubItems = new THashSet<>();
+        this.clubOffers = new THashMap<>();
+        this.targetOffers = new THashMap<>();
+        this.clothing = new THashMap<>();
+        this.offerDefs = new TIntIntHashMap();
+        this.vouchers = new ArrayList<>();
+        this.limitedNumbers = new THashMap<>();
+        this.calendarRewards = new THashMap<>();
 
         this.initialize();
 
         this.ecotronItem = Emulator.getGameEnvironment().getItemManager().getItem("ecotron_box");
 
-        Emulator.getLogging().logStart("Catalog Manager -> Loaded! ("+(System.currentTimeMillis() - millis)+" MS)");
+        Emulator.getLogging().logStart("Catalog Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
 
-    public synchronized void initialize()
-    {
+    public synchronized void initialize() {
         Emulator.getPluginManager().fireEvent(new EmulatorLoadCatalogManagerEvent());
 
-        try
-        {
-            this.loadLimitedNumbers();
-            this.loadCatalogPages();
-            this.loadCatalogFeaturedPages();
-            this.loadCatalogItems();
-            this.loadClubOffers();
-            this.loadTargetOffers();
-            this.loadVouchers();
-            this.loadClothing();
-            this.loadRecycler();
-            this.loadGiftWrappers();
-            this.loadCalendarRewards();
-        }
-        catch(SQLException e)
-        {
-            Emulator.getLogging().logSQLException(e);
-        }
+        this.loadLimitedNumbers();
+        this.loadCatalogPages();
+        this.loadCatalogFeaturedPages();
+        this.loadCatalogItems();
+        this.loadClubOffers();
+        this.loadTargetOffers();
+        this.loadVouchers();
+        this.loadClothing();
+        this.loadRecycler();
+        this.loadGiftWrappers();
+        this.loadCalendarRewards();
     }
 
-    private synchronized void loadLimitedNumbers() throws SQLException
-    {
+    private synchronized void loadLimitedNumbers() {
         this.limitedNumbers.clear();
 
         THashMap<Integer, LinkedList<Integer>> limiteds = new THashMap<>();
         TIntIntHashMap totals = new TIntIntHashMap();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM catalog_items_limited"))
-        {
-            try (ResultSet set = statement.executeQuery())
-            {
-                while (set.next())
-                {
-                    if (!limiteds.containsKey(set.getInt("catalog_item_id")))
-                    {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM catalog_items_limited")) {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    if (!limiteds.containsKey(set.getInt("catalog_item_id"))) {
                         limiteds.put(set.getInt("catalog_item_id"), new LinkedList<>());
                     }
 
                     totals.adjustOrPutValue(set.getInt("catalog_item_id"), 1, 1);
 
-                    if (set.getInt("user_id") == 0)
-                    {
+                    if (set.getInt("user_id") == 0) {
                         limiteds.get(set.getInt("catalog_item_id")).push(set.getInt("number"));
                     }
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
-        for (Map.Entry<Integer, LinkedList<Integer>> set : limiteds.entrySet())
-        {
+        for (Map.Entry<Integer, LinkedList<Integer>> set : limiteds.entrySet()) {
             this.limitedNumbers.put(set.getKey(), new CatalogLimitedConfiguration(set.getKey(), set.getValue(), totals.get(set.getKey())));
         }
     }
 
 
-    private synchronized void loadCatalogPages() throws SQLException
-    {
+    private synchronized void loadCatalogPages() {
         this.catalogPages.clear();
 
         final THashMap<Integer, CatalogPage> pages = new THashMap<>();
-        pages.put(-1, new CatalogRootLayout(null));
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM catalog_pages ORDER BY parent_id, id"))
-        {
-            try (ResultSet set = statement.executeQuery())
-            {
-                while(set.next())
-                {
+        pages.put(-1, new CatalogRootLayout());
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM catalog_pages ORDER BY parent_id, id")) {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
                     Class<? extends CatalogPage> pageClazz = pageDefinitions.get(set.getString("page_layout"));
 
-                    if (pageClazz == null)
-                    {
+                    if (pageClazz == null) {
                         Emulator.getLogging().logStart("Unknown Page Layout: " + set.getString("page_layout"));
                         continue;
                     }
 
-                    try
-                    {
+                    try {
                         CatalogPage page = pageClazz.getConstructor(ResultSet.class).newInstance(set);
                         pages.put(page.getId(), page);
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         Emulator.getLogging().logErrorLine("Failed to load layout: " + set.getString("page_layout"));
                     }
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
-        pages.forEachValue(new TObjectProcedure<CatalogPage>()
-        {
+        pages.forEachValue(new TObjectProcedure<CatalogPage>() {
             @Override
-            public boolean execute(CatalogPage object)
-            {
+            public boolean execute(CatalogPage object) {
                 CatalogPage page = pages.get(object.parentId);
 
-                if (page != null)
-                {
-                    if (page.id != object.id)
-                    {
+                if (page != null) {
+                    if (page.id != object.id) {
                         page.addChildPage(object);
                     }
-                }
-                else
-                {
-                    if (object.parentId != -2)
-                    {
+                } else {
+                    if (object.parentId != -2) {
                         Emulator.getLogging().logStart("Parent Page not found for " + object.getPageName() + " (ID: " + object.id + ", parent_id: " + object.parentId + ")");
                     }
                 }
@@ -338,14 +307,11 @@ public class CatalogManager
     }
 
 
-    private synchronized void loadCatalogFeaturedPages() throws SQLException
-    {
+    private synchronized void loadCatalogFeaturedPages() {
         this.catalogFeaturedPages.clear();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM catalog_featured_pages ORDER BY slot_id ASC"))
-        {
-            while (set.next())
-            {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM catalog_featured_pages ORDER BY slot_id ASC")) {
+            while (set.next()) {
                 this.catalogFeaturedPages.put(set.getInt("slot_id"), new CatalogFeaturedPage(
                         set.getInt("slot_id"),
                         set.getString("caption"),
@@ -355,30 +321,24 @@ public class CatalogManager
                         set.getString("page_name"),
                         set.getInt("page_id"),
                         set.getString("product_name")
-                        ));
+                ));
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
     }
 
-    private synchronized void loadCatalogItems() throws SQLException
-    {
+    private synchronized void loadCatalogItems() {
         this.clubItems.clear();
         catalogItemAmount = 0;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM catalog_items"))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM catalog_items")) {
             CatalogItem item;
-            while (set.next())
-            {
+            while (set.next()) {
                 if (set.getString("item_ids").equals("0"))
                     continue;
 
-                if(set.getString("catalog_name").contains("HABBO_CLUB_"))
-                {
+                if (set.getString("catalog_name").contains("HABBO_CLUB_")) {
                     this.clubItems.add(new CatalogItem(set));
                     continue;
                 }
@@ -390,151 +350,119 @@ public class CatalogManager
 
                 item = page.getCatalogItem(set.getInt("id"));
 
-                if (item == null)
-                {
+                if (item == null) {
                     catalogItemAmount++;
                     item = new CatalogItem(set);
                     page.addItem(item);
 
-                    if(item.getOfferId() != -1)
-                    {
+                    if (item.getOfferId() != -1) {
                         page.addOfferId(item.getOfferId());
 
                         this.offerDefs.put(item.getOfferId(), item.getId());
                     }
-                }
-                else
+                } else
                     item.update(set);
 
-                if (item.isLimited())
-                {
+                if (item.isLimited()) {
                     this.createOrUpdateLimitedConfig(item);
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
-        for (CatalogPage page : this.catalogPages.valueCollection())
-        {
-            for (Integer id : page.getIncluded())
-            {
+        for (CatalogPage page : this.catalogPages.valueCollection()) {
+            for (Integer id : page.getIncluded()) {
                 CatalogPage p = this.catalogPages.get(id);
 
-                if (p != null)
-                {
+                if (p != null) {
                     page.getCatalogItems().putAll(p.getCatalogItems());
                 }
             }
         }
     }
 
-    private void loadClubOffers() throws SQLException
-    {
-		this.clubOffers.clear();
+    private void loadClubOffers() {
+        this.clubOffers.clear();
 
-		try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM catalog_club_offers WHERE enabled = ?"))
-		{
-			statement.setString(1, "1");
-			try (ResultSet set = statement.executeQuery())
-			{
-				while (set.next())
-				{
-					this.clubOffers.put(set.getInt("id"), new ClubOffer(set));
-				}
-			}
-		}
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM catalog_club_offers WHERE enabled = ?")) {
+            statement.setString(1, "1");
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    this.clubOffers.put(set.getInt("id"), new ClubOffer(set));
+                }
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
     }
 
-    private void loadTargetOffers() throws SQLException
-    {
-        synchronized (this.targetOffers)
-        {
+    private void loadTargetOffers() {
+        synchronized (this.targetOffers) {
             this.targetOffers.clear();
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM catalog_target_offers WHERE end_timestamp > ?"))
-            {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM catalog_target_offers WHERE end_timestamp > ?")) {
                 statement.setInt(1, Emulator.getIntUnixTimestamp());
-                try (ResultSet set = statement.executeQuery())
-                {
-                    while (set.next())
-                    {
+                try (ResultSet set = statement.executeQuery()) {
+                    while (set.next()) {
                         this.targetOffers.put(set.getInt("id"), new TargetOffer(set));
                     }
                 }
-            }
-        }
-    }
-
-
-    private void loadVouchers() throws SQLException
-    {
-        synchronized (this.vouchers)
-        {
-            this.vouchers.clear();
-
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM vouchers"))
-            {
-                while (set.next())
-                {
-                    this.vouchers.add(new Voucher(set));
-                }
-            }
-        }
-    }
-
-
-    public void loadRecycler() throws SQLException
-    {
-        synchronized (this.prizes)
-        {
-            this.prizes.clear();
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM recycler_prizes"))
-            {
-                while (set.next())
-                {
-                    Item item = Emulator.getGameEnvironment().getItemManager().getItem(set.getInt("item_id"));
-
-                    if (item != null)
-                    {
-                        if (this.prizes.get(set.getInt("rarity")) == null)
-                        {
-                            this.prizes.put(set.getInt("rarity"), new THashSet<>());
-                        }
-
-                        this.prizes.get(set.getInt("rarity")).add(item);
-                    }
-                    else
-                    {
-                        Emulator.getLogging().logErrorLine("Cannot load item with ID:" + set.getInt("item_id") + " as recycler reward!");
-                    }
-                }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
 
-    public void loadGiftWrappers() throws SQLException
-    {
-        synchronized (this.giftWrappers)
-        {
-            synchronized (this.giftFurnis)
-            {
+    private void loadVouchers() {
+        synchronized (this.vouchers) {
+            this.vouchers.clear();
+
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM vouchers")) {
+                while (set.next()) {
+                    this.vouchers.add(new Voucher(set));
+                }
+            } catch (SQLException e) {
+                Emulator.getLogging().logSQLException(e);
+            }
+        }
+    }
+
+
+    public void loadRecycler() {
+        synchronized (this.prizes) {
+            this.prizes.clear();
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM recycler_prizes")) {
+                while (set.next()) {
+                    Item item = Emulator.getGameEnvironment().getItemManager().getItem(set.getInt("item_id"));
+
+                    if (item != null) {
+                        if (this.prizes.get(set.getInt("rarity")) == null) {
+                            this.prizes.put(set.getInt("rarity"), new THashSet<>());
+                        }
+
+                        this.prizes.get(set.getInt("rarity")).add(item);
+                    } else {
+                        Emulator.getLogging().logErrorLine("Cannot load item with ID:" + set.getInt("item_id") + " as recycler reward!");
+                    }
+                }
+            } catch (SQLException e) {
+                Emulator.getLogging().logSQLException(e);
+            }
+        }
+    }
+
+
+    public void loadGiftWrappers() {
+        synchronized (this.giftWrappers) {
+            synchronized (this.giftFurnis) {
                 this.giftWrappers.clear();
                 this.giftFurnis.clear();
 
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM gift_wrappers ORDER BY sprite_id DESC"))
-                {
-                    while (set.next())
-                    {
-                        switch (set.getString("type"))
-                        {
+                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM gift_wrappers ORDER BY sprite_id DESC")) {
+                    while (set.next()) {
+                        switch (set.getString("type")) {
                             case "wrapper":
                                 this.giftWrappers.put(set.getInt("sprite_id"), set.getInt("item_id"));
                                 break;
@@ -544,65 +472,47 @@ public class CatalogManager
                                 break;
                         }
                     }
-                }
-                catch (SQLException e)
-                {
+                } catch (SQLException e) {
                     Emulator.getLogging().logSQLException(e);
                 }
             }
         }
     }
 
-    private void loadCalendarRewards()
-    {
-        synchronized (this.calendarRewards)
-        {
+    private void loadCalendarRewards() {
+        synchronized (this.calendarRewards) {
             this.calendarRewards.clear();
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM calendar_rewards"))
-            {
-                try (ResultSet set = statement.executeQuery())
-                {
-                    while (set.next())
-                    {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM calendar_rewards")) {
+                try (ResultSet set = statement.executeQuery()) {
+                    while (set.next()) {
                         this.calendarRewards.put(set.getInt("id"), new CalendarRewardObject(set));
                     }
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
 
-    private void loadClothing()
-    {
-        synchronized (this.clothing)
-        {
+    private void loadClothing() {
+        synchronized (this.clothing) {
             this.clothing.clear();
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM catalog_clothing"))
-            {
-                while (set.next())
-                {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM catalog_clothing")) {
+                while (set.next()) {
                     this.clothing.put(set.getInt("id"), new ClothItem(set));
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
-    public ClothItem getClothing(String name)
-    {
-        for (ClothItem item : this.clothing.values())
-        {
-            if (item.name.equalsIgnoreCase(name))
-            {
+    public ClothItem getClothing(String name) {
+        for (ClothItem item : this.clothing.values()) {
+            if (item.name.equalsIgnoreCase(name)) {
                 return item;
             }
         }
@@ -611,14 +521,10 @@ public class CatalogManager
     }
 
 
-    public Voucher getVoucher(String code)
-    {
-        synchronized (this.vouchers)
-        {
-            for (Voucher voucher : this.vouchers)
-            {
-                if (voucher.code.equals(code))
-                {
+    public Voucher getVoucher(String code) {
+        synchronized (this.vouchers) {
+            for (Voucher voucher : this.vouchers) {
+                if (voucher.code.equals(code)) {
                     return voucher;
                 }
             }
@@ -627,34 +533,27 @@ public class CatalogManager
     }
 
 
-    public void redeemVoucher(GameClient client, String voucherCode)
-    {
+    public void redeemVoucher(GameClient client, String voucherCode) {
         Voucher voucher = Emulator.getGameEnvironment().getCatalogManager().getVoucher(voucherCode);
 
-        if(voucher != null)
-        {
-            if(Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher))
-            {
+        if (voucher != null) {
+            if (Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher)) {
                 client.getHabbo().getHabboInfo().addCredits(voucher.credits);
 
-                if(voucher.points > 0)
-                {
+                if (voucher.points > 0) {
                     client.getHabbo().getHabboInfo().addCurrencyAmount(voucher.pointsType, voucher.points);
                     client.sendResponse(new UserPointsComposer(client.getHabbo().getHabboInfo().getCurrencyAmount(voucher.pointsType), voucher.points, voucher.pointsType));
                 }
 
-                if(voucher.credits > 0)
-                {
+                if (voucher.credits > 0) {
                     client.getHabbo().getHabboInfo().addCredits(voucher.credits);
                     client.sendResponse(new UserCreditsComposer(client.getHabbo()));
                 }
 
-                if (voucher.catalogItemId > 0)
-                {
+                if (voucher.catalogItemId > 0) {
                     CatalogItem item = this.getCatalogItem(voucher.catalogItemId);
 
-                    if (item != null)
-                    {
+                    if (item != null) {
                         this.purchaseItem(null, item, client.getHabbo(), 1, "", true);
                     }
                 }
@@ -669,21 +568,16 @@ public class CatalogManager
     }
 
 
-    public boolean deleteVoucher(Voucher voucher)
-    {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM vouchers WHERE code = ?"))
-        {
+    public boolean deleteVoucher(Voucher voucher) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM vouchers WHERE code = ?")) {
             statement.setString(1, voucher.code);
 
-            synchronized (this.vouchers)
-            {
+            synchronized (this.vouchers) {
                 this.vouchers.remove(voucher);
             }
 
             return statement.executeUpdate() >= 1;
-        }
-        catch(SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
@@ -691,47 +585,23 @@ public class CatalogManager
     }
 
 
-    public CatalogPage getCatalogPage(int pageId)
-    {
+    public CatalogPage getCatalogPage(int pageId) {
         return this.catalogPages.get(pageId);
     }
 
-    public CatalogPage getCatalogPage(final String captionSafe)
-    {
-        final CatalogPage[] page = {null};
-
-        synchronized (this.catalogPages)
-        {
-            this.catalogPages.forEachValue(new TObjectProcedure<CatalogPage>()
-            {
-                @Override
-                public boolean execute(CatalogPage object)
-                {
-                    if(object.getPageName().equalsIgnoreCase(captionSafe))
-                    {
-                        page[0] = object;
-                        return false;
-                    }
-
-                    return true;
-                }
-            });
-
-            return page[0];
-        }
+    public CatalogPage getCatalogPage(String captionSafe) {
+        return this.catalogPages.valueCollection().stream()
+                .filter(p -> p != null && p.getPageName() != null && p.getPageName().equalsIgnoreCase(captionSafe))
+                .findAny().orElse(null);
     }
 
 
-    public CatalogItem getCatalogItem(int id)
-    {
+    public CatalogItem getCatalogItem(int id) {
         final CatalogItem[] item = {null};
-        synchronized (this.catalogPages)
-        {
-            this.catalogPages.forEachValue(new TObjectProcedure<CatalogPage>()
-            {
+        synchronized (this.catalogPages) {
+            this.catalogPages.forEachValue(new TObjectProcedure<CatalogPage>() {
                 @Override
-                public boolean execute(CatalogPage object)
-                {
+                public boolean execute(CatalogPage object) {
                     item[0] = object.getCatalogItem(id);
 
                     return item[0] == null;
@@ -743,17 +613,13 @@ public class CatalogManager
     }
 
 
-    public List<CatalogPage> getCatalogPages(int parentId, final Habbo habbo)
-    {
+    public List<CatalogPage> getCatalogPages(int parentId, final Habbo habbo) {
         final List<CatalogPage> pages = new ArrayList<>();
 
-        this.catalogPages.get(parentId).childPages.forEachValue(new TObjectProcedure<CatalogPage>()
-        {
+        this.catalogPages.get(parentId).childPages.forEachValue(new TObjectProcedure<CatalogPage>() {
             @Override
-            public boolean execute(CatalogPage object)
-            {
-                if (object.getRank() <= habbo.getHabboInfo().getRank().getId() && object.visible)
-                {
+            public boolean execute(CatalogPage object) {
+                if (object.getRank() <= habbo.getHabboInfo().getRank().getId() && object.visible) {
                     pages.add(object);
                 }
 
@@ -765,18 +631,14 @@ public class CatalogManager
         return pages;
     }
 
-    public TIntObjectMap<CatalogFeaturedPage> getCatalogFeaturedPages()
-    {
+    public TIntObjectMap<CatalogFeaturedPage> getCatalogFeaturedPages() {
         return this.catalogFeaturedPages;
     }
 
 
-    public CatalogItem getClubItem(int itemId)
-    {
-        synchronized (this.clubItems)
-        {
-            for (CatalogItem item : this.clubItems)
-            {
+    public CatalogItem getClubItem(int itemId) {
+        synchronized (this.clubItems) {
+            for (CatalogItem item : this.clubItems) {
                 if (item.getId() == itemId)
                     return item;
             }
@@ -786,11 +648,10 @@ public class CatalogManager
     }
 
 
-    public boolean moveCatalogItem(CatalogItem item, int pageId)
-    {
+    public boolean moveCatalogItem(CatalogItem item, int pageId) {
         CatalogPage page = this.getCatalogPage(item.getPageId());
 
-        if(page == null)
+        if (page == null)
             return false;
 
         page.getCatalogItems().remove(item.getId());
@@ -806,33 +667,22 @@ public class CatalogManager
     }
 
 
-    public Item getRandomRecyclerPrize()
-    {
+    public Item getRandomRecyclerPrize() {
         int level = 1;
 
-        if(Emulator.getRandom().nextInt(Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.5")) + 1 == Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.5"))
-        {
+        if (Emulator.getRandom().nextInt(Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.5")) + 1 == Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.5")) {
             level = 5;
-        }
-        else if(Emulator.getRandom().nextInt(Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.4")) + 1 == Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.4"))
-        {
+        } else if (Emulator.getRandom().nextInt(Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.4")) + 1 == Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.4")) {
             level = 4;
-        }
-        else if(Emulator.getRandom().nextInt(Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.3")) + 1 == Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.3"))
-        {
+        } else if (Emulator.getRandom().nextInt(Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.3")) + 1 == Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.3")) {
             level = 3;
-        }
-        else if(Emulator.getRandom().nextInt(Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.2")) + 1 == Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.2"))
-        {
+        } else if (Emulator.getRandom().nextInt(Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.2")) + 1 == Emulator.getConfig().getInt("hotel.ecotron.rarity.chance.2")) {
             level = 2;
         }
 
-        if (this.prizes.containsKey(level) && !this.prizes.get(level).isEmpty())
-        {
+        if (this.prizes.containsKey(level) && !this.prizes.get(level).isEmpty()) {
             return (Item) this.prizes.get(level).toArray()[Emulator.getRandom().nextInt(this.prizes.get(level).size())];
-        }
-        else
-        {
+        } else {
             Emulator.getLogging().logErrorLine("[Recycler] No rewards specified for rarity level " + level);
         }
 
@@ -840,11 +690,9 @@ public class CatalogManager
     }
 
 
-    public CatalogPage createCatalogPage(String caption, String captionSave, int roomId, int icon, CatalogPageLayouts layout, int minRank, int parentId)
-    {
+    public CatalogPage createCatalogPage(String caption, String captionSave, int roomId, int icon, CatalogPageLayouts layout, int minRank, int parentId) {
         CatalogPage catalogPage = null;
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO catalog_pages (parent_id, caption, caption_save, icon_image, visible, enabled, min_rank, page_layout, room_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS))
-        {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO catalog_pages (parent_id, caption, caption_save, icon_image, visible, enabled, min_rank, page_layout, room_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, parentId);
             statement.setString(2, caption);
             statement.setString(3, captionSave);
@@ -855,32 +703,21 @@ public class CatalogManager
             statement.setString(8, layout.name());
             statement.setInt(9, roomId);
             statement.execute();
-            try (ResultSet set = statement.getGeneratedKeys())
-            {
-                if (set.next())
-                {
-                    try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM catalog_pages WHERE id = ?"))
-                    {
+            try (ResultSet set = statement.getGeneratedKeys()) {
+                if (set.next()) {
+                    try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM catalog_pages WHERE id = ?")) {
                         stmt.setInt(1, set.getInt(1));
-                        try (ResultSet page = stmt.executeQuery())
-                        {
-                            if (page.next())
-                            {
+                        try (ResultSet page = stmt.executeQuery()) {
+                            if (page.next()) {
                                 Class<? extends CatalogPage> pageClazz = pageDefinitions.get(page.getString("page_layout"));
 
-                                if (pageClazz != null)
-                                {
-                                    try
-                                    {
+                                if (pageClazz != null) {
+                                    try {
                                         catalogPage = pageClazz.getConstructor(ResultSet.class).newInstance(page);
-                                    }
-                                    catch (Exception e)
-                                    {
+                                    } catch (Exception e) {
                                         Emulator.getLogging().logErrorLine(e);
                                     }
-                                }
-                                else
-                                {
+                                } else {
                                     Emulator.getLogging().logErrorLine("Unknown Page Layout: " + page.getString("page_layout"));
                                 }
                             }
@@ -888,14 +725,11 @@ public class CatalogManager
                     }
                 }
             }
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
 
-        if(catalogPage != null)
-        {
+        if (catalogPage != null) {
             this.catalogPages.put(catalogPage.getId(), catalogPage);
         }
 
@@ -903,41 +737,28 @@ public class CatalogManager
     }
 
 
-    public CatalogLimitedConfiguration getLimitedConfig(CatalogItem item)
-    {
-        synchronized (this.limitedNumbers)
-        {
+    public CatalogLimitedConfiguration getLimitedConfig(CatalogItem item) {
+        synchronized (this.limitedNumbers) {
             return this.limitedNumbers.get(item.getId());
         }
     }
 
 
-    public CatalogLimitedConfiguration createOrUpdateLimitedConfig(CatalogItem item)
-    {
-        if (item.isLimited())
-        {
+    public CatalogLimitedConfiguration createOrUpdateLimitedConfig(CatalogItem item) {
+        if (item.isLimited()) {
             CatalogLimitedConfiguration limitedConfiguration = this.limitedNumbers.get(item.getId());
 
-            if (limitedConfiguration == null)
-            {
+            if (limitedConfiguration == null) {
                 limitedConfiguration = new CatalogLimitedConfiguration(item.getId(), new LinkedList<>(), 0);
                 limitedConfiguration.generateNumbers(1, item.limitedStack);
                 this.limitedNumbers.put(item.getId(), limitedConfiguration);
-            }
-            else
-            {
-                if (limitedConfiguration.getTotalSet() != item.limitedStack)
-                {
-                    if (limitedConfiguration.getTotalSet() == 0)
-                    {
+            } else {
+                if (limitedConfiguration.getTotalSet() != item.limitedStack) {
+                    if (limitedConfiguration.getTotalSet() == 0) {
                         limitedConfiguration.setTotalSet(item.limitedStack);
-                    }
-                    else if (item.limitedStack > limitedConfiguration.getTotalSet())
-                    {
+                    } else if (item.limitedStack > limitedConfiguration.getTotalSet()) {
                         limitedConfiguration.generateNumbers(item.limitedStack + 1, item.limitedStack - limitedConfiguration.getTotalSet());
-                    }
-                    else
-                    {
+                    } else {
                         item.limitedStack = limitedConfiguration.getTotalSet();
                     }
                 }
@@ -950,19 +771,15 @@ public class CatalogManager
     }
 
 
-    public void dispose()
-    {
+    public void dispose() {
         TIntObjectIterator<CatalogPage> pageIterator = this.catalogPages.iterator();
 
-        while (pageIterator.hasNext())
-        {
+        while (pageIterator.hasNext()) {
             pageIterator.advance();
 
-            for(CatalogItem item : pageIterator.value().getCatalogItems().valueCollection())
-            {
+            for (CatalogItem item : pageIterator.value().getCatalogItems().valueCollection()) {
                 item.run();
-                if(item.isLimited())
-                {
+                if (item.isLimited()) {
                     this.limitedNumbers.get(item.getId()).run();
                 }
             }
@@ -972,73 +789,58 @@ public class CatalogManager
     }
 
 
-    public void purchaseItem(CatalogPage page, CatalogItem item, Habbo habbo, int amount, String extradata, boolean free)
-    {
+    public void purchaseItem(CatalogPage page, CatalogItem item, Habbo habbo, int amount, String extradata, boolean free) {
         Item cBaseItem = null;
 
-        if(item == null || habbo.getHabboStats().isPurchasingFurniture)
-        {
+        if (item == null || habbo.getHabboStats().isPurchasingFurniture) {
             habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
             return;
         }
 
         habbo.getHabboStats().isPurchasingFurniture = true;
 
-        try
-        {
-            if (item.isClubOnly() && !habbo.getClient().getHabbo().getHabboStats().hasActiveClub())
-            {
+        try {
+            if (item.isClubOnly() && !habbo.getClient().getHabbo().getHabboStats().hasActiveClub()) {
                 habbo.getClient().sendResponse(new AlertPurchaseUnavailableComposer(AlertPurchaseUnavailableComposer.REQUIRES_CLUB));
                 return;
             }
 
-            if (amount <= 0)
-            {
+            if (amount <= 0) {
                 habbo.getClient().sendResponse(new AlertPurchaseUnavailableComposer(AlertPurchaseUnavailableComposer.ILLEGAL));
                 return;
             }
 
-            try
-            {
+            try {
                 CatalogLimitedConfiguration limitedConfiguration = null;
                 int limitedStack = 0;
                 int limitedNumber = 0;
-                if (item.isLimited())
-                {
+                if (item.isLimited()) {
                     amount = 1;
-                    if (this.getLimitedConfig(item).available() == 0)
-                    {
+                    if (this.getLimitedConfig(item).available() == 0) {
                         habbo.getClient().sendResponse(new AlertLimitedSoldOutComposer());
                         return;
                     }
 
-                    if (Emulator.getConfig().getBoolean("hotel.catalog.ltd.limit.enabled"))
-                    {
+                    if (Emulator.getConfig().getBoolean("hotel.catalog.ltd.limit.enabled")) {
                         int ltdLimit = Emulator.getConfig().getInt("hotel.purchase.ltd.limit.daily.total");
-                        if (habbo.getHabboStats().totalLtds() >= ltdLimit)
-                        {
+                        if (habbo.getHabboStats().totalLtds() >= ltdLimit) {
                             habbo.alert(Emulator.getTexts().getValue("error.catalog.buy.limited.daily.total").replace("%itemname%", item.getBaseItems().iterator().next().getFullName()).replace("%limit%", ltdLimit + ""));
                             return;
                         }
 
                         ltdLimit = Emulator.getConfig().getInt("hotel.purchase.ltd.limit.daily.item");
-                        if (habbo.getHabboStats().totalLtds(item.id) >= ltdLimit)
-                        {
+                        if (habbo.getHabboStats().totalLtds(item.id) >= ltdLimit) {
                             habbo.alert(Emulator.getTexts().getValue("error.catalog.buy.limited.daily.item").replace("%itemname%", item.getBaseItems().iterator().next().getFullName()).replace("%limit%", ltdLimit + ""));
                             return;
                         }
                     }
                 }
 
-                if (amount > 1)
-                {
-                    if (amount == item.getAmount())
-                    {
+                if (amount > 1) {
+                    if (amount == item.getAmount()) {
                         amount = 1;
-                    } else
-                    {
-                        if (amount * item.getAmount() > 100)
-                        {
+                    } else {
+                        if (amount * item.getAmount() > 100) {
                             habbo.alert("Whoops! You tried to buy this " + (amount * item.getAmount()) + " times. This must've been a mistake.");
                             habbo.getClient().sendResponse(new AlertPurchaseUnavailableComposer(AlertPurchaseUnavailableComposer.ILLEGAL));
                             return;
@@ -1049,8 +851,7 @@ public class CatalogManager
                 THashSet<HabboItem> itemsList = new THashSet<>();
 
 
-                if (amount > 1 && !CatalogItem.haveOffer(item))
-                {
+                if (amount > 1 && !CatalogItem.haveOffer(item)) {
                     String message = Emulator.getTexts().getValue("scripter.warning.catalog.amount").replace("%username%", habbo.getHabboInfo().getUsername()).replace("%itemname%", item.getName()).replace("%pagename%", page.getCaption());
                     ScripterManager.scripterDetected(habbo.getClient(), message);
                     Emulator.getLogging().logUserLine(message);
@@ -1058,12 +859,10 @@ public class CatalogManager
                     return;
                 }
 
-                if (item.isLimited())
-                {
+                if (item.isLimited()) {
                     limitedConfiguration = this.getLimitedConfig(item);
 
-                    if (limitedConfiguration == null)
-                    {
+                    if (limitedConfiguration == null) {
                         limitedConfiguration = this.createOrUpdateLimitedConfig(item);
                     }
 
@@ -1075,7 +874,8 @@ public class CatalogManager
                 int totalPoints = free ? 0 : this.calculateDiscountedPrice(item.getPoints(), amount, item);
 
                 if (totalCredits > 0 && habbo.getHabboInfo().getCredits() - totalCredits < 0) return;
-                if (totalPoints > 0 && habbo.getHabboInfo().getCurrencyAmount(item.getPointsType()) - totalPoints < 0) return;
+                if (totalPoints > 0 && habbo.getHabboInfo().getCurrencyAmount(item.getPointsType()) - totalPoints < 0)
+                    return;
 
                 List<String> badges = new ArrayList<>();
                 Map<AddHabboItemComposer.AddHabboItemCategory, List<Integer>> unseenItems = new HashMap<>();
@@ -1243,45 +1043,36 @@ public class CatalogManager
                 UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
                 Emulator.getPluginManager().fireEvent(purchasedEvent);
 
-                if (badgeFound)
-                {
+                if (badgeFound) {
                     habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.ALREADY_HAVE_BADGE));
 
-                    if (item.getBaseItems().size() == 1)
-                    {
+                    if (item.getBaseItems().size() == 1) {
                         return;
                     }
                 }
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission("acc_infinite_credits"))
-                {
-                    if (purchasedEvent.totalCredits > 0)
-                    {
+                if (!free && !habbo.getClient().getHabbo().hasPermission("acc_infinite_credits")) {
+                    if (purchasedEvent.totalCredits > 0) {
                         habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.totalCredits);
                         habbo.getClient().sendResponse(new UserCreditsComposer(habbo.getClient().getHabbo()));
                     }
                 }
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission("acc_infinite_points"))
-                {
-                    if (purchasedEvent.totalPoints > 0)
-                    {
+                if (!free && !habbo.getClient().getHabbo().hasPermission("acc_infinite_points")) {
+                    if (purchasedEvent.totalPoints > 0) {
                         habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.totalPoints);
                         habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.totalPoints, item.getPointsType()));
                     }
                 }
 
-                if (purchasedEvent.itemsList != null && !purchasedEvent.itemsList.isEmpty())
-                {
+                if (purchasedEvent.itemsList != null && !purchasedEvent.itemsList.isEmpty()) {
                     habbo.getClient().getHabbo().getInventory().getItemsComponent().addItems(purchasedEvent.itemsList);
                     unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI, purchasedEvent.itemsList.stream().map(HabboItem::getId).collect(Collectors.toList()));
 
                     Emulator.getPluginManager().fireEvent(new UserCatalogFurnitureBoughtEvent(habbo, item, purchasedEvent.itemsList));
 
-                    if (limitedConfiguration != null)
-                    {
-                        for (HabboItem itm : purchasedEvent.itemsList)
-                        {
+                    if (limitedConfiguration != null) {
+                        for (HabboItem itm : purchasedEvent.itemsList) {
                             limitedConfiguration.limitedSold(item.getId(), habbo, itm);
                         }
                     }
@@ -1291,8 +1082,7 @@ public class CatalogManager
                     unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BADGE, new ArrayList<>());
                 }
 
-                for (String b : purchasedEvent.badges)
-                {
+                for (String b : purchasedEvent.badges) {
                     HabboBadge badge = new HabboBadge(0, b, 0, habbo);
                     Emulator.getThreading().run(badge);
                     habbo.getInventory().getBadgesComponent().addBadge(badge);
@@ -1311,26 +1101,20 @@ public class CatalogManager
                 habbo.getClient().sendResponse(new PurchaseOKComposer(purchasedEvent.catalogItem));
                 habbo.getClient().sendResponse(new InventoryRefreshComposer());
 
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 Emulator.getLogging().logPacketError(e);
                 habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
             }
-        }
-        finally
-        {
+        } finally {
             habbo.getHabboStats().isPurchasingFurniture = false;
         }
     }
 
-    public List<ClubOffer> getClubOffers()
-    {
+    public List<ClubOffer> getClubOffers() {
         List<ClubOffer> offers = new ArrayList<>();
 
-        for (Map.Entry<Integer, ClubOffer> entry : this.clubOffers.entrySet())
-        {
-            if (!entry.getValue().isDeal())
-            {
+        for (Map.Entry<Integer, ClubOffer> entry : this.clubOffers.entrySet()) {
+            if (!entry.getValue().isDeal()) {
                 offers.add(entry.getValue());
             }
         }
@@ -1338,28 +1122,22 @@ public class CatalogManager
         return offers;
     }
 
-    public void claimCalendarReward(Habbo habbo, int day)
-    {
-        if (!habbo.getHabboStats().calendarRewardsClaimed.contains(day))
-        {
+    public void claimCalendarReward(Habbo habbo, int day) {
+        if (!habbo.getHabboStats().calendarRewardsClaimed.contains(day)) {
             habbo.getHabboStats().calendarRewardsClaimed.add(day);
             CalendarRewardObject object = this.calendarRewards.get(day);
 
-            if (object != null)
-            {
+            if (object != null) {
                 object.give(habbo);
                 habbo.getClient().sendResponse(new InventoryRefreshComposer());
                 habbo.getClient().sendResponse(new AdventCalendarProductComposer(true, object));
 
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO calendar_rewards_claimed (user_id, reward_id, timestamp) VALUES (?, ?, ?)"))
-                {
+                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO calendar_rewards_claimed (user_id, reward_id, timestamp) VALUES (?, ?, ?)")) {
                     statement.setInt(1, habbo.getHabboInfo().getId());
                     statement.setInt(2, day);
                     statement.setInt(3, Emulator.getIntUnixTimestamp());
                     statement.execute();
-                }
-                catch (SQLException e)
-                {
+                } catch (SQLException e) {
                     Emulator.getLogging().logSQLException(e);
                 }
             }
@@ -1368,8 +1146,7 @@ public class CatalogManager
         }
     }
 
-    public TargetOffer getTargetOffer(int offerId)
-    {
+    public TargetOffer getTargetOffer(int offerId) {
         return this.targetOffers.get(offerId);
     }
 

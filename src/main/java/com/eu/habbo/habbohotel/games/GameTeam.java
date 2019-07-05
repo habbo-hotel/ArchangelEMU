@@ -3,30 +3,22 @@ package com.eu.habbo.habbohotel.games;
 import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.set.hash.THashSet;
 
-public class GameTeam
-{
-
-    private final THashSet<GamePlayer> members;
-
+public class GameTeam {
 
     public final GameTeamColors teamColor;
-
-
+    private final THashSet<GamePlayer> members;
     private int teamScore;
 
 
-    public GameTeam(GameTeamColors teamColor)
-    {
+    public GameTeam(GameTeamColors teamColor) {
         this.teamColor = teamColor;
 
         this.members = new THashSet<>();
     }
 
 
-    public void initialise()
-    {
-        for(GamePlayer player : this.members)
-        {
+    public void initialise() {
+        for (GamePlayer player : this.members) {
             player.reset();
         }
 
@@ -34,30 +26,25 @@ public class GameTeam
     }
 
 
-    public void reset()
-    {
+    public void reset() {
         this.members.clear();
     }
 
 
-    public void addTeamScore(int teamScore)
-    {
+    public void addTeamScore(int teamScore) {
         this.teamScore += teamScore;
     }
 
 
-    public int getTeamScore()
-    {
+    public int getTeamScore() {
         return this.teamScore;
     }
 
 
-    public synchronized int getTotalScore()
-    {
+    public synchronized int getTotalScore() {
         int score = this.teamScore;
 
-        for(GamePlayer player : this.members)
-        {
+        for (GamePlayer player : this.members) {
             score += player.getScore();
         }
 
@@ -65,36 +52,28 @@ public class GameTeam
     }
 
 
-    public void addMember(GamePlayer gamePlayer)
-    {
-        synchronized (this.members)
-        {
+    public void addMember(GamePlayer gamePlayer) {
+        synchronized (this.members) {
             this.members.add(gamePlayer);
         }
     }
 
 
-    public void removeMember(GamePlayer gamePlayer)
-    {
-        synchronized (this.members)
-        {
+    public void removeMember(GamePlayer gamePlayer) {
+        synchronized (this.members) {
             this.members.remove(gamePlayer);
         }
     }
 
 
-    public THashSet<GamePlayer> getMembers()
-    {
+    public THashSet<GamePlayer> getMembers() {
         return this.members;
     }
 
 
-    public boolean isMember(Habbo habbo)
-    {
-        for(GamePlayer p : this.members)
-        {
-            if(p.getHabbo().equals(habbo))
-            {
+    public boolean isMember(Habbo habbo) {
+        for (GamePlayer p : this.members) {
+            if (p.getHabbo().equals(habbo)) {
                 return true;
             }
         }
@@ -104,12 +83,9 @@ public class GameTeam
 
 
     @Deprecated
-    public GamePlayer getPlayerForHabbo(Habbo habbo)
-    {
-        for(GamePlayer p : this.members)
-        {
-            if(p.getHabbo().equals(habbo))
-            {
+    public GamePlayer getPlayerForHabbo(Habbo habbo) {
+        for (GamePlayer p : this.members) {
+            if (p.getHabbo().equals(habbo)) {
                 return p;
             }
         }

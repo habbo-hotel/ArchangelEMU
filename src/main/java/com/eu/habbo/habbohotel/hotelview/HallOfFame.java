@@ -8,55 +8,44 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class HallOfFame
-{
+public class HallOfFame {
 
     private final THashMap<Integer, HallOfFameWinner> winners = new THashMap<>();
 
 
     private String competitionName;
 
-    public HallOfFame()
-    {
+    public HallOfFame() {
         this.setCompetitionName("xmasRoomComp");
 
         this.reload();
     }
 
 
-    public void reload()
-    {
+    public void reload() {
         this.winners.clear();
 
-        synchronized (this.winners)
-        {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery(Emulator.getConfig().getValue("hotelview.halloffame.query")))
-            {
-                while (set.next())
-                {
+        synchronized (this.winners) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery(Emulator.getConfig().getValue("hotelview.halloffame.query"))) {
+                while (set.next()) {
                     HallOfFameWinner winner = new HallOfFameWinner(set);
                     this.winners.put(winner.getId(), winner);
                 }
-            }
-            catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
 
-    public THashMap<Integer, HallOfFameWinner> getWinners()
-    {
+    public THashMap<Integer, HallOfFameWinner> getWinners() {
         return this.winners;
     }
 
-    public String getCompetitionName()
-    {
+    public String getCompetitionName() {
         return this.competitionName;
     }
 
-    void setCompetitionName(String name)
-    {
+    void setCompetitionName(String name) {
         this.competitionName = name;
     }
 }

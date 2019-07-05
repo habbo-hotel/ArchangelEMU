@@ -7,22 +7,22 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 
-public class GuildForumThreadsComposer extends MessageComposer
-{
+public class GuildForumThreadsComposer extends MessageComposer {
     public final Guild guild;
     public final int index;
 
-    public GuildForumThreadsComposer(Guild guild, int index)
-    {
+    public GuildForumThreadsComposer(Guild guild, int index) {
         this.guild = guild;
         this.index = index;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         ArrayList<ForumThread> threads;
 
         try {
@@ -42,15 +42,15 @@ public class GuildForumThreadsComposer extends MessageComposer
         this.response.appendInt(this.index);
         this.response.appendInt(count);
 
-        for(int i = 0; i < index; i++) {
-            if(!it.hasNext())
+        for (int i = 0; i < index; i++) {
+            if (!it.hasNext())
                 break;
 
             it.next();
         }
 
-        for(int i = 0; i < count; i++) {
-            if(!it.hasNext())
+        for (int i = 0; i < count; i++) {
+            if (!it.hasNext())
                 break;
 
             it.next().serialize(this.response);

@@ -5,26 +5,21 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ReportRoomFormComposer extends MessageComposer
-{
+public class ReportRoomFormComposer extends MessageComposer {
     private final List<ModToolIssue> pendingIssues;
 
-    public ReportRoomFormComposer(List<ModToolIssue> issues)
-    {
+    public ReportRoomFormComposer(List<ModToolIssue> issues) {
         this.pendingIssues = issues;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.ReportRoomFormComposer);
         this.response.appendInt(this.pendingIssues.size()); //Current standing help request(s) amount:
 
-        for (ModToolIssue issue : this.pendingIssues)
-        {
+        for (ModToolIssue issue : this.pendingIssues) {
             this.response.appendString(issue.id + "");
             this.response.appendString(issue.timestamp + "");
             this.response.appendString(issue.message);

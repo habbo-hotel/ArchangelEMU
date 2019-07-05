@@ -7,13 +7,10 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class ModToolCloseTicketEvent extends MessageHandler
-{
+public class ModToolCloseTicketEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
-        if(this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL))
-        {
+    public void handle() throws Exception {
+        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             int state = this.packet.readInt();
             int something = this.packet.readInt();
             int ticketId = this.packet.readInt();
@@ -25,8 +22,7 @@ public class ModToolCloseTicketEvent extends MessageHandler
 
             Habbo sender = Emulator.getGameEnvironment().getHabboManager().getHabbo(issue.senderId);
 
-            switch (state)
-            {
+            switch (state) {
                 case 1:
                     Emulator.getGameEnvironment().getModToolManager().closeTicketAsUseless(issue, sender);
                     break;
@@ -39,9 +35,7 @@ public class ModToolCloseTicketEvent extends MessageHandler
                     Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, sender);
                     break;
             }
-        }
-        else
-        {
+        } else {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.ticket.close").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
         }
     }

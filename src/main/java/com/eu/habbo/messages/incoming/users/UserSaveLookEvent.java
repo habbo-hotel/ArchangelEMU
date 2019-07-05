@@ -8,22 +8,16 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
 import com.eu.habbo.plugin.events.users.UserSavedLookEvent;
-import com.eu.habbo.util.figure.FigureUtil;
 
-public class UserSaveLookEvent extends MessageHandler
-{
+public class UserSaveLookEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception
-    {
+    public void handle() throws Exception {
         String genderCode = this.packet.readString();
         HabboGender gender;
 
-        try
-        {
+        try {
             gender = HabboGender.valueOf(genderCode);
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             String message = Emulator.getTexts().getValue("scripter.warning.look.gender").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%gender%", genderCode);
             ScripterManager.scripterDetected(this.client, message);
             Emulator.getLogging().logUserLine(message);
@@ -34,15 +28,14 @@ public class UserSaveLookEvent extends MessageHandler
 
         UserSavedLookEvent lookEvent = new UserSavedLookEvent(this.client.getHabbo(), gender, look);
         Emulator.getPluginManager().fireEvent(lookEvent);
-        if(lookEvent.isCancelled())
+        if (lookEvent.isCancelled())
             return;
 
         this.client.getHabbo().getHabboInfo().setLook(lookEvent.newLook);
         this.client.getHabbo().getHabboInfo().setGender(lookEvent.gender);
         Emulator.getThreading().run(this.client.getHabbo().getHabboInfo());
         this.client.sendResponse(new UpdateUserLookComposer(this.client.getHabbo()));
-        if(this.client.getHabbo().getHabboInfo().getCurrentRoom() != null)
-        {
+        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(this.client.getHabbo()).compose());
         }
 

@@ -8,14 +8,12 @@ import java.sql.SQLException;
 
 public class TrophiesLayout extends CatalogPage {
 
-    public TrophiesLayout(ResultSet set) throws SQLException
-    {
+    public TrophiesLayout(ResultSet set) throws SQLException {
         super(set);
     }
 
     @Override
-    public void serialize(ServerMessage message)
-    {
+    public void serialize(ServerMessage message) {
         message.appendString("trophies");
         message.appendInt(3);
         message.appendString(super.getHeaderImage());

@@ -8,10 +8,8 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
-public class ActionTorch extends PetAction
-{
-    public ActionTorch()
-    {
+public class ActionTorch extends PetAction {
+    public ActionTorch() {
         super(null, true);
 
         this.minimumActionDuration = 1000;
@@ -19,10 +17,8 @@ public class ActionTorch extends PetAction
     }
 
     @Override
-    public boolean apply(Pet pet, Habbo habbo, String[] data)
-    {
-        if(pet.getHappyness() < 30)
-        {
+    public boolean apply(Pet pet, Habbo habbo, String[] data) {
+        if (pet.getHappyness() < 30) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
             return false;
         }

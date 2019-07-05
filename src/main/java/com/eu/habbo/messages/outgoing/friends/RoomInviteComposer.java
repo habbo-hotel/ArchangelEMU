@@ -4,20 +4,17 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomInviteComposer extends MessageComposer
-{
+public class RoomInviteComposer extends MessageComposer {
     private final int userId;
     private final String message;
 
-    public RoomInviteComposer(int userId, String message)
-    {
+    public RoomInviteComposer(int userId, String message) {
         this.userId = userId;
         this.message = message;
     }
 
     @Override
-    public ServerMessage compose()
-    {
+    public ServerMessage compose() {
         this.response.init(Outgoing.RoomInviteComposer);
         this.response.appendInt(this.userId);
         this.response.appendString(this.message);

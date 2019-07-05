@@ -11,25 +11,21 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionPuzzleBox extends HabboItem
-{
-    public InteractionPuzzleBox(ResultSet set, Item baseItem) throws SQLException
-    {
+public class InteractionPuzzleBox extends HabboItem {
+    public InteractionPuzzleBox(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionPuzzleBox(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells)
-    {
+    public InteractionPuzzleBox(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception
-    {
-        if(client.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+        if (client.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
             return;
 
-        if(!RoomLayout.tilesAdjecent(room.getLayout().getTile(super.getX(), super.getY()), client.getHabbo().getRoomUnit().getCurrentLocation()))
+        if (!RoomLayout.tilesAdjecent(room.getLayout().getTile(super.getX(), super.getY()), client.getHabbo().getRoomUnit().getCurrentLocation()))
             return;
 
 
@@ -37,8 +33,7 @@ public class InteractionPuzzleBox extends HabboItem
         client.getHabbo().getRoomUnit().lookAtPoint(boxLocation);
         room.sendComposer(new RoomUserStatusComposer(client.getHabbo().getRoomUnit()).compose());
 
-        switch (client.getHabbo().getRoomUnit().getBodyRotation())
-        {
+        switch (client.getHabbo().getRoomUnit().getBodyRotation()) {
             case NORTH_EAST:
             case NORTH_WEST:
             case SOUTH_EAST:
@@ -48,20 +43,18 @@ public class InteractionPuzzleBox extends HabboItem
 
         RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), client.getHabbo().getRoomUnit().getBodyRotation().getValue());
 
-        if (tile == null || !room.tileWalkable(tile) || room.hasHabbosAt(tile.x, tile.y))
-        {
+        if (tile == null || !room.tileWalkable(tile) || room.hasHabbosAt(tile.x, tile.y)) {
             return;
         }
 
         double offset = room.getStackHeight(tile.x, tile.y, false) - this.getZ();
 
-        if(!boxLocation.equals(room.getLayout().getTileInFront(client.getHabbo().getRoomUnit().getCurrentLocation(), client.getHabbo().getRoomUnit().getBodyRotation().getValue())))
+        if (!boxLocation.equals(room.getLayout().getTileInFront(client.getHabbo().getRoomUnit().getCurrentLocation(), client.getHabbo().getRoomUnit().getBodyRotation().getValue())))
             return;
 
         HabboItem item = room.getTopItemAt(tile.x, tile.y);
 
-        if(item == null || (item.getZ() <= this.getZ() && item.getBaseItem().allowWalk()))
-        {
+        if (item == null || (item.getZ() <= this.getZ() && item.getBaseItem().allowWalk())) {
             room.scheduledComposers.add(new FloorItemOnRollerComposer(this, null, tile, offset, room).compose());
             client.getHabbo().getRoomUnit().setGoalLocation(boxLocation);
             this.needsUpdate(true);
@@ -69,8 +62,7 @@ public class InteractionPuzzleBox extends HabboItem
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage)
-    {
+    public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
         serverMessage.appendString(this.getExtradata());
 
@@ -78,20 +70,17 @@ public class InteractionPuzzleBox extends HabboItem
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects)
-    {
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         return false;
     }
 
     @Override
-    public boolean isWalkable()
-    {
+    public boolean isWalkable() {
         return false;
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception
-    {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 }
