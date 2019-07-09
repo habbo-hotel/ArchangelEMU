@@ -20,6 +20,7 @@ import java.util.List;
 public class FloorPlanEditorSaveEvent extends MessageHandler {
     public static int MAXIMUM_FLOORPLAN_WIDTH_LENGTH = 64;
     public static int MAXIMUM_FLOORPLAN_SIZE = 64 * 64;
+    public static final String VALID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
     @Override
     public void handle() throws Exception {
@@ -37,6 +38,18 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
             List<String> errors = new ArrayList<>();
             String map = this.packet.readString();
             map = map.replace("X", "x");
+
+            String checkMap = map.replace(((char) 13) + "", "").toUpperCase();
+            for (char c : VALID_CHARACTERS.toCharArray())
+            {
+                checkMap = checkMap.replace(c + "", "");
+            }
+
+            if (!checkMap.isEmpty() && Emulator.getConfig().getBoolean("hotel.room.floorplan.check.enabled"))
+            {
+                errors.add("${notification.floorplan_editor.error.title}");
+            }
+
 
             if (map.isEmpty() || map.replace("x", "").replace(((char) 13) + "", "").length() == 0) {
                 errors.add("${notification.floorplan_editor.error.message.effective_height_is_0}");
