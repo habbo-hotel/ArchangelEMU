@@ -37,7 +37,7 @@ public final class Emulator {
     public final static int MINOR = 1;
 
 
-    public final static int BUILD = 0;
+    public final static int BUILD = 1;
 
 
     public final static String PREVIEW = "Stable";
@@ -143,6 +143,7 @@ public final class Emulator {
                     Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a stable 2.1.0 build, it should be more than stable for daily use on hotels, if you find any bugs please place them on our git repository.");
                     Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
                     Emulator.getLogging().logStart("https://discord.gg/syuqgN");
+                    Emulator.getLogging().logStart("Please report bugs on our git at Krews.org. Not on our discord!!");
                     System.out.println("Waiting for commands: ");
                 }
             }, 3500);
