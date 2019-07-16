@@ -4,13 +4,11 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.util.Map;
-import java.util.Set;
 
 public class PixelScheduler extends Scheduler {
 
     public static boolean IGNORE_HOTEL_VIEW;
     public static boolean IGNORE_IDLED;
-    public static Set<Map.Entry<Integer, Habbo>> HABBOS;
 
     public PixelScheduler() {
         super(Emulator.getConfig().getInt("hotel.auto.pixels.interval"));
