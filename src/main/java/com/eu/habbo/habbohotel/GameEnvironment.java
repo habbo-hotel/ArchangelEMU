@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.CreditsScheduler;
+import com.eu.habbo.core.GotwPointsScheduler;
 import com.eu.habbo.core.PixelScheduler;
 import com.eu.habbo.core.PointsScheduler;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
@@ -26,6 +27,7 @@ public class GameEnvironment {
     public CreditsScheduler creditsScheduler;
     public PixelScheduler pixelScheduler;
     public PointsScheduler pointsScheduler;
+    public GotwPointsScheduler gotwPointsScheduler;
     private HabboManager habboManager;
     private NavigatorManager navigatorManager;
     private GuildManager guildManager;
@@ -76,6 +78,9 @@ public class GameEnvironment {
         Emulator.getThreading().run(this.pixelScheduler);
         this.pointsScheduler = new PointsScheduler();
         Emulator.getThreading().run(this.pointsScheduler);
+        this.gotwPointsScheduler = new GotwPointsScheduler();
+        Emulator.getThreading().run(this.gotwPointsScheduler);
+
 
         Emulator.getLogging().logStart("GameEnvironment -> Loaded!");
     }
@@ -84,6 +89,7 @@ public class GameEnvironment {
         this.pointsScheduler.setDisposed(true);
         this.pixelScheduler.setDisposed(true);
         this.creditsScheduler.setDisposed(true);
+        this.gotwPointsScheduler.setDisposed(true);
         this.craftingManager.dispose();
         this.habboManager.dispose();
         this.commandHandler.dispose();
@@ -171,7 +177,9 @@ public class GameEnvironment {
         return this.pixelScheduler;
     }
 
-    public PointsScheduler getPointsScheduler() {
-        return this.pointsScheduler;
+    public PointsScheduler getPointsScheduler() { return this.pointsScheduler;
+    }
+
+    public GotwPointsScheduler getGotwPointsScheduler() { return this.gotwPointsScheduler;
     }
 }
