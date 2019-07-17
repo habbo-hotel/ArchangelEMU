@@ -126,6 +126,8 @@ public class PluginManager {
             Emulator.getGameEnvironment().getCreditsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPointsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPixelScheduler().reloadConfig();
+            Emulator.getGameEnvironment().getGotwPointsScheduler().reloadConfig();
+
         }
     }
 
