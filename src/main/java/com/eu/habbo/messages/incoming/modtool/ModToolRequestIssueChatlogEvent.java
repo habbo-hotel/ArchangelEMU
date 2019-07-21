@@ -43,6 +43,12 @@ public class ModToolRequestIssueChatlogEvent extends MessageHandler {
                             chatlog = thread.getComments().stream().map(c -> new ModToolChatLog(c.getCreatedAt(), c.getHabbo().getHabboInfo().getId(), c.getHabbo().getHabboInfo().getUsername(), c.getMessage(), c.getCommentId() == issue.commentId)).collect(Collectors.toList());
                         }
                     }
+                } else if (issue.type == ModToolTicketType.PHOTO) {
+                    if (issue.photoItem != null) {
+                        chatlogType = ModToolIssueChatlogType.PHOTO;
+
+                        chatlog = Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(issue.roomId);
+                    }
                 } else {
                     chatlogType = ModToolIssueChatlogType.CHAT;
 
