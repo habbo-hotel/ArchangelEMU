@@ -283,22 +283,19 @@ public class CatalogManager {
             Emulator.getLogging().logSQLException(e);
         }
 
-        pages.forEachValue(new TObjectProcedure<CatalogPage>() {
-            @Override
-            public boolean execute(CatalogPage object) {
-                CatalogPage page = pages.get(object.parentId);
+        pages.forEachValue((object) -> {
+            CatalogPage page = pages.get(object.parentId);
 
-                if (page != null) {
-                    if (page.id != object.id) {
-                        page.addChildPage(object);
-                    }
-                } else {
-                    if (object.parentId != -2) {
-                        Emulator.getLogging().logStart("Parent Page not found for " + object.getPageName() + " (ID: " + object.id + ", parent_id: " + object.parentId + ")");
-                    }
+            if (page != null) {
+                if (page.id != object.id) {
+                    page.addChildPage(object);
                 }
-                return true;
+            } else {
+                if (object.parentId != -2) {
+                    Emulator.getLogging().logStart("Parent Page not found for " + object.getPageName() + " (ID: " + object.id + ", parent_id: " + object.parentId + ")");
+                }
             }
+            return true;
         });
 
         this.catalogPages.putAll(pages);
