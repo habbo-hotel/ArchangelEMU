@@ -292,6 +292,7 @@ public class Incoming {
     public static final int UpdateUIFlagsEvent = 2313;
     public static final int ReportThreadEvent = 534;
     public static final int ReportCommentEvent = 1412;
+    public static final int ReportPhotoEvent = 2492;
 
     public static final int RequestCraftingRecipesEvent = 1173;
     public static final int RequestCraftingRecipesAvailableEvent = 3086;

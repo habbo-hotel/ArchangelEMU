@@ -468,6 +468,7 @@ public class PacketManager {
         this.registerHandler(Incoming.ReportFriendPrivateChatEvent, ReportFriendPrivateChatEvent.class);
         this.registerHandler(Incoming.ReportThreadEvent, ReportThreadEvent.class);
         this.registerHandler(Incoming.ReportCommentEvent, ReportCommentEvent.class);
+        this.registerHandler(Incoming.ReportPhotoEvent, ReportPhotoEvent.class);
     }
 
     void registerTrading() throws Exception {

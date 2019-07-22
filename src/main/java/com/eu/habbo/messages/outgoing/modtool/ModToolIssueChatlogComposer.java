@@ -8,7 +8,6 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,6 +64,14 @@ public class ModToolIssueChatlogComposer extends MessageComposer {
                 ModToolChatRecordDataContext.GROUP_ID.append(this.response);
                 this.response.appendInt(this.issue.commentId);
             }
+        } else if (this.issue.type == ModToolTicketType.PHOTO) {
+            this.response.appendShort(2);
+
+            ModToolChatRecordDataContext.ROOM_NAME.append(this.response);
+            this.response.appendString(this.roomName);
+
+            ModToolChatRecordDataContext.PHOTO_ID.append(this.response);
+            this.response.appendString(this.issue.photoItem.getId() + "");
         } else {
             this.response.appendShort(3); //Context Count
 

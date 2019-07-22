@@ -8,47 +8,17 @@ import java.util.Map;
 public class PixelScheduler extends Scheduler {
 
     public static boolean IGNORE_HOTEL_VIEW;
-
-
     public static boolean IGNORE_IDLED;
-
-
-    private static int PIXELS;
 
     public PixelScheduler() {
         super(Emulator.getConfig().getInt("hotel.auto.pixels.interval"));
         this.reloadConfig();
     }
 
-    public static boolean isIgnoreHotelView() {
-        return IGNORE_HOTEL_VIEW;
-    }
-
-    public static void setIgnoreHotelView(boolean ignoreHotelView) {
-        IGNORE_HOTEL_VIEW = ignoreHotelView;
-    }
-
-    public static boolean isIgnoreIdled() {
-        return IGNORE_IDLED;
-    }
-
-    public static void setIgnoreIdled(boolean ignoreIdled) {
-        IGNORE_IDLED = ignoreIdled;
-    }
-
-    public static int getPIXELS() {
-        return PIXELS;
-    }
-
-    public static void setPIXELS(int PIXELS) {
-        PixelScheduler.PIXELS = PIXELS;
-    }
-
     public void reloadConfig() {
         if (Emulator.getConfig().getBoolean("hotel.auto.pixels.enabled")) {
             IGNORE_HOTEL_VIEW = Emulator.getConfig().getBoolean("hotel.auto.pixels.ignore.hotelview");
             IGNORE_IDLED = Emulator.getConfig().getBoolean("hotel.auto.pixels.ignore.idled");
-            PIXELS = Emulator.getConfig().getInt("hotel.auto.pixels.amount");
             if (this.disposed) {
                 this.disposed = false;
                 this.run();
@@ -65,7 +35,6 @@ public class PixelScheduler extends Scheduler {
         Habbo habbo;
         for (Map.Entry<Integer, Habbo> map : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
             habbo = map.getValue();
-
             try {
                 if (habbo != null) {
                     if (habbo.getHabboInfo().getCurrentRoom() == null && IGNORE_HOTEL_VIEW)
@@ -74,7 +43,7 @@ public class PixelScheduler extends Scheduler {
                     if (habbo.getRoomUnit().isIdle() && IGNORE_IDLED)
                         continue;
 
-                    habbo.givePixels(PIXELS);
+                    habbo.givePixels(habbo.getHabboInfo().getRank().getPixelsTimerAmount());
                 }
             } catch (Exception e) {
                 Emulator.getLogging().logErrorLine(e);

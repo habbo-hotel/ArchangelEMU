@@ -8,14 +8,10 @@ import java.util.Map;
 public class CreditsScheduler extends Scheduler {
 
     public static boolean IGNORE_HOTEL_VIEW;
-
-
     public static boolean IGNORE_IDLED;
 
-
-    public static int CREDITS;
-
     public CreditsScheduler() {
+
         super(Emulator.getConfig().getInt("hotel.auto.credits.interval"));
         this.reloadConfig();
     }
@@ -24,7 +20,6 @@ public class CreditsScheduler extends Scheduler {
         if (Emulator.getConfig().getBoolean("hotel.auto.credits.enabled")) {
             IGNORE_HOTEL_VIEW = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.hotelview");
             IGNORE_IDLED = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.idled");
-            CREDITS = Emulator.getConfig().getInt("hotel.auto.credits.amount");
             if (this.disposed) {
                 this.disposed = false;
                 this.run();
@@ -50,7 +45,7 @@ public class CreditsScheduler extends Scheduler {
                     if (habbo.getRoomUnit().isIdle() && IGNORE_IDLED)
                         continue;
 
-                    habbo.giveCredits(CREDITS);
+                    habbo.giveCredits(habbo.getHabboInfo().getRank().getCreditsTimerAmount());
                 }
             } catch (Exception e) {
                 Emulator.getLogging().logErrorLine(e);

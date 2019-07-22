@@ -19,12 +19,6 @@ public class ChangeNameCheckUsernameEvent extends MessageHandler {
 
         String name = this.packet.readString();
 
-        if (name.equalsIgnoreCase(this.client.getHabbo().getHabboInfo().getUsername())) {
-            this.client.getHabbo().getHabboStats().allowNameChange = false;
-            this.client.sendResponse(new RoomUserNameChangedComposer(this.client.getHabbo()));
-            return;
-        }
-
         int errorCode = ChangeNameCheckResultComposer.AVAILABLE;
 
         List<String> suggestions = new ArrayList<>(4);
@@ -32,7 +26,7 @@ public class ChangeNameCheckUsernameEvent extends MessageHandler {
             errorCode = ChangeNameCheckResultComposer.TOO_SHORT;
         } else if (name.length() > 15) {
             errorCode = ChangeNameCheckResultComposer.TOO_LONG;
-        } else if (HabboManager.getOfflineHabboInfo(name) != null || ConfirmChangeNameEvent.changingUsernames.contains(name.toLowerCase())) {
+        } else if (name.equalsIgnoreCase(this.client.getHabbo().getHabboInfo().getUsername()) || HabboManager.getOfflineHabboInfo(name) != null || ConfirmChangeNameEvent.changingUsernames.contains(name.toLowerCase())) {
             errorCode = ChangeNameCheckResultComposer.TAKEN_WITH_SUGGESTIONS;
             suggestions.add(name + Emulator.getRandom().nextInt(9999));
             suggestions.add(name + Emulator.getRandom().nextInt(9999));
