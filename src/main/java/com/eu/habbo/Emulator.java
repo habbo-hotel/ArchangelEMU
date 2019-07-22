@@ -34,13 +34,13 @@ public final class Emulator {
     public final static int MAJOR = 2;
 
 
-    public final static int MINOR = 2;
+    public final static int MINOR = 1;
 
 
-    public final static int BUILD = 0;
+    public final static int BUILD = 1;
 
 
-    public final static String PREVIEW = "RC-1";
+    public final static String PREVIEW = "Stable";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
@@ -137,12 +137,15 @@ public final class Emulator {
             }
 
 
-            Emulator.getThreading().run(() -> {
-                Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a 2.2.0 RC-1 Build. If you find any bugs please place them on our git repository.");
-                Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
-                Emulator.getLogging().logStart("https://discord.gg/syuqgN");
-                Emulator.getLogging().logStart("Please report bugs on our git at Krews.org. Not on our discord!!");
-                System.out.println("Waiting for commands: ");
+            Emulator.getThreading().run(new Runnable() {
+                @Override
+                public void run() {
+                    Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a stable 2.1.0 build, it should be more than stable for daily use on hotels, if you find any bugs please place them on our git repository.");
+                    Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
+                    Emulator.getLogging().logStart("https://discord.gg/syuqgN");
+                    Emulator.getLogging().logStart("Please report bugs on our git at Krews.org. Not on our discord!!");
+                    System.out.println("Waiting for commands: ");
+                }
             }, 3500);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -166,14 +169,24 @@ public final class Emulator {
     }
 
     private static void setBuild() {
+        if (Emulator.class.getProtectionDomain().getCodeSource() == null) {
+            build = "UNKNOWN";
+            return;
+        }
 
         StringBuilder sb = new StringBuilder();
         try {
+            String filepath = new File(Emulator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
             MessageDigest md = MessageDigest.getInstance("MD5");// MD5
+            FileInputStream fis = new FileInputStream(filepath);
             byte[] dataBytes = new byte[1024];
             int nread = 0;
+
+            while ((nread = fis.read(dataBytes)) != -1)
                 md.update(dataBytes, 0, nread);
+
             byte[] mdbytes = md.digest();
+
             for (int i = 0; i < mdbytes.length; i++)
                 sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
         } catch (Exception e) {

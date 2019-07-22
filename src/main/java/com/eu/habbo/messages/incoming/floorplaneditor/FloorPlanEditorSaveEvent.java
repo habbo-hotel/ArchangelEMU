@@ -50,21 +50,6 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
                 errors.add("${notification.floorplan_editor.error.title}");
             }
 
-            boolean rowCountCorrect = true;
-            int rowCount = 0;
-            String[] splitMap = map.split(((char) 13) + "");
-            for (String s : splitMap) {
-                if(rowCount > 0 && rowCount != s.length()) {
-                    rowCountCorrect = false;
-                }
-                rowCount = s.length();
-            }
-
-            if (!rowCountCorrect && Emulator.getConfig().getBoolean("hotel.room.floorplan.check.enabled"))
-            {
-                errors.add("${notification.floorplan_editor.error.title}");
-            }
-
 
             if (map.isEmpty() || map.replace("x", "").replace(((char) 13) + "", "").length() == 0) {
                 errors.add("${notification.floorplan_editor.error.message.effective_height_is_0}");
