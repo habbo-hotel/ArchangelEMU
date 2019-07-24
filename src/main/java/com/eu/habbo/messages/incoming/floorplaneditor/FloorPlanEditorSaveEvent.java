@@ -13,14 +13,11 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class FloorPlanEditorSaveEvent extends MessageHandler {
     public static int MAXIMUM_FLOORPLAN_WIDTH_LENGTH = 64;
     public static int MAXIMUM_FLOORPLAN_SIZE = 64 * 64;
-    public static final String VALID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
     @Override
     public void handle() throws Exception {
@@ -35,81 +32,46 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
             return;
 
         if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
-            List<String> errors = new ArrayList<>();
+            StringJoiner errors = new StringJoiner("<br />");
             String map = this.packet.readString();
             map = map.replace("X", "x");
 
-            String checkMap = map.replace(((char) 13) + "", "").toUpperCase();
-            for (char c : VALID_CHARACTERS.toCharArray())
-            {
-                checkMap = checkMap.replace(c + "", "");
-            }
+            String[] mapRows = map.split("\r");
 
-            if (!checkMap.isEmpty() && Emulator.getConfig().getBoolean("hotel.room.floorplan.check.enabled"))
-            {
-                errors.add("${notification.floorplan_editor.error.title}");
-            }
+            int firstRowSize = mapRows[0].length();
 
-            boolean rowCountCorrect = true;
-            int rowCount = 0;
-            String[] splitMap = map.split(((char) 13) + "");
-            for (String s : splitMap) {
-                if(rowCount > 0 && rowCount != s.length()) {
-                    rowCountCorrect = false;
+            if (Emulator.getConfig().getBoolean("hotel.room.floorplan.check.enabled")) {
+                if (!map.matches("[a-zA-Z0-9\r]+")) errors.add("${notification.floorplan_editor.error.title}");
+
+                Arrays.stream(mapRows)
+                        .filter(line -> line.length() != firstRowSize)
+                        .findAny()
+                        .ifPresent(s -> errors.add("(General): Line " + (Arrays.asList(mapRows).indexOf(s) + 1) + " is of different length than line 1"));
+
+                if (map.isEmpty() || map.replace("x", "").replace("\r", "").isEmpty()) {
+                    errors.add("${notification.floorplan_editor.error.message.effective_height_is_0}");
                 }
-                rowCount = s.length();
-            }
 
-            if (!rowCountCorrect && Emulator.getConfig().getBoolean("hotel.room.floorplan.check.enabled"))
-            {
-                errors.add("Invalid Rowcount");
-            }
-
-
-            if (map.isEmpty() || map.replace("x", "").replace(((char) 13) + "", "").length() == 0) {
-                errors.add("${notification.floorplan_editor.error.message.effective_height_is_0}");
-            }
-
-            int lengthX = -1;
-            int lengthY = -1;
-
-            String[] data = map.split(((char) 13) + "");
-
-            if (errors.isEmpty()) {
                 if (map.length() > 64 * 64) {
                     errors.add("${notification.floorplan_editor.error.message.too_large_area}");
                 }
 
-
-                lengthY = data.length;
-                if (data.length > 64) {
-                    errors.add("${notification.floorplan_editor.error.message.too_large_height}");
-                } else {
-                    for (String s : data) {
-                        if (lengthX == -1) {
-                            lengthX = s.length();
-                        }
-
-                        if (s.length() != lengthX) {
-                            break;
-                        }
-
-                        if (s.length() > 64 || s.length() == 0) {
-                            errors.add("${notification.floorplan_editor.error.message.too_large_width}");
-                        }
-                    }
-                }
+                if (mapRows.length > 64) errors.add("${notification.floorplan_editor.error.message.too_large_height}");
+                else if (Arrays.stream(mapRows).anyMatch(l -> l.length() > 64 || l.length() == 0)) errors.add("${notification.floorplan_editor.error.message.too_large_width}");
             }
 
             int doorX = this.packet.readInt();
             int doorY = this.packet.readInt();
 
-            if (doorX < 0 || doorX > lengthX || doorY < 0 || doorY > lengthY || data[doorY].charAt(doorX) == 'x') {
+            if (doorX < 0 || doorX > firstRowSize || doorY < 0 || doorY >= mapRows.length) {
                 errors.add("${notification.floorplan_editor.error.message.entry_tile_outside_map}");
             }
 
-            int doorRotation = this.packet.readInt();
+            if (doorY < mapRows.length && doorX < mapRows[doorY].length() && mapRows[doorY].charAt(doorX) == 'x') {
+                errors.add("${notification.floorplan_editor.error.message.entry_not_on_tile}");
+            }
 
+            int doorRotation = this.packet.readInt();
             if (doorRotation < 0 || doorRotation > 7) {
                 errors.add("${notification.floorplan_editor.error.message.invalid_entry_tile_direction}");
             }
@@ -123,8 +85,8 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
             if (floorSize < -2 || floorSize > 1) {
                 errors.add("${notification.floorplan_editor.error.message.invalid_floor_thickness}");
             }
-            int wallHeight = -1;
 
+            int wallHeight = -1;
             if (this.packet.bytesAvailable() >= 4)
                 wallHeight = this.packet.readInt();
 
@@ -132,12 +94,8 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
                 errors.add("${notification.floorplan_editor.error.message.invalid_walls_fixed_height}");
             }
 
-            if (!errors.isEmpty()) {
-                StringBuilder errorMessage = new StringBuilder();
-                for (String s : errors) {
-                    errorMessage.append(s).append("<br />");
-                }
-                this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errorMessage.toString()));
+            if (errors.length() > 0) {
+                this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
                 return;
             }
 

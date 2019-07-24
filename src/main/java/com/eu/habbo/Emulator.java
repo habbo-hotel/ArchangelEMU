@@ -18,10 +18,7 @@ import com.eu.habbo.plugin.events.emulator.EmulatorStoppedEvent;
 import com.eu.habbo.threading.ThreadPooling;
 import com.eu.habbo.util.imager.badges.BadgeImager;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -157,7 +154,9 @@ public final class Emulator {
                     }
                     System.out.println("Waiting for command: ");
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
+                        Emulator.getLogging().logErrorLine(e);
+                    }
                 }
             }
         } catch (Exception e) {
