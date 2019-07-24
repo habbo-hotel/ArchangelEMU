@@ -143,11 +143,11 @@ public final class Emulator {
                 Emulator.getLogging().logStart("https://discord.gg/syuqgN");
                 Emulator.getLogging().logStart("Please report bugs on our git at Krews.org. Not on our discord!!");
                 System.out.println("Waiting for commands: ");
-            }, 3500);
+            }, 1500);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-            while (!isShuttingDown && isReady && reader.ready()) {
+            while (!isShuttingDown && isReady) {
                 try {
 
                     String line = reader.readLine();
