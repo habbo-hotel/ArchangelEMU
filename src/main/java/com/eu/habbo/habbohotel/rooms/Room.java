@@ -2989,8 +2989,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return;
         }
 
-        habbo.getHabboStats().chatCounter += 2;
-
         if (habbo.getHabboInfo().getCurrentRoom() != this)
             return;
 
@@ -3002,6 +3000,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
         habbo.getHabboStats().lastChat = millis;
         if (roomChatMessage != null && roomChatMessage.getMessage().equalsIgnoreCase("i am a pirate")) {
+            habbo.getHabboStats().chatCounter += 2;
             Emulator.getThreading().run(new YouAreAPirate(habbo, this));
             return;
         }
@@ -3059,6 +3058,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 }
             }
         }
+
+        habbo.getHabboStats().chatCounter += 2;
 
         ServerMessage prefixMessage = roomChatMessage.getHabbo().getHabboInfo().getRank().hasPrefix() ? new RoomUserNameChangedComposer(habbo, true).compose() : null;
         ServerMessage clearPrefixMessage = prefixMessage != null ? new RoomUserNameChangedComposer(habbo).compose() : null;
