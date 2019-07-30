@@ -109,7 +109,7 @@ public class Habbo implements Runnable {
 
 
     public void connect() {
-        if (!Emulator.getConfig().getBoolean("networking.tcp.proxy")) {
+        if (!Emulator.getConfig().getBoolean("networking.tcp.proxy") && this.client.getChannel().remoteAddress() != null) {
             this.habboInfo.setIpLogin(((InetSocketAddress) this.client.getChannel().remoteAddress()).getAddress().getHostAddress());
         }
 

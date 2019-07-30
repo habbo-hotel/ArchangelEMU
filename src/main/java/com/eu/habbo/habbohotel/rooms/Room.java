@@ -2136,9 +2136,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public Game getGame(Class<? extends Game> gameType) {
+        if (gameType == null) return null;
+
         synchronized (this.games) {
             for (Game game : this.games) {
-                if (gameType.isInstance(game)) {
+                if (game != null && gameType.isInstance(game)) {
                     return game;
                 }
             }
