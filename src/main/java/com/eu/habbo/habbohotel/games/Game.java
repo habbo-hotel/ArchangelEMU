@@ -165,19 +165,23 @@ public abstract class Game implements Runnable {
                 }
             }
 
-            for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
-                Emulator.getGameEnvironment().getItemManager().getHighscoreManager().addHighscoreData(new WiredHighscoreDataEntry(item.getId(), winningTeam.getMembers().stream().map(m -> m.getHabbo().getHabboInfo().getId()).collect(Collectors.toList()), winningTeam.getTotalScore(), true, Emulator.getIntUnixTimestamp()));
+            if (winningTeam.getMembers().size() > 0) {
+                for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
+                    Emulator.getGameEnvironment().getItemManager().getHighscoreManager().addHighscoreData(new WiredHighscoreDataEntry(item.getId(), winningTeam.getMembers().stream().map(m -> m.getHabbo().getHabboInfo().getId()).collect(Collectors.toList()), winningTeam.getTotalScore(), true, Emulator.getIntUnixTimestamp()));
+                }
             }
 
             for (GameTeam team : this.teams.values()) {
                 if (team == winningTeam) continue;
 
-                for (GamePlayer player : winningTeam.getMembers()) {
+                for (GamePlayer player : team.getMembers()) {
                     WiredHandler.handleCustomTrigger(WiredTriggerTeamLoses.class, player.getHabbo().getRoomUnit(), this.room, new Object[]{this});
                 }
 
-                for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
-                    Emulator.getGameEnvironment().getItemManager().getHighscoreManager().addHighscoreData(new WiredHighscoreDataEntry(item.getId(), winningTeam.getMembers().stream().map(m -> m.getHabbo().getHabboInfo().getId()).collect(Collectors.toList()), winningTeam.getTotalScore(), false, Emulator.getIntUnixTimestamp()));
+                if (team.getMembers().size() > 0) {
+                    for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
+                        Emulator.getGameEnvironment().getItemManager().getHighscoreManager().addHighscoreData(new WiredHighscoreDataEntry(item.getId(), team.getMembers().stream().map(m -> m.getHabbo().getHabboInfo().getId()).collect(Collectors.toList()), team.getTotalScore(), false, Emulator.getIntUnixTimestamp()));
+                    }
                 }
             }
         }
