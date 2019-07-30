@@ -19,11 +19,12 @@ public class UserEffectsListComposer extends MessageComposer {
     public ServerMessage compose() {
         this.response.init(Outgoing.UserEffectsListComposer);
 
-        synchronized (this.habbo.getInventory().getEffectsComponent().effects) {
-            this.response.appendInt(this.habbo.getInventory().getEffectsComponent().effects.size());
-            this.habbo.getInventory().getEffectsComponent().effects.forEachValue(new TObjectProcedure<EffectsComponent.HabboEffect>() {
-                @Override
-                public boolean execute(EffectsComponent.HabboEffect effect) {
+        if (this.habbo == null || this.habbo.getInventory() == null || this.habbo.getInventory().getEffectsComponent() == null || this.habbo.getInventory().getEffectsComponent().effects == null) {
+            this.response.appendInt(0);
+        } else {
+            synchronized (this.habbo.getInventory().getEffectsComponent().effects) {
+                this.response.appendInt(this.habbo.getInventory().getEffectsComponent().effects.size());
+                this.habbo.getInventory().getEffectsComponent().effects.forEachValue(effect -> {
                     UserEffectsListComposer.this.response.appendInt(effect.effect);
                     UserEffectsListComposer.this.response.appendInt(0);
                     UserEffectsListComposer.this.response.appendInt(effect.duration);
@@ -31,9 +32,10 @@ public class UserEffectsListComposer extends MessageComposer {
                     UserEffectsListComposer.this.response.appendInt(effect.activationTimestamp >= 0 ? Emulator.getIntUnixTimestamp() - effect.activationTimestamp : -1);
                     UserEffectsListComposer.this.response.appendBoolean(effect.isActivated());
                     return true;
-                }
-            });
+                });
+            }
         }
+
         return this.response;
     }
 }

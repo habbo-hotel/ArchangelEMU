@@ -80,7 +80,7 @@ public class RoomUserWalkEvent extends MessageHandler {
 
                             if (!event.isCancelled()) {
                                 if (!event.idle) {
-                                    roomUnit.getRoom().unIdle(habbo);
+                                    if (roomUnit.getRoom() != null) roomUnit.getRoom().unIdle(habbo);
                                     roomUnit.resetIdleTimer();
                                 }
                             }
