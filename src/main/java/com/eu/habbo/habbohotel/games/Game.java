@@ -223,6 +223,14 @@ public abstract class Game implements Runnable {
         }
     }
 
+    public void dispose() {
+        for (GameTeam team : this.teams.values()) {
+            team.clearMembers();
+        }
+        this.teams.clear();
+
+        this.stop();
+    }
 
     private void saveScores() {
         if (this.room == null)

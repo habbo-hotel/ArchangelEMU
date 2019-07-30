@@ -1,6 +1,9 @@
 package com.eu.habbo.habbohotel.games;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.plugin.Event;
+import com.eu.habbo.plugin.events.games.GameHabboLeaveEvent;
 import gnu.trove.set.hash.THashSet;
 
 public class GameTeam {
@@ -63,6 +66,16 @@ public class GameTeam {
         synchronized (this.members) {
             this.members.remove(gamePlayer);
         }
+    }
+
+    public void clearMembers() {
+        for (GamePlayer player : this.members) {
+            player.getHabbo().getHabboInfo().getGamePlayer().reset();
+            player.getHabbo().getHabboInfo().setCurrentGame(null);
+            player.getHabbo().getHabboInfo().setGamePlayer(null);
+        }
+
+        this.members.clear();
     }
 
 

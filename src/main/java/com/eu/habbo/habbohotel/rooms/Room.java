@@ -853,7 +853,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     }
 
                     for (Game game : this.games) {
-                        game.stop();
+                        game.dispose();
                     }
                     this.games.clear();
 
@@ -2130,6 +2130,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public boolean deleteGame(Game game) {
         game.stop();
+        game.dispose();
         synchronized (this.games) {
             return this.games.remove(game);
         }
