@@ -17,6 +17,8 @@ public class WiredHighscoreMidnightUpdater implements Runnable {
         List<Room> rooms = Emulator.getGameEnvironment().getRoomManager().getActiveRooms();
 
         for (Room room : rooms) {
+            if (room == null || room.getRoomSpecialTypes() == null) continue;
+
             THashSet<HabboItem> items = room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class);
             for (HabboItem item : items) {
                 ((InteractionWiredHighscore) item).reloadData();
