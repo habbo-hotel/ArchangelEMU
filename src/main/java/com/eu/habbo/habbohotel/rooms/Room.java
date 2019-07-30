@@ -135,7 +135,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private final TIntObjectMap<RoomMoodlightData> moodlightData;
     private final THashSet<String> wordFilterWords;
     private final TIntObjectMap<HabboItem> roomItems;
-    private final THashMap<WiredHighscoreScoreType, THashMap<WiredHighscoreClearType, THashSet<WiredHighscoreData>>> wiredHighscoreData;
     private final Object loadLock = new Object();
     //Use appropriately. Could potentially cause memory leaks when used incorrectly.
     public volatile boolean preventUnloading = false;
@@ -289,7 +288,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         this.activeTrades = new THashSet<>(0);
         this.rights = new TIntArrayList();
-        this.wiredHighscoreData = new THashMap<>();
         this.userVotes = new ArrayList<>();
     }
 
@@ -4209,70 +4207,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 Emulator.getLogging().logSQLException(e);
             }
         }
-    }
-
-    public THashSet<WiredHighscoreData> getWiredHighscoreData(WiredHighscoreScoreType scoreType, WiredHighscoreClearType clearType) {
-        if (!this.wiredHighscoreData.containsKey(scoreType)) {
-            this.loadWiredHighscoreData(scoreType, clearType);
-        }
-
-        return this.wiredHighscoreData.get(scoreType).get(clearType);
-    }
-
-    public void loadWiredHighscoreData(WiredHighscoreScoreType scoreType, WiredHighscoreClearType clearType) {
-        this.wiredHighscoreData.clear();
-        THashSet<WiredHighscoreData> wiredData = new THashSet<>();
-
-        try {
-            String query = "SELECT " +
-                    "SUM(score + team_score) as total_score, " +
-                    "COUNT(*) as wins, " +
-                    "users.username, " +
-                    "room_game_scores.*, " +
-                    "GROUP_CONCAT(users.username) as usernames " +
-                    "FROM room_game_scores " +
-                    "INNER JOIN users ON room_game_scores.user_id = users.id " +
-                    "WHERE room_id = ? AND game_start_timestamp >= ? ";
-
-            int timestamp = 0;
-            if (clearType != WiredHighscoreClearType.ALLTIME) {
-                if (clearType == WiredHighscoreClearType.MONTHLY) {
-                    timestamp = Emulator.getIntUnixTimestamp() - (31 * 24 * 60 * 60);
-                } else if (clearType == WiredHighscoreClearType.WEEKLY) {
-                    timestamp = Emulator.getIntUnixTimestamp() - (7 * 24 * 60 * 60);
-                } else if (clearType == WiredHighscoreClearType.DAILY) {
-                    timestamp = Emulator.getIntUnixTimestamp() - (24 * 60 * 60);
-                }
-            }
-
-
-            if (scoreType == WiredHighscoreScoreType.CLASSIC) {
-                query += "GROUP BY game_start_timestamp, user_id, team_id ORDER BY total_score DESC";
-            } else if (scoreType == WiredHighscoreScoreType.MOSTWIN) {
-                query += "GROUP BY game_start_timestamp, game_name, team_id ORDER BY wins DESC, total_score ASC";
-            } else if (scoreType == WiredHighscoreScoreType.PERTEAM) {
-                query += "GROUP BY game_start_timestamp, team_id ORDER BY team_score DESC";
-            }
-
-            query += " LIMIT " + Emulator.getConfig().getValue("wired.highscores.displaycount");
-
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, this.id);
-                statement.setInt(2, timestamp);
-
-                try (ResultSet set = statement.executeQuery()) {
-                    while (set.next()) {
-                        wiredData.add(new WiredHighscoreData(set.getString("usernames").split(","), set.getInt("score"), set.getInt("team_score"), set.getInt("total_score")));
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
-        }
-
-        THashMap<WiredHighscoreClearType, THashSet<WiredHighscoreData>> dataMap = new THashMap<>();
-        dataMap.put(clearType, wiredData);
-        this.wiredHighscoreData.put(scoreType, dataMap);
     }
 
     public void handleWordQuiz(Habbo habbo, String answer) {

@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.wired;
+package com.eu.habbo.habbohotel.wired.highscores;
 
 public enum WiredHighscoreScoreType {
     PERTEAM(0),
