@@ -50,7 +50,7 @@ public class HabboInfo implements Runnable {
     private String photoJSON;
     private int webPublishTimestamp;
     private String machineID;
-    private HashSet<NavigatorSavedSearch> savedSearches = new HashSet<>();
+    private List<NavigatorSavedSearch> savedSearches = new ArrayList<>();
 
     public HabboInfo(ResultSet set) {
         try {
@@ -125,7 +125,7 @@ public class HabboInfo implements Runnable {
     }
 
     private void loadSavedSearches() {
-        this.savedSearches = new HashSet<>();
+        this.savedSearches = new ArrayList<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_saved_searches WHERE user_id = ?")) {
             statement.setInt(1, this.id);
@@ -470,7 +470,7 @@ public class HabboInfo implements Runnable {
         this.machineID = machineID;
     }
 
-    public HashSet<NavigatorSavedSearch> getSavedSearches() {
+    public List<NavigatorSavedSearch> getSavedSearches() {
         return this.savedSearches;
     }
 
