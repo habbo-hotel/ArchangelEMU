@@ -28,33 +28,28 @@ public class AdventCalendarDataComposer extends MessageComposer {
         this.response.appendString("");
         this.response.appendInt(this.currentDay);
         this.response.appendInt(this.totalDays);
-
         this.response.appendInt(this.unlocked.size());
 
         TIntArrayList expired = new TIntArrayList();
         for (int i = 0; i < this.totalDays; i++) {
             expired.add(i);
-            expired.remove(this.currentDay);
         }
+        expired.remove(this.currentDay);
+        if(this.currentDay > 1) expired.remove(this.currentDay - 2);
+        if(this.currentDay > 0) expired.remove(this.currentDay - 1);
 
-        this.unlocked.forEach(new TIntProcedure() {
-            @Override
-            public boolean execute(int value) {
-                AdventCalendarDataComposer.this.response.appendInt(value);
-                expired.remove(value);
-                return true;
-            }
+        this.unlocked.forEach(value -> {
+            AdventCalendarDataComposer.this.response.appendInt(value);
+            expired.remove(value);
+            return true;
         });
 
 
         if (this.lockExpired) {
             this.response.appendInt(expired.size());
-            expired.forEach(new TIntProcedure() {
-                @Override
-                public boolean execute(int value) {
-                    AdventCalendarDataComposer.this.response.appendInt(value);
-                    return true;
-                }
+            expired.forEach(value -> {
+                AdventCalendarDataComposer.this.response.appendInt(value);
+                return true;
             });
         } else {
             this.response.appendInt(0);
