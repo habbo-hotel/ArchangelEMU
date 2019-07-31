@@ -31,6 +31,7 @@ import com.eu.habbo.plugin.events.emulator.EmulatorLoadCatalogManagerEvent;
 import com.eu.habbo.plugin.events.users.catalog.UserCatalogFurnitureBoughtEvent;
 import com.eu.habbo.plugin.events.users.catalog.UserCatalogItemPurchasedEvent;
 import gnu.trove.TCollections;
+import gnu.trove.iterator.TIntIterator;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
@@ -1119,15 +1120,15 @@ public class CatalogManager {
         return offers;
     }
 
-    public void claimCalendarReward(Habbo habbo, int day) {
+    public void claimCalendarReward(Habbo habbo, int day, boolean force) {
         if (!habbo.getHabboStats().calendarRewardsClaimed.contains(day)) {
-            habbo.getHabboStats().calendarRewardsClaimed.add(day);
-            CalendarRewardObject object = this.calendarRewards.get(day);
-
-            if (object != null) {
-                object.give(habbo);
-                habbo.getClient().sendResponse(new InventoryRefreshComposer());
+            CalendarRewardObject object = this.calendarRewards.get((day+1));
+            int actualDay = (int) Math.floor((Emulator.getIntUnixTimestamp() - Emulator.getConfig().getInt("hotel.calendar.starttimestamp")) / 86400);
+            int diff = (actualDay - day);
+            if (((diff <= 2 && diff >= 0) || force) && object != null) {
+                habbo.getHabboStats().calendarRewardsClaimed.add(day);
                 habbo.getClient().sendResponse(new AdventCalendarProductComposer(true, object));
+                object.give(habbo);
 
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO calendar_rewards_claimed (user_id, reward_id, timestamp) VALUES (?, ?, ?)")) {
                     statement.setInt(1, habbo.getHabboInfo().getId());
@@ -1138,8 +1139,6 @@ public class CatalogManager {
                     Emulator.getLogging().logSQLException(e);
                 }
             }
-
-
         }
     }
 

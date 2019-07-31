@@ -1,30 +1,32 @@
 package com.eu.habbo.habbohotel.catalog;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CalendarRewardObject {
     private final int id;
-    private final String name;
     private final String customImage;
     private final int credits;
     private final int points;
     private final int pointsType;
     private final String badge;
-    private final int catalogItemId;
+    private final int itemId;
 
     public CalendarRewardObject(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
-        this.name = set.getString("name");
         this.customImage = set.getString("custom_image");
         this.credits = set.getInt("credits");
         this.points = set.getInt("points");
         this.pointsType = set.getInt("points_type");
         this.badge = set.getString("badge");
-        this.catalogItemId = set.getInt("catalog_item_id");
+        this.itemId = set.getInt("item_id");
     }
 
     public void give(Habbo habbo) {
@@ -40,21 +42,25 @@ public class CalendarRewardObject {
             habbo.addBadge(this.badge);
         }
 
-        if (this.catalogItemId > 0) {
-            CatalogItem item = this.getCatalogItem();
+        if (this.itemId > 0) {
+            Item item = getItem();
 
             if (item != null) {
-                Emulator.getGameEnvironment().getCatalogManager().purchaseItem(null, item, habbo, 1, "", true);
+                HabboItem habboItem = Emulator.getGameEnvironment().getItemManager().createItem(
+                        habbo.getHabboInfo().getId(),
+                        item,
+                        0,
+                        0,
+                        "");
+                habbo.getInventory().getItemsComponent().addItem(habboItem);
+                habbo.getClient().sendResponse(new AddHabboItemComposer(habboItem));
+                habbo.getClient().sendResponse(new InventoryRefreshComposer());
             }
         }
     }
 
     public int getId() {
         return this.id;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     public String getCustomImage() {
@@ -77,7 +83,7 @@ public class CalendarRewardObject {
         return this.badge;
     }
 
-    public CatalogItem getCatalogItem() {
-        return Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(this.catalogItemId);
+    public Item getItem() {
+        return Emulator.getGameEnvironment().getItemManager().getItem(this.itemId);
     }
 }
