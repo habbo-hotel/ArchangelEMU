@@ -3,6 +3,8 @@ package com.eu.habbo.messages.incoming.guilds;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.messages.outgoing.guilds.GuildFavoriteRoomUserUpdateComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersAddGuildBadgeComposer;
 import com.eu.habbo.messages.outgoing.users.UserProfileComposer;
 import com.eu.habbo.plugin.events.guilds.GuildRemovedFavoriteEvent;
 
@@ -19,6 +21,10 @@ public class GuildRemoveFavoriteEvent extends MessageHandler {
                 return;
 
             this.client.getHabbo().getHabboStats().guild = 0;
+
+            if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null && guild != null) {
+                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new GuildFavoriteRoomUserUpdateComposer(this.client.getHabbo().getRoomUnit(), guild).compose());
+            }
 
             this.client.sendResponse(new UserProfileComposer(this.client.getHabbo(), this.client));
         }
