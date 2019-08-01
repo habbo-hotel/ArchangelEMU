@@ -21,14 +21,16 @@ CREATE TABLE `items_highscore_data`  (
   PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `voucher_history`  (
+DROP TABLE IF EXISTS `calendar_rewards`;
+CREATE TABLE `calendar_rewards`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `voucher_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `timestamp` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-);
+  `custom_image` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
+  `credits` int(11) NOT NULL DEFAULT 0,
+  `points` int(11) NOT NULL DEFAULT 0,
+  `points_type` int(3) NOT NULL DEFAULT 0,
+  `badge` varchar(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
+  `item_id` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
 
-ALTER TABLE `vouchers`
-ADD COLUMN `amount` int(11) NOT NULL DEFAULT 1,
-ADD COLUMN `limit` int(11) NOT NULL DEFAULT -1;
+SET FOREIGN_KEY_CHECKS = 1;
