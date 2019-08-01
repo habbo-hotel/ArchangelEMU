@@ -34,3 +34,16 @@ CREATE TABLE `calendar_rewards`  (
 ) ENGINE = MyISAM AUTO_INCREMENT = 3 CHARACTER SET = latin1 COLLATE = latin1_swedish_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE `voucher_history`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `voucher_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `timestamp` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+ALTER TABLE `vouchers`
+ADD COLUMN `amount` int(11) NOT NULL DEFAULT 1,
+ADD COLUMN `limit` int(11) NOT NULL DEFAULT -1;
+
