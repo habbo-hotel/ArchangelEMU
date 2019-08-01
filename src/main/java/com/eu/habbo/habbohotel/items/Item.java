@@ -33,6 +33,7 @@ public class Item {
     private TIntArrayList vendingItems;
     private double[] multiHeights;
     private String customParams;
+    private String clothingOnWalk;
 
     private ItemInteraction interactionType;
 
@@ -93,6 +94,8 @@ public class Item {
         this.effectM = set.getShort("effect_id_male");
         this.effectF = set.getShort("effect_id_female");
         this.customParams = set.getString("customparams");
+        this.clothingOnWalk = set.getString("clothing_on_walk");
+
         if (!set.getString("vending_ids").isEmpty()) {
             this.vendingItems = new TIntArrayList();
             String[] vendingIds = set.getString("vending_ids").replace(";", ",").split(",");
@@ -215,4 +218,6 @@ public class Item {
     public String getCustomParams() {
         return customParams;
     }
+
+    public String getClothingOnWalk() { return clothingOnWalk; }
 }

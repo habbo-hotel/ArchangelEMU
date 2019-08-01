@@ -51,3 +51,6 @@ ALTER TABLE `users_pets`
 ADD COLUMN `mp_is_dead` tinyint(1) NOT NULL DEFAULT 0;
 
 ALTER TABLE `items` CHARACTER SET = utf8, COLLATE = utf8_general_ci;
+
+ALTER TABLE `items_base`
+ADD COLUMN `clothing_on_walk` varchar(255) NOT NULL DEFAULT '';
