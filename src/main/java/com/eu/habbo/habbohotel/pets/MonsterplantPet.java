@@ -71,6 +71,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
     private boolean canBreed = true;
     private boolean publiclyBreedable = false;
     private int growthStage = 0;
+    private boolean hasDied = false;
 
     public MonsterplantPet(ResultSet set) throws SQLException {
         super(set);
@@ -85,6 +86,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
         this.deathTimestamp = set.getInt("mp_death_timestamp");
         this.publiclyBreedable = set.getString("mp_allow_breed").equals("1");
         this.canBreed = set.getString("mp_breedable").equals("1");
+        this.hasDied = set.getInt("mp_is_dead") == 1;
     }
 
     public MonsterplantPet(int userId, int type, int hue, int nose, int noseColor, int mouth, int mouthColor, int eyes, int eyesColor) {
@@ -120,7 +122,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
         if (this.needsUpdate) {
             super.run();
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET mp_type = ?, mp_color = ?, mp_nose = ?, mp_eyes = ?, mp_mouth = ?, mp_nose_color = ?, mp_eyes_color = ?, mp_mouth_color = ?, mp_death_timestamp = ?, mp_breedable = ?, mp_allow_breed = ? WHERE id = ?")) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET mp_type = ?, mp_color = ?, mp_nose = ?, mp_eyes = ?, mp_mouth = ?, mp_nose_color = ?, mp_eyes_color = ?, mp_mouth_color = ?, mp_death_timestamp = ?, mp_breedable = ?, mp_allow_breed = ?, mp_is_dead = ? WHERE id = ?")) {
                 statement.setInt(1, this.type);
                 statement.setInt(2, this.hue);
                 statement.setInt(3, this.nose);
@@ -132,7 +134,8 @@ public class MonsterplantPet extends Pet implements IPetLook {
                 statement.setInt(9, this.deathTimestamp);
                 statement.setString(10, this.canBreed ? "1" : "0");
                 statement.setString(11, this.publiclyBreedable ? "1" : "0");
-                statement.setInt(12, this.id);
+                statement.setInt(12, this.hasDied ? 1 : 0);
+                statement.setInt(13, this.id);
                 statement.execute();
             } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
@@ -146,8 +149,11 @@ public class MonsterplantPet extends Pet implements IPetLook {
             if (this.isDead()) {
                 this.roomUnit.removeStatus(RoomUnitStatus.GESTURE);
 
-                if (!this.roomUnit.hasStatus(RoomUnitStatus.RIP)) {
+                if (!this.hasDied) {
                     AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantGardenOfDeath"));
+
+                    this.hasDied = true;
+                    this.needsUpdate = true;
                 }
 
                 this.roomUnit.clearStatus();

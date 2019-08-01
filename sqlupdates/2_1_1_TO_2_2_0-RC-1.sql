@@ -47,3 +47,5 @@ ALTER TABLE `vouchers`
 ADD COLUMN `amount` int(11) NOT NULL DEFAULT 1,
 ADD COLUMN `limit` int(11) NOT NULL DEFAULT -1;
 
+ALTER TABLE `users_pets`
+ADD COLUMN `mp_is_dead` tinyint(1) NOT NULL DEFAULT 0;
