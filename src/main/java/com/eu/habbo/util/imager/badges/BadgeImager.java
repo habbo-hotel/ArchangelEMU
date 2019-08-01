@@ -53,17 +53,8 @@ public class BadgeImager {
                 float red = (color.getRed() / 255.0F) * (maskColor.getRed() / 255.0F);
                 float green = (color.getGreen() / 255.0F) * (maskColor.getGreen() / 255.0F);
                 float blue = (color.getBlue() / 255.0F) * (maskColor.getBlue() / 255.0F);
-//
-
-
-//
-
-
-//
-
 
                 color = new Color(red, green, blue, alpha);
-
 
                 int rgb = color.getRGB();
                 image.setRGB(x, y, rgb);
@@ -208,6 +199,8 @@ public class BadgeImager {
             } else {
                 part = Emulator.getGameEnvironment().getGuildManager().getPart(GuildPartType.SYMBOL, id);
             }
+
+            if (part == null) continue;
 
             BufferedImage imagePart = BadgeImager.deepCopy(this.cachedImages.get(part.valueA));
 
