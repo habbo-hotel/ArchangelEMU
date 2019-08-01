@@ -52,7 +52,7 @@ public class GuildMembersComposer extends MessageComposer {
             this.response.appendString(member.getRank().type < 3 && member.getRank().type > 0 ? cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR) : "");
         }
 
-        this.response.appendBoolean(this.isAdmin); //Is owner
+        this.response.appendBoolean(this.isAdmin);
         this.response.appendInt(14);
         this.response.appendInt(this.pageId);
         this.response.appendInt(this.level);
