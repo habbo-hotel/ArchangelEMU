@@ -222,7 +222,7 @@ public class RoomTrade {
             if (worth > 0) {
                 creditsForUserTwo += worth;
                 creditFurniUserOne.add(item);
-                new QueryDeleteHabboItem(item);
+                new QueryDeleteHabboItem(item).run();
             }
         }
         itemsUserOne.removeAll(creditFurniUserOne);
@@ -234,7 +234,7 @@ public class RoomTrade {
             if (worth > 0) {
                 creditsForUserOne += worth;
                 creditFurniUserTwo.add(item);
-                new QueryDeleteHabboItem(item);
+                new QueryDeleteHabboItem(item).run();
             }
         }
         itemsUserTwo.removeAll(creditFurniUserTwo);
