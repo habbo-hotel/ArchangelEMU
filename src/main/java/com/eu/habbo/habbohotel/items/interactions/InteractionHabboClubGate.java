@@ -12,7 +12,7 @@ import com.eu.habbo.threading.runnables.CloseGate;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionHabboClubGate extends InteractionGate {
+public class InteractionHabboClubGate extends InteractionDefault {
     public InteractionHabboClubGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
@@ -24,19 +24,16 @@ public class InteractionHabboClubGate extends InteractionGate {
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Habbo habbo = room.getHabbo(roomUnit);
-
-        if (habbo != null) {
-            return habbo.getHabboStats().hasActiveClub();
-        }
-
-        return false;
+    public boolean isWalkable() {
+        return true;
     }
 
     @Override
-    public boolean isWalkable() {
-        return true;
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
+        Habbo habbo = room.getHabbo(roomUnit);
+
+        System.out.println(habbo != null && habbo.getHabboStats().hasActiveClub());
+        return habbo != null && habbo.getHabboStats().hasActiveClub();
     }
 
     @Override
@@ -72,6 +69,6 @@ public class InteractionHabboClubGate extends InteractionGate {
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        Emulator.getThreading().run(new CloseGate(this, room), 500);
+        Emulator.getThreading().run(new CloseGate(this, room), 1000);
     }
 }
