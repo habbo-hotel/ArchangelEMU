@@ -39,18 +39,8 @@ public class TradeUpdateComposer extends MessageComposer {
             }
 
             this.response.appendInt(roomTradeUser.getItems().size());
-            this.response.appendInt(roomTradeUser.getItems().stream().mapToInt(this::getCreditsByItem).sum());
+            this.response.appendInt(roomTradeUser.getItems().stream().mapToInt(RoomTrade::getCreditsByItem).sum());
         }
         return this.response;
-    }
-
-    private int getCreditsByItem(HabboItem item) {
-        if (!item.getBaseItem().getName().startsWith("CF_") && !item.getBaseItem().getName().startsWith("CFC_")) return 0;
-
-        try {
-            return Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
-        } catch (Exception e) {
-            return 0;
-        }
     }
 }
