@@ -94,6 +94,16 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
                 errors.add("${notification.floorplan_editor.error.message.invalid_walls_fixed_height}");
             }
 
+            blockingRoomItemScan:
+            for (int y = 0; y < mapRows.length; y++) {
+                for (int x = 0; x < firstRowSize; x++) {
+                    if (mapRows[y].charAt(x) == "x".charAt(0) && room.getTopItemAt(x, y) != null) {
+                        errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
+                        break blockingRoomItemScan;
+                    }
+                }
+            }
+
             if (errors.length() > 0) {
                 this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
                 return;
