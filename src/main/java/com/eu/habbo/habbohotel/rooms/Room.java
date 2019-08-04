@@ -4430,7 +4430,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (topItem != item) {
             for (RoomTile t : occupiedTiles) {
                 HabboItem tileTopItem = this.getTopItemAt(t.x, t.y);
-                if (!magicTile && ((tileTopItem != item ? (t.state.equals(RoomTileState.INVALID) || !t.getAllowStack() || !tileTopItem.getBaseItem().allowStack()) : this.calculateTileState(t, item).equals(RoomTileState.INVALID))))
+                if (!magicTile && ((tileTopItem != null && tileTopItem != item ? (t.state.equals(RoomTileState.INVALID) || !t.getAllowStack() || !tileTopItem.getBaseItem().allowStack()) : this.calculateTileState(t, item).equals(RoomTileState.INVALID))))
                     return FurnitureMovementError.CANT_STACK;
                 if (this.hasHabbosAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_HABBOS;
                 if (this.hasBotsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_BOTS;
