@@ -20,8 +20,8 @@ public class TradeUpdateComposer extends MessageComposer {
         this.response.init(Outgoing.TradeUpdateComposer);
         for (RoomTradeUser roomTradeUser : this.roomTrade.getRoomTradeUsers()) {
             this.response.appendInt(roomTradeUser.getUserId());
-            this.response.appendInt(roomTradeUser.getItems().size());
 
+            this.response.appendInt(roomTradeUser.getItems().size());
             for (HabboItem item : roomTradeUser.getItems()) {
                 this.response.appendInt(item.getId());
                 this.response.appendString(item.getBaseItem().getType().code);
@@ -38,9 +38,19 @@ public class TradeUpdateComposer extends MessageComposer {
                     this.response.appendInt(0);
             }
 
-            this.response.appendInt(0);
-            this.response.appendInt(0);
+            this.response.appendInt(roomTradeUser.getItems().size());
+            this.response.appendInt(roomTradeUser.getItems().stream().mapToInt(this::getCreditsByItem).sum());
         }
         return this.response;
+    }
+
+    private int getCreditsByItem(HabboItem item) {
+        if (!item.getBaseItem().getName().startsWith("CF_") && !item.getBaseItem().getName().startsWith("CFC_")) return 0;
+
+        try {
+            return Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }
