@@ -30,7 +30,7 @@ public class UserSearchResultComposer extends MessageComposer {
         List<MessengerBuddy> u = new ArrayList<>();
 
         for (MessengerBuddy buddy : this.users) {
-            if (!buddy.getUsername().equals(this.habbo.getHabboInfo().getUsername()) && !this.inFriendList(buddy)) {
+            if (!this.inFriendList(buddy)) {
                 u.add(buddy);
             }
         }
