@@ -42,6 +42,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomCreatedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUncachedEvent;
+import com.eu.habbo.plugin.events.rooms.UserVoteRoomEvent;
 import com.eu.habbo.plugin.events.users.HabboAddedToRoomEvent;
 import com.eu.habbo.plugin.events.users.UserEnterRoomEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
@@ -431,6 +432,9 @@ public class RoomManager {
         if (habbo.getHabboInfo().getCurrentRoom() != null && room != null && habbo.getHabboInfo().getCurrentRoom() == room) {
             if (this.hasVotedForRoom(habbo, room))
                 return;
+
+            UserVoteRoomEvent event = new UserVoteRoomEvent(room, habbo);
+            if (Emulator.getPluginManager().fireEvent(event).isCancelled()) return;
 
             room.setScore(room.getScore() + 1);
             room.setNeedsUpdate(true);
