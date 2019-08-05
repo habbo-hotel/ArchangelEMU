@@ -7,10 +7,16 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 public class UserSearchResultComposer extends MessageComposer {
     private final THashSet<MessengerBuddy> users;
     private final THashSet<MessengerBuddy> friends;
     private final Habbo habbo;
+
+    private static Comparator COMPARATOR = Comparator.comparing((MessengerBuddy b) -> b.getUsername().length()).thenComparing((MessengerBuddy b, MessengerBuddy b2) -> b.getUsername().compareToIgnoreCase(b2.getUsername()));
 
     public UserSearchResultComposer(THashSet<MessengerBuddy> users, THashSet<MessengerBuddy> friends, Habbo habbo) {
         this.users = users;
@@ -21,13 +27,18 @@ public class UserSearchResultComposer extends MessageComposer {
     @Override
     public ServerMessage compose() {
         this.response.init(Outgoing.UserSearchResultComposer);
-        THashSet<MessengerBuddy> u = new THashSet<>();
+        List<MessengerBuddy> u = new ArrayList<>();
 
         for (MessengerBuddy buddy : this.users) {
             if (!buddy.getUsername().equals(this.habbo.getHabboInfo().getUsername()) && !this.inFriendList(buddy)) {
                 u.add(buddy);
             }
         }
+
+        List<MessengerBuddy> friends = new ArrayList<>(this.friends);
+
+        u.sort(UserSearchResultComposer.COMPARATOR);
+        friends.sort(UserSearchResultComposer.COMPARATOR);
 
         this.response.appendInt(this.friends.size());
         for (MessengerBuddy buddy : this.friends) {
