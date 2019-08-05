@@ -3413,11 +3413,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     continue;
                 }
 
+                if (this.layout == null) continue;
+
                 THashSet<RoomTile> tiles = this.layout.getTilesAt(
                         this.layout.getTile(habboItem.getX(), habboItem.getY()),
                         habboItem.getBaseItem().getWidth(),
                         habboItem.getBaseItem().getLength(),
-                        habboItem.getRotation());
+                        habboItem.getRotation()
+                );
 
                 for (RoomTile tile : tiles) {
                     if (((tile.x == x) && (tile.y == y))) {
@@ -3682,6 +3685,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public void sendComposer(ServerMessage message) {
         for (Habbo habbo : this.getHabbos()) {
+            if (habbo.getClient() == null) {
+                this.removeHabbo(habbo, true);
+            }
+
             habbo.getClient().sendResponse(message);
         }
     }

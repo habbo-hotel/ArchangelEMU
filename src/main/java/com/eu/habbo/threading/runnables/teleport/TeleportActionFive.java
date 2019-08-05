@@ -37,6 +37,8 @@ class TeleportActionFive implements Runnable {
 
         //if (!(this.currentTeleport instanceof InteractionTeleportTile))
 
+        if (this.room.getLayout() == null || this.currentTeleport == null) return;
+
         RoomTile currentLocation = this.room.getLayout().getTile(this.currentTeleport.getX(), this.currentTeleport.getY());
         RoomTile tile = this.room.getLayout().getTileInFront(currentLocation, this.currentTeleport.getRotation());
 

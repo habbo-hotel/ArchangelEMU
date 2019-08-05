@@ -22,6 +22,7 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.sql.ResultSet;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,7 +111,9 @@ public class Habbo implements Runnable {
 
     public void connect() {
         if (!Emulator.getConfig().getBoolean("networking.tcp.proxy") && this.client.getChannel().remoteAddress() != null) {
-            this.habboInfo.setIpLogin(((InetSocketAddress) this.client.getChannel().remoteAddress()).getAddress().getHostAddress());
+            SocketAddress address = this.client.getChannel().remoteAddress();
+
+            if (address != null) this.habboInfo.setIpLogin(((InetSocketAddress) address).getAddress().getHostAddress());
         }
 
         this.habboInfo.setMachineID(this.client.getMachineId());
@@ -199,7 +202,8 @@ public class Habbo implements Runnable {
             return;
 
         this.getHabboInfo().addCredits(event.credits);
-        this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
+
+        if (this.client != null) this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
     }
 
 
@@ -213,7 +217,7 @@ public class Habbo implements Runnable {
             return;
 
         this.getHabboInfo().addPixels(event.points);
-        this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
+        if (this.client != null) this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
     }
 
 
@@ -231,7 +235,7 @@ public class Habbo implements Runnable {
             return;
 
         this.getHabboInfo().addCurrencyAmount(event.type, event.points);
-        this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
+        if (this.client != null) this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
     }
 
 
