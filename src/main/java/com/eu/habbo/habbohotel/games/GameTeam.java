@@ -80,6 +80,14 @@ public class GameTeam {
         this.members.clear();
     }
 
+    public void resetScores() {
+        for (GamePlayer player : this.members) {
+            if (player == null) continue;
+
+            player.reset();
+        }
+    }
+
 
     public THashSet<GamePlayer> getMembers() {
         return this.members;
