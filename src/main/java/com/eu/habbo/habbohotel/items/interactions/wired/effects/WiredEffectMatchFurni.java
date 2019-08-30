@@ -101,7 +101,8 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                                     tilesToUpdate.addAll(tiles);
 
                                     double offsetZ = highestZ - item.getZ();
-
+                                    double totalHeight = item.getZ() + offsetZ;
+                                    if(totalHeight > 40) break;
                                     tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation));
 
                                     if (!slideAnimation) {

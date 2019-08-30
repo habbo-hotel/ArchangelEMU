@@ -1478,12 +1478,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                             if (newRoller == null || topItem == newRoller) {
                                 List<HabboItem> sortedItems = new ArrayList<>(itemsOnRoller);
-                                sortedItems.sort(new Comparator<HabboItem>() {
-                                    @Override
-                                    public int compare(HabboItem o1, HabboItem o2) {
-                                        return o1.getZ() > o2.getZ() ? -1 : 1;
-                                    }
-                                });
+                                sortedItems.sort((o1, o2) -> o1.getZ() > o2.getZ() ? -1 : 1);
 
                                 for (HabboItem item : sortedItems) {
                                     if (item.getX() == roller.getX() && item.getY() == roller.getY() && zOffset <= 0) {
@@ -4471,9 +4466,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
         //Place at new position
+        double height = this.getStackHeight(tile.x, tile.y, false);
+        if(height > 40d) return FurnitureMovementError.CANT_STACK;
         item.setX(tile.x);
         item.setY(tile.y);
-        item.setZ(this.getStackHeight(tile.x, tile.y, false, item));
+        item.setZ(height);
         if (magicTile) {
             item.setZ(tile.z);
             item.setExtradata("" + item.getZ() * 100);
