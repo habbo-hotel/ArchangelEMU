@@ -14,7 +14,7 @@ public class FreezeGameTeam extends GameTeam {
 
     @Override
     public void removeMember(GamePlayer gamePlayer) {
-        if (gamePlayer.getHabbo() == null || gamePlayer.getHabbo().getHabboInfo().getCurrentRoom() == null) return;
+        if (gamePlayer == null || gamePlayer.getHabbo() == null || gamePlayer.getHabbo().getHabboInfo().getCurrentRoom() == null) return;
 
         Game game = gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().getGame(FreezeGame.class);
         Room room = gamePlayer.getHabbo().getRoomUnit().getRoom();

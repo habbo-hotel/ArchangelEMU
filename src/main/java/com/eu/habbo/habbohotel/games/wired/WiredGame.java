@@ -15,6 +15,10 @@ public class WiredGame extends Game {
     @Override
     public void initialise() {
         this.state = GameState.RUNNING;
+
+        for (GameTeam team : this.teams.values()) {
+            team.resetScores();
+        }
     }
 
     @Override
