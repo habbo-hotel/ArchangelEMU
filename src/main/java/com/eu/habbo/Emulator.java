@@ -37,7 +37,7 @@ public final class Emulator {
     public final static int BUILD = 0;
 
 
-    public final static String PREVIEW = "RC-1";
+    public final static String PREVIEW = "RC-2";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
@@ -48,7 +48,8 @@ public final class Emulator {
                     "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
                     " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
                     "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
-                    "                                /____/                             \n";
+                    "                                /____/                             \n" +
+                    "				                'RC Stands for Race Car.'		        \n" ;
     public static String build = "";
     public static boolean isReady = false;
     public static boolean isShuttingDown = false;
@@ -165,12 +166,19 @@ public final class Emulator {
     }
 
     private static void setBuild() {
+        if (Emulator.class.getProtectionDomain().getCodeSource() == null) {
+            build = "UNKNOWN";
+            return;
+        }
 
         StringBuilder sb = new StringBuilder();
         try {
+            String filepath = new File(Emulator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
             MessageDigest md = MessageDigest.getInstance("MD5");// MD5
+            FileInputStream fis = new FileInputStream(filepath);
             byte[] dataBytes = new byte[1024];
             int nread = 0;
+            while ((nread = fis.read(dataBytes)) != -1)
                 md.update(dataBytes, 0, nread);
             byte[] mdbytes = md.digest();
             for (int i = 0; i < mdbytes.length; i++)
