@@ -4467,7 +4467,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
         //Place at new position
-        double height = this.getStackHeight(tile.x, tile.y, false);
+        double height = this.getStackHeight(tile.x, tile.y, false, item);
         if(height > 40d) return FurnitureMovementError.CANT_STACK;
         item.setX(tile.x);
         item.setY(tile.y);
