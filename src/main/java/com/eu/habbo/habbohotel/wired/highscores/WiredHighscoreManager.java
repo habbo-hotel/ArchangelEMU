@@ -1,6 +1,8 @@
 package com.eu.habbo.habbohotel.wired.highscores;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.plugin.EventHandler;
+import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,12 +31,16 @@ public class WiredHighscoreManager {
         this.data.clear();
         this.loadHighscoreData();
 
+        Emulator.getLogging().logStart("Highscore Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS, " + this.data.size() + " items)");
+    }
+
+    @EventHandler
+    public static void onEmulatorLoaded(EmulatorLoadedEvent event) {
         if (midnightUpdater != null) {
             midnightUpdater.cancel(true);
         }
+        
         midnightUpdater = Emulator.getThreading().run(new WiredHighscoreMidnightUpdater(), WiredHighscoreMidnightUpdater.getNextUpdaterRun());
-
-        Emulator.getLogging().logStart("Highscore Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS, " + this.data.size() + " items)");
     }
 
     public void dispose() {
