@@ -3244,16 +3244,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public THashSet<HabboItem> getItemsAt(RoomTile tile) {
+        THashSet<HabboItem> items = new THashSet<>(0);
+
+        if (tile == null)
+            return items;
+
         if (this.loaded) {
             if (this.tileCache.containsKey(tile)) {
                 return this.tileCache.get(tile);
             }
         }
-
-        THashSet<HabboItem> items = new THashSet<>(0);
-
-        if (tile == null)
-            return items;
 
         TIntObjectIterator<HabboItem> iterator = this.roomItems.iterator();
 
@@ -3682,6 +3682,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         for (Habbo habbo : this.getHabbos()) {
             if (habbo.getClient() == null) {
                 this.removeHabbo(habbo, true);
+                continue;
             }
 
             habbo.getClient().sendResponse(message);
