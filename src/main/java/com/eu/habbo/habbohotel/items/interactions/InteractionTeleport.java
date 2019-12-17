@@ -17,6 +17,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/// how u find files? where is file search bar on this ide
 public class InteractionTeleport extends HabboItem {
     private int targetId;
     private int targetRoomId;
@@ -62,27 +64,37 @@ public class InteractionTeleport extends HabboItem {
 
         Habbo habbo = client.getHabbo();
 
+        /// Habbo must exist
         if (habbo == null)
             return;
 
+        /// Get Unit of habbo (extension class)
         RoomUnit unit = habbo.getRoomUnit();
 
+        /// Unit must exit - this should be logged as this should never happen
         if (unit == null)
             return;
 
+        /// Get current tile habbo is standing on
         RoomTile currentLocation = room.getLayout().getTile(this.getX(), this.getY());
 
+        /// dont proceed is our current tile is null - this should never happen
         if (currentLocation == null)
             return;
 
+        /// Get the tile infront
         RoomTile infrontTile = room.getLayout().getTileInFront(currentLocation, this.getRotation());
 
+        /// Check whether we can use the teleport
         if (!canUseTeleport(client, room))
             return;
 
-        if (this.roomUnitID == unit.getId() && unit.getCurrentLocation().equals(currentLocation)) {
+        if (this.roomUnitID == unit.getId() && unit.getCurrentLocation().equals(currentLocation))
+        {
             startTeleport(room, habbo);
-        } else if (unit.getCurrentLocation().equals(currentLocation) || unit.getCurrentLocation().equals(infrontTile)) {
+
+        } else if (unit.getCurrentLocation().equals(currentLocation) || unit.getCurrentLocation().equals(infrontTile))
+        {
             // set state 1 and walk on item
             this.roomUnitID = unit.getId();
             this.setExtradata("1");
@@ -187,19 +199,25 @@ public class InteractionTeleport extends HabboItem {
 
     public boolean canUseTeleport(GameClient client, Room room) {
 
+        /// Get habbo
         Habbo habbo = client.getHabbo();
 
+        /// this should never happen....
         if (habbo == null)
             return false;
 
+        /// Get extension class
         RoomUnit unit = habbo.getRoomUnit();
 
+        /// this should never happen...
         if (unit == null)
             return false;
 
+        /// Habbo cannot use the teleport if riding
         if (habbo.getHabboInfo().getRiding() != null)
             return false;
 
+        /// check whether the room unit Id is valid
         return this.roomUnitID == -1 || this.roomUnitID == unit.getId();
     }
 
@@ -208,6 +226,7 @@ public class InteractionTeleport extends HabboItem {
     }
 
     public void startTeleport(Room room, Habbo habbo, int delay) {
+        /// dont teleport if we are already teleporting
         if (habbo.getRoomUnit().isTeleporting)
             return;
 

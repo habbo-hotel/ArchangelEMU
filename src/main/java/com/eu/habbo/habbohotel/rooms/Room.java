@@ -4318,6 +4318,60 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return FurnitureMovementError.NO_RIGHTS;
     }
 
+    public HabboItem OverrideItem(HabboItem p_Item, Habbo p_Owner)
+    {
+        if (p_Item instanceof InteractionTeleport)
+        {
+            TIntObjectIterator<HabboItem> l_Itr = this.roomItems.iterator();
+
+            for (int l_I = 0; l_I < this.roomItems.size(); l_I++)
+            {
+                l_Itr.advance();
+
+                if (l_Itr.value() instanceof InteractionTeleport)
+                {
+                    InteractionTeleport l_Item = (InteractionTeleport)l_Itr.value();
+
+                    /// If the item matches our hand item, then we have the correct item
+                    if (p_Item.getId() == l_Item.getTargetId())
+                    {
+                        return p_Item;
+                    }
+
+                    /// If the pair item is not placed in the room, check whether its placed in any other rooms
+                    if (this.getHabboItem(l_Item.getTargetId()) == null)
+                    {
+                        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT room_id FROM items WHERE id = ?"))
+                        {
+                            statement.setInt(1, l_Item.getTargetId());
+                            try (ResultSet set = statement.executeQuery())
+                            {
+                                set.next();
+
+                                /// Check if pair item is placed in any rooms, if not then return that i
+                                if (set.getInt("room_id") == 0)
+                                {
+                                    HabboItem l_HandItem = p_Owner.getInventory().getItemsComponent().getHabboItem(l_Item.getTargetId());
+
+                                    if (l_HandItem != null)
+                                    {
+                                        return l_HandItem;
+                                    }
+                                }
+                            }
+                        }
+                         catch (SQLException e) {
+                            Emulator.getLogging().logSQLException(e);
+                        }
+                    }
+                }
+            }
+        }
+
+        return p_Item;
+    }
+
+
     public FurnitureMovementError furnitureFitsAt(RoomTile tile, HabboItem item, int rotation) {
         if (!this.layout.fitsOnMap(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))
             return FurnitureMovementError.INVALID_MOVE;
@@ -4367,6 +4421,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (!fits.equals(FurnitureMovementError.NONE)) {
             return fits;
         }
+
+        if (item instanceof InteractionTeleport)
+        {
+            InteractionTeleport l_Test = (InteractionTeleport)item;
+            int hello = 0;
+        }
+
+        item = this.OverrideItem(item, owner);
 
         item.setZ(tile.getStackHeight());
         item.setX(tile.x);
