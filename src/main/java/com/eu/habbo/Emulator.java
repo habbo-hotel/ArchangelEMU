@@ -37,7 +37,7 @@ public final class Emulator {
     public final static int BUILD = 0;
 
 
-    public final static String PREVIEW = "RC-3";
+    public final static String PREVIEW = "RC-2";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
@@ -49,7 +49,7 @@ public final class Emulator {
                     " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
                     "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
                     "                                /____/                             \n" +
-                    "				                'the only emulator with broken teleporters'		        \n" ;
+                    "				                'RC Stands for Race Car.'		        \n" ;
     public static String build = "";
     public static boolean isReady = false;
     public static boolean isShuttingDown = false;
