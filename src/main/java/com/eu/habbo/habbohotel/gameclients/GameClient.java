@@ -1,22 +1,3 @@
-/*
- * Morning Star
- * Copyright (C) 2019
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-
 package com.eu.habbo.habbohotel.gameclients;
 
 import com.eu.habbo.Emulator;
@@ -35,134 +16,114 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GameClient
-{
-    /// Constructor
-    /// @p_Channel : Channel
-    public GameClient(Channel p_Channel) {
-        this.m_Channel = p_Channel;
+public class GameClient {
+
+    public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
+    private final Channel channel;
+    public long lastPacketCounterCleared = Emulator.getIntUnixTimestamp();
+    private Habbo habbo;
+    private String machineId = "";
+
+    public GameClient(Channel channel) {
+        this.channel = channel;
     }
 
 
-    /// Composer class - Abstract class
-    /// @p_Composer : Composer
-    public void sendResponse(MessageComposer p_Composer) {
-        if (this.m_Channel.isOpen())
-        {
-            try
-            {
-                ServerMessage l_ServerMessage = p_Composer.compose();
-                this.sendResponse(l_ServerMessage);
-
-            } catch (Exception l_Exception)
-            {
-                Emulator.getLogging().logPacketError(l_Exception);
+    public void sendResponse(MessageComposer composer) {
+        if (this.channel.isOpen()) {
+            try {
+                ServerMessage msg = composer.compose();
+                this.sendResponse(msg);
+            } catch (Exception e) {
+                Emulator.getLogging().logPacketError(e);
             }
         }
     }
 
-    /// Send Raw Response
-    /// @p_Response : Response
-    public void sendResponse(ServerMessage p_Response)
-    {
-        if (this.m_Channel.isOpen())
-        {
-            if (p_Response == null || p_Response.getHeader() <= 0)
-            {
+
+    public void sendResponse(ServerMessage response) {
+        if (this.channel.isOpen()) {
+            if (response == null || response.getHeader() <= 0) {
                 return;
             }
 
             if (PacketManager.DEBUG_SHOW_PACKETS)
-                Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + p_Response.getHeader() + "] -> " + p_Response.getBodyString());
+                Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
 
-            this.m_Channel.write(p_Response.get(), this.m_Channel.voidPromise());
-            this.m_Channel.flush();
+            this.channel.write(response.get(), this.channel.voidPromise());
+            this.channel.flush();
         }
     }
 
-    /// Send packed response
-    /// @p_Responses : Response Array
-    public void sendResponses(ArrayList<ServerMessage> p_Responses)
-    {
-        ByteBuf l_Buffer = Unpooled.buffer();
 
-        if (this.m_Channel.isOpen()) {
-            for (ServerMessage l_Itr : p_Responses)
-            {
-                if (l_Itr == null || l_Itr.getHeader() <= 0) {
+    public void sendResponses(ArrayList<ServerMessage> responses) {
+        ByteBuf buffer = Unpooled.buffer();
+
+        if (this.channel.isOpen()) {
+            for (ServerMessage response : responses) {
+                if (response == null || response.getHeader() <= 0) {
                     return;
                 }
 
                 if (PacketManager.DEBUG_SHOW_PACKETS)
-                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + l_Itr.getHeader() + "] -> " + l_Itr.getBodyString());
+                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
 
-                l_Buffer.writeBytes(l_Itr.get());
+                buffer.writeBytes(response.get());
             }
-            this.m_Channel.write(l_Buffer.copy(), this.m_Channel.voidPromise());
-            this.m_Channel.flush();
+            this.channel.write(buffer.copy(), this.channel.voidPromise());
+            this.channel.flush();
         }
-        l_Buffer.release();
+        buffer.release();
     }
 
-    /// Dispose Habbo
+
     public void dispose() {
+        try {
+            this.channel.close();
 
-        try
-        {
-            this.m_Channel.close();
-
-            if (this.m_Habbo != null) {
-                if (this.m_Habbo.isOnline())
-                {
-                    this.m_Habbo.getHabboInfo().setOnline(false);
-                    this.m_Habbo.disconnect();
+            if (this.habbo != null) {
+                if (this.habbo.isOnline()) {
+                    this.habbo.getHabboInfo().setOnline(false);
+                    this.habbo.disconnect();
                 }
 
-                this.m_Habbo = null;
+                this.habbo = null;
             }
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }
 
-    ///////////////////////////////////////////
-    //            GETTERS/SETTERS
-    ///////////////////////////////////////////
+    public Channel getChannel() {
+        return this.channel;
+    }
 
-    public Channel getChannel()         { return this.m_Channel;    }
-    public String getMachineId()        { return this.m_MachineId;  }
-    public Habbo getHabbo()             { return this.m_Habbo;      }
+    public Habbo getHabbo() {
+        return this.habbo;
+    }
 
-    public void setHabbo(Habbo p_Habbo) { this.m_Habbo = p_Habbo;   }
-    public void setMachineId(String p_MachineId)
-    {
-        if (p_MachineId == null)
-        {
+    public void setHabbo(Habbo habbo) {
+        this.habbo = habbo;
+    }
+
+    public String getMachineId() {
+        return this.machineId;
+    }
+
+    public void setMachineId(String machineId) {
+        if (machineId == null) {
             throw new RuntimeException("Cannot set machineID to NULL");
         }
-        this.m_MachineId = p_MachineId;
+        this.machineId = machineId;
 
-        if (this.m_MachineId != null)
-        {
+        if (this.habbo != null) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET machine_id = ? WHERE id = ? LIMIT 1")) {
-                statement.setString(1, this.m_MachineId);
-                statement.setInt(2, this.m_Habbo.getHabboInfo().getId());
+                statement.setString(1, this.machineId);
+                statement.setInt(2, this.habbo.getHabboInfo().getId());
                 statement.execute();
-            } catch (SQLException e)
-            {
+            } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
         }
     }
-
-    //////////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////
-
-    public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
-    public long lastPacketCounterCleared = Emulator.getIntUnixTimestamp();
-
-    private final Channel m_Channel;
-    private Habbo m_Habbo;
-    private String m_MachineId;
 }
