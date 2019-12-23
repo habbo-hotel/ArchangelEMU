@@ -32,7 +32,6 @@ public class InteractionHabboClubGate extends InteractionDefault {
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        System.out.println(habbo != null && habbo.getHabboStats().hasActiveClub());
         return habbo != null && habbo.getHabboStats().hasActiveClub();
     }
 
