@@ -105,6 +105,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public static boolean HABBO_CHAT_DELAY = false;
     public static int MAXIMUM_BOTS = 10;
     public static int MAXIMUM_PETS = 10;
+    public static int MAXIMUM_FURNI = 2500;
     public static int HAND_ITEM_TIME = 10;
     public static int IDLE_CYCLES = 240;
     public static int IDLE_CYCLES_KICK = 480;
@@ -415,6 +416,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
+        }
+
+        if (this.itemCount() > Room.MAXIMUM_FURNI) {
+            Emulator.getLogging().logErrorLine("Room ID: " + this.getId() + " has exceeded the furniture limit (" + this.itemCount() + " > " + Room.MAXIMUM_FURNI + ").");
         }
     }
 
@@ -4298,6 +4303,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public FurnitureMovementError canPlaceFurnitureAt(HabboItem item, Habbo habbo, RoomTile tile, int rotation) {
+        if (this.itemCount() >= Room.MAXIMUM_FURNI) {
+            return FurnitureMovementError.MAX_ITEMS;
+        }
+
         rotation %= 8;
         if (this.hasRights(habbo) || this.guildRightLevel(habbo) >= 2 || habbo.hasPermission(Permission.ACC_MOVEROTATE)) {
             return FurnitureMovementError.NONE;

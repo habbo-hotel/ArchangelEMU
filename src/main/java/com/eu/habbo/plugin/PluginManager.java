@@ -82,6 +82,7 @@ public class PluginManager {
         Messenger.MAXIMUM_FRIENDS_HC = Emulator.getConfig().getInt("hotel.max.friends.hc");
         Room.MAXIMUM_BOTS = Emulator.getConfig().getInt("hotel.max.bots.room");
         Room.MAXIMUM_PETS = Emulator.getConfig().getInt("hotel.pets.max.room");
+        Room.MAXIMUM_FURNI = Emulator.getConfig().getInt("hotel.room.furni.max", 2500);
         Room.HAND_ITEM_TIME = Emulator.getConfig().getInt("hotel.rooms.handitem.time");
         Room.IDLE_CYCLES = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles", 240);
         Room.IDLE_CYCLES_KICK = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles.kick", 480);
@@ -206,7 +207,7 @@ public class PluginManager {
         }
     }
 
-    public Event fireEvent(Event event) {
+    public <T extends Event> T fireEvent(T event) {
         for (Method method : this.methods) {
             if (method.getParameterTypes().length == 1 && method.getParameterTypes()[0].isAssignableFrom(event.getClass())) {
                 try {
