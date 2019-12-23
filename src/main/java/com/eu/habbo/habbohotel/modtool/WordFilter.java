@@ -72,8 +72,15 @@ public class WordFilter {
     }
 
     public String normalise(String message) {
-        return DIACRITICS_AND_FRIENDS.matcher(Normalizer.normalize(StringUtils.stripAccents(message), Normalizer.Form.NFKD).replaceAll("[,.;:'\"]", "").replace("I", "l")
-                .replaceAll("[^\\p{ASCII}*$]", "").replaceAll("\\p{M}", "").replaceAll("^\\p{M}*$]", "").replaceAll("[1|]", "i").replace("2", "z").replace("3", "e").replace("4", "a").replace("5", "s").replace("8", "b").replace("0", "o").replace(" ", "").replace("$", "s").replace("ß", "b").trim()).replaceAll("");
+        return DIACRITICS_AND_FRIENDS.matcher(Normalizer.normalize(StringUtils.stripAccents(message), Normalizer.Form.NFKD)
+                .replaceAll("[,.;:'\"]", " ").replace("I", "l")
+                .replaceAll("[^\\p{ASCII}*$]", "").replaceAll("\\p{M}", " ")
+                .replaceAll("^\\p{M}*$]", "").replaceAll("[1|]", "i")
+                .replace("2", "z").replace("3", "e")
+                .replace("4", "a").replace("5", "s")
+                .replace("8", "b").replace("0", "o")
+                .replace(" ", " ").replace("$", "s")
+                .replace("ß", "b").trim()).replaceAll(" ");
     }
 
     public boolean autoReportCheck(RoomChatMessage roomChatMessage) {
@@ -139,7 +146,7 @@ public class WordFilter {
                     if (Emulator.getPluginManager().fireEvent(new UserTriggerWordFilterEvent(habbo, word)).isCancelled())
                         continue;
                 }
-                filteredMessage = filteredMessage.replaceAll("(?i)" + word.key, word.replacement);
+                filteredMessage = filteredMessage.replace("(?i)" + word.key, word.replacement);
                 foundShit = true;
 
                 if (habbo != null && word.muteTime > 0) {
