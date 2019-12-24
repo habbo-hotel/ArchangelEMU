@@ -198,7 +198,11 @@ public enum RoomUnitEffect {
     WATERINGCAN(192),
     TRAMPOLINEJUMP(193),
     TREADMILL(194),
-    CROSSTRAINER(195);
+    CROSSTRAINER(195),
+    STARWARS(196),
+    FLYINGCARPET(197),
+    YELLOWDUCK(198),
+    FLYNGTURTLE(199);
 
     private int id;
 
