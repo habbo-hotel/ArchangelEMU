@@ -27,10 +27,16 @@ public class UserEffectsListComposer extends MessageComposer {
                 this.habbo.getInventory().getEffectsComponent().effects.forEachValue(effect -> {
                     UserEffectsListComposer.this.response.appendInt(effect.effect);
                     UserEffectsListComposer.this.response.appendInt(0);
-                    UserEffectsListComposer.this.response.appendInt(effect.duration);
-                    UserEffectsListComposer.this.response.appendInt(effect.total);
-                    UserEffectsListComposer.this.response.appendInt(effect.activationTimestamp >= 0 ? Emulator.getIntUnixTimestamp() - effect.activationTimestamp : -1);
-                    UserEffectsListComposer.this.response.appendBoolean(effect.isActivated());
+                    UserEffectsListComposer.this.response.appendInt(effect.duration > 0 ? effect.duration : 1);
+                    UserEffectsListComposer.this.response.appendInt(effect.total - (effect.isActivated() ? 1 : 0));
+
+                    if(!effect.isActivated()) {
+                        UserEffectsListComposer.this.response.appendInt(0);
+                    }
+                    else {
+                        UserEffectsListComposer.this.response.appendInt(effect.duration > 0 ? (Emulator.getIntUnixTimestamp() - effect.activationTimestamp) + effect.duration : -1);
+                    }
+                    UserEffectsListComposer.this.response.appendBoolean(effect.duration <= 0); //effect.isActivated());
                     return true;
                 });
             }
