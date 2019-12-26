@@ -37,7 +37,7 @@ public final class Emulator {
     public final static int BUILD = 0;
 
 
-    public final static String PREVIEW = "RC-2";
+    public final static String PREVIEW = "RC-3";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
@@ -49,7 +49,7 @@ public final class Emulator {
                     " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
                     "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
                     "                                /____/                             \n" +
-                    "				                'RC Stands for Race Car.'		        \n" ;
+                    "				                'The boiz are back in town.'	    \n" ;
     public static String build = "";
     public static boolean isReady = false;
     public static boolean isShuttingDown = false;
@@ -136,7 +136,7 @@ public final class Emulator {
 
 
             Emulator.getThreading().run(() -> {
-                Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a 2.2.0 RC-1 Build. If you find any bugs please place them on our git repository.");
+                Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a 2.2.0 RC-3 Build. If you find any bugs please place them on our git repository.");
                 Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
                 Emulator.getLogging().logStart("https://discord.gg/syuqgN");
                 Emulator.getLogging().logStart("Please report bugs on our git at Krews.org. Not on our discord!!");
