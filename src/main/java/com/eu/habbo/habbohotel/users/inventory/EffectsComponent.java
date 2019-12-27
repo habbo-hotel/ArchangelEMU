@@ -34,6 +34,10 @@ public class EffectsComponent {
     }
 
     public HabboEffect createEffect(int effectId) {
+        return createEffect(effectId, 86400);
+    }
+
+    public HabboEffect createEffect(int effectId, int duration) {
         HabboEffect effect;
         synchronized (this.effects) {
             if (this.effects.containsKey(effectId)) {
@@ -44,6 +48,7 @@ public class EffectsComponent {
                 }
             } else {
                 effect = new HabboEffect(effectId, this.habbo.getHabboInfo().getId());
+                effect.duration = duration;
                 effect.insert();
             }
 
@@ -159,6 +164,9 @@ public class EffectsComponent {
         }
 
         public boolean isRemaining() {
+            if(this.duration <= 0)
+                return true;
+
             if (this.total > 0) {
                 if (this.activationTimestamp >= 0) {
                     if (Emulator.getIntUnixTimestamp() - this.activationTimestamp >= this.duration) {
@@ -172,6 +180,9 @@ public class EffectsComponent {
         }
 
         public int remainingTime() {
+            if(this.duration <= 0) //permanant
+                return Integer.MAX_VALUE;
+
             return Emulator.getIntUnixTimestamp() - this.activationTimestamp + this.duration;
         }
 

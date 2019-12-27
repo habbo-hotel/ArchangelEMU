@@ -355,6 +355,8 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("snowstorm_tree", null));
         this.interactionsList.add(new ItemInteraction("snowstorm_machine", null));
         this.interactionsList.add(new ItemInteraction("snowstorm_pile", null));
+
+        this.interactionsList.add(new ItemInteraction("vote_counter", InteractionVoteCounter.class));
     }
 
 

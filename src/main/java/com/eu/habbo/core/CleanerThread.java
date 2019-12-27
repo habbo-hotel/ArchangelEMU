@@ -147,8 +147,8 @@ public class CleanerThread implements Runnable {
                 statement.execute("DELETE users_favorite_rooms FROM users_favorite_rooms LEFT JOIN rooms ON room_id = rooms.id WHERE rooms.id IS NULL");
             }
 
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE users_effects SET total = total - 1 WHERE activation_timestamp < ? AND activation_timestamp != 0")) {
-                statement.setInt(1, Emulator.getIntUnixTimestamp() - 86400);
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE users_effects SET total = total - 1 WHERE activation_timestamp + duration < ? AND activation_timestamp > 0 AND duration > 0")) {
+                statement.setInt(1, Emulator.getIntUnixTimestamp());
                 statement.execute();
             }
 

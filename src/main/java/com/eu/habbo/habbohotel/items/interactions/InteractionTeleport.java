@@ -21,7 +21,7 @@ public class InteractionTeleport extends HabboItem {
     private int targetId;
     private int targetRoomId;
     private int roomUnitID = -1;
-    private boolean walkable = false;
+    private boolean walkable;
 
     public InteractionTeleport(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -82,6 +82,7 @@ public class InteractionTeleport extends HabboItem {
 
         if (this.roomUnitID == unit.getId() && unit.getCurrentLocation().equals(currentLocation)) {
             startTeleport(room, habbo);
+            walkable = true;
         } else if (unit.getCurrentLocation().equals(currentLocation) || unit.getCurrentLocation().equals(infrontTile)) {
             // set state 1 and walk on item
             this.roomUnitID = unit.getId();
@@ -93,11 +94,11 @@ public class InteractionTeleport extends HabboItem {
             List<Runnable> onFail = new ArrayList<Runnable>();
 
             onSuccess.add(() -> {
-                walkable = this.getBaseItem().allowWalk();
                 room.updateTile(currentLocation);
                 tryTeleport(client, room);
                 unit.removeOverrideTile(currentLocation);
                 unit.setCanLeaveRoomByDoor(true);
+                walkable = this.getBaseItem().allowWalk();
             });
 
             onFail.add(() -> {
@@ -208,8 +209,10 @@ public class InteractionTeleport extends HabboItem {
     }
 
     public void startTeleport(Room room, Habbo habbo, int delay) {
-        if (habbo.getRoomUnit().isTeleporting)
+        if (habbo.getRoomUnit().isTeleporting) {
+            walkable = this.getBaseItem().allowWalk();
             return;
+        }
 
         this.roomUnitID = -1;
         habbo.getRoomUnit().isTeleporting = true;
