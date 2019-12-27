@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.core.RoomUserPetComposer;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.battlebanzai.BattleBanzaiGame;
 import com.eu.habbo.habbohotel.games.football.FootballGame;
@@ -40,6 +41,7 @@ import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
+import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomCreatedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUncachedEvent;
 import com.eu.habbo.plugin.events.rooms.UserVoteRoomEvent;
@@ -710,9 +712,20 @@ public class RoomManager {
         List<Habbo> habbos = new ArrayList<>();
         if (!room.getCurrentHabbos().isEmpty()) {
 
+            Collection<Habbo> habbosToSendEnter = room.getCurrentHabbos().values();
 
-            room.sendComposer(new RoomUsersComposer(habbo).compose());
-            room.sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
+            if (Emulator.getPluginManager().isRegistered(HabboAddedToRoomEvent.class, false)) {
+                HabboAddedToRoomEvent event = Emulator.getPluginManager().fireEvent(new HabboAddedToRoomEvent(habbo, room, habbosToSendEnter));
+                habbosToSendEnter = event.habbosToSendEnter;
+            }
+
+            for (Habbo habboToSendEnter : habbosToSendEnter) {
+                GameClient client = habboToSendEnter.getClient();
+                if (client != null) {
+                    client.sendResponse(new RoomUsersComposer(habbo).compose());
+                    habboToSendEnter.getClient().sendResponse(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
+                }
+            }
 
             for (Habbo h : room.getHabbos()) {
                 if (!h.getRoomUnit().isInvisible()) {
@@ -889,10 +902,6 @@ public class RoomManager {
 
         if (!habbo.getHabboStats().nux && (room.isOwner(habbo) || room.isPublicRoom())) {
             UserNuxEvent.handle(habbo);
-        }
-
-        if (Emulator.getPluginManager().isRegistered(HabboAddedToRoomEvent.class, false)) {
-            Emulator.getPluginManager().fireEvent(new HabboAddedToRoomEvent(habbo, room));
         }
     }
 
