@@ -31,6 +31,7 @@ public class ToggleFloorItemEvent extends MessageHandler {
             if (item == null || item instanceof InteractionDice)
                 return;
 
+            /*
             if (item.getBaseItem().getName().equalsIgnoreCase("totem_planet")) {
                 THashSet<HabboItem> items = room.getItemsAt(room.getLayout().getTile(item.getX(), item.getY()));
                 HabboItem totemLeg = null;
@@ -75,7 +76,7 @@ public class ToggleFloorItemEvent extends MessageHandler {
                         }
                     }
                 }
-            }
+            }*/
 
             //Do not move to onClick(). Wired could trigger it.
             if (item instanceof InteractionMonsterPlantSeed) {
