@@ -156,11 +156,20 @@ public class PacketManager {
         if (client == null || Emulator.isShuttingDown)
             return;
 
-        if (client.getHabbo() == null && !(packet.getMessageId() == Incoming.SecureLoginEvent || packet.getMessageId() == Incoming.MachineIDEvent))
-            return;
-
         try {
             if (this.isRegistered(packet.getMessageId())) {
+                Class<? extends MessageHandler> handlerClass = this.incoming.get(packet.getMessageId());
+
+                if (handlerClass == null) throw new Exception("Unknown message " + packet.getMessageId());
+
+                if (client.getHabbo() == null && !handlerClass.isAnnotationPresent(NoAuthMessage.class)) {
+                    if (DEBUG_SHOW_PACKETS) {
+                        Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + Logging.ANSI_RED + "NOT LOGGED IN" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
+                    }
+
+                    return;
+                }
+
                 if (PacketManager.DEBUG_SHOW_PACKETS)
                     Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
 
@@ -168,7 +177,7 @@ public class PacketManager {
                     System.out.println(("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + client.getHabbo().getHabboInfo().getUsername() + "][" + packet.getMessageId() + "] => " + packet.getMessageBody()));
                 }
 
-                final MessageHandler handler = this.incoming.get(packet.getMessageId()).newInstance();
+                final MessageHandler handler = handlerClass.newInstance();
 
                 handler.client = client;
                 handler.packet = packet;
@@ -184,7 +193,7 @@ public class PacketManager {
                 }
             } else {
                 if (PacketManager.DEBUG_SHOW_PACKETS)
-                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + Logging.ANSI_RED + "UNDEFINED" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
+                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + Logging.ANSI_YELLOW + "UNDEFINED" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
             }
         } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
