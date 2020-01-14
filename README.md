@@ -30,6 +30,7 @@ When making an bug report or a feature request use the template we provide so th
 - Claudio
 - Alejandro
 - Harmony
+- Quadral (Pathfinder)
 
 ## Discord ##
 Join us on Discord at https://discord.gg/BzfFsTp
