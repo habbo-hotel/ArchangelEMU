@@ -37,7 +37,7 @@ public final class Emulator {
     public final static int BUILD = 0;
 
 
-    public final static String PREVIEW = "RC-3";
+    public final static String PREVIEW = "Stable";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
@@ -48,8 +48,7 @@ public final class Emulator {
                     "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
                     " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
                     "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
-                    "                                /____/                             \n" +
-                    "				                'The boiz are back in town.'	    \n" ;
+                    "                                /____/                             \n" ;
     public static String build = "";
     public static boolean isReady = false;
     public static boolean isShuttingDown = false;
@@ -115,8 +114,7 @@ public final class Emulator {
             Emulator.rconServer.initializePipeline();
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
-            Emulator.getLogging().logStart("Habbo Hotel Emulator has succesfully loaded.");
-            Emulator.getLogging().logStart("You're running: " + Emulator.version);
+            Emulator.getLogging().logStart("Arcturus Morningstar has succesfully loaded. You're running: " + Emulator.version);
             Emulator.getLogging().logStart("System launched in: " + (System.nanoTime() - startTime) / 1e6 + "ms. Using: " + (Runtime.getRuntime().availableProcessors() * 2) + " threads!");
             Emulator.getLogging().logStart("Memory: " + (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024) + "/" + (runtime.freeMemory()) / (1024 * 1024) + "MB");
 
@@ -136,10 +134,9 @@ public final class Emulator {
 
 
             Emulator.getThreading().run(() -> {
-                Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a 2.2.0 RC-3 Build. If you find any bugs please place them on our git repository.");
                 Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
                 Emulator.getLogging().logStart("https://discord.gg/syuqgN");
-                Emulator.getLogging().logStart("Please report bugs on our git at Krews.org. Not on our discord!!");
+                Emulator.getLogging().logStart("Please report bugs on our git at Krews.org.");
                 System.out.println("Waiting for commands: ");
             }, 1500);
 
