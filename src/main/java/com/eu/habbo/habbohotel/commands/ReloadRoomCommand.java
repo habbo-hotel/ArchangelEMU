@@ -17,18 +17,15 @@ public class ReloadRoomCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        Emulator.getThreading().run(new Runnable() {
-            @Override
-            public void run() {
-                Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
-                if (room != null) {
-                    Collection<Habbo> habbos = new ArrayList<>(room.getHabbos());
-                    Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
-                    room = Emulator.getGameEnvironment().getRoomManager().loadRoom(room.getId());
-                    ServerMessage message = new ForwardToRoomComposer(room.getId()).compose();
-                    for (Habbo habbo : habbos) {
-                        habbo.getClient().sendResponse(message);
-                    }
+        Emulator.getThreading().run(() -> {
+            Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+            if (room != null) {
+                Collection<Habbo> habbos = new ArrayList<>(room.getHabbos());
+                Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
+                room = Emulator.getGameEnvironment().getRoomManager().loadRoom(room.getId());
+                ServerMessage message = new ForwardToRoomComposer(room.getId()).compose();
+                for (Habbo habbo : habbos) {
+                    habbo.getClient().sendResponse(message);
                 }
             }
         }, 100);

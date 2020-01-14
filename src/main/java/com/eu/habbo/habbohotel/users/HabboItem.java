@@ -18,7 +18,11 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
+import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
+import com.eu.habbo.util.figure.FigureUtil;
 import gnu.trove.set.hash.THashSet;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
 import java.sql.Connection;
@@ -26,6 +30,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class HabboItem implements Runnable, IEventTriggers {
@@ -293,6 +298,20 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
         if ((this.getBaseItem().allowSit() || this.getBaseItem().allowLay()) && roomUnit.getDanceType() != DanceType.NONE) {
             roomUnit.setDanceType(DanceType.NONE);
             room.sendComposer(new RoomUserDanceComposer(roomUnit).compose());
+        }
+
+        if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousLocation() != roomUnit.getGoal() && roomUnit.getGoal() == room.getLayout().getTile(this.x, this.y)) {
+            Habbo habbo = room.getHabbo(roomUnit);
+
+            if (habbo != null && habbo.getClient() != null) {
+                String[] clothingKeys = Arrays.stream(this.getBaseItem().getClothingOnWalk().split("\\.")).map(k -> k.split("-")[0]).toArray(String[]::new);
+                habbo.getHabboInfo().setLook(String.join(".", Arrays.stream(habbo.getHabboInfo().getLook().split("\\.")).filter(k -> !ArrayUtils.contains(clothingKeys, k.split("-")[0])).toArray(String[]::new)) + "." + this.getBaseItem().getClothingOnWalk());
+
+                habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
+                if (habbo.getHabboInfo().getCurrentRoom() != null) {
+                    habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
+                }
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.trading.*;
+import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.*;
@@ -214,6 +215,33 @@ public class RoomTrade {
         userOne.clearItems();
         userTwo.clearItems();
 
+        int creditsForUserTwo = 0;
+        THashSet<HabboItem> creditFurniUserOne = new THashSet<>();
+        for (HabboItem item : itemsUserOne) {
+            int worth = RoomTrade.getCreditsByItem(item);
+            if (worth > 0) {
+                creditsForUserTwo += worth;
+                creditFurniUserOne.add(item);
+                new QueryDeleteHabboItem(item).run();
+            }
+        }
+        itemsUserOne.removeAll(creditFurniUserOne);
+
+        int creditsForUserOne = 0;
+        THashSet<HabboItem> creditFurniUserTwo = new THashSet<>();
+        for (HabboItem item : itemsUserTwo) {
+            int worth = RoomTrade.getCreditsByItem(item);
+            if (worth > 0) {
+                creditsForUserOne += worth;
+                creditFurniUserTwo.add(item);
+                new QueryDeleteHabboItem(item).run();
+            }
+        }
+        itemsUserTwo.removeAll(creditFurniUserTwo);
+
+        userOne.getHabbo().giveCredits(creditsForUserOne);
+        userTwo.getHabbo().giveCredits(creditsForUserTwo);
+
         userOne.getHabbo().getInventory().getItemsComponent().addItems(itemsUserTwo);
         userTwo.getHabbo().getInventory().getItemsComponent().addItems(itemsUserOne);
 
@@ -286,5 +314,15 @@ public class RoomTrade {
 
     public List<RoomTradeUser> getRoomTradeUsers() {
         return this.users;
+    }
+
+    public static int getCreditsByItem(HabboItem item) {
+        if (!item.getBaseItem().getName().startsWith("CF_") && !item.getBaseItem().getName().startsWith("CFC_")) return 0;
+
+        try {
+            return Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

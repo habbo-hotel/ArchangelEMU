@@ -25,8 +25,21 @@ public class UpdateStackHeightComposer extends MessageComposer {
 
     @Override
     public ServerMessage compose() {
+        //TODO: THIS IS A TEMP FIX. THERE IS AN ISSUE WITH BAD PACKET STRUCTURE HERE CAUSING ISSUES WITH MOVING LARGE FURNITURE
         this.response.init(Outgoing.UpdateStackHeightComposer);
         if (this.updateTiles != null) {
+            if(this.updateTiles.size() > 4) {
+                RoomTile[] tiles = (RoomTile[])this.updateTiles.toArray();
+                this.response.appendByte(4);
+                for(int i = 0; i < 4; i++) {
+                    RoomTile t = tiles[i];
+                    this.response.appendByte((int) t.x);
+                    this.response.appendByte((int) t.y);
+                    this.response.appendShort(t.relativeHeight());
+                }
+                return this.response;
+            }
+
             this.response.appendByte(this.updateTiles.size());
             for (RoomTile t : this.updateTiles) {
                 this.response.appendByte((int) t.x);

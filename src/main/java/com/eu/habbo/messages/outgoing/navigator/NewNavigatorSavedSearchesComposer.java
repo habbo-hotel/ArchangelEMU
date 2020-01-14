@@ -6,11 +6,12 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.HashSet;
+import java.util.List;
 
 public class NewNavigatorSavedSearchesComposer extends MessageComposer {
-    private final HashSet<NavigatorSavedSearch> searches;
+    private final List<NavigatorSavedSearch> searches;
 
-    public NewNavigatorSavedSearchesComposer(HashSet<NavigatorSavedSearch> searches) {
+    public NewNavigatorSavedSearchesComposer(List<NavigatorSavedSearch> searches) {
         this.searches = searches;
     }
 

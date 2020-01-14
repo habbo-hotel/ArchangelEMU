@@ -23,12 +23,12 @@ public class UnmuteCommand extends Command {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_unmute.not_found").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
             return true;
         } else {
-            if (!habbo.getHabboStats().allowTalk() || habbo.getHabboInfo().getCurrentRoom().isMuted(habbo)) {
+            if (!habbo.getHabboStats().allowTalk() || (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom().isMuted(habbo))) {
                 if (!habbo.getHabboStats().allowTalk()) {
                     habbo.unMute();
                 }
 
-                if (habbo.getHabboInfo().getCurrentRoom().isMuted(habbo)) {
+                if (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom().isMuted(habbo)) {
                     habbo.getHabboInfo().getCurrentRoom().muteHabbo(habbo, 1);
                 }
 

@@ -217,7 +217,7 @@ public class Pet implements ISerialize, Runnable {
 
         int time = Emulator.getIntUnixTimestamp();
         if (this.roomUnit != null && this.task != PetTasks.RIDE) {
-            if (time - this.gestureTickTimeout > 5) {
+            if (time - this.gestureTickTimeout > 5 && this.roomUnit.hasStatus(RoomUnitStatus.GESTURE)) {
                 this.roomUnit.removeStatus(RoomUnitStatus.GESTURE);
                 this.packetUpdate = true;
             }
@@ -236,8 +236,6 @@ public class Pet implements ISerialize, Runnable {
             }
 
             if (!this.roomUnit.isWalking()) {
-                this.roomUnit.removeStatus(RoomUnitStatus.MOVE);
-
                 if (this.roomUnit.getWalkTimeOut() < time && this.canWalk()) {
                     RoomTile tile = this.room.getRandomWalkableTile();
 
@@ -399,9 +397,9 @@ public class Pet implements ISerialize, Runnable {
             for (Map.Entry<RoomUnitStatus, String> entry : keys.entrySet()) {
                 this.roomUnit.setStatus(entry.getKey(), entry.getValue());
             }
-        }
 
-        this.packetUpdate = true;
+            if (!keys.isEmpty()) this.packetUpdate = true;
+        }
     }
 
     public void updateGesture(int time) {

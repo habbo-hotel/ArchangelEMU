@@ -17,6 +17,8 @@ public class InviteFriendsEvent extends MessageHandler {
 
             String message = this.packet.readString();
 
+            message = Emulator.getGameEnvironment().getWordFilter().filter(message, this.client.getHabbo());
+
             for (int i : userIds) {
                 if (i == 0)
                     continue;

@@ -43,6 +43,8 @@ public class CrackableReward {
                 if (prize.contains(":") && prize.split(":").length == 2) {
                     itemId = Integer.valueOf(prize.split(":")[0]);
                     chance = Integer.valueOf(prize.split(":")[1]);
+                } else if (prize.contains(":")) {
+                    Emulator.getLogging().logErrorLine("Invalid configuration of crackable prizes (item id: " + this.itemId + "). '" + prize + "' format should be itemId:chance.");
                 } else {
                     itemId = Integer.valueOf(prize.replace(":", ""));
                 }

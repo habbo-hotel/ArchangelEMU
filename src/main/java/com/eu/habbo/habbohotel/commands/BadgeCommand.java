@@ -4,6 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
+import com.eu.habbo.habbohotel.users.HabboManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,11 +40,18 @@ public class BadgeCommand extends Command {
 
                 return true;
             } else {
+                HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(params[1]);
+
+                if (habboInfo == null) {
+                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_badge.unknown_user"), RoomChatMessageBubbles.ALERT);
+                    return true;
+                }
+
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
                     boolean found;
 
-                    try (PreparedStatement statement = connection.prepareStatement("SELECT `badge_code` FROM `users_badges` INNER JOIN `users` ON `users`.`id` = `user_id` WHERE `users`.`username` = ? AND `badge_code` = ? LIMIT 1")) {
-                        statement.setString(1, params[1]);
+                    try (PreparedStatement statement = connection.prepareStatement("SELECT `badge_code` FROM `users_badges` WHERE `user_id` = ? AND `badge_code` = ? LIMIT 1")) {
+                        statement.setInt(1, habboInfo.getId());
                         statement.setString(2, params[2]);
                         try (ResultSet set = statement.executeQuery()) {
                             found = set.next();
@@ -53,8 +62,8 @@ public class BadgeCommand extends Command {
                         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_badge.already_owns").replace("%user%", params[1]).replace("%badge%", params[2]), RoomChatMessageBubbles.ALERT);
                         return true;
                     } else {
-                        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_badges (`id`, `user_id`, `slot_id`, `badge_code`) VALUES (null, (SELECT `id` FROM `users` WHERE `username` = ? LIMIT 1), 0, ?)")) {
-                            statement.setString(1, params[1]);
+                        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_badges (`id`, `user_id`, `slot_id`, `badge_code`) VALUES (null, ?, 0, ?)")) {
+                            statement.setInt(1, habboInfo.getId());
                             statement.setString(2, params[2]);
                             statement.execute();
                         }

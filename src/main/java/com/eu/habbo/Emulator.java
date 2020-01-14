@@ -18,10 +18,7 @@ import com.eu.habbo.plugin.events.emulator.EmulatorStoppedEvent;
 import com.eu.habbo.threading.ThreadPooling;
 import com.eu.habbo.util.imager.badges.BadgeImager;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -34,10 +31,10 @@ public final class Emulator {
     public final static int MAJOR = 2;
 
 
-    public final static int MINOR = 1;
+    public final static int MINOR = 2;
 
 
-    public final static int BUILD = 1;
+    public final static int BUILD = 0;
 
 
     public final static String PREVIEW = "Stable";
@@ -51,7 +48,7 @@ public final class Emulator {
                     "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
                     " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
                     "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
-                    "                                /____/                             \n";
+                    "                                /____/                             \n" ;
     public static String build = "";
     public static boolean isReady = false;
     public static boolean isShuttingDown = false;
@@ -117,8 +114,7 @@ public final class Emulator {
             Emulator.rconServer.initializePipeline();
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
-            Emulator.getLogging().logStart("Habbo Hotel Emulator has succesfully loaded.");
-            Emulator.getLogging().logStart("You're running: " + Emulator.version);
+            Emulator.getLogging().logStart("Arcturus Morningstar has succesfully loaded. You're running: " + Emulator.version);
             Emulator.getLogging().logStart("System launched in: " + (System.nanoTime() - startTime) / 1e6 + "ms. Using: " + (Runtime.getRuntime().availableProcessors() * 2) + " threads!");
             Emulator.getLogging().logStart("Memory: " + (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024) + "/" + (runtime.freeMemory()) / (1024 * 1024) + "MB");
 
@@ -137,20 +133,16 @@ public final class Emulator {
             }
 
 
-            Emulator.getThreading().run(new Runnable() {
-                @Override
-                public void run() {
-                    Emulator.getLogging().logStart("Thankyou for downloading Arcturus Morningstar! This is a stable 2.1.0 build, it should be more than stable for daily use on hotels, if you find any bugs please place them on our git repository.");
-                    Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
-                    Emulator.getLogging().logStart("https://discord.gg/syuqgN");
-                    Emulator.getLogging().logStart("Please report bugs on our git at Krews.org. Not on our discord!!");
-                    System.out.println("Waiting for commands: ");
-                }
-            }, 3500);
+            Emulator.getThreading().run(() -> {
+                Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
+                Emulator.getLogging().logStart("https://discord.gg/syuqgN");
+                Emulator.getLogging().logStart("Please report bugs on our git at Krews.org.");
+                System.out.println("Waiting for commands: ");
+            }, 1500);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-            while (!isShuttingDown && isReady && reader.ready()) {
+            while (!isShuttingDown && isReady) {
                 try {
 
                     String line = reader.readLine();
@@ -160,7 +152,9 @@ public final class Emulator {
                     }
                     System.out.println("Waiting for command: ");
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
+                        Emulator.getLogging().logErrorLine(e);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -181,12 +175,9 @@ public final class Emulator {
             FileInputStream fis = new FileInputStream(filepath);
             byte[] dataBytes = new byte[1024];
             int nread = 0;
-
             while ((nread = fis.read(dataBytes)) != -1)
                 md.update(dataBytes, 0, nread);
-
             byte[] mdbytes = md.digest();
-
             for (int i = 0; i < mdbytes.length; i++)
                 sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
         } catch (Exception e) {

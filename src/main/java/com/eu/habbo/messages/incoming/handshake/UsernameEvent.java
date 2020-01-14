@@ -83,8 +83,8 @@ public class UsernameEvent extends MessageHandler {
             }
         }
 
-        if (calendar && Emulator.getConfig().getBoolean("hotel.calendar.enabled")) {
-            this.client.sendResponse(new AdventCalendarDataComposer("xmas11", Emulator.getGameEnvironment().getCatalogManager().calendarRewards.size(), (int) Math.floor((Emulator.getIntUnixTimestamp() - Emulator.getConfig().getInt("hotel.calendar.starttimestamp")) / 86400), this.client.getHabbo().getHabboStats().calendarRewardsClaimed, true));
+        if (Emulator.getConfig().getBoolean("hotel.calendar.enabled")) {
+            this.client.sendResponse(new AdventCalendarDataComposer("xmas15", Emulator.getGameEnvironment().getCatalogManager().calendarRewards.size(), (int) Math.floor((Emulator.getIntUnixTimestamp() - Emulator.getConfig().getInt("hotel.calendar.starttimestamp")) / 86400), this.client.getHabbo().getHabboStats().calendarRewardsClaimed, true));
             this.client.sendResponse(new NuxAlertComposer("openView/calendar"));
         }
 

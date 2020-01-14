@@ -147,9 +147,11 @@ public class HabboInventory {
     }
 
     public MarketPlaceOffer getOffer(int id) {
-        for (MarketPlaceOffer offer : this.items) {
-            if (offer.getOfferId() == id)
-                return offer;
+        synchronized (this.items) {
+            for (MarketPlaceOffer offer : this.items) {
+                if (offer.getOfferId() == id)
+                    return offer;
+            }
         }
 
         return null;

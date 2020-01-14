@@ -22,19 +22,20 @@ public class GuildRemoveAdminEvent extends MessageHandler {
                 int userId = this.packet.readInt();
 
                 Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
-                Emulator.getGameEnvironment().getGuildManager().removeAdmin(guild, userId);
+                Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
-                Habbo habbo = room.getHabbo(userId);
                 GuildRemovedAdminEvent removedAdminEvent = new GuildRemovedAdminEvent(guild, userId, habbo);
                 Emulator.getPluginManager().fireEvent(removedAdminEvent);
 
                 if (removedAdminEvent.isCancelled())
                     return;
 
+                Emulator.getGameEnvironment().getGuildManager().removeAdmin(guild, userId);
+
                 if (habbo != null) {
                     habbo.getClient().sendResponse(new GuildInfoComposer(guild, this.client, false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild.getId(), userId)));
 
-                    room.refreshRightsForHabbo(habbo);
+                    if (room != null && habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom() == room) room.refreshRightsForHabbo(habbo);
                 }
                 GuildMember guildMember = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, userId);
 

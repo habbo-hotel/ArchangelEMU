@@ -36,7 +36,7 @@ public class FriendsComposer extends MessageComposer {
                 this.response.appendInt(row.getValue().getGender().equals(HabboGender.M) ? 0 : 1);
                 this.response.appendBoolean(row.getValue().getOnline() == 1);
                 this.response.appendBoolean(row.getValue().inRoom()); //IN ROOM
-                this.response.appendString(row.getValue().getLook());
+                this.response.appendString(row.getValue().getOnline() == 1 ? row.getValue().getLook() : "");
                 this.response.appendInt(0);
                 this.response.appendString(row.getValue().getMotto());
                 this.response.appendString("");

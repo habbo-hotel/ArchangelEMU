@@ -7,7 +7,8 @@ public enum ModToolChatRecordDataContext {
     ROOM_ID("roomId", 1),
     GROUP_ID("groupId", 1),
     THREAD_ID("threadId", 1),
-    MESSAGE_ID("messageId", 1);
+    MESSAGE_ID("messageId", 1),
+    PHOTO_ID("extraDataId", 2);
 
     public final String key;
     public final int type;

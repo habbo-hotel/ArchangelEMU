@@ -140,14 +140,16 @@ public abstract class TagGame extends Game {
                 TObjectHashIterator<HabboItem> iterator = poles.iterator();
                 if ((iterator.hasNext())) {
                     HabboItem item = iterator.next();
-                    habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1);
+                    habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1);
+                    this.room.scheduledTasks.add(() -> habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1));
                     this.taggers.put(habbo, (InteractionTagPole) item);
                     return true;
                 }
             }
         } else {
             if (this.taggers.isEmpty()) {
-                habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1);
+                habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1);
+                this.room.scheduledTasks.add(() -> habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1));
                 this.taggers.put(habbo, null);
                 return true;
             }

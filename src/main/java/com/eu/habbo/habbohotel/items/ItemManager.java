@@ -38,11 +38,15 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.bunnyrun.Interaction
 import com.eu.habbo.habbohotel.items.interactions.games.tag.icetag.InteractionIceTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.icetag.InteractionIceTagPole;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.rollerskate.InteractionRollerskateField;
+import com.eu.habbo.habbohotel.items.interactions.totems.InteractionTotemHead;
+import com.eu.habbo.habbohotel.items.interactions.totems.InteractionTotemLegs;
+import com.eu.habbo.habbohotel.items.interactions.totems.InteractionTotemPlanet;
 import com.eu.habbo.habbohotel.items.interactions.wired.conditions.*;
 import com.eu.habbo.habbohotel.items.interactions.wired.effects.*;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraRandom;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraUnseen;
+import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.habbohotel.items.interactions.wired.triggers.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -69,6 +73,7 @@ public class ItemManager {
     private final THashSet<ItemInteraction> interactionsList;
     private final THashMap<String, SoundTrack> soundTracks;
     private final YoutubeManager youtubeManager;
+    private final WiredHighscoreManager highscoreManager;
     private final TreeMap<Integer, NewUserGift> newuserGifts;
 
     public ItemManager() {
@@ -77,6 +82,7 @@ public class ItemManager {
         this.interactionsList = new THashSet<>();
         this.soundTracks = new THashMap<>();
         this.youtubeManager = new YoutubeManager();
+        this.highscoreManager = new WiredHighscoreManager();
         this.newuserGifts = new TreeMap<>();
     }
 
@@ -90,6 +96,7 @@ public class ItemManager {
         this.loadCrackable();
         this.loadSoundTracks();
         this.youtubeManager.load();
+        this.highscoreManager.load();
         this.loadNewUserGifts();
 
         Emulator.getLogging().logStart("Item Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
@@ -351,6 +358,12 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("snowstorm_tree", null));
         this.interactionsList.add(new ItemInteraction("snowstorm_machine", null));
         this.interactionsList.add(new ItemInteraction("snowstorm_pile", null));
+
+        this.interactionsList.add(new ItemInteraction("vote_counter", InteractionVoteCounter.class));
+
+        this.interactionsList.add(new ItemInteraction("totem_leg", InteractionTotemLegs.class));
+        this.interactionsList.add(new ItemInteraction("totem_head", InteractionTotemHead.class));
+        this.interactionsList.add(new ItemInteraction("totem_planet", InteractionTotemPlanet.class));
     }
 
 
@@ -784,8 +797,13 @@ public class ItemManager {
         return this.youtubeManager;
     }
 
+    public WiredHighscoreManager getHighscoreManager() {
+        return highscoreManager;
+    }
+
     public void dispose() {
         this.items.clear();
+        this.highscoreManager.dispose();
 
         Emulator.getLogging().logShutdownLine("Item Manager -> Disposed!");
     }

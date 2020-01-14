@@ -75,8 +75,6 @@ public class RoomPlaceItemEvent extends MessageHandler {
                     this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.NO_RIGHTS.errorCode));
                     return;
                 }
-
-                return;
             }
 
             RoomTile tile = room.getLayout().getTile(x, y);

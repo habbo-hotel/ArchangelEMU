@@ -3,24 +3,23 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreRow;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.habbohotel.wired.WiredHighscoreClearType;
-import com.eu.habbo.habbohotel.wired.WiredHighscoreData;
-import com.eu.habbo.habbohotel.wired.WiredHighscoreScoreType;
+import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreClearType;
+import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreScoreType;
 import com.eu.habbo.messages.ServerMessage;
-import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class InteractionWiredHighscore extends HabboItem {
     public WiredHighscoreScoreType scoreType;
     public WiredHighscoreClearType clearType;
 
-    private THashSet<WiredHighscoreData> data;
-    private int lastUpdate;
+    private List<WiredHighscoreRow> data;
 
     public InteractionWiredHighscore(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -37,13 +36,7 @@ public class InteractionWiredHighscore extends HabboItem {
             Emulator.getLogging().logErrorLine(e);
         }
 
-        if (this.getRoomId() > 0) {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-
-            if (room != null) {
-                this.reloadData(room);
-            }
-        }
+        this.reloadData();
     }
 
     public InteractionWiredHighscore(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
@@ -60,6 +53,8 @@ public class InteractionWiredHighscore extends HabboItem {
         } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
+
+        this.reloadData();
     }
 
     @Override
@@ -86,7 +81,6 @@ public class InteractionWiredHighscore extends HabboItem {
         try {
             int state = Integer.valueOf(this.getExtradata());
             this.setExtradata(Math.abs(state - 1) + "");
-            this.reloadData(room);
             room.updateItem(this);
         } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
@@ -98,43 +92,22 @@ public class InteractionWiredHighscore extends HabboItem {
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt(6);
         serverMessage.appendString(this.getExtradata());
-        serverMessage.appendInt(this.scoreType.type); //score type
-        serverMessage.appendInt(this.clearType.type); //clear type
+        serverMessage.appendInt(this.scoreType.type);
+        serverMessage.appendInt(this.clearType.type);
 
-        if (this.getRoomId() == 0) {
-            serverMessage.appendInt(0);
-        } else {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        if (this.data != null) {
+            serverMessage.appendInt(this.data.size());
 
-            if (room == null) {
-                serverMessage.appendInt(0);
-            } else {
-                if (Emulator.getIntUnixTimestamp() - this.lastUpdate > 60 * 60) {
-                    this.reloadData(room);
-                }
+            for (WiredHighscoreRow row : this.data) {
+                serverMessage.appendInt(row.getValue());
 
-                if (this.data != null) {
-                    serverMessage.appendInt(this.data.size()); //count
-
-                    for (WiredHighscoreData dataSet : this.data) {
-                        if (this.scoreType == WiredHighscoreScoreType.PERTEAM) {
-                            serverMessage.appendInt(dataSet.teamScore); //Team score
-                        } else if (dataSet.usernames.length == 1) {
-                            serverMessage.appendInt(dataSet.score);
-                        } else {
-                            serverMessage.appendInt(dataSet.totalScore);
-                        }
-
-                        serverMessage.appendInt(dataSet.usernames.length); //Users count
-
-                        for (String codeDragon : dataSet.usernames) {
-                            serverMessage.appendString(codeDragon);
-                        }
-                    }
-                } else {
-                    serverMessage.appendInt(0);
+                serverMessage.appendInt(row.getUsers().size());
+                for (String username : row.getUsers()) {
+                    serverMessage.appendString(username);
                 }
             }
+        } else {
+            serverMessage.appendInt(0);
         }
 
         super.serializeExtradata(serverMessage);
@@ -142,7 +115,7 @@ public class InteractionWiredHighscore extends HabboItem {
 
     @Override
     public void onPlace(Room room) {
-        this.reloadData(room);
+        this.reloadData();
         super.onPlace(room);
     }
 
@@ -151,11 +124,9 @@ public class InteractionWiredHighscore extends HabboItem {
         if (this.data != null) {
             this.data.clear();
         }
-        this.lastUpdate = 0;
     }
 
-    private void reloadData(Room room) {
-        this.data = room.getWiredHighscoreData(this.scoreType, this.clearType);
-        this.lastUpdate = Emulator.getIntUnixTimestamp();
+    public void reloadData() {
+        this.data = Emulator.getGameEnvironment().getItemManager().getHighscoreManager().getHighscoreRowsForItem(this.getId(), this.clearType, this.scoreType);
     }
 }

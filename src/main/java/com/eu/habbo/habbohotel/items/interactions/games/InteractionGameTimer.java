@@ -16,6 +16,7 @@ import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class InteractionGameTimer extends HabboItem implements Runnable {
     private int[] TIMER_INTERVAL_STEPS = new int[] { 30, 60, 120, 180, 300, 600 };
@@ -77,16 +78,17 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
         parseCustomParams(item);
     }
 
-    public void parseCustomParams(Item baseItem) {
+    private void parseCustomParams(Item baseItem) {
         try {
-            String[] intervalSteps = baseItem.getCustomParams().split(",");
-            int[] finalSteps = new int[intervalSteps.length];
-            for (int i = 0; i < intervalSteps.length; i++) {
-                finalSteps[i] = Integer.parseInt(intervalSteps[i]);
-            }
-            TIMER_INTERVAL_STEPS = finalSteps;
-        }
-        catch (Exception e) {
+            TIMER_INTERVAL_STEPS = Arrays.stream(baseItem.getCustomParams().split(","))
+                    .mapToInt(s -> {
+                        try {
+                            return Integer.parseInt(s);
+                        } catch (NumberFormatException e) {
+                            return 0;
+                        }
+                    }).toArray();
+        } catch (Exception e) {
             Emulator.getLogging().logErrorLine(e);
         }
     }

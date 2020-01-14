@@ -24,6 +24,7 @@ import com.eu.habbo.messages.outgoing.inventory.AddBotComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.modtool.ModToolIssueHandledComposer;
 import com.eu.habbo.messages.outgoing.users.AddUserBadgeComposer;
 import com.eu.habbo.messages.outgoing.users.UserCreditsComposer;
 import com.eu.habbo.messages.outgoing.users.UserPointsComposer;
@@ -283,22 +284,19 @@ public class CatalogManager {
             Emulator.getLogging().logSQLException(e);
         }
 
-        pages.forEachValue(new TObjectProcedure<CatalogPage>() {
-            @Override
-            public boolean execute(CatalogPage object) {
-                CatalogPage page = pages.get(object.parentId);
+        pages.forEachValue((object) -> {
+            CatalogPage page = pages.get(object.parentId);
 
-                if (page != null) {
-                    if (page.id != object.id) {
-                        page.addChildPage(object);
-                    }
-                } else {
-                    if (object.parentId != -2) {
-                        Emulator.getLogging().logStart("Parent Page not found for " + object.getPageName() + " (ID: " + object.id + ", parent_id: " + object.parentId + ")");
-                    }
+            if (page != null) {
+                if (page.id != object.id) {
+                    page.addChildPage(object);
                 }
-                return true;
+            } else {
+                if (object.parentId != -2) {
+                    Emulator.getLogging().logStart("Parent Page not found for " + object.getPageName() + " (ID: " + object.id + ", parent_id: " + object.parentId + ")");
+                }
             }
+            return true;
         });
 
         this.catalogPages.putAll(pages);
@@ -536,35 +534,52 @@ public class CatalogManager {
     public void redeemVoucher(GameClient client, String voucherCode) {
         Voucher voucher = Emulator.getGameEnvironment().getCatalogManager().getVoucher(voucherCode);
 
-        if (voucher != null) {
-            if (Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher)) {
-                client.getHabbo().getHabboInfo().addCredits(voucher.credits);
+        if (voucher == null) {
+            client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.INVALID_CODE));
+            return;
+        }
 
-                if (voucher.points > 0) {
-                    client.getHabbo().getHabboInfo().addCurrencyAmount(voucher.pointsType, voucher.points);
-                    client.sendResponse(new UserPointsComposer(client.getHabbo().getHabboInfo().getCurrencyAmount(voucher.pointsType), voucher.points, voucher.pointsType));
-                }
+        Habbo habbo = client.getHabbo();
+        if (habbo == null) return;
 
-                if (voucher.credits > 0) {
-                    client.getHabbo().getHabboInfo().addCredits(voucher.credits);
-                    client.sendResponse(new UserCreditsComposer(client.getHabbo()));
-                }
-
-                if (voucher.catalogItemId > 0) {
-                    CatalogItem item = this.getCatalogItem(voucher.catalogItemId);
-
-                    if (item != null) {
-                        this.purchaseItem(null, item, client.getHabbo(), 1, "", true);
-                    }
-                }
-
-                client.sendResponse(new RedeemVoucherOKComposer());
-
-                return;
+        if (voucher.isExhausted()) {
+            if (!Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher)) {
+                client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.TECHNICAL_ERROR));
             }
         }
 
-        client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.INVALID_CODE));
+        if (voucher.hasUserExhausted(habbo.getHabboInfo().getId())) {
+            client.sendResponse(new ModToolIssueHandledComposer("You have exceeded the limit for redeeming this voucher."));
+            return;
+        }
+
+        voucher.addHistoryEntry(habbo.getHabboInfo().getId());
+
+        if (voucher.isExhausted()) {
+            if (!Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher)) {
+                client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.TECHNICAL_ERROR));
+            }
+        }
+
+        if (voucher.points > 0) {
+            client.getHabbo().getHabboInfo().addCurrencyAmount(voucher.pointsType, voucher.points);
+            client.sendResponse(new UserPointsComposer(client.getHabbo().getHabboInfo().getCurrencyAmount(voucher.pointsType), voucher.points, voucher.pointsType));
+        }
+
+        if (voucher.credits > 0) {
+            client.getHabbo().getHabboInfo().addCredits(voucher.credits);
+            client.sendResponse(new UserCreditsComposer(client.getHabbo()));
+        }
+
+        if (voucher.catalogItemId > 0) {
+            CatalogItem item = this.getCatalogItem(voucher.catalogItemId);
+
+            if (item != null) {
+                this.purchaseItem(null, item, client.getHabbo(), 1, "", true);
+            }
+        }
+
+        client.sendResponse(new RedeemVoucherOKComposer());
     }
 
 
@@ -1122,15 +1137,15 @@ public class CatalogManager {
         return offers;
     }
 
-    public void claimCalendarReward(Habbo habbo, int day) {
+    public void claimCalendarReward(Habbo habbo, int day, boolean force) {
         if (!habbo.getHabboStats().calendarRewardsClaimed.contains(day)) {
-            habbo.getHabboStats().calendarRewardsClaimed.add(day);
-            CalendarRewardObject object = this.calendarRewards.get(day);
-
-            if (object != null) {
-                object.give(habbo);
-                habbo.getClient().sendResponse(new InventoryRefreshComposer());
+            CalendarRewardObject object = this.calendarRewards.get((day+1));
+            int actualDay = (int) Math.floor((Emulator.getIntUnixTimestamp() - Emulator.getConfig().getInt("hotel.calendar.starttimestamp")) / 86400);
+            int diff = (actualDay - day);
+            if (((diff <= 2 && diff >= 0) || force) && object != null) {
+                habbo.getHabboStats().calendarRewardsClaimed.add(day);
                 habbo.getClient().sendResponse(new AdventCalendarProductComposer(true, object));
+                object.give(habbo);
 
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO calendar_rewards_claimed (user_id, reward_id, timestamp) VALUES (?, ?, ?)")) {
                     statement.setInt(1, habbo.getHabboInfo().getId());
@@ -1141,8 +1156,6 @@ public class CatalogManager {
                     Emulator.getLogging().logSQLException(e);
                 }
             }
-
-
         }
     }
 

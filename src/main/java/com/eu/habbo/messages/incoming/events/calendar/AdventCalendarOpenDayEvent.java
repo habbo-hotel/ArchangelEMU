@@ -9,6 +9,6 @@ public class AdventCalendarOpenDayEvent extends MessageHandler {
         String campaign = this.packet.readString();
         int day = this.packet.readInt();
 
-        Emulator.getGameEnvironment().getCatalogManager().claimCalendarReward(this.client.getHabbo(), day);
+        Emulator.getGameEnvironment().getCatalogManager().claimCalendarReward(this.client.getHabbo(), day, false);
     }
 }

@@ -52,6 +52,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
         try {
             this.id = set.getInt("id");
             this.username = set.getString("username");
+            this.look = set.getString("look");
             this.relation = 0;
             this.userOne = 0;
         } catch (SQLException e) {

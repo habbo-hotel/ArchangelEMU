@@ -120,7 +120,7 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
 
         this.points = packet.readInt();
         this.count = packet.readInt();
-        this.teamColor = GameTeamColors.values()[packet.readInt() - 1];
+        this.teamColor = GameTeamColors.values()[packet.readInt()];
         packet.readString();
         packet.readInt();
         this.setDelay(packet.readInt());

@@ -29,12 +29,20 @@ public class Rank {
 
 
     private boolean hasPrefix;
+    private int diamondsTimerAmount;
+    private int creditsTimerAmount;
+    private int pixelsTimerAmount;
+    private int gotwTimerAmount;
 
     public Rank(ResultSet set) throws SQLException {
         this.permissions = new THashMap<>();
         this.variables = new THashMap<>();
         this.id = set.getInt("id");
         this.level = set.getInt("level");
+        this.diamondsTimerAmount = 1;
+        this.creditsTimerAmount = 1;
+        this.pixelsTimerAmount = 1;
+        this.gotwTimerAmount = 1;
 
         this.load(set);
     }
@@ -47,6 +55,10 @@ public class Rank {
         this.logCommands = set.getString("log_commands").equals("1");
         this.prefix = set.getString("prefix");
         this.prefixColor = set.getString("prefix_color");
+        this.diamondsTimerAmount = set.getInt("auto_points_amount");
+        this.creditsTimerAmount = set.getInt("auto_credits_amount");
+        this.pixelsTimerAmount = set.getInt("auto_pixels_amount");
+        this.gotwTimerAmount = set.getInt("auto_gotw_amount");
         this.hasPrefix = !this.prefix.isEmpty();
         for (int i = 1; i < meta.getColumnCount() + 1; i++) {
             String columnName = meta.getColumnName(i);
@@ -115,4 +127,13 @@ public class Rank {
     public boolean hasPrefix() {
         return this.hasPrefix;
     }
+
+    public int getDiamondsTimerAmount() { return this.diamondsTimerAmount; }
+
+    public int getCreditsTimerAmount() { return this.creditsTimerAmount; }
+
+    public int getPixelsTimerAmount() { return this.pixelsTimerAmount; }
+
+    public int getGotwTimerAmount() { return this.gotwTimerAmount; }
 }
+

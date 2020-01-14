@@ -105,6 +105,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public static boolean HABBO_CHAT_DELAY = false;
     public static int MAXIMUM_BOTS = 10;
     public static int MAXIMUM_PETS = 10;
+    public static int MAXIMUM_FURNI = 2500;
     public static int HAND_ITEM_TIME = 10;
     public static int IDLE_CYCLES = 240;
     public static int IDLE_CYCLES_KICK = 480;
@@ -135,7 +136,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private final TIntObjectMap<RoomMoodlightData> moodlightData;
     private final THashSet<String> wordFilterWords;
     private final TIntObjectMap<HabboItem> roomItems;
-    private final THashMap<WiredHighscoreScoreType, THashMap<WiredHighscoreClearType, THashSet<WiredHighscoreData>>> wiredHighscoreData;
     private final Object loadLock = new Object();
     //Use appropriately. Could potentially cause memory leaks when used incorrectly.
     public volatile boolean preventUnloading = false;
@@ -289,7 +289,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         this.activeTrades = new THashSet<>(0);
         this.rights = new TIntArrayList();
-        this.wiredHighscoreData = new THashMap<>();
         this.userVotes = new ArrayList<>();
     }
 
@@ -417,6 +416,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
+        }
+
+        if (this.itemCount() > Room.MAXIMUM_FURNI) {
+            Emulator.getLogging().logErrorLine("Room ID: " + this.getId() + " has exceeded the furniture limit (" + this.itemCount() + " > " + Room.MAXIMUM_FURNI + ").");
         }
     }
 
@@ -855,7 +858,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     }
 
                     for (Game game : this.games) {
-                        game.stop();
+                        game.dispose();
                     }
                     this.games.clear();
 
@@ -1480,12 +1483,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                             if (newRoller == null || topItem == newRoller) {
                                 List<HabboItem> sortedItems = new ArrayList<>(itemsOnRoller);
-                                sortedItems.sort(new Comparator<HabboItem>() {
-                                    @Override
-                                    public int compare(HabboItem o1, HabboItem o2) {
-                                        return o1.getZ() > o2.getZ() ? -1 : 1;
-                                    }
-                                });
+                                sortedItems.sort((o1, o2) -> o1.getZ() > o2.getZ() ? -1 : 1);
 
                                 for (HabboItem item : sortedItems) {
                                     if (item.getX() == roller.getX() && item.getY() == roller.getY() && zOffset <= 0) {
@@ -2132,15 +2130,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public boolean deleteGame(Game game) {
         game.stop();
+        game.dispose();
         synchronized (this.games) {
             return this.games.remove(game);
         }
     }
 
     public Game getGame(Class<? extends Game> gameType) {
+        if (gameType == null) return null;
+
         synchronized (this.games) {
             for (Game game : this.games) {
-                if (gameType.isInstance(game)) {
+                if (game != null && gameType.isInstance(game)) {
                     return game;
                 }
             }
@@ -2989,8 +2990,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return;
         }
 
-        habbo.getHabboStats().chatCounter += 2;
-
         if (habbo.getHabboInfo().getCurrentRoom() != this)
             return;
 
@@ -3002,6 +3001,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
         habbo.getHabboStats().lastChat = millis;
         if (roomChatMessage != null && roomChatMessage.getMessage().equalsIgnoreCase("i am a pirate")) {
+            habbo.getHabboStats().chatCounter += 2;
             Emulator.getThreading().run(new YouAreAPirate(habbo, this));
             return;
         }
@@ -3060,12 +3060,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
 
+        habbo.getHabboStats().chatCounter += 2;
+
         ServerMessage prefixMessage = roomChatMessage.getHabbo().getHabboInfo().getRank().hasPrefix() ? new RoomUserNameChangedComposer(habbo, true).compose() : null;
         ServerMessage clearPrefixMessage = prefixMessage != null ? new RoomUserNameChangedComposer(habbo).compose() : null;
 
         Rectangle show = this.roomSpecialTypes.tentAt(habbo.getRoomUnit().getCurrentLocation());
 
-        roomChatMessage.setMessage(roomChatMessage.getMessage().trim());
+        String trimmedMessage = roomChatMessage.getMessage().replaceAll("\\s+$","");
+
+        if (trimmedMessage.isEmpty()) trimmedMessage = " ";
+
+        roomChatMessage.setMessage(trimmedMessage);
 
         if (chatType == RoomChatType.WHISPER) {
             if (roomChatMessage.getTargetHabbo() == null) {
@@ -3243,16 +3249,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public THashSet<HabboItem> getItemsAt(RoomTile tile) {
+        THashSet<HabboItem> items = new THashSet<>(0);
+
+        if (tile == null)
+            return items;
+
         if (this.loaded) {
             if (this.tileCache.containsKey(tile)) {
                 return this.tileCache.get(tile);
             }
         }
-
-        THashSet<HabboItem> items = new THashSet<>(0);
-
-        if (tile == null)
-            return items;
 
         TIntObjectIterator<HabboItem> iterator = this.roomItems.iterator();
 
@@ -3407,11 +3413,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     continue;
                 }
 
+                if (this.layout == null) continue;
+
                 THashSet<RoomTile> tiles = this.layout.getTilesAt(
                         this.layout.getTile(habboItem.getX(), habboItem.getY()),
                         habboItem.getBaseItem().getWidth(),
                         habboItem.getBaseItem().getLength(),
-                        habboItem.getRotation());
+                        habboItem.getRotation()
+                );
 
                 for (RoomTile tile : tiles) {
                     if (((tile.x == x) && (tile.y == y))) {
@@ -3637,7 +3646,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public RoomTile getRandomWalkableTile() {
         for (int i = 0; i < 10; i++) {
             RoomTile tile = this.layout.getTile((short) (Math.random() * this.layout.getMapSizeX()), (short) (Math.random() * this.layout.getMapSizeY()));
-            if (tile != null && tile.isWalkable()) {
+            if (tile != null && tile.getState() != RoomTileState.BLOCKED && tile.getState() != RoomTileState.INVALID) {
                 return tile;
             }
         }
@@ -3676,6 +3685,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public void sendComposer(ServerMessage message) {
         for (Habbo habbo : this.getHabbos()) {
+            if (habbo.getClient() == null) {
+                this.removeHabbo(habbo, true);
+                continue;
+            }
+
             habbo.getClient().sendResponse(message);
         }
     }
@@ -4152,6 +4166,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void unIdle(Habbo habbo) {
+        if (habbo == null || habbo.getRoomUnit() == null) return;
         habbo.getRoomUnit().resetIdleTimer();
         this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
         WiredHandler.handle(WiredTriggerType.UNIDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
@@ -4204,70 +4219,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 Emulator.getLogging().logSQLException(e);
             }
         }
-    }
-
-    public THashSet<WiredHighscoreData> getWiredHighscoreData(WiredHighscoreScoreType scoreType, WiredHighscoreClearType clearType) {
-        if (!this.wiredHighscoreData.containsKey(scoreType)) {
-            this.loadWiredHighscoreData(scoreType, clearType);
-        }
-
-        return this.wiredHighscoreData.get(scoreType).get(clearType);
-    }
-
-    public void loadWiredHighscoreData(WiredHighscoreScoreType scoreType, WiredHighscoreClearType clearType) {
-        this.wiredHighscoreData.clear();
-        THashSet<WiredHighscoreData> wiredData = new THashSet<>();
-
-        try {
-            String query = "SELECT " +
-                    "SUM(score + team_score) as total_score, " +
-                    "COUNT(*) as wins, " +
-                    "users.username, " +
-                    "room_game_scores.*, " +
-                    "GROUP_CONCAT(users.username) as usernames " +
-                    "FROM room_game_scores " +
-                    "INNER JOIN users ON room_game_scores.user_id = users.id " +
-                    "WHERE room_id = ? AND game_start_timestamp >= ? ";
-
-            int timestamp = 0;
-            if (clearType != WiredHighscoreClearType.ALLTIME) {
-                if (clearType == WiredHighscoreClearType.MONTHLY) {
-                    timestamp = Emulator.getIntUnixTimestamp() - (31 * 24 * 60 * 60);
-                } else if (clearType == WiredHighscoreClearType.WEEKLY) {
-                    timestamp = Emulator.getIntUnixTimestamp() - (7 * 24 * 60 * 60);
-                } else if (clearType == WiredHighscoreClearType.DAILY) {
-                    timestamp = Emulator.getIntUnixTimestamp() - (24 * 60 * 60);
-                }
-            }
-
-
-            if (scoreType == WiredHighscoreScoreType.CLASSIC) {
-                query += "GROUP BY game_start_timestamp, user_id, team_id ORDER BY total_score DESC";
-            } else if (scoreType == WiredHighscoreScoreType.MOSTWIN) {
-                query += "GROUP BY game_start_timestamp, game_name, team_id ORDER BY wins DESC, total_score ASC";
-            } else if (scoreType == WiredHighscoreScoreType.PERTEAM) {
-                query += "GROUP BY game_start_timestamp, team_id ORDER BY team_score DESC";
-            }
-
-            query += " LIMIT " + Emulator.getConfig().getValue("wired.highscores.displaycount");
-
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, this.id);
-                statement.setInt(2, timestamp);
-
-                try (ResultSet set = statement.executeQuery()) {
-                    while (set.next()) {
-                        wiredData.add(new WiredHighscoreData(set.getString("usernames").split(","), set.getInt("score"), set.getInt("team_score"), set.getInt("total_score")));
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
-        }
-
-        THashMap<WiredHighscoreClearType, THashSet<WiredHighscoreData>> dataMap = new THashMap<>();
-        dataMap.put(clearType, wiredData);
-        this.wiredHighscoreData.put(scoreType, dataMap);
     }
 
     public void handleWordQuiz(Habbo habbo, String answer) {
@@ -4352,6 +4303,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public FurnitureMovementError canPlaceFurnitureAt(HabboItem item, Habbo habbo, RoomTile tile, int rotation) {
+        if (this.itemCount() >= Room.MAXIMUM_FURNI) {
+            return FurnitureMovementError.MAX_ITEMS;
+        }
+
         rotation %= 8;
         if (this.hasRights(habbo) || this.guildRightLevel(habbo) >= 2 || habbo.hasPermission(Permission.ACC_MOVEROTATE)) {
             return FurnitureMovementError.NONE;
@@ -4487,7 +4442,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
         if (topItem != item) {
             for (RoomTile t : occupiedTiles) {
-                if (!magicTile && ((this.getTopItemAt(t.x, t.y) != item ? t.state.equals(RoomTileState.INVALID) || !t.getAllowStack() : this.calculateTileState(t, item).equals(RoomTileState.INVALID))))
+                HabboItem tileTopItem = this.getTopItemAt(t.x, t.y);
+                if (!magicTile && ((tileTopItem != null && tileTopItem != item ? (t.state.equals(RoomTileState.INVALID) || !t.getAllowStack() || !tileTopItem.getBaseItem().allowStack()) : this.calculateTileState(t, item).equals(RoomTileState.INVALID))))
                     return FurnitureMovementError.CANT_STACK;
                 if (this.hasHabbosAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_HABBOS;
                 if (this.hasBotsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_BOTS;
@@ -4521,9 +4477,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
         //Place at new position
+        double height = this.getStackHeight(tile.x, tile.y, false, item);
+        if(height > 40d) return FurnitureMovementError.CANT_STACK;
         item.setX(tile.x);
         item.setY(tile.y);
-        item.setZ(this.getStackHeight(tile.x, tile.y, false, item));
+        item.setZ(height);
         if (magicTile) {
             item.setZ(tile.z);
             item.setExtradata("" + item.getZ() * 100);

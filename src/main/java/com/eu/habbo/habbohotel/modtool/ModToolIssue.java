@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.modtool;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.UpdateModToolIssue;
@@ -28,6 +29,7 @@ public class ModToolIssue implements ISerialize {
     public int groupId = -1;
     public int threadId = -1;
     public int commentId = -1;
+    public HabboItem photoItem = null;
 
     public ModToolIssue(ResultSet set) throws SQLException {
         this.id = set.getInt("id");

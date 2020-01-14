@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboManager;
+import com.eu.habbo.messages.NoAuthMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.achievements.AchievementListComposer;
@@ -31,6 +32,7 @@ import com.eu.habbo.plugin.events.users.UserLoginEvent;
 
 import java.util.ArrayList;
 
+@NoAuthMessage
 public class SecureLoginEvent extends MessageHandler {
 
 

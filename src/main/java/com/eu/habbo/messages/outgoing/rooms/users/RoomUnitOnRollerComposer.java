@@ -55,7 +55,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         this.response.appendString(this.oldZ + "");
         this.response.appendString(this.newZ + "");
 
-        if (this.roller != null) {
+        if (this.roller != null && room.getLayout() != null) {
             RoomTile rollerTile = room.getLayout().getTile(this.roller.getX(), this.roller.getY());
 
             Emulator.getThreading().run(() -> {
