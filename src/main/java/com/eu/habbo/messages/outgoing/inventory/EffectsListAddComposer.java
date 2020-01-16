@@ -8,7 +8,8 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class EffectsListAddComposer extends MessageComposer {
     public final EffectsComponent.HabboEffect effect;
 
-    public EffectsListAddComposer(EffectsComponent.HabboEffect effect) {
+    public
+    EffectsListAddComposer(EffectsComponent.HabboEffect effect) {
         this.effect = effect;
     }
 
@@ -17,8 +18,8 @@ public class EffectsListAddComposer extends MessageComposer {
         this.response.init(Outgoing.EffectsListAddComposer);
         this.response.appendInt(this.effect.effect); //Type
         this.response.appendInt(0); //Unknown Costume?
-        this.response.appendInt(this.effect.duration); //Duration
-        this.response.appendBoolean(this.effect.isActivated()); //Is active
+        this.response.appendInt(effect.duration > 0 ? effect.duration : Integer.MAX_VALUE); //Duration
+        this.response.appendBoolean(effect.duration <= 0); //Is active
         return this.response;
     }
 }

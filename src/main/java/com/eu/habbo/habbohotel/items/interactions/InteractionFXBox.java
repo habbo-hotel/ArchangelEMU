@@ -27,8 +27,6 @@ public class InteractionFXBox extends InteractionDefault {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        super.onClick(client, room, objects);
-
         if (client != null && this.getUserId() == client.getHabbo().getHabboInfo().getId()) {
             if(this.getExtradata().equals("1"))
                 return;
@@ -54,7 +52,6 @@ public class InteractionFXBox extends InteractionDefault {
                 return;
 
             EffectsComponent.HabboEffect effect = client.getHabbo().getInventory().getEffectsComponent().createEffect(effectId, 0);
-            client.sendResponse(new UserEffectsListComposer(client.getHabbo()));
             client.getHabbo().getInventory().getEffectsComponent().enableEffect(effectId);
 
             this.setExtradata("1");

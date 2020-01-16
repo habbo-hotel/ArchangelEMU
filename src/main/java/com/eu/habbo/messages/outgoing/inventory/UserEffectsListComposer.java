@@ -10,38 +10,41 @@ import gnu.trove.procedure.TObjectProcedure;
 
 public class UserEffectsListComposer extends MessageComposer {
     public final Habbo habbo;
+    public final EffectsComponent.HabboEffect[] effects;
 
-    public UserEffectsListComposer(Habbo habbo) {
+    public UserEffectsListComposer(Habbo habbo, EffectsComponent.HabboEffect[] effects) {
         this.habbo = habbo;
+        this.effects = effects;
     }
 
     @Override
     public ServerMessage compose() {
         this.response.init(Outgoing.UserEffectsListComposer);
 
+
         if (this.habbo == null || this.habbo.getInventory() == null || this.habbo.getInventory().getEffectsComponent() == null || this.habbo.getInventory().getEffectsComponent().effects == null) {
             this.response.appendInt(0);
         } else {
             synchronized (this.habbo.getInventory().getEffectsComponent().effects) {
-                this.response.appendInt(this.habbo.getInventory().getEffectsComponent().effects.size());
-                this.habbo.getInventory().getEffectsComponent().effects.forEachValue(effect -> {
+                this.response.appendInt(this.effects.length);
+
+                for(EffectsComponent.HabboEffect effect : effects) {
+
                     UserEffectsListComposer.this.response.appendInt(effect.effect);
                     UserEffectsListComposer.this.response.appendInt(0);
-                    UserEffectsListComposer.this.response.appendInt(effect.duration > 0 ? effect.duration : 1);
-                    UserEffectsListComposer.this.response.appendInt(effect.total - (effect.isActivated() ? 1 : 0));
+                    UserEffectsListComposer.this.response.appendInt(effect.duration > 0 ? effect.duration : Integer.MAX_VALUE);
+                    UserEffectsListComposer.this.response.appendInt((effect.duration > 0 ? (effect.total - (effect.isActivated() ? 1 : 0)) : 0));
 
-                    if(!effect.isActivated()) {
+                    if(!effect.isActivated() && effect.duration > 0) {
                         UserEffectsListComposer.this.response.appendInt(0);
                     }
                     else {
-                        UserEffectsListComposer.this.response.appendInt(effect.duration > 0 ? (Emulator.getIntUnixTimestamp() - effect.activationTimestamp) + effect.duration : -1);
+                        UserEffectsListComposer.this.response.appendInt(effect.duration > 0 ? (Emulator.getIntUnixTimestamp() - effect.activationTimestamp) + effect.duration : 0);
                     }
-                    UserEffectsListComposer.this.response.appendBoolean(effect.duration <= 0); //effect.isActivated());
-                    return true;
-                });
+                    UserEffectsListComposer.this.response.appendBoolean(effect.duration <= 0); // is perm
+                }
             }
         }
-
         return this.response;
     }
 }
