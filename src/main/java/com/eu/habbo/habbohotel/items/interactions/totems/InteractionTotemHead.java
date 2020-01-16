@@ -22,7 +22,12 @@ public class InteractionTotemHead extends InteractionDefault {
     }
 
     public TotemType getTotemType() {
-        int extraData = Integer.parseInt(this.getExtradata());
+        int extraData;
+        try {
+            extraData = Integer.parseInt(this.getExtradata());
+        } catch(NumberFormatException ex) {
+            extraData = 0;
+        }
         if(extraData < 3) {
             return TotemType.fromInt(extraData + 1);
         }
