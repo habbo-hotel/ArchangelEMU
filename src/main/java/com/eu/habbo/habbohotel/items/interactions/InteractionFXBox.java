@@ -52,7 +52,6 @@ public class InteractionFXBox extends InteractionDefault {
                 return;
 
             EffectsComponent.HabboEffect effect = client.getHabbo().getInventory().getEffectsComponent().createEffect(effectId, 0);
-            client.sendResponse(new UserEffectsListComposer(client.getHabbo()));
             client.getHabbo().getInventory().getEffectsComponent().enableEffect(effectId);
 
             this.setExtradata("1");

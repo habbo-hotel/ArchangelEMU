@@ -74,8 +74,7 @@ public class InteractionTotemPlanet extends InteractionDefault {
                 return;
             }
 
-            client.getHabbo().getInventory().getEffectsComponent().createEffect(effectId);
-            client.sendResponse(new UserEffectsListComposer(client.getHabbo()));
+            EffectsComponent.HabboEffect effect = client.getHabbo().getInventory().getEffectsComponent().createEffect(effectId);
             client.getHabbo().getInventory().getEffectsComponent().enableEffect(effectId);
             return;
         }
