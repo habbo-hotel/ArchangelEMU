@@ -21,7 +21,12 @@ public class InteractionTotemLegs extends InteractionDefault {
     }
 
     public TotemType getTotemType() {
-        int extraData = Integer.parseInt(this.getExtradata());
+        int extraData;
+        try {
+            extraData = Integer.parseInt(this.getExtradata());
+        } catch(NumberFormatException ex) {
+            extraData = 0;
+        }
         return TotemType.fromInt((int)Math.ceil((extraData + 1) / 4.0f));
     }
 
