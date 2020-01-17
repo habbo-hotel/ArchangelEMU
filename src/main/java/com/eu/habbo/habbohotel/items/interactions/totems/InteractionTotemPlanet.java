@@ -22,7 +22,12 @@ public class InteractionTotemPlanet extends InteractionDefault {
     }
 
     public TotemPlanetType getPlanetType() {
-        int extraData = Integer.parseInt(this.getExtradata());
+        int extraData;
+        try {
+            extraData = Integer.parseInt(this.getExtradata());
+        } catch(NumberFormatException ex) {
+            extraData = 0;
+        }
         return TotemPlanetType.fromInt(extraData);
     }
 

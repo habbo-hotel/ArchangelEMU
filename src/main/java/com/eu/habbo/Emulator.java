@@ -34,7 +34,7 @@ public final class Emulator {
     public final static int MINOR = 2;
 
 
-    public final static int BUILD = 1;
+    public final static int BUILD = 2;
 
 
     public final static String PREVIEW = "Stable";
