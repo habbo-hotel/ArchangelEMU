@@ -29,7 +29,7 @@ public class UpdateStackHeightComposer extends MessageComposer {
         this.response.init(Outgoing.UpdateStackHeightComposer);
         if (this.updateTiles != null) {
             if(this.updateTiles.size() > 4) {
-                RoomTile[] tiles = (RoomTile[])this.updateTiles.toArray();
+                RoomTile[] tiles = this.updateTiles.toArray(new RoomTile[updateTiles.size()]);
                 this.response.appendByte(4);
                 for(int i = 0; i < 4; i++) {
                     RoomTile t = tiles[i];
