@@ -216,6 +216,9 @@ public class Incoming {
     public static final int PostItRequestDataEvent = 3964;
     public static final int PostItSaveDataEvent = 3666;
     public static final int PostItDeleteEvent = 3336;
+
+    public static final int MySanctionStatusEvent = 2746;
+
     public static final int MoodLightSaveSettingsEvent = 1648;
     public static final int ModToolRequestIssueChatlogEvent = 211;
     public static final int ModToolRequestRoomUserChatlogEvent = -1;

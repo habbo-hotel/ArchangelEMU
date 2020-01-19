@@ -2,6 +2,8 @@ package com.eu.habbo.messages.incoming.handshake;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Messenger;
+import com.eu.habbo.habbohotel.modtool.ModToolSanctionItem;
+import com.eu.habbo.habbohotel.modtool.ModToolSanctions;
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -25,13 +27,17 @@ import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.inventory.UserEffectsListComposer;
 import com.eu.habbo.messages.outgoing.modtool.CfhTopicsMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolComposer;
+import com.eu.habbo.messages.outgoing.modtool.ModToolSanctionInfoComposer;
 import com.eu.habbo.messages.outgoing.navigator.*;
 import com.eu.habbo.messages.outgoing.unknown.BuildersClubExpiredComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
+import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 @NoAuthMessage
 public class SecureLoginEvent extends MessageHandler {
@@ -134,6 +140,37 @@ public class SecureLoginEvent extends MessageHandler {
                 //this.client.sendResponse(new ForumsTestComposer());
                 this.client.sendResponse(new InventoryAchievementsComposer());
                 this.client.sendResponse(new AchievementListComposer(this.client.getHabbo()));
+
+                ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
+                THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
+                ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
+
+
+                if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) {
+                    ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
+
+                    if (item.sanctionLevel > 0 && item.probationTimestamp > Emulator.getIntUnixTimestamp()) {
+                        this.client.sendResponse(new ModToolSanctionInfoComposer(this.client.getHabbo()));
+                    } else if (item.sanctionLevel > 0 && item.probationTimestamp <= Emulator.getIntUnixTimestamp()) {
+                        modToolSanctions.updateSanction(item.id, 0, 0);
+                    }
+
+                    if (item.tradeLockedUntil > 0 && item.tradeLockedUntil <= Emulator.getIntUnixTimestamp()) {
+                        modToolSanctions.updateTradeLockedUntil(item.id, 0);
+                        habbo.getHabboStats().setAllowTrade(true);
+                    } else if (item.tradeLockedUntil > 0 && item.tradeLockedUntil > Emulator.getIntUnixTimestamp()) {
+                        habbo.getHabboStats().setAllowTrade(false);
+                    }
+
+                    if (item.isMuted && item.muteDuration <= Emulator.getIntUnixTimestamp()) {
+                        modToolSanctions.updateMuteDuration(item.id, 0);
+                        habbo.unMute();
+                    } else if (item.isMuted && item.muteDuration > Emulator.getIntUnixTimestamp()) {
+                        Date muteDuration = new Date((long) item.muteDuration * 1000);
+                        long diff = muteDuration.getTime() - Emulator.getDate().getTime();
+                        habbo.mute(Math.toIntExact(diff));
+                    }
+                }
 
                 Emulator.getPluginManager().fireEvent(new UserLoginEvent(habbo, this.client.getChannel().localAddress()));
 
