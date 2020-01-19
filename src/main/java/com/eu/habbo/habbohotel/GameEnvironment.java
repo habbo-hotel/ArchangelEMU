@@ -15,6 +15,7 @@ import com.eu.habbo.habbohotel.guilds.GuildManager;
 import com.eu.habbo.habbohotel.hotelview.HotelViewManager;
 import com.eu.habbo.habbohotel.items.ItemManager;
 import com.eu.habbo.habbohotel.modtool.ModToolManager;
+import com.eu.habbo.habbohotel.modtool.ModToolSanctions;
 import com.eu.habbo.habbohotel.modtool.WordFilter;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
 import com.eu.habbo.habbohotel.permissions.PermissionsManager;
@@ -39,6 +40,7 @@ public class GameEnvironment {
     private PermissionsManager permissionsManager;
     private BotManager botManager;
     private ModToolManager modToolManager;
+    private ModToolSanctions modToolSanctions;
     private PetManager petManager;
     private AchievementManager achievementManager;
     private GuideManager guideManager;
@@ -62,6 +64,7 @@ public class GameEnvironment {
         this.navigatorManager = new NavigatorManager();
         this.commandHandler = new CommandHandler();
         this.modToolManager = new ModToolManager();
+        this.modToolSanctions = new ModToolSanctions();
         this.achievementManager = new AchievementManager();
         this.achievementManager.reload();
         this.guideManager = new GuideManager();
@@ -143,6 +146,10 @@ public class GameEnvironment {
 
     public ModToolManager getModToolManager() {
         return this.modToolManager;
+    }
+
+    public ModToolSanctions getModToolSanctions() {
+        return this.modToolSanctions;
     }
 
     public PetManager getPetManager() {

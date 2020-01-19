@@ -31,6 +31,7 @@ import com.eu.habbo.messages.incoming.guides.*;
 import com.eu.habbo.messages.incoming.guilds.*;
 import com.eu.habbo.messages.incoming.guilds.forums.*;
 import com.eu.habbo.messages.incoming.handshake.*;
+import com.eu.habbo.messages.incoming.helper.MySanctionStatusEvent;
 import com.eu.habbo.messages.incoming.helper.RequestTalentTrackEvent;
 import com.eu.habbo.messages.incoming.hotelview.*;
 import com.eu.habbo.messages.incoming.inventory.RequestInventoryBadgesEvent;
@@ -561,6 +562,7 @@ public class PacketManager {
         this.registerHandler(Incoming.RequestResolutionEvent, RequestResolutionEvent.class);
         this.registerHandler(Incoming.RequestTalenTrackEvent, RequestTalentTrackEvent.class);
         this.registerHandler(Incoming.UnknownEvent1, UnknownEvent1.class);
+        this.registerHandler(Incoming.MySanctionStatusEvent, MySanctionStatusEvent.class);
     }
 
     void registerFloorPlanEditor() throws Exception {
