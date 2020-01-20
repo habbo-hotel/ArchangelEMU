@@ -31,7 +31,12 @@ public class InteractionTotemLegs extends InteractionDefault {
     }
 
     public TotemColor getTotemColor() {
-        int extraData = Integer.parseInt(this.getExtradata());
+        int extraData;
+        try {
+            extraData = Integer.parseInt(this.getExtradata());
+        } catch(NumberFormatException ex) {
+            extraData = 0;
+        }
         return TotemColor.fromInt(extraData - (4 * (getTotemType().type - 1)));
     }
 

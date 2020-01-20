@@ -35,7 +35,12 @@ public class InteractionTotemHead extends InteractionDefault {
     }
 
     public TotemColor getTotemColor() {
-        int extraData = Integer.parseInt(this.getExtradata());
+        int extraData;
+        try {
+            extraData = Integer.parseInt(this.getExtradata());
+        }catch(NumberFormatException ex) {
+            extraData = 0;
+        }
         if(extraData < 3) {
             return TotemColor.NONE;
         }
