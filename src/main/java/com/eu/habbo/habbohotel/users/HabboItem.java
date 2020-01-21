@@ -60,7 +60,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
         this.y = set.getShort("y");
         this.z = set.getDouble("z");
         this.rotation = set.getInt("rot");
-        this.extradata = set.getString("extra_data");
+        this.extradata = set.getString("extra_data").isEmpty() ? "0" : set.getString("extra_data");
 
         String ltdData = set.getString("limited_data");
         if (!ltdData.isEmpty()) {
@@ -79,7 +79,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
         this.y = 0;
         this.z = 0;
         this.rotation = 0;
-        this.extradata = extradata;
+        this.extradata = extradata.isEmpty() ? "0" : extradata;
         this.limitedSells = limitedSells;
         this.limitedStack = limitedStack;
     }
