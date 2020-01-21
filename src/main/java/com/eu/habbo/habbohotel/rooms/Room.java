@@ -547,7 +547,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             tile.setState(this.calculateTileState(tile));
         }
 
-        this.sendComposer(new UpdateStackHeightComposer(tiles).compose());
+        this.sendComposer(new UpdateStackHeightComposer(this, tiles).compose());
     }
 
     private RoomTileState calculateTileState(RoomTile tile) {
@@ -655,7 +655,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     }
                 }
             }
-            this.sendComposer(new UpdateStackHeightComposer(updatedTiles).compose());
+            this.sendComposer(new UpdateStackHeightComposer(this, updatedTiles).compose());
             this.updateTiles(updatedTiles);
             for (RoomTile tile : updatedTiles) {
                 this.updateHabbosAt(tile.x, tile.y);
