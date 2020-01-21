@@ -31,8 +31,6 @@ public class ModToolSanctionInfoComposer extends MessageComposer {
 
         Date probationEndTime;
         Date probationStartTime = null;
-        long numberOfDaysProbation = 0;
-        long numberOfHoursProbation = 0;
 
         if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) {
             ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
@@ -44,9 +42,6 @@ public class ModToolSanctionInfoComposer extends MessageComposer {
 
             if (item.probationTimestamp > 0) {
                 probationEndTime = new Date((long) item.probationTimestamp * 1000);
-                long diff = probationEndTime.getTime() - Emulator.getDate().getTime();
-                numberOfDaysProbation = diff / 1000 / 60 / 60 / 24;
-                numberOfHoursProbation = diff / 1000 / 60 / 60;
 
                 probationStartTime = new DateTime(probationEndTime).minusDays(modToolSanctions.getProbationDays(modToolSanctionLevelItem)).toDate();
 
@@ -63,14 +58,14 @@ public class ModToolSanctionInfoComposer extends MessageComposer {
             this.response.appendBoolean(prevItem); // has prev sanction
             this.response.appendBoolean(item.probationTimestamp >= Emulator.getIntUnixTimestamp()); // is on probation
             this.response.appendString(modToolSanctions.getSanctionType(modToolSanctionLevelItem)); // current sanction type
-            this.response.appendInt(Math.toIntExact(numberOfDaysProbation)); // probation days left
-            this.response.appendInt(30); // unused?
+            this.response.appendInt(modToolSanctions.getTimeOfSanction(modToolSanctionLevelItem)); // time of current sanction
+            this.response.appendInt(30); // TODO: unused?
             this.response.appendString(item.reason.equals("") ? "cfh.reason.EMPTY" : item.reason); // reason
             this.response.appendString(probationStartTime == null ? Emulator.getDate().toString() : probationStartTime.toString()); // probation start time
-            this.response.appendInt(Math.toIntExact(numberOfHoursProbation)); // days of probation in hours?
+            this.response.appendInt(0); // TODO: unused?
             this.response.appendString(modToolSanctions.getSanctionType(nextModToolSanctionLevelItem)); // next sanction type
             this.response.appendInt(modToolSanctions.getTimeOfSanction(nextModToolSanctionLevelItem)); // time to be applied in next sanction (in hours)
-            this.response.appendInt(30); // unused?
+            this.response.appendInt(30); // TODO: unused?
             this.response.appendBoolean(item.isMuted); // muted
             this.response.appendString(tradeLockedUntil == null ? "" : tradeLockedUntil.toString()); // trade locked until
 
@@ -80,14 +75,14 @@ public class ModToolSanctionInfoComposer extends MessageComposer {
             this.response.appendBoolean(false); // has prev sanction
             this.response.appendBoolean(false); // is on probation
             this.response.appendString("ALERT"); // last sanction type
-            this.response.appendInt(0); // probation days left
-            this.response.appendInt(30); // unused?
+            this.response.appendInt(0); // time of current sanction
+            this.response.appendInt(30); // TODO: unused?
             this.response.appendString("cfh.reason.EMPTY"); // reason
             this.response.appendString(Emulator.getDate().toString()); // probation start time
-            this.response.appendInt(0); // days of probation in hours?
+            this.response.appendInt(0); // TODO: unused?
             this.response.appendString("ALERT"); // next sanction type
             this.response.appendInt(0); // time to be applied in next sanction (in hours)
-            this.response.appendInt(30); // unused?
+            this.response.appendInt(30); // TODO: unused?
             this.response.appendBoolean(false); // muted
             this.response.appendString(""); // trade locked until
 
