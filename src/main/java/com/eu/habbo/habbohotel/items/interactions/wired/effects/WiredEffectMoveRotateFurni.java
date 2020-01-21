@@ -69,7 +69,6 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                         rotationToAdd = 6;
                     }
                 }
-
             }
 
             int newRotation = ((item.getRotation() + rotationToAdd) % 8) % (item.getBaseItem().getWidth() > 1 || item.getBaseItem().getLength() > 1 ? 4 : 8);
@@ -162,7 +161,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                                 for (short y = (short) rectangle.y; y < rectangle.y + rectangle.getHeight(); y++) {
                                     RoomTile tile = layout.getTile(x, y);
 
-                                    if (tile == null || tile.state == RoomTileState.INVALID || !tile.getAllowStack()) {
+                                    if (tile == null || tile.state == RoomTileState.INVALID || tile.state == RoomTileState.BLOCKED || !tile.getAllowStack()) {
                                         validMove = false;
                                         break;
                                     }
@@ -181,9 +180,13 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                                     }
 
                                     HabboItem i = room.getTopItemAt(x, y, item);
-                                    if (i == null || i == item || i.getBaseItem().allowStack()) {
-                                        offset = Math.max(room.getStackHeight(newTile.x, newTile.y, false, item) - item.getZ(), offset);
+                                    if (i != null && !i.getBaseItem().allowStack()) {
+                                        validMove = false;
+                                        break;
                                     }
+
+                                    offset = Math.max(room.getStackHeight(newTile.x, newTile.y, false, item) - item.getZ(), offset);
+
                                     tilesToUpdate.add(tile);
                                 }
                             }
