@@ -419,7 +419,8 @@ public class WiredHandler {
             return;
 
         THashSet<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(WiredTriggerType.AT_GIVEN_TIME);
-
+        triggers.addAll(room.getRoomSpecialTypes().getTriggers(WiredTriggerType.PERIODICALLY));
+        triggers.addAll(room.getRoomSpecialTypes().getTriggers(WiredTriggerType.PERIODICALLY_LONG));
         if (triggers != null) {
             for (InteractionWiredTrigger trigger : triggers) {
                 ((WiredTriggerReset) trigger).resetTimer();
