@@ -150,10 +150,10 @@ public class SecureLoginEvent extends MessageHandler {
                     if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) {
                         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
 
-                        if (item.sanctionLevel > 0 && item.probationTimestamp > Emulator.getIntUnixTimestamp()) {
+                        if (item.sanctionLevel > 0 && item.probationTimestamp != 0 && item.probationTimestamp > Emulator.getIntUnixTimestamp()) {
                             this.client.sendResponse(new ModToolSanctionInfoComposer(this.client.getHabbo()));
-                        } else if (item.sanctionLevel > 0 && item.probationTimestamp <= Emulator.getIntUnixTimestamp()) {
-                            modToolSanctions.updateSanction(item.id, 0, 0);
+                        } else if (item.sanctionLevel > 0 && item.probationTimestamp != 0 && item.probationTimestamp <= Emulator.getIntUnixTimestamp()) {
+                            modToolSanctions.updateSanction(item.id, 0);
                         }
 
                         if (item.tradeLockedUntil > 0 && item.tradeLockedUntil <= Emulator.getIntUnixTimestamp()) {

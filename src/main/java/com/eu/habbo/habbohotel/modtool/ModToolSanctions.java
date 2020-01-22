@@ -51,7 +51,7 @@ public class ModToolSanctions {
 
     public THashMap<Integer, ArrayList<ModToolSanctionItem>> getSanctions(int habboId) {
         synchronized (this.sanctionHashmap) {
-            //this.sanctionHashmap.clear(); // TODO: unsure if needed at some point.
+            this.sanctionHashmap.clear();
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM sanctions WHERE habbo_id = ? ORDER BY id ASC")) {
                 statement.setInt(1, habboId);
                 try (ResultSet set = statement.executeQuery()) {
@@ -91,11 +91,10 @@ public class ModToolSanctions {
         }
     }
 
-    public void updateSanction(int rowId, int sanctionLevel, int probationTimestamp) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE sanctions SET sanction_level = ? AND probation_timestamp = ? WHERE id = ?")) {
-            statement.setInt(1, sanctionLevel);
-            statement.setInt(2, probationTimestamp);
-            statement.setInt(3, rowId);
+    public void updateSanction(int rowId, int probationTimestamp) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE sanctions SET probation_timestamp = ? WHERE id = ?")) {
+            statement.setInt(1, probationTimestamp);
+            statement.setInt(2, rowId);
 
             statement.execute();
         } catch (SQLException e) {
