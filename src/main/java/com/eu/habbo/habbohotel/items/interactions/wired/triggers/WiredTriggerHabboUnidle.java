@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredTriggerHabboUnidle extends InteractionWiredTrigger {
-    private static final WiredTriggerType type = WiredTriggerType.IDLES;
+    private static final WiredTriggerType type = WiredTriggerType.UNIDLES;
 
     public WiredTriggerHabboUnidle(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
