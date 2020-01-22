@@ -418,14 +418,11 @@ public class WiredHandler {
         if (!room.isLoaded())
             return;
 
-        THashSet<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(WiredTriggerType.AT_GIVEN_TIME);
-        triggers.addAll(room.getRoomSpecialTypes().getTriggers(WiredTriggerType.PERIODICALLY));
-        triggers.addAll(room.getRoomSpecialTypes().getTriggers(WiredTriggerType.PERIODICALLY_LONG));
-        if (triggers != null) {
-            for (InteractionWiredTrigger trigger : triggers) {
-                ((WiredTriggerReset) trigger).resetTimer();
+        room.getRoomSpecialTypes().getTriggers().forEach(t-> {
+            if(t.getType() == WiredTriggerType.AT_GIVEN_TIME || t.getType() == WiredTriggerType.PERIODICALLY || t.getType() == WiredTriggerType.PERIODICALLY_LONG) {
+                ((WiredTriggerReset) t).resetTimer();
             }
-        }
+        });
 
         room.setLastTimerReset(Emulator.getIntUnixTimestamp());
     }
