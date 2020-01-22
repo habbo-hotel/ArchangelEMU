@@ -4089,11 +4089,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 if (habbo != null && iterator.value().getUserId() == habbo.getHabboInfo().getId())
                     continue;
 
-                if (userItemsMap.get(iterator.value().getUserId()) == null) {
-                    userItemsMap.put(iterator.value().getUserId(), new THashSet<>());
-                }
+                if (iterator.value() instanceof InteractionPostIt)
+                    continue;
 
-                userItemsMap.get(iterator.value().getUserId()).add(iterator.value());
+                userItemsMap.computeIfAbsent(iterator.value().getUserId(), k -> new THashSet<>()).add(iterator.value());
             }
         }
 
