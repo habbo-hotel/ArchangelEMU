@@ -28,10 +28,11 @@ public class ModToolSanctionMuteEvent extends MessageHandler {
 
             if (habbo != null) {
                 ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
-                THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
-                ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
 
                 if (Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
+                    THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
+                    ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
+
                     if (modToolSanctionItems != null && !modToolSanctionItemsHashMap.isEmpty()) {
                         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
 

@@ -50,10 +50,11 @@ public class ModToolSanctionBanEvent extends MessageHandler {
         }
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
-            THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(userId);
-            ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(userId);
 
             if (Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
+                THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(userId);
+                ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(userId);
+
                 if (modToolSanctionItems != null && !modToolSanctionItemsHashMap.isEmpty()) {
                     ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
 
