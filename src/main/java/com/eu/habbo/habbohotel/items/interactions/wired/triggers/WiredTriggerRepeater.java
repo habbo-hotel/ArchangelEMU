@@ -1,9 +1,11 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.triggers;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
+import com.eu.habbo.habbohotel.items.interactions.wired.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
@@ -17,7 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICycleable {
+public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICycleable, WiredTriggerReset {
     public static final WiredTriggerType type = WiredTriggerType.PERIODICALLY;
     public static final int DEFAULT_DELAY = 20 * 500;
 
@@ -120,6 +122,17 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICy
                 if (room.isLoaded()) {
                     WiredHandler.handle(this, null, room, new Object[]{this});
                 }
+            }
+        }
+    }
+
+    @Override
+    public void resetTimer() {
+        this.counter = 0;
+        if (this.getRoomId() != 0) {
+            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+            if (room != null && room.isLoaded()) {
+                WiredHandler.handle(this, null, room, new Object[]{this});
             }
         }
     }
