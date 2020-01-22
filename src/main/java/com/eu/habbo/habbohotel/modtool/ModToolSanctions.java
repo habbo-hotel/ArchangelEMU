@@ -115,7 +115,7 @@ public class ModToolSanctions {
     }
 
     public void updateMuteDuration(int rowId, int muteDuration) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE sanctions SET muted_duration = ? WHERE id = ?")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE sanctions SET mute_duration = ? WHERE id = ?")) {
             statement.setInt(1, muteDuration);
             statement.setInt(2, rowId);
 
