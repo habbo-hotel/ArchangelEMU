@@ -47,7 +47,7 @@ public class ModToolSanctionMuteEvent extends MessageHandler {
                         modToolSanctions.run(userId, this.client.getHabbo(), 0, cfhTopic, message, 0, false, 0);
                     }
                 } else {
-                    habbo.mute(60 * 60);
+                    habbo.mute(60 * 60, false);
                     habbo.alert(message);
                     this.client.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_mute.muted").replace("%user%", habbo.getHabboInfo().getUsername()));
                 }

@@ -21,7 +21,7 @@ public class MuteUser extends RCONMessage<MuteUser.JSON> {
             if (json.duration == 0) {
                 habbo.unMute();
             } else {
-                habbo.mute(json.duration);
+                habbo.mute(json.duration, false);
             }
         } else {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET mute_end_timestamp = ? WHERE user_id = ? LIMIT 1")) {

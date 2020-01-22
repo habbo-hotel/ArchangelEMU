@@ -169,7 +169,7 @@ public class SecureLoginEvent extends MessageHandler {
                         } else if (item.isMuted && item.muteDuration > Emulator.getIntUnixTimestamp()) {
                             Date muteDuration = new Date((long) item.muteDuration * 1000);
                             long diff = muteDuration.getTime() - Emulator.getDate().getTime();
-                            habbo.mute(Math.toIntExact(diff));
+                            habbo.mute(Math.toIntExact(diff), false);
                         }
                     }
                 }

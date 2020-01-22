@@ -30,7 +30,7 @@ public class ModToolIssueDefaultSanctionEvent extends MessageHandler {
                         } else if (defaultSanction.muteLength > 0) {
 
                             if (target != null) {
-                                target.mute(defaultSanction.muteLength * 86400);
+                                target.mute(defaultSanction.muteLength * 86400, false);
                             }
                         }
                     }
