@@ -65,7 +65,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
                     RoomUnitOnRollerComposer.this.roomUnit.setZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
                     RoomUnitOnRollerComposer.this.roomUnit.sitUpdate = true;
                 }
-            }, this.room.getRollerSpeed() == 0 ? 250 : 500);
+            }, this.room.getRollerSpeed() == 0 ? 250 : 400);
         } else {
             this.roomUnit.setLocation(this.newLocation);
             this.roomUnit.setZ(this.newZ);
