@@ -751,7 +751,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
     }
 
-    private void updateBotsAt(short x, short y) {
+    public void updateBotsAt(short x, short y) {
         HabboItem topItem = this.getTopItemAt(x, y);
 
         THashSet<RoomUnit> roomUnits = new THashSet<>();

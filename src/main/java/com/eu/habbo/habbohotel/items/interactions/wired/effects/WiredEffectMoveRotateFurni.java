@@ -72,15 +72,20 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
             }
 
             int newRotation = ((item.getRotation() + rotationToAdd) % 8) % (item.getBaseItem().getWidth() > 1 || item.getBaseItem().getLength() > 1 ? 4 : 8);
-
             //Verify if rotation result in a valid position
-            if (rotationToAdd > 0 && room.furnitureFitsAt(room.getLayout().getTile(item.getX(), item.getY()), item, newRotation).equals(FurnitureMovementError.NONE))//room.canPlaceFurnitureAt(item, null, room.getLayout().getTile(item.getX(), item.getY()), item.getRotation() + rotationToAdd))
+            FurnitureMovementError rotateError = room.furnitureFitsAt(room.getLayout().getTile(item.getX(), item.getY()), item, newRotation);
+            if (rotationToAdd > 0 && (rotateError.equals(FurnitureMovementError.TILE_HAS_HABBOS) || rotateError.equals(FurnitureMovementError.TILE_HAS_PETS) ||
+                    rotateError.equals(FurnitureMovementError.TILE_HAS_BOTS) || rotateError.equals(FurnitureMovementError.NONE)))
             {
                 item.setRotation(newRotation);
 
                 if (this.direction == 0) {
                     tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                     room.sendComposer(new FloorItemUpdateComposer(item).compose());
+                    for (RoomTile t : tilesToUpdate) {
+                        room.updateHabbosAt(t.x, t.y);
+                        room.updateBotsAt(t.x, t.y);
+                    }
                 }
             }
 
