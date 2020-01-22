@@ -2971,7 +2971,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         habbo.getHabboStats().mutedCount++;
         timeOut += (timeOut * (int) Math.ceil(Math.pow(habbo.getHabboStats().mutedCount, 2)));
         habbo.getHabboStats().chatCounter = 0;
-        habbo.mute(timeOut);
+        habbo.mute(timeOut, true);
     }
 
     public void talk(Habbo habbo, RoomChatMessage roomChatMessage, RoomChatType chatType) {

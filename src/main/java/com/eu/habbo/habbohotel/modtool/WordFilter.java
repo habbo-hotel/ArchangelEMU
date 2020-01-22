@@ -150,7 +150,7 @@ public class WordFilter {
                 foundShit = true;
 
                 if (habbo != null && word.muteTime > 0) {
-                    habbo.mute(word.muteTime);
+                    habbo.mute(word.muteTime, false);
                 }
             }
         }
