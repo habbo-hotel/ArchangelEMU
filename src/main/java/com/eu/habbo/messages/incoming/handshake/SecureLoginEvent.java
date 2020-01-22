@@ -142,33 +142,35 @@ public class SecureLoginEvent extends MessageHandler {
                 this.client.sendResponse(new AchievementListComposer(this.client.getHabbo()));
 
                 ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
-                THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
-                ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
 
+                if (Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
+                    THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
+                    ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
 
-                if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) {
-                    ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
+                    if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) {
+                        ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
 
-                    if (item.sanctionLevel > 0 && item.probationTimestamp > Emulator.getIntUnixTimestamp()) {
-                        this.client.sendResponse(new ModToolSanctionInfoComposer(this.client.getHabbo()));
-                    } else if (item.sanctionLevel > 0 && item.probationTimestamp <= Emulator.getIntUnixTimestamp()) {
-                        modToolSanctions.updateSanction(item.id, 0, 0);
-                    }
+                        if (item.sanctionLevel > 0 && item.probationTimestamp > Emulator.getIntUnixTimestamp()) {
+                            this.client.sendResponse(new ModToolSanctionInfoComposer(this.client.getHabbo()));
+                        } else if (item.sanctionLevel > 0 && item.probationTimestamp <= Emulator.getIntUnixTimestamp()) {
+                            modToolSanctions.updateSanction(item.id, 0, 0);
+                        }
 
-                    if (item.tradeLockedUntil > 0 && item.tradeLockedUntil <= Emulator.getIntUnixTimestamp()) {
-                        modToolSanctions.updateTradeLockedUntil(item.id, 0);
-                        habbo.getHabboStats().setAllowTrade(true);
-                    } else if (item.tradeLockedUntil > 0 && item.tradeLockedUntil > Emulator.getIntUnixTimestamp()) {
-                        habbo.getHabboStats().setAllowTrade(false);
-                    }
+                        if (item.tradeLockedUntil > 0 && item.tradeLockedUntil <= Emulator.getIntUnixTimestamp()) {
+                            modToolSanctions.updateTradeLockedUntil(item.id, 0);
+                            habbo.getHabboStats().setAllowTrade(true);
+                        } else if (item.tradeLockedUntil > 0 && item.tradeLockedUntil > Emulator.getIntUnixTimestamp()) {
+                            habbo.getHabboStats().setAllowTrade(false);
+                        }
 
-                    if (item.isMuted && item.muteDuration <= Emulator.getIntUnixTimestamp()) {
-                        modToolSanctions.updateMuteDuration(item.id, 0);
-                        habbo.unMute();
-                    } else if (item.isMuted && item.muteDuration > Emulator.getIntUnixTimestamp()) {
-                        Date muteDuration = new Date((long) item.muteDuration * 1000);
-                        long diff = muteDuration.getTime() - Emulator.getDate().getTime();
-                        habbo.mute(Math.toIntExact(diff));
+                        if (item.isMuted && item.muteDuration <= Emulator.getIntUnixTimestamp()) {
+                            modToolSanctions.updateMuteDuration(item.id, 0);
+                            habbo.unMute();
+                        } else if (item.isMuted && item.muteDuration > Emulator.getIntUnixTimestamp()) {
+                            Date muteDuration = new Date((long) item.muteDuration * 1000);
+                            long diff = muteDuration.getTime() - Emulator.getDate().getTime();
+                            habbo.mute(Math.toIntExact(diff));
+                        }
                     }
                 }
 

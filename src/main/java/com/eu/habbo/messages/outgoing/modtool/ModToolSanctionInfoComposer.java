@@ -26,49 +26,52 @@ public class ModToolSanctionInfoComposer extends MessageComposer {
     @Override
     public ServerMessage compose() {
         ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
-        THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
-        ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
 
         Date probationEndTime;
         Date probationStartTime = null;
 
-        if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) {
-            ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
+        if (Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
+            THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
+            ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
 
-            boolean prevItem = modToolSanctionItems.size() > 1;
+            if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) {
+                ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
 
-            ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel);
-            ModToolSanctionLevelItem nextModToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel + 1);
+                boolean prevItem = modToolSanctionItems.size() > 1;
 
-            if (item.probationTimestamp > 0) {
-                probationEndTime = new Date((long) item.probationTimestamp * 1000);
+                ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel);
+                ModToolSanctionLevelItem nextModToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel + 1);
 
-                probationStartTime = new DateTime(probationEndTime).minusDays(modToolSanctions.getProbationDays(modToolSanctionLevelItem)).toDate();
+                if (item.probationTimestamp > 0) {
+                    probationEndTime = new Date((long) item.probationTimestamp * 1000);
+
+                    probationStartTime = new DateTime(probationEndTime).minusDays(modToolSanctions.getProbationDays(modToolSanctionLevelItem)).toDate();
+
+                }
+
+                Date tradeLockedUntil = null;
+
+                if (item.tradeLockedUntil > 0) {
+                    tradeLockedUntil = new Date((long) item.tradeLockedUntil * 1000);
+                }
+
+                this.response.init(Outgoing.ModToolSanctionInfoComposer);
+
+                this.response.appendBoolean(prevItem); // has prev sanction
+                this.response.appendBoolean(item.probationTimestamp >= Emulator.getIntUnixTimestamp()); // is on probation
+                this.response.appendString(modToolSanctions.getSanctionType(modToolSanctionLevelItem)); // current sanction type
+                this.response.appendInt(modToolSanctions.getTimeOfSanction(modToolSanctionLevelItem)); // time of current sanction
+                this.response.appendInt(30); // TODO: unused?
+                this.response.appendString(item.reason.equals("") ? "cfh.reason.EMPTY" : item.reason); // reason
+                this.response.appendString(probationStartTime == null ? Emulator.getDate().toString() : probationStartTime.toString()); // probation start time
+                this.response.appendInt(0); // TODO: unused?
+                this.response.appendString(modToolSanctions.getSanctionType(nextModToolSanctionLevelItem)); // next sanction type
+                this.response.appendInt(modToolSanctions.getTimeOfSanction(nextModToolSanctionLevelItem)); // time to be applied in next sanction (in hours)
+                this.response.appendInt(30); // TODO: unused?
+                this.response.appendBoolean(item.isMuted); // muted
+                this.response.appendString(tradeLockedUntil == null ? "" : tradeLockedUntil.toString()); // trade locked until
 
             }
-
-            Date tradeLockedUntil = null;
-
-            if (item.tradeLockedUntil > 0) {
-                tradeLockedUntil = new Date((long) item.tradeLockedUntil * 1000);
-            }
-
-            this.response.init(Outgoing.ModToolSanctionInfoComposer);
-
-            this.response.appendBoolean(prevItem); // has prev sanction
-            this.response.appendBoolean(item.probationTimestamp >= Emulator.getIntUnixTimestamp()); // is on probation
-            this.response.appendString(modToolSanctions.getSanctionType(modToolSanctionLevelItem)); // current sanction type
-            this.response.appendInt(modToolSanctions.getTimeOfSanction(modToolSanctionLevelItem)); // time of current sanction
-            this.response.appendInt(30); // TODO: unused?
-            this.response.appendString(item.reason.equals("") ? "cfh.reason.EMPTY" : item.reason); // reason
-            this.response.appendString(probationStartTime == null ? Emulator.getDate().toString() : probationStartTime.toString()); // probation start time
-            this.response.appendInt(0); // TODO: unused?
-            this.response.appendString(modToolSanctions.getSanctionType(nextModToolSanctionLevelItem)); // next sanction type
-            this.response.appendInt(modToolSanctions.getTimeOfSanction(nextModToolSanctionLevelItem)); // time to be applied in next sanction (in hours)
-            this.response.appendInt(30); // TODO: unused?
-            this.response.appendBoolean(item.isMuted); // muted
-            this.response.appendString(tradeLockedUntil == null ? "" : tradeLockedUntil.toString()); // trade locked until
-
         } else {
             this.response.init(Outgoing.ModToolSanctionInfoComposer);
 

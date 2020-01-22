@@ -1,12 +1,17 @@
 package com.eu.habbo.messages.outgoing.modtool;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.modtool.ModToolSanctionItem;
+import com.eu.habbo.habbohotel.modtool.ModToolSanctionLevelItem;
+import com.eu.habbo.habbohotel.modtool.ModToolSanctions;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import gnu.trove.map.hash.THashMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class ModToolUserInfoComposer extends MessageComposer {
     private final ResultSet set;
@@ -37,11 +42,23 @@ public class ModToolUserInfoComposer extends MessageComposer {
             this.response.appendString(this.set.getString("mail"));
             this.response.appendString("Rank (" + this.set.getInt("rank_id") + "): " + this.set.getString("rank_name")); //user_class_txt
 
-            if (false) //has sanction
-            {
-                this.response.appendString("SOME SANCTION");
-                this.response.appendInt(31);
+            ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
+
+            if (Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
+                THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(this.set.getInt("user_id"));
+                ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(this.set.getInt("user_id"));
+
+                if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) //has sanction
+                {
+                    ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
+                    ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel);
+
+                    this.response.appendString(modToolSanctions.getSanctionType(modToolSanctionLevelItem));
+                    this.response.appendInt(31);
+                }
+
             }
+
             return this.response;
         } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
