@@ -134,7 +134,7 @@ public class Logging {
         if (Emulator.getConfig().getBoolean("logging.debug")) {
             this.write(debugFileWriter, line.toString());
         }
-        System.out.println("[" + Logging.ANSI_BRIGHT + Logging.ANSI_GREEN + "SHUTDOWN" + Logging.ANSI_RESET + "] " + line.toString());
+        System.out.println("[" + Logging.ANSI_BRIGHT + Logging.ANSI_RED + "SHUTDOWN" + Logging.ANSI_RESET + "] " + line.toString());
     }
 
     public void logUserLine(Object line) {

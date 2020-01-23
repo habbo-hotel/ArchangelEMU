@@ -40,7 +40,7 @@ public final class Emulator {
     public static final String ANSI_YELLOW = "\u001B[33m";
 
 
-    public final static String PREVIEW = "RC-1";
+    public final static String PREVIEW = "RC-2";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
@@ -58,6 +58,8 @@ public final class Emulator {
     public static boolean isShuttingDown = false;
     public static boolean stopped = false;
     public static boolean debugging = false;
+    private static String  classPath = System.getProperty("java.class.path");
+    private static String osName = System.getProperty("os.name");
     private static int timeStarted = 0;
     private static Runtime runtime;
     private static ConfigurationManager config;
@@ -85,7 +87,9 @@ public final class Emulator {
 
     public static void main(String[] args) throws Exception {
         try {
-            AnsiConsole.systemInstall();
+            if (osName.startsWith("Windows") && (!classPath.contains("idea_rt.jar"))) {
+                AnsiConsole.systemInstall();
+            }
             Locale.setDefault(new Locale("en"));
             setBuild();
             Emulator.stopped = false;
@@ -197,7 +201,8 @@ public final class Emulator {
         Emulator.isShuttingDown = true;
         Emulator.isReady = false;
         Emulator.getLogging().logShutdownLine("Stopping Arcturus Emulator " + version + "...");
-
+        String classPath = System.getProperty("java.class.path");
+        String osName = System.getProperty("os.name");
         try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStartShutdownEvent());
@@ -255,8 +260,10 @@ public final class Emulator {
             Emulator.getDatabase().dispose();
         }
         Emulator.stopped = true;
-        AnsiConsole.systemUninstall();
 
+        if (osName.startsWith("Windows") && (!classPath.contains("idea_rt.jar"))) {
+            AnsiConsole.systemUninstall();
+        }
         try {
             if (Emulator.threading != null)
 
