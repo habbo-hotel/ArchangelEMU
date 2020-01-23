@@ -45,7 +45,7 @@ public class HabboInfo implements Runnable {
     private TIntIntHashMap currencies;
     private GamePlayer gamePlayer;
     private int photoRoomId;
-    private int photoTimestamp;
+    private long photoTimestamp;
     private String photoURL;
     private String photoJSON;
     private int webPublishTimestamp;
@@ -430,11 +430,11 @@ public class HabboInfo implements Runnable {
         this.photoRoomId = roomId;
     }
 
-    public int getPhotoTimestamp() {
+    public long getPhotoTimestamp() {
         return this.photoTimestamp;
     }
 
-    public void setPhotoTimestamp(int photoTimestamp) {
+    public void setPhotoTimestamp(long photoTimestamp) {
         this.photoTimestamp = photoTimestamp;
     }
 
