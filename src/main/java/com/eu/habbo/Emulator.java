@@ -201,8 +201,6 @@ public final class Emulator {
         Emulator.isShuttingDown = true;
         Emulator.isReady = false;
         Emulator.getLogging().logShutdownLine("Stopping Arcturus Emulator " + version + "...");
-        String classPath = System.getProperty("java.class.path");
-        String osName = System.getProperty("os.name");
         try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStartShutdownEvent());
