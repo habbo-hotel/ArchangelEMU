@@ -4160,6 +4160,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public void idle(Habbo habbo) {
         habbo.getRoomUnit().setIdle();
+
+        if (habbo.getRoomUnit().getDanceType() != DanceType.NONE) {
+            this.dance(habbo, DanceType.NONE);
+        }
+
         this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
         WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
     }
