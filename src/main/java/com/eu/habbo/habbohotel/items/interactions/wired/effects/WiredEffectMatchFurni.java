@@ -60,6 +60,17 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                 if (this.direction) {
                     item.setRotation(setting.rotation);
                     slideAnimation = false;
+
+                    room.scheduledTasks.add(() -> {
+                        room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation).forEach(t -> {
+                            room.updateBotsAt(t.x, t.y);
+                            room.updateHabbosAt(t.x, t.y);
+                        });
+                        room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation).forEach(t -> {
+                            room.updateBotsAt(t.x, t.y);
+                            room.updateHabbosAt(t.x, t.y);
+                        });
+                    });
                 }
 
                 //room.sendComposer(new ItemStateComposer(item).compose());
