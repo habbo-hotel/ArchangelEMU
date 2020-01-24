@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.gates;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GameState;
 import com.eu.habbo.habbohotel.games.GameTeam;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
@@ -28,17 +29,19 @@ public class InteractionBattleBanzaiGate extends InteractionGameGate {
     }
 
     @Override
-    public boolean isWalkable() {
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-        if (room == null)
-            return false;
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
-        return (this.getExtradata() == null || this.getExtradata().isEmpty() || Integer.valueOf(this.getExtradata()) < 5) && ((room.getGame(BattleBanzaiGame.class))) == null || ((BattleBanzaiGame) (room.getGame(BattleBanzaiGame.class))).state.equals(GameState.IDLE);
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public boolean isWalkable() {
+        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
+        if (room == null) return false;
+
+        Game game = room.getGame(BattleBanzaiGame.class);
+
+        return game == null || game.getState() == GameState.IDLE;
     }
 
     //TODO: Move to upper class

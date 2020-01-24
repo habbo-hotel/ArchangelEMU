@@ -1,5 +1,7 @@
 package com.eu.habbo.habbohotel.items.interactions.games.freeze.gates;
 
+import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GameState;
 import com.eu.habbo.habbohotel.games.GameTeam;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
@@ -27,18 +29,18 @@ public class InteractionFreezeGate extends InteractionGameGate {
     }
 
     @Override
-    public boolean isWalkable() {
-        if (this.getRoomId() == 0)
-            return false;
-
-        return (this.getExtradata().isEmpty() ||
-                Integer.valueOf(this.getExtradata()) < 5);
-        //((Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getGame(FreezeGame.class))) == null ||
-        //!((FreezeGame)(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getGame(FreezeGame.class))).isRunning;
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public boolean isWalkable() {
+        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+
+        if (room == null) return false;
+
+        Game game = room.getGame(FreezeGame.class);
+
+        return game == null || game.getState() == GameState.IDLE;
     }
 
     @Override
