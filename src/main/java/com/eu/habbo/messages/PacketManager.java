@@ -440,6 +440,7 @@ public class PacketManager {
         this.registerHandler(Incoming.RoomFavoriteEvent, RoomFavoriteEvent.class);
         this.registerHandler(Incoming.LoveLockStartConfirmEvent, LoveLockStartConfirmEvent.class);
         this.registerHandler(Incoming.RoomUnFavoriteEvent, RoomUnFavoriteEvent.class);
+        this.registerHandler(Incoming.UseRandomStateItemEvent, UseRandomStateItemEvent.class);
     }
 
     void registerPolls() throws Exception {
