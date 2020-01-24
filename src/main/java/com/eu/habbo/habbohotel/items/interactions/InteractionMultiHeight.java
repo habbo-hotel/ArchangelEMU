@@ -2,10 +2,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -13,9 +10,12 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import gnu.trove.set.hash.THashSet;
+import org.apache.commons.math3.util.Pair;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InteractionMultiHeight extends HabboItem {
     public InteractionMultiHeight(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
@@ -55,6 +55,11 @@ public class InteractionMultiHeight extends HabboItem {
 
         if (objects.length > 0) {
             if (objects[0] instanceof Integer && room != null) {
+                HabboItem topItem = room.getTopItemAt(this.getX(), this.getY());
+                if (topItem != null && !topItem.equals(this)) { // multiheight items cannot change height even if there is a stackable item on top - no items allowed on top
+                    return;
+                }
+
                 this.needsUpdate(true);
 
                 if (this.getExtradata().length() == 0)
