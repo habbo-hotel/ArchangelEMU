@@ -5,25 +5,27 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class CameraPublishWaitMessageComposer extends MessageComposer {
-    public final boolean published;
-    public final int seconds;
-    public final String unknownString;
+    public final boolean isOk;
+    public final int cooldownSeconds;
+    public final String extraDataId;
 
-    public CameraPublishWaitMessageComposer(boolean published, int seconds, String unknownString) {
-        this.published = published;
-        this.seconds = seconds;
-        this.unknownString = unknownString;
+    public CameraPublishWaitMessageComposer(boolean isOk, int cooldownSeconds, String extraDataId) {
+        this.isOk = isOk;
+        this.cooldownSeconds = cooldownSeconds;
+        this.extraDataId = extraDataId;
     }
 
     @Override
     public ServerMessage compose() {
         this.response.init(Outgoing.CameraPublishWaitMessageComposer);
-        this.response.appendBoolean(this.published);
-        this.response.appendInt(this.seconds);
 
-        if (this.published) {
-            this.response.appendString(this.unknownString);
+        this.response.appendBoolean(this.isOk);
+        this.response.appendInt(this.cooldownSeconds);
+
+        if (!this.extraDataId.isEmpty()) {
+            this.response.appendString(this.extraDataId);
         }
+
         return this.response;
     }
 }

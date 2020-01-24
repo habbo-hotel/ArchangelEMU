@@ -22,6 +22,8 @@ import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.messages.PacketManager;
+import com.eu.habbo.messages.incoming.camera.CameraPublishToWebEvent;
+import com.eu.habbo.messages.incoming.camera.CameraPurchaseEvent;
 import com.eu.habbo.messages.incoming.floorplaneditor.FloorPlanEditorSaveEvent;
 import com.eu.habbo.messages.incoming.hotelview.HotelViewRequestLTDAvailabilityEvent;
 import com.eu.habbo.messages.incoming.users.ChangeNameCheckUsernameEvent;
@@ -124,6 +126,11 @@ public class PluginManager {
         RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB = Emulator.getConfig().getBoolean("hotel.navigator.populartab.publics");
 
         ChangeNameCheckUsernameEvent.VALID_CHARACTERS = Emulator.getConfig().getValue("allowed.username.characters", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-=!?@:,.");
+        CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS = Emulator.getConfig().getInt("camera.price.points.publish", 5);
+        CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS_TYPE = Emulator.getConfig().getInt("camera.price.points.publish.type", 0);
+        CameraPurchaseEvent.CAMERA_PURCHASE_CREDITS = Emulator.getConfig().getInt("camera.price.credits", 5);
+        CameraPurchaseEvent.CAMERA_PURCHASE_POINTS = Emulator.getConfig().getInt("camera.price.points", 5);
+        CameraPurchaseEvent.CAMERA_PURCHASE_POINTS_TYPE = Emulator.getConfig().getInt("camera.price.points.type", 0);
 
         if (Emulator.isReady) {
             Emulator.getGameEnvironment().getCreditsScheduler().reloadConfig();
