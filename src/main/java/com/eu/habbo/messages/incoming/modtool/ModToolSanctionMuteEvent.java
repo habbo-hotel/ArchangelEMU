@@ -42,6 +42,12 @@ public class ModToolSanctionMuteEvent extends MessageHandler {
                             int muteDurationTimestamp = Math.toIntExact(new Date( System.currentTimeMillis() + (modToolSanctionLevelItem.sanctionHourLength * 60 * 60)).getTime() / 1000);
 
                             modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, true, muteDurationTimestamp);
+                        } else {
+                            ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel);
+
+                            int muteDurationTimestamp = Math.toIntExact(new Date( System.currentTimeMillis() + (modToolSanctionLevelItem.sanctionHourLength * 60 * 60)).getTime() / 1000);
+
+                            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, true, muteDurationTimestamp);
                         }
                     } else {
                         modToolSanctions.run(userId, this.client.getHabbo(), 0, cfhTopic, message, 0, false, 0);
