@@ -4,11 +4,12 @@ cache:
   paths:
     - target/
 
-build-dev:
+build:
   script:
     - mvn package
   only:
     - dev
+    - master
   artifacts:
       paths:
       - target/Habbo-*.jar
