@@ -525,6 +525,7 @@ public class Outgoing {
     public final static int UnknownRoomViewerComposer = 3523;
     public final static int ErrorLoginComposer = 4000;
     public final static int HotelViewNextLTDAvailableComposer = 44;
+    public final static int HotelViewSecondsUntilComposer = 3926;
     public final static int UnknownRoomDesktopComposer = 69;
     public final static int UnknownGuildComposer3 = 876;
 

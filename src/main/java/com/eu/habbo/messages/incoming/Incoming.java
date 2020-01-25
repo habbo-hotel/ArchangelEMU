@@ -351,6 +351,8 @@ public class Incoming {
     public static final int LoveLockStartConfirmEvent = 3775;
 
     public static final int HotelViewRequestLTDAvailabilityEvent = 410;
+    public static final int HotelViewRequestSecondsUntilEvent = 271;
+
     public static final int PurchaseTargetOfferEvent = 1826;
     public static final int TargetOfferStateEvent = 2041;
     public static final int StopBreedingEvent = 2713;
