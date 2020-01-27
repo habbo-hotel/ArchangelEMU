@@ -27,6 +27,7 @@ import com.eu.habbo.messages.incoming.camera.CameraPublishToWebEvent;
 import com.eu.habbo.messages.incoming.camera.CameraPurchaseEvent;
 import com.eu.habbo.messages.incoming.floorplaneditor.FloorPlanEditorSaveEvent;
 import com.eu.habbo.messages.incoming.hotelview.HotelViewRequestLTDAvailabilityEvent;
+import com.eu.habbo.messages.incoming.rooms.promotions.BuyRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.users.ChangeNameCheckUsernameEvent;
 import com.eu.habbo.messages.outgoing.catalog.DiscountComposer;
 import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
@@ -133,6 +134,8 @@ public class PluginManager {
         CameraPurchaseEvent.CAMERA_PURCHASE_CREDITS = Emulator.getConfig().getInt("camera.price.credits", 5);
         CameraPurchaseEvent.CAMERA_PURCHASE_POINTS = Emulator.getConfig().getInt("camera.price.points", 5);
         CameraPurchaseEvent.CAMERA_PURCHASE_POINTS_TYPE = Emulator.getConfig().getInt("camera.price.points.type", 0);
+
+        BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE = Emulator.getConfig().getValue("room.promotion.badge", "RADZZ");
 
         NewNavigatorEventCategoriesComposer.CATEGORIES.clear();
         for (String category : Emulator.getConfig().getValue("navigator.eventcategories", "").split(";")) {

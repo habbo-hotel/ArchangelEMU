@@ -11,6 +11,8 @@ import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesCompo
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
 
 public class BuyRoomPromotionEvent extends MessageHandler {
+    public static String ROOM_PROMOTION_BADGE = "RADZZ";
+
     @Override
     public void handle() throws Exception {
         int pageId = this.packet.readInt();
@@ -43,12 +45,20 @@ public class BuyRoomPromotionEvent extends MessageHandler {
                     }
 
                     if (room.isPromoted()) {
-                        if (!this.client.getHabbo().hasPermission("acc_infinite_credits"))
+                        if (!this.client.getHabbo().hasPermission("acc_infinite_credits")) {
                             this.client.getHabbo().giveCredits(-item.getCredits());
-                        if (!this.client.getHabbo().hasPermission("acc_infinite_points"))
+                        }
+
+                        if (!this.client.getHabbo().hasPermission("acc_infinite_points")) {
                             this.client.getHabbo().givePoints(item.getPointsType(), -item.getPoints());
+                        }
+
                         this.client.sendResponse(new PurchaseOKComposer());
                         room.sendComposer(new RoomPromotionMessageComposer(room, room.getPromotion()).compose());
+
+                        if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE)) {
+                            this.client.getHabbo().addBadge(BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE);
+                        }
                     } else {
                         this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                     }
