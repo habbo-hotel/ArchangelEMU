@@ -53,7 +53,7 @@ public class InteractionPuzzleBox extends HabboItem {
                             room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.WEST.getValue())
                     }
             )
-                    .filter(t -> t.isWalkable() && !room.hasHabbosAt(t.x, t.y))
+                    .filter(t -> t != null && t.isWalkable() && !room.hasHabbosAt(t.x, t.y))
                     .min(Comparator.comparingDouble(a -> a.distance(client.getHabbo().getRoomUnit().getCurrentLocation())));
 
             nearestTile.ifPresent(roomTile -> client.getHabbo().getRoomUnit().setGoalLocation(roomTile));
