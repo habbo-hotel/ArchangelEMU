@@ -51,6 +51,8 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
         thread.setState(ForumThreadState.fromValue(state));
         thread.setAdminId(this.client.getHabbo().getHabboInfo().getId());
 
+        Emulator.getThreading().run(thread);
+
         switch (state) {
             case 10:
             case 20:
