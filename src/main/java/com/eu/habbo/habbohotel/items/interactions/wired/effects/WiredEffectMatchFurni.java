@@ -57,7 +57,9 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
 
                 int oldRotation = item.getRotation();
                 boolean slideAnimation = true;
-                if (this.direction) {
+                double offsetZ = 0;
+
+                if (this.direction && item.getRotation() != setting.rotation) {
                     item.setRotation(setting.rotation);
                     slideAnimation = false;
 
@@ -73,12 +75,9 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                     });
                 }
 
-                //room.sendComposer(new ItemStateComposer(item).compose());
-                room.sendComposer(new FloorItemUpdateComposer(item).compose());
+                RoomTile t = room.getLayout().getTile((short) setting.x, (short) setting.y);
 
                 if (this.position) {
-                    RoomTile t = room.getLayout().getTile((short) setting.x, (short) setting.y);
-
                     if (t != null) {
                         if (t.state != RoomTileState.INVALID) {
                             boolean canMove = true;
@@ -111,21 +110,25 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                                 if (highestZ != -1d) {
                                     tilesToUpdate.addAll(tiles);
 
-                                    double offsetZ = highestZ - item.getZ();
+                                    offsetZ = highestZ - item.getZ();
                                     double totalHeight = item.getZ() + offsetZ;
-                                    if(totalHeight > 40) break;
+                                    if (totalHeight > 40) break;
                                     tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation));
 
                                     if (!slideAnimation) {
                                         item.setX(t.x);
                                         item.setY(t.y);
                                     }
-
-                                    room.sendComposer(new FloorItemOnRollerComposer(item, null, t, offsetZ, room).compose());
                                 }
                             }
                         }
                     }
+                }
+
+                if (slideAnimation && t != null) {
+                    room.sendComposer(new FloorItemOnRollerComposer(item, null, t, offsetZ, room).compose());
+                } else {
+                    room.updateItem(item);
                 }
 
                 item.needsUpdate(true);
