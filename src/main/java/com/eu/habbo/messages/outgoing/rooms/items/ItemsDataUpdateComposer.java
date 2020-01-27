@@ -24,7 +24,7 @@ public class ItemsDataUpdateComposer extends MessageComposer {
             this.response.appendInt(item.getId());
             item.serializeExtradata(this.response);
         }
-        
+
         return this.response;
     }
 }
