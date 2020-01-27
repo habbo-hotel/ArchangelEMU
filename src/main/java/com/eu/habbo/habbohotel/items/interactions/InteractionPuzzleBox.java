@@ -1,16 +1,17 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Optional;
 
 public class InteractionPuzzleBox extends HabboItem {
     public InteractionPuzzleBox(ResultSet set, Item baseItem) throws SQLException {
@@ -26,40 +27,59 @@ public class InteractionPuzzleBox extends HabboItem {
         if (client.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
             return;
 
-        if (!RoomLayout.tilesAdjecent(room.getLayout().getTile(super.getX(), super.getY()), client.getHabbo().getRoomUnit().getCurrentLocation()))
-            return;
-
-
         RoomTile boxLocation = room.getLayout().getTile(this.getX(), this.getY());
-        client.getHabbo().getRoomUnit().lookAtPoint(boxLocation);
-        room.sendComposer(new RoomUserStatusComposer(client.getHabbo().getRoomUnit()).compose());
+        RoomUserRotation rotation = null;
 
-        switch (client.getHabbo().getRoomUnit().getBodyRotation()) {
-            case NORTH_EAST:
-            case NORTH_WEST:
-            case SOUTH_EAST:
-            case SOUTH_WEST:
-                return;
+        if (this.getX() == client.getHabbo().getRoomUnit().getX()) {
+            if (this.getY() == client.getHabbo().getRoomUnit().getY() + 1) {
+                rotation = RoomUserRotation.SOUTH;
+            } else if (this.getY() == client.getHabbo().getRoomUnit().getY() - 1) {
+                rotation = RoomUserRotation.NORTH;
+            }
+        } else if (this.getY() == client.getHabbo().getRoomUnit().getY()) {
+            if (this.getX() == client.getHabbo().getRoomUnit().getX() + 1) {
+                rotation = RoomUserRotation.EAST;
+            } else if (this.getX() == client.getHabbo().getRoomUnit().getX() - 1) {
+                rotation = RoomUserRotation.WEST;
+            }
         }
 
-        RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), client.getHabbo().getRoomUnit().getBodyRotation().getValue());
+        if (rotation == null) {
+            Optional<RoomTile> nearestTile = Arrays.stream(
+                    new RoomTile[]{
+                            room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.SOUTH.getValue()),
+                            room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.NORTH.getValue()),
+                            room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.EAST.getValue()),
+                            room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.WEST.getValue())
+                    }
+            )
+                    .filter(t -> t.isWalkable() && !room.hasHabbosAt(t.x, t.y))
+                    .min(Comparator.comparingDouble(a -> a.distance(client.getHabbo().getRoomUnit().getCurrentLocation())));
 
-        if (tile == null || !room.tileWalkable(tile) || room.hasHabbosAt(tile.x, tile.y)) {
+            nearestTile.ifPresent(roomTile -> client.getHabbo().getRoomUnit().setGoalLocation(roomTile));
             return;
         }
 
-        double offset = room.getStackHeight(tile.x, tile.y, false) - this.getZ();
+        RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), rotation.getValue());
 
-        if (!boxLocation.equals(room.getLayout().getTileInFront(client.getHabbo().getRoomUnit().getCurrentLocation(), client.getHabbo().getRoomUnit().getBodyRotation().getValue())))
+        if (tile == null || room.hasHabbosAt(tile.x, tile.y)) {
+            return;
+        }
+
+        if (!boxLocation.equals(room.getLayout().getTileInFront(client.getHabbo().getRoomUnit().getCurrentLocation(), rotation.getValue())))
             return;
 
         HabboItem item = room.getTopItemAt(tile.x, tile.y);
 
-        if (item == null || (item.getZ() <= this.getZ() && item.getBaseItem().allowWalk())) {
-            room.scheduledComposers.add(new FloorItemOnRollerComposer(this, null, tile, offset, room).compose());
-            room.scheduledTasks.add(() -> client.getHabbo().getRoomUnit().setGoalLocation(boxLocation));
-            this.needsUpdate(true);
-        }
+        if (item != null && !room.getTopItemAt(tile.x, tile.y).getBaseItem().allowStack()) return;
+
+        this.setZ(room.getStackHeight(tile.x, tile.y, false));
+        this.needsUpdate(true);
+        room.updateItem(this);
+
+        room.scheduledComposers.add(new FloorItemOnRollerComposer(this, null, tile, 0, room).compose());
+        room.scheduledTasks.add(() -> client.getHabbo().getRoomUnit().setGoalLocation(boxLocation));
+        this.needsUpdate(true);
     }
 
     @Override
