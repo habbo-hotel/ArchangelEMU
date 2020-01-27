@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
+import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.*;
@@ -16,6 +17,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class InteractionMultiHeight extends HabboItem {
     public InteractionMultiHeight(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
@@ -74,26 +77,27 @@ public class InteractionMultiHeight extends HabboItem {
                 }
 
                 if (this.isWalkable()) {
-                    THashSet<Habbo> habbos = room.getHabbosOnItem(this);
-                    THashSet<RoomUnit> updatedUnits = new THashSet<>();
-                    for (Habbo habbo : habbos) {
-                        if (habbo.getRoomUnit() == null)
-                            continue;
+                    List<RoomUnit> unitsOnItem = new ArrayList<>();
+                    unitsOnItem.addAll(room.getHabbosOnItem(this).stream().map(Habbo::getRoomUnit).filter(Objects::nonNull).collect(Collectors.toList()));
+                    unitsOnItem.addAll(room.getBotsOnItem(this).stream().map(Bot::getRoomUnit).filter(Objects::nonNull).collect(Collectors.toList()));
 
-                        if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
+                    THashSet<RoomUnit> updatedUnits = new THashSet<>();
+                    for (RoomUnit unit : unitsOnItem) {
+                        if (unit.hasStatus(RoomUnitStatus.MOVE))
                             continue;
 
                         if (this.getBaseItem().getMultiHeights().length >= 0) {
                             if (this.getBaseItem().allowSit()) {
-                                habbo.getRoomUnit().setStatus(RoomUnitStatus.SIT, this.getBaseItem().getMultiHeights()[(this.getExtradata().isEmpty() ? 0 : Integer.valueOf(this.getExtradata()) % (this.getBaseItem().getMultiHeights().length))] * 1.0D + "");
+                                unit.setStatus(RoomUnitStatus.SIT, this.getBaseItem().getMultiHeights()[(this.getExtradata().isEmpty() ? 0 : Integer.valueOf(this.getExtradata()) % (this.getBaseItem().getMultiHeights().length))] * 1.0D + "");
                             } else {
-                                habbo.getRoomUnit().setZ(habbo.getRoomUnit().getCurrentLocation().getStackHeight());
-                                habbo.getRoomUnit().setPreviousLocationZ(habbo.getRoomUnit().getZ());
+                                unit.setZ(unit.getCurrentLocation().getStackHeight());
+                                unit.setPreviousLocationZ(unit.getZ());
                             }
                         }
 
-                        updatedUnits.add(habbo.getRoomUnit());
+                        updatedUnits.add(unit);
                     }
+
                     room.sendComposer(new RoomUserStatusComposer(updatedUnits, true).compose());
                 }
             }

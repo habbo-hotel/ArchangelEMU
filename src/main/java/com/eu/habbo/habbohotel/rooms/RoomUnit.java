@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.pets.Pet;
@@ -391,6 +392,13 @@ public class RoomUnit {
 
     public void setZ(double z) {
         this.z = z;
+
+        if (this.room != null) {
+            Bot bot = this.room.getBot(this);
+            if (bot != null) {
+                bot.needsUpdate(true);
+            }
+        }
     }
 
     public boolean isInRoom() {

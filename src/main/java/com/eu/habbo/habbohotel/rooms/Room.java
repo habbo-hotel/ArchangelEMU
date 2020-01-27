@@ -466,6 +466,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                             b.getRoomUnit().setRotation(RoomUserRotation.fromValue(this.getLayout().getDoorDirection()));
                         } else {
                             b.getRoomUnit().setZ(set.getDouble("z"));
+                            b.getRoomUnit().setPreviousLocationZ(set.getDouble("z"));
                             b.getRoomUnit().setRotation(RoomUserRotation.values()[set.getInt("rot")]);
                         }
                         b.getRoomUnit().setRoomUnitType(RoomUnitType.BOT);
