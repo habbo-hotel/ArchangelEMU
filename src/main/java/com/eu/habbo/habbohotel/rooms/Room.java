@@ -2095,25 +2095,29 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return "";
     }
 
-    public void createPromotion(String title, String description) {
+    public void createPromotion(String title, String description, int category) {
         this.promoted = true;
 
         if (this.promotion == null) {
-            this.promotion = new RoomPromotion(this, title, description, Emulator.getIntUnixTimestamp() + (120 * 60));
+            this.promotion = new RoomPromotion(this, title, description, Emulator.getIntUnixTimestamp() + (120 * 60), Emulator.getIntUnixTimestamp(), category);
         } else {
             this.promotion.setTitle(title);
             this.promotion.setDescription(description);
             this.promotion.setEndTimestamp(Emulator.getIntUnixTimestamp() + (120 * 60));
+            this.promotion.setCategory(category);
         }
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_promotions (room_id, title, description, end_timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?, description = ?, end_timestamp = ?")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_promotions (room_id, title, description, end_timestamp, start_timestamp, category) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?, description = ?, end_timestamp = ?, category = ?")) {
             statement.setInt(1, this.id);
             statement.setString(2, title);
             statement.setString(3, description);
             statement.setInt(4, this.promotion.getEndTimestamp());
-            statement.setString(5, this.promotion.getTitle());
-            statement.setString(6, this.promotion.getDescription());
-            statement.setInt(7, this.promotion.getEndTimestamp());
+            statement.setInt(5, this.promotion.getStartTimestamp());
+            statement.setInt(6, category);
+            statement.setString(7, this.promotion.getTitle());
+            statement.setString(8, this.promotion.getDescription());
+            statement.setInt(9, this.promotion.getEndTimestamp());
+            statement.setInt(10, this.promotion.getCategory());
             statement.execute();
         } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);

@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
+import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
 
 public class BuyRoomPromotionEvent extends MessageHandler {
@@ -19,6 +20,9 @@ public class BuyRoomPromotionEvent extends MessageHandler {
         boolean unknown1 = this.packet.readBoolean();
         String description = this.packet.readString();
         int categoryId = this.packet.readInt();
+
+        if (NewNavigatorEventCategoriesComposer.CATEGORIES.stream().noneMatch(c -> c.getId() == categoryId))
+            return;
 
         CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(pageId);
 
@@ -35,7 +39,7 @@ public class BuyRoomPromotionEvent extends MessageHandler {
                     if (room.isPromoted()) {
                         room.getPromotion().addEndTimestamp(120 * 60);
                     } else {
-                        room.createPromotion(title, description);
+                        room.createPromotion(title, description, categoryId);
                     }
 
                     if (room.isPromoted()) {

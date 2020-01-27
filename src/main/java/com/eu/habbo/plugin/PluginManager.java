@@ -15,6 +15,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.items.interactions.games.football.InteractionFootballGate;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.modtool.WordFilter;
+import com.eu.habbo.habbohotel.navigation.EventCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboInventory;
@@ -28,6 +29,7 @@ import com.eu.habbo.messages.incoming.floorplaneditor.FloorPlanEditorSaveEvent;
 import com.eu.habbo.messages.incoming.hotelview.HotelViewRequestLTDAvailabilityEvent;
 import com.eu.habbo.messages.incoming.users.ChangeNameCheckUsernameEvent;
 import com.eu.habbo.messages.outgoing.catalog.DiscountComposer;
+import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
@@ -132,12 +134,20 @@ public class PluginManager {
         CameraPurchaseEvent.CAMERA_PURCHASE_POINTS = Emulator.getConfig().getInt("camera.price.points", 5);
         CameraPurchaseEvent.CAMERA_PURCHASE_POINTS_TYPE = Emulator.getConfig().getInt("camera.price.points.type", 0);
 
+        NewNavigatorEventCategoriesComposer.CATEGORIES.clear();
+        for (String category : Emulator.getConfig().getValue("navigator.eventcategories", "").split(";")) {
+            try {
+                NewNavigatorEventCategoriesComposer.CATEGORIES.add(new EventCategory(category));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         if (Emulator.isReady) {
             Emulator.getGameEnvironment().getCreditsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPointsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPixelScheduler().reloadConfig();
             Emulator.getGameEnvironment().getGotwPointsScheduler().reloadConfig();
-
         }
     }
 
