@@ -79,8 +79,8 @@ public class ModToolIssue implements ISerialize {
         message.appendString(this.senderUsername); //Reporter user name.
         message.appendInt(this.reportedId); //Reported user ID.
         message.appendString(this.reportedUsername); //Reported user name.
-        message.appendInt(this.modId); //MOD User ID?
-        message.appendString(this.modName); //MOD User name?
+        message.appendInt(this.modId); //ADMIN User ID?
+        message.appendString(this.modName); //ADMIN User name?
         message.appendString(this.message);
         message.appendInt(0);
 

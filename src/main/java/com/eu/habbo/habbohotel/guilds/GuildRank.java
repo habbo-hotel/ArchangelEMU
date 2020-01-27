@@ -1,8 +1,8 @@
 package com.eu.habbo.habbohotel.guilds;
 
 public enum GuildRank {
-    ADMIN(0),
-    MOD(1),
+    OWNER(0),
+    ADMIN(1),
     MEMBER(2),
     REQUESTED(3),
     DELETED(4);

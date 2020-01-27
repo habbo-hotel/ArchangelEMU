@@ -118,13 +118,13 @@ public final class Emulator {
             Emulator.texts = new TextsManager();
             new CleanerThread();
             Emulator.gameServer = new GameServer(getConfig().getValue("game.host", "127.0.0.1"), getConfig().getInt("game.port", 30000));
-            Emulator.rconServer = new RCONServer(getConfig().getValue("rcon.host", "127.0.0.1"), getConfig().getInt("rcon.port", 30001));
+            //Emulator.rconServer = new RCONServer(getConfig().getValue("rcon.host", "127.0.0.1"), getConfig().getInt("rcon.port", 30001));
             Emulator.gameEnvironment = new GameEnvironment();
             Emulator.gameEnvironment.load();
             Emulator.gameServer.initializePipeline();
             Emulator.gameServer.connect();
-            Emulator.rconServer.initializePipeline();
-            Emulator.rconServer.connect();
+            //Emulator.rconServer.initializePipeline();
+            //Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
             Emulator.getLogging().logStart("Arcturus Morningstar has succesfully loaded. You're running: " + Emulator.version);
             Emulator.getLogging().logStart("System launched in: " + (System.nanoTime() - startTime) / 1e6 + "ms. Using: " + (Runtime.getRuntime().availableProcessors() * 2) + " threads!");

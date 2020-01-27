@@ -36,13 +36,13 @@ public class GuildInfoComposer extends MessageComposer {
         this.response.appendString(this.guild.getBadge());
         this.response.appendInt(this.guild.getRoomId());
         this.response.appendString(this.guild.getRoomName());
-        //this.response.appendInt(this.guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() ? 3 : (this.member == null ? 0 : (this.member.getRank().equals(GuildRank.MEMBER) || this.member.getRank().equals(GuildRank.MOD) ? 1 : (this.member.getRank().equals(GuildRank.REQUESTED) ? 2 : 0))));
-        this.response.appendInt(adminPermissions ? 4 : (this.member == null ? 0 : (this.member.getRank().equals(GuildRank.MEMBER) ? 1 : (this.member.getRank().equals(GuildRank.REQUESTED) ? 2 : (this.member.getRank().equals(GuildRank.MOD) ? 3 : (this.member.getRank().equals(GuildRank.ADMIN) ? 4 : 0))))));
+        //this.response.appendInt(this.guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() ? 3 : (this.member == null ? 0 : (this.member.getRank().equals(GuildRank.MEMBER) || this.member.getRank().equals(GuildRank.ADMIN) ? 1 : (this.member.getRank().equals(GuildRank.REQUESTED) ? 2 : 0))));
+        this.response.appendInt(adminPermissions ? 4 : (this.member == null ? 0 : (this.member.getRank().equals(GuildRank.MEMBER) ? 1 : (this.member.getRank().equals(GuildRank.REQUESTED) ? 2 : (this.member.getRank().equals(GuildRank.ADMIN) ? 3 : (this.member.getRank().equals(GuildRank.OWNER) ? 4 : 0))))));
         this.response.appendInt(this.guild.getMemberCount()); //Member count.
         this.response.appendBoolean(this.client.getHabbo().getHabboStats().guild == this.guild.getId()); //favorite group
         this.response.appendString(new SimpleDateFormat("dd-MM-yyyy").format(new Date(this.guild.getDateCreated() * 1000L)));
         this.response.appendBoolean(adminPermissions || (this.guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()));
-        this.response.appendBoolean(adminPermissions || (this.member != null && (this.member.getRank().equals(GuildRank.ADMIN)))); //Is admin. //this.member.getRank().equals(GuildRank.MOD) ||
+        this.response.appendBoolean(adminPermissions || (this.member != null && (this.member.getRank().equals(GuildRank.ADMIN)))); //Is admin. //this.member.getRank().equals(GuildRank.ADMIN) ||
         //Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.guild.getOwnerId());
 
         this.response.appendString(this.guild.getOwnerName());
