@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiSphere;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.messages.outgoing.rooms.items.ItemsDataUpdateComposer;
 import gnu.trove.set.hash.THashSet;
 
 public class BattleBanzaiTilesFlicker implements Runnable {
@@ -36,8 +37,9 @@ public class BattleBanzaiTilesFlicker implements Runnable {
 
         for (HabboItem item : this.items) {
             item.setExtradata(state + "");
-            this.room.updateItem(item);
         }
+
+        this.room.sendComposer(new ItemsDataUpdateComposer(this.items).compose());
 
         if (this.count == 5) {
             for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
