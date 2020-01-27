@@ -18,3 +18,6 @@ CREATE TABLE `guild_forum_views`  (
   `timestamp` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+ALTER TABLE `support_tickets`
+ADD COLUMN `photo_item_id` int(11) NOT NULL DEFAULT -1 AFTER `comment_id`;

@@ -41,18 +41,12 @@ public class ReportPhotoEvent extends MessageHandler {
 
         if (item == null || !(item instanceof InteractionExternalImage)) return;
 
-        InteractionExternalImage photoItem = (InteractionExternalImage) item;
+        HabboInfo photoOwner = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(item.getUserId());
 
-        String photoCreatorId = new JsonParser().parse(photoItem.getExtradata()).getAsJsonObject().get("u").getAsString();
+        if (photoOwner == null) return;
 
-        if (photoCreatorId == null) return;
-
-        HabboInfo photoCreator = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(Integer.valueOf(photoCreatorId));
-
-        if (photoCreator == null) return;
-
-        ModToolIssue issue = new ModToolIssue(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getUsername(), photoCreator.getId(), photoCreator.getUsername(), roomId, "", ModToolTicketType.PHOTO);
-        issue.photoItem = photoItem;
+        ModToolIssue issue = new ModToolIssue(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getUsername(), photoOwner.getId(), photoOwner.getUsername(), roomId, "", ModToolTicketType.PHOTO);
+        issue.photoItem = item;
 
         new InsertModToolIssue(issue).run();
 
