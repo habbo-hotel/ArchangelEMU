@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.*;
@@ -56,7 +57,7 @@ public class InteractionPuzzleBox extends HabboItem {
 
         if (item == null || (item.getZ() <= this.getZ() && item.getBaseItem().allowWalk())) {
             room.scheduledComposers.add(new FloorItemOnRollerComposer(this, null, tile, offset, room).compose());
-            client.getHabbo().getRoomUnit().setGoalLocation(boxLocation);
+            room.scheduledTasks.add(() -> client.getHabbo().getRoomUnit().setGoalLocation(boxLocation));
             this.needsUpdate(true);
         }
     }
