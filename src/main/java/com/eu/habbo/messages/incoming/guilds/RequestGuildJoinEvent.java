@@ -21,7 +21,7 @@ public class RequestGuildJoinEvent extends MessageHandler {
         if (guild == null)
             return;
 
-        if (guild.getState() == GuildState.CLOSED) {
+        if (guild.getState() == GuildState.CLOSED || guild.getState() == GuildState.LARGE_CLOSED) {
             this.client.sendResponse(new GuildJoinErrorComposer(GuildJoinErrorComposer.GROUP_CLOSED));
             return;
         }

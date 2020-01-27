@@ -203,7 +203,7 @@ public class GuildManager {
                 }
 
                 if (userId == 0 && !error) {
-                    if (guild.getState() == GuildState.LOCKED) {
+                    if (guild.getState() == GuildState.EXCLUSIVE) {
                         try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(id) as total FROM guilds_members WHERE guild_id = ? AND level_id = 3")) {
                             statement.setInt(1, guild.getId());
                             try (ResultSet set = statement.executeQuery()) {
@@ -236,7 +236,7 @@ public class GuildManager {
                             statement.setInt(1, guild.getId());
                             statement.setInt(2, client.getHabbo().getHabboInfo().getId());
                             statement.setInt(3, Emulator.getIntUnixTimestamp());
-                            statement.setInt(4, guild.getState() == GuildState.LOCKED ? GuildRank.REQUESTED.type : GuildRank.MEMBER.type);
+                            statement.setInt(4, guild.getState() == GuildState.EXCLUSIVE ? GuildRank.REQUESTED.type : GuildRank.MEMBER.type);
                             statement.execute();
                         }
                     }
@@ -251,7 +251,7 @@ public class GuildManager {
                 }
 
                 if (userId == 0 && !error) {
-                    if (guild.getState() == GuildState.LOCKED)
+                    if (guild.getState() == GuildState.EXCLUSIVE)
                         guild.increaseRequestCount();
                     else {
                         guild.increaseMemberCount();
