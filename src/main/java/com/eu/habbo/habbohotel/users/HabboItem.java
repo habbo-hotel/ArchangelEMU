@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.IEventTriggers;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
+import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
@@ -20,7 +21,6 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
-import com.eu.habbo.util.figure.FigureUtil;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
@@ -34,6 +34,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class HabboItem implements Runnable, IEventTriggers {
+    private static Class[] TOGGLING_INTERACTIONS = new Class[]{
+            InteractionGameTimer.class,
+            InteractionWired.class,
+            InteractionWiredHighscore.class,
+            InteractionMultiHeight.class
+    };
+
     private int id;
     private int userId;
     private int roomId;
@@ -283,8 +290,9 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
                 }
             }
 
-
-            WiredHandler.handle(WiredTriggerType.STATE_CHANGED, client.getHabbo().getRoomUnit(), room, new Object[]{this});
+            if ((this.getBaseItem().getStateCount() > 1 && !(this instanceof InteractionDice)) || Arrays.asList(HabboItem.TOGGLING_INTERACTIONS).contains(this.getClass()) || (objects != null && objects.length == 1 && objects[0].equals("TOGGLE_OVERRIDE"))) {
+                WiredHandler.handle(WiredTriggerType.STATE_CHANGED, client.getHabbo().getRoomUnit(), room, new Object[]{this});
+            }
         }
     }
 

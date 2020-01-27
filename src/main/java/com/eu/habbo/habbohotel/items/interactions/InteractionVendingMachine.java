@@ -62,6 +62,8 @@ public class InteractionVendingMachine extends HabboItem {
                             room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectM(), -1);
                         if (this.getBaseItem().getEffectF() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.F)
                             room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectF(), -1);
+
+                        super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
                     }
                 } else {
                     if (!tile.isWalkable() && tile.state != RoomTileState.SIT && tile.state != RoomTileState.LAY) {

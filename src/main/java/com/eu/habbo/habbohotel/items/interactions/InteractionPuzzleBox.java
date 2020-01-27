@@ -80,6 +80,8 @@ public class InteractionPuzzleBox extends HabboItem {
         room.scheduledComposers.add(new FloorItemOnRollerComposer(this, null, tile, 0, room).compose());
         room.scheduledTasks.add(() -> client.getHabbo().getRoomUnit().setGoalLocation(boxLocation));
         this.needsUpdate(true);
+
+        super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
     }
 
     @Override
