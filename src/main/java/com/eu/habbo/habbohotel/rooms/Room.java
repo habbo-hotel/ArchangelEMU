@@ -764,7 +764,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     bot.getRoomUnit().setPreviousLocationZ(topItem.getZ());
                     bot.getRoomUnit().setRotation(RoomUserRotation.fromValue(topItem.getRotation()));
                 } else {
-                    bot.getRoomUnit().setZ(topItem.getZ() + topItem.getBaseItem().getHeight());
+                    bot.getRoomUnit().setZ(topItem.getZ() + Item.getCurrentHeight(topItem));
 
                     if (topItem.getBaseItem().allowLay()) {
                         bot.getRoomUnit().setStatus(RoomUnitStatus.LAY, (topItem.getZ() + topItem.getBaseItem().getHeight()) + "");
@@ -772,6 +772,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 }
             } else {
                 bot.getRoomUnit().setZ(bot.getRoomUnit().getCurrentLocation().getStackHeight());
+                bot.getRoomUnit().setPreviousLocationZ(bot.getRoomUnit().getCurrentLocation().getStackHeight());
             }
 
             roomUnits.add(bot.getRoomUnit());
@@ -1604,7 +1605,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         this.dance(unit, DanceType.NONE);
                         //int tileHeight = this.layout.getTile(topItem.getX(), topItem.getY()).z;
                         unit.setStatus(RoomUnitStatus.SIT, (Item.getCurrentHeight(topItem) * 1.0D) + "");
-                        unit.setPreviousLocationZ(topItem.getZ());
                         unit.setZ(topItem.getZ());
                         unit.setRotation(RoomUserRotation.values()[topItem.getRotation()]);
                         unit.sitUpdate = false;
