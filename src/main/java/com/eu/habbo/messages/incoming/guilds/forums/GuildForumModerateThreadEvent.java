@@ -10,6 +10,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadMessagesComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadsComposer;
 import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 
 
@@ -51,7 +52,7 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
         thread.setState(ForumThreadState.fromValue(state));
         thread.setAdminId(this.client.getHabbo().getHabboInfo().getId());
 
-        Emulator.getThreading().run(thread);
+        thread.run();
 
         switch (state) {
             case 10:
@@ -64,5 +65,6 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
         }
 
         this.client.sendResponse(new GuildForumThreadMessagesComposer(thread));
+        this.client.sendResponse(new GuildForumThreadsComposer(guild, 0));
     }
 }
