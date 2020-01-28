@@ -11,10 +11,13 @@ import com.eu.habbo.messages.outgoing.rooms.items.FloorItemUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
 import com.eu.habbo.threading.runnables.RoomUnitVendingMachineAction;
+import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import com.eu.habbo.util.pathfinding.Rotation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InteractionVendingMachine extends HabboItem {
     public InteractionVendingMachine(ResultSet set, Item baseItem) throws SQLException {
@@ -74,8 +77,20 @@ public class InteractionVendingMachine extends HabboItem {
                             }
                         }
                     }
+
+                    List<Runnable> onSuccess = new ArrayList<>();
+                    List<Runnable> onFail = new ArrayList<>();
+
+                    onSuccess.add(() -> Emulator.getThreading().run(() -> {
+                        try {
+                            this.onClick(client, room, objects);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, 150));
+
                     client.getHabbo().getRoomUnit().setGoalLocation(tile);
-                    Emulator.getThreading().run(new RoomUnitVendingMachineAction(client.getHabbo(), this, room), client.getHabbo().getRoomUnit().getPath().size() + 2 * 510);
+                    Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), tile, room, onSuccess, onFail));
                 }
             }
         }
