@@ -38,7 +38,7 @@ public class ModToolSanctionInfoComposer extends MessageComposer {
                 ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
 
                 ModToolSanctionItem prevItem = null;
-                if (modToolSanctionItems.get(modToolSanctionItems.size() - 2) != null) {
+                if (modToolSanctionItems.size() > 1 && modToolSanctionItems.get(modToolSanctionItems.size() - 2) != null) {
                     prevItem = modToolSanctionItems.get(modToolSanctionItems.size() - 2);
                 }
 
