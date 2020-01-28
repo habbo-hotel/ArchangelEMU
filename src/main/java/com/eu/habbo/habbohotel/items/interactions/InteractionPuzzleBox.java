@@ -24,9 +24,6 @@ public class InteractionPuzzleBox extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        if (client.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
-            return;
-
         RoomTile boxLocation = room.getLayout().getTile(this.getX(), this.getY());
         RoomUserRotation rotation = null;
 
@@ -80,7 +77,11 @@ public class InteractionPuzzleBox extends HabboItem {
         room.updateItem(this);
 
         room.scheduledComposers.add(new FloorItemOnRollerComposer(this, null, tile, 0, room).compose());
-        room.scheduledTasks.add(() -> client.getHabbo().getRoomUnit().setGoalLocation(boxLocation));
+        room.scheduledTasks.add(() -> {
+            client.getHabbo().getRoomUnit().setGoalLocation(boxLocation);
+
+            room.scheduledTasks.add(() -> client.getHabbo().getRoomUnit().setGoalLocation(boxLocation));
+        });
         this.needsUpdate(true);
     }
 
