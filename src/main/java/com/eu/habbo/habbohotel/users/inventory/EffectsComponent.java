@@ -31,6 +31,8 @@ public class EffectsComponent {
         } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
         }
+        if(habbo.getHabboInfo().getRank().getRoomEffect() > 0)
+            this.createRankEffect(habbo.getHabboInfo().getRank().getRoomEffect());
     }
 
     public HabboEffect createEffect(int effectId) {
@@ -58,6 +60,17 @@ public class EffectsComponent {
         return effect;
     }
 
+    public HabboEffect createRankEffect(int effectId) {
+        HabboEffect rankEffect = new HabboEffect(effectId, habbo.getHabboInfo().getId());
+        rankEffect.duration = 0;
+        rankEffect.isRankEnable = true;
+        rankEffect.activationTimestamp = Emulator.getIntUnixTimestamp();
+        rankEffect.enabled = true;
+        this.effects.put(effectId, rankEffect);
+        this.activatedEffect = effectId; // enabled by default
+        return rankEffect;
+    }
+
     public void addEffect(HabboEffect effect) {
         this.effects.put(effect.effect, effect);
 
@@ -67,9 +80,8 @@ public class EffectsComponent {
     public void dispose() {
         synchronized (this.effects) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_effects SET duration = ?, activation_timestamp = ?, total = ? WHERE user_id = ? AND effect = ?")) {
-                this.effects.forEachValue(new TObjectProcedure<HabboEffect>() {
-                    @Override
-                    public boolean execute(HabboEffect effect) {
+                this.effects.forEachValue(effect -> {
+                    if(!effect.isRankEnable) {
                         try {
                             statement.setInt(1, effect.duration);
                             statement.setInt(2, effect.activationTimestamp);
@@ -80,9 +92,8 @@ public class EffectsComponent {
                         } catch (SQLException e) {
                             Emulator.getLogging().logSQLException(e);
                         }
-
-                        return true;
                     }
+                    return true;
                 });
 
                 statement.executeBatch();
@@ -145,6 +156,7 @@ public class EffectsComponent {
         public int activationTimestamp = -1;
         public int total = 1;
         public boolean enabled = false;
+        public boolean isRankEnable = false;
 
         public HabboEffect(ResultSet set) throws SQLException {
             this.effect = set.getInt("effect");

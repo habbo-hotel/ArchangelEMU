@@ -747,11 +747,6 @@ public class RoomManager {
             }
 
             int effect = habbo.getInventory().getEffectsComponent().activatedEffect;
-
-            if (effect == 0) {
-                effect = habbo.getHabboInfo().getRank().getRoomEffect();
-            }
-
             room.giveEffect(habbo.getRoomUnit(), effect, -1);
         }
 

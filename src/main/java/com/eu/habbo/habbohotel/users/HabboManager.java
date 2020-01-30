@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolBan;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.permissions.Rank;
+import com.eu.habbo.habbohotel.users.inventory.EffectsComponent;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigComposer;
@@ -246,13 +247,19 @@ public class HabboManager {
             Rank oldRank = habbo.getHabboInfo().getRank();
             if (!oldRank.getBadge().isEmpty()) {
                 habbo.deleteBadge(habbo.getInventory().getBadgesComponent().getBadge(oldRank.getBadge()));
-                //BadgesComponent.deleteBadge(userId, oldRank.getBadge()); // unnecessary as Habbo.deleteBadge does this
+            }
+            if(oldRank.getRoomEffect() > 0) {
+                habbo.getInventory().getEffectsComponent().effects.remove(oldRank.getRoomEffect());
             }
 
             habbo.getHabboInfo().setRank(newRank);
 
             if (!newRank.getBadge().isEmpty()) {
                 habbo.addBadge(newRank.getBadge());
+            }
+
+            if(newRank.getRoomEffect() > 0) {
+                habbo.getInventory().getEffectsComponent().createRankEffect(habbo.getHabboInfo().getRank().getRoomEffect());
             }
 
             habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
