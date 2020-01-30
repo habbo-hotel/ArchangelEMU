@@ -343,10 +343,10 @@ public class PacketManager {
     }
 
     private void registerInventory() throws Exception {
-        //this.registerHandler(Incoming.TestInventoryEvent,                       TestInventoryEvent.class);
         this.registerHandler(Incoming.RequestInventoryBadgesEvent, RequestInventoryBadgesEvent.class);
         this.registerHandler(Incoming.RequestInventoryBotsEvent, RequestInventoryBotsEvent.class);
         this.registerHandler(Incoming.RequestInventoryItemsEvent, RequestInventoryItemsEvent.class);
+        this.registerHandler(Incoming.HotelViewInventoryEvent, RequestInventoryItemsEvent.class);
         this.registerHandler(Incoming.RequestInventoryPetsEvent, RequestInventoryPetsEvent.class);
     }
 
