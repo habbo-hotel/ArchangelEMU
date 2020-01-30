@@ -65,7 +65,9 @@ public class EffectsComponent {
         rankEffect.duration = 0;
         rankEffect.isRankEnable = true;
         rankEffect.activationTimestamp = Emulator.getIntUnixTimestamp();
+        rankEffect.enabled = true;
         this.effects.put(effectId, rankEffect);
+        this.activatedEffect = effectId; // enabled by default
         return rankEffect;
     }
 
