@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.outgoing.rooms.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
@@ -65,7 +66,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
                     RoomUnitOnRollerComposer.this.roomUnit.setZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
                     RoomUnitOnRollerComposer.this.roomUnit.sitUpdate = true;
                 }
-            }, this.room.getRollerSpeed() == 0 ? 250 : 400);
+            }, this.room.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
         } else {
             this.roomUnit.setLocation(this.newLocation);
             this.roomUnit.setZ(this.newZ);
