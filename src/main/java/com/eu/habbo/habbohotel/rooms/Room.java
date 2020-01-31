@@ -1459,7 +1459,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                                     }
                                                 }
                                             }
-                                        }, 500);
+                                        }, this.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
                                     }
                                 }
 
