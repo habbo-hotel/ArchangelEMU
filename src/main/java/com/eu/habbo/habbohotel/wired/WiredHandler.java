@@ -415,11 +415,13 @@ public class WiredHandler {
     }
 
     public static void resetTimers(Room room) {
-        if (!room.isLoaded())
+        if (!room.isLoaded() || room.getRoomSpecialTypes() == null)
             return;
 
-        room.getRoomSpecialTypes().getTriggers().forEach(t-> {
-            if(t.getType() == WiredTriggerType.AT_GIVEN_TIME || t.getType() == WiredTriggerType.PERIODICALLY || t.getType() == WiredTriggerType.PERIODICALLY_LONG) {
+        room.getRoomSpecialTypes().getTriggers().forEach(t -> {
+            if (t == null) return;
+            
+            if (t.getType() == WiredTriggerType.AT_GIVEN_TIME || t.getType() == WiredTriggerType.PERIODICALLY || t.getType() == WiredTriggerType.PERIODICALLY_LONG) {
                 ((WiredTriggerReset) t).resetTimer();
             }
         });
