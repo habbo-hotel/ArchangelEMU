@@ -16,7 +16,6 @@ import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.FloorItemUpdateComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -75,50 +74,50 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                     });
                 }
 
-                RoomTile t = room.getLayout().getTile((short) setting.x, (short) setting.y);
+                RoomTile t = null;
 
                 if (this.position) {
-                    if (t != null) {
-                        if (t.state != RoomTileState.INVALID) {
-                            boolean canMove = true;
+                    t = room.getLayout().getTile((short) setting.x, (short) setting.y);
 
-                            if (t.x == item.getX() && t.y == item.getY()) {
-                                canMove = !(room.getTopItemAt(t.x, t.y) == item);
-                                slideAnimation = false;
-                            }
+                    if (t != null && t.state != RoomTileState.INVALID) {
+                        boolean canMove = true;
 
-                            if (canMove && !room.hasHabbosAt(t.x, t.y)) {
-                                THashSet<RoomTile> tiles = room.getLayout().getTilesAt(t, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation);
-                                double highestZ = -1d;
-                                for (RoomTile tile : tiles) {
-                                    if (tile.state == RoomTileState.INVALID) {
-                                        highestZ = -1d;
-                                        break;
-                                    }
+                        if (t.x == item.getX() && t.y == item.getY()) {
+                            canMove = !(room.getTopItemAt(t.x, t.y) == item);
+                            slideAnimation = false;
+                        }
 
-                                    if (item instanceof InteractionRoller && room.hasItemsAt(tile.x, tile.y)) {
-                                        highestZ = -1d;
-                                        break;
-                                    }
-
-                                    double stackHeight = room.getStackHeight(tile.x, tile.y, false, item);
-                                    if (stackHeight > highestZ) {
-                                        highestZ = stackHeight;
-                                    }
+                        if (canMove && !room.hasHabbosAt(t.x, t.y)) {
+                            THashSet<RoomTile> tiles = room.getLayout().getTilesAt(t, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation);
+                            double highestZ = -1d;
+                            for (RoomTile tile : tiles) {
+                                if (tile.state == RoomTileState.INVALID) {
+                                    highestZ = -1d;
+                                    break;
                                 }
 
-                                if (highestZ != -1d) {
-                                    tilesToUpdate.addAll(tiles);
+                                if (item instanceof InteractionRoller && room.hasItemsAt(tile.x, tile.y)) {
+                                    highestZ = -1d;
+                                    break;
+                                }
 
-                                    offsetZ = highestZ - item.getZ();
-                                    double totalHeight = item.getZ() + offsetZ;
-                                    if (totalHeight > 40) break;
-                                    tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation));
+                                double stackHeight = room.getStackHeight(tile.x, tile.y, false, item);
+                                if (stackHeight > highestZ) {
+                                    highestZ = stackHeight;
+                                }
+                            }
 
-                                    if (!slideAnimation) {
-                                        item.setX(t.x);
-                                        item.setY(t.y);
-                                    }
+                            if (highestZ != -1d) {
+                                tilesToUpdate.addAll(tiles);
+
+                                offsetZ = highestZ - item.getZ();
+                                double totalHeight = item.getZ() + offsetZ;
+                                if (totalHeight > 40) break;
+                                tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation));
+
+                                if (!slideAnimation) {
+                                    item.setX(t.x);
+                                    item.setY(t.y);
                                 }
                             }
                         }
@@ -127,6 +126,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
 
                 if (slideAnimation && t != null) {
                     room.sendComposer(new FloorItemOnRollerComposer(item, null, t, offsetZ, room).compose());
+                    room.updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                 } else {
                     room.updateItem(item);
                 }
