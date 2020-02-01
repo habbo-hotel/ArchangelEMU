@@ -102,7 +102,7 @@ public class SecureLoginEvent extends MessageHandler {
 
                 messages.add(new SecureLoginOKComposer().compose());
                 messages.add(new UserHomeRoomComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), 0).compose());
-                messages.add(new UserEffectsListComposer(habbo, client.getHabbo().getInventory().getEffectsComponent().effects.values().toArray(new EffectsComponent.HabboEffect[0])).compose());
+                messages.add(new UserEffectsListComposer(habbo, this.client.getHabbo().getInventory().getEffectsComponent().effects.values()).compose());
                 messages.add(new UserClothesComposer(this.client.getHabbo()).compose());
                 messages.add(new NewUserIdentityComposer(habbo).compose());
                 messages.add(new UserPermissionsComposer(this.client.getHabbo()).compose());

@@ -14,12 +14,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class EffectsComponent {
-    public final THashMap<Integer, HabboEffect> effects;
+    public final THashMap<Integer, HabboEffect> effects = new THashMap<>();
     public final Habbo habbo;
     public int activatedEffect = 0;
 
     public EffectsComponent(Habbo habbo) {
-        this.effects = new THashMap<>();
         this.habbo = habbo;
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_effects WHERE user_id = ?")) {
             statement.setInt(1, habbo.getHabboInfo().getId());
