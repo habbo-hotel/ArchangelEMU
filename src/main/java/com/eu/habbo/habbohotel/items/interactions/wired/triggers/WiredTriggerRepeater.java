@@ -19,7 +19,7 @@ import java.util.List;
 
 public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICycleable {
     public static final WiredTriggerType type = WiredTriggerType.PERIODICALLY;
-    public static final int DEFAULT_DELAY = 20 * 500;
+    public static final int DEFAULT_DELAY = 10 * 500;
 
     protected int repeatTime = DEFAULT_DELAY;
     protected int counter = 0;
