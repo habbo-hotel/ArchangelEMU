@@ -26,7 +26,8 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.*;
-import com.eu.habbo.habbohotel.wired.*;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -78,6 +79,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Room implements Comparable<Room>, ISerialize, Runnable {
     public static final Comparator SORT_SCORE = new Comparator() {
@@ -720,8 +722,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void updateHabbosAt(short x, short y) {
-        THashSet<Habbo> habbos = this.getHabbosAt(x, y);
+        this.updateHabbosAt(x, y, this.getHabbosAt(x, y));
+    }
 
+    public void updateHabbosAt(short x, short y, THashSet<Habbo> habbos) {
         HabboItem item = this.getTopItemAt(x, y);
 
         THashSet<RoomUnit> roomUnits = new THashSet<>();
@@ -4516,7 +4520,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         //Update Habbos at old position
         for (RoomTile t : occupiedTiles) {
-            this.updateHabbosAt(t.x, t.y);
+            this.updateHabbosAt(
+                    t.x,
+                    t.y,
+                    this.getHabbosAt(t.x, t.y)
+                            .stream()
+                            .filter(h -> !h.getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
+                            .collect(Collectors.toCollection(THashSet::new))
+            );
             this.updateBotsAt(t.x, t.y);
         }
         return FurnitureMovementError.NONE;
