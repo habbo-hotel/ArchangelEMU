@@ -171,7 +171,7 @@ public class MarketPlace {
 
 
     public static void serializeItemInfo(int itemId, ServerMessage message) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT avg(price) as price, COUNT(*) as sold, (datediff(NOW(), DATE(from_unixtime(timestamp)))) as day FROM marketplace_items INNER JOIN items ON items.id = marketplace_items.item_id INNER JOIN items_base ON items.item_id = items_base.id WHERE items.limited_data = '0:0' AND state = 2 AND items_base.sprite_id = ? AND DATE(from_unixtime(timestamp)) >= NOW() - INTERVAL 30 DAY GROUP BY DATE(from_unixtime(timestamp))")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT avg(marketplace_items.price) as price, COUNT(*) as sold, (datediff(NOW(), DATE(from_unixtime(marketplace_items.timestamp)))) as day FROM marketplace_items INNER JOIN items ON items.id = marketplace_items.item_id INNER JOIN items_base ON items.item_id = items_base.id WHERE items.limited_data = '0:0' AND marketplace_items.state = 2 AND items_base.sprite_id = ? AND DATE(from_unixtime(marketplace_items.timestamp)) >= NOW() - INTERVAL 30 DAY GROUP BY DATE(from_unixtime(marketplace_items.timestamp))")) {
             statement.setInt(1, itemId);
 
             message.appendInt(avarageLastXDays(itemId, 7));
