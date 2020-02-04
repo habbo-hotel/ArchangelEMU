@@ -31,6 +31,8 @@ When making an bug report or a feature request use the template we provide so th
 - Alejandro
 - Harmony
 - Quadral (Pathfinder)
+- Skeletor
+- z
 
 ## Discord ##
 Join us on Discord at https://discord.gg/BzfFsTp
