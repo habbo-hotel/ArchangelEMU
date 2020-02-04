@@ -13,7 +13,7 @@ public class MoodLightSaveSettingsEvent extends MessageHandler {
     public void handle() throws Exception {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
-        if ((room.getGuildId() > 0 && room.guildRightLevel(this.client.getHabbo()) < 2) && !room.hasRights(this.client.getHabbo()))
+        if ((room.getGuildId() <= 0 && room.guildRightLevel(this.client.getHabbo()) < 2) && !room.hasRights(this.client.getHabbo()))
             return;
 
         int id = this.packet.readInt();
