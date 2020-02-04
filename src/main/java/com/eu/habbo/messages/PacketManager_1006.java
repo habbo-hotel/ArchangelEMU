@@ -372,7 +372,7 @@ public class PacketManager_1006 {
         this.registerHandler(Incoming.PetPickupEvent, PetPickupEvent.class);
         this.registerHandler(Incoming.ScratchPetEvent, ScratchPetEvent.class);
         this.registerHandler(Incoming.RequestPetTrainingPanelEvent, RequestPetTrainingPanelEvent.class);
-        this.registerHandler(Incoming.HorseUseItemEvent, PetUseItemEvent.class);
+        this.registerHandler(Incoming.PetUseItemEvent, PetUseItemEvent.class);
         this.registerHandler(Incoming.HorseRideSettingsEvent, PetRideSettingsEvent.class);
         this.registerHandler(Incoming.HorseRideEvent, PetRideEvent.class);
     }

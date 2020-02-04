@@ -64,7 +64,8 @@ public class Incoming {
     public static final int SearchRoomsFriendsNowEvent = 1786;
     public static final int SetStackHelperHeightEvent = 3839;
     public static final int RedeemVoucherEvent = 339;
-    public static final int HorseUseItemEvent = 1328;
+    public static final int PetUseItemEvent = 1328;
+    public static final int HorseRemoveSaddleEvent = 186;
     public static final int BuyItemEvent = 1603;
     public static final int AdvertisingSaveEvent = 3608;
     public static final int RequestPetTrainingPanelEvent = 2161;

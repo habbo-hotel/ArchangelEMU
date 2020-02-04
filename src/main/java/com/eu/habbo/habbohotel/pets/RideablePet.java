@@ -10,6 +10,7 @@ public class RideablePet extends Pet {
     private Habbo rider;
     private boolean hasSaddle;
     private boolean anyoneCanRide;
+    private int saddleItemId;
 
     public RideablePet(ResultSet set) throws SQLException {
         super(set);
@@ -43,5 +44,13 @@ public class RideablePet extends Pet {
 
     public void setRider(Habbo rider) {
         this.rider = rider;
+    }
+
+    public int getSaddleItemId() {
+        return saddleItemId;
+    }
+
+    public void setSaddleItemId(int saddleItemId) {
+        this.saddleItemId = saddleItemId;
     }
 }
