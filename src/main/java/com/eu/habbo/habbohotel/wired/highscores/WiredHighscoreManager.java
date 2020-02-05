@@ -92,7 +92,7 @@ public class WiredHighscoreManager {
     public List<WiredHighscoreRow> getHighscoreRowsForItem(int itemId, WiredHighscoreClearType clearType, WiredHighscoreScoreType scoreType) {
         if (!this.data.containsKey(itemId)) return null;
 
-        Stream<WiredHighscoreRow> highscores = this.data.get(itemId).stream()
+        Stream<WiredHighscoreRow> highscores = new ArrayList<>(this.data.get(itemId)).stream()
                 .filter(entry -> this.timeMatchesEntry(entry, clearType) && (scoreType != WiredHighscoreScoreType.MOSTWIN || entry.isWin()))
                 .map(entry -> new WiredHighscoreRow(
                         entry.getUserIds().stream()
