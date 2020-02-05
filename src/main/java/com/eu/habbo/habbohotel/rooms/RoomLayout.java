@@ -257,8 +257,12 @@ public class RoomLayout {
         return this.heightmap.replace("\r\n", "\r");
     }//re
 
-    /// Pathfinder Reworked By Quadral, thanks buddy!! You Saved Morningstar <3
     public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit) {
+        return this.findPath(oldTile, newTile, goalLocation, roomUnit, false);
+    }
+
+    /// Pathfinder Reworked By Quadral, thanks buddy!! You Saved Morningstar <3
+    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit, boolean isWalktroughRetry) {
         if (this.room == null || !this.room.isLoaded() || oldTile == null || newTile == null || oldTile.equals(newTile) || newTile.state == RoomTileState.INVALID)
             return new LinkedList<>();
         LinkedList<RoomTile> openList = new LinkedList<>();
@@ -291,7 +295,7 @@ public class RoomLayout {
                 double height = currentAdj.getStackHeight() - current.getStackHeight();
                 if (!ALLOW_FALLING && height < -MAXIMUM_STEP_HEIGHT) continue;
                 if (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT) continue;
-                if (currentAdj.hasUnits() && (!this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
+                if (currentAdj.hasUnits() && ((!isWalktroughRetry && !this.room.isAllowWalkthrough()) || currentAdj.equals(goalLocation))) {
                     closedList.add(currentAdj);
                     openList.remove(currentAdj);
                     continue;
@@ -308,6 +312,11 @@ public class RoomLayout {
             }
         }
        // System.out.println("Invalid Path.");
+
+        if (!this.room.isAllowWalkthrough()) {
+            return this.findPath(oldTile, newTile, goalLocation, roomUnit, true);
+        }
+
         return new LinkedList<>();
     }
 
