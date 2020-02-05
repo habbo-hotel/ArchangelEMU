@@ -27,6 +27,7 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 
 public class RoomUnit {
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
@@ -65,6 +66,7 @@ public class RoomUnit {
     private int walkTimeOut;
     private int effectId;
     private int effectEndTimestamp;
+    private ScheduledFuture moveBlockingTask;
 
     private int idleTimer;
     private Room room;
@@ -767,5 +769,13 @@ public class RoomUnit {
                 .map(rotation -> room.getLayout().getTileInFront(baseTile, rotation))
                 .filter(t -> t != null && t.isWalkable() && !room.hasHabbosAt(t.x, t.y))
                 .min(Comparator.comparingDouble(a -> a.distance(this.getCurrentLocation()))).orElse(null);
+    }
+
+    public ScheduledFuture getMoveBlockingTask() {
+        return moveBlockingTask;
+    }
+
+    public void setMoveBlockingTask(ScheduledFuture moveBlockingTask) {
+        this.moveBlockingTask = moveBlockingTask;
     }
 }

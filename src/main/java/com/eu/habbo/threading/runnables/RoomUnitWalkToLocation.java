@@ -29,17 +29,17 @@ public class RoomUnitWalkToLocation implements Runnable {
             return;
         }
 
-        if (!this.walker.getGoal().equals(this.goalTile)) {
-            onFail();
-            return;
-        }
-
         if (this.walker.getCurrentLocation().equals(this.goalTile)) {
             onSuccess();
             return;
         }
 
-        Emulator.getThreading().run(this, 500);
+        if (!this.walker.getGoal().equals(this.goalTile)) {
+            onFail();
+            return;
+        }
+
+        Emulator.getThreading().run(this, 250);
     }
 
     private void onSuccess() {
