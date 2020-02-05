@@ -22,7 +22,7 @@ public class HorseRemoveSaddleEvent extends MessageHandler {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
         Pet pet = room.getPet(this.packet.readInt());
 
-        if (pet == null || !(pet instanceof HorsePet)) return;
+        if (pet == null || !(pet instanceof HorsePet) || pet.getUserId() != this.client.getHabbo().getHabboInfo().getId()) return;
 
         HorsePet horse = (HorsePet) pet;
 
