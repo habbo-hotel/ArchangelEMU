@@ -42,18 +42,9 @@ public class InteractionPuzzleBox extends HabboItem {
         }
 
         if (rotation == null) {
-            Optional<RoomTile> nearestTile = Arrays.stream(
-                    new RoomTile[]{
-                            room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.SOUTH.getValue()),
-                            room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.NORTH.getValue()),
-                            room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.EAST.getValue()),
-                            room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.WEST.getValue())
-                    }
-            )
-                    .filter(t -> t != null && t.isWalkable() && !room.hasHabbosAt(t.x, t.y))
-                    .min(Comparator.comparingDouble(a -> a.distance(client.getHabbo().getRoomUnit().getCurrentLocation())));
+            RoomTile nearestTile = client.getHabbo().getRoomUnit().getClosestAdjacentTile(this.getX(), this.getY(), false);
 
-            nearestTile.ifPresent(roomTile -> client.getHabbo().getRoomUnit().setGoalLocation(roomTile));
+            if (nearestTile != null) client.getHabbo().getRoomUnit().setGoalLocation(nearestTile);
             return;
         }
 

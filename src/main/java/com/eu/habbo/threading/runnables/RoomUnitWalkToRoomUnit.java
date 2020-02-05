@@ -74,22 +74,10 @@ public class RoomUnitWalkToRoomUnit implements Runnable {
     }
 
     private void findNewLocation() {
-        this.goalTile = this.room.getLayout().getTileInFront(this.target.getCurrentLocation(), this.target.getBodyRotation().getValue());
+        this.goalTile = this.walker.getClosestAdjacentTile(this.target.getCurrentLocation().x, this.target.getCurrentLocation().y, true);
 
         if (this.goalTile == null)
             return;
-
-        if (!this.room.tileWalkable(this.goalTile)) {
-            List<RoomTile> tiles = this.room.getLayout().getTilesAround(this.target.getCurrentLocation());
-
-            for (RoomTile t : tiles) {
-                if (this.room.tileWalkable(t)) {
-                    this.goalTile = t;
-
-                    break;
-                }
-            }
-        }
 
         this.walker.setGoalLocation(this.goalTile);
 

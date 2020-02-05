@@ -3,7 +3,10 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.*;
+import com.eu.habbo.habbohotel.items.interactions.InteractionGuildGate;
+import com.eu.habbo.habbohotel.items.interactions.InteractionHabboClubGate;
+import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
+import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.DanceType;
@@ -22,9 +25,7 @@ import gnu.trove.map.TMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class RoomUnit {
@@ -742,5 +743,29 @@ public class RoomUnit {
         HabboItem topItem = this.room.getTopItemAt(this.getX(), this.getY());
 
         return topItem == null || (!(topItem instanceof InteractionWater) && !(topItem instanceof InteractionWaterItem));
+    }
+
+    public RoomTile getClosestAdjacentTile(short x, short y, boolean diagonal) {
+        RoomTile baseTile = room.getLayout().getTile(x, y);
+
+        if (baseTile == null) return null;
+
+        List<Integer> rotations = new ArrayList<>();
+        rotations.add(RoomUserRotation.SOUTH.getValue());
+        rotations.add(RoomUserRotation.NORTH.getValue());
+        rotations.add(RoomUserRotation.EAST.getValue());
+        rotations.add(RoomUserRotation.WEST.getValue());
+
+        if (diagonal) {
+            rotations.add(RoomUserRotation.NORTH_EAST.getValue());
+            rotations.add(RoomUserRotation.NORTH_WEST.getValue());
+            rotations.add(RoomUserRotation.SOUTH_EAST.getValue());
+            rotations.add(RoomUserRotation.SOUTH_WEST.getValue());
+        }
+
+        return rotations.stream()
+                .map(rotation -> room.getLayout().getTileInFront(baseTile, rotation))
+                .filter(t -> t != null && t.isWalkable() && !room.hasHabbosAt(t.x, t.y))
+                .min(Comparator.comparingDouble(a -> a.distance(this.getCurrentLocation()))).orElse(null);
     }
 }
