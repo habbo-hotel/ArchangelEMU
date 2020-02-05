@@ -178,6 +178,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("effect_tile_group", InteractionEffectTile.class));
         this.interactionsList.add(new ItemInteraction("crackable_subscription_box", InteractionRedeemableSubscriptionBox.class));
         this.interactionsList.add(new ItemInteraction("random_state", InteractionRandomState.class));
+        this.interactionsList.add(new ItemInteraction("vendingmachine_no_sides", InteractionNoSidesVendingMachine.class));
 
         this.interactionsList.add(new ItemInteraction("game_timer", InteractionGameTimer.class));
 

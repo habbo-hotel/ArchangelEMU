@@ -46,7 +46,7 @@ public class InteractionVendingMachine extends HabboItem {
         super.onClick(client, room, objects);
 
         if (client != null) {
-            RoomTile tile = getSquareInFront(room.getLayout(), this);
+            RoomTile tile = this.getRequiredTile(client.getHabbo(), room);
 
             if (tile != null) {
                 if (tile.equals(client.getHabbo().getRoomUnit().getCurrentLocation())) {
@@ -206,5 +206,9 @@ public class InteractionVendingMachine extends HabboItem {
 
     public void giveVendingMachineItem(Habbo habbo, Room room) {
         Emulator.getThreading().run(new RoomUnitGiveHanditem(habbo.getRoomUnit(), room, this.getBaseItem().getRandomVendingItem()));
+    }
+
+    public RoomTile getRequiredTile(Habbo habbo, Room room) {
+        return getSquareInFront(room.getLayout(), this);
     }
 }
