@@ -177,6 +177,9 @@ public class RoomUnit {
             }
 
             Deque<RoomTile> peekPath = room.getLayout().findPath(this.currentLocation, this.path.peek(), this.goalLocation, this);
+
+            if (peekPath == null) peekPath = new LinkedList<>();
+
             if (peekPath.size() >= 3) {
                 if (path.isEmpty()) return true;
 
@@ -543,10 +546,9 @@ public class RoomUnit {
 
     public void findPath()
     {
-        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation)))
-        {
-
-            this.path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation, this);
+        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation))) {
+            Deque<RoomTile> path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation, this);
+            if (path != null) this.path = path;
         }
     }
 
