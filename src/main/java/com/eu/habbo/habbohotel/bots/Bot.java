@@ -22,6 +22,8 @@ import java.util.Arrays;
 
 public class Bot implements Runnable {
     public static final String NO_CHAT_SET = "${bot.skill.chatter.configuration.text.placeholder}";
+    public static String[] PLACEMENT_MESSAGES = "Yo!;Hello I'm a real party animal!;Hello!".split(";");
+
     private final ArrayList<String> chatLines;
     private transient int id;
     private String name;
@@ -240,6 +242,8 @@ public class Bot implements Runnable {
         if (this.roomUnit != null) {
             room.giveEffect(this.roomUnit, this.effect, -1);
         }
+
+        this.talk(PLACEMENT_MESSAGES[Emulator.getRandom().nextInt(PLACEMENT_MESSAGES.length)]);
     }
 
     public void onPickUp(Habbo habbo, Room room) {

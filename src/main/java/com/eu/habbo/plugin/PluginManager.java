@@ -3,6 +3,7 @@ package com.eu.habbo.plugin;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.Easter;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
+import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.TargetOffer;
@@ -82,6 +83,8 @@ public class PluginManager {
         BotManager.MAXIMUM_CHAT_LENGTH = Emulator.getConfig().getInt("hotel.bot.max.chatlength");
         BotManager.MAXIMUM_NAME_LENGTH = Emulator.getConfig().getInt("hotel.bot.max.namelength");
         BotManager.MAXIMUM_CHAT_SPEED = Emulator.getConfig().getInt("hotel.bot.max.chatdelay");
+        Bot.PLACEMENT_MESSAGES = Emulator.getConfig().getValue("hotel.bot.placement.messages", "Yo!;Hello I'm a real party animal!;Hello!").split(";");
+
         HabboInventory.MAXIMUM_ITEMS = Emulator.getConfig().getInt("hotel.inventory.max.items");
         Messenger.MAXIMUM_FRIENDS = Emulator.getConfig().getInt("hotel.max.friends");
         Messenger.MAXIMUM_FRIENDS_HC = Emulator.getConfig().getInt("hotel.max.friends.hc");
