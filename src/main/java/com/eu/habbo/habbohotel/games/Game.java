@@ -132,8 +132,7 @@ public abstract class Game implements Runnable {
         }
 
         for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
-            item.setExtradata("0");
-            this.room.updateItem(item);
+            ((WiredBlob) item).onGameStart(this.room);
         }
     }
 
@@ -190,6 +189,10 @@ public abstract class Game implements Runnable {
         for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
             ((InteractionWiredHighscore) item).reloadData();
             this.room.updateItem(item);
+        }
+
+        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
+            ((WiredBlob) item).onGameEnd(this.room);
         }
     }
 
