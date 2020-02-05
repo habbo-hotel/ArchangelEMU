@@ -138,7 +138,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                             if(this.rotation > 0) {
                                 item.setX(newTile.x);
                                 item.setY(newTile.y);
-                                item.setZ(offset);
+                                item.setZ(item.getZ() + offset);
                                 room.sendComposer(new FloorItemUpdateComposer(item).compose());
                                 for (RoomTile t : tilesToUpdate) {
                                     room.updateHabbosAt(t.x, t.y);
