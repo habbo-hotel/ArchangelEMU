@@ -87,7 +87,7 @@ public class InteractionVendingMachine extends HabboItem {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }, 150));
+                    }, 500));
 
                     client.getHabbo().getRoomUnit().setGoalLocation(tile);
                     Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), tile, room, onSuccess, onFail));

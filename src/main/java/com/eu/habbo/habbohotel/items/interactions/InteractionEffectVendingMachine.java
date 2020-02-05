@@ -3,18 +3,18 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.RoomUnitVendingMachineAction;
+import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import com.eu.habbo.util.pathfinding.Rotation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InteractionEffectVendingMachine extends InteractionDefault {
     public InteractionEffectVendingMachine(ResultSet set, Item baseItem) throws SQLException {
@@ -55,7 +55,7 @@ public class InteractionEffectVendingMachine extends InteractionDefault {
                         });
                     }
                 } else {
-                    if (!tile.isWalkable()) {
+                    if (!tile.isWalkable() && tile.state != RoomTileState.SIT && tile.state != RoomTileState.LAY) {
                         for (RoomTile t : room.getLayout().getTilesAround(room.getLayout().getTile(this.getX(), this.getY()))) {
                             if (t != null && t.isWalkable()) {
                                 tile = t;
@@ -63,8 +63,20 @@ public class InteractionEffectVendingMachine extends InteractionDefault {
                             }
                         }
                     }
+
+                    List<Runnable> onSuccess = new ArrayList<>();
+                    List<Runnable> onFail = new ArrayList<>();
+
+                    onSuccess.add(() -> Emulator.getThreading().run(() -> {
+                        try {
+                            this.onClick(client, room, objects);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, 500));
+
                     client.getHabbo().getRoomUnit().setGoalLocation(tile);
-                    Emulator.getThreading().run(new RoomUnitVendingMachineAction(client.getHabbo(), this, room), client.getHabbo().getRoomUnit().getPath().size() + 2 * 510);
+                    Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), tile, room, onSuccess, onFail));
                 }
             }
         }
