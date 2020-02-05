@@ -96,8 +96,13 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
                 List<Runnable> tasks = new ArrayList<>();
                 tasks.add(new RoomUnitGiveHanditem(habbo.getRoomUnit(), room, this.itemId));
                 tasks.add(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, 0));
+
                 Emulator.getThreading().run(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, this.itemId));
-                Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(bot.getRoomUnit(), habbo.getRoomUnit(), room, tasks, null));
+
+                List<Runnable> failedReach = new ArrayList<>();
+                failedReach.add(() -> tasks.forEach(Runnable::run));
+
+                Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(bot.getRoomUnit(), habbo.getRoomUnit(), room, tasks, failedReach));
             }
 
             return true;
