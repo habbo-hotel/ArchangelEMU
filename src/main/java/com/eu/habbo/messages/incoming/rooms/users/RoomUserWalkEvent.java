@@ -117,6 +117,8 @@ public class RoomUserWalkEvent extends MessageHandler {
 
                         // This is where we set the end location and begin finding a path
                         if (tile.isWalkable() || room.canSitOrLayAt(tile.x, tile.y)) {
+                            if (roomUnit.getMoveBlockingTask() != null) roomUnit.getMoveBlockingTask().get();
+
                             roomUnit.setGoalLocation(tile);
                         }
                     } else {

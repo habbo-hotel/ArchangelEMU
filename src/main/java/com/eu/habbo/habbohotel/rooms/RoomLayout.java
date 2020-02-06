@@ -317,7 +317,7 @@ public class RoomLayout {
             return this.findPath(oldTile, newTile, goalLocation, roomUnit, true);
         }
 
-        return new LinkedList<>();
+        return null;
     }
 
     private RoomTile findTile(List<RoomTile> tiles, short x, short y) {

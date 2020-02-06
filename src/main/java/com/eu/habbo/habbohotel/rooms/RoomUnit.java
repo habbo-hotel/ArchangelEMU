@@ -27,6 +27,7 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 
 public class RoomUnit {
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
@@ -65,6 +66,7 @@ public class RoomUnit {
     private int walkTimeOut;
     private int effectId;
     private int effectEndTimestamp;
+    private ScheduledFuture moveBlockingTask;
 
     private int idleTimer;
     private Room room;
@@ -175,6 +177,9 @@ public class RoomUnit {
             }
 
             Deque<RoomTile> peekPath = room.getLayout().findPath(this.currentLocation, this.path.peek(), this.goalLocation, this);
+
+            if (peekPath == null) peekPath = new LinkedList<>();
+
             if (peekPath.size() >= 3) {
                 if (path.isEmpty()) return true;
 
@@ -541,10 +546,9 @@ public class RoomUnit {
 
     public void findPath()
     {
-        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation)))
-        {
-
-            this.path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation, this);
+        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation))) {
+            Deque<RoomTile> path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation, this);
+            if (path != null) this.path = path;
         }
     }
 
@@ -767,5 +771,13 @@ public class RoomUnit {
                 .map(rotation -> room.getLayout().getTileInFront(baseTile, rotation))
                 .filter(t -> t != null && t.isWalkable() && !room.hasHabbosAt(t.x, t.y))
                 .min(Comparator.comparingDouble(a -> a.distance(this.getCurrentLocation()))).orElse(null);
+    }
+
+    public ScheduledFuture getMoveBlockingTask() {
+        return moveBlockingTask;
+    }
+
+    public void setMoveBlockingTask(ScheduledFuture moveBlockingTask) {
+        this.moveBlockingTask = moveBlockingTask;
     }
 }
