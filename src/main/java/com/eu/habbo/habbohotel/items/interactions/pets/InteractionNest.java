@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.items.interactions;
+package com.eu.habbo.habbohotel.items.interactions.pets;
 
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;

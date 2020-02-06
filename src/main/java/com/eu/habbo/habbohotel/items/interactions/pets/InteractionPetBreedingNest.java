@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.items.interactions;
+package com.eu.habbo.habbohotel.items.interactions.pets;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
