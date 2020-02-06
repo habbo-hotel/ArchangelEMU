@@ -40,7 +40,7 @@ public final class Emulator {
     public static final String ANSI_YELLOW = "\u001B[33m";
 
 
-    public final static String PREVIEW = "Stable";
+    public final static String PREVIEW = "RC-3";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
