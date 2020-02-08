@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 
 public class RoomUnit {
+    public boolean isWiredTeleporting = false;
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
     public boolean canRotate = true;

@@ -42,7 +42,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
     }
 
     public static void teleportUnitToTile(RoomUnit roomUnit, RoomTile tile) {
-        if (roomUnit == null || tile == null)
+        if (roomUnit == null || tile == null || roomUnit.isWiredTeleporting)
             return;
 
         Room room = roomUnit.getRoom();
