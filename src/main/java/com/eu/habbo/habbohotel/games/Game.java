@@ -91,8 +91,11 @@ public abstract class Game implements Runnable {
 
             GameTeam team = this.getTeamForHabbo(habbo);
             if (team != null && team.isMember(habbo)) {
-                team.removeMember(habbo.getHabboInfo().getGamePlayer());
-                habbo.getHabboInfo().getGamePlayer().reset();
+                if (habbo.getHabboInfo().getGamePlayer() != null) {
+                    team.removeMember(habbo.getHabboInfo().getGamePlayer());
+                    habbo.getHabboInfo().getGamePlayer().reset();
+                }
+
                 habbo.getHabboInfo().setCurrentGame(null);
                 habbo.getHabboInfo().setGamePlayer(null);
                 habbo.getClient().sendResponse(new GuideSessionPartnerIsPlayingComposer(false));
@@ -101,23 +104,6 @@ public abstract class Game implements Runnable {
                 }
             }
         }
-
-        /*
-        boolean deleteGame = true;
-        for (GameTeam team : this.teams.values())
-        {
-            if (team.getMembers().size() > 0 )
-            {
-                deleteGame = false;
-                break;
-            }
-        }
-
-        if (deleteGame)
-        {
-            this.room.deleteGame(this);
-        }
-        */
     }
 
 
