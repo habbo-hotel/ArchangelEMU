@@ -46,7 +46,7 @@ public class UserProfileComposer extends MessageComposer {
         this.response.appendString(this.habboInfo.getUsername());
         this.response.appendString(this.habboInfo.getLook());
         this.response.appendString(this.habboInfo.getMotto());
-        this.response.appendString(new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date(this.habboInfo.getAccountCreated() * 1000L)));
+        this.response.appendString(new SimpleDateFormat("dd-MM-yyyy").format(new Date(this.habboInfo.getAccountCreated() * 1000L)));
 
         int achievementScore = 0;
         if (this.habbo != null) {
