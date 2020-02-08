@@ -194,19 +194,16 @@ public class WiredHandler {
         if (effect != null && effect.canExecute(millis)) {
             executed = true;
             if (!effect.requiresTriggeringUser() || (roomUnit != null && effect.requiresTriggeringUser())) {
-                Emulator.getThreading().run(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (room.isLoaded()) {
-                            try {
-                                if (!effect.execute(roomUnit, room, stuff)) return;
-                                effect.setCooldown(millis);
-                            } catch (Exception e) {
-                                Emulator.getLogging().logErrorLine(e);
-                            }
-
-                            effect.activateBox(room);
+                Emulator.getThreading().run(() -> {
+                    if (room.isLoaded()) {
+                        try {
+                            if (!effect.execute(roomUnit, room, stuff)) return;
+                            effect.setCooldown(millis);
+                        } catch (Exception e) {
+                            Emulator.getLogging().logErrorLine(e);
                         }
+
+                        effect.activateBox(room);
                     }
                 }, effect.getDelay() * 500);
             }
