@@ -27,6 +27,7 @@ public class RoomUnitTeleport implements Runnable {
         this.y = y;
         this.z = z;
         this.newEffect = newEffect;
+        roomUnit.isWiredTeleporting = true;
     }
 
     @Override
@@ -53,6 +54,7 @@ public class RoomUnitTeleport implements Runnable {
         ServerMessage teleportMessage = new RoomUnitOnRollerComposer(this.roomUnit, t, this.room).compose();
         this.roomUnit.setLocation(t);
         this.room.sendComposer(teleportMessage);
+        roomUnit.isWiredTeleporting = false;
 
         this.room.updateHabbosAt(t.x, t.y);
         this.room.updateBotsAt(t.x, t.y);

@@ -42,7 +42,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
     }
 
     public static void teleportUnitToTile(RoomUnit roomUnit, RoomTile tile) {
-        if (roomUnit == null || tile == null)
+        if (roomUnit == null || tile == null || roomUnit.isWiredTeleporting)
             return;
 
         Room room = roomUnit.getRoom();
@@ -63,6 +63,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
             for (RoomTile optionalTile : optionalTiles) {
                 if (optionalTile.state != RoomTileState.INVALID && optionalTile.state != RoomTileState.BLOCKED) {
                     alternativeTile = optionalTile;
+                    break;
                 }
             }
 
@@ -139,30 +140,13 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        THashSet<HabboItem> items = new THashSet<>();
-
-        for (HabboItem item : this.items) {
-            if (item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                items.add(item);
-        }
-
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
+        this.items.removeIf(item -> item == null || item.getRoomId() != this.getRoomId()
+                || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null);
 
         if (!this.items.isEmpty()) {
-            int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
-            int j = 1;
-
-            int tryCount = 0;
-            while (tryCount < this.items.size()) {
-                tryCount++;
-                HabboItem item = this.items.get((tryCount - 1 + i) % this.items.size());
-
-                teleportUnitToTile(roomUnit, room.getLayout().getTile(item.getX(), item.getY()));
-                break;
-
-            }
+            int i = Emulator.getRandom().nextInt(this.items.size());
+            HabboItem item = this.items.get(i);
+            teleportUnitToTile(roomUnit, room.getLayout().getTile(item.getX(), item.getY()));
             return true;
         }
 
@@ -220,6 +204,6 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
 
     @Override
     protected long requiredCooldown() {
-        return 0;
+        return 50L;
     }
 }
