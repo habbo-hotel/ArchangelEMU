@@ -2377,6 +2377,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public HabboItem getHabboItem(int id) {
+        if (this.roomItems == null || this.roomSpecialTypes == null)
+            return null; // room not loaded completely
+
         HabboItem item;
         synchronized (this.roomItems) {
             item = this.roomItems.get(id);
