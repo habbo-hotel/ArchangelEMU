@@ -2,10 +2,10 @@ package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.InteractionNest;
-import com.eu.habbo.habbohotel.items.interactions.InteractionPetDrink;
-import com.eu.habbo.habbohotel.items.interactions.InteractionPetFood;
-import com.eu.habbo.habbohotel.items.interactions.InteractionPetToy;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetToy;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;

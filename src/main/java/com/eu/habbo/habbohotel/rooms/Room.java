@@ -19,6 +19,10 @@ import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.Interaction
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeExitTile;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetBreedingNest;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.permissions.Permission;
@@ -576,10 +580,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             if (lowestItem == null || lowestItem.getZ() < item.getZ()) {
                 lowestItem = item;
 
-                result = this.checkStateForItem(lowestItem);
+                result = this.checkStateForItem(lowestItem, tile);
             } else if (lowestItem.getZ() == item.getZ()) {
                 if (result == RoomTileState.OPEN) {
-                    result = this.checkStateForItem(item);
+                    result = this.checkStateForItem(item, tile);
                 }
             }
         }
@@ -589,7 +593,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return result;
     }
 
-    private RoomTileState checkStateForItem(HabboItem item) {
+    private RoomTileState checkStateForItem(HabboItem item, RoomTile tile) {
         RoomTileState result = RoomTileState.BLOCKED;
 
         if (item.isWalkable()) {
@@ -602,6 +606,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         if (item.getBaseItem().allowLay()) {
             result = RoomTileState.LAY;
+        }
+
+        RoomTileState overriddenState = item.getOverrideTileState(tile, this);
+        if (overriddenState != null) {
+            result = overriddenState;
         }
 
         return result;

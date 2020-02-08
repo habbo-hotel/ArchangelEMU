@@ -10,10 +10,7 @@ import com.eu.habbo.habbohotel.items.IEventTriggers;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -25,12 +22,14 @@ import gnu.trove.set.hash.THashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
 
 public abstract class HabboItem implements Runnable, IEventTriggers {
@@ -487,4 +486,30 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
     }
 
     public boolean invalidatesToRoomKick() { return false; }
+
+    public List<RoomTile> getOccupyingTiles(RoomLayout layout) {
+        List<RoomTile> tiles = new ArrayList<>();
+
+        Rectangle rect = RoomLayout.getRectangle(this.getX(), this.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+
+        for (int i = rect.x; i < rect.x + rect.getWidth(); i++) {
+            for (int j = rect.y; j < rect.y + rect.getHeight(); j++) {
+                tiles.add(layout.getTile((short) i, (short) j));
+            }
+        }
+
+        return tiles;
+    }
+
+    public RoomTile getOverrideGoalTile(RoomUnit unit, Room room, RoomTile tile) {
+        return tile;
+    }
+
+    public RoomTileState getOverrideTileState(RoomTile tile, Room room) {
+        return null;
+    }
+
+    public boolean canOverrideTile(RoomUnit unit, Room room, RoomTile tile) {
+        return false;
+    }
 }
