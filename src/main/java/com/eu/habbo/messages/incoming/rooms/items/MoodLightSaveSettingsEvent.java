@@ -33,7 +33,7 @@ public class MoodLightSaveSettingsEvent extends MessageHandler {
             return;
         }
 
-        if (brightness > 0xFF || brightness <= (0.3 * 0xFF)) {
+        if (brightness > 0xFF || brightness < (0.3 * 0xFF)) {
             ScripterManager.scripterDetected(this.client, "User tried to set a moodlight's brightness to out-of-bounds ([76, 255]): " + brightness);
             return;
         }
