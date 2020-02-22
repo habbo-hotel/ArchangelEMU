@@ -76,7 +76,7 @@ public class InteractionFreezeTile extends HabboItem {
     @Override
     public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation) {
         for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation) {
-            if (!set.getValue().isEmpty()) return false;
+            if (set.getValue() != null && !set.getValue().isEmpty()) return false;
         }
 
         return super.canStackAt(room, itemsAtLocation);
