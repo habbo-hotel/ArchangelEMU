@@ -113,7 +113,7 @@ public class BotManager {
                     return;
                 }
 
-                if (!room.hasHabbosAt(location.x, location.y) && !location.isWalkable() && location.state != RoomTileState.SIT && location.state != RoomTileState.LAY)
+                if (room.hasHabbosAt(location.x, location.y) || (!location.isWalkable() && location.state != RoomTileState.SIT && location.state != RoomTileState.LAY))
                     return;
 
                 RoomUnit roomUnit = new RoomUnit();
