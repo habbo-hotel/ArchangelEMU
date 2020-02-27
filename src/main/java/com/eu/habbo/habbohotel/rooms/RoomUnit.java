@@ -291,7 +291,7 @@ public class RoomUnit {
             if (item != null) {
                 if (item != habboItem || !RoomLayout.pointInSquare(item.getX(), item.getY(), item.getX() + item.getBaseItem().getWidth() - 1, item.getY() + item.getBaseItem().getLength() - 1, this.getX(), this.getY())) {
                     if (item.canWalkOn(this, room, null)) {
-                        item.onWalkOn(this, room, new Object[]{this.getCurrentLocation(), next});
+                        item.onWalkOn(this, room, null);
                     } else if (item instanceof InteractionGuildGate || item instanceof InteractionHabboClubGate) {
                         this.setRotation(oldRotation);
                         this.tilesWalked--;
@@ -306,7 +306,7 @@ public class RoomUnit {
                         return false;
                     }
                 } else {
-                    item.onWalk(this, room, new Object[]{this.getCurrentLocation(), next});
+                    item.onWalk(this, room, null);
                 }
 
                 zHeight += item.getZ();
