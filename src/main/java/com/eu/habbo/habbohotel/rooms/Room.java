@@ -570,6 +570,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         HabboItem lowestChair = this.getLowestChair(tile);
         THashSet<HabboItem> items = this.getItemsAt(tile);
         if (items == null) return RoomTileState.INVALID;
+
+        if (items.stream().anyMatch(i -> i.getBaseItem().allowLay())) return RoomTileState.LAY;
+
         for (HabboItem item : items) {
             if (exclude != null && item == exclude) continue;
 
@@ -853,10 +856,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 return;
 
             if (this.loaded) {
-                if (!this.traxManager.disposed()) {
-                    this.traxManager.dispose();
-                }
                 try {
+                    if (!this.traxManager.disposed()) {
+                        this.traxManager.dispose();
+                    }
+
                     this.roomCycleTask.cancel(false);
                     this.scheduledTasks.clear();
                     this.scheduledComposers.clear();
@@ -936,12 +940,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 }
             }
 
-            this.wordQuiz = "";
-            this.yesVotes = 0;
-            this.noVotes = 0;
-            this.updateDatabaseUserCount();
-            this.preLoaded = true;
-            this.layout = null;
+            try {
+                this.wordQuiz = "";
+                this.yesVotes = 0;
+                this.noVotes = 0;
+                this.updateDatabaseUserCount();
+                this.preLoaded = true;
+                this.layout = null;
+            } catch (Exception e) {
+                Emulator.getLogging().logErrorLine(e);
+            }
         }
 
         Emulator.getPluginManager().fireEvent(new RoomUnloadedEvent(this));
@@ -2598,13 +2606,15 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             this.sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
         }
 
-        HabboItem item = this.getTopItemAt(habbo.getRoomUnit().getX(), habbo.getRoomUnit().getY());
+        if (habbo.getRoomUnit().getCurrentLocation() != null) {
+            HabboItem item = this.getTopItemAt(habbo.getRoomUnit().getX(), habbo.getRoomUnit().getY());
 
-        if (item != null) {
-            try {
-                item.onWalkOff(habbo.getRoomUnit(), this, new Object[]{});
-            } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+            if (item != null) {
+                try {
+                    item.onWalkOff(habbo.getRoomUnit(), this, new Object[]{});
+                } catch (Exception e) {
+                    Emulator.getLogging().logErrorLine(e);
+                }
             }
         }
 
