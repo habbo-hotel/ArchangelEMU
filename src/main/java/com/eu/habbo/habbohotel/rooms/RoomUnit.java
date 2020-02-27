@@ -781,7 +781,7 @@ public class RoomUnit {
         return this.getClosestTile(
                 rotations.stream()
                     .map(rotation -> room.getLayout().getTileInFront(baseTile, rotation))
-                    .filter(t -> t != null && t.isWalkable() && !room.hasHabbosAt(t.x, t.y))
+                    .filter(t -> t != null && t.isWalkable() && (this.getCurrentLocation().equals(t) || !room.hasHabbosAt(t.x, t.y)))
                     .collect(Collectors.toList())
         );
     }

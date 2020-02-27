@@ -83,11 +83,10 @@ public class InteractionVendingMachine extends HabboItem {
                         }
                     }
 
-                    List<Runnable> onSuccess = new ArrayList<>();
-                    List<Runnable> onFail = new ArrayList<>();
-
                     RoomTile finalTile = tile;
-                    onSuccess.add(() -> {
+                    client.getHabbo().getRoomUnit().setGoalLocation(tile);
+
+                    Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), tile, room, () -> {
                         this.setExtradata("1");
                         room.scheduledComposers.add(new FloorItemUpdateComposer(this).compose());
 
@@ -98,7 +97,7 @@ public class InteractionVendingMachine extends HabboItem {
                         }
 
                         Emulator.getThreading().run(() -> {
-                            Runnable procedure = () -> {
+                            client.getHabbo().getRoomUnit().setMoveBlockingTask(Emulator.getThreading().run(() -> {
                                 if (client.getHabbo().getRoomUnit().getCurrentLocation().equals(finalTile)) {
                                     this.rotateToMachine(client.getHabbo().getRoomUnit());
                                     room.sendComposer(new RoomUserStatusComposer(client.getHabbo().getRoomUnit()).compose());
@@ -117,14 +116,9 @@ public class InteractionVendingMachine extends HabboItem {
                                 } catch (InterruptedException | ExecutionException e) {
                                     e.printStackTrace();
                                 }
-                            };
-
-                            client.getHabbo().getRoomUnit().setMoveBlockingTask(Emulator.getThreading().run(procedure, 300));
+                            }, 300));
                         }, 250);
-                    });
-
-                    client.getHabbo().getRoomUnit().setGoalLocation(tile);
-                    Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), tile, room, onSuccess, onFail));
+                    }, null));
                 }
             }
         }
