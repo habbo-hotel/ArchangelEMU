@@ -11,8 +11,14 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
 import com.eu.habbo.plugin.events.users.UserIdleEvent;
+import gnu.trove.set.hash.THashSet;
 
 public class RoomUserWalkEvent extends MessageHandler {
+    @Override
+    public int getRatelimit() {
+        return 500;
+    }
+
     @Override
     public void handle() throws Exception {
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
@@ -111,6 +117,23 @@ public class RoomUserWalkEvent extends MessageHandler {
                                 if (pillow != null && room.canLayAt(pillow.x, pillow.y)) {
                                     roomUnit.setGoalLocation(pillow);
                                     return;
+                                }
+                            }
+                        }
+
+                        THashSet<HabboItem> items = room.getItemsAt(tile);
+
+                        if (items.size() > 0) {
+                            for (HabboItem item : items) {
+                                RoomTile overriddenTile = item.getOverrideGoalTile(roomUnit, room, tile);
+
+                                if (overriddenTile == null) {
+                                    return; // null cancels the entire event
+                                }
+
+                                if (!overriddenTile.equals(tile) && overriddenTile.isWalkable()) {
+                                    tile = overriddenTile;
+                                    break;
                                 }
                             }
                         }

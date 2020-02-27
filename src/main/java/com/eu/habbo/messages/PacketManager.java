@@ -171,14 +171,26 @@ public class PacketManager {
                     return;
                 }
 
+                final MessageHandler handler = handlerClass.newInstance();
+
+                if (handler.getRatelimit() > 0) {
+                    if (client.messageTimestamps.containsKey(handlerClass) && System.currentTimeMillis() - client.messageTimestamps.get(handlerClass) < handler.getRatelimit()) {
+                        if (PacketManager.DEBUG_SHOW_PACKETS) {
+                            Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "][" + Logging.ANSI_RED + "RATELIMITED" + Logging.ANSI_RESET + "] => " + packet.getMessageBody());
+                        }
+
+                        return;
+                    } else {
+                        client.messageTimestamps.put(handlerClass, System.currentTimeMillis());
+                    }
+                }
+
                 if (PacketManager.DEBUG_SHOW_PACKETS)
                     Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
 
                 if (logList.contains(packet.getMessageId()) && client.getHabbo() != null) {
                     System.out.println(("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + client.getHabbo().getHabboInfo().getUsername() + "][" + packet.getMessageId() + "] => " + packet.getMessageBody()));
                 }
-
-                final MessageHandler handler = handlerClass.newInstance();
 
                 handler.client = client;
                 handler.packet = packet;

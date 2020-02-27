@@ -5,6 +5,7 @@ import com.eu.habbo.core.Logging;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -17,12 +18,12 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameClient {
-
     public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
     private final Channel channel;
     public long lastPacketCounterCleared = Emulator.getIntUnixTimestamp();
     private Habbo habbo;
     private String machineId = "";
+    public final ConcurrentHashMap<Class<? extends MessageHandler>, Long> messageTimestamps = new ConcurrentHashMap<>();
 
     public GameClient(Channel channel) {
         this.channel = channel;
