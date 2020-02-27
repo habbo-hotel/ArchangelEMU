@@ -4366,6 +4366,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (!this.layout.fitsOnMap(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))
             return FurnitureMovementError.INVALID_MOVE;
 
+        if (item instanceof InteractionStackHelper) return FurnitureMovementError.NONE;
+
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
         for (RoomTile t : occupiedTiles) {
 
@@ -4374,22 +4376,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             if (this.hasPetsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_PETS;
         }
 
-        boolean magicTile = item instanceof InteractionStackHelper;
+        List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
+        for (RoomTile t : occupiedTiles) {
+            tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
 
-        if (!magicTile) {
-            List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
-            for (RoomTile t : occupiedTiles) {
-                tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
-
-                HabboItem topItem = this.getTopItemAt(t.x, t.y, item);
-                if (topItem != null && !topItem.getBaseItem().allowStack() && !t.getAllowStack()) {
-                    return FurnitureMovementError.CANT_STACK;
-                }
-            }
-
-            if (!item.canStackAt(this, tileFurniList)) {
+            HabboItem topItem = this.getTopItemAt(t.x, t.y, item);
+            if (topItem != null && !topItem.getBaseItem().allowStack() && !t.getAllowStack()) {
                 return FurnitureMovementError.CANT_STACK;
             }
+        }
+
+        if (!item.canStackAt(this, tileFurniList)) {
+            return FurnitureMovementError.CANT_STACK;
         }
 
         return FurnitureMovementError.NONE;

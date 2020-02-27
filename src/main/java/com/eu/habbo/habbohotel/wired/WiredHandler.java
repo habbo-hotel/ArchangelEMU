@@ -142,7 +142,7 @@ public class WiredHandler {
                     if (!((condition.operator() == WiredConditionOperator.OR && matchedConditions.contains(condition.getType())) ||
                             (condition.operator() == WiredConditionOperator.AND && condition.execute(roomUnit, room, stuff))) &&
                             !Emulator.getPluginManager().fireEvent(new WiredConditionFailedEvent(room, roomUnit, trigger, condition)).isCancelled()) {
-                            
+
                         return false;
                     }
                 }
