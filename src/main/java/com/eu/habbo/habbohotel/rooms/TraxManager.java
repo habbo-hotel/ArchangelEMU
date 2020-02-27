@@ -261,7 +261,7 @@ public class TraxManager implements Disposable {
 
     public InteractionMusicDisc fromItemId(int itemId) {
         for (InteractionMusicDisc musicDisc : this.songs) {
-            if (musicDisc.getId() == itemId) {
+            if (musicDisc != null && musicDisc.getId() == itemId) {
                 return musicDisc;
             }
         }
