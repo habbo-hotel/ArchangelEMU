@@ -713,21 +713,23 @@ public class RoomManager {
         if (!room.getCurrentHabbos().isEmpty()) {
 
             Collection<Habbo> habbosToSendEnter = room.getCurrentHabbos().values();
+            Collection<Habbo> visibleHabbos = room.getHabbos();
 
             if (Emulator.getPluginManager().isRegistered(HabboAddedToRoomEvent.class, false)) {
-                HabboAddedToRoomEvent event = Emulator.getPluginManager().fireEvent(new HabboAddedToRoomEvent(habbo, room, habbosToSendEnter));
+                HabboAddedToRoomEvent event = Emulator.getPluginManager().fireEvent(new HabboAddedToRoomEvent(habbo, room, habbosToSendEnter, visibleHabbos));
                 habbosToSendEnter = event.habbosToSendEnter;
+                visibleHabbos = event.visibleHabbos;
             }
 
             for (Habbo habboToSendEnter : habbosToSendEnter) {
                 GameClient client = habboToSendEnter.getClient();
                 if (client != null) {
                     client.sendResponse(new RoomUsersComposer(habbo).compose());
-                    habboToSendEnter.getClient().sendResponse(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
+                    client.sendResponse(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
                 }
             }
 
-            for (Habbo h : room.getHabbos()) {
+            for (Habbo h : visibleHabbos) {
                 if (!h.getRoomUnit().isInvisible()) {
                     habbos.add(h);
                 }
