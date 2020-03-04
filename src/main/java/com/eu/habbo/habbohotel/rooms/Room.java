@@ -4475,7 +4475,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         //Check if can be placed at new position
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
-        
+
         if (!stackHelper.isPresent()) {
             if (topItem != item) {
                 for (RoomTile t : occupiedTiles) {
