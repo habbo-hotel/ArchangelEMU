@@ -8,7 +8,7 @@ import java.util.Collection;
 public class HabboAddedToRoomEvent extends UserEvent {
 
     public final Room room;
-    public final Collection<Habbo> habbosToSendEnter;
+    public Collection<Habbo> habbosToSendEnter;
 
 
     public HabboAddedToRoomEvent(Habbo habbo, Room room, Collection<Habbo> habbosToSendEnter) {
