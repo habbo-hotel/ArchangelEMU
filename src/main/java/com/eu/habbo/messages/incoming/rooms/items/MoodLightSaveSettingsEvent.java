@@ -14,6 +14,7 @@ import java.util.List;
 
 public class MoodLightSaveSettingsEvent extends MessageHandler {
     public static List<String> MOODLIGHT_AVAILABLE_COLORS = Arrays.asList("#74F5F5,#0053F7,#E759DE,#EA4532,#F2F851,#82F349,#000000".split(","));
+    public static int MIN_BRIGHTNESS = (int) Math.floor(0.3 * 0xFF);
 
     @Override
     public void handle() throws Exception {
@@ -33,7 +34,7 @@ public class MoodLightSaveSettingsEvent extends MessageHandler {
             return;
         }
 
-        if (brightness > 0xFF || brightness <= (0.3 * 0xFF)) {
+        if (brightness > 0xFF || brightness < MIN_BRIGHTNESS) {
             ScripterManager.scripterDetected(this.client, "User tried to set a moodlight's brightness to out-of-bounds ([76, 255]): " + brightness);
             return;
         }

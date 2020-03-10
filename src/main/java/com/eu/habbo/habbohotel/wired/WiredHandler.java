@@ -139,12 +139,11 @@ public class WiredHandler {
                 }
 
                 for (InteractionWiredCondition condition : conditions) {
-                    if ((condition.operator() == WiredConditionOperator.OR && matchedConditions.contains(condition.getType())) ||
-                            (condition.operator() == WiredConditionOperator.AND && condition.execute(roomUnit, room, stuff))) {
-                        condition.activateBox(room);
-                    } else {
-                        if (!Emulator.getPluginManager().fireEvent(new WiredConditionFailedEvent(room, roomUnit, trigger, condition)).isCancelled())
-                            return false;
+                    if (!((condition.operator() == WiredConditionOperator.OR && matchedConditions.contains(condition.getType())) ||
+                            (condition.operator() == WiredConditionOperator.AND && condition.execute(roomUnit, room, stuff))) &&
+                            !Emulator.getPluginManager().fireEvent(new WiredConditionFailedEvent(room, roomUnit, trigger, condition)).isCancelled()) {
+
+                        return false;
                     }
                 }
             }

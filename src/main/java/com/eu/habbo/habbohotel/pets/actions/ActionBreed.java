@@ -1,6 +1,6 @@
 package com.eu.habbo.habbohotel.pets.actions;
 
-import com.eu.habbo.habbohotel.items.interactions.InteractionPetBreedingNest;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetBreedingNest;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetAction;
 import com.eu.habbo.habbohotel.pets.PetTasks;

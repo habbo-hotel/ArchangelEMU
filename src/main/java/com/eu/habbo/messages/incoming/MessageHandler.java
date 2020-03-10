@@ -9,4 +9,8 @@ public abstract class MessageHandler {
     public boolean isCancelled = false;
 
     public abstract void handle() throws Exception;
+
+    public int getRatelimit() {
+        return 0;
+    }
 }

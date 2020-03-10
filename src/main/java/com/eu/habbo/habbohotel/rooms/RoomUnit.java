@@ -28,6 +28,7 @@ import gnu.trove.set.hash.THashSet;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.util.stream.Collectors;
 
 public class RoomUnit {
     public boolean isWiredTeleporting = false;
@@ -290,7 +291,7 @@ public class RoomUnit {
             if (item != null) {
                 if (item != habboItem || !RoomLayout.pointInSquare(item.getX(), item.getY(), item.getX() + item.getBaseItem().getWidth() - 1, item.getY() + item.getBaseItem().getLength() - 1, this.getX(), this.getY())) {
                     if (item.canWalkOn(this, room, null)) {
-                        item.onWalkOn(this, room, null);
+                        item.onWalkOn(this, room, new Object[]{this.getCurrentLocation(), next});
                     } else if (item instanceof InteractionGuildGate || item instanceof InteractionHabboClubGate) {
                         this.setRotation(oldRotation);
                         this.tilesWalked--;
@@ -305,7 +306,7 @@ public class RoomUnit {
                         return false;
                     }
                 } else {
-                    item.onWalk(this, room, null);
+                    item.onWalk(this, room, new Object[]{this.getCurrentLocation(), next});
                 }
 
                 zHeight += item.getZ();
@@ -714,6 +715,9 @@ public class RoomUnit {
     public boolean canOverrideTile(RoomTile tile) {
         if (tile == null || room == null || room.getLayout() == null) return false;
 
+        if (room.getItemsAt(tile).stream().anyMatch(i -> i.canOverrideTile(this, room, tile)))
+            return true;
+
         int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
         return this.overridableTiles.contains(tileIndex);
     }
@@ -726,6 +730,8 @@ public class RoomUnit {
     }
 
     public void removeOverrideTile(RoomTile tile) {
+        if (room == null || room.getLayout() == null) return;
+
         int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
         this.overridableTiles.remove(tileIndex);
     }
@@ -750,6 +756,10 @@ public class RoomUnit {
         return topItem == null || (!(topItem instanceof InteractionWater) && !(topItem instanceof InteractionWaterItem));
     }
 
+    public RoomTile getClosestTile(List<RoomTile> tiles) {
+        return tiles.stream().min(Comparator.comparingDouble(a -> a.distance(this.getCurrentLocation()))).orElse(null);
+    }
+
     public RoomTile getClosestAdjacentTile(short x, short y, boolean diagonal) {
         RoomTile baseTile = room.getLayout().getTile(x, y);
 
@@ -768,10 +778,12 @@ public class RoomUnit {
             rotations.add(RoomUserRotation.SOUTH_WEST.getValue());
         }
 
-        return rotations.stream()
-                .map(rotation -> room.getLayout().getTileInFront(baseTile, rotation))
-                .filter(t -> t != null && t.isWalkable() && !room.hasHabbosAt(t.x, t.y))
-                .min(Comparator.comparingDouble(a -> a.distance(this.getCurrentLocation()))).orElse(null);
+        return this.getClosestTile(
+                rotations.stream()
+                    .map(rotation -> room.getLayout().getTileInFront(baseTile, rotation))
+                    .filter(t -> t != null && t.isWalkable() && (this.getCurrentLocation().equals(t) || !room.hasHabbosAt(t.x, t.y)))
+                    .collect(Collectors.toList())
+        );
     }
 
     public ScheduledFuture getMoveBlockingTask() {
