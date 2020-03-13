@@ -12,7 +12,7 @@ Arcturus Morningstar is released under the [GNU General Public License v3](https
 
 ## Versions ##
 ![image](https://img.shields.io/badge/VERSION-2.3.0-success.svg?style=for-the-badge&logo=appveyor)
-![image](https://img.shields.io/badge/STATUS-UNSTABLE-red.svg?style=for-the-badge&logo=appveyor)
+![image](https://img.shields.io/badge/STATUS-STABLE-green.svg?style=for-the-badge&logo=appveyor)
 
 Compiled Download: https://git.krews.org/morningstar/Arcturus-Community/releases
 
@@ -33,6 +33,7 @@ When making an bug report or a feature request use the template we provide so th
 - Quadral (Pathfinder)
 - Skeletor
 - z
+- ArpyAge
 
 ## Discord ##
 Join us on Discord at https://discord.gg/BzfFsTp
