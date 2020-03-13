@@ -3995,8 +3995,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public void makeStand(Habbo habbo) {
         if (habbo.getRoomUnit() == null) return;
+
         HabboItem item = this.getTopItemAt(habbo.getRoomUnit().getX(), habbo.getRoomUnit().getY());
-        if (item == null || !item.getBaseItem().allowSit()) {
+        if (item == null || !item.getBaseItem().allowSit() || !item.getBaseItem().allowLay()) {
             habbo.getRoomUnit().cmdStand = true;
             habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[habbo.getRoomUnit().getBodyRotation().getValue() - habbo.getRoomUnit().getBodyRotation().getValue() % 2]);
             habbo.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
