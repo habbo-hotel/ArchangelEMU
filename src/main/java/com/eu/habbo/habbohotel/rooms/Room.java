@@ -3993,6 +3993,17 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
     }
 
+    public void makeStand(Habbo habbo) {
+        if (habbo.getRoomUnit() == null) return;
+        HabboItem item = this.getTopItemAt(habbo.getRoomUnit().getX(), habbo.getRoomUnit().getY());
+        if (item == null || !item.getBaseItem().allowSit()) {
+            habbo.getRoomUnit().cmdStand = true;
+            habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[habbo.getRoomUnit().getBodyRotation().getValue() - habbo.getRoomUnit().getBodyRotation().getValue() % 2]);
+            habbo.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
+            this.sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
+        }
+    }
+
     public void giveEffect(Habbo habbo, int effectId, int duration) {
         if (this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
             this.giveEffect(habbo.getRoomUnit(), effectId, duration);

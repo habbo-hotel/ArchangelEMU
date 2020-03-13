@@ -38,6 +38,7 @@ public class RoomUnit {
     public boolean animateWalk = false;
     public boolean cmdTeleport = false;
     public boolean cmdSit = false;
+    public boolean cmdStand = false;
     public boolean cmdLay = false;
     public boolean sitUpdate = false;
     public boolean isTeleporting = false;
