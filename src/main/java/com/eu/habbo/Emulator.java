@@ -17,6 +17,7 @@ import com.eu.habbo.plugin.events.emulator.EmulatorStartShutdownEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorStoppedEvent;
 import com.eu.habbo.threading.ThreadPooling;
 import com.eu.habbo.util.imager.badges.BadgeImager;
+import org.fusesource.jansi.AnsiConsole;
 
 import java.io.*;
 import java.security.MessageDigest;
@@ -28,32 +29,37 @@ import java.util.Random;
 
 public final class Emulator {
 
+
     public final static int MAJOR = 2;
+    public final static int MINOR = 3;
+    public final static int BUILD = 0;
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
 
 
-    public final static int MINOR = 2;
-
-
-    public final static int BUILD = 2;
-
-
-    public final static String PREVIEW = "Stable";
+    public final static String PREVIEW = "RC-3";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
+            "\n" +
+            "███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗ \n" +
+                    "████╗ ████║██╔═══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗\n" +
+                    "██╔████╔██║██║   ██║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗███████╗   ██║   ███████║██████╔╝\n" +
+                    "██║╚██╔╝██║██║   ██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚════██║   ██║   ██╔══██║██╔══██╗\n" +
+                    "██║ ╚═╝ ██║╚██████╔╝██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝███████║   ██║   ██║  ██║██║  ██║\n" +
+                    "╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝\n" +
+                    "                                                                                             ";
 
-            "							                    				    \n" +
-                    "    __  ___                 _  A R C T U R U S __            		\n" +
-                    "   /  |/  /___  _________  (_)___  ____ ______/ /_____ ______		\n" +
-                    "  / /|_/ / __ \\/ ___/ __ \\/ / __ \\/ __ `/ ___/ __/ __ `/ ___/	\n" +
-                    " / /  / / /_/ / /  / / / / / / / / /_/ (__  ) /_/ /_/ / /    		\n" +
-                    "/_/  /_/\\____/_/  /_/ /_/_/_/ /_/\\__, /____/\\__/\\__,_/_/     	\n" +
-                    "                                /____/                             \n" ;
     public static String build = "";
     public static boolean isReady = false;
     public static boolean isShuttingDown = false;
     public static boolean stopped = false;
     public static boolean debugging = false;
+    private static String  classPath = System.getProperty("java.class.path");
+    private static String osName = System.getProperty("os.name");
     private static int timeStarted = 0;
     private static Runtime runtime;
     private static ConfigurationManager config;
@@ -81,14 +87,20 @@ public final class Emulator {
 
     public static void main(String[] args) throws Exception {
         try {
+            if (osName.startsWith("Windows") && (!classPath.contains("idea_rt.jar"))) {
+                AnsiConsole.systemInstall();
+            }
             Locale.setDefault(new Locale("en"));
-
             setBuild();
             Emulator.stopped = false;
             ConsoleCommand.load();
             Emulator.logging = new Logging();
-            Emulator.getLogging().logStart("\r" + Emulator.logo +
-                    "       Build: " + build + "\n");
+            System.out.println(ANSI_PURPLE + logo );
+            System.out.println(ANSI_WHITE + "This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
+            System.out.println(ANSI_BLUE + "[VERSION] " + ANSI_WHITE + version);
+            System.out.println(ANSI_RED + "[BUILD] " + ANSI_WHITE + build + "\n");
+            System.out.println(ANSI_YELLOW + "[KREWS] " + ANSI_WHITE + "Remember to sign up your hotel to join our toplist beta at https://bit.ly/2NN0rxq" );
+            System.out.println(ANSI_YELLOW + "[KREWS] " + ANSI_WHITE + "Join our discord at https://discord.gg/syuqgN" + "\n");
             random = new Random();
             long startTime = System.nanoTime();
 
@@ -119,7 +131,6 @@ public final class Emulator {
             Emulator.getLogging().logStart("Memory: " + (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024) + "/" + (runtime.freeMemory()) / (1024 * 1024) + "MB");
 
             Emulator.debugging = Emulator.getConfig().getBoolean("debug.mode");
-
             if (debugging) {
                 Emulator.getLogging().logDebugLine("Debugging Enabled!");
             }
@@ -134,10 +145,6 @@ public final class Emulator {
 
 
             Emulator.getThreading().run(() -> {
-                Emulator.getLogging().logStart("Please note, Arcturus Emulator is a project by TheGeneral, we take no credit for the original work, and only the work we have continued. If you'd like to support the project, join our discord at: ");
-                Emulator.getLogging().logStart("https://discord.gg/syuqgN");
-                Emulator.getLogging().logStart("Please report bugs on our git at Krews.org.");
-                System.out.println("Waiting for commands: ");
             }, 1500);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -189,11 +196,11 @@ public final class Emulator {
     }
 
     private static void dispose() {
+
         Emulator.getThreading().setCanAdd(false);
         Emulator.isShuttingDown = true;
         Emulator.isReady = false;
         Emulator.getLogging().logShutdownLine("Stopping Arcturus Emulator " + version + "...");
-
         try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStartShutdownEvent());
@@ -245,7 +252,6 @@ public final class Emulator {
                 Emulator.gameServer.stop();
         } catch (Exception e) {
         }
-
         Emulator.getLogging().logShutdownLine("Stopped Arcturus Emulator " + version + "...");
 
         if (Emulator.database != null) {
@@ -253,8 +259,12 @@ public final class Emulator {
         }
         Emulator.stopped = true;
 
+        if (osName.startsWith("Windows") && (!classPath.contains("idea_rt.jar"))) {
+            AnsiConsole.systemUninstall();
+        }
         try {
             if (Emulator.threading != null)
+
                 Emulator.threading.shutDown();
         } catch (Exception e) {
         }

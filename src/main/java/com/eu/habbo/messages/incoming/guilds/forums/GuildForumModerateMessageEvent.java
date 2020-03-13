@@ -60,6 +60,8 @@ public class GuildForumModerateMessageEvent extends MessageHandler {
         comment.setAdminId(this.client.getHabbo().getHabboInfo().getId());
         this.client.sendResponse(new PostUpdateMessageComposer(guild.getId(), thread.getThreadId(), comment));
 
+        Emulator.getThreading().run(comment);
+
         switch (state) {
             case 10:
             case 20:

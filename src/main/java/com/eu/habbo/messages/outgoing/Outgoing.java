@@ -388,13 +388,12 @@ public class Outgoing {
     public final static int AlertPurchaseUnavailableComposer = 3770; // PRODUCTION-201611291003-338511768
     public final static int PetBreedingStartFailedComposer = 2621; // PRODUCTION-201611291003-338511768
     public final static int DailyQuestComposer = 1878; // PRODUCTION-201611291003-338511768
-    public final static int NewNavigatorRoomEventComposer = 1840; // PRODUCTION-201611291003-338511768
     public final static int HotelViewHideCommunityVoteButtonComposer = 1435; // PRODUCTION-201611291003-338511768
     public final static int CatalogSearchResultComposer = 3388; // PRODUCTION-201611291003-338511768
     public final static int FriendFindingRoomComposer = 1210; // PRODUCTION-201611291003-338511768
     public final static int QuestComposer = 230; // PRODUCTION-201611291003-338511768
     public final static int ModToolSanctionDataComposer = 2782; // PRODUCTION-201611291003-338511768
-    public final static int RoomEventMessageComposer = 2274;
+    public final static int RoomEventMessageComposer = 1840;
 
 
     public final static int JukeBoxMySongsComposer = 2602; // PRODUCTION-201611291003-338511768
@@ -525,6 +524,7 @@ public class Outgoing {
     public final static int UnknownRoomViewerComposer = 3523;
     public final static int ErrorLoginComposer = 4000;
     public final static int HotelViewNextLTDAvailableComposer = 44;
+    public final static int HotelViewSecondsUntilComposer = 3926;
     public final static int UnknownRoomDesktopComposer = 69;
     public final static int UnknownGuildComposer3 = 876;
 

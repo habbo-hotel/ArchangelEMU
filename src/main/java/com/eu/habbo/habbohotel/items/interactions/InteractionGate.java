@@ -38,8 +38,6 @@ public class InteractionGate extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        super.onClick(client, room, objects);
-
         boolean isWired = (objects.length >= 2 && objects[1] instanceof WiredEffectType && objects[1] == WiredEffectType.TOGGLE_STATE);
         if (client != null && !room.hasRights(client.getHabbo()) && !isWired)
             return;
@@ -54,6 +52,8 @@ public class InteractionGate extends HabboItem {
         room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
         this.needsUpdate(true);
         room.updateItemState(this);
+
+        super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
     }
 
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {

@@ -72,7 +72,7 @@ public class GameTeam {
         for (GamePlayer player : this.members) {
             if (player == null || player.getHabbo() == null) continue;
 
-            player.getHabbo().getHabboInfo().getGamePlayer().reset();
+            if (player.getHabbo().getHabboInfo().getGamePlayer() != null) player.getHabbo().getHabboInfo().getGamePlayer().reset();
             player.getHabbo().getHabboInfo().setCurrentGame(null);
             player.getHabbo().getHabboInfo().setGamePlayer(null);
         }

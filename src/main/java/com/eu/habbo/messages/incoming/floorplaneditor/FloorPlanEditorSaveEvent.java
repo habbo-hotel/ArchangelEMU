@@ -58,6 +58,11 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
 
                 if (mapRows.length > 64) errors.add("${notification.floorplan_editor.error.message.too_large_height}");
                 else if (Arrays.stream(mapRows).anyMatch(l -> l.length() > 64 || l.length() == 0)) errors.add("${notification.floorplan_editor.error.message.too_large_width}");
+
+                if (errors.length() > 0) {
+                    this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
+                    return;
+                }
             }
 
             int doorX = this.packet.readInt();

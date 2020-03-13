@@ -139,12 +139,11 @@ public class WiredHandler {
                 }
 
                 for (InteractionWiredCondition condition : conditions) {
-                    if ((condition.operator() == WiredConditionOperator.OR && matchedConditions.contains(condition.getType())) ||
-                            (condition.operator() == WiredConditionOperator.AND && condition.execute(roomUnit, room, stuff))) {
-                        condition.activateBox(room);
-                    } else {
-                        if (!Emulator.getPluginManager().fireEvent(new WiredConditionFailedEvent(room, roomUnit, trigger, condition)).isCancelled())
-                            return false;
+                    if (!((condition.operator() == WiredConditionOperator.OR && matchedConditions.contains(condition.getType())) ||
+                            (condition.operator() == WiredConditionOperator.AND && condition.execute(roomUnit, room, stuff))) &&
+                            !Emulator.getPluginManager().fireEvent(new WiredConditionFailedEvent(room, roomUnit, trigger, condition)).isCancelled()) {
+
+                        return false;
                     }
                 }
             }
@@ -194,19 +193,16 @@ public class WiredHandler {
         if (effect != null && effect.canExecute(millis)) {
             executed = true;
             if (!effect.requiresTriggeringUser() || (roomUnit != null && effect.requiresTriggeringUser())) {
-                Emulator.getThreading().run(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (room.isLoaded()) {
-                            try {
-                                if (!effect.execute(roomUnit, room, stuff)) return;
-                                effect.setCooldown(millis);
-                            } catch (Exception e) {
-                                Emulator.getLogging().logErrorLine(e);
-                            }
-
-                            effect.activateBox(room);
+                Emulator.getThreading().run(() -> {
+                    if (room.isLoaded()) {
+                        try {
+                            if (!effect.execute(roomUnit, room, stuff)) return;
+                            effect.setCooldown(millis);
+                        } catch (Exception e) {
+                            Emulator.getLogging().logErrorLine(e);
                         }
+
+                        effect.activateBox(room);
                     }
                 }, effect.getDelay() * 500);
             }
@@ -415,16 +411,16 @@ public class WiredHandler {
     }
 
     public static void resetTimers(Room room) {
-        if (!room.isLoaded())
+        if (!room.isLoaded() || room.getRoomSpecialTypes() == null)
             return;
 
-        THashSet<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(WiredTriggerType.AT_GIVEN_TIME);
-
-        if (triggers != null) {
-            for (InteractionWiredTrigger trigger : triggers) {
-                ((WiredTriggerReset) trigger).resetTimer();
+        room.getRoomSpecialTypes().getTriggers().forEach(t -> {
+            if (t == null) return;
+            
+            if (t.getType() == WiredTriggerType.AT_GIVEN_TIME || t.getType() == WiredTriggerType.PERIODICALLY || t.getType() == WiredTriggerType.PERIODICALLY_LONG) {
+                ((WiredTriggerReset) t).resetTimer();
             }
-        }
+        });
 
         room.setLastTimerReset(Emulator.getIntUnixTimestamp());
     }

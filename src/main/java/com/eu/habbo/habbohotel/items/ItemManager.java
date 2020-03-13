@@ -38,6 +38,7 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.bunnyrun.Interaction
 import com.eu.habbo.habbohotel.items.interactions.games.tag.icetag.InteractionIceTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.icetag.InteractionIceTagPole;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.rollerskate.InteractionRollerskateField;
+import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.items.interactions.totems.InteractionTotemHead;
 import com.eu.habbo.habbohotel.items.interactions.totems.InteractionTotemLegs;
 import com.eu.habbo.habbohotel.items.interactions.totems.InteractionTotemPlanet;
@@ -177,6 +178,8 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("pressureplate_group", InteractionGroupPressurePlate.class));
         this.interactionsList.add(new ItemInteraction("effect_tile_group", InteractionEffectTile.class));
         this.interactionsList.add(new ItemInteraction("crackable_subscription_box", InteractionRedeemableSubscriptionBox.class));
+        this.interactionsList.add(new ItemInteraction("random_state", InteractionRandomState.class));
+        this.interactionsList.add(new ItemInteraction("vendingmachine_no_sides", InteractionNoSidesVendingMachine.class));
 
         this.interactionsList.add(new ItemInteraction("game_timer", InteractionGameTimer.class));
 

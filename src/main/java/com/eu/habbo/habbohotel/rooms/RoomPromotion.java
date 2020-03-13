@@ -13,12 +13,16 @@ public class RoomPromotion {
     private String title;
     private String description;
     private int endTimestamp;
+    private int startTimestamp;
+    private int category;
 
-    public RoomPromotion(Room room, String title, String description, int endTimestamp) {
+    public RoomPromotion(Room room, String title, String description, int endTimestamp, int startTimestamp, int category) {
         this.room = room;
         this.title = title;
         this.description = description;
         this.endTimestamp = endTimestamp;
+        this.startTimestamp = startTimestamp;
+        this.category = category;
     }
 
     public RoomPromotion(Room room, ResultSet set) throws SQLException {
@@ -26,14 +30,17 @@ public class RoomPromotion {
         this.title = set.getString("title");
         this.description = set.getString("description");
         this.endTimestamp = set.getInt("end_timestamp");
+        this.startTimestamp = set.getInt("start_timestamp");
+        this.category = set.getInt("category");
     }
 
     public void save() {
         if (this.needsUpdate) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE room_promotions SET title = ?, description = ? WHERE room_id = ?")) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE room_promotions SET title = ?, description = ?, category = ? WHERE room_id = ?")) {
                 statement.setString(1, this.title);
                 statement.setString(2, this.description);
-                statement.setInt(3, this.room.getId());
+                statement.setInt(3, this.category);
+                statement.setInt(4, this.room.getId());
                 statement.executeUpdate();
             } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
@@ -73,5 +80,21 @@ public class RoomPromotion {
 
     public void addEndTimestamp(int time) {
         this.endTimestamp += time;
+    }
+
+    public int getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    public void setStartTimestamp(int startTimestamp) {
+        this.startTimestamp = startTimestamp;
+    }
+
+    public int getCategory() {
+        return category;
+    }
+
+    public void setCategory(int category) {
+        this.category = category;
     }
 }

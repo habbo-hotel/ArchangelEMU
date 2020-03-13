@@ -2,9 +2,16 @@ package com.eu.habbo.messages.incoming.modtool;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolBanType;
+import com.eu.habbo.habbohotel.modtool.ModToolSanctionItem;
+import com.eu.habbo.habbohotel.modtool.ModToolSanctions;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import gnu.trove.map.hash.THashMap;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class ModToolSanctionBanEvent extends MessageHandler {
     public static final int BAN_18_HOURS = 3;
@@ -42,7 +49,27 @@ public class ModToolSanctionBanEvent extends MessageHandler {
                 duration = Emulator.getIntUnixTimestamp();
         }
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
-            Emulator.getGameEnvironment().getModToolManager().ban(userId, this.client.getHabbo(), message, duration, ModToolBanType.ACCOUNT, cfhTopic);
+            ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
+
+            if (Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
+                THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(userId);
+                ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(userId);
+
+                if (modToolSanctionItems != null && !modToolSanctionItemsHashMap.isEmpty()) {
+                    ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
+
+                    if (item.probationTimestamp > 0 && item.probationTimestamp >= Emulator.getIntUnixTimestamp()) {
+                        modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
+                    } else {
+                        modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
+                    }
+                } else {
+                    modToolSanctions.run(userId, this.client.getHabbo(), 0, cfhTopic, message, 0, false, 0);
+                }
+            } else {
+                Emulator.getGameEnvironment().getModToolManager().ban(userId, this.client.getHabbo(), message, duration, ModToolBanType.ACCOUNT, cfhTopic);
+            }
+
         } else {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.ban").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
         }

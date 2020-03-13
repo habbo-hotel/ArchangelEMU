@@ -14,7 +14,7 @@ public class InsertModToolIssue implements Runnable {
 
     @Override
     public void run() {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO support_tickets (state, timestamp, score, sender_id, reported_id, room_id, mod_id, issue, category, group_id, thread_id, comment_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO support_tickets (state, timestamp, score, sender_id, reported_id, room_id, mod_id, issue, category, group_id, thread_id, comment_id, photo_item_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, this.issue.state.getState());
             statement.setInt(2, this.issue.timestamp);
             statement.setInt(3, this.issue.priority);
@@ -27,6 +27,7 @@ public class InsertModToolIssue implements Runnable {
             statement.setInt(10, this.issue.groupId);
             statement.setInt(11, this.issue.threadId);
             statement.setInt(12, this.issue.commentId);
+            statement.setInt(13, this.issue.photoItem != null ? this.issue.photoItem.getId() : -1);
             statement.execute();
 
             try (ResultSet key = statement.getGeneratedKeys()) {

@@ -47,9 +47,7 @@ public class RoomUnitWalkToRoomUnit implements Runnable {
         if (this.goalTile == null)
             return;
 
-        if (this.walker.getGoal().equals(this.goalTile)) //Check if the goal is still the same. Chances are something is running the same task. If so we dump this task.
-        {
-            //Check if arrived.
+        if (this.walker.getGoal().equals(this.goalTile)) { // check that the action hasn't been cancelled by changing the goal
             if (this.walker.getCurrentLocation().distance(this.goalTile) <= this.minDistance) {
                 for (Runnable r : this.targetReached) {
                     Emulator.getThreading().run(r);
@@ -57,38 +55,22 @@ public class RoomUnitWalkToRoomUnit implements Runnable {
                     WiredHandler.handle(WiredTriggerType.BOT_REACHED_AVTR, this.target, this.room, new Object[]{this.walker});
                 }
             } else {
-                List<RoomTile> tiles = this.room.getLayout().getTilesAround(this.target.getCurrentLocation());
-
-                for (RoomTile t : tiles) {
-                    if (t.equals(this.goalTile)) {
-                        Emulator.getThreading().run(this, 500);
-                        return;
-                    }
-                }
-
-                this.findNewLocation();
-
                 Emulator.getThreading().run(this, 500);
             }
         }
     }
 
     private void findNewLocation() {
-        this.goalTile = this.room.getLayout().getTileInFront(this.target.getCurrentLocation(), this.target.getBodyRotation().getValue());
+        this.goalTile = this.walker.getClosestAdjacentTile(this.target.getCurrentLocation().x, this.target.getCurrentLocation().y, true);
 
-        if (this.goalTile == null)
-            return;
-
-        if (!this.room.tileWalkable(this.goalTile)) {
-            List<RoomTile> tiles = this.room.getLayout().getTilesAround(this.target.getCurrentLocation());
-
-            for (RoomTile t : tiles) {
-                if (this.room.tileWalkable(t)) {
-                    this.goalTile = t;
-
-                    break;
+        if (this.goalTile == null) {
+            if (this.failedReached != null) {
+                for (Runnable r : this.failedReached) {
+                    Emulator.getThreading().run(r);
                 }
             }
+
+            return;
         }
 
         this.walker.setGoalLocation(this.goalTile);

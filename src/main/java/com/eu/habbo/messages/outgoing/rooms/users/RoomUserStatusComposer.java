@@ -14,10 +14,16 @@ import java.util.Map;
 public class RoomUserStatusComposer extends MessageComposer {
     private Collection<Habbo> habbos;
     private THashSet<RoomUnit> roomUnits;
+    private double overrideZ = -1;
 
     public RoomUserStatusComposer(RoomUnit roomUnit) {
         this.roomUnits = new THashSet<>();
         this.roomUnits.add(roomUnit);
+    }
+
+    public RoomUserStatusComposer(RoomUnit roomUnit, double overrideZ) {
+        this(roomUnit);
+        this.overrideZ = overrideZ;
     }
 
     public RoomUserStatusComposer(THashSet<RoomUnit> roomUnits, boolean value) {
@@ -37,7 +43,7 @@ public class RoomUserStatusComposer extends MessageComposer {
                 this.response.appendInt(roomUnit.getId());
                 this.response.appendInt(roomUnit.getPreviousLocation().x);
                 this.response.appendInt(roomUnit.getPreviousLocation().y);
-                this.response.appendString(roomUnit.getPreviousLocationZ() + "");
+                this.response.appendString((this.overrideZ != -1 ? this.overrideZ : roomUnit.getPreviousLocationZ()) + "");
 
 
                 this.response.appendInt(roomUnit.getHeadRotation().getValue());

@@ -45,6 +45,15 @@ public class ModToolIssue implements ISerialize {
         this.modName = set.getString("mod_username");
         this.type = ModToolTicketType.values()[set.getInt("type") - 1];
         this.category = set.getInt("category");
+        this.groupId = set.getInt("group_id");
+        this.threadId = set.getInt("thread_id");
+        this.commentId = set.getInt("comment_id");
+
+        int photoItemId = set.getInt("photo_item_id");
+
+        if (photoItemId != -1) {
+            this.photoItem = Emulator.getGameEnvironment().getItemManager().loadHabboItem(photoItemId);;
+        }
 
         if (this.modId <= 0) {
             this.modName = "";
@@ -79,8 +88,8 @@ public class ModToolIssue implements ISerialize {
         message.appendString(this.senderUsername); //Reporter user name.
         message.appendInt(this.reportedId); //Reported user ID.
         message.appendString(this.reportedUsername); //Reported user name.
-        message.appendInt(this.modId); //MOD User ID?
-        message.appendString(this.modName); //MOD User name?
+        message.appendInt(this.modId); //ADMIN User ID?
+        message.appendString(this.modName); //ADMIN User name?
         message.appendString(this.message);
         message.appendInt(0);
 

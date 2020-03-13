@@ -192,7 +192,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
         if (!this.needsUpdate)
             return;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds_forums_comments` SET `state` = ?, `admin_id` = ? WHERE `id` = ?;")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds_forums_comments SET `state` = ?, `admin_id` = ? WHERE `id` = ?")) {
             statement.setInt(1, this.state.getStateId());
             statement.setInt(2, this.adminId);
             statement.setInt(3, this.commentId);

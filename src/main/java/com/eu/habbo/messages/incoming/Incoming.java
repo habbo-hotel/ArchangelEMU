@@ -64,7 +64,8 @@ public class Incoming {
     public static final int SearchRoomsFriendsNowEvent = 1786;
     public static final int SetStackHelperHeightEvent = 3839;
     public static final int RedeemVoucherEvent = 339;
-    public static final int HorseUseItemEvent = 1328;
+    public static final int PetUseItemEvent = 1328;
+    public static final int HorseRemoveSaddleEvent = 186;
     public static final int BuyItemEvent = 1603;
     public static final int AdvertisingSaveEvent = 3608;
     public static final int RequestPetTrainingPanelEvent = 2161;
@@ -136,7 +137,7 @@ public class Incoming {
     public static final int RequestAchievementsEvent = 219;
     public static final int GuildChangeColorsEvent = 1764;
     public static final int RequestInventoryBadgesEvent = 2769;
-    public static final int TestInventoryEvent = 3500;
+    public static final int HotelViewInventoryEvent = 3500;
     public static final int RequestPetBreedsEvent = 1756;
     public static final int GuildChangeBadgeEvent = 1991;
     public static final int ModToolBanEvent = -1;
@@ -216,6 +217,10 @@ public class Incoming {
     public static final int PostItRequestDataEvent = 3964;
     public static final int PostItSaveDataEvent = 3666;
     public static final int PostItDeleteEvent = 3336;
+    public static final int UseRandomStateItemEvent = 3617;
+
+    public static final int MySanctionStatusEvent = 2746;
+
     public static final int MoodLightSaveSettingsEvent = 1648;
     public static final int ModToolRequestIssueChatlogEvent = 211;
     public static final int ModToolRequestRoomUserChatlogEvent = -1;
@@ -255,6 +260,7 @@ public class Incoming {
     public static final int RequestDeleteRoomEvent = 532;
     public static final int RequestPromotionRoomsEvent = 1075;
     public static final int BuyRoomPromotionEvent = 777;
+    public static final int EditRoomPromotionMessageEvent = 3991;
     public static final int RequestGuideToolEvent = 1922;
     public static final int RequestGuideAssistanceEvent = 3338;
     public static final int GuideUserTypingEvent = 519;
@@ -310,7 +316,6 @@ public class Incoming {
     public static final int YoutubeRequestStateChange = 3005;
     public static final int YoutubeRequestPlaylistChange = 2069;
 
-    public static final int EditRoomPromotionMessageEvent = 3707;
     public static final int HotelViewRequestBadgeRewardEvent = 2318;
     public static final int HotelViewClaimBadgeRewardEvent = -1;
 
@@ -347,6 +352,8 @@ public class Incoming {
     public static final int LoveLockStartConfirmEvent = 3775;
 
     public static final int HotelViewRequestLTDAvailabilityEvent = 410;
+    public static final int HotelViewRequestSecondsUntilEvent = 271;
+
     public static final int PurchaseTargetOfferEvent = 1826;
     public static final int TargetOfferStateEvent = 2041;
     public static final int StopBreedingEvent = 2713;

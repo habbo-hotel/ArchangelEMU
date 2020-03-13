@@ -6,11 +6,12 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
+import java.util.Set;
 
 public class ItemsDataUpdateComposer extends MessageComposer {
-    private final List<HabboItem> items;
+    private final Set<HabboItem> items;
 
-    public ItemsDataUpdateComposer(List<HabboItem> items) {
+    public ItemsDataUpdateComposer(Set<HabboItem> items) {
         this.items = items;
     }
 
@@ -18,9 +19,12 @@ public class ItemsDataUpdateComposer extends MessageComposer {
     public ServerMessage compose() {
         this.response.init(Outgoing.ItemsDataUpdateComposer);
         this.response.appendInt(this.items.size());
+
         for (HabboItem item : this.items) {
+            this.response.appendInt(item.getId());
             item.serializeExtradata(this.response);
         }
+
         return this.response;
     }
 }

@@ -9,10 +9,8 @@ import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.IEventTriggers;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -20,20 +18,28 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
-import com.eu.habbo.util.figure.FigureUtil;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
 
+import java.awt.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
 
 public abstract class HabboItem implements Runnable, IEventTriggers {
+    private static Class[] TOGGLING_INTERACTIONS = new Class[]{
+            InteractionGameTimer.class,
+            InteractionWired.class,
+            InteractionWiredHighscore.class,
+            InteractionMultiHeight.class
+    };
+
     private int id;
     private int userId;
     private int roomId;
@@ -60,7 +66,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
         this.y = set.getShort("y");
         this.z = set.getDouble("z");
         this.rotation = set.getInt("rot");
-        this.extradata = set.getString("extra_data");
+        this.extradata = set.getString("extra_data").isEmpty() ? "0" : set.getString("extra_data");
 
         String ltdData = set.getString("limited_data");
         if (!ltdData.isEmpty()) {
@@ -79,7 +85,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
         this.y = 0;
         this.z = 0;
         this.rotation = 0;
-        this.extradata = extradata;
+        this.extradata = extradata.isEmpty() ? "0" : extradata;
         this.limitedSells = limitedSells;
         this.limitedStack = limitedStack;
     }
@@ -283,8 +289,9 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
                 }
             }
 
-
-            WiredHandler.handle(WiredTriggerType.STATE_CHANGED, client.getHabbo().getRoomUnit(), room, new Object[]{this});
+            if ((this.getBaseItem().getStateCount() > 1 && !(this instanceof InteractionDice)) || Arrays.asList(HabboItem.TOGGLING_INTERACTIONS).contains(this.getClass()) || (objects != null && objects.length == 1 && objects[0].equals("TOGGLE_OVERRIDE"))) {
+                WiredHandler.handle(WiredTriggerType.STATE_CHANGED, client.getHabbo().getRoomUnit(), room, new Object[]{this});
+            }
         }
     }
 
@@ -479,4 +486,30 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
     }
 
     public boolean invalidatesToRoomKick() { return false; }
+
+    public List<RoomTile> getOccupyingTiles(RoomLayout layout) {
+        List<RoomTile> tiles = new ArrayList<>();
+
+        Rectangle rect = RoomLayout.getRectangle(this.getX(), this.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+
+        for (int i = rect.x; i < rect.x + rect.getWidth(); i++) {
+            for (int j = rect.y; j < rect.y + rect.getHeight(); j++) {
+                tiles.add(layout.getTile((short) i, (short) j));
+            }
+        }
+
+        return tiles;
+    }
+
+    public RoomTile getOverrideGoalTile(RoomUnit unit, Room room, RoomTile tile) {
+        return tile;
+    }
+
+    public RoomTileState getOverrideTileState(RoomTile tile, Room room) {
+        return null;
+    }
+
+    public boolean canOverrideTile(RoomUnit unit, Room room, RoomTile tile) {
+        return false;
+    }
 }

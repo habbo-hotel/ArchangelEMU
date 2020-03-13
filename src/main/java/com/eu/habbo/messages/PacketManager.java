@@ -31,6 +31,7 @@ import com.eu.habbo.messages.incoming.guides.*;
 import com.eu.habbo.messages.incoming.guilds.*;
 import com.eu.habbo.messages.incoming.guilds.forums.*;
 import com.eu.habbo.messages.incoming.handshake.*;
+import com.eu.habbo.messages.incoming.helper.MySanctionStatusEvent;
 import com.eu.habbo.messages.incoming.helper.RequestTalentTrackEvent;
 import com.eu.habbo.messages.incoming.hotelview.*;
 import com.eu.habbo.messages.incoming.inventory.RequestInventoryBadgesEvent;
@@ -170,14 +171,26 @@ public class PacketManager {
                     return;
                 }
 
+                final MessageHandler handler = handlerClass.newInstance();
+
+                if (handler.getRatelimit() > 0) {
+                    if (client.messageTimestamps.containsKey(handlerClass) && System.currentTimeMillis() - client.messageTimestamps.get(handlerClass) < handler.getRatelimit()) {
+                        if (PacketManager.DEBUG_SHOW_PACKETS) {
+                            Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "][" + Logging.ANSI_RED + "RATELIMITED" + Logging.ANSI_RESET + "] => " + packet.getMessageBody());
+                        }
+
+                        return;
+                    } else {
+                        client.messageTimestamps.put(handlerClass, System.currentTimeMillis());
+                    }
+                }
+
                 if (PacketManager.DEBUG_SHOW_PACKETS)
                     Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
 
                 if (logList.contains(packet.getMessageId()) && client.getHabbo() != null) {
                     System.out.println(("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + client.getHabbo().getHabboInfo().getUsername() + "][" + packet.getMessageId() + "] => " + packet.getMessageBody()));
                 }
-
-                final MessageHandler handler = handlerClass.newInstance();
 
                 handler.client = client;
                 handler.packet = packet;
@@ -338,13 +351,14 @@ public class PacketManager {
         this.registerHandler(Incoming.HotelViewRequestBadgeRewardEvent, HotelViewRequestBadgeRewardEvent.class);
         this.registerHandler(Incoming.HotelViewClaimBadgeRewardEvent, HotelViewClaimBadgeRewardEvent.class);
         this.registerHandler(Incoming.HotelViewRequestLTDAvailabilityEvent, HotelViewRequestLTDAvailabilityEvent.class);
+        this.registerHandler(Incoming.HotelViewRequestSecondsUntilEvent, HotelViewRequestSecondsUntilEvent.class);
     }
 
     private void registerInventory() throws Exception {
-        //this.registerHandler(Incoming.TestInventoryEvent,                       TestInventoryEvent.class);
         this.registerHandler(Incoming.RequestInventoryBadgesEvent, RequestInventoryBadgesEvent.class);
         this.registerHandler(Incoming.RequestInventoryBotsEvent, RequestInventoryBotsEvent.class);
         this.registerHandler(Incoming.RequestInventoryItemsEvent, RequestInventoryItemsEvent.class);
+        this.registerHandler(Incoming.HotelViewInventoryEvent, RequestInventoryItemsEvent.class);
         this.registerHandler(Incoming.RequestInventoryPetsEvent, RequestInventoryPetsEvent.class);
     }
 
@@ -439,6 +453,7 @@ public class PacketManager {
         this.registerHandler(Incoming.RoomFavoriteEvent, RoomFavoriteEvent.class);
         this.registerHandler(Incoming.LoveLockStartConfirmEvent, LoveLockStartConfirmEvent.class);
         this.registerHandler(Incoming.RoomUnFavoriteEvent, RoomUnFavoriteEvent.class);
+        this.registerHandler(Incoming.UseRandomStateItemEvent, UseRandomStateItemEvent.class);
     }
 
     void registerPolls() throws Exception {
@@ -539,9 +554,10 @@ public class PacketManager {
         this.registerHandler(Incoming.PetPickupEvent, PetPickupEvent.class);
         this.registerHandler(Incoming.ScratchPetEvent, ScratchPetEvent.class);
         this.registerHandler(Incoming.RequestPetTrainingPanelEvent, RequestPetTrainingPanelEvent.class);
-        this.registerHandler(Incoming.HorseUseItemEvent, PetUseItemEvent.class);
+        this.registerHandler(Incoming.PetUseItemEvent, PetUseItemEvent.class);
         this.registerHandler(Incoming.HorseRideSettingsEvent, PetRideSettingsEvent.class);
         this.registerHandler(Incoming.HorseRideEvent, PetRideEvent.class);
+        this.registerHandler(Incoming.HorseRemoveSaddleEvent, HorseRemoveSaddleEvent.class);
         this.registerHandler(Incoming.ToggleMonsterplantBreedableEvent, ToggleMonsterplantBreedableEvent.class);
         this.registerHandler(Incoming.CompostMonsterplantEvent, CompostMonsterplantEvent.class);
         this.registerHandler(Incoming.BreedMonsterplantsEvent, BreedMonsterplantsEvent.class);
@@ -561,6 +577,7 @@ public class PacketManager {
         this.registerHandler(Incoming.RequestResolutionEvent, RequestResolutionEvent.class);
         this.registerHandler(Incoming.RequestTalenTrackEvent, RequestTalentTrackEvent.class);
         this.registerHandler(Incoming.UnknownEvent1, UnknownEvent1.class);
+        this.registerHandler(Incoming.MySanctionStatusEvent, MySanctionStatusEvent.class);
     }
 
     void registerFloorPlanEditor() throws Exception {

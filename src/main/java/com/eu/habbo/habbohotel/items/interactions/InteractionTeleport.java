@@ -83,6 +83,12 @@ public class InteractionTeleport extends HabboItem {
         if (this.roomUnitID == unit.getId() && unit.getCurrentLocation().equals(currentLocation)) {
             startTeleport(room, habbo);
             walkable = true;
+
+            try {
+                super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else if (unit.getCurrentLocation().equals(currentLocation) || unit.getCurrentLocation().equals(infrontTile)) {
             // set state 1 and walk on item
             this.roomUnitID = unit.getId();
@@ -133,9 +139,7 @@ public class InteractionTeleport extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        super.onClick(client, room, objects);
-
-        if (room != null && client != null && objects.length <= 1) {
+        if (room != null && client != null && objects != null && objects.length <= 1) {
             tryTeleport(client, room);
         }
     }
@@ -201,7 +205,7 @@ public class InteractionTeleport extends HabboItem {
         if (habbo.getHabboInfo().getRiding() != null)
             return false;
 
-        return this.roomUnitID == -1 || this.roomUnitID == unit.getId();
+        return true;
     }
 
     public void startTeleport(Room room, Habbo habbo) {

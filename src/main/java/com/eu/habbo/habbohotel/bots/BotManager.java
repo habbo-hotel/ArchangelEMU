@@ -113,15 +113,19 @@ public class BotManager {
                     return;
                 }
 
-                if (!room.hasHabbosAt(location.x, location.y) && !location.isWalkable() && location.state != RoomTileState.SIT)
+                if (room.hasHabbosAt(location.x, location.y) || (!location.isWalkable() && location.state != RoomTileState.SIT && location.state != RoomTileState.LAY))
                     return;
 
                 RoomUnit roomUnit = new RoomUnit();
                 roomUnit.setRotation(RoomUserRotation.SOUTH);
                 roomUnit.setLocation(location);
                 HabboItem topItem = room.getTopItemAt(location.x, location.y);
-                roomUnit.setZ(roomUnit.getCurrentLocation().getStackHeight());
-                roomUnit.setPreviousLocationZ(roomUnit.getCurrentLocation().getStackHeight());
+
+                double topItemHeight = 0;
+                if (topItem != null) topItemHeight = Item.getCurrentHeight(topItem);
+                roomUnit.setPreviousLocationZ(roomUnit.getCurrentLocation().getStackHeight() - topItemHeight);
+
+
                 roomUnit.setPathFinderRoom(room);
                 roomUnit.setRoomUnitType(RoomUnitType.BOT);
                 roomUnit.setCanWalk(room.isAllowBotsWalk());
@@ -136,7 +140,6 @@ public class BotManager {
                 bot.onPlace(habbo, room);
 
                 if (topItem != null) {
-                    roomUnit.setZ(topItem.getBaseItem().allowSit() ? topItem.getZ() : topItem.getZ() + Item.getCurrentHeight(topItem));
                     try {
                         topItem.onWalkOn(bot.getRoomUnit(), room, null);
                     } catch (Exception e) {

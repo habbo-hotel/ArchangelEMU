@@ -33,6 +33,11 @@ public class InteractionTotemPlanet extends InteractionDefault {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+        if(client.getHabbo().getHabboInfo().getId() != this.getUserId()) {
+            super.onClick(client, room, objects);
+            return;
+        }
+
         InteractionTotemLegs legs = null;
         InteractionTotemHead head = null;
 

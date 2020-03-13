@@ -1,14 +1,18 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InteractionSwitch extends InteractionDefault {
     public InteractionSwitch(ResultSet set, Item baseItem) throws SQLException {
@@ -43,12 +47,22 @@ public class InteractionSwitch extends InteractionDefault {
             RoomTile closestTile = null;
             for (RoomTile tile : room.getLayout().getTilesAround(room.getLayout().getTile(this.getX(), this.getY()))) {
                 if (tile.isWalkable() && (closestTile == null || closestTile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()) > tile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()))) {
-                    closestTile = client.getHabbo().getRoomUnit().getCurrentLocation();
+                    closestTile = tile;
                 }
             }
 
-            if (closestTile != null) {
+            if (closestTile != null && !closestTile.equals(client.getHabbo().getRoomUnit().getCurrentLocation())) {
+                List<Runnable> onSuccess = new ArrayList<>();
+                onSuccess.add(() -> {
+                    try {
+                        this.onClick(client, room, objects);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
                 client.getHabbo().getRoomUnit().setGoalLocation(closestTile);
+                Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), closestTile, room, onSuccess, new ArrayList<>()));
             }
         }
 

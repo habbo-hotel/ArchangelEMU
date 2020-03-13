@@ -75,6 +75,7 @@ public class PetUseItemEvent extends MessageHandler {
                 ((HorsePet) pet).needsUpdate = true;
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_saddle")) {
                 ((HorsePet) pet).hasSaddle(true);
+                ((HorsePet) pet).setSaddleItemId(item.getBaseItem().getId());
                 ((HorsePet) pet).needsUpdate = true;
             }
 

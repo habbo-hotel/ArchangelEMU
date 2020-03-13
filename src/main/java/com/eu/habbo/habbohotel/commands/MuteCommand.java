@@ -43,7 +43,7 @@ public class MuteCommand extends Command {
                 }
             }
 
-            habbo.mute(duration);
+            habbo.mute(duration, false);
 
             if (habbo.getHabboInfo().getCurrentRoom() != null) {
                 habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.MUTED).compose()); //: RoomUserIgnoredComposer.UNIGNORED

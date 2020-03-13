@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RoomUnitWalkToLocation implements Runnable {
@@ -13,6 +14,18 @@ public class RoomUnitWalkToLocation implements Runnable {
     private Room room;
     private List<Runnable> targetReached;
     private List<Runnable> failedReached;
+
+    public RoomUnitWalkToLocation(RoomUnit walker, RoomTile goalTile, Room room, Runnable targetReached, Runnable failedReached) {
+        this.walker = walker;
+        this.goalTile = goalTile;
+        this.room = room;
+
+        this.targetReached = new ArrayList<>();
+        if (targetReached != null) this.targetReached.add(targetReached);
+
+        this.failedReached = new ArrayList<>();
+        if (failedReached != null) this.targetReached.add(failedReached);
+    }
 
     public RoomUnitWalkToLocation(RoomUnit walker, RoomTile goalTile, Room room, List<Runnable> targetReached, List<Runnable> failedReached) {
         this.walker = walker;
@@ -29,17 +42,17 @@ public class RoomUnitWalkToLocation implements Runnable {
             return;
         }
 
-        if (!this.walker.getGoal().equals(this.goalTile)) {
-            onFail();
-            return;
-        }
-
         if (this.walker.getCurrentLocation().equals(this.goalTile)) {
             onSuccess();
             return;
         }
 
-        Emulator.getThreading().run(this, 500);
+        if (!this.walker.getGoal().equals(this.goalTile)) {
+            onFail();
+            return;
+        }
+
+        Emulator.getThreading().run(this, 250);
     }
 
     private void onSuccess() {

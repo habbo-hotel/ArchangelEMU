@@ -99,4 +99,23 @@ public class InteractionBattleBanzaiTile extends HabboItem {
 
         return super.canStackAt(room, itemsAtLocation);
     }
+
+    @Override
+    public void onPickUp(Room room) {
+        super.onPickUp(room);
+
+        this.setExtradata("0");
+        room.updateItem(this);
+    }
+
+    @Override
+    public void onPlace(Room room) {
+        super.onPlace(room);
+
+        BattleBanzaiGame game = (BattleBanzaiGame) room.getGame(BattleBanzaiGame.class);
+
+        if (game != null && game.getState() != GameState.IDLE) {
+            this.setExtradata("1");
+        }
+    }
 }

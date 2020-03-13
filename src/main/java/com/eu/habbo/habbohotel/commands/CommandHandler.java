@@ -245,6 +245,7 @@ public class CommandHandler {
         addCommand(new ShoutCommand());
         addCommand(new ShutdownCommand());
         addCommand(new SitCommand());
+        addCommand(new StandCommand());
         addCommand(new SitDownCommand());
         addCommand(new StaffAlertCommand());
         addCommand(new StaffOnlineCommand());

@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.modtool;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.modtool.ModToolUserRoomVisitsComposer;
 
@@ -12,10 +13,11 @@ public class ModToolRequestRoomVisitsEvent extends MessageHandler {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             int userId = this.packet.readInt();
 
-            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
+            HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(userId);
 
-            if (habbo != null)
-                this.client.sendResponse(new ModToolUserRoomVisitsComposer(habbo, Emulator.getGameEnvironment().getModToolManager().requestUserRoomVisits(habbo)));
+            if (habboInfo != null) {
+                this.client.sendResponse(new ModToolUserRoomVisitsComposer(habboInfo, Emulator.getGameEnvironment().getModToolManager().getUserRoomVisits(userId)));
+            }
         }
     }
 }

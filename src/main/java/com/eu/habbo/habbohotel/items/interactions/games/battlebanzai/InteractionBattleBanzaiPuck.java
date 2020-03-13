@@ -124,10 +124,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
 
     @Override
     public boolean validMove(Room room, RoomTile from, RoomTile to) {
-        if (room == null || from == null || to == null) return false;
-
-        HabboItem topItem = room.getTopItemAt(to.x, to.y, this);
-        return topItem != null;
+        return room != null && from != null && to != null;
         //return !(!room.getLayout().tileWalkable(to.x, to.y) || (topItem != null && (!topItem.getBaseItem().setAllowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
     }
 

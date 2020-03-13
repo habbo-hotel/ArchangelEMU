@@ -13,7 +13,6 @@ import java.sql.SQLException;
 
 public class InteractionMusicDisc extends HabboItem {
     private int songId;
-    private boolean inQueue;
 
     public InteractionMusicDisc(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -74,21 +73,13 @@ public class InteractionMusicDisc extends HabboItem {
     public void onPlace(Room room) {
         super.onPlace(room);
 
-        room.sendComposer(new JukeBoxMySongsComposer(room.getTraxManager().myList()).compose());
+        room.getTraxManager().sendUpdatedSongList();
     }
 
     @Override
     public void onPickUp(Room room) {
         super.onPickUp(room);
 
-        room.getTraxManager().removeSong(this.getId());
-    }
-
-    public boolean inQueue() {
-        return this.inQueue;
-    }
-
-    public void inQueue(boolean inQueue) {
-        this.inQueue = inQueue;
+        room.getTraxManager().sendUpdatedSongList();
     }
 }

@@ -8,14 +8,15 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.Iterator;
+import java.util.Set;
 
 public class GuildForumListComposer extends MessageComposer {
-    private final THashSet<Guild> guilds;
+    private final Set<Guild> guilds;
     private final Habbo habbo;
     private final int mode;
     private final int index;
 
-    public GuildForumListComposer(THashSet<Guild> guilds, Habbo habbo, int mode, int index) {
+    public GuildForumListComposer(Set<Guild> guilds, Habbo habbo, int mode, int index) {
         this.guilds = guilds;
         this.habbo = habbo;
         this.mode = mode;

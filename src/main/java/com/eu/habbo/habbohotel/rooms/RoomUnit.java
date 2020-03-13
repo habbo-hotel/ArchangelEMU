@@ -1,8 +1,12 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.*;
+import com.eu.habbo.habbohotel.items.interactions.InteractionGuildGate;
+import com.eu.habbo.habbohotel.items.interactions.InteractionHabboClubGate;
+import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
+import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.DanceType;
@@ -21,18 +25,20 @@ import gnu.trove.map.TMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.stream.Collectors;
 
 public class RoomUnit {
+    public boolean isWiredTeleporting = false;
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
     public boolean canRotate = true;
     public boolean animateWalk = false;
     public boolean cmdTeleport = false;
     public boolean cmdSit = false;
+    public boolean cmdStand = false;
     public boolean cmdLay = false;
     public boolean sitUpdate = false;
     public boolean isTeleporting = false;
@@ -63,6 +69,7 @@ public class RoomUnit {
     private int walkTimeOut;
     private int effectId;
     private int effectEndTimestamp;
+    private ScheduledFuture moveBlockingTask;
 
     private int idleTimer;
     private Room room;
@@ -173,6 +180,9 @@ public class RoomUnit {
             }
 
             Deque<RoomTile> peekPath = room.getLayout().findPath(this.currentLocation, this.path.peek(), this.goalLocation, this);
+
+            if (peekPath == null) peekPath = new LinkedList<>();
+
             if (peekPath.size() >= 3) {
                 if (path.isEmpty()) return true;
 
@@ -282,7 +292,7 @@ public class RoomUnit {
             if (item != null) {
                 if (item != habboItem || !RoomLayout.pointInSquare(item.getX(), item.getY(), item.getX() + item.getBaseItem().getWidth() - 1, item.getY() + item.getBaseItem().getLength() - 1, this.getX(), this.getY())) {
                     if (item.canWalkOn(this, room, null)) {
-                        item.onWalkOn(this, room, null);
+                        item.onWalkOn(this, room, new Object[]{this.getCurrentLocation(), next});
                     } else if (item instanceof InteractionGuildGate || item instanceof InteractionHabboClubGate) {
                         this.setRotation(oldRotation);
                         this.tilesWalked--;
@@ -297,7 +307,7 @@ public class RoomUnit {
                         return false;
                     }
                 } else {
-                    item.onWalk(this, room, null);
+                    item.onWalk(this, room, new Object[]{this.getCurrentLocation(), next});
                 }
 
                 zHeight += item.getZ();
@@ -391,6 +401,13 @@ public class RoomUnit {
 
     public void setZ(double z) {
         this.z = z;
+
+        if (this.room != null) {
+            Bot bot = this.room.getBot(this);
+            if (bot != null) {
+                bot.needsUpdate(true);
+            }
+        }
     }
 
     public boolean isInRoom() {
@@ -532,10 +549,9 @@ public class RoomUnit {
 
     public void findPath()
     {
-        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation)))
-        {
-
-            this.path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation, this);
+        if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation))) {
+            Deque<RoomTile> path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation, this);
+            if (path != null) this.path = path;
         }
     }
 
@@ -700,6 +716,9 @@ public class RoomUnit {
     public boolean canOverrideTile(RoomTile tile) {
         if (tile == null || room == null || room.getLayout() == null) return false;
 
+        if (room.getItemsAt(tile).stream().anyMatch(i -> i.canOverrideTile(this, room, tile)))
+            return true;
+
         int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
         return this.overridableTiles.contains(tileIndex);
     }
@@ -712,6 +731,8 @@ public class RoomUnit {
     }
 
     public void removeOverrideTile(RoomTile tile) {
+        if (room == null || room.getLayout() == null) return;
+
         int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
         this.overridableTiles.remove(tileIndex);
     }
@@ -734,5 +755,45 @@ public class RoomUnit {
         HabboItem topItem = this.room.getTopItemAt(this.getX(), this.getY());
 
         return topItem == null || (!(topItem instanceof InteractionWater) && !(topItem instanceof InteractionWaterItem));
+    }
+
+    public RoomTile getClosestTile(List<RoomTile> tiles) {
+        return tiles.stream().min(Comparator.comparingDouble(a -> a.distance(this.getCurrentLocation()))).orElse(null);
+    }
+
+    public RoomTile getClosestAdjacentTile(short x, short y, boolean diagonal) {
+        if(room == null) return null;
+
+        RoomTile baseTile = room.getLayout().getTile(x, y);
+
+        if (baseTile == null) return null;
+
+        List<Integer> rotations = new ArrayList<>();
+        rotations.add(RoomUserRotation.SOUTH.getValue());
+        rotations.add(RoomUserRotation.NORTH.getValue());
+        rotations.add(RoomUserRotation.EAST.getValue());
+        rotations.add(RoomUserRotation.WEST.getValue());
+
+        if (diagonal) {
+            rotations.add(RoomUserRotation.NORTH_EAST.getValue());
+            rotations.add(RoomUserRotation.NORTH_WEST.getValue());
+            rotations.add(RoomUserRotation.SOUTH_EAST.getValue());
+            rotations.add(RoomUserRotation.SOUTH_WEST.getValue());
+        }
+
+        return this.getClosestTile(
+                rotations.stream()
+                    .map(rotation -> room.getLayout().getTileInFront(baseTile, rotation))
+                    .filter(t -> t != null && t.isWalkable() && (this.getCurrentLocation().equals(t) || !room.hasHabbosAt(t.x, t.y)))
+                    .collect(Collectors.toList())
+        );
+    }
+
+    public ScheduledFuture getMoveBlockingTask() {
+        return moveBlockingTask;
+    }
+
+    public void setMoveBlockingTask(ScheduledFuture moveBlockingTask) {
+        this.moveBlockingTask = moveBlockingTask;
     }
 }

@@ -1,0 +1,15 @@
+image: maven:latest
+
+cache:
+  paths:
+    - target/
+
+build:
+  script:
+    - mvn package
+  only:
+    - dev
+    - master
+  artifacts:
+      paths:
+      - target/Habbo-*.jar

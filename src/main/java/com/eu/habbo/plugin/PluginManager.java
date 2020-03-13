@@ -3,6 +3,7 @@ package com.eu.habbo.plugin;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.Easter;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
+import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.TargetOffer;
@@ -15,6 +16,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.items.interactions.games.football.InteractionFootballGate;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.modtool.WordFilter;
+import com.eu.habbo.habbohotel.navigation.EventCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboInventory;
@@ -22,10 +24,14 @@ import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.messages.PacketManager;
+import com.eu.habbo.messages.incoming.camera.CameraPublishToWebEvent;
+import com.eu.habbo.messages.incoming.camera.CameraPurchaseEvent;
 import com.eu.habbo.messages.incoming.floorplaneditor.FloorPlanEditorSaveEvent;
 import com.eu.habbo.messages.incoming.hotelview.HotelViewRequestLTDAvailabilityEvent;
+import com.eu.habbo.messages.incoming.rooms.promotions.BuyRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.users.ChangeNameCheckUsernameEvent;
 import com.eu.habbo.messages.outgoing.catalog.DiscountComposer;
+import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
@@ -77,6 +83,8 @@ public class PluginManager {
         BotManager.MAXIMUM_CHAT_LENGTH = Emulator.getConfig().getInt("hotel.bot.max.chatlength");
         BotManager.MAXIMUM_NAME_LENGTH = Emulator.getConfig().getInt("hotel.bot.max.namelength");
         BotManager.MAXIMUM_CHAT_SPEED = Emulator.getConfig().getInt("hotel.bot.max.chatdelay");
+        Bot.PLACEMENT_MESSAGES = Emulator.getConfig().getValue("hotel.bot.placement.messages", "Yo!;Hello I'm a real party animal!;Hello!").split(";");
+
         HabboInventory.MAXIMUM_ITEMS = Emulator.getConfig().getInt("hotel.inventory.max.items");
         Messenger.MAXIMUM_FRIENDS = Emulator.getConfig().getInt("hotel.max.friends");
         Messenger.MAXIMUM_FRIENDS_HC = Emulator.getConfig().getInt("hotel.max.friends.hc");
@@ -124,13 +132,28 @@ public class PluginManager {
         RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB = Emulator.getConfig().getBoolean("hotel.navigator.populartab.publics");
 
         ChangeNameCheckUsernameEvent.VALID_CHARACTERS = Emulator.getConfig().getValue("allowed.username.characters", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-=!?@:,.");
+        CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS = Emulator.getConfig().getInt("camera.price.points.publish", 5);
+        CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS_TYPE = Emulator.getConfig().getInt("camera.price.points.publish.type", 0);
+        CameraPurchaseEvent.CAMERA_PURCHASE_CREDITS = Emulator.getConfig().getInt("camera.price.credits", 5);
+        CameraPurchaseEvent.CAMERA_PURCHASE_POINTS = Emulator.getConfig().getInt("camera.price.points", 5);
+        CameraPurchaseEvent.CAMERA_PURCHASE_POINTS_TYPE = Emulator.getConfig().getInt("camera.price.points.type", 0);
+
+        BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE = Emulator.getConfig().getValue("room.promotion.badge", "RADZZ");
+
+        NewNavigatorEventCategoriesComposer.CATEGORIES.clear();
+        for (String category : Emulator.getConfig().getValue("navigator.eventcategories", "").split(";")) {
+            try {
+                NewNavigatorEventCategoriesComposer.CATEGORIES.add(new EventCategory(category));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         if (Emulator.isReady) {
             Emulator.getGameEnvironment().getCreditsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPointsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPixelScheduler().reloadConfig();
             Emulator.getGameEnvironment().getGotwPointsScheduler().reloadConfig();
-
         }
     }
 

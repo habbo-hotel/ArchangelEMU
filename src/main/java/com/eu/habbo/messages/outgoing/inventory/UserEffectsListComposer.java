@@ -6,13 +6,15 @@ import com.eu.habbo.habbohotel.users.inventory.EffectsComponent;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import gnu.trove.procedure.TObjectProcedure;
+
+import java.util.Collection;
+
 
 public class UserEffectsListComposer extends MessageComposer {
     public final Habbo habbo;
-    public final EffectsComponent.HabboEffect[] effects;
+    public final Collection<EffectsComponent.HabboEffect> effects;
 
-    public UserEffectsListComposer(Habbo habbo, EffectsComponent.HabboEffect[] effects) {
+    public UserEffectsListComposer(Habbo habbo, Collection<EffectsComponent.HabboEffect> effects) {
         this.habbo = habbo;
         this.effects = effects;
     }
@@ -26,10 +28,9 @@ public class UserEffectsListComposer extends MessageComposer {
             this.response.appendInt(0);
         } else {
             synchronized (this.habbo.getInventory().getEffectsComponent().effects) {
-                this.response.appendInt(this.effects.length);
+                this.response.appendInt(this.effects.size());
 
-                for(EffectsComponent.HabboEffect effect : effects) {
-
+                for (EffectsComponent.HabboEffect effect : effects) {
                     UserEffectsListComposer.this.response.appendInt(effect.effect);
                     UserEffectsListComposer.this.response.appendInt(0);
                     UserEffectsListComposer.this.response.appendInt(effect.duration > 0 ? effect.duration : Integer.MAX_VALUE);

@@ -27,13 +27,14 @@ public class RoomUnitTeleport implements Runnable {
         this.y = y;
         this.z = z;
         this.newEffect = newEffect;
+        roomUnit.isWiredTeleporting = true;
     }
 
     @Override
     public void run() {
-        if (roomUnit == null || roomUnit.getRoom() == null)
+        if (roomUnit == null || roomUnit.getRoom() == null || room.getLayout() == null)
             return;
-
+        
         RoomTile t = this.room.getLayout().getTile((short) this.x, (short) this.y);
 
         HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
@@ -53,8 +54,10 @@ public class RoomUnitTeleport implements Runnable {
         ServerMessage teleportMessage = new RoomUnitOnRollerComposer(this.roomUnit, t, this.room).compose();
         this.roomUnit.setLocation(t);
         this.room.sendComposer(teleportMessage);
+        roomUnit.isWiredTeleporting = false;
 
         this.room.updateHabbosAt(t.x, t.y);
+        this.room.updateBotsAt(t.x, t.y);
 
         topItem = room.getTopItemAt(x, y);
         if (topItem != null && roomUnit.getCurrentLocation().equals(room.getLayout().getTile((short) x, (short) y))) {

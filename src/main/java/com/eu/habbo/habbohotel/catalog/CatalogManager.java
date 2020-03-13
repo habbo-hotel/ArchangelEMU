@@ -40,6 +40,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -729,6 +730,8 @@ public class CatalogManager {
                                 if (pageClazz != null) {
                                     try {
                                         catalogPage = pageClazz.getConstructor(ResultSet.class).newInstance(page);
+                                    } catch (InvocationTargetException e) {
+                                        Emulator.getLogging().logErrorLine(e.getCause());
                                     } catch (Exception e) {
                                         Emulator.getLogging().logErrorLine(e);
                                     }

@@ -1,6 +1,6 @@
 package com.eu.habbo.messages.incoming.rooms.pets;
 
-import com.eu.habbo.habbohotel.items.interactions.InteractionPetBreedingNest;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetBreedingNest;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 

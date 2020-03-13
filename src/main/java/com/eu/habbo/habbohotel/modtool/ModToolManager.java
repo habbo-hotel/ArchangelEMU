@@ -278,12 +278,12 @@ public class ModToolManager {
         return chatlogs;
     }
 
-    public THashSet<ModToolRoomVisit> requestUserRoomVisits(Habbo habbo) {
+    public THashSet<ModToolRoomVisit> getUserRoomVisits(int userId) {
         THashSet<ModToolRoomVisit> roomVisits = new THashSet<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.name, room_enter_log.* FROM room_enter_log INNER JOIN rooms ON rooms.id = room_enter_log.room_id WHERE user_id = ? AND timestamp >= ? ORDER BY timestamp DESC LIMIT 50")) {
-            statement.setInt(1, habbo.getHabboInfo().getId());
-            statement.setInt(2, Emulator.getIntUnixTimestamp() - 84600);
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.name, room_enter_log.* FROM room_enter_log INNER JOIN rooms ON rooms.id = room_enter_log.room_id WHERE user_id = ? ORDER BY timestamp DESC LIMIT 50")) {
+            statement.setInt(1, userId);
+
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     roomVisits.add(new ModToolRoomVisit(set));

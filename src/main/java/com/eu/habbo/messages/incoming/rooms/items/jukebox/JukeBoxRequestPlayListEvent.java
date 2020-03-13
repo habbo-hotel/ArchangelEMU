@@ -10,7 +10,7 @@ public class JukeBoxRequestPlayListEvent extends MessageHandler {
     public void handle() throws Exception {
         TraxManager traxManager = this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager();
         this.client.sendResponse(new JukeBoxPlayListComposer(traxManager.getSongs(), traxManager.totalLength()));
-        this.client.sendResponse(new JukeBoxMySongsComposer(traxManager.myList()));
+        this.client.sendResponse(new JukeBoxMySongsComposer(traxManager.myList(this.client.getHabbo())));
         this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().updateCurrentPlayingSong(this.client.getHabbo());
     }
 }

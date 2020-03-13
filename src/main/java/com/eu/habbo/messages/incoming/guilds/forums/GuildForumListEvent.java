@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Set;
 
 public class GuildForumListEvent extends MessageHandler {
     @Override
@@ -19,14 +20,14 @@ public class GuildForumListEvent extends MessageHandler {
         int offset = this.packet.readInt();
         int amount = this.packet.readInt();
 
-        THashSet<Guild> guilds = null;
+        Set<Guild> guilds = null;
         switch (mode) {
             case 0: // most active
-                guilds = getPopularForums();
+                guilds = getActiveForums();
                 break;
 
             case 1: // most viewed
-                guilds = getPopularForums();
+                guilds = Emulator.getGameEnvironment().getGuildManager().getMostViewed();
                 break;
 
             case 2: // my groups
@@ -39,14 +40,16 @@ public class GuildForumListEvent extends MessageHandler {
         }
     }
 
-    private THashSet<Guild> getPopularForums() {
+    private THashSet<Guild> getActiveForums() {
         THashSet<Guild> guilds = new THashSet<Guild>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT `guilds`.`id`, SUM(`guilds_forums_threads`.`posts_count`) AS `post_count` " +
                 "FROM `guilds_forums_threads` " +
                 "LEFT JOIN `guilds` ON `guilds`.`id` = `guilds_forums_threads`.`guild_id` " +
+                "WHERE `guilds`.`read_forum` = 'EVERYONE' AND `guilds_forums_threads`.`created_at` > ? " +
                 "GROUP BY `guilds`.`id` " +
                 "ORDER BY `post_count` DESC LIMIT 100")) {
+            statement.setInt(1, Emulator.getIntUnixTimestamp() - 7 * 24 * 60 * 60);
             ResultSet set = statement.executeQuery();
 
             while (set.next()) {

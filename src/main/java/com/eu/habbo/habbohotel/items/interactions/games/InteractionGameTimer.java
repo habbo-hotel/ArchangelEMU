@@ -153,16 +153,20 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
             return;
         }
 
+        this.timeNow--;
+        if (this.timeNow < 0) this.timeNow = 0;
+
         if (this.timeNow > 0) {
             this.threadActive = true;
             Emulator.getThreading().run(this, 1000);
-            this.timeNow--;
-            room.updateItem(this);
         } else {
             this.threadActive = false;
+            this.timeNow = 0;
             this.endGame(room);
             WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, room, new Object[]{});
         }
+
+        room.updateItem(this);
     }
 
     @Override

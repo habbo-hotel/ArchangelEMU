@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.guilds;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.guilds.forums.ForumView;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGuildFurni;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -14,10 +15,8 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class GuildManager {
 
@@ -25,12 +24,16 @@ public class GuildManager {
 
     private final TIntObjectMap<Guild> guilds;
 
+    private final THashSet<ForumView> views = new THashSet<>();
+
     public GuildManager() {
         long millis = System.currentTimeMillis();
         this.guildParts = new THashMap<GuildPartType, THashMap<Integer, GuildPart>>();
         this.guilds = TCollections.synchronizedMap(new TIntObjectHashMap<Guild>());
 
         this.loadGuildParts();
+        this.loadGuildViews();
+
         Emulator.getLogging().logStart("Guild Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
@@ -53,6 +56,19 @@ public class GuildManager {
         }
     }
 
+    public void loadGuildViews() {
+        this.views.clear();
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet set = statement.executeQuery("SELECT * FROM guild_forum_views")) {
+            while (set.next()) {
+                this.views.add(new ForumView(set));
+            }
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+    }
 
     public Guild createGuild(Habbo habbo, int roomId, String roomName, String name, String description, String badge, int colorOne, int colorTwo) {
         Guild guild = new Guild(habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), roomId, roomName, name, description, colorOne, colorTwo, badge);
@@ -203,7 +219,7 @@ public class GuildManager {
                 }
 
                 if (userId == 0 && !error) {
-                    if (guild.getState() == GuildState.LOCKED) {
+                    if (guild.getState() == GuildState.EXCLUSIVE) {
                         try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(id) as total FROM guilds_members WHERE guild_id = ? AND level_id = 3")) {
                             statement.setInt(1, guild.getId());
                             try (ResultSet set = statement.executeQuery()) {
@@ -236,7 +252,7 @@ public class GuildManager {
                             statement.setInt(1, guild.getId());
                             statement.setInt(2, client.getHabbo().getHabboInfo().getId());
                             statement.setInt(3, Emulator.getIntUnixTimestamp());
-                            statement.setInt(4, guild.getState() == GuildState.LOCKED ? GuildRank.REQUESTED.type : GuildRank.MEMBER.type);
+                            statement.setInt(4, guild.getState() == GuildState.EXCLUSIVE ? GuildRank.REQUESTED.type : GuildRank.MEMBER.type);
                             statement.execute();
                         }
                     }
@@ -251,7 +267,7 @@ public class GuildManager {
                 }
 
                 if (userId == 0 && !error) {
-                    if (guild.getState() == GuildState.LOCKED)
+                    if (guild.getState() == GuildState.EXCLUSIVE)
                         guild.increaseRequestCount();
                     else {
                         guild.increaseMemberCount();
@@ -593,5 +609,39 @@ public class GuildManager {
             guildIterator.remove();
         }
         Emulator.getLogging().logShutdownLine("Guild Manager -> Disposed!");
+    }
+
+    public boolean hasViewedForum(int userId, int guildId) {
+        return this.views.stream()
+                .anyMatch(v -> v.getUserId() == userId && v.getGuildId() == guildId && v.getTimestamp() > (Emulator.getIntUnixTimestamp() - 7 * 24 * 60 * 60));
+    }
+
+    public void addView(int userId, int guildId) {
+        ForumView view = new ForumView(userId, guildId, Emulator.getIntUnixTimestamp());
+
+        this.views.add(view);
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO `guild_forum_views`(`user_id`, `guild_id`, `timestamp`) VALUES (?, ?, ?)")) {
+            statement.setInt(1, view.getUserId());
+            statement.setInt(2, view.getGuildId());
+            statement.setInt(3, view.getTimestamp());
+
+            statement.execute();
+        } catch (SQLException e) {
+            Emulator.getLogging().logSQLException(e);
+        }
+    }
+
+    public Set<Guild> getMostViewed() {
+        return this.views.stream()
+                .filter(v -> v.getTimestamp() > (Emulator.getIntUnixTimestamp() - 7 * 24 * 60 * 60))
+                .collect(Collectors.groupingBy(ForumView::getGuildId))
+                .entrySet()
+                .stream()
+                .sorted(Comparator.comparingInt((Map.Entry<Integer, List<ForumView>> a) -> a.getValue().size()))
+                .map(k -> this.getGuild(k.getKey()))
+                .filter(g -> g != null && g.canReadForum() == SettingsState.EVERYONE)
+                .limit(100)
+                .collect(Collectors.toSet());
     }
 }

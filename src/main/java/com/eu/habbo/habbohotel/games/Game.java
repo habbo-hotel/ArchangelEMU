@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.messages.outgoing.guides.GuideSessionPartnerIsPlayingComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.games.GameHabboJoinEvent;
 import com.eu.habbo.plugin.events.games.GameHabboLeaveEvent;
@@ -68,7 +69,7 @@ public abstract class Game implements Runnable {
                     habbo.getHabboInfo().setCurrentGame(this.getClass());
                     habbo.getHabboInfo().setGamePlayer(player);
                 }
-
+                habbo.getClient().sendResponse(new GuideSessionPartnerIsPlayingComposer(true));
                 return true;
             }
         } catch (Exception e) {
@@ -90,33 +91,19 @@ public abstract class Game implements Runnable {
 
             GameTeam team = this.getTeamForHabbo(habbo);
             if (team != null && team.isMember(habbo)) {
-                team.removeMember(habbo.getHabboInfo().getGamePlayer());
-                habbo.getHabboInfo().getGamePlayer().reset();
+                if (habbo.getHabboInfo().getGamePlayer() != null) {
+                    team.removeMember(habbo.getHabboInfo().getGamePlayer());
+                    habbo.getHabboInfo().getGamePlayer().reset();
+                }
+
                 habbo.getHabboInfo().setCurrentGame(null);
                 habbo.getHabboInfo().setGamePlayer(null);
-
+                habbo.getClient().sendResponse(new GuideSessionPartnerIsPlayingComposer(false));
                 if (this.countsAchievements && this.endTime > this.startTime) {
                     AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GamePlayed"));
                 }
             }
         }
-
-        /*
-        boolean deleteGame = true;
-        for (GameTeam team : this.teams.values())
-        {
-            if (team.getMembers().size() > 0 )
-            {
-                deleteGame = false;
-                break;
-            }
-        }
-
-        if (deleteGame)
-        {
-            this.room.deleteGame(this);
-        }
-        */
     }
 
 
@@ -131,8 +118,7 @@ public abstract class Game implements Runnable {
         }
 
         for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
-            item.setExtradata("0");
-            this.room.updateItem(item);
+            ((WiredBlob) item).onGameStart(this.room);
         }
     }
 
@@ -189,6 +175,10 @@ public abstract class Game implements Runnable {
         for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
             ((InteractionWiredHighscore) item).reloadData();
             this.room.updateItem(item);
+        }
+
+        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
+            ((WiredBlob) item).onGameEnd(this.room);
         }
     }
 

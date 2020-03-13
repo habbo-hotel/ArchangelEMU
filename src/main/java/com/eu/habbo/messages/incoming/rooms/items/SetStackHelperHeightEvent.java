@@ -51,7 +51,7 @@ public class SetStackHelperHeightEvent extends MessageHandler {
                 item.needsUpdate(true);
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().updateItem(item);
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().updateTiles(tiles);
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UpdateStackHeightComposer(tiles).compose());
+                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UpdateStackHeightComposer(room, tiles).compose());
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UpdateStackHeightTileHeightComposer(item, (int) ((height) * 100)).compose());
             }
         }

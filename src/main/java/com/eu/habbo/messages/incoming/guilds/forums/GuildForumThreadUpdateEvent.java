@@ -7,6 +7,8 @@ import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.guilds.SettingsState;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadsComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.ThreadUpdatedMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
@@ -42,9 +44,24 @@ public class GuildForumThreadUpdateEvent extends MessageHandler {
             return;
         }
 
+        boolean pinChanged = isPinned != thread.isPinned();
+        if (pinChanged) {
+            this.client.sendResponse(new BubbleAlertComposer(isPinned ? BubbleAlertKeys.FORUMS_THREAD_PINNED.key : BubbleAlertKeys.FORUMS_THREAD_UNPINNED.key).compose());
+        }
+
+        if (isLocked != thread.isLocked()) {
+            this.client.sendResponse(new BubbleAlertComposer(isLocked ? BubbleAlertKeys.FORUMS_THREAD_LOCKED.key : BubbleAlertKeys.FORUMS_THREAD_UNLOCKED.key).compose());
+        }
+
+        thread.setPinned(isPinned);
+        thread.setLocked(isLocked);
+
+        thread.run();
+
+
         this.client.sendResponse(new ThreadUpdatedMessageComposer(guild, thread, this.client.getHabbo(), isPinned, isLocked));
 
-        if (isPinned) {
+        if (pinChanged) {
             this.client.sendResponse(new GuildForumThreadsComposer(guild, 0));
         }
     }

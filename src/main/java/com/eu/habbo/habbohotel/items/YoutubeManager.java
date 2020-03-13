@@ -77,42 +77,44 @@ public class YoutubeManager {
 
         long millis = System.currentTimeMillis();
 
-        ExecutorService youtubeDataLoaderPool = Executors.newFixedThreadPool(10);
+        Emulator.getThreading().run(() -> {
+            ExecutorService youtubeDataLoaderPool = Executors.newFixedThreadPool(10);
 
-        Emulator.getLogging().logStart("YouTube Manager -> Loading...");
+            Emulator.getLogging().logStart("YouTube Manager -> Loading...");
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM youtube_playlists")) {
-            try (ResultSet set = statement.executeQuery()) {
-                while (set.next()) {
-                    final int itemId = set.getInt("item_id");
-                    final String playlistId = set.getString("playlist_id");
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM youtube_playlists")) {
+                try (ResultSet set = statement.executeQuery()) {
+                    while (set.next()) {
+                        final int itemId = set.getInt("item_id");
+                        final String playlistId = set.getString("playlist_id");
 
-                    youtubeDataLoaderPool.submit(() -> {
-                        ArrayList<YoutubePlaylist> playlists = this.playlists.getOrDefault(itemId, new ArrayList<>());
+                        youtubeDataLoaderPool.submit(() -> {
+                            ArrayList<YoutubePlaylist> playlists = this.playlists.getOrDefault(itemId, new ArrayList<>());
 
-                        YoutubePlaylist playlist = this.getPlaylistDataById(playlistId);
-                        if (playlist != null) {
-                            playlists.add(playlist);
-                        } else {
-                            Emulator.getLogging().logErrorLine("Failed to load YouTube playlist: " + playlistId);
-                        }
+                            YoutubePlaylist playlist = this.getPlaylistDataById(playlistId);
+                            if (playlist != null) {
+                                playlists.add(playlist);
+                            } else {
+                                Emulator.getLogging().logErrorLine("Failed to load YouTube playlist: " + playlistId);
+                            }
 
-                        this.playlists.put(itemId, playlists);
-                    });
+                            this.playlists.put(itemId, playlists);
+                        });
+                    }
                 }
+            } catch (SQLException e) {
+                Emulator.getLogging().logSQLException(e);
             }
-        } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
-        }
 
-        youtubeDataLoaderPool.shutdown();
-        try {
-            youtubeDataLoaderPool.awaitTermination(60, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            youtubeDataLoaderPool.shutdown();
+            try {
+                youtubeDataLoaderPool.awaitTermination(60, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        Emulator.getLogging().logStart("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+            Emulator.getLogging().logStart("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        });
     }
 
     public YoutubePlaylist getPlaylistDataById(String playlistId) {

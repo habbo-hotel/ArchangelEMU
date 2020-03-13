@@ -61,7 +61,7 @@ public class ModToolIssueChatlogComposer extends MessageComposer {
             this.response.appendInt(this.issue.threadId);
 
             if (this.type == ModToolIssueChatlogType.FORUM_COMMENT) {
-                ModToolChatRecordDataContext.GROUP_ID.append(this.response);
+                ModToolChatRecordDataContext.MESSAGE_ID.append(this.response);
                 this.response.appendInt(this.issue.commentId);
             }
         } else if (this.issue.type == ModToolTicketType.PHOTO) {

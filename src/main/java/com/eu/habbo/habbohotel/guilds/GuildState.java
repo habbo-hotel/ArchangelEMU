@@ -2,8 +2,10 @@ package com.eu.habbo.habbohotel.guilds;
 
 public enum GuildState {
     OPEN(0),
-    LOCKED(1),
-    CLOSED(2);
+    EXCLUSIVE(1),
+    CLOSED(2),
+    LARGE(3),
+    LARGE_CLOSED(4);
 
     public final int state;
 

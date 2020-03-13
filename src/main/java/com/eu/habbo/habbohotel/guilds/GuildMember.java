@@ -62,4 +62,12 @@ public class GuildMember implements Comparable {
     public int compareTo(Object o) {
         return 0;
     }
+
+    public GuildMembershipStatus getMembershipStatus() {
+        if (this.rank == GuildRank.DELETED) return GuildMembershipStatus.NOT_MEMBER;
+        if (this.rank == GuildRank.OWNER || this.rank == GuildRank.ADMIN || this.rank == GuildRank.MEMBER) return GuildMembershipStatus.MEMBER;
+        if (this.rank == GuildRank.REQUESTED) return GuildMembershipStatus.PENDING;
+
+        return GuildMembershipStatus.NOT_MEMBER;
+    }
 }

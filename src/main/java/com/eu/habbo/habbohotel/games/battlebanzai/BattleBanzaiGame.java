@@ -157,11 +157,14 @@ public class BattleBanzaiGame extends Game {
     public void onEnd() {
         GameTeam winningTeam = null;
 
+        boolean singleTeamGame = this.teams.values().stream().filter(t -> t.getMembers().size() > 0).count() == 1;
+
         for (GameTeam team : this.teams.values()) {
-            for (GamePlayer player : team.getMembers()) {
-                if (player.getScore() > 0) {
-                    AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallPlayer"));
-                    AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallQuestCompleted"));
+            if (!singleTeamGame) {
+                for (GamePlayer player : team.getMembers()) {
+                    if (player.getScore() > 0) {
+                        AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallPlayer"));
+                    }
                 }
             }
 
@@ -171,10 +174,12 @@ public class BattleBanzaiGame extends Game {
         }
 
         if (winningTeam != null) {
-            for (GamePlayer player : winningTeam.getMembers()) {
-                if (player.getScore() > 0) {
-                    this.room.sendComposer(new RoomUserActionComposer(player.getHabbo().getRoomUnit(), RoomUserAction.WAVE).compose());
-                    AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallWinner"));
+            if (!singleTeamGame) {
+                for (GamePlayer player : winningTeam.getMembers()) {
+                    if (player.getScore() > 0) {
+                        this.room.sendComposer(new RoomUserActionComposer(player.getHabbo().getRoomUnit(), RoomUserAction.WAVE).compose());
+                        AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallWinner"));
+                    }
                 }
             }
 

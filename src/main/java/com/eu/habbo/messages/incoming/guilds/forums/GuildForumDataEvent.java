@@ -16,5 +16,9 @@ public class GuildForumDataEvent extends MessageHandler {
             return;
 
         this.client.sendResponse(new GuildForumDataComposer(guild, this.client.getHabbo()));
+
+        if (!Emulator.getGameEnvironment().getGuildManager().hasViewedForum(this.client.getHabbo().getHabboInfo().getId(), guildId)) {
+            Emulator.getGameEnvironment().getGuildManager().addView(this.client.getHabbo().getHabboInfo().getId(), guildId);
+        }
     }
 }

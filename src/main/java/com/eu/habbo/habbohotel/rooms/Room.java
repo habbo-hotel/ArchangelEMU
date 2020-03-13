@@ -19,6 +19,10 @@ import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.Interaction
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeExitTile;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetBreedingNest;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.permissions.Permission;
@@ -26,7 +30,8 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.*;
-import com.eu.habbo.habbohotel.wired.*;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -78,6 +83,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Room implements Comparable<Room>, ISerialize, Runnable {
     public static final Comparator SORT_SCORE = new Comparator() {
@@ -466,6 +472,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                             b.getRoomUnit().setRotation(RoomUserRotation.fromValue(this.getLayout().getDoorDirection()));
                         } else {
                             b.getRoomUnit().setZ(set.getDouble("z"));
+                            b.getRoomUnit().setPreviousLocationZ(set.getDouble("z"));
                             b.getRoomUnit().setRotation(RoomUserRotation.values()[set.getInt("rot")]);
                         }
                         b.getRoomUnit().setRoomUnitType(RoomUnitType.BOT);
@@ -547,7 +554,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             tile.setState(this.calculateTileState(tile));
         }
 
-        this.sendComposer(new UpdateStackHeightComposer(tiles).compose());
+        this.sendComposer(new UpdateStackHeightComposer(this, tiles).compose());
     }
 
     private RoomTileState calculateTileState(RoomTile tile) {
@@ -563,6 +570,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         HabboItem lowestChair = this.getLowestChair(tile);
         THashSet<HabboItem> items = this.getItemsAt(tile);
         if (items == null) return RoomTileState.INVALID;
+
+        if (items.stream().anyMatch(i -> i.getBaseItem().allowLay())) return RoomTileState.LAY;
+
         for (HabboItem item : items) {
             if (exclude != null && item == exclude) continue;
 
@@ -573,10 +583,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             if (lowestItem == null || lowestItem.getZ() < item.getZ()) {
                 lowestItem = item;
 
-                result = this.checkStateForItem(lowestItem);
+                result = this.checkStateForItem(lowestItem, tile);
             } else if (lowestItem.getZ() == item.getZ()) {
                 if (result == RoomTileState.OPEN) {
-                    result = this.checkStateForItem(item);
+                    result = this.checkStateForItem(item, tile);
                 }
             }
         }
@@ -586,7 +596,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return result;
     }
 
-    private RoomTileState checkStateForItem(HabboItem item) {
+    private RoomTileState checkStateForItem(HabboItem item, RoomTile tile) {
         RoomTileState result = RoomTileState.BLOCKED;
 
         if (item.isWalkable()) {
@@ -599,6 +609,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         if (item.getBaseItem().allowLay()) {
             result = RoomTileState.LAY;
+        }
+
+        RoomTileState overriddenState = item.getOverrideTileState(tile, this);
+        if (overriddenState != null) {
+            result = overriddenState;
         }
 
         return result;
@@ -655,7 +670,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     }
                 }
             }
-            this.sendComposer(new UpdateStackHeightComposer(updatedTiles).compose());
+            this.sendComposer(new UpdateStackHeightComposer(this, updatedTiles).compose());
             this.updateTiles(updatedTiles);
             for (RoomTile tile : updatedTiles) {
                 this.updateHabbosAt(tile.x, tile.y);
@@ -719,8 +734,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void updateHabbosAt(short x, short y) {
-        THashSet<Habbo> habbos = this.getHabbosAt(x, y);
+        this.updateHabbosAt(x, y, this.getHabbosAt(x, y));
+    }
 
+    public void updateHabbosAt(short x, short y, THashSet<Habbo> habbos) {
         HabboItem item = this.getTopItemAt(x, y);
 
         THashSet<RoomUnit> roomUnits = new THashSet<>();
@@ -751,7 +768,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
     }
 
-    private void updateBotsAt(short x, short y) {
+    public void updateBotsAt(short x, short y) {
         HabboItem topItem = this.getTopItemAt(x, y);
 
         THashSet<RoomUnit> roomUnits = new THashSet<>();
@@ -763,7 +780,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     bot.getRoomUnit().setPreviousLocationZ(topItem.getZ());
                     bot.getRoomUnit().setRotation(RoomUserRotation.fromValue(topItem.getRotation()));
                 } else {
-                    bot.getRoomUnit().setZ(topItem.getZ() + topItem.getBaseItem().getHeight());
+                    bot.getRoomUnit().setZ(topItem.getZ() + Item.getCurrentHeight(topItem));
 
                     if (topItem.getBaseItem().allowLay()) {
                         bot.getRoomUnit().setStatus(RoomUnitStatus.LAY, (topItem.getZ() + topItem.getBaseItem().getHeight()) + "");
@@ -771,6 +788,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 }
             } else {
                 bot.getRoomUnit().setZ(bot.getRoomUnit().getCurrentLocation().getStackHeight());
+                bot.getRoomUnit().setPreviousLocationZ(bot.getRoomUnit().getCurrentLocation().getStackHeight());
             }
 
             roomUnits.add(bot.getRoomUnit());
@@ -838,10 +856,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 return;
 
             if (this.loaded) {
-                if (!this.traxManager.disposed()) {
-                    this.traxManager.dispose();
-                }
                 try {
+                    if (!this.traxManager.disposed()) {
+                        this.traxManager.dispose();
+                    }
+
                     this.roomCycleTask.cancel(false);
                     this.scheduledTasks.clear();
                     this.scheduledComposers.clear();
@@ -921,12 +940,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 }
             }
 
-            this.wordQuiz = "";
-            this.yesVotes = 0;
-            this.noVotes = 0;
-            this.updateDatabaseUserCount();
-            this.preLoaded = true;
-            this.layout = null;
+            try {
+                this.wordQuiz = "";
+                this.yesVotes = 0;
+                this.noVotes = 0;
+                this.updateDatabaseUserCount();
+                this.preLoaded = true;
+                this.layout = null;
+            } catch (Exception e) {
+                Emulator.getLogging().logErrorLine(e);
+            }
         }
 
         Emulator.getPluginManager().fireEvent(new RoomUnloadedEvent(this));
@@ -1457,7 +1480,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                                     }
                                                 }
                                             }
-                                        }, 500);
+                                        }, this.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
                                     }
                                 }
 
@@ -1603,7 +1626,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         this.dance(unit, DanceType.NONE);
                         //int tileHeight = this.layout.getTile(topItem.getX(), topItem.getY()).z;
                         unit.setStatus(RoomUnitStatus.SIT, (Item.getCurrentHeight(topItem) * 1.0D) + "");
-                        unit.setPreviousLocationZ(topItem.getZ());
                         unit.setZ(topItem.getZ());
                         unit.setRotation(RoomUserRotation.values()[topItem.getRotation()]);
                         unit.sitUpdate = false;
@@ -2095,25 +2117,29 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return "";
     }
 
-    public void createPromotion(String title, String description) {
+    public void createPromotion(String title, String description, int category) {
         this.promoted = true;
 
         if (this.promotion == null) {
-            this.promotion = new RoomPromotion(this, title, description, Emulator.getIntUnixTimestamp() + (120 * 60));
+            this.promotion = new RoomPromotion(this, title, description, Emulator.getIntUnixTimestamp() + (120 * 60), Emulator.getIntUnixTimestamp(), category);
         } else {
             this.promotion.setTitle(title);
             this.promotion.setDescription(description);
             this.promotion.setEndTimestamp(Emulator.getIntUnixTimestamp() + (120 * 60));
+            this.promotion.setCategory(category);
         }
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_promotions (room_id, title, description, end_timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?, description = ?, end_timestamp = ?")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_promotions (room_id, title, description, end_timestamp, start_timestamp, category) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE title = ?, description = ?, end_timestamp = ?, category = ?")) {
             statement.setInt(1, this.id);
             statement.setString(2, title);
             statement.setString(3, description);
             statement.setInt(4, this.promotion.getEndTimestamp());
-            statement.setString(5, this.promotion.getTitle());
-            statement.setString(6, this.promotion.getDescription());
-            statement.setInt(7, this.promotion.getEndTimestamp());
+            statement.setInt(5, this.promotion.getStartTimestamp());
+            statement.setInt(6, category);
+            statement.setString(7, this.promotion.getTitle());
+            statement.setString(8, this.promotion.getDescription());
+            statement.setInt(9, this.promotion.getEndTimestamp());
+            statement.setInt(10, this.promotion.getCategory());
             statement.execute();
         } catch (SQLException e) {
             Emulator.getLogging().logSQLException(e);
@@ -2359,6 +2385,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public HabboItem getHabboItem(int id) {
+        if (this.roomItems == null || this.roomSpecialTypes == null)
+            return null; // room not loaded completely
+
         HabboItem item;
         synchronized (this.roomItems) {
             item = this.roomItems.get(id);
@@ -2577,13 +2606,15 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             this.sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
         }
 
-        HabboItem item = this.getTopItemAt(habbo.getRoomUnit().getX(), habbo.getRoomUnit().getY());
+        if (habbo.getRoomUnit().getCurrentLocation() != null) {
+            HabboItem item = this.getTopItemAt(habbo.getRoomUnit().getX(), habbo.getRoomUnit().getY());
 
-        if (item != null) {
-            try {
-                item.onWalkOff(habbo.getRoomUnit(), this, new Object[]{});
-            } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+            if (item != null) {
+                try {
+                    item.onWalkOff(habbo.getRoomUnit(), this, new Object[]{});
+                } catch (Exception e) {
+                    Emulator.getLogging().logErrorLine(e);
+                }
             }
         }
 
@@ -2971,7 +3002,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         habbo.getHabboStats().mutedCount++;
         timeOut += (timeOut * (int) Math.ceil(Math.pow(habbo.getHabboStats().mutedCount, 2)));
         habbo.getHabboStats().chatCounter = 0;
-        habbo.mute(timeOut);
+        habbo.mute(timeOut, true);
     }
 
     public void talk(Habbo habbo, RoomChatMessage roomChatMessage, RoomChatType chatType) {
@@ -3962,6 +3993,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
     }
 
+    public void makeStand(Habbo habbo) {
+        if (habbo.getRoomUnit() == null) return;
+
+        HabboItem item = this.getTopItemAt(habbo.getRoomUnit().getX(), habbo.getRoomUnit().getY());
+        if (item == null || !item.getBaseItem().allowSit() || !item.getBaseItem().allowLay()) {
+            habbo.getRoomUnit().cmdStand = true;
+            habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[habbo.getRoomUnit().getBodyRotation().getValue() - habbo.getRoomUnit().getBodyRotation().getValue() % 2]);
+            habbo.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
+            this.sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
+        }
+    }
+
     public void giveEffect(Habbo habbo, int effectId, int duration) {
         if (this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
             this.giveEffect(habbo.getRoomUnit(), effectId, duration);
@@ -4089,11 +4132,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 if (habbo != null && iterator.value().getUserId() == habbo.getHabboInfo().getId())
                     continue;
 
-                if (userItemsMap.get(iterator.value().getUserId()) == null) {
-                    userItemsMap.put(iterator.value().getUserId(), new THashSet<>());
-                }
+                if (iterator.value() instanceof InteractionPostIt)
+                    continue;
 
-                userItemsMap.get(iterator.value().getUserId()).add(iterator.value());
+                userItemsMap.computeIfAbsent(iterator.value().getUserId(), k -> new THashSet<>()).add(iterator.value());
             }
         }
 
@@ -4161,6 +4203,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public void idle(Habbo habbo) {
         habbo.getRoomUnit().setIdle();
+
+        if (habbo.getRoomUnit().getDanceType() != DanceType.NONE) {
+            this.dance(habbo, DanceType.NONE);
+        }
+
         this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
         WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
     }
@@ -4331,6 +4378,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (!this.layout.fitsOnMap(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))
             return FurnitureMovementError.INVALID_MOVE;
 
+        if (item instanceof InteractionStackHelper) return FurnitureMovementError.NONE;
+
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
         for (RoomTile t : occupiedTiles) {
 
@@ -4339,22 +4388,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             if (this.hasPetsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_PETS;
         }
 
-        boolean magicTile = item instanceof InteractionStackHelper;
+        List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
+        for (RoomTile t : occupiedTiles) {
+            tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
 
-        if (!magicTile) {
-            List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
-            for (RoomTile t : occupiedTiles) {
-                tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
-
-                HabboItem topItem = this.getTopItemAt(t.x, t.y, item);
-                if (topItem != null && !topItem.getBaseItem().allowStack() && !t.getAllowStack()) {
-                    return FurnitureMovementError.CANT_STACK;
-                }
-            }
-
-            if (!item.canStackAt(this, tileFurniList)) {
+            HabboItem topItem = this.getTopItemAt(t.x, t.y, item);
+            if (topItem != null && !topItem.getBaseItem().allowStack() && !t.getAllowStack()) {
                 return FurnitureMovementError.CANT_STACK;
             }
+        }
+
+        if (!item.canStackAt(this, tileFurniList)) {
+            return FurnitureMovementError.CANT_STACK;
         }
 
         return FurnitureMovementError.NONE;
@@ -4438,26 +4483,31 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         boolean magicTile = item instanceof InteractionStackHelper;
 
+        Optional<HabboItem> stackHelper = this.getItemsAt(tile).stream().filter(i -> i instanceof InteractionStackHelper).findAny();
+
         //Check if can be placed at new position
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
-        if (topItem != item) {
-            for (RoomTile t : occupiedTiles) {
-                HabboItem tileTopItem = this.getTopItemAt(t.x, t.y);
-                if (!magicTile && ((tileTopItem != null && tileTopItem != item ? (t.state.equals(RoomTileState.INVALID) || !t.getAllowStack() || !tileTopItem.getBaseItem().allowStack()) : this.calculateTileState(t, item).equals(RoomTileState.INVALID))))
-                    return FurnitureMovementError.CANT_STACK;
-                if (this.hasHabbosAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_HABBOS;
-                if (this.hasBotsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_BOTS;
-                if (this.hasPetsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_PETS;
+
+        if (!stackHelper.isPresent()) {
+            if (topItem != item) {
+                for (RoomTile t : occupiedTiles) {
+                    HabboItem tileTopItem = this.getTopItemAt(t.x, t.y);
+                    if (!magicTile && ((tileTopItem != null && tileTopItem != item ? (t.state.equals(RoomTileState.INVALID) || !t.getAllowStack() || !tileTopItem.getBaseItem().allowStack()) : this.calculateTileState(t, item).equals(RoomTileState.INVALID))))
+                        return FurnitureMovementError.CANT_STACK;
+                    if (this.hasHabbosAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_HABBOS;
+                    if (this.hasBotsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_BOTS;
+                    if (this.hasPetsAt(t.x, t.y)) return FurnitureMovementError.TILE_HAS_PETS;
+                }
             }
-        }
 
-        List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
-        for (RoomTile t : occupiedTiles) {
-            tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
-        }
+            List<Pair<RoomTile, THashSet<HabboItem>>> tileFurniList = new ArrayList<>();
+            for (RoomTile t : occupiedTiles) {
+                tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
+            }
 
-        if (!magicTile && !item.canStackAt(this, tileFurniList)) {
-            return FurnitureMovementError.CANT_STACK;
+            if (!magicTile && !item.canStackAt(this, tileFurniList)) {
+                return FurnitureMovementError.CANT_STACK;
+            }
         }
 
         THashSet<RoomTile> oldOccupiedTiles = this.layout.getTilesAt(this.layout.getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
@@ -4477,8 +4527,19 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
         //Place at new position
-        double height = this.getStackHeight(tile.x, tile.y, false, item);
+
+        double height;
+
+        if (stackHelper.isPresent()) {
+            height = stackHelper.get().getExtradata().isEmpty() ? Double.valueOf("0.0") : (Double.valueOf(stackHelper.get().getExtradata()) / 100);
+        } else if (item.equals(topItem) && tile.x == item.getX() && tile.y == item.getY()) {
+            height = item.getZ();
+        } else {
+            height = this.getStackHeight(tile.x, tile.y, false, item);
+        }
+
         if(height > 40d) return FurnitureMovementError.CANT_STACK;
+
         item.setX(tile.x);
         item.setY(tile.y);
         item.setZ(height);
@@ -4504,7 +4565,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         //Update Habbos at old position
         for (RoomTile t : occupiedTiles) {
-            this.updateHabbosAt(t.x, t.y);
+            this.updateHabbosAt(
+                    t.x,
+                    t.y,
+                    this.getHabbosAt(t.x, t.y)
+                            .stream()
+                            .filter(h -> !h.getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
+                            .collect(Collectors.toCollection(THashSet::new))
+            );
             this.updateBotsAt(t.x, t.y);
         }
         return FurnitureMovementError.NONE;

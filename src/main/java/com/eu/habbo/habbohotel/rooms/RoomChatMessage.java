@@ -210,7 +210,7 @@ public class RoomChatMessage implements Runnable, ISerialize, Loggable {
                         return;
                     }
                 } else {
-                    this.habbo.mute(Emulator.getConfig().getInt("hotel.wordfilter.automute"));
+                    this.habbo.mute(Emulator.getConfig().getInt("hotel.wordfilter.automute"), false);
                 }
 
                 this.message = "";
