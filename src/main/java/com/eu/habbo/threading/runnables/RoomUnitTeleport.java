@@ -32,12 +32,9 @@ public class RoomUnitTeleport implements Runnable {
 
     @Override
     public void run() {
-        if (roomUnit == null || roomUnit.getRoom() == null)
+        if (roomUnit == null || roomUnit.getRoom() == null || room.getLayout() == null)
             return;
-
-        if (room.getLayout() == null)
-            return;
-
+        
         RoomTile t = this.room.getLayout().getTile((short) this.x, (short) this.y);
 
         HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
