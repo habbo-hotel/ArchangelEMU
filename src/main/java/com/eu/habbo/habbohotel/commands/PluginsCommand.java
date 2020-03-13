@@ -9,7 +9,7 @@ import java.util.Collections;
 
 public class PluginsCommand extends Command {
     public PluginsCommand() {
-        super(null, new String[]{"plugins"});
+        super(null, Emulator.getTexts().getValue("commands.keys.cmd_plugins").split(";"));
     }
 
     @Override
