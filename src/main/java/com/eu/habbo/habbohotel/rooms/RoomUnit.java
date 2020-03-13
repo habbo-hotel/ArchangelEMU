@@ -761,6 +761,8 @@ public class RoomUnit {
     }
 
     public RoomTile getClosestAdjacentTile(short x, short y, boolean diagonal) {
+        if(room == null) return null;
+
         RoomTile baseTile = room.getLayout().getTile(x, y);
 
         if (baseTile == null) return null;
