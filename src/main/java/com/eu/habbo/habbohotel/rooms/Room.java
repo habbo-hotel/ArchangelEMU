@@ -857,7 +857,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
             if (this.loaded) {
                 try {
-                    if (!this.traxManager.disposed()) {
+
+                    if (this.traxManager != null && !this.traxManager.disposed()) {
                         this.traxManager.dispose();
                     }
 
