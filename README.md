@@ -69,8 +69,8 @@ Sale of a special edition of a *source code* will not be permitted. You may use 
 If we ever are to make paid features or plugins, we will not prevent or discourage developers from creating alternative options for users.
 
 
-## Plugins - ArcturusExtended ##
-ArcturusExtended is a pack with a collection of constantly updated plugins which add custom features to Arcturus Morningstar.
+## Plugins - Official Plugins ##
+You can find official plugins to add custom features to Arcturus Morningstar at the following URL: 
 
-[View the respository here.](https://git.krews.org/morningstar/arcturus-extended/)
+[View the respository here.](https://git.krews.org/official-plugins)
 
