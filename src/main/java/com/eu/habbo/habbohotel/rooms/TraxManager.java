@@ -44,24 +44,26 @@ public class TraxManager implements Disposable {
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     HabboItem musicDisc = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set.getInt("item_id"));
+                    if(musicDisc != null) {
+                        if (!(musicDisc instanceof  InteractionMusicDisc) || musicDisc.getRoomId() != -1) {
+                            try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM room_trax_playlist WHERE room_id = ? AND item_id = ? LIMIT 1")) {
+                                stmt.setInt(1, this.room.getId());
+                                stmt.setInt(2, musicDisc.getId());
+                                stmt.execute();
+                            } catch (SQLException e) {
+                                Emulator.getLogging().logSQLException(e);
+                                return;
+                            }
+                        } else {
+                            SoundTrack track = Emulator.getGameEnvironment().getItemManager().getSoundTrack(((InteractionMusicDisc) musicDisc).getSongId());
 
-                    if (!(musicDisc instanceof  InteractionMusicDisc) || musicDisc.getRoomId() != -1) {
-                        try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM room_trax_playlist WHERE room_id = ? AND item_id = ? LIMIT 1")) {
-                            stmt.setInt(1, this.room.getId());
-                            stmt.setInt(2, musicDisc.getId());
-                            stmt.execute();
-                        } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
-                            return;
-                        }
-                    } else {
-                        SoundTrack track = Emulator.getGameEnvironment().getItemManager().getSoundTrack(((InteractionMusicDisc) musicDisc).getSongId());
-
-                        if (track != null) {
-                            this.songs.add((InteractionMusicDisc) musicDisc);
-                            this.totalLength += track.getLength();
+                            if (track != null) {
+                                this.songs.add((InteractionMusicDisc) musicDisc);
+                                this.totalLength += track.getLength();
+                            }
                         }
                     }
+
                 }
             }
         } catch (SQLException e) {
