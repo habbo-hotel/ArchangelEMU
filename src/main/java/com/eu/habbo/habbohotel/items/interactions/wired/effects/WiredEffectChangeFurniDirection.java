@@ -94,7 +94,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        StringBuilder data = new StringBuilder(this.startRotation.getValue() + "\t" + this.rotateAction + "\t" + this.items.size());
+        StringBuilder data = new StringBuilder(this.getDelay() + this.startRotation.getValue() + "\t" + this.rotateAction + "\t" + this.items.size());
 
         for (Map.Entry<HabboItem, RoomUserRotation> entry : this.items.entrySet()) {
             data.append("\t").append(entry.getKey().getId()).append(":").append(entry.getValue().getValue());
@@ -107,6 +107,9 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split("\t");
 
+        if (data.length >= 1) {
+            this.setDelay(Integer.valueOf(data[0]));
+        }
         if (data.length >= 3) {
             this.startRotation = RoomUserRotation.fromValue(Integer.valueOf(data[0]));
             this.rotateAction = Integer.valueOf(data[1]);
@@ -178,6 +181,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 this.items.put(item, this.startRotation);
             }
         }
+        this.setDelay(packet.readInt());
         return true;
     }
 
