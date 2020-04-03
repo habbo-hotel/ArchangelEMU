@@ -318,8 +318,8 @@ public class RoomLayout {
             }
         }
 
-        if (!this.room.isAllowWalkthrough() && !isWalktroughRetry) {
-            return this.findPath(oldTile, newTile, goalLocation, roomUnit, false);
+        if (this.room.isAllowWalkthrough() && isWalktroughRetry) {
+            return this.findPath(oldTile, newTile, goalLocation, roomUnit, true);
         }
 
         return null;
