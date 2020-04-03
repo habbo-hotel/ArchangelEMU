@@ -31,18 +31,18 @@ public final class Emulator {
 
 
     public final static int MAJOR = 2;
-    public final static int MINOR = 3;
-    public final static int BUILD = 1;
+    public final static int MINOR = 4;
+    public final static int BUILD = 0;
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_WHITE = "\u001B[37m";
     public static final String ANSI_YELLOW = "\u001B[33m";
+// This Build of 2.4.0 will not be released anytime soon. :)
 
+    public final static String PREVIEW = "RC-1";
 
-    public final static String PREVIEW = "RC-3";
-
-    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD;
+    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + "-" + PREVIEW;
     private static final String logo =
             "\n" +
             "███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗ \n" +
