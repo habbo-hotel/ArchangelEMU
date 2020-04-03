@@ -300,7 +300,6 @@ public class RoomLayout {
                 double height = currentAdj.getStackHeight() - current.getStackHeight();
                 if (!ALLOW_FALLING && height < -MAXIMUM_STEP_HEIGHT) continue;
                 if (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT) continue;
-
                 if (currentAdj.hasUnits() && ((!isWalktroughRetry && !this.room.isAllowWalkthrough()) || currentAdj.equals(goalLocation))) {
                     closedList.add(currentAdj);
                     openList.remove(currentAdj);
@@ -320,7 +319,7 @@ public class RoomLayout {
         }
 
         if (!this.room.isAllowWalkthrough() && !isWalktroughRetry) {
-            return this.findPath(oldTile, newTile, goalLocation, roomUnit, true);
+            return this.findPath(oldTile, newTile, goalLocation, roomUnit, false);
         }
 
         return null;
