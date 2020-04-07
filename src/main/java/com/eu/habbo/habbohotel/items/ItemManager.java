@@ -197,12 +197,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_trg_game_ends", WiredTriggerGameEnds.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_bot_reached_stf", WiredTriggerBotReachedFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_bot_reached_avtr", WiredTriggerBotReachedHabbo.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_says_command", WiredTriggerHabboSaysCommand.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_score_achieved", WiredTriggerScoreAchieved.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_idles", WiredTriggerHabboIdle.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_unidles", WiredTriggerHabboUnidle.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_starts_dancing", WiredTriggerHabboStartsDancing.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_stops_dancing", WiredTriggerHabboStopsDancing.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_game_team_win", WiredTriggerTeamWins.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_game_team_lose", WiredTriggerTeamLoses.class));
 
@@ -233,22 +228,12 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_act_bot_follow_avatar", WiredEffectBotFollowHabbo.class));
         this.interactionsList.add(new ItemInteraction("wf_act_bot_clothes", WiredEffectBotClothes.class));
         this.interactionsList.add(new ItemInteraction("wf_act_bot_talk_to_avatar", WiredEffectBotTalkToHabbo.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_diamonds", WiredEffectGiveDiamonds.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_credits", WiredEffectGiveCredits.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_duckets", WiredEffectGiveDuckets.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_badge", WiredEffectGiveBadge.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_forward_user", WiredEffectForwardToRoom.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_roller_speed", WiredEffectRollerSpeed.class));
         this.interactionsList.add(new ItemInteraction("wf_act_raise_furni", WiredEffectRaiseFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_act_lower_furni", WiredEffectLowerFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_respect", WiredEffectGiveRespect.class));
         this.interactionsList.add(new ItemInteraction("wf_act_alert", WiredEffectAlert.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_handitem", WiredEffectGiveHandItem.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_match_to_sshot2", WiredEffectMatchFurniStaff.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_effect", WiredEffectGiveEffect.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_open_habbo_pages", WiredEffectOpenHabboPages.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_achievement", WiredEffectGiveAchievement.class));
-
 
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_furni_on", WiredConditionFurniHaveFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_furnis_hv_avtrs", WiredConditionFurniHaveHabbo.class));
@@ -274,23 +259,6 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_cnd_trggrer_on_frn", WiredConditionTriggerOnFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_handitem", WiredConditionHabboHasHandItem.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_date_rng_active", WiredConditionDateRangeActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_motto_contains", WiredConditionMottoContains.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_battlebanzai", WiredConditionBattleBanzaiGameActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_battlebanzai", WiredConditionNotBattleBanzaiGameActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_freeze", WiredConditionFreezeGameActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_freeze", WiredConditionNotFreezeGameActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_rank", WiredConditionHabboHasRank.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_not_rank", WiredConditionHabboNotRank.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_diamonds", WiredConditionHabboHasDiamonds.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_credits", WiredConditionHabboHasCredits.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_duckets", WiredConditionHabboHasDuckets.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_has_diamonds", WiredConditionNotHabboHasDiamonds.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_has_credits", WiredConditionNotHabboHasCredits.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_has_duckets", WiredConditionNotHabboHasDuckets.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_owns_badge", WiredConditionHabboOwnsBadge.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_owns_badge", WiredConditionNotHabboOwnsBadge.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_is_dancing", WiredConditionHabboIsDancing.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_is_dancing", WiredConditionNotHabboIsDancing.class));
 
 
         this.interactionsList.add(new ItemInteraction("wf_xtra_random", WiredExtraRandom.class));
