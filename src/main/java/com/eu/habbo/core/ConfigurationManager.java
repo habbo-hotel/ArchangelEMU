@@ -2,6 +2,7 @@ package com.eu.habbo.core;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
+import gnu.trove.map.hash.THashMap;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,27 +32,71 @@ public class ConfigurationManager {
 
         InputStream input = null;
 
-        try {
-            File f = new File(this.configurationPath);
-            input = new FileInputStream(f);
-            this.properties.load(input);
+        String envDbHostname = System.getenv("DB_HOSTNAME");
 
-        } catch (IOException ex) {
-            Emulator.getLogging().logErrorLine("[CRITICAL] FAILED TO LOAD CONFIG FILE! (" + this.configurationPath + ")");
-            ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        boolean useEnvVarsForDbConnection = envDbHostname != null && envDbHostname.length() > 1;
+
+        if (!useEnvVarsForDbConnection) {
+            try {
+                File f = new File(this.configurationPath);
+                input = new FileInputStream(f);
+                this.properties.load(input);
+
+            } catch (IOException ex) {
+                Emulator.getLogging().logErrorLine("[CRITICAL] FAILED TO LOAD CONFIG FILE! (" + this.configurationPath + ")");
+                ex.printStackTrace();
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        } else {
+
+            Map<String, String> envMapping = new THashMap<>();
+
+            // Database section
+            envMapping.put("db.hostname", "DB_HOSTNAME");
+            envMapping.put("db.port", "DB_PORT");
+            envMapping.put("db.database", "DB_DATABASE");
+            envMapping.put("db.username", "DB_USERNAME");
+            envMapping.put("db.password", "DB_PASSWORD");
+            envMapping.put("db.params", "DB_PARAMS");
+
+            // Game Configuration
+            envMapping.put("game.host", "EMU_HOST");
+            envMapping.put("game.port", "EMU_PORT");
+
+            // RCON
+            envMapping.put("rcon.host", "RCON_HOST");
+            envMapping.put("rcon.port", "RCON_PORT");
+            envMapping.put("rcon.allowed", "RCON_ALLOWED");
+
+            // Runtime
+            envMapping.put("runtime.threads", "RT_THREADS");
+            envMapping.put("logging.errors.runtime", "RT_LOG_ERRORS");
+
+
+            for (Map.Entry<String, String> entry : envMapping.entrySet()) {
+                String envValue = System.getenv(entry.getValue());
+
+                if (envValue == null || envValue.length() == 0) {
+                    Emulator.getLogging().logStart("Cannot find environment-value for variable `" + entry.getValue() + "`");
+                } else {
+                    this.properties.setProperty(entry.getKey(), envValue);
                 }
             }
         }
 
+
         if (this.loaded) {
             this.loadFromDatabase();
         }
+
 
         this.isLoading = false;
         Emulator.getLogging().logStart("Configuration Manager -> Loaded!");
