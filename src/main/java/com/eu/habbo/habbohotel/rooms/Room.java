@@ -1191,6 +1191,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                             if (habbo.getRoomUnit().isIdle()) {
                                 this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
+                                WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
                             }
                         } else {
                             habbo.getRoomUnit().increaseIdleTimer();
