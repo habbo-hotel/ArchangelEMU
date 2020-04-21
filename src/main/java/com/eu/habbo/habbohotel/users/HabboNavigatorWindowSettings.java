@@ -31,7 +31,7 @@ public class HabboNavigatorWindowSettings {
         this.y = set.getInt("y");
         this.width = set.getInt("width");
         this.height = set.getInt("height");
-        this.openSearches = set.getString("open_searches").equals("1");
+        this.openSearches = set.getBoolean("open_searches");
         this.unknown = 0;
     }
 
