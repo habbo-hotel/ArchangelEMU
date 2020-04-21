@@ -228,8 +228,6 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_act_bot_follow_avatar", WiredEffectBotFollowHabbo.class));
         this.interactionsList.add(new ItemInteraction("wf_act_bot_clothes", WiredEffectBotClothes.class));
         this.interactionsList.add(new ItemInteraction("wf_act_bot_talk_to_avatar", WiredEffectBotTalkToHabbo.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_raise_furni", WiredEffectRaiseFurni.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_lower_furni", WiredEffectLowerFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_respect", WiredEffectGiveRespect.class));
         this.interactionsList.add(new ItemInteraction("wf_act_alert", WiredEffectAlert.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_handitem", WiredEffectGiveHandItem.class));
