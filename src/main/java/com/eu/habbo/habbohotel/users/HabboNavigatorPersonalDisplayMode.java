@@ -16,7 +16,7 @@ public class HabboNavigatorPersonalDisplayMode {
     }
 
     public HabboNavigatorPersonalDisplayMode(ResultSet set) throws SQLException {
-        this.listMode = set.getString("list_type").equals("thumbnails") ? ListMode.THUMBNAILS : ListMode.LIST;
+        this.listMode = set.getBoolean("list_type") ? ListMode.THUMBNAILS : ListMode.LIST;
         this.displayMode = DisplayMode.valueOf(set.getString("display").toUpperCase());
     }
 }
