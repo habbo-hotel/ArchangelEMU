@@ -102,7 +102,7 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (stuff != null && stuff.length >= 1 && stuff[stuff.length - 1] instanceof WiredEffectTriggerStacks) {
+        if (stuff == null && stuff.length >= 1 && stuff[stuff.length - 1] instanceof WiredEffectTriggerStacks) {
             return false;
         }
 
@@ -126,14 +126,14 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
                 }
             }
         }
+            Object[] newStuff = new Object[stuff.length + 1];
+            System.arraycopy(stuff, 0, newStuff, 0, stuff.length);
+            newStuff[newStuff.length - 1] = this;
+            WiredHandler.executeEffectsAtTiles(usedTiles, roomUnit, room, stuff);
 
-        Object[] newStuff = new Object[stuff.length + 1];
-        System.arraycopy(stuff, 0, newStuff, 0, stuff.length);
-        newStuff[newStuff.length - 1] = this;
-        WiredHandler.executeEffectsAtTiles(usedTiles, roomUnit, room, stuff);
+            return true;
+        }
 
-        return true;
-    }
 
     @Override
     public String getWiredData() {
