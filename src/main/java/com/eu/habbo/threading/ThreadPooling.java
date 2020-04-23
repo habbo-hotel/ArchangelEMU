@@ -38,14 +38,11 @@ public class ThreadPooling {
     public ScheduledFuture run(Runnable run, long delay) {
         try {
             if (this.canAdd) {
-                return this.scheduledPool.schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            run.run();
-                        } catch (Exception e) {
-                            Emulator.getLogging().logErrorLine(e);
-                        }
+                return this.scheduledPool.schedule(() -> {
+                    try {
+                        run.run();
+                    } catch (Exception e) {
+                        Emulator.getLogging().logErrorLine(e);
                     }
                 }, delay, TimeUnit.MILLISECONDS);
             }

@@ -717,14 +717,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
 
             if (oldZ != roomUnit.getZ()) {
-                this.scheduledTasks.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            item.onWalkOn(roomUnit, Room.this, null);
-                        } catch (Exception e) {
+                this.scheduledTasks.add(() -> {
+                    try {
+                        item.onWalkOn(roomUnit, Room.this, null);
+                    } catch (Exception e) {
 
-                        }
                     }
                 });
             }
@@ -1039,12 +1036,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             if (this.loaded) {
                 try {
                     Emulator.getThreading().run(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    Room.this.cycle();
-                                }
-                            });
+                            Room.this::cycle);
                 } catch (Exception e) {
                     Emulator.getLogging().logErrorLine(e);
                 }
@@ -1175,12 +1167,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         habbo.getRoomUnit().kickCount++;
 
                         if (habbo.getRoomUnit().kickCount >= 5) {
-                            this.scheduledTasks.add(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, room);
-                                }
-                            });
+                            this.scheduledTasks.add(() -> Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, room));
                             continue;
                         }
                     }
@@ -1471,15 +1458,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                     HabboItem item = room.getTopItemAt(tileInFront.x, tileInFront.y);
 
                                     if (item != null && itemsNewTile.contains(item)) {
-                                        Emulator.getThreading().run(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (unit.getGoal() == rollerTile) {
-                                                    try {
-                                                        item.onWalkOn(unit, room, null);
-                                                    } catch (Exception e) {
-                                                        Emulator.getLogging().logErrorLine(e);
-                                                    }
+                                        Emulator.getThreading().run(() -> {
+                                            if (unit.getGoal() == rollerTile) {
+                                                try {
+                                                    item.onWalkOn(unit, room, null);
+                                                } catch (Exception e) {
+                                                    Emulator.getLogging().logErrorLine(e);
                                                 }
                                             }
                                         }, this.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);

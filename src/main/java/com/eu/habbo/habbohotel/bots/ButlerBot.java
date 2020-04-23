@@ -75,20 +75,13 @@ public class ButlerBot extends Bot {
                                 tasks.add(new RoomUnitGiveHanditem(serveEvent.habbo.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), serveEvent.itemId));
                                 tasks.add(new RoomUnitGiveHanditem(this.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), 0));
 
-                                tasks.add(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        b.talk(Emulator.getTexts().getValue("bots.butler.given").replace("%key%", key).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername()));
-                                    }
-                                });
+                                tasks.add(() -> b.talk(Emulator.getTexts().getValue("bots.butler.given").replace("%key%", key).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername())));
 
                                 List<Runnable> failedReached = new ArrayList();
-                                failedReached.add(new Runnable() {
-                                    public void run() {
-                                        if (b.getRoomUnit().getCurrentLocation().distance(serveEvent.habbo.getRoomUnit().getCurrentLocation()) <= Emulator.getConfig().getInt("hotel.bot.butler.servedistance", 8)) {
-                                            for (Runnable t : tasks) {
-                                                t.run();
-                                            }
+                                failedReached.add(() -> {
+                                    if (b.getRoomUnit().getCurrentLocation().distance(serveEvent.habbo.getRoomUnit().getCurrentLocation()) <= Emulator.getConfig().getInt("hotel.bot.butler.servedistance", 8)) {
+                                        for (Runnable t : tasks) {
+                                            t.run();
                                         }
                                     }
                                 });

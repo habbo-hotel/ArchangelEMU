@@ -44,12 +44,9 @@ public class InteractionEffectGiver extends InteractionDefault {
             this.setExtradata("1");
             room.updateItem(this);
 
-            Emulator.getThreading().run(new Runnable() {
-                @Override
-                public void run() {
-                    InteractionEffectGiver.this.setExtradata("0");
-                    room.updateItem(instance);
-                }
+            Emulator.getThreading().run(() -> {
+                InteractionEffectGiver.this.setExtradata("0");
+                room.updateItem(instance);
             }, 500);
         }
     }

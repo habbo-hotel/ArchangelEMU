@@ -8,7 +8,6 @@ import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboManager;
-import com.eu.habbo.habbohotel.users.inventory.EffectsComponent;
 import com.eu.habbo.messages.NoAuthMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -36,7 +35,6 @@ import com.eu.habbo.plugin.events.users.UserLoginEvent;
 import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 @NoAuthMessage
@@ -178,14 +176,11 @@ public class SecureLoginEvent extends MessageHandler {
 
                 if (Emulator.getConfig().getBoolean("hotel.welcome.alert.enabled")) {
                     final Habbo finalHabbo = habbo;
-                    Emulator.getThreading().run(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (Emulator.getConfig().getBoolean("hotel.welcome.alert.oldstyle")) {
-                                SecureLoginEvent.this.client.sendResponse(new MessagesForYouComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername()).split("<br/>")));
-                            } else {
-                                SecureLoginEvent.this.client.sendResponse(new GenericAlertComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername())));
-                            }
+                    Emulator.getThreading().run(() -> {
+                        if (Emulator.getConfig().getBoolean("hotel.welcome.alert.oldstyle")) {
+                            SecureLoginEvent.this.client.sendResponse(new MessagesForYouComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername()).split("<br/>")));
+                        } else {
+                            SecureLoginEvent.this.client.sendResponse(new GenericAlertComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername())));
                         }
                     }, Emulator.getConfig().getInt("hotel.welcome.alert.delay", 5000));
                 }

@@ -58,12 +58,7 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
             if (target != null) {
                 if (RoomLayout.tilesAdjecent(target.getRoomUnit().getCurrentLocation(), room.getLayout().getTile(item.getX(), item.getY())) && (target.getRoomUnit().getX() == item.getX() || target.getRoomUnit().getY() == item.getY())) {
                     final Habbo finalTarget = target;
-                    Emulator.getThreading().run(new Runnable() {
-                        @Override
-                        public void run() {
-                            WiredHandler.handle(WiredTriggerType.COLLISION, finalTarget.getRoomUnit(), room, new Object[]{item});
-                        }
-                    }, 500);
+                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, finalTarget.getRoomUnit(), room, new Object[]{item}), 500);
 
                     continue;
                 }
