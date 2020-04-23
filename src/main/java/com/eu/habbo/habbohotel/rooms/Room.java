@@ -86,25 +86,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Room implements Comparable<Room>, ISerialize, Runnable {
-    public static final Comparator SORT_SCORE = new Comparator() {
-        @Override
-        public int compare(Object o1, Object o2) {
+    public static final Comparator SORT_SCORE = (o1, o2) -> {
 
-            if (!(o1 instanceof Room && o2 instanceof Room))
-                return 0;
+        if (!(o1 instanceof Room && o2 instanceof Room))
+            return 0;
 
-            return ((Room) o2).getScore() - ((Room) o1).getScore();
-        }
+        return ((Room) o2).getScore() - ((Room) o1).getScore();
     };
-    public static final Comparator SORT_ID = new Comparator() {
-        @Override
-        public int compare(Object o1, Object o2) {
+    public static final Comparator SORT_ID = (o1, o2) -> {
 
-            if (!(o1 instanceof Room && o2 instanceof Room))
-                return 0;
+        if (!(o1 instanceof Room && o2 instanceof Room))
+            return 0;
 
-            return ((Room) o2).getId() - ((Room) o1).getId();
-        }
+        return ((Room) o2).getId() - ((Room) o1).getId();
     };
     private static final TIntObjectHashMap<RoomMoodlightData> defaultMoodData = new TIntObjectHashMap<>();
     //Configuration. Loaded from database & updated accordingly.
@@ -112,6 +106,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public static int MAXIMUM_BOTS = 10;
     public static int MAXIMUM_PETS = 10;
     public static int MAXIMUM_FURNI = 2500;
+    public static int MAXIMUM_POSTITNOTES = 200;
     public static int HAND_ITEM_TIME = 10;
     public static int IDLE_CYCLES = 240;
     public static int IDLE_CYCLES_KICK = 480;
@@ -427,6 +422,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (this.itemCount() > Room.MAXIMUM_FURNI) {
             Emulator.getLogging().logErrorLine("Room ID: " + this.getId() + " has exceeded the furniture limit (" + this.itemCount() + " > " + Room.MAXIMUM_FURNI + ").");
         }
+
     }
 
     private synchronized void loadWiredData(Connection connection) {
@@ -2556,6 +2552,25 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     }
 
+    public THashSet<HabboItem> getPostItNotes() {
+        THashSet<HabboItem> items = new THashSet<>();
+        TIntObjectIterator<HabboItem> iterator = this.roomItems.iterator();
+
+        for (int i = this.roomItems.size(); i-- > 0; ) {
+            try {
+                iterator.advance();
+            } catch (Exception e) {
+                break;
+            }
+
+            if (iterator.value().getBaseItem().getInteractionType().getType() == InteractionPostIt.class)
+                items.add(iterator.value());
+        }
+
+        return items;
+
+    }
+
     public void addHabbo(Habbo habbo) {
         synchronized (this.roomUnitLock) {
             habbo.getRoomUnit().setId(this.unitCounter);
@@ -4339,6 +4354,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (this.itemCount() >= Room.MAXIMUM_FURNI) {
             return FurnitureMovementError.MAX_ITEMS;
         }
+
+
 
         rotation %= 8;
         if (this.hasRights(habbo) || this.guildRightLevel(habbo) >= 2 || habbo.hasPermission(Permission.ACC_MOVEROTATE)) {
