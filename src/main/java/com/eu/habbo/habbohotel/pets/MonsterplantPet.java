@@ -26,32 +26,32 @@ public class MonsterplantPet extends Pet implements IPetLook {
     public static final Map<Integer, Pair<String, Integer>> bodyRarity = new LinkedHashMap<Integer, Pair<String, Integer>>() {
         {
             this.put(1, new Pair<>("Blungon", 0));
-            this.put(5, new Pair<>("Squarg", 0));
             this.put(2, new Pair<>("Wailzor", 1));
             this.put(3, new Pair<>("Stumpy", 1));
             this.put(4, new Pair<>("Sunspike", 2));
-            this.put(9, new Pair<>("Weggylum", 2));
+            this.put(5, new Pair<>("Squarg", 0));
             this.put(6, new Pair<>("Shroomer", 3));
             this.put(7, new Pair<>("Zuchinu", 3));
+            this.put(8, new Pair<>("Abysswirl", 5));
+            this.put(9, new Pair<>("Weggylum", 2));
             this.put(10, new Pair<>("Wystique", 4));
             this.put(11, new Pair<>("Hairbullis", 4));
-            this.put(8, new Pair<>("Abysswirl", 5));
             this.put(12, new Pair<>("Snozzle", 5)); //Rarity???
         }
     };
     public static final Map<Integer, Pair<String, Integer>> colorRarity = new LinkedHashMap<Integer, Pair<String, Integer>>() {
         {
             this.put(0, new Pair<>("Aenueus", 0));
-            this.put(9, new Pair<>("Fulvus", 0));
             this.put(1, new Pair<>("Griseus", 1));
-            this.put(3, new Pair<>("Viridulus", 1));
             this.put(2, new Pair<>("Phoenicus", 2));
+            this.put(3, new Pair<>("Viridulus", 1));
+            this.put(4, new Pair<>("Cyaneus", 5));
             this.put(5, new Pair<>("Incarnatus", 2));
-            this.put(8, new Pair<>("Amethyst", 3));
-            this.put(10, new Pair<>("Cinereus", 3));
             this.put(6, new Pair<>("Azureus", 4));
             this.put(7, new Pair<>("Atamasc", 4));
-            this.put(4, new Pair<>("Cyaneus", 5));
+            this.put(8, new Pair<>("Amethyst", 3));
+            this.put(9, new Pair<>("Fulvus", 0));
+            this.put(10, new Pair<>("Cinereus", 3));
         }
     };
     public static final ArrayList<Pair<String, Integer>> indexedBody = new ArrayList<>(MonsterplantPet.bodyRarity.values());
