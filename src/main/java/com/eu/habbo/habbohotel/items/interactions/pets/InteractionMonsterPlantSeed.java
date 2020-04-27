@@ -30,6 +30,18 @@ public class InteractionMonsterPlantSeed extends HabboItem {
         }
     }
 
+    public static int randomGoldenRarityLevel() {
+        int number = Emulator.getRandom().nextInt(66);
+        int count = 0;
+        for (int i = 8; i < 11; i++) {
+            count += 11 - i;
+            if (number <= count) {
+                return i;
+            }
+        }
+        return 10;
+    }
+
     public static int randomRarityLevel() {
         int number = Emulator.getRandom().nextInt(66);
         int count = 0;

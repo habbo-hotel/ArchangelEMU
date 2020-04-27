@@ -19,6 +19,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.util.Pair;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -101,13 +102,15 @@ public class PetManager {
         return 100 * level;
     }
 
-    public static int randomBody(int minimumRarity) {
-        int randomRarity = random(Math.max(minimumRarity - 1, 0), MonsterplantPet.bodyRarity.size(), 2.0);
+    public static int randomBody(int minimumRarity, boolean isRare) {
+        int randomRarity = isRare ? random(Math.max(minimumRarity - 1, 0), (MonsterplantPet.bodyRarity.size() - minimumRarity) + (minimumRarity - 1), 2.0) : random(Math.max(minimumRarity - 1, 0), MonsterplantPet.bodyRarity.size(), 2.0);
+
         return MonsterplantPet.bodyRarity.get(MonsterplantPet.bodyRarity.keySet().toArray()[randomRarity]).getValue();
     }
 
-    public static int randomColor(int minimumRarity) {
-        int randomRarity = random(Math.max(minimumRarity - 1, 0), MonsterplantPet.colorRarity.size(), 2.0);
+    public static int randomColor(int minimumRarity, boolean isRare) {
+        int randomRarity = isRare ? random(Math.max(minimumRarity - 1, 0), (MonsterplantPet.colorRarity.size() - minimumRarity) + (minimumRarity - 1), 2.0) : random(Math.max(minimumRarity - 1, 0), MonsterplantPet.colorRarity.size(), 2.0);
+
         return MonsterplantPet.colorRarity.get(MonsterplantPet.colorRarity.keySet().toArray()[randomRarity]).getValue();
     }
 
@@ -426,8 +429,8 @@ public class PetManager {
     public MonsterplantPet createMonsterplant(Room room, Habbo habbo, boolean rare, RoomTile t, int minimumRarity) {
         MonsterplantPet pet = new MonsterplantPet(
                 habbo.getHabboInfo().getId(),   //Owner ID
-                randomBody(rare ? 4 : minimumRarity),
-                randomColor(rare ? 4 : minimumRarity),
+                randomBody(minimumRarity, rare),
+                randomColor(minimumRarity, rare),
                 Emulator.getRandom().nextInt(12) + 1,
                 Emulator.getRandom().nextInt(11),
                 Emulator.getRandom().nextInt(12) + 1,
