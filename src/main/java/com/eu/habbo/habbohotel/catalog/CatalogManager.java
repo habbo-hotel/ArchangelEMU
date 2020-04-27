@@ -1124,6 +1124,8 @@ public class CatalogManager {
                 habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
             }
         } finally {
+            habbo.getHabboStats().lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
+            habbo.getHabboStats().run();
             habbo.getHabboStats().isPurchasingFurniture = false;
         }
     }
