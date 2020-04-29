@@ -5,10 +5,7 @@ import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.habbohotel.catalog.ClubOffer;
-import com.eu.habbo.habbohotel.catalog.layouts.ClubBuyLayout;
-import com.eu.habbo.habbohotel.catalog.layouts.RecentPurchasesLayout;
-import com.eu.habbo.habbohotel.catalog.layouts.RoomBundleLayout;
-import com.eu.habbo.habbohotel.catalog.layouts.VipBuyLayout;
+import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInventory;
@@ -24,6 +21,7 @@ import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectProcedure;
+import org.apache.commons.lang3.StringUtils;
 
 public class CatalogBuyItemEvent extends MessageHandler {
     @Override
@@ -188,8 +186,17 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
             if (page instanceof RecentPurchasesLayout)
                 item = this.client.getHabbo().getHabboStats().getRecentPurchases().get(itemId);
+
             else
                 item = page.getCatalogItem(itemId);
+            // temp patch, can a dev with better knowledge than me look into this asap pls.
+            if (page instanceof PetsLayout) { // checks it's the petlayout
+                String[] check = extraData.split("\n"); // splits the extradata
+                if (check.length != 3) return; // checks if there's 3 parts (always is with pets, if not it fucks them off)
+                if (!StringUtils.isAlphanumeric(check[0])) { // checks the data to see if it has any nasties. expected format is: name/0/COLORCODE
+                    return; // if it does it fucks off.
+                }
+            }
 
             Emulator.getGameEnvironment().getCatalogManager().purchaseItem(page, item, this.client.getHabbo(), count, extraData, false);
 
