@@ -39,9 +39,9 @@ public class RequestUserDataEvent extends MessageHandler {
             messages.add(new UserDataComposer(this.client.getHabbo()).compose());
             messages.add(new UserPerksComposer(this.client.getHabbo()).compose());
 
-            if (!this.client.getHabbo().getHabboStats().nux && this.client.getHabbo().getHabboInfo().getHomeRoom() != 0)
+            if (!this.client.getHabbo().getHabboStats().nux || Emulator.getConfig().getBoolean("retro.style.homeroom") && this.client.getHabbo().getHabboInfo().getHomeRoom() != 0)
                 messages.add(new ForwardToRoomComposer(this.client.getHabbo().getHabboInfo().getHomeRoom()).compose());
-            else if (!this.client.getHabbo().getHabboStats().nux && RoomManager.HOME_ROOM_ID > 0)
+            else   if (!this.client.getHabbo().getHabboStats().nux || Emulator.getConfig().getBoolean("retro.style.homeroom") && RoomManager.HOME_ROOM_ID > 0)
                 messages.add(new ForwardToRoomComposer(RoomManager.HOME_ROOM_ID).compose());
 
             messages.add(new MeMenuSettingsComposer(this.client.getHabbo()).compose());
