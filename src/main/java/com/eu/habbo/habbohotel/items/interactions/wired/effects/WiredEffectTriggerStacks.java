@@ -102,7 +102,8 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (stuff == null && stuff.length >= 1 && stuff[stuff.length - 1] instanceof WiredEffectTriggerStacks) {
+
+        if (stuff == null || (stuff.length >= 1 && stuff[stuff.length - 1] instanceof WiredEffectTriggerStacks)) {
             return false;
         }
 
