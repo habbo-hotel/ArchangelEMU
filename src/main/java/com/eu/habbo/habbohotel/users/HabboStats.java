@@ -78,7 +78,7 @@ public class HabboStats implements Runnable {
     public int forumPostsCount;
     public THashMap<Integer, List<Integer>> ltdPurchaseLog = new THashMap<>(0);
     public long lastTradeTimestamp = Emulator.getIntUnixTimestamp();
-    public long lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
+    public int lastPurchaseTimestamp;
     public long lastGiftTimestamp = Emulator.getIntUnixTimestamp();
     public int uiFlags;
     public boolean hasGottenDefaultSavedSearches;
@@ -135,6 +135,8 @@ public class HabboStats implements Runnable {
         this.forumPostsCount = set.getInt("forums_post_count");
         this.uiFlags = set.getInt("ui_flags");
         this.hasGottenDefaultSavedSearches = set.getInt("has_gotten_default_saved_searches") == 1;
+        this.lastPurchaseTimestamp = set.getInt("last_purchase_timestamp");
+
         this.nuxReward = this.nux;
 
         try (PreparedStatement statement = set.getStatement().getConnection().prepareStatement("SELECT * FROM user_window_settings WHERE user_id = ? LIMIT 1")) {
@@ -294,7 +296,7 @@ public class HabboStats implements Runnable {
     @Override
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET achievement_score = ?, respects_received = ?, respects_given = ?, daily_respect_points = ?, block_following = ?, block_friendrequests = ?, online_time = online_time + ?, guild_id = ?, daily_pet_respect_points = ?, club_expire_timestamp = ?, login_streak = ?, rent_space_id = ?, rent_space_endtime = ?, volume_system = ?, volume_furni = ?, volume_trax = ?, block_roominvites = ?, old_chat = ?, block_camera_follow = ?, chat_color = ?, hof_points = ?, block_alerts = ?, talent_track_citizenship_level = ?, talent_track_helpers_level = ?, ignore_bots = ?, ignore_pets = ?, nux = ?, mute_end_timestamp = ?, allow_name_change = ?, perk_trade = ?, can_trade = ?, `forums_post_count` = ?, ui_flags = ?, has_gotten_default_saved_searches = ? WHERE user_id = ? LIMIT 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET achievement_score = ?, respects_received = ?, respects_given = ?, daily_respect_points = ?, block_following = ?, block_friendrequests = ?, online_time = online_time + ?, guild_id = ?, daily_pet_respect_points = ?, club_expire_timestamp = ?, login_streak = ?, rent_space_id = ?, rent_space_endtime = ?, volume_system = ?, volume_furni = ?, volume_trax = ?, block_roominvites = ?, old_chat = ?, block_camera_follow = ?, chat_color = ?, hof_points = ?, block_alerts = ?, talent_track_citizenship_level = ?, talent_track_helpers_level = ?, ignore_bots = ?, ignore_pets = ?, nux = ?, mute_end_timestamp = ?, allow_name_change = ?, perk_trade = ?, can_trade = ?, `forums_post_count` = ?, ui_flags = ?, has_gotten_default_saved_searches = ?, last_purchase_timestamp = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.achievementScore);
                 statement.setInt(2, this.respectPointsReceived);
                 statement.setInt(3, this.respectPointsGiven);
@@ -329,8 +331,10 @@ public class HabboStats implements Runnable {
                 statement.setInt(32, this.forumPostsCount);
                 statement.setInt(33, this.uiFlags);
                 statement.setInt(34, this.hasGottenDefaultSavedSearches ? 1 : 0);
+                statement.setInt(35, this.lastPurchaseTimestamp);
 
-                statement.setInt(35, this.habboInfo.getId());
+                statement.setInt(36, this.habboInfo.getId());
+                
                 statement.executeUpdate();
             }
 
