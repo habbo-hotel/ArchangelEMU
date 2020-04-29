@@ -188,12 +188,14 @@ public class CatalogBuyItemEvent extends MessageHandler {
                 item = this.client.getHabbo().getHabboStats().getRecentPurchases().get(itemId);
             else
                 item = page.getCatalogItem(itemId);
-            
+
             // temp patch, can a dev with better knowledge than me look into this asap pls.
-            if (page instanceof PetsLayout) {
-                String check = extraData.replace("\n", "");
-                if (!StringUtils.isAlphanumeric(check)) {
-                    return;
+            if (page instanceof PetsLayout) { // checks it's the petlayout
+                String[] check = extraData.split("\n"); // splits the extradata
+                if (check.length != 3) return; // checks if there's 3 parts (always is with pets, if not it fucks them off)
+                String petName = check[0]; // gets the pet name
+                if (!StringUtils.isAlphanumeric(petName)) { // checks the data to see if it has any nasties.
+                    return; // if it does it fucks off.
                 }
             }
             Emulator.getGameEnvironment().getCatalogManager().purchaseItem(page, item, this.client.getHabbo(), count, extraData, false);
