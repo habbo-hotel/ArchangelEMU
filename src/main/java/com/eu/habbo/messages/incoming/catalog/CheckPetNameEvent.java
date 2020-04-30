@@ -6,6 +6,9 @@ import com.eu.habbo.messages.outgoing.catalog.PetNameErrorComposer;
 import org.apache.commons.lang3.StringUtils;
 
 public class CheckPetNameEvent extends MessageHandler {
+    public static int PET_NAME_LENGTH_MINIMUM = Emulator.getConfig().getInt("hotel.pets.name.length.min");
+    public static int PET_NAME_LENGTH_MAXIMUM = Emulator.getConfig().getInt("hotel.pets.name.length.max");
+
     @Override
     public void handle() throws Exception {
         String petName = this.packet.readString();
@@ -13,7 +16,7 @@ public class CheckPetNameEvent extends MessageHandler {
         int minLength = Emulator.getConfig().getInt("hotel.pets.name.length.min");
         int maxLength = Emulator.getConfig().getInt("hotel.pets.name.length.max");
 
-        if (petName.length() < minLength) {
+        if (petName.length() < PET_NAME_LENGTH_MINIMUM) {
             this.client.sendResponse(new PetNameErrorComposer(PetNameErrorComposer.NAME_TO_SHORT, minLength + ""));
         } else if (petName.length() > maxLength) {
             this.client.sendResponse(new PetNameErrorComposer(PetNameErrorComposer.NAME_TO_LONG, maxLength + ""));

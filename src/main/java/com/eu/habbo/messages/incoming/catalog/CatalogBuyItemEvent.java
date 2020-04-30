@@ -23,6 +23,9 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectProcedure;
 import org.apache.commons.lang3.StringUtils;
 
+import static com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent.PET_NAME_LENGTH_MAXIMUM;
+import static com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent.PET_NAME_LENGTH_MINIMUM;
+
 public class CatalogBuyItemEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
@@ -192,11 +195,9 @@ public class CatalogBuyItemEvent extends MessageHandler {
             // temp patch, can a dev with better knowledge than me look into this asap pls.
             if (page instanceof PetsLayout) { // checks it's the petlayout
                 String[] check = extraData.split("\n"); // splits the extradata
-                if (check.length != 3) return; // checks if there's 3 parts (always is with pets, if not it fucks them off)
-                if (!StringUtils.isAlphanumeric(check[0])) { // checks the data to see if it has any nasties. expected format is: name/0/COLORCODE
+                if ((check.length != 3) || (check[0].length() < PET_NAME_LENGTH_MINIMUM) || (check[0].length() > PET_NAME_LENGTH_MAXIMUM) || (!StringUtils.isAlphanumeric(check[0])))// checks if there's 3 parts (always is with pets, if not it fucks them off)
                     return; // if it does it fucks off.
                 }
-            }
 
             Emulator.getGameEnvironment().getCatalogManager().purchaseItem(page, item, this.client.getHabbo(), count, extraData, false);
 

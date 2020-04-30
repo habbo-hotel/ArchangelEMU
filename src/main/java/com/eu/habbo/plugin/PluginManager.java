@@ -26,6 +26,7 @@ import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.messages.incoming.camera.CameraPublishToWebEvent;
 import com.eu.habbo.messages.incoming.camera.CameraPurchaseEvent;
+import com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent;
 import com.eu.habbo.messages.incoming.floorplaneditor.FloorPlanEditorSaveEvent;
 import com.eu.habbo.messages.incoming.hotelview.HotelViewRequestLTDAvailabilityEvent;
 import com.eu.habbo.messages.incoming.rooms.promotions.BuyRoomPromotionEvent;
@@ -131,6 +132,9 @@ public class PluginManager {
         AchievementManager.TALENTTRACK_ENABLED = Emulator.getConfig().getBoolean("hotel.talenttrack.enabled");
         InteractionRoller.NO_RULES = Emulator.getConfig().getBoolean("hotel.room.rollers.norules");
         RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB = Emulator.getConfig().getBoolean("hotel.navigator.populartab.publics");
+        CheckPetNameEvent.PET_NAME_LENGTH_MINIMUM = Emulator.getConfig().getInt("hotel.pets.name.length.min");
+        CheckPetNameEvent.PET_NAME_LENGTH_MAXIMUM = Emulator.getConfig().getInt("hotel.pets.name.length.max");
+
 
         ChangeNameCheckUsernameEvent.VALID_CHARACTERS = Emulator.getConfig().getValue("allowed.username.characters", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-=!?@:,.");
         CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS = Emulator.getConfig().getInt("camera.price.points.publish", 5);
