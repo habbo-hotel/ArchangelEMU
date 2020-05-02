@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.gameclients;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.Logging;
+import com.eu.habbo.crypto.HabboEncryption;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.messages.ServerMessage;
@@ -18,85 +19,33 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameClient {
-    public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
+
     private final Channel channel;
-    public long lastPacketCounterCleared = Emulator.getIntUnixTimestamp();
+    private final HabboEncryption encryption;
+
     private Habbo habbo;
     private String machineId = "";
+
+    public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
     public final ConcurrentHashMap<Class<? extends MessageHandler>, Long> messageTimestamps = new ConcurrentHashMap<>();
+    public long lastPacketCounterCleared = Emulator.getIntUnixTimestamp();
 
     public GameClient(Channel channel) {
         this.channel = channel;
-    }
-
-
-    public void sendResponse(MessageComposer composer) {
-        if (this.channel.isOpen()) {
-            try {
-                ServerMessage msg = composer.compose();
-                this.sendResponse(msg);
-            } catch (Exception e) {
-                Emulator.getLogging().logPacketError(e);
-            }
-        }
-    }
-
-
-    public void sendResponse(ServerMessage response) {
-        if (this.channel.isOpen()) {
-            if (response == null || response.getHeader() <= 0) {
-                return;
-            }
-
-            if (PacketManager.DEBUG_SHOW_PACKETS)
-                Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
-
-            this.channel.write(response.get(), this.channel.voidPromise());
-            this.channel.flush();
-        }
-    }
-
-
-    public void sendResponses(ArrayList<ServerMessage> responses) {
-        ByteBuf buffer = Unpooled.buffer();
-
-        if (this.channel.isOpen()) {
-            for (ServerMessage response : responses) {
-                if (response == null || response.getHeader() <= 0) {
-                    return;
-                }
-
-                if (PacketManager.DEBUG_SHOW_PACKETS)
-                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
-
-                buffer.writeBytes(response.get());
-            }
-            this.channel.write(buffer.copy(), this.channel.voidPromise());
-            this.channel.flush();
-        }
-        buffer.release();
-    }
-
-
-    public void dispose() {
-        try {
-            this.channel.close();
-
-            if (this.habbo != null) {
-                if (this.habbo.isOnline()) {
-                    this.habbo.getHabboInfo().setOnline(false);
-                    this.habbo.disconnect();
-                }
-
-                this.habbo = null;
-            }
-        } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
-        }
+        this.encryption = Emulator.getCrypto().isEnabled()
+                ? new HabboEncryption(
+                    Emulator.getCrypto().getExponent(),
+                    Emulator.getCrypto().getModulus(),
+                    Emulator.getCrypto().getPrivateExponent())
+                : null;
     }
 
     public Channel getChannel() {
         return this.channel;
+    }
+
+    public HabboEncryption getEncryption() {
+        return encryption;
     }
 
     public Habbo getHabbo() {
@@ -125,6 +74,68 @@ public class GameClient {
             } catch (SQLException e) {
                 Emulator.getLogging().logSQLException(e);
             }
+        }
+    }
+
+    public void sendResponse(MessageComposer composer) {
+        if (this.channel.isOpen()) {
+            try {
+                ServerMessage msg = composer.compose();
+                this.sendResponse(msg);
+            } catch (Exception e) {
+                Emulator.getLogging().logPacketError(e);
+            }
+        }
+    }
+
+    public void sendResponse(ServerMessage response) {
+        if (this.channel.isOpen()) {
+            if (response == null || response.getHeader() <= 0) {
+                return;
+            }
+
+            if (PacketManager.DEBUG_SHOW_PACKETS)
+                Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
+
+            this.channel.write(response.get(), this.channel.voidPromise());
+            this.channel.flush();
+        }
+    }
+
+    public void sendResponses(ArrayList<ServerMessage> responses) {
+        ByteBuf buffer = Unpooled.buffer();
+
+        if (this.channel.isOpen()) {
+            for (ServerMessage response : responses) {
+                if (response == null || response.getHeader() <= 0) {
+                    return;
+                }
+
+                if (PacketManager.DEBUG_SHOW_PACKETS)
+                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
+
+                buffer.writeBytes(response.get());
+            }
+            this.channel.write(buffer.copy(), this.channel.voidPromise());
+            this.channel.flush();
+        }
+        buffer.release();
+    }
+
+    public void dispose() {
+        try {
+            this.channel.close();
+
+            if (this.habbo != null) {
+                if (this.habbo.isOnline()) {
+                    this.habbo.getHabboInfo().setOnline(false);
+                    this.habbo.disconnect();
+                }
+
+                this.habbo = null;
+            }
+        } catch (Exception e) {
+            Emulator.getLogging().logErrorLine(e);
         }
     }
 }

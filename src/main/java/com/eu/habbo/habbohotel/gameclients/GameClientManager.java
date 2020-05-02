@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.gameclients;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
+import com.eu.habbo.networking.gameserver.GameServerAttributes;
 import io.netty.channel.*;
 import io.netty.util.AttributeKey;
 
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class GameClientManager {
-    public static final AttributeKey<GameClient> CLIENT = AttributeKey.valueOf("GameClient");
+
     private final ConcurrentMap<ChannelId, GameClient> clients;
 
     public GameClientManager() {
@@ -34,7 +35,7 @@ public class GameClientManager {
             }
         });
 
-        ctx.channel().attr(CLIENT).set(client);
+        ctx.channel().attr(GameServerAttributes.CLIENT).set(client);
         ctx.fireChannelRegistered();
 
         return this.clients.putIfAbsent(ctx.channel().id(), client) == null;
@@ -46,13 +47,13 @@ public class GameClientManager {
     }
 
     private void disposeClient(Channel channel) {
-        GameClient client = channel.attr(CLIENT).get();
+        GameClient client = channel.attr(GameServerAttributes.CLIENT).get();
 
         if (client != null) {
             client.dispose();
         }
         channel.deregister();
-        channel.attr(CLIENT).set(null);
+        channel.attr(GameServerAttributes.CLIENT).set(null);
         channel.closeFuture();
         channel.close();
         this.clients.remove(channel.id());

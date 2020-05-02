@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.gameclients.GameClientManager;
 import com.eu.habbo.messages.ClientMessage;
+import com.eu.habbo.networking.gameserver.GameServerAttributes;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -24,7 +25,7 @@ public class ChannelReadHandler implements Runnable {
             int length = m.readInt();
             short header = m.readShort();
             //_header = header;
-            GameClient client = this.ctx.channel().attr(GameClientManager.CLIENT).get();
+            GameClient client = this.ctx.channel().attr(GameServerAttributes.CLIENT).get();
 
             if (m.readableBytes() + 2 < length) {
                 return;

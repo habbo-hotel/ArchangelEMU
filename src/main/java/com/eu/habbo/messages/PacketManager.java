@@ -260,8 +260,8 @@ public class PacketManager {
 
     private void registerHandshake() throws Exception {
         this.registerHandler(Incoming.ReleaseVersionEvent, ReleaseVersionEvent.class);
-        this.registerHandler(Incoming.GenerateSecretKeyEvent, GenerateSecretKeyEvent.class);
-        this.registerHandler(Incoming.RequestBannerToken, RequestBannerToken.class);
+        this.registerHandler(Incoming.InitDiffieHandshake, InitDiffieHandshakeEvent.class);
+        this.registerHandler(Incoming.CompleteDiffieHandshake, CompleteDiffieHandshakeEvent.class);
         this.registerHandler(Incoming.SecureLoginEvent, SecureLoginEvent.class);
         this.registerHandler(Incoming.MachineIDEvent, MachineIDEvent.class);
         this.registerHandler(Incoming.UsernameEvent, UsernameEvent.class);
