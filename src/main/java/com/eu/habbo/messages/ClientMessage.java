@@ -78,4 +78,8 @@ public class ClientMessage {
         return this.buffer.readableBytes();
     }
 
+    public boolean release() {
+        return this.buffer.release();
+    }
+
 }

@@ -1,5 +1,6 @@
-package com.eu.habbo.networking.gameserver;
+package com.eu.habbo.networking.gameserver.encoders;
 
+import com.eu.habbo.networking.gameserver.GameServerAttributes;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,7 +15,13 @@ public class GameByteEncryption extends ChannelOutboundHandlerAdapter {
         ByteBuf out = (ByteBuf) msg;
 
         // Read all available bytes.
-        byte[] data = out.array();
+        byte[] data;
+
+        if (out.hasArray()) {
+            data = out.array();
+        } else {
+            data = out.readBytes(out.readableBytes()).array();
+        }
 
         // Encrypt.
         ctx.channel().attr(GameServerAttributes.CRYPTO_SERVER).get().parse(data);

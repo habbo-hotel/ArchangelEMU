@@ -1,16 +1,19 @@
-package com.eu.habbo.networking.gameserver;
+package com.eu.habbo.networking.gameserver.decoders;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.threading.runnables.ChannelReadHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.TooLongFrameException;
 
 import java.io.IOException;
 
 @ChannelHandler.Sharable
 public class GameMessageHandler extends ChannelInboundHandlerAdapter {
+
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) {
         if (!Emulator.getGameServer().getGameClientManager().addClient(ctx)) {
@@ -25,8 +28,10 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ClientMessage message = (ClientMessage) msg;
+
         try {
-            ChannelReadHandler handler = new ChannelReadHandler(ctx, msg);
+            ChannelReadHandler handler = new ChannelReadHandler(ctx, message);
 
             if (PacketManager.MULTI_THREADED_PACKET_HANDLING) {
                 Emulator.getThreading().run(handler);
@@ -46,12 +51,18 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        if (cause instanceof Exception) {
-            if (!(cause instanceof IOException)) {
-                // cause.printStackTrace(Logging.getErrorsRuntimeWriter());
+        if (cause instanceof TooLongFrameException) {
+            Emulator.getLogging().logErrorLine("Disconnecting client, reason: \"" + cause.getMessage() + "\".");
+        } else {
+            Emulator.getLogging().logErrorLine("Disconnecting client, exception in GameMessageHander:");
+            Emulator.getLogging().logErrorLine(cause.toString());
+
+            for (StackTraceElement element : cause.getStackTrace()) {
+                Emulator.getLogging().logErrorLine(element.toString());
             }
         }
 
         ctx.channel().close();
     }
+
 }

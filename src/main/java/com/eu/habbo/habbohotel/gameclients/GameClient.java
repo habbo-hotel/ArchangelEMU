@@ -80,8 +80,8 @@ public class GameClient {
     public void sendResponse(MessageComposer composer) {
         if (this.channel.isOpen()) {
             try {
-                ServerMessage msg = composer.compose();
-                this.sendResponse(msg);
+                this.channel.write(composer, this.channel.voidPromise());
+                this.channel.flush();
             } catch (Exception e) {
                 Emulator.getLogging().logPacketError(e);
             }
@@ -94,32 +94,23 @@ public class GameClient {
                 return;
             }
 
-            if (PacketManager.DEBUG_SHOW_PACKETS)
-                Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
-
-            this.channel.write(response.get(), this.channel.voidPromise());
+            this.channel.write(response, this.channel.voidPromise());
             this.channel.flush();
         }
     }
 
     public void sendResponses(ArrayList<ServerMessage> responses) {
-        ByteBuf buffer = Unpooled.buffer();
-
         if (this.channel.isOpen()) {
             for (ServerMessage response : responses) {
                 if (response == null || response.getHeader() <= 0) {
                     return;
                 }
 
-                if (PacketManager.DEBUG_SHOW_PACKETS)
-                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
-
-                buffer.writeBytes(response.get());
+                this.channel.write(response);
             }
-            this.channel.write(buffer.copy(), this.channel.voidPromise());
+
             this.channel.flush();
         }
-        buffer.release();
     }
 
     public void dispose() {

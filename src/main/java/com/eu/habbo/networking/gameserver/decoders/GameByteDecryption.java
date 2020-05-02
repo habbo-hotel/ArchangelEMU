@@ -1,5 +1,6 @@
-package com.eu.habbo.networking.gameserver;
+package com.eu.habbo.networking.gameserver.decoders;
 
+import com.eu.habbo.networking.gameserver.GameServerAttributes;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
