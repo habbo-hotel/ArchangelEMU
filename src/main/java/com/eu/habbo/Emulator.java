@@ -1,9 +1,6 @@
 package com.eu.habbo;
 
-import com.eu.habbo.core.CleanerThread;
-import com.eu.habbo.core.ConfigurationManager;
-import com.eu.habbo.core.Logging;
-import com.eu.habbo.core.TextsManager;
+import com.eu.habbo.core.*;
 import com.eu.habbo.core.consolecommands.ConsoleCommand;
 import com.eu.habbo.database.Database;
 import com.eu.habbo.habbohotel.GameEnvironment;
@@ -63,6 +60,7 @@ public final class Emulator {
     private static int timeStarted = 0;
     private static Runtime runtime;
     private static ConfigurationManager config;
+    private static CryptoConfig crypto;
     private static TextsManager texts;
     private static GameServer gameServer;
     private static RCONServer rconServer;
@@ -106,6 +104,11 @@ public final class Emulator {
 
             Emulator.runtime = Runtime.getRuntime();
             Emulator.config = new ConfigurationManager("config.ini");
+            Emulator.crypto = new CryptoConfig(
+                    Emulator.getConfig().getBoolean("enc.enabled", false),
+                    Emulator.getConfig().getValue("enc.e"),
+                    Emulator.getConfig().getValue("enc.n"),
+                    Emulator.getConfig().getValue("enc.d"));
             Emulator.database = new Database(Emulator.getConfig());
             Emulator.config.loaded = true;
             Emulator.config.loadFromDatabase();
@@ -272,6 +275,10 @@ public final class Emulator {
 
     public static ConfigurationManager getConfig() {
         return config;
+    }
+
+    public static CryptoConfig getCrypto() {
+        return crypto;
     }
 
     public static TextsManager getTexts() {
