@@ -51,6 +51,11 @@ public class SecureLoginEvent extends MessageHandler {
         if (!Emulator.isReady)
             return;
 
+        if (Emulator.getCrypto().isEnabled() && !this.client.isHandshakeFinished()) {
+            Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+            return;
+        }
+
         String sso = this.packet.readString().replace(" ", "");
 
         if (Emulator.getPluginManager().fireEvent(new SSOAuthenticationEvent(sso)).isCancelled()) {

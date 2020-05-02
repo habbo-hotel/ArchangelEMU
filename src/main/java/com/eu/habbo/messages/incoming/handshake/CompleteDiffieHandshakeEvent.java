@@ -21,6 +21,7 @@ public class CompleteDiffieHandshakeEvent extends MessageHandler {
 
         byte[] sharedKey = this.client.getEncryption().getDiffie().getSharedKey(this.packet.readString());
 
+        this.client.setHandshakeFinished(true);
         this.client.sendResponse(new CompleteDiffieHandshakeComposer(this.client.getEncryption().getDiffie().getPublicKey()));
 
         this.client.getChannel().attr(GameServerAttributes.CRYPTO_CLIENT).set(new HabboRC4(sharedKey));

@@ -24,6 +24,7 @@ public class GameClient {
     private final HabboEncryption encryption;
 
     private Habbo habbo;
+    private boolean handshakeFinished;
     private String machineId = "";
 
     public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
@@ -54,6 +55,14 @@ public class GameClient {
 
     public void setHabbo(Habbo habbo) {
         this.habbo = habbo;
+    }
+
+    public boolean isHandshakeFinished() {
+        return handshakeFinished;
+    }
+
+    public void setHandshakeFinished(boolean handshakeFinished) {
+        this.handshakeFinished = handshakeFinished;
     }
 
     public String getMachineId() {
