@@ -735,23 +735,22 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         THashSet<RoomUnit> roomUnits = new THashSet<>();
         for (Habbo habbo : habbos) {
+
+            double z = habbo.getRoomUnit().getCurrentLocation().getStackHeight();
+
             if ((item == null && !habbo.getRoomUnit().cmdSit) || (item != null && !item.getBaseItem().allowSit()))
                 habbo.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
 
             if ((item == null && !habbo.getRoomUnit().cmdLay) || (item != null && !item.getBaseItem().allowLay()))
                 habbo.getRoomUnit().removeStatus(RoomUnitStatus.LAY);
 
-            if (item != null) {
-                if (item.getBaseItem().allowSit() || item.getBaseItem().allowLay()) {
-                    habbo.getRoomUnit().setZ(item.getZ());
-                    habbo.getRoomUnit().setPreviousLocationZ(item.getZ());
-                    habbo.getRoomUnit().setRotation(RoomUserRotation.fromValue(item.getRotation()));
-                } else {
-                    habbo.getRoomUnit().setZ(item.getZ() + Item.getCurrentHeight(item));
-                }
+            if (item != null && (item.getBaseItem().allowSit() || item.getBaseItem().allowLay())) {
+                habbo.getRoomUnit().setZ(item.getZ());
+                habbo.getRoomUnit().setPreviousLocationZ(item.getZ());
+                habbo.getRoomUnit().setRotation(RoomUserRotation.fromValue(item.getRotation()));
             } else {
-                habbo.getRoomUnit().setZ(habbo.getRoomUnit().getCurrentLocation().getStackHeight());
-                habbo.getRoomUnit().setPreviousLocationZ(habbo.getRoomUnit().getCurrentLocation().getStackHeight());
+                habbo.getRoomUnit().setZ(z);
+                habbo.getRoomUnit().setPreviousLocationZ(z);
             }
             roomUnits.add(habbo.getRoomUnit());
         }
