@@ -56,7 +56,7 @@ public class SendGift extends RCONMessage<SendGift.SendGiftJSON> {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         } else {
             username = habbo.getHabboInfo().getUsername();

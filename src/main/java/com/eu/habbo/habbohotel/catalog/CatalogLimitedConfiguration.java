@@ -47,7 +47,7 @@ public class CatalogLimitedConfiguration implements Runnable {
                 statement.setInt(5, item.getLimitedSells());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }
@@ -65,7 +65,7 @@ public class CatalogLimitedConfiguration implements Runnable {
 
                 statement.executeBatch();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             this.totalSet += amount;
@@ -98,7 +98,7 @@ public class CatalogLimitedConfiguration implements Runnable {
             statement.setInt(3, this.itemId);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 }

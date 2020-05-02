@@ -26,7 +26,7 @@ public class GiveUserClothing extends RCONMessage<GiveUserClothing.JSONGiveUserC
             statement.setInt(2, object.clothing_id);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         if (habbo != null) {

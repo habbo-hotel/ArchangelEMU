@@ -157,7 +157,7 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
                     if (item != null)
                         this.items.add(item);
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    logger.error("Caught exception", e);
                 }
             }
         }

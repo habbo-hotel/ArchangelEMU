@@ -25,7 +25,7 @@ public class PermissionsManager {
 
         this.reload();
 
-        Emulator.getLogging().logStart("Permissions Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        logger.info("Permissions Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public void reload() {
@@ -58,7 +58,7 @@ public class PermissionsManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -71,7 +71,7 @@ public class PermissionsManager {
                     this.enables.put(set.getInt("effect_id"), set.getInt("min_rank"));
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

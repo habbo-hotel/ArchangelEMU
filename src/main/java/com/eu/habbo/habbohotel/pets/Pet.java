@@ -205,7 +205,7 @@ public class Pet implements ISerialize, Runnable {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             this.needsUpdate = false;

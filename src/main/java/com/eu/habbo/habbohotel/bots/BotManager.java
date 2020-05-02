@@ -38,7 +38,7 @@ public class BotManager {
 
         this.reload();
 
-        Emulator.getLogging().logStart("Bot Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        logger.info("Bot Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public static void addBotDefinition(String type, Class<? extends Bot> botClazz) throws Exception {
@@ -58,10 +58,10 @@ public class BotManager {
                 m.setAccessible(true);
                 m.invoke(null);
             } catch (NoSuchMethodException e) {
-                Emulator.getLogging().logStart("Bot Manager -> Failed to execute initialise method upon bot type '" + set.getKey() + "'. No Such Method!");
+                logger.info("Bot Manager -> Failed to execute initialise method upon bot type '" + set.getKey() + "'. No Such Method!");
                 return false;
             } catch (Exception e) {
-                Emulator.getLogging().logStart("Bot Manager -> Failed to execute initialise method upon bot type '" + set.getKey() + "'. Error: " + e.getMessage());
+                logger.info("Bot Manager -> Failed to execute initialise method upon bot type '" + set.getKey() + "'. Error: " + e.getMessage());
                 return false;
             }
         }
@@ -88,12 +88,12 @@ public class BotManager {
                             }
                         }
                     } catch (SQLException e) {
-                        Emulator.getLogging().logSQLException(e);
+                        logger.error("Caught SQL exception", e);
                     }
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return bot;
@@ -143,7 +143,7 @@ public class BotManager {
                     try {
                         topItem.onWalkOn(bot.getRoomUnit(), room, null);
                     } catch (Exception e) {
-                        Emulator.getLogging().logErrorLine(e);
+                        logger.error("Caught exception", e);
                     }
                 }
                 bot.cycle(false);
@@ -195,9 +195,9 @@ public class BotManager {
             else
                 Emulator.getLogging().logErrorLine("Unknown Bot Type: " + type);
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         return null;
@@ -208,7 +208,7 @@ public class BotManager {
             statement.setInt(1, bot.getId());
             return statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return false;
@@ -221,9 +221,9 @@ public class BotManager {
                 m.setAccessible(true);
                 m.invoke(null);
             } catch (NoSuchMethodException e) {
-                Emulator.getLogging().logStart("Bot Manager -> Failed to execute dispose method upon bot type '" + set.getKey() + "'. No Such Method!");
+                logger.info("Bot Manager -> Failed to execute dispose method upon bot type '" + set.getKey() + "'. No Such Method!");
             } catch (Exception e) {
-                Emulator.getLogging().logStart("Bot Manager -> Failed to execute dispose method upon bot type '" + set.getKey() + "'. Error: " + e.getMessage());
+                logger.info("Bot Manager -> Failed to execute dispose method upon bot type '" + set.getKey() + "'. Error: " + e.getMessage());
             }
         }
     }

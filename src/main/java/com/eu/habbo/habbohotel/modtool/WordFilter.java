@@ -29,7 +29,7 @@ public class WordFilter {
     public WordFilter() {
         long start = System.currentTimeMillis();
         this.reload();
-        Emulator.getLogging().logStart("WordFilter -> Loaded! (" + (System.currentTimeMillis() - start) + " MS)");
+        logger.info("WordFilter -> Loaded! (" + (System.currentTimeMillis() - start) + " MS)");
     }
 
     private static String stripDiacritics(String str) {
@@ -54,7 +54,7 @@ public class WordFilter {
                     try {
                         word = new WordFilterWord(set);
                     } catch (SQLException e) {
-                        Emulator.getLogging().logSQLException(e);
+                        logger.error("Caught SQL exception", e);
                         continue;
                     }
 
@@ -67,7 +67,7 @@ public class WordFilter {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 

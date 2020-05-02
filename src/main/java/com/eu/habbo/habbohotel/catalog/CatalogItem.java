@@ -211,7 +211,7 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
 
                     identifier = Integer.parseInt(itemId);
                 } catch (Exception e) {
-                    Emulator.getLogging().logStart("Invalid value (" + itemId + ") for items_base column for catalog_item id (" + this.id + "). Value must be integer or of the format of integer:amount;integer:amount");
+                    logger.info("Invalid value (" + itemId + ") for items_base column for catalog_item id (" + this.id + "). Value must be integer or of the format of integer:amount;integer:amount");
                     continue;
                 }
                 if (identifier > 0) {
@@ -259,7 +259,7 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
                 }
             } catch (Exception e) {
                 Emulator.getLogging().logDebugLine("Failed to load " + this.itemId);
-                Emulator.getLogging().logErrorLine(e);
+                logger.error("Caught exception", e);
             }
         } else {
             try {
@@ -343,7 +343,7 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
                 statement.setInt(3, this.getId());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             this.needsUpdate = false;

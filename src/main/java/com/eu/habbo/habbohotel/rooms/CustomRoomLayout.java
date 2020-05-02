@@ -30,7 +30,7 @@ public class CustomRoomLayout extends RoomLayout implements Runnable {
                 statement.setInt(5, this.roomId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

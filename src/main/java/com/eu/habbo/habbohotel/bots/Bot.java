@@ -155,7 +155,7 @@ public class Bot implements Runnable {
                 statement.execute();
                 this.needsUpdate = false;
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

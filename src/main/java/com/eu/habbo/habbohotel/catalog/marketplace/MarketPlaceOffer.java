@@ -66,7 +66,7 @@ public class MarketPlaceOffer implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -86,7 +86,7 @@ public class MarketPlaceOffer implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -160,7 +160,7 @@ public class MarketPlaceOffer implements Runnable {
                 statement.setInt(3, this.offerId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

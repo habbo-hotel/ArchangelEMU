@@ -50,7 +50,7 @@ public class FriendRequestEvent extends MessageHandler {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
                 return;
             }
         } else {

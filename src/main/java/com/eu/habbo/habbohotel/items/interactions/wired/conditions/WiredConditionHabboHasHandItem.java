@@ -71,7 +71,7 @@ public class WiredConditionHabboHasHandItem extends InteractionWiredCondition {
         try {
             this.handItem = Integer.valueOf(set.getString("wired_data"));
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 

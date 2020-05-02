@@ -57,7 +57,7 @@ public class TalentTrackLevel {
             if (item != null) {
                 this.items.add(item);
             } else {
-                Emulator.getLogging().logStart("Incorrect reward furni (ID: " + s + ") for talent track level " + this.level);
+                logger.info("Incorrect reward furni (ID: " + s + ") for talent track level " + this.level);
             }
         }
 

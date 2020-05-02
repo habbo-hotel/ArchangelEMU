@@ -89,7 +89,7 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler {
             resultLists = toQueryResults(resultLists);
             this.client.sendResponse(new NewNavigatorSearchResultsComposer(view, query, resultLists));
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         /*
@@ -104,7 +104,7 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler {
         }
         catch (Exception e)
         {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
         */
     }

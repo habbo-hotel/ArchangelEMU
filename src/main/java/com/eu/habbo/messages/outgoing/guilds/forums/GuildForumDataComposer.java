@@ -73,7 +73,7 @@ public class GuildForumDataComposer extends MessageComposer {
                 newComments = set.getInt(1);
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         response.appendInt(guild.getId());

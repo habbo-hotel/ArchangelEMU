@@ -23,7 +23,7 @@ public class UserCurrencyComposer extends MessageComposer {
             try {
                 type = Integer.valueOf(s);
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                logger.error("Caught exception", e);
                 return null;
             }
 

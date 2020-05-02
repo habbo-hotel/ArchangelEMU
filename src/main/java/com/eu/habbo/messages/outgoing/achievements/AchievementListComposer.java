@@ -49,7 +49,7 @@ public class AchievementListComposer extends MessageComposer {
 
             this.response.appendString("");
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         return this.response;

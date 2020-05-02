@@ -60,7 +60,7 @@ public class CraftingManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -114,7 +114,7 @@ public class CraftingManager {
             }
             statement.executeBatch();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         this.altars.clear();

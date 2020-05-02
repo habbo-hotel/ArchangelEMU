@@ -25,7 +25,7 @@ public class ExecuteCommand extends RCONMessage<ExecuteCommand.JSONExecuteComman
             CommandHandler.handleCommand(habbo.getClient(), json.command);
         } catch (Exception e) {
             this.status = STATUS_ERROR;
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 

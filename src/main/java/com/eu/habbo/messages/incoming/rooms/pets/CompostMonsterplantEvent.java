@@ -42,7 +42,7 @@ public class CompostMonsterplantEvent extends MessageHandler {
                             statement.setInt(1, pet.getId());
                             statement.executeUpdate();
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            logger.error("Caught SQL exception", e);
                         }
                     }
                 }

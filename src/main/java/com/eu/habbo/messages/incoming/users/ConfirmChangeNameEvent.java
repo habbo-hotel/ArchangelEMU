@@ -80,7 +80,7 @@ public class ConfirmChangeNameEvent extends MessageHandler {
                     statement.setInt(4, Emulator.getIntUnixTimestamp());
                     statement.execute();
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    logger.error("Caught SQL exception", e);
                 }
             } else {
                 this.client.sendResponse(new ChangeNameCheckResultComposer(ChangeNameCheckResultComposer.TAKEN_WITH_SUGGESTIONS, name, new ArrayList<>()));

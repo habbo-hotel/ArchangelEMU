@@ -31,7 +31,7 @@ public class WiredHighscoreManager {
         this.data.clear();
         this.loadHighscoreData();
 
-        Emulator.getLogging().logStart("Highscore Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS, " + this.data.size() + " items)");
+        logger.info("Highscore Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS, " + this.data.size() + " items)");
     }
 
     @EventHandler
@@ -65,7 +65,7 @@ public class WiredHighscoreManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -85,7 +85,7 @@ public class WiredHighscoreManager {
 
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 

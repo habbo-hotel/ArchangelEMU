@@ -33,7 +33,7 @@ public class InteractionWiredHighscore extends HabboItem {
             this.scoreType = WiredHighscoreScoreType.valueOf(name);
             this.clearType = WiredHighscoreClearType.values()[ctype];
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         this.reloadData();
@@ -51,7 +51,7 @@ public class InteractionWiredHighscore extends HabboItem {
             this.scoreType = WiredHighscoreScoreType.valueOf(name);
             this.clearType = WiredHighscoreClearType.values()[ctype];
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         this.reloadData();
@@ -83,7 +83,7 @@ public class InteractionWiredHighscore extends HabboItem {
             this.setExtradata(Math.abs(state - 1) + "");
             room.updateItem(this);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 

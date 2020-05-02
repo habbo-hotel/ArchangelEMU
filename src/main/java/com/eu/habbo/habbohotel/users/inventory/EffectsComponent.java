@@ -28,7 +28,7 @@ public class EffectsComponent {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
         if(habbo.getHabboInfo().getRank().getRoomEffect() > 0)
             this.createRankEffect(habbo.getHabboInfo().getRank().getRoomEffect());
@@ -89,7 +89,7 @@ public class EffectsComponent {
                             statement.setInt(5, effect.effect);
                             statement.addBatch();
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            logger.error("Caught SQL exception", e);
                         }
                     }
                     return true;
@@ -97,7 +97,7 @@ public class EffectsComponent {
 
                 statement.executeBatch();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             this.effects.clear();
@@ -205,7 +205,7 @@ public class EffectsComponent {
                 statement.setInt(4, this.duration);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
 
@@ -215,7 +215,7 @@ public class EffectsComponent {
                 statement.setInt(2, this.effect);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

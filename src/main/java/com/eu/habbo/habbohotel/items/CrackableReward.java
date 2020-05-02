@@ -52,7 +52,7 @@ public class CrackableReward {
                 this.prizes.put(itemId, new AbstractMap.SimpleEntry<>(this.totalChance, this.totalChance + chance));
                 this.totalChance += chance;
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                logger.error("Caught exception", e);
             }
         }
     }

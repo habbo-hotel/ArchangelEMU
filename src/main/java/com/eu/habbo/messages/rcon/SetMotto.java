@@ -29,7 +29,7 @@ public class SetMotto extends RCONMessage<SetMotto.SetMottoJSON> {
                     statement.execute();
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logErrorLine(e);
+                logger.error("Caught exception", e);
             }
         }
     }

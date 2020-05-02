@@ -32,7 +32,7 @@ public class HallOfFame {
                     this.winners.put(winner.getId(), winner);
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

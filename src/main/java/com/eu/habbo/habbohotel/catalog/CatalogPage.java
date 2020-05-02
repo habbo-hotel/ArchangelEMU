@@ -70,7 +70,7 @@ public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize
                 try {
                     this.included.add(Integer.valueOf(id));
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    logger.error("Caught exception", e);
                     Emulator.getLogging().logErrorLine("Failed to parse includes column value of (" + id + ") for catalog page (" + this.id + ")");
                 }
             }

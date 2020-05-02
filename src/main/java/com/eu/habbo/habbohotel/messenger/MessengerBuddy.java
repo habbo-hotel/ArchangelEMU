@@ -44,7 +44,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -56,7 +56,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             this.relation = 0;
             this.userOne = 0;
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -149,7 +149,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             statement.setInt(3, this.id);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 

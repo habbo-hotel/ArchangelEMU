@@ -58,7 +58,7 @@ public class AchievementManager {
                     statement.setInt(4, amount);
                     statement.execute();
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    logger.error("Caught SQL exception", e);
                 }
             }
         }
@@ -140,7 +140,7 @@ public class AchievementManager {
                 try {
                     badge = habbo.getInventory().getBadgesComponent().getBadge(("ACH_" + achievement.name + oldLevel.level).toLowerCase());
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    logger.error("Caught exception", e);
                     return;
                 }
             }
@@ -203,7 +203,7 @@ public class AchievementManager {
             statement.setInt(3, 1);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -217,7 +217,7 @@ public class AchievementManager {
             }
             statement.executeBatch();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -231,7 +231,7 @@ public class AchievementManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return 0;
@@ -254,9 +254,9 @@ public class AchievementManager {
                         }
                     }
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    logger.error("Caught SQL exception", e);
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    logger.error("Caught exception", e);
                 }
 
 
@@ -276,13 +276,13 @@ public class AchievementManager {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
                 Emulator.getLogging().logErrorLine("Achievement Manager -> Failed to load!");
                 return;
             }
         }
 
-        Emulator.getLogging().logStart("Achievement Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        logger.info("Achievement Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public Achievement getAchievement(String name) {

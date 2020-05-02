@@ -43,7 +43,7 @@ public class RoomPromotion {
                 statement.setInt(4, this.room.getId());
                 statement.executeUpdate();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             this.needsUpdate = false;

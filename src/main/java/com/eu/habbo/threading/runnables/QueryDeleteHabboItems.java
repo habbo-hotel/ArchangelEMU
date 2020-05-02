@@ -28,7 +28,7 @@ public class QueryDeleteHabboItems implements Runnable {
 
             statement.executeBatch();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         this.items.clear();

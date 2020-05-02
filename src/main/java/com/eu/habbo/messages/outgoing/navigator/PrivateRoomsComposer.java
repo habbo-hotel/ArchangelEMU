@@ -42,7 +42,7 @@ public class PrivateRoomsComposer extends MessageComposer {
             this.response.appendString("E");
             return this.response;
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
         return null;
     }

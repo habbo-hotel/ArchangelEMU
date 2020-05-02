@@ -154,7 +154,7 @@ public class RoomUserWalkEvent extends MessageHandler {
                     }
                 }
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                logger.error("Caught exception", e);
             }
         }
     }

@@ -53,7 +53,7 @@ public class HabboNavigatorWindowSettings {
                 statement.setString(4, displayMode.name().toLowerCase());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             this.displayModes.put(category, new HabboNavigatorPersonalDisplayMode(listMode, displayMode));
@@ -114,7 +114,7 @@ public class HabboNavigatorWindowSettings {
                 statement.execute();
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 }

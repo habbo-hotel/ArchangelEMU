@@ -148,7 +148,7 @@ public class Habbo implements Runnable {
                 }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         try {
@@ -164,7 +164,7 @@ public class Habbo implements Runnable {
 
             this.habboStats.dispose();
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
             return;
         } finally {
             Emulator.getGameEnvironment().getRoomManager().unloadRoomsForHabbo(this);

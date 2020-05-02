@@ -361,7 +361,7 @@ public class RoomUnit {
             return false;
 
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
             return false;
         }
     }

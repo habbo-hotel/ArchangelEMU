@@ -23,7 +23,7 @@ public class UseRandomStateItemEvent extends MessageHandler {
             InteractionRandomState randomStateItem = (InteractionRandomState)item;
             randomStateItem.onRandomStateClick(this.client, room);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 }

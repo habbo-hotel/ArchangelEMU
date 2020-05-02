@@ -49,7 +49,7 @@ public class AddYoutubePlaylistCommand extends Command {
 
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_add_youtube_playlist"));

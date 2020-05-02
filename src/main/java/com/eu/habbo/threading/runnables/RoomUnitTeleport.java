@@ -42,7 +42,7 @@ public class RoomUnitTeleport implements Runnable {
             try {
                 topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                logger.error("Caught exception", e);
             }
         }
         this.roomUnit.setPath(new LinkedList<>());

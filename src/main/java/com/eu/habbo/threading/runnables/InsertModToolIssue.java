@@ -2,10 +2,15 @@ package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolIssue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
 public class InsertModToolIssue implements Runnable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(InsertModToolIssue.class);
+
     private final ModToolIssue issue;
 
     public InsertModToolIssue(ModToolIssue issue) {
@@ -36,7 +41,7 @@ public class InsertModToolIssue implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 }

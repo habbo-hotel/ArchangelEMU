@@ -60,7 +60,7 @@ public class UserProfileComposer extends MessageComposer {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
         this.response.appendInt(achievementScore);

@@ -51,7 +51,7 @@ public class BadgesComponent {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return badgesList;
@@ -78,7 +78,7 @@ public class BadgesComponent {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
         return badgesList;
     }
@@ -102,7 +102,7 @@ public class BadgesComponent {
             statement.setString(2, badge);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -112,7 +112,7 @@ public class BadgesComponent {
             statement.setString(2, badge);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 

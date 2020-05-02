@@ -38,7 +38,7 @@ public class CameraPacketHandler {
                 message.handle(channel);
                 message.buffer.release();
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                logger.error("Caught exception", e);
             }
         }
     }

@@ -80,7 +80,7 @@ public class PetManager {
 
         reloadPetData();
 
-        Emulator.getLogging().logStart("Pet Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        logger.info("Pet Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public static int getLevel(int experience) {
@@ -151,7 +151,7 @@ public class PetManager {
             this.loadPetCommands(connection);
             this.loadPetBreeding(connection);
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
             Emulator.getLogging().logErrorLine("Pet Manager -> Failed to load!");
         }
     }
@@ -167,7 +167,7 @@ public class PetManager {
                 this.petRaces.get(set.getInt("race")).add(new PetRace(set));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -177,7 +177,7 @@ public class PetManager {
                 this.petData.put(set.getInt("pet_type"), new PetData(set));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         this.loadPetItems(connection);
@@ -217,7 +217,7 @@ public class PetManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -244,7 +244,7 @@ public class PetManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -255,7 +255,7 @@ public class PetManager {
                 commandsList.put(set.getInt("command_id"), new PetCommand(set, this.petActions.get(set.getInt("command_id"))));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_commands ORDER BY pet_id ASC")) {
@@ -267,7 +267,7 @@ public class PetManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -277,7 +277,7 @@ public class PetManager {
                 this.breedingPetType.put(set.getInt("pet_id"), set.getInt("offspring_id"));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM pet_breeding_races")) {
@@ -294,7 +294,7 @@ public class PetManager {
                 this.breedingReward.get(reward.petType).get(reward.rarityLevel).add(reward);
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -308,7 +308,7 @@ public class PetManager {
             int petId = Integer.valueOf(petName.split("t")[1]);
             return this.petRaces.get(petId);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         return null;
@@ -364,7 +364,7 @@ public class PetManager {
                         }
                     }
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    logger.error("Caught SQL exception", e);
                 }
             }
         }
@@ -511,7 +511,7 @@ public class PetManager {
             statement.setInt(1, pet.getId());
             return statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return false;

@@ -31,7 +31,7 @@ public class MuteUser extends RCONMessage<MuteUser.JSON> {
                     this.status = HABBO_NOT_FOUND;
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

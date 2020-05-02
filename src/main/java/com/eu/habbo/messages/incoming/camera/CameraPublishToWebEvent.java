@@ -50,7 +50,7 @@ public class CameraPublishToWebEvent extends MessageHandler {
 
                     isOk = true;
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    logger.error("Caught SQL exception", e);
                 }
             }
         }

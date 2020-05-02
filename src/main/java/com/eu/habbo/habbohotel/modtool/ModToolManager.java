@@ -41,7 +41,7 @@ public class ModToolManager {
         this.tickets = new THashMap<>();
         this.cfhCategories = new TIntObjectHashMap<>();
         this.loadModTool();
-        Emulator.getLogging().logStart("ModTool Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        logger.info("ModTool Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public static void requestUserInfo(GameClient client, ClientMessage packet) {
@@ -58,9 +58,9 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 
@@ -78,7 +78,7 @@ public class ModToolManager {
             this.loadTickets(connection);
             this.loadCfhCategories(connection);
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -97,7 +97,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -108,7 +108,7 @@ public class ModToolManager {
                     this.presets.get(set.getString("type")).add(set.getString("preset"));
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }
@@ -120,7 +120,7 @@ public class ModToolManager {
                     this.tickets.put(set.getInt("id"), new ModToolIssue(set));
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }
@@ -146,7 +146,7 @@ public class ModToolManager {
                 this.cfhCategories.get(set.getInt("support_cfh_category_id")).addTopic(new CfhTopic(set, this.getIssuePreset(set.getInt("default_sanction"))));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -198,7 +198,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return chatlogs;
@@ -215,7 +215,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return chatlogs;
@@ -235,7 +235,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return chatLogs;
@@ -272,7 +272,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return chatlogs;
@@ -290,7 +290,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return roomVisits;
@@ -348,7 +348,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return roomVisits;
@@ -378,7 +378,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return null;
@@ -495,7 +495,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return ban;
@@ -519,7 +519,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return banned;
@@ -543,7 +543,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return false;
@@ -557,7 +557,7 @@ public class ModToolManager {
             statement.execute();
             return statement.getUpdateCount() > 0;
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return false;
@@ -662,7 +662,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return total;

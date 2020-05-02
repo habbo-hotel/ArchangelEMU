@@ -80,7 +80,7 @@ public class YoutubeManager {
         Emulator.getThreading().run(() -> {
             ExecutorService youtubeDataLoaderPool = Executors.newFixedThreadPool(10);
 
-            Emulator.getLogging().logStart("YouTube Manager -> Loading...");
+            logger.info("YouTube Manager -> Loading...");
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM youtube_playlists")) {
                 try (ResultSet set = statement.executeQuery()) {
@@ -103,7 +103,7 @@ public class YoutubeManager {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             youtubeDataLoaderPool.shutdown();
@@ -113,7 +113,7 @@ public class YoutubeManager {
                 e.printStackTrace();
             }
 
-            Emulator.getLogging().logStart("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+            logger.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
         });
     }
 

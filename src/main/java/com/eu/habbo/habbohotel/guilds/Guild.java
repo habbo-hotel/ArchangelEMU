@@ -91,7 +91,7 @@ public class Guild implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -116,7 +116,7 @@ public class Guild implements Runnable {
 
                 this.needsUpdate = false;
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

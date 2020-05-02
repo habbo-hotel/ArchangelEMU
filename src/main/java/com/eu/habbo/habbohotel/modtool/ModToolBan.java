@@ -63,7 +63,7 @@ public class ModToolBan implements Runnable {
                 statement.setInt(9, this.cfhTopic);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

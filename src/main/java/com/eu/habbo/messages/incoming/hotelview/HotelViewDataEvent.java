@@ -30,7 +30,7 @@ public class HotelViewDataEvent extends MessageHandler {
                 this.client.sendResponse(new HotelViewDataComposer(data, data.split(",")[data.split(",").length - 1]));
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 }

@@ -50,7 +50,7 @@ public class InteractionRentableSpace extends HabboItem {
                                 }
                             }
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            logger.error("Caught SQL exception", e);
                         }
                     }
                 } else {
@@ -180,7 +180,7 @@ public class InteractionRentableSpace extends HabboItem {
                 statement.setInt(1, zero);
                 statement.setInt(2, zero);
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
 

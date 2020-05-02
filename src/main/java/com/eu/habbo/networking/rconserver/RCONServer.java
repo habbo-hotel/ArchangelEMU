@@ -1,7 +1,6 @@
 package com.eu.habbo.networking.rconserver;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.Logging;
 import com.eu.habbo.messages.rcon.*;
 import com.eu.habbo.networking.Server;
 import com.google.gson.Gson;
@@ -10,12 +9,17 @@ import gnu.trove.map.hash.THashMap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class RCONServer extends Server {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RCONServer.class);
+
     private final THashMap<String, Class<? extends RCONMessage>> messages;
     private final GsonBuilder gsonBuilder;
     List<String> allowedAdresses = new ArrayList<>();
@@ -87,21 +91,19 @@ public class RCONServer extends Server {
                 RCONMessage rcon = message.getDeclaredConstructor().newInstance();
                 Gson gson = this.gsonBuilder.create();
                 rcon.handle(gson, gson.fromJson(body, rcon.type));
-                System.out.print("[" + Logging.ANSI_BLUE + "RCON" + Logging.ANSI_RESET + "] Handled RCON Message: " + message.getSimpleName());
+                LOGGER.info("Handled RCON Message: {}", message.getSimpleName());
                 result = gson.toJson(rcon, RCONMessage.class);
 
                 if (Emulator.debugging) {
-                    System.out.print(" [" + Logging.ANSI_BLUE + "DATA" + Logging.ANSI_RESET + "]" + body + "[" + Logging.ANSI_BLUE + "RESULT" + Logging.ANSI_RESET + "]" + result);
+                    LOGGER.debug("RCON Data {} RCON Result {}", body, result);
                 }
-                System.out.println("");
 
                 return result;
             } catch (Exception ex) {
-                Emulator.getLogging().logErrorLine(ex);
-                Emulator.getLogging().logPacketError("[RCON] Failed to handle RCONMessage: " + message.getName() + ex.getMessage() + " by: " + ctx.channel().remoteAddress());
+                LOGGER.error("Failed to handle RCONMessage", ex);
             }
         } else {
-            Emulator.getLogging().logPacketError("[RCON] Couldn't find: " + key);
+            LOGGER.error("Couldn't find: {}", key);
         }
 
         throw new ArrayIndexOutOfBoundsException("Unhandled RCON Message");

@@ -40,7 +40,7 @@ public class HorsePet extends RideablePet {
                 statement.setInt(6, super.getId());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             super.run();

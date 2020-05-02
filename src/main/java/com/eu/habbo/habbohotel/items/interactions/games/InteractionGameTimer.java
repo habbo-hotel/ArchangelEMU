@@ -89,7 +89,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
                         }
                     }).toArray();
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 
@@ -117,7 +117,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
                     room.addGame(game);
                     game.initialise();
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    logger.error("Caught exception", e);
                 }
             }
         }

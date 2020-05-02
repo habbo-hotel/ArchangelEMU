@@ -149,7 +149,7 @@ public class BattleBanzaiGame extends Game {
                 }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 

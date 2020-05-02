@@ -40,7 +40,7 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
 
             handler.run();
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 

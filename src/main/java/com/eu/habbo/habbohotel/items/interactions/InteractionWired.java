@@ -71,7 +71,7 @@ public abstract class InteractionWired extends HabboItem {
                 statement.setInt(2, this.getId());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
         super.run();

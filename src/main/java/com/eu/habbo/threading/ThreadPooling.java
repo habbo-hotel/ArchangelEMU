@@ -1,13 +1,19 @@
 package com.eu.habbo.threading;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.util.imager.badges.BadgeImager;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ThreadPooling {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadPooling.class);
+
     public final int threads;
     private final ScheduledExecutorService scheduledPool;
     private volatile boolean canAdd;
@@ -16,7 +22,7 @@ public class ThreadPooling {
         this.threads = threads;
         this.scheduledPool = new HabboExecutorService(this.threads, new DefaultThreadFactory("ArcturusThreadFactory"));
         this.canAdd = true;
-        Emulator.getLogging().logStart("Thread Pool -> Loaded!");
+        LOGGER.info("Thread Pool -> Loaded!");
     }
 
     public ScheduledFuture run(Runnable run) {
@@ -29,7 +35,7 @@ public class ThreadPooling {
                 }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         return null;
@@ -42,12 +48,12 @@ public class ThreadPooling {
                     try {
                         run.run();
                     } catch (Exception e) {
-                        Emulator.getLogging().logErrorLine(e);
+                        LOGGER.error("Caught exception", e);
                     }
                 }, delay, TimeUnit.MILLISECONDS);
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         return null;
@@ -57,7 +63,7 @@ public class ThreadPooling {
         this.canAdd = false;
         this.scheduledPool.shutdownNow();
 
-        Emulator.getLogging().logShutdownLine("Threading -> Disposed!");
+        LOGGER.info("Threading -> Disposed!");
     }
 
     public void setCanAdd(boolean canAdd) {

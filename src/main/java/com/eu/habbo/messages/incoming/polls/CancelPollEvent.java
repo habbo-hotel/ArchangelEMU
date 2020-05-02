@@ -24,7 +24,7 @@ public class CancelPollEvent extends MessageHandler {
                 statement.setString(4, "");
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

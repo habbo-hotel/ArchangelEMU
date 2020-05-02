@@ -1,7 +1,7 @@
 package com.eu.habbo.messages;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.Logging;
+import com.eu.habbo.core.CreditsScheduler;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.messages.incoming.Incoming;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -71,17 +71,21 @@ import com.eu.habbo.messages.incoming.wired.WiredTriggerSaveDataEvent;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PacketManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PacketManager.class);
+
     private static final List<Integer> logList = new ArrayList<>();
     public static boolean DEBUG_SHOW_PACKETS = false;
     public static boolean MULTI_THREADED_PACKET_HANDLING = false;
     private final THashMap<Integer, Class<? extends MessageHandler>> incoming;
     private final THashMap<Integer, List<ICallable>> callables;
-
 
     public PacketManager() throws Exception {
         this.incoming = new THashMap<>();
@@ -165,7 +169,7 @@ public class PacketManager {
 
                 if (client.getHabbo() == null && !handlerClass.isAnnotationPresent(NoAuthMessage.class)) {
                     if (DEBUG_SHOW_PACKETS) {
-                        Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + Logging.ANSI_RED + "NOT LOGGED IN" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
+                        LOGGER.debug("[CLIENT][NOT LOGGED IN][{}] => {}", packet.getMessageId(), packet.getMessageBody());
                     }
 
                     return;
@@ -176,7 +180,7 @@ public class PacketManager {
                 if (handler.getRatelimit() > 0) {
                     if (client.messageTimestamps.containsKey(handlerClass) && System.currentTimeMillis() - client.messageTimestamps.get(handlerClass) < handler.getRatelimit()) {
                         if (PacketManager.DEBUG_SHOW_PACKETS) {
-                            Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "][" + Logging.ANSI_RED + "RATELIMITED" + Logging.ANSI_RESET + "] => " + packet.getMessageBody());
+                            LOGGER.debug("[CLIENT][{}][RATELIMITED] => {}", packet.getMessageId(), packet.getMessageBody());
                         }
 
                         return;
@@ -185,11 +189,12 @@ public class PacketManager {
                     }
                 }
 
-                if (PacketManager.DEBUG_SHOW_PACKETS)
-                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
+                if (PacketManager.DEBUG_SHOW_PACKETS) {
+                    LOGGER.debug("[CLIENT][{}] => {}", packet.getMessageId(), packet.getMessageBody());
+                }
 
                 if (logList.contains(packet.getMessageId()) && client.getHabbo() != null) {
-                    System.out.println(("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + client.getHabbo().getHabboInfo().getUsername() + "][" + packet.getMessageId() + "] => " + packet.getMessageBody()));
+                    LOGGER.debug("[CLIENT][{}][{}] => {}", client.getHabbo().getHabboInfo().getUsername(), packet.getMessageId(), packet.getMessageBody());
                 }
 
                 handler.client = client;
@@ -205,11 +210,12 @@ public class PacketManager {
                     handler.handle();
                 }
             } else {
-                if (PacketManager.DEBUG_SHOW_PACKETS)
-                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + Logging.ANSI_YELLOW + "UNDEFINED" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
+                if (PacketManager.DEBUG_SHOW_PACKETS) {
+                    LOGGER.debug("[CLIENT][UNDEFINED][{}] => {}", packet.getMessageId(), packet.getMessageBody());
+                }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 

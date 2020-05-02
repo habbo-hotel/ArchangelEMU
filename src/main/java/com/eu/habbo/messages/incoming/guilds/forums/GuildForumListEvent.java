@@ -60,7 +60,7 @@ public class GuildForumListEvent extends MessageHandler {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
             this.client.sendResponse(new ConnectionErrorComposer(500));
         }
 
@@ -84,7 +84,7 @@ public class GuildForumListEvent extends MessageHandler {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
             this.client.sendResponse(new ConnectionErrorComposer(500));
         }
 

@@ -40,7 +40,7 @@ public class AnswerPollEvent extends MessageHandler {
                 statement.setString(4, answer.toString());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             if (poll.lastQuestionId == questionId) {

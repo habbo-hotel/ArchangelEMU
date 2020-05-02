@@ -54,7 +54,7 @@ public class MarketplaceOwnItemsComposer extends MessageComposer {
 
                 this.response.appendInt(0);
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                logger.error("Caught exception", e);
             }
         }
 

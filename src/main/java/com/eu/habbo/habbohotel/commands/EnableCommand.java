@@ -38,7 +38,7 @@ public class EnableCommand extends Command {
                             }
                         }
                     } catch (Exception e) {
-                        Emulator.getLogging().logErrorLine(e);
+                        logger.error("Caught exception", e);
                     }
                 }
             }

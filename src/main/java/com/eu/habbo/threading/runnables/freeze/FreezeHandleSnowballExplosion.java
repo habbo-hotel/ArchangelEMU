@@ -100,7 +100,7 @@ class FreezeHandleSnowballExplosion implements Runnable {
 
             Emulator.getThreading().run(new FreezeResetExplosionTiles(freezeTiles, this.thrownData.room), 1000);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 }

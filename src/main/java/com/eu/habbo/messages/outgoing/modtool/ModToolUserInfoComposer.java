@@ -61,7 +61,7 @@ public class ModToolUserInfoComposer extends MessageComposer {
 
             return this.response;
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
         return null;
     }

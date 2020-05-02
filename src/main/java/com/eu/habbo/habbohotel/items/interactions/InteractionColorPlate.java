@@ -41,7 +41,7 @@ public class InteractionColorPlate extends InteractionDefault {
         try {
             state = Integer.valueOf(this.getExtradata());
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         state += amount;

@@ -41,7 +41,7 @@ public class HorseRemoveSaddleEvent extends MessageHandler {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
 

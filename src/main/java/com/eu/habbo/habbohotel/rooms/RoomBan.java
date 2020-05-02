@@ -42,7 +42,7 @@ public class RoomBan {
             statement.setInt(3, this.endTimestamp);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -53,7 +53,7 @@ public class RoomBan {
             statement.setInt(2, this.userId);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 }

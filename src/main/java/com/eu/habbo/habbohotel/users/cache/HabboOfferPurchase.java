@@ -38,7 +38,7 @@ public class HabboOfferPurchase {
                 statement.setInt(2, offerId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
                 return null;
             }
 

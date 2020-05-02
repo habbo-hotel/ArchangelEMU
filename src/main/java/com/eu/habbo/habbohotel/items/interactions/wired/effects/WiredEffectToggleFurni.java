@@ -136,7 +136,7 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
                     item.onClick(habbo != null && !(item instanceof InteractionGameTimer) ? habbo.getClient() : null, room, new Object[]{state, this.getType()});
                 }
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                logger.error("Caught exception", e);
             }
         }
 

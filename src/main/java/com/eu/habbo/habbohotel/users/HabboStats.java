@@ -228,7 +228,7 @@ public class HabboStats implements Runnable {
             statement.setInt(1, habboInfo.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return load(habboInfo);
@@ -287,7 +287,7 @@ public class HabboStats implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return stats;
@@ -365,7 +365,7 @@ public class HabboStats implements Runnable {
 
             this.navigatorWindowSettings.save(connection);
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -479,7 +479,7 @@ public class HabboStats implements Runnable {
             statement.setInt(2, roomId);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         this.favoriteRooms.add(roomId);
@@ -493,7 +493,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(2, roomId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }
@@ -519,7 +519,7 @@ public class HabboStats implements Runnable {
             statement.setInt(2, id);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         this.secretRecipes.add(id);
@@ -605,7 +605,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(2, userId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }
@@ -620,7 +620,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(2, userId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

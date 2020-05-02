@@ -27,7 +27,7 @@ public class GivePixels extends RCONMessage<GivePixels.JSONGivePixels> {
                 statement.execute();
             } catch (SQLException e) {
                 this.status = RCONMessage.SYSTEM_ERROR;
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             this.message = "offline";

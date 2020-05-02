@@ -42,7 +42,7 @@ public class RoomLayout {
 
             this.parse();
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 

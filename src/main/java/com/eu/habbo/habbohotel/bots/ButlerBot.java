@@ -43,7 +43,7 @@ public class ButlerBot extends Bot {
                 serveItems.put(ks, set.getInt("item"));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 

@@ -22,7 +22,7 @@ public class ModToolSanctions {
         this.sanctionHashmap = new THashMap<>();
         this.sanctionLevelsHashmap = new THashMap<>();
         this.loadModSanctions();
-        Emulator.getLogging().logStart("Sanctions Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        logger.info("Sanctions Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
 
     }
 
@@ -41,7 +41,7 @@ public class ModToolSanctions {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -68,7 +68,7 @@ public class ModToolSanctions {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             return this.sanctionHashmap;
@@ -87,7 +87,7 @@ public class ModToolSanctions {
 
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -98,7 +98,7 @@ public class ModToolSanctions {
 
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -109,7 +109,7 @@ public class ModToolSanctions {
 
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -120,7 +120,7 @@ public class ModToolSanctions {
 
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 

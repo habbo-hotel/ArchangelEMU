@@ -24,37 +24,37 @@ public class HabboInventory {
         try {
             this.badgesComponent = new BadgesComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         try {
             this.botsComponent = new BotsComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         try {
             this.effectsComponent = new EffectsComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         try {
             this.itemsComponent = new ItemsComponent(this, this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         try {
             this.petsComponent = new PetsComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         try {
             this.wardrobeComponent = new WardrobeComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         this.items = MarketPlace.getOwnOffers(this.habbo);

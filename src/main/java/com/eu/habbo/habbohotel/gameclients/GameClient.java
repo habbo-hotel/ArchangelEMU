@@ -1,16 +1,14 @@
 package com.eu.habbo.habbohotel.gameclients;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.Logging;
 import com.eu.habbo.crypto.HabboEncryption;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.MessageComposer;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +17,8 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameClient {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameClient.class);
 
     private final Channel channel;
     private final HabboEncryption encryption;
@@ -81,7 +81,7 @@ public class GameClient {
                 statement.setInt(2, this.habbo.getHabboInfo().getId());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -92,7 +92,7 @@ public class GameClient {
                 this.channel.write(composer.compose().retain(), this.channel.voidPromise());
                 this.channel.flush();
             } catch (Exception e) {
-                Emulator.getLogging().logPacketError(e);
+                LOGGER.error("Caught exception", e);
             }
         }
     }
@@ -135,7 +135,7 @@ public class GameClient {
                 this.habbo = null;
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 }

@@ -47,7 +47,7 @@ public class GnomePet extends Pet implements IPetLook {
                 statement.setInt(2, this.id);
                 statement.executeUpdate();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

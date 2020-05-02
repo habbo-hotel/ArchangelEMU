@@ -26,7 +26,7 @@ public class IgnoreUser extends RCONMessage<IgnoreUser.JSONIgnoreUser> {
                 statement.setInt(2, object.target_id);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             this.message = "offline";

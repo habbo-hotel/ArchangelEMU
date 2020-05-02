@@ -64,7 +64,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return foundComment;
@@ -103,7 +103,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
                 Emulator.getPluginManager().fireEvent(new GuildForumThreadCommentCreated(createdComment));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return createdComment;
@@ -200,7 +200,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
 
             this.needsUpdate = false;
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 }

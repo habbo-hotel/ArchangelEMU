@@ -206,7 +206,7 @@ public class RoomTrade {
                 statement.executeBatch();
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         THashSet<HabboItem> itemsUserOne = new THashSet<>(userOne.getItems());

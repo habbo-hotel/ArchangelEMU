@@ -72,7 +72,7 @@ public class BadgeCommand extends Command {
                         return true;
                     }
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    logger.error("Caught SQL exception", e);
                 }
             }
         }

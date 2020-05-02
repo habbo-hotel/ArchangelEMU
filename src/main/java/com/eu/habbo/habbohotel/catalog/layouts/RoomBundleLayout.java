@@ -185,7 +185,7 @@ public class RoomBundleLayout extends SingleBundle {
                     statement.setInt(3, this.room.getId());
                     statement.execute();
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    logger.error("Caught SQL exception", e);
                 }
             }
 
@@ -219,7 +219,7 @@ public class RoomBundleLayout extends SingleBundle {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         Room r = Emulator.getGameEnvironment().getRoomManager().loadRoom(roomId);

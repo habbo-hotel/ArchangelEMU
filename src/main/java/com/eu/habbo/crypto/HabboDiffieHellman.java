@@ -2,7 +2,7 @@ package com.eu.habbo.crypto;
 
 import com.eu.habbo.crypto.exceptions.HabboCryptoException;
 import com.eu.habbo.crypto.utils.BigIntegerUtils;
-import com.eu.habbo.crypto.utils.HexUtils;
+import com.eu.habbo.util.HexUtils;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;

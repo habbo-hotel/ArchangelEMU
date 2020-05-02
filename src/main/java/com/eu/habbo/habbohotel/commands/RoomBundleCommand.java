@@ -62,7 +62,7 @@ public class RoomBundleCommand extends Command {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
             ((RoomBundleLayout) page).loadItems(gameClient.getHabbo().getHabboInfo().getCurrentRoom());
 

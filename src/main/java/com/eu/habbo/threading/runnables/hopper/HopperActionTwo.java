@@ -39,7 +39,7 @@ class HopperActionTwo implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         if (targetRoomId != 0 && targetItemId != 0) {

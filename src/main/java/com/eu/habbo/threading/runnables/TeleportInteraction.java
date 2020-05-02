@@ -112,7 +112,7 @@ class TeleportInteraction extends Thread {
                 }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 

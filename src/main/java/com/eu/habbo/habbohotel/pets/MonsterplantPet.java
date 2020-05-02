@@ -138,7 +138,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                 statement.setInt(13, this.id);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

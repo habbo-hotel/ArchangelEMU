@@ -44,7 +44,7 @@ public class CatalogPagesListComposer extends MessageComposer {
 
             return this.response;
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         return null;

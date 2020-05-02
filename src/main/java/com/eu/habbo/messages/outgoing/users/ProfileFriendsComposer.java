@@ -47,7 +47,7 @@ public class ProfileFriendsComposer extends MessageComposer {
                 }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         this.userId = habbo.getHabboInfo().getId();
@@ -101,7 +101,7 @@ public class ProfileFriendsComposer extends MessageComposer {
                 this.response.appendString(this.haters.get(hatersIndex).getLook());
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
         return this.response;
     }

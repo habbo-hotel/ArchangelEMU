@@ -32,7 +32,7 @@ public class InventoryItemsComposer extends MessageComposer implements TIntObjec
             this.items.forEachEntry(this);
             return this.response;
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         return null;

@@ -1,6 +1,5 @@
 package com.eu.habbo.networking;
 
-import com.eu.habbo.Emulator;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -9,10 +8,15 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
 public abstract class Server {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
+
     protected final ServerBootstrap serverBootstrap;
     protected final EventLoopGroup bossGroup;
     protected final EventLoopGroup workerGroup;
@@ -48,22 +52,22 @@ public abstract class Server {
         }
 
         if (!channelFuture.isSuccess()) {
-            Emulator.getLogging().logShutdownLine("Failed to connect to the host (" + this.host + ":" + this.port + ")@" + this.name);
+            LOGGER.info("Failed to connect to the host (" + this.host + ":" + this.port + ")@" + this.name);
             System.exit(0);
         } else {
-            Emulator.getLogging().logStart("Started GameServer on " + this.host + ":" + this.port + "@" + this.name);
+            LOGGER.info("Started GameServer on " + this.host + ":" + this.port + "@" + this.name);
         }
     }
 
     public void stop() {
-        Emulator.getLogging().logShutdownLine("Stopping " + this.name);
+        LOGGER.info("Stopping " + this.name);
         try {
             this.workerGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
             this.bossGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine("Exception during " + this.name + " shutdown... HARD STOP");
+            LOGGER.error("Exception during {} shutdown... HARD STOP", this.name, e);
         }
-        Emulator.getLogging().logShutdownLine("GameServer Stopped!");
+        LOGGER.info("GameServer Stopped!");
     }
 
     public ServerBootstrap getServerBootstrap() {

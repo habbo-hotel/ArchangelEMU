@@ -97,7 +97,7 @@ public class SecureLoginEvent extends MessageHandler {
                     Emulator.getThreading().run(habbo);
                     Emulator.getGameEnvironment().getHabboManager().addHabbo(habbo);
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    logger.error("Caught exception", e);
                     Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
                     return;
                 }

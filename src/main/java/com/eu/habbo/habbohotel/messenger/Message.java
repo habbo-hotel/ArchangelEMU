@@ -31,7 +31,7 @@ public class Message implements Runnable {
                 statement.setInt(4, this.timestamp);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
         }
     }

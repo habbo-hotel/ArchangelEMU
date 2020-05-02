@@ -35,7 +35,7 @@ public class RequestInventoryItemsEvent extends MessageHandler {
                     items.put(iterator.key(), iterator.value());
                     count++;
                 } catch (NoSuchElementException e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    logger.error("Caught exception", e);
                     break;
                 }
 

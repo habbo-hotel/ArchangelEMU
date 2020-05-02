@@ -45,7 +45,7 @@ public class RedeemClothingEvent extends MessageHandler {
                                 statement.setInt(2, clothing.id);
                                 statement.execute();
                             } catch (SQLException e) {
-                                Emulator.getLogging().logSQLException(e);
+                                logger.error("Caught SQL exception", e);
                             }
 
                             this.client.getHabbo().getInventory().getWardrobeComponent().getClothing().add(clothing.id);

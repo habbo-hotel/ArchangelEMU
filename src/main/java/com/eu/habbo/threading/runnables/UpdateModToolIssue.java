@@ -24,7 +24,7 @@ public class UpdateModToolIssue implements Runnable {
             statement.setInt(5, this.issue.id);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 }

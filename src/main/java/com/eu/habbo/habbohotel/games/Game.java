@@ -73,7 +73,7 @@ public abstract class Game implements Runnable {
                 return true;
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
 
         return false;

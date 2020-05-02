@@ -41,7 +41,7 @@ public class Messenger {
             statement.setInt(4, userOne);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -55,7 +55,7 @@ public class Messenger {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
         return users;
     }
@@ -85,7 +85,7 @@ public class Messenger {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return false;
@@ -102,7 +102,7 @@ public class Messenger {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return false;
@@ -114,7 +114,7 @@ public class Messenger {
             statement.setInt(2, userFrom);
             statement.executeUpdate();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -133,7 +133,7 @@ public class Messenger {
                     count = set.getInt("count");
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return count;
@@ -157,7 +157,7 @@ public class Messenger {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
         return map;
     }
@@ -213,7 +213,7 @@ public class Messenger {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -237,7 +237,7 @@ public class Messenger {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return buddy;
@@ -252,7 +252,7 @@ public class Messenger {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -311,7 +311,7 @@ public class Messenger {
             statement.setInt(1, userTo);
             statement.executeUpdate();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 
@@ -323,7 +323,7 @@ public class Messenger {
             statement.setInt(3, userFrom);
             return statement.executeUpdate();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return 0;
@@ -345,7 +345,7 @@ public class Messenger {
                 statement.setInt(3, Emulator.getIntUnixTimestamp());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
             }
 
             Habbo habboTo = Emulator.getGameServer().getGameClientManager().getHabbo(userTo);

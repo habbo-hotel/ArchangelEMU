@@ -107,7 +107,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
             //serverMessage.appendString( ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? Item.getCurrentHeight(this) : ""));
 
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            logger.error("Caught exception", e);
         }
     }
 
@@ -264,7 +264,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
                     statement.setInt(10, this.id);
                     statement.execute();
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    logger.error("Caught SQL exception", e);
                     Emulator.getLogging().logErrorLine("SQLException trying to save HabboItem: " + this.toString());
                 }
 
@@ -272,7 +272,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
             }
 
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
     }
 

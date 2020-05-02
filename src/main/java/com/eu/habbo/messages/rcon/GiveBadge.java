@@ -74,7 +74,7 @@ public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON> {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                logger.error("Caught SQL exception", e);
                 this.status = RCONMessage.STATUS_ERROR;
                 this.message = e.getMessage();
             }

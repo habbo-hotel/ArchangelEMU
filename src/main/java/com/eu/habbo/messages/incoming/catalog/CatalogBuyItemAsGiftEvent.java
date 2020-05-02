@@ -104,7 +104,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                                 }
                             }
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            logger.error("Caught SQL exception", e);
                         }
                     } else {
                         userId = habbo.getHabboInfo().getId();
@@ -287,7 +287,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                                                         try {
                                                             guildId = Integer.parseInt(extraData);
                                                         } catch (Exception e) {
-                                                            Emulator.getLogging().logErrorLine(e);
+                                                            logger.error("Caught exception", e);
                                                             this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                                                             return;
                                                         }

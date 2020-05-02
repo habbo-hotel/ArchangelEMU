@@ -49,12 +49,12 @@ public class ItemsComponent {
                             Emulator.getLogging().logErrorLine("Failed to load HabboItem: " + set.getInt("id"));
                         }
                     } catch (SQLException e) {
-                        Emulator.getLogging().logSQLException(e);
+                        logger.error("Caught SQL exception", e);
                     }
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            logger.error("Caught SQL exception", e);
         }
 
         return itemsList;
