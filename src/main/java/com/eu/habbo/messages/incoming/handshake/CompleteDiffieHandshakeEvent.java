@@ -1,5 +1,6 @@
 package com.eu.habbo.messages.incoming.handshake;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.crypto.HabboRC4;
 import com.eu.habbo.messages.NoAuthMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -13,6 +14,11 @@ public class CompleteDiffieHandshakeEvent extends MessageHandler {
 
     @Override
     public void handle() throws Exception {
+        if (this.client.getEncryption() == null) {
+            Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+            return;
+        }
+
         byte[] sharedKey = this.client.getEncryption().getDiffie().getSharedKey(this.packet.readString());
 
         this.client.sendResponse(new CompleteDiffieHandshakeComposer(this.client.getEncryption().getDiffie().getPublicKey()));
