@@ -18,7 +18,6 @@ public class Incoming {
     public static final int HorseRideEvent = 1036;
     public static final int RequestCreateRoomEvent = 2752;
     public static final int SaveMottoEvent = 2228;
-    public static final int GenerateSecretKeyEvent = -1;//3575
     public static final int ModToolAlertEvent = 1840;
     public static final int TradeAcceptEvent = 3863;
     public static final int RequestCatalogModeEvent = 1195;
@@ -78,7 +77,6 @@ public class Incoming {
     public static final int MannequinSaveNameEvent = 2850;
     public static final int SellItemEvent = 3447;
     public static final int GuildAcceptMembershipEvent = 3386;
-    public static final int RequestBannerToken = -1;//2619
     public static final int RequestRecylerLogicEvent = 398;
     public static final int RequestGuildJoinEvent = 998;
     public static final int RequestCatalogIndexEvent = 2529;
@@ -111,6 +109,8 @@ public class Incoming {
     public static final int AcceptFriendRequest = 137;
     public static final int DeclineFriendRequest = 2890; //835; //TODO
     public static final int ReleaseVersionEvent = 4000;//4000 
+    public static final int InitDiffieHandshake = 3110;
+    public static final int CompleteDiffieHandshake = 773;
     public static final int SearchRoomsMyFavoriteEvent = 2578;
     public static final int TradeStartEvent = 1481;
     public static final int RequestTargetOfferEvent = 2487;

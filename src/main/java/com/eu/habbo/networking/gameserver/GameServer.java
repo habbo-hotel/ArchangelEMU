@@ -4,6 +4,10 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClientManager;
 import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.networking.Server;
+import com.eu.habbo.networking.gameserver.decoders.*;
+import com.eu.habbo.networking.gameserver.encoders.MessageComposerEncoder;
+import com.eu.habbo.networking.gameserver.encoders.ServerMessageEncoder;
+import com.eu.habbo.networking.gameserver.encoders.GameServerMessageLogger;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.logging.LoggingHandler;
@@ -26,8 +30,24 @@ public class GameServer extends Server {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast("logger", new LoggingHandler());
-                ch.pipeline().addLast("bytesDecoder", new GameByteDecoder());
-                ch.pipeline().addLast(new GameMessageHandler());
+
+                // Decoders.
+                ch.pipeline().addLast(
+                        new GamePolicyDecoder(),
+                        new GameByteFrameDecoder(),
+                        new GameByteDecoder(),
+                        new GameMessageRateLimit(),
+                        new GameMessageHandler()
+                );
+
+                // Encoders.
+                ch.pipeline().addLast(new ServerMessageEncoder());
+
+                if (PacketManager.DEBUG_SHOW_PACKETS) {
+                    ch.pipeline().addLast(new GameServerMessageLogger());
+                }
+
+                ch.pipeline().addLast(new MessageComposerEncoder());
             }
         });
     }

@@ -191,4 +191,9 @@ public class ServerMessage {
 
         return this.channelBuffer.copy();
     }
+
+    public void release() {
+        this.channelBuffer.release();
+    }
+
 }

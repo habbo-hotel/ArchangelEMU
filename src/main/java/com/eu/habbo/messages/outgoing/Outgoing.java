@@ -66,7 +66,8 @@ public class Outgoing {
     public final static int UserBadgesComposer = 1087;
     public final static int GuildManageComposer = 3965;
     public final static int RemoveFriendComposer = -1;//error 404
-    public final static int BannerTokenComposer = -1;//error 404
+    public final static int InitDiffieHandshakeComposer = 1347;
+    public final static int CompleteDiffieHandshakeComposer = 3885;
     public final static int UserDataComposer = 2725;
     public final static int UserSearchResultComposer = 973;
     public final static int ModToolUserRoomVisitsComposer = 1752;
