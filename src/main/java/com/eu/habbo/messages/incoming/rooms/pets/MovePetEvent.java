@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.pets;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 
@@ -23,7 +24,8 @@ public class MovePetEvent extends MessageHandler {
                     if (tile != null) {
                         pet.getRoomUnit().setLocation(tile);
                         pet.getRoomUnit().setPreviousLocation(tile);
-                        pet.getRoomUnit().setZ(this.packet.readInt() + tile.z);
+                        pet.getRoomUnit().setZ(tile.z);
+                        pet.getRoomUnit().setRotation(RoomUserRotation.fromValue(this.packet.readInt()));
                         pet.getRoomUnit().setPreviousLocationZ(pet.getRoomUnit().getZ());
                         room.sendComposer(new RoomUserStatusComposer(pet.getRoomUnit()).compose());
                         pet.needsUpdate = true;
