@@ -54,6 +54,8 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
         if (cause instanceof TooLongFrameException) {
             Emulator.getLogging().logErrorLine("Disconnecting client, reason: \"" + cause.getMessage() + "\".");
         } else {
+            cause.printStackTrace();
+
             Emulator.getLogging().logErrorLine("Disconnecting client, exception in GameMessageHander:");
             Emulator.getLogging().logErrorLine(cause.toString());
 
