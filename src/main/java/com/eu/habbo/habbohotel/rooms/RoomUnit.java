@@ -239,6 +239,7 @@ public class RoomUnit {
             {
                 if (!room.tileWalkable(next)) {
                     this.room = room;
+                    this.path.clear();
                     this.findPath();
 
                     if (this.path.isEmpty()) {
