@@ -89,7 +89,7 @@ public class GameClient {
     public void sendResponse(MessageComposer composer) {
         if (this.channel.isOpen()) {
             try {
-                this.channel.write(composer.compose(), this.channel.voidPromise());
+                this.channel.write(composer.compose().retain(), this.channel.voidPromise());
                 this.channel.flush();
             } catch (Exception e) {
                 Emulator.getLogging().logPacketError(e);
@@ -103,7 +103,7 @@ public class GameClient {
                 return;
             }
 
-            this.channel.write(response, this.channel.voidPromise());
+            this.channel.write(response.retain(), this.channel.voidPromise());
             this.channel.flush();
         }
     }
@@ -115,7 +115,7 @@ public class GameClient {
                     return;
                 }
 
-                this.channel.write(response);
+                this.channel.write(response.retain());
             }
 
             this.channel.flush();

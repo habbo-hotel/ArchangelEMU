@@ -14,7 +14,7 @@ public class GameServerMessageLogger extends MessageToMessageEncoder<ServerMessa
     protected void encode(ChannelHandlerContext ctx, ServerMessage message, List<Object> out) throws Exception {
         Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + message.getHeader() + "] -> " + message.getBodyString());
 
-        out.add(message);
+        out.add(message.retain());
     }
 
 }

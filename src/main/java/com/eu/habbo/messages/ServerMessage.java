@@ -4,11 +4,14 @@ import com.eu.habbo.Emulator;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+import io.netty.util.IllegalReferenceCountException;
+import io.netty.util.ReferenceCounted;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public class ServerMessage {
+public class ServerMessage implements ReferenceCounted {
+
     private int header;
     private ByteBufOutputStream stream;
     private ByteBuf channelBuffer;
@@ -192,8 +195,42 @@ public class ServerMessage {
         return this.channelBuffer.copy();
     }
 
-    public void release() {
-        this.channelBuffer.release();
+    @Override
+    public int refCnt() {
+        return this.channelBuffer.refCnt();
+    }
+
+    @Override
+    public ReferenceCounted retain() {
+        this.channelBuffer.retain();
+        return this;
+    }
+
+    @Override
+    public ReferenceCounted retain(int i) {
+        this.channelBuffer.retain(i);
+        return this;
+    }
+
+    @Override
+    public ReferenceCounted touch() {
+        this.channelBuffer.touch();
+        return this;
+    }
+
+    @Override
+    public ReferenceCounted touch(Object o) {
+        this.channelBuffer.touch(o);
+        return this;
+    }
+
+    public boolean release() {
+        return this.channelBuffer.release();
+    }
+
+    @Override
+    public boolean release(int i) {
+        return this.channelBuffer.release(i);
     }
 
 }
