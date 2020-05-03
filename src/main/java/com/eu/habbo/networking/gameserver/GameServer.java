@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.gameclients.GameClientManager;
 import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.networking.Server;
 import com.eu.habbo.networking.gameserver.decoders.*;
-import com.eu.habbo.networking.gameserver.encoders.MessageComposerEncoder;
 import com.eu.habbo.networking.gameserver.encoders.ServerMessageEncoder;
 import com.eu.habbo.networking.gameserver.encoders.GameServerMessageLogger;
 import io.netty.channel.ChannelInitializer;
@@ -46,8 +45,6 @@ public class GameServer extends Server {
                 if (PacketManager.DEBUG_SHOW_PACKETS) {
                     ch.pipeline().addLast(new GameServerMessageLogger());
                 }
-
-                ch.pipeline().addLast(new MessageComposerEncoder());
             }
         });
     }
