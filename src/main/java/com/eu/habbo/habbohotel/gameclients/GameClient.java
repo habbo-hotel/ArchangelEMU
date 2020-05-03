@@ -89,7 +89,7 @@ public class GameClient {
     public void sendResponse(MessageComposer composer) {
         if (this.channel.isOpen()) {
             try {
-                this.channel.write(composer, this.channel.voidPromise());
+                this.channel.write(composer.compose(), this.channel.voidPromise());
                 this.channel.flush();
             } catch (Exception e) {
                 Emulator.getLogging().logPacketError(e);
