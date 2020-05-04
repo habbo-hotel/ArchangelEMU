@@ -85,10 +85,13 @@ public class PacketManager {
     public static boolean MULTI_THREADED_PACKET_HANDLING = false;
     private final THashMap<Integer, Class<? extends MessageHandler>> incoming;
     private final THashMap<Integer, List<ICallable>> callables;
+    private final PacketNames names;
 
     public PacketManager() throws Exception {
         this.incoming = new THashMap<>();
         this.callables = new THashMap<>();
+        this.names = new PacketNames();
+        this.names.initialize();
 
         this.registerHandshake();
         this.registerCatalog();
@@ -113,6 +116,10 @@ public class PacketManager {
         this.registerCrafting();
         this.registerCamera();
         this.registerGameCenter();
+    }
+
+    public PacketNames getNames() {
+        return names;
     }
 
     @EventHandler
