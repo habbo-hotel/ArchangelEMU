@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ConsoleCommand {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleCommand.class);
     private static final THashMap<String, ConsoleCommand> commands = new THashMap<>();
 
@@ -48,11 +47,11 @@ public abstract class ConsoleCommand {
                     LOGGER.error("Caught exception", e);
                 }
             } else {
-                System.out.println("Unknown Console Command " + message[0]);
-                System.out.println("Commands Available (" + commands.size() + "): ");
+                LOGGER.info("Unknown Console Command " + message[0]);
+                LOGGER.info("Commands Available (" + commands.size() + "): ");
 
                 for (ConsoleCommand c : commands.values()) {
-                    System.out.println(c.key + " - " + c.usage);
+                    LOGGER.info(c.key + " - " + c.usage);
                 }
             }
         }
