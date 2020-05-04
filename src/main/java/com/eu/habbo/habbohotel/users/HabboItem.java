@@ -512,4 +512,22 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
     public boolean canOverrideTile(RoomUnit unit, Room room, RoomTile tile) {
         return false;
     }
+
+    public Rectangle getRectangle() {
+        return RoomLayout.getRectangle(
+                this.getX(),
+                this.getY(),
+                this.getBaseItem().getWidth(),
+                this.getBaseItem().getLength(),
+                this.getRotation());
+    }
+
+    public Rectangle getRectangle(int marginX, int marginY) {
+        return RoomLayout.getRectangle(
+                this.getX() - marginX,
+                this.getY() - marginY,
+                this.getBaseItem().getWidth() + (marginX * 2),
+                this.getBaseItem().getLength() + (marginY * 2),
+                this.getRotation());
+    }
 }
