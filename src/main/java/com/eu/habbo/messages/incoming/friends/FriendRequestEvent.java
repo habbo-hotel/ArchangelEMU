@@ -8,6 +8,8 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.friends.FriendRequestComposer;
 import com.eu.habbo.messages.outgoing.friends.FriendRequestErrorComposer;
 import com.eu.habbo.plugin.events.users.friends.UserRequestFriendshipEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +18,8 @@ import java.sql.SQLException;
 
 
 public class FriendRequestEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FriendRequestEvent.class);
+
     @Override
     public void handle() throws Exception {
         String username = this.packet.readString();
@@ -50,7 +54,7 @@ public class FriendRequestEvent extends MessageHandler {
                     }
                 }
             } catch (SQLException e) {
-                logger.error("Caught SQL exception", e);
+                LOGGER.error("Caught SQL exception", e);
                 return;
             }
         } else {

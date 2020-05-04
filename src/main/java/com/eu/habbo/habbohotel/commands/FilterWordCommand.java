@@ -4,12 +4,16 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.modtool.WordFilter;
 import com.eu.habbo.habbohotel.modtool.WordFilterWord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class FilterWordCommand extends Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilterWordCommand.class);
+
     public FilterWordCommand() {
         super("cmd_filterword", Emulator.getTexts().getValue("commands.keys.cmd_filterword").split(";"));
     }
@@ -35,7 +39,7 @@ public class FilterWordCommand extends Command {
             statement.setString(2, replacement);
             statement.execute();
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_filterword.error"));
             return true;
         }

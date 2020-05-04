@@ -21,6 +21,8 @@ import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.Connection;
@@ -29,10 +31,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
 import java.util.List;
 
 public abstract class HabboItem implements Runnable, IEventTriggers {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HabboItem.class);
+
     private static Class[] TOGGLING_INTERACTIONS = new Class[]{
             InteractionGameTimer.class,
             InteractionWired.class,
@@ -107,7 +111,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
             //serverMessage.appendString( ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? Item.getCurrentHeight(this) : ""));
 
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
     }
 
@@ -264,15 +268,15 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
                     statement.setInt(10, this.id);
                     statement.execute();
                 } catch (SQLException e) {
-                    logger.error("Caught SQL exception", e);
-                    Emulator.getLogging().logErrorLine("SQLException trying to save HabboItem: " + this.toString());
+                    LOGGER.error("Caught SQL exception", e);
+                    LOGGER.error("SQLException trying to save HabboItem: " + this.toString());
                 }
 
                 this.needsUpdate = false;
             }
 
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 

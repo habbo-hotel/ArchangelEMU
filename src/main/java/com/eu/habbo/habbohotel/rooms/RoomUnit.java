@@ -24,6 +24,8 @@ import com.eu.habbo.util.pathfinding.Rotation;
 import gnu.trove.map.TMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +33,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
 public class RoomUnit {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnit.class);
+
     public boolean isWiredTeleporting = false;
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
@@ -361,7 +366,7 @@ public class RoomUnit {
             return false;
 
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
             return false;
         }
     }

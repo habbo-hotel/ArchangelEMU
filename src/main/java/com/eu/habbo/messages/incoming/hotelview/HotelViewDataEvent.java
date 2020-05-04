@@ -1,10 +1,13 @@
 package com.eu.habbo.messages.incoming.hotelview;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.hotelview.HotelViewDataComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HotelViewDataEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HotelViewDataEvent.class);
+
 
     @Override
     public void handle() {
@@ -30,7 +33,7 @@ public class HotelViewDataEvent extends MessageHandler {
                 this.client.sendResponse(new HotelViewDataComposer(data, data.split(",")[data.split(",").length - 1]));
             }
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
     }
 }

@@ -6,12 +6,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class YoutubeManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(YoutubeManager.class);
+
     public class YoutubeVideo {
         private final String id;
         private final int duration;
@@ -80,7 +83,7 @@ public class YoutubeManager {
         Emulator.getThreading().run(() -> {
             ExecutorService youtubeDataLoaderPool = Executors.newFixedThreadPool(10);
 
-            logger.info("YouTube Manager -> Loading...");
+            LOGGER.info("YouTube Manager -> Loading...");
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM youtube_playlists")) {
                 try (ResultSet set = statement.executeQuery()) {
@@ -95,7 +98,7 @@ public class YoutubeManager {
                             if (playlist != null) {
                                 playlists.add(playlist);
                             } else {
-                                Emulator.getLogging().logErrorLine("Failed to load YouTube playlist: " + playlistId);
+                                LOGGER.error("Failed to load YouTube playlist: " + playlistId);
                             }
 
                             this.playlists.put(itemId, playlists);
@@ -103,7 +106,7 @@ public class YoutubeManager {
                     }
                 }
             } catch (SQLException e) {
-                logger.error("Caught SQL exception", e);
+                LOGGER.error("Caught SQL exception", e);
             }
 
             youtubeDataLoaderPool.shutdown();
@@ -113,7 +116,7 @@ public class YoutubeManager {
                 e.printStackTrace();
             }
 
-            logger.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+            LOGGER.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
         });
     }
 

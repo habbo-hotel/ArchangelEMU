@@ -14,6 +14,8 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTalkComposer;
 import com.eu.habbo.plugin.events.pets.PetTalkEvent;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.Calendar;
@@ -21,6 +23,7 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class Pet implements ISerialize, Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Pet.class);
 
     public int levelThirst;
     public int levelHunger;
@@ -62,7 +65,7 @@ public class Pet implements ISerialize, Runnable {
         this.name = set.getString("name");
         this.petData = Emulator.getGameEnvironment().getPetManager().getPetData(set.getInt("type"));
         if (this.petData == null) {
-            Emulator.getLogging().logErrorLine("WARNING! Missing pet data for type: " + set.getInt("type") + "! Insert a new entry into the pet_actions table for this type!");
+            LOGGER.error("WARNING! Missing pet data for type: " + set.getInt("type") + "! Insert a new entry into the pet_actions table for this type!");
             this.petData = Emulator.getGameEnvironment().getPetManager().getPetData(0);
         }
         this.race = set.getInt("race");
@@ -85,7 +88,7 @@ public class Pet implements ISerialize, Runnable {
         this.petData = Emulator.getGameEnvironment().getPetManager().getPetData(type);
 
         if (this.petData == null) {
-            Emulator.getLogging().logErrorLine(new Exception("WARNING! Missing pet data for type: " + type + "! Insert a new entry into the pet_actions table for this type!"));
+            LOGGER.warn("Missing pet data for type: " + type + "! Insert a new entry into the pet_actions table for this type!");
         }
 
         this.race = race;
@@ -205,7 +208,7 @@ public class Pet implements ISerialize, Runnable {
                     }
                 }
             } catch (SQLException e) {
-                logger.error("Caught SQL exception", e);
+                LOGGER.error("Caught SQL exception", e);
             }
 
             this.needsUpdate = false;

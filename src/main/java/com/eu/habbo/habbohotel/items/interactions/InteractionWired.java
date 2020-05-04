@@ -7,6 +7,8 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemStateComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public abstract class InteractionWired extends HabboItem {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionWired.class);
     private long cooldown;
 
     InteractionWired(ResultSet set, Item baseItem) throws SQLException {
@@ -71,7 +74,7 @@ public abstract class InteractionWired extends HabboItem {
                 statement.setInt(2, this.getId());
                 statement.execute();
             } catch (SQLException e) {
-                logger.error("Caught SQL exception", e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
         super.run();

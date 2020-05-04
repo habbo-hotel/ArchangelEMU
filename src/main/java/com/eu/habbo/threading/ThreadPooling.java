@@ -1,7 +1,6 @@
 package com.eu.habbo.threading;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.util.imager.badges.BadgeImager;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,7 @@ public class ThreadPooling {
 
     public ThreadPooling(Integer threads) {
         this.threads = threads;
-        this.scheduledPool = new HabboExecutorService(this.threads, new DefaultThreadFactory("ArcturusThreadFactory"));
+        this.scheduledPool = new HabboExecutorService(this.threads, new DefaultThreadFactory("HabExec"));
         this.canAdd = true;
         LOGGER.info("Thread Pool -> Loaded!");
     }

@@ -3,9 +3,12 @@ package com.eu.habbo.habbohotel.catalog;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +17,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogItem.class);
     int id;
     int limitedStack;
     private int pageId;
@@ -211,7 +214,7 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
 
                     identifier = Integer.parseInt(itemId);
                 } catch (Exception e) {
-                    logger.info("Invalid value (" + itemId + ") for items_base column for catalog_item id (" + this.id + "). Value must be integer or of the format of integer:amount;integer:amount");
+                    LOGGER.info("Invalid value (" + itemId + ") for items_base column for catalog_item id (" + this.id + "). Value must be integer or of the format of integer:amount;integer:amount");
                     continue;
                 }
                 if (identifier > 0) {
@@ -258,8 +261,8 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
                     }
                 }
             } catch (Exception e) {
-                Emulator.getLogging().logDebugLine("Failed to load " + this.itemId);
-                logger.error("Caught exception", e);
+                LOGGER.debug("Failed to load " + this.itemId);
+                LOGGER.error("Caught exception", e);
             }
         } else {
             try {
@@ -343,7 +346,7 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
                 statement.setInt(3, this.getId());
                 statement.execute();
             } catch (SQLException e) {
-                logger.error("Caught SQL exception", e);
+                LOGGER.error("Caught SQL exception", e);
             }
 
             this.needsUpdate = false;

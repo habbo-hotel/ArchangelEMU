@@ -7,10 +7,14 @@ import com.eu.habbo.habbohotel.catalog.CatalogPageLayouts;
 import com.eu.habbo.habbohotel.catalog.layouts.RoomBundleLayout;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
 public class RoomBundleCommand extends Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomBundleCommand.class);
+
     public RoomBundleCommand() {
         super("cmd_bundle", Emulator.getTexts().getValue("commands.keys.cmd_bundle").split(";"));
     }
@@ -62,7 +66,7 @@ public class RoomBundleCommand extends Command {
                     }
                 }
             } catch (SQLException e) {
-                logger.error("Caught SQL exception", e);
+                LOGGER.error("Caught SQL exception", e);
             }
             ((RoomBundleLayout) page).loadItems(gameClient.getHabbo().getHabboInfo().getCurrentRoom());
 

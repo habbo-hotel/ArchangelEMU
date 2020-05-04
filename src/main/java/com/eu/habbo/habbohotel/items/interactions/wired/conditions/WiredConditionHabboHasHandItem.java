@@ -1,6 +1,5 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -8,11 +7,15 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredConditionHabboHasHandItem extends InteractionWiredCondition {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WiredConditionHabboHasHandItem.class);
+
     public static final WiredConditionType type = WiredConditionType.ACTOR_HAS_HANDITEM;
 
     private int handItem;
@@ -71,7 +74,7 @@ public class WiredConditionHabboHasHandItem extends InteractionWiredCondition {
         try {
             this.handItem = Integer.valueOf(set.getString("wired_data"));
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
     }
 

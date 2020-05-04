@@ -1,22 +1,24 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.extra;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.games.GameState;
 import com.eu.habbo.habbohotel.games.battlebanzai.BattleBanzaiGame;
-import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredBlob extends InteractionDefault {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WiredBlob.class);
+
     enum WiredBlobState {
         ACTIVE("0"),
         USED("1");
@@ -104,14 +106,14 @@ public class WiredBlob extends InteractionDefault {
         String[] params = this.getBaseItem().getCustomParams().split(",");
 
         if (params.length != 2) {
-            Emulator.getLogging().logErrorLine("Wired blobs should have customparams with two parameters (points,resetsWithGame)");
+            LOGGER.error("Wired blobs should have customparams with two parameters (points,resetsWithGame)");
             return;
         }
 
         try {
             this.POINTS_REWARD = Integer.parseInt(params[0]);
         } catch (NumberFormatException e) {
-            Emulator.getLogging().logErrorLine("Wired blobs should have customparams with the first parameter being the amount of points (number)");
+            LOGGER.error("Wired blobs should have customparams with the first parameter being the amount of points (number)");
             return;
         }
 

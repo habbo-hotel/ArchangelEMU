@@ -1,6 +1,8 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,15 +11,11 @@ import java.sql.SQLException;
 
 public class RoomBan {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomBan.class);
+
     public final int roomId;
-
-
     public final int userId;
-
-
     public final String username;
-
-
     public final int endTimestamp;
 
     public RoomBan(int roomId, int userId, String username, int endTimestamp) {
@@ -42,7 +40,7 @@ public class RoomBan {
             statement.setInt(3, this.endTimestamp);
             statement.execute();
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -53,7 +51,7 @@ public class RoomBan {
             statement.setInt(2, this.userId);
             statement.execute();
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 }

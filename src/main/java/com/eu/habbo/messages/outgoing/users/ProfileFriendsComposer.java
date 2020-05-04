@@ -1,6 +1,5 @@
 package com.eu.habbo.messages.outgoing.users;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
@@ -8,6 +7,8 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class ProfileFriendsComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileFriendsComposer.class);
+
     private final List<MessengerBuddy> lovers = new ArrayList<>();
     private final List<MessengerBuddy> friends = new ArrayList<>();
     private final List<MessengerBuddy> haters = new ArrayList<>();
@@ -47,7 +50,7 @@ public class ProfileFriendsComposer extends MessageComposer {
                 }
             }
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
 
         this.userId = habbo.getHabboInfo().getId();
@@ -101,7 +104,7 @@ public class ProfileFriendsComposer extends MessageComposer {
                 this.response.appendString(this.haters.get(hatersIndex).getLook());
             }
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
         return this.response;
     }

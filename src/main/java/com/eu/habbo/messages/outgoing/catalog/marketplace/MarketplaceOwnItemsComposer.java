@@ -7,8 +7,12 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MarketplaceOwnItemsComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MarketplaceOwnItemsComposer.class);
+
     private final Habbo habbo;
 
     public MarketplaceOwnItemsComposer(Habbo habbo) {
@@ -54,7 +58,7 @@ public class MarketplaceOwnItemsComposer extends MessageComposer {
 
                 this.response.appendInt(0);
             } catch (Exception e) {
-                logger.error("Caught exception", e);
+                LOGGER.error("Caught exception", e);
             }
         }
 

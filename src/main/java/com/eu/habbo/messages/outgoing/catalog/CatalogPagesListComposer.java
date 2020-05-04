@@ -6,10 +6,14 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class CatalogPagesListComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogPagesListComposer.class);
+
     private final Habbo habbo;
     private final String mode;
     private final boolean hasPermission;
@@ -44,7 +48,7 @@ public class CatalogPagesListComposer extends MessageComposer {
 
             return this.response;
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
 
         return null;

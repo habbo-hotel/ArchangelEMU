@@ -16,6 +16,8 @@ import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemCancelledEvent;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemOfferedEvent;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemSoldEvent;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,6 +28,8 @@ import java.util.List;
 
 
 public class MarketPlace {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MarketPlace.class);
+
     //Configuration. Loaded from database & updated accordingly.
     public static boolean MARKETPLACE_ENABLED = true;
 
@@ -43,7 +47,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return offers;
@@ -101,7 +105,7 @@ public class MarketPlace {
                     }
                 }
             } catch (SQLException e) {
-                logger.error("Caught SQL exception", e);
+                LOGGER.error("Caught SQL exception", e);
                 habbo.getClient().sendResponse(new MarketplaceCancelSaleComposer(offer, false));
             }
         }
@@ -163,7 +167,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return offers;
@@ -193,7 +197,7 @@ public class MarketPlace {
             message.appendInt(1);
             message.appendInt(itemId);
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -208,7 +212,7 @@ public class MarketPlace {
                 number = set.getInt("number");
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return number;
@@ -226,7 +230,7 @@ public class MarketPlace {
                 avg = set.getInt("avg");
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return calculateCommision(avg);
@@ -294,7 +298,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -321,7 +325,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -388,7 +392,7 @@ public class MarketPlace {
             statement.setInt(2, offer.getOfferId());
             statement.execute();
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 

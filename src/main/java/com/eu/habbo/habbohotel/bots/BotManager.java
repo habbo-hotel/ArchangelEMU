@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.cache.HabboOfferPurchase;
 import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
@@ -15,12 +16,15 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.plugin.events.bots.BotPickUpEvent;
 import com.eu.habbo.plugin.events.bots.BotPlacedEvent;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.Map;
 
 public class BotManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BotManager.class);
 
     final private static THashMap<String, Class<? extends Bot>> botDefenitions = new THashMap<>();
     public static int MINIMUM_CHAT_SPEED = 7;
@@ -38,7 +42,7 @@ public class BotManager {
 
         this.reload();
 
-        logger.info("Bot Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Bot Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public static void addBotDefinition(String type, Class<? extends Bot> botClazz) throws Exception {
@@ -58,10 +62,10 @@ public class BotManager {
                 m.setAccessible(true);
                 m.invoke(null);
             } catch (NoSuchMethodException e) {
-                logger.info("Bot Manager -> Failed to execute initialise method upon bot type '" + set.getKey() + "'. No Such Method!");
+                LOGGER.info("Bot Manager -> Failed to execute initialise method upon bot type '" + set.getKey() + "'. No Such Method!");
                 return false;
             } catch (Exception e) {
-                logger.info("Bot Manager -> Failed to execute initialise method upon bot type '" + set.getKey() + "'. Error: " + e.getMessage());
+                LOGGER.info("Bot Manager -> Failed to execute initialise method upon bot type '" + set.getKey() + "'. Error: " + e.getMessage());
                 return false;
             }
         }
@@ -88,12 +92,12 @@ public class BotManager {
                             }
                         }
                     } catch (SQLException e) {
-                        logger.error("Caught SQL exception", e);
+                        LOGGER.error("Caught SQL exception", e);
                     }
                 }
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return bot;
@@ -143,7 +147,7 @@ public class BotManager {
                     try {
                         topItem.onWalkOn(bot.getRoomUnit(), room, null);
                     } catch (Exception e) {
-                        logger.error("Caught exception", e);
+                        LOGGER.error("Caught exception", e);
                     }
                 }
                 bot.cycle(false);
@@ -193,11 +197,11 @@ public class BotManager {
             if (botClazz != null)
                 return botClazz.getDeclaredConstructor(ResultSet.class).newInstance(set);
             else
-                Emulator.getLogging().logErrorLine("Unknown Bot Type: " + type);
+                LOGGER.error("Unknown Bot Type: " + type);
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
 
         return null;
@@ -208,7 +212,7 @@ public class BotManager {
             statement.setInt(1, bot.getId());
             return statement.execute();
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return false;
@@ -221,9 +225,9 @@ public class BotManager {
                 m.setAccessible(true);
                 m.invoke(null);
             } catch (NoSuchMethodException e) {
-                logger.info("Bot Manager -> Failed to execute dispose method upon bot type '" + set.getKey() + "'. No Such Method!");
+                LOGGER.info("Bot Manager -> Failed to execute dispose method upon bot type '" + set.getKey() + "'. No Such Method!");
             } catch (Exception e) {
-                logger.info("Bot Manager -> Failed to execute dispose method upon bot type '" + set.getKey() + "'. Error: " + e.getMessage());
+                LOGGER.info("Bot Manager -> Failed to execute dispose method upon bot type '" + set.getKey() + "'. Error: " + e.getMessage());
             }
         }
     }

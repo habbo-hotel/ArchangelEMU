@@ -1,6 +1,8 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class RoomPromotion {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomPromotion.class);
     private final Room room;
     public boolean needsUpdate;
     private String title;
@@ -43,7 +46,7 @@ public class RoomPromotion {
                 statement.setInt(4, this.room.getId());
                 statement.executeUpdate();
             } catch (SQLException e) {
-                logger.error("Caught SQL exception", e);
+                LOGGER.error("Caught SQL exception", e);
             }
 
             this.needsUpdate = false;

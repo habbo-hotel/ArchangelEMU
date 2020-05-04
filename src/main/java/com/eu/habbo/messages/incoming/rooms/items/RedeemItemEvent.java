@@ -11,8 +11,12 @@ import com.eu.habbo.messages.outgoing.users.UserCreditsComposer;
 import com.eu.habbo.messages.outgoing.users.UserCurrencyComposer;
 import com.eu.habbo.plugin.events.furniture.FurnitureRedeemedEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RedeemItemEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RedeemItemEvent.class);
+
     @Override
     public void handle() throws Exception {
         int itemId = this.packet.readInt();
@@ -32,7 +36,7 @@ public class RedeemItemEvent extends MessageHandler {
                         try {
                             credits = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
                         } catch (Exception e) {
-                            Emulator.getLogging().logErrorLine("Failed to parse redeemable furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_<amount>");
+                            LOGGER.error("Failed to parse redeemable furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_<amount>");
                             return;
                         }
 
@@ -43,7 +47,7 @@ public class RedeemItemEvent extends MessageHandler {
                         try {
                             pixels = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
                         } catch (Exception e) {
-                            Emulator.getLogging().logErrorLine("Failed to parse redeemable pixel furniture: " + item.getBaseItem().getName() + ". Must be in format of PF_<amount>");
+                            LOGGER.error("Failed to parse redeemable pixel furniture: " + item.getBaseItem().getName() + ". Must be in format of PF_<amount>");
                             return;
                         }
 
@@ -55,14 +59,14 @@ public class RedeemItemEvent extends MessageHandler {
                         try {
                             pointsType = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
                         } catch (Exception e) {
-                            Emulator.getLogging().logErrorLine("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
+                            LOGGER.error("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
                             return;
                         }
 
                         try {
                             points = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
                         } catch (Exception e) {
-                            Emulator.getLogging().logErrorLine("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
+                            LOGGER.error("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
                             return;
                         }
 
@@ -73,7 +77,7 @@ public class RedeemItemEvent extends MessageHandler {
                         try {
                             points = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
                         } catch (Exception e) {
-                            Emulator.getLogging().logErrorLine("Failed to parse redeemable diamonds furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_diamond_<amount>");
+                            LOGGER.error("Failed to parse redeemable diamonds furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_diamond_<amount>");
                             return;
                         }
 

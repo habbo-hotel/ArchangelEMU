@@ -2,6 +2,8 @@ package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.ResultSet;
@@ -12,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class RoomLayout {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomLayout.class);
     protected static final int BASICMOVEMENTCOST = 10;
     protected static final int DIAGONALMOVEMENTCOST = 14;
     public static double MAXIMUM_STEP_HEIGHT = 1.1;
@@ -42,7 +45,7 @@ public class RoomLayout {
 
             this.parse();
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
     }
 

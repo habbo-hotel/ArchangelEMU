@@ -20,6 +20,8 @@ import com.eu.habbo.plugin.events.users.UserPointsEvent;
 import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -28,6 +30,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Habbo implements Runnable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Habbo.class);
+
     private final HabboInfo habboInfo;
     private final HabboStats habboStats;
     private final Messenger messenger;
@@ -122,7 +127,7 @@ public class Habbo implements Runnable {
         this.messenger.connectionChanged(this, true, false);
 
         Emulator.getGameEnvironment().getRoomManager().loadRoomsForHabbo(this);
-        Emulator.getLogging().logUserLine(this.habboInfo.getUsername() + " logged in from IP " + this.habboInfo.getIpLogin());
+        LOGGER.info("{} logged in from IP {}", this.habboInfo.getUsername(), this.habboInfo.getIpLogin());
     }
 
 
@@ -148,7 +153,7 @@ public class Habbo implements Runnable {
                 }
             }
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
 
         try {
@@ -164,13 +169,13 @@ public class Habbo implements Runnable {
 
             this.habboStats.dispose();
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
             return;
         } finally {
             Emulator.getGameEnvironment().getRoomManager().unloadRoomsForHabbo(this);
             Emulator.getGameEnvironment().getHabboManager().removeHabbo(this);
         }
-        Emulator.getLogging().logUserLine(this.habboInfo.getUsername() + " disconnected.");
+        LOGGER.info("{} disconnected.", this.habboInfo.getUsername());
         this.client = null;
     }
 

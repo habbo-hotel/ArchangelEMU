@@ -4,12 +4,16 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SetMotto extends RCONMessage<SetMotto.SetMottoJSON> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SetMotto.class);
+
     public SetMotto() {
         super(SetMottoJSON.class);
     }
@@ -29,7 +33,7 @@ public class SetMotto extends RCONMessage<SetMotto.SetMottoJSON> {
                     statement.execute();
                 }
             } catch (SQLException e) {
-                logger.error("Caught exception", e);
+                LOGGER.error("Caught exception", e);
             }
         }
     }

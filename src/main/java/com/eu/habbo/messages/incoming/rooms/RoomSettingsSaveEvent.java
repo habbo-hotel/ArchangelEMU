@@ -7,8 +7,12 @@ import com.eu.habbo.habbohotel.rooms.RoomCategory;
 import com.eu.habbo.habbohotel.rooms.RoomState;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RoomSettingsSaveEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomSettingsSaveEvent.class);
+
     @Override
     public void handle() throws Exception {
         int roomId = this.packet.readInt();
@@ -93,7 +97,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                     }
 
                     ScripterManager.scripterDetected(this.client, message);
-                    Emulator.getLogging().logUserLine(message);
+                    LOGGER.info(message);
                 }
 
 

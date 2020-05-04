@@ -14,6 +14,8 @@ import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WiredTriggerBotReachedFurni.class);
+
     public final static WiredTriggerType type = WiredTriggerType.BOT_REACHED_STF;
 
     private THashSet<HabboItem> items;
@@ -157,7 +161,7 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
                     if (item != null)
                         this.items.add(item);
                 } catch (Exception e) {
-                    logger.error("Caught exception", e);
+                    LOGGER.error("Caught exception", e);
                 }
             }
         }

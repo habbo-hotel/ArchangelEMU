@@ -13,12 +13,16 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
 public class InteractionGameTimer extends HabboItem implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionGameTimer.class);
+
     private int[] TIMER_INTERVAL_STEPS = new int[] { 30, 60, 120, 180, 300, 600 };
 
     private int baseTime = 0;
@@ -89,7 +93,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
                         }
                     }).toArray();
         } catch (Exception e) {
-            logger.error("Caught exception", e);
+            LOGGER.error("Caught exception", e);
         }
     }
 
@@ -117,7 +121,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
                     room.addGame(game);
                     game.initialise();
                 } catch (Exception e) {
-                    logger.error("Caught exception", e);
+                    LOGGER.error("Caught exception", e);
                 }
             }
         }

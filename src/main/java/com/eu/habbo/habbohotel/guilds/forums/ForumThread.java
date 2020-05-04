@@ -9,11 +9,15 @@ import com.eu.habbo.plugin.events.guilds.forums.GuildForumThreadBeforeCreated;
 import com.eu.habbo.plugin.events.guilds.forums.GuildForumThreadCreated;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.*;
 
 public class ForumThread implements Runnable, ISerialize {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForumThread.class);
+
 
     private final static THashMap<Integer, THashSet<ForumThread>> guildThreadsCache = new THashMap<>();
     private final static THashMap<Integer, ForumThread> forumThreadsCache = new THashMap<>();
@@ -108,7 +112,7 @@ public class ForumThread implements Runnable, ISerialize {
                 Emulator.getPluginManager().fireEvent(new GuildForumThreadCreated(createdThread));
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return createdThread;
@@ -156,7 +160,7 @@ public class ForumThread implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return threads;
@@ -195,7 +199,7 @@ public class ForumThread implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return foundThread;
@@ -337,7 +341,7 @@ public class ForumThread implements Runnable, ISerialize {
                     addComment(comment);
                 }
             } catch (SQLException e) {
-                logger.error("Caught SQL exception", e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -461,7 +465,7 @@ public class ForumThread implements Runnable, ISerialize {
 
             this.needsUpdate = false;
         } catch (SQLException e) {
-            logger.error("Caught SQL exception", e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 }
