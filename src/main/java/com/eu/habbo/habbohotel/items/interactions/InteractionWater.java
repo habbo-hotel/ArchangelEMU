@@ -1,43 +1,43 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.util.Pair;
 
+import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 public class InteractionWater extends InteractionDefault {
+
+    private static final String DEEP_WATER_NAME = "bw_water_2";
+    private final boolean isDeepWater;
+
     public InteractionWater(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
+        this.isDeepWater = baseItem.getName().equalsIgnoreCase(DEEP_WATER_NAME);
     }
 
     public InteractionWater(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.isDeepWater = false;
     }
 
     @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         super.onMove(room, oldLocation, newLocation);
-
-        this.recalculate(room);
+        this.updateWaters(room, oldLocation);
     }
 
     @Override
     public void onPickUp(Room room) {
-        this.recalculate(room);
+        this.updateWaters(room, null);
 
         Object[] empty = new Object[]{};
         for (Habbo habbo : room.getHabbosOnItem(this)) {
@@ -58,89 +58,8 @@ public class InteractionWater extends InteractionDefault {
 
     @Override
     public void onPlace(Room room) {
-        this.recalculate(room);
+        this.updateWaters(room, null);
         super.onPlace(room);
-    }
-
-    public void refreshWaters(Room room) {
-        if (room == null) {
-            room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-        }
-
-        int _1 = 0;
-        int _2 = 0;
-        int _3 = 0;
-        int _4 = 0;
-        int _5 = 0;
-        int _6 = 0;
-        int _7 = 0;
-        int _8 = 0;
-        int _9 = 0;
-        int _10 = 0;
-        int _11 = 0;
-        int _12 = 0;
-
-        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWaterItem.class)) {
-            ((InteractionWaterItem) item).update();
-        }
-
-        if (!this.getBaseItem().getName().equalsIgnoreCase("bw_water_2")) {
-            if (room.waterTiles.containsKey(this.getX() - 1) && room.waterTiles.get(this.getX() - 1).contains(this.getY() - 1))
-                _1 = 1;
-            if (room.waterTiles.containsKey(this.getX()) && room.waterTiles.get(this.getX()).contains(this.getY() - 1))
-                _2 = 1;
-            if (room.waterTiles.containsKey(this.getX() + 1) && room.waterTiles.get(this.getX() + 1).contains(this.getY() - 1))
-                _3 = 1;
-            if (room.waterTiles.containsKey(this.getX() + 2) && room.waterTiles.get(this.getX() + 2).contains(this.getY() - 1))
-                _4 = 1;
-            if (room.waterTiles.containsKey(this.getX() - 1) && room.waterTiles.get(this.getX() - 1).contains(this.getY()))
-                _5 = 1;
-            if (room.waterTiles.containsKey(this.getX() + 2) && room.waterTiles.get(this.getX() + 2).contains(this.getY()))
-                _6 = 1;
-            if (room.waterTiles.containsKey(this.getX() - 1) && room.waterTiles.get(this.getX() - 1).contains(this.getY() + 1))
-                _7 = 1;
-            if (room.waterTiles.containsKey(this.getX() + 2) && room.waterTiles.get(this.getX() + 2).contains(this.getY() + 1))
-                _8 = 1;
-            if (room.waterTiles.containsKey(this.getX() - 1) && room.waterTiles.get(this.getX() - 1).contains(this.getY() + 2))
-                _9 = 1;
-            if (room.waterTiles.containsKey(this.getX()) && room.waterTiles.get(this.getX()).contains(this.getY() + 2))
-                _10 = 1;
-            if (room.waterTiles.containsKey(this.getX() + 1) && room.waterTiles.get(this.getX() + 1).contains(this.getY() + 2))
-                _11 = 1;
-            if (room.waterTiles.containsKey(this.getX() + 2) && room.waterTiles.get(this.getX() + 2).contains(this.getY() + 2))
-                _12 = 1;
-        }
-
-        //if (_1  == 0 && room.getLayout().isVoidTile((short)(this.getX() -1), (short) (this.getY() -1))) _1  = 1;
-        if (_2 == 0 && room.getLayout().isVoidTile(this.getX(), (short) (this.getY() - 1))) _2 = 1;
-        if (_3 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 1), (short) (this.getY() - 1))) _3 = 1;
-        //if (_4  == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() - 1))) _4  = 1;
-        if (_5 == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), this.getY())) _5 = 1;
-        if (_6 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), this.getY())) _6 = 1;
-        if (_7 == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), (short) (this.getY() + 1))) _7 = 1;
-        if (_8 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() + 1))) _8 = 1;
-        //if (_9  == 0 && room.getLayout().isVoidTile((short)(this.getX() -1), (short) (this.getY() + 2))) _9 = 1;
-        if (_10 == 0 && room.getLayout().isVoidTile(this.getX(), (short) (this.getY() + 2))) _10 = 1;
-        if (_11 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 1), (short) (this.getY() + 2))) _11 = 1;
-        //if (_12 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() + 2))) _12 = 1;
-
-        int result = 0;
-        result |= _1 << 11;
-        result |= _2 << 10;
-        result |= _3 << 9;
-        result |= _4 << 8;
-        result |= _5 << 7;
-        result |= _6 << 6;
-        result |= _7 << 5;
-        result |= _8 << 4;
-        result |= _9 << 3;
-        result |= _10 << 2;
-        result |= _11 << 1;
-        result |= _12;
-
-        this.setExtradata(result + "");
-        this.needsUpdate(true);
-        room.updateItem(this);
     }
 
     @Override
@@ -167,28 +86,6 @@ public class InteractionWater extends InteractionDefault {
             return;
 
         pet.getRoomUnit().removeStatus(RoomUnitStatus.SWIM);
-    }
-
-    private void recalculate(Room room) {
-        THashMap<Short, TIntArrayList> tiles = new THashMap<>();
-
-        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWater.class)) {
-            for (short i = 0; i < item.getBaseItem().getLength(); i++) {
-                for (short j = 0; j < item.getBaseItem().getWidth(); j++) {
-                    if (!tiles.containsKey((short) (item.getX() + i))) {
-                        tiles.put((short) (item.getX() + i), new TIntArrayList());
-                    }
-
-                    tiles.get((short) (item.getX() + i)).add(item.getY() + j);
-                }
-            }
-        }
-
-        room.waterTiles = tiles;
-
-        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWater.class)) {
-            ((InteractionWater) item).refreshWaters(room);
-        }
     }
 
     @Override
@@ -222,4 +119,161 @@ public class InteractionWater extends InteractionDefault {
 
         return pet == null || pet.getPetData().canSwim;
     }
+
+    private void updateWaters(Room room, RoomTile oldLocation) {
+        // Update ourself.
+        this.updateWater(room);
+
+        // Find targets containing furni to update.
+        Rectangle target = this.getRectangle(1, 1);
+        Rectangle targetOld = null;
+
+        if (oldLocation != null) {
+            targetOld = RoomLayout.getRectangle(
+                    oldLocation.x - 1,
+                    oldLocation.y - 1,
+                    this.getBaseItem().getWidth() + 2,
+                    this.getBaseItem().getLength() + 2,
+                    this.getRotation());
+        }
+
+        // Update neighbouring water.
+        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWater.class)) {
+            // We already updated ourself.
+            if (item == this) {
+                continue;
+            }
+
+            // Check if found water furni is touching or intersecting our water furni.
+            // Check the same for the old location
+            Rectangle itemRectangle = item.getRectangle();
+
+            if (target.intersects(itemRectangle) || (targetOld != null && targetOld.intersects(itemRectangle))) {
+                ((InteractionWater) item).updateWater(room);
+            }
+        }
+
+        // Update water items we might have missed in the old location.
+        if (targetOld != null) {
+            for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWaterItem.class)) {
+                if (targetOld.intersects(item.getRectangle())) {
+                    ((InteractionWaterItem) item).update();
+                }
+            }
+        }
+    }
+
+    private void updateWater(Room room) {
+        Rectangle target = this.getRectangle();
+
+        // Only update water item furnis that are intersecting with us.
+        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWaterItem.class)) {
+            if (target.intersects(item.getRectangle())) {
+                ((InteractionWaterItem) item).update();
+            }
+        }
+
+        // Prepare bits for cutting off water.
+        byte _1 = 0;
+        byte _2 = 0;
+        byte _3 = 0;
+        byte _4 = 0;
+        byte _5 = 0;
+        byte _6 = 0;
+        byte _7 = 0;
+        byte _8 = 0;
+        byte _9 = 0;
+        byte _10 = 0;
+        byte _11 = 0;
+        byte _12 = 0;
+
+        // Check if we are touching a water tile.
+        if (this.isValidForMask(room, this.getX() - 1, this.getY() - 1, this.getZ())) {
+            _1 = 1;
+        }
+        if (this.isValidForMask(room, this.getX(), this.getY() - 1, this.getZ())) {
+            _2 = 1;
+        }
+        if (this.isValidForMask(room, this.getX() + 1, this.getY() - 1, this.getZ())) {
+            _3 = 1;
+        }
+        if (this.isValidForMask(room, this.getX() + 2, this.getY() - 1, this.getZ())) {
+            _4 = 1;
+        }
+        if (this.isValidForMask(room, this.getX() - 1, this.getY(), this.getZ())) {
+            _5 = 1;
+        }
+        if (this.isValidForMask(room, this.getX() + 2, this.getY(), this.getZ())) {
+            _6 = 1;
+        }
+        if (this.isValidForMask(room, this.getX() - 1, this.getY() + 1, this.getZ())) {
+            _7 = 1;
+        }
+        if (this.isValidForMask(room, this.getX() + 2, this.getY() + 1, this.getZ())) {
+            _8 = 1;
+        }
+        if (this.isValidForMask(room, this.getX() - 1, this.getY() + 2, this.getZ())) {
+            _9 = 1;
+        }
+        if (this.isValidForMask(room, this.getX(), this.getY() + 2, this.getZ())) {
+            _10 = 1;
+        }
+        if (this.isValidForMask(room, this.getX() + 1, this.getY() + 2, this.getZ())) {
+            _11 = 1;
+        }
+        if (this.isValidForMask(room, this.getX() + 2, this.getY() + 2, this.getZ())) {
+            _12 = 1;
+        }
+
+        // Check if we are touching invalid tiles.
+        // if (_1  == 0 && room.getLayout().isVoidTile((short)(this.getX() -1), (short) (this.getY() -1))) _1  = 1;
+        if (_2 == 0 && room.getLayout().isVoidTile(this.getX(), (short) (this.getY() - 1))) _2 = 1;
+        if (_3 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 1), (short) (this.getY() - 1))) _3 = 1;
+        // if (_4  == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() - 1))) _4  = 1;
+        if (_5 == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), this.getY())) _5 = 1;
+        if (_6 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), this.getY())) _6 = 1;
+        if (_7 == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), (short) (this.getY() + 1))) _7 = 1;
+        if (_8 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() + 1))) _8 = 1;
+        // if (_9  == 0 && room.getLayout().isVoidTile((short)(this.getX() -1), (short) (this.getY() + 2))) _9 = 1;
+        if (_10 == 0 && room.getLayout().isVoidTile(this.getX(), (short) (this.getY() + 2))) _10 = 1;
+        if (_11 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 1), (short) (this.getY() + 2))) _11 = 1;
+        // if (_12 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() + 2))) _12 = 1;
+
+        // Update water.
+        int result = (_1 << 11)
+                | (_2 << 10)
+                | (_3 << 9)
+                | (_4 << 8)
+                | (_5 << 7)
+                | (_6 << 6)
+                | (_7 << 5)
+                | (_8 << 4)
+                | (_9 << 3)
+                | (_10 << 2)
+                | (_11 << 1)
+                | _12;
+
+        String updatedData = String.valueOf(result);
+
+        if (!this.getExtradata().equals(updatedData)) {
+            this.setExtradata(updatedData);
+            this.needsUpdate(true);
+            room.updateItem(this);
+        }
+    }
+
+    private boolean isValidForMask(Room room, int x, int y, double z) {
+        for (HabboItem item : room.getItemsAt(x, y, z)) {
+            if (item instanceof InteractionWater) {
+                // Only allow masking if both are deepwater or both not.
+                // This allows deepwater and normal water to look nice.
+                if (((InteractionWater) item).isDeepWater == this.isDeepWater) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 }
