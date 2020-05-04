@@ -8,6 +8,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +30,10 @@ public abstract class Server {
         this.host = host;
         this.port = port;
 
-        this.bossGroup = new NioEventLoopGroup(bossGroupThreads);
-        this.workerGroup = new NioEventLoopGroup(workerGroupThreads);
+        String threadName = name.replace("Server", "").replace(" ", "");
+
+        this.bossGroup = new NioEventLoopGroup(bossGroupThreads, new DefaultThreadFactory(threadName + "Boss"));
+        this.workerGroup = new NioEventLoopGroup(workerGroupThreads, new DefaultThreadFactory(threadName + "Worker"));
         this.serverBootstrap = new ServerBootstrap();
     }
 
@@ -40,8 +43,8 @@ public abstract class Server {
         this.serverBootstrap.childOption(ChannelOption.TCP_NODELAY, true);
         this.serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
         this.serverBootstrap.childOption(ChannelOption.SO_REUSEADDR, true);
-        this.serverBootstrap.childOption(ChannelOption.SO_RCVBUF, 5120);
-        this.serverBootstrap.childOption(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(5120));
+        this.serverBootstrap.childOption(ChannelOption.SO_RCVBUF, 4096);
+        this.serverBootstrap.childOption(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(4096));
         this.serverBootstrap.childOption(ChannelOption.ALLOCATOR, new UnpooledByteBufAllocator(false));
     }
 

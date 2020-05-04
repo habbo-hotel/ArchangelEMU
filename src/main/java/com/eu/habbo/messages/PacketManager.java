@@ -1,7 +1,6 @@
 package com.eu.habbo.messages;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.CreditsScheduler;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.messages.incoming.Incoming;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -53,9 +52,9 @@ import com.eu.habbo.messages.incoming.rooms.items.jukebox.*;
 import com.eu.habbo.messages.incoming.rooms.items.lovelock.LoveLockStartConfirmEvent;
 import com.eu.habbo.messages.incoming.rooms.items.rentablespace.RentSpaceCancelEvent;
 import com.eu.habbo.messages.incoming.rooms.items.rentablespace.RentSpaceEvent;
-import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestStateChange;
-import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestPlaylists;
 import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestPlaylistChange;
+import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestPlaylists;
+import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestStateChange;
 import com.eu.habbo.messages.incoming.rooms.pets.*;
 import com.eu.habbo.messages.incoming.rooms.promotions.BuyRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.rooms.promotions.RequestPromotionRoomsEvent;
@@ -169,7 +168,7 @@ public class PacketManager {
 
                 if (client.getHabbo() == null && !handlerClass.isAnnotationPresent(NoAuthMessage.class)) {
                     if (DEBUG_SHOW_PACKETS) {
-                        LOGGER.debug("[CLIENT][NOT LOGGED IN][{}] => {}", packet.getMessageId(), packet.getMessageBody());
+                        LOGGER.warn("Client packet {} requires an authenticated session.", packet.getMessageId());
                     }
 
                     return;
@@ -180,7 +179,7 @@ public class PacketManager {
                 if (handler.getRatelimit() > 0) {
                     if (client.messageTimestamps.containsKey(handlerClass) && System.currentTimeMillis() - client.messageTimestamps.get(handlerClass) < handler.getRatelimit()) {
                         if (PacketManager.DEBUG_SHOW_PACKETS) {
-                            LOGGER.debug("[CLIENT][{}][RATELIMITED] => {}", packet.getMessageId(), packet.getMessageBody());
+                            LOGGER.warn("Client packet {} was ratelimited.", packet.getMessageId());
                         }
 
                         return;
@@ -189,12 +188,8 @@ public class PacketManager {
                     }
                 }
 
-                if (PacketManager.DEBUG_SHOW_PACKETS) {
-                    LOGGER.debug("[CLIENT][{}] => {}", packet.getMessageId(), packet.getMessageBody());
-                }
-
                 if (logList.contains(packet.getMessageId()) && client.getHabbo() != null) {
-                    LOGGER.debug("[CLIENT][{}][{}] => {}", client.getHabbo().getHabboInfo().getUsername(), packet.getMessageId(), packet.getMessageBody());
+                    LOGGER.info("User {} sent packet {} with body {}", client.getHabbo().getHabboInfo().getUsername(), packet.getMessageId(), packet.getMessageBody());
                 }
 
                 handler.client = client;
@@ -208,10 +203,6 @@ public class PacketManager {
 
                 if (!handler.isCancelled) {
                     handler.handle();
-                }
-            } else {
-                if (PacketManager.DEBUG_SHOW_PACKETS) {
-                    LOGGER.debug("[CLIENT][UNDEFINED][{}] => {}", packet.getMessageId(), packet.getMessageBody());
                 }
             }
         } catch (Exception e) {

@@ -1,10 +1,9 @@
 package com.eu.habbo.messages;
 
-import com.eu.habbo.util.HexUtils;
+import com.eu.habbo.util.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
-import io.netty.util.IllegalReferenceCountException;
 import io.netty.util.ReferenceCounted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,13 +172,7 @@ public class ServerMessage implements ReferenceCounted {
     }
 
     public String getBodyString() {
-        byte[] data = this.get().array();
-
-        if (data.length == 0) {
-            return "";
-        }
-
-        return HexUtils.pretty(data);
+        return PacketUtils.formatPacket(this.channelBuffer);
     }
 
     public int getHeader() {
