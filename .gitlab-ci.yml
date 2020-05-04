@@ -4,28 +4,22 @@ stages:
   - build
   - deploy
 
-cache:
-  paths:
-    - target/
-
 build:
   stage: build
   script:
     - mvn package
   only:
-    - dev
-    - master
+    changes:
+      - src/**/*
   artifacts:
-      paths:
+    paths:
       - target/Habbo-*.jar
-
 
 .notify_builder: &notify_builder
   stage: deploy
   trigger:
     project: project-dobby/builder
     strategy: depend
-
 
 notify_deploy_release:
   <<: *notify_builder
