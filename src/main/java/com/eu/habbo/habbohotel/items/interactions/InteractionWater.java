@@ -17,16 +17,20 @@ import java.util.List;
 public class InteractionWater extends InteractionDefault {
 
     private static final String DEEP_WATER_NAME = "bw_water_2";
+
     private final boolean isDeepWater;
+    private boolean isInRoom;
 
     public InteractionWater(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.isDeepWater = baseItem.getName().equalsIgnoreCase(DEEP_WATER_NAME);
+        this.isInRoom = this.getRoomId() != 0;
     }
 
     public InteractionWater(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.isDeepWater = false;
+        this.isInRoom = this.getRoomId() != 0;
     }
 
     @Override
@@ -37,6 +41,7 @@ public class InteractionWater extends InteractionDefault {
 
     @Override
     public void onPickUp(Room room) {
+        this.isInRoom = false;
         this.updateWaters(room, null);
 
         Object[] empty = new Object[]{};
@@ -58,6 +63,7 @@ public class InteractionWater extends InteractionDefault {
 
     @Override
     public void onPlace(Room room) {
+        this.isInRoom = true;
         this.updateWaters(room, null);
         super.onPlace(room);
     }
@@ -188,7 +194,7 @@ public class InteractionWater extends InteractionDefault {
         byte _12 = 0;
 
         // Check if we are touching a water tile.
-        if (this.isValidForMask(room, this.getX() - 1, this.getY() - 1, this.getZ())) {
+        if (this.isValidForMask(room, this.getX() - 1, this.getY() - 1, this.getZ(), true)) {
             _1 = 1;
         }
         if (this.isValidForMask(room, this.getX(), this.getY() - 1, this.getZ())) {
@@ -197,7 +203,7 @@ public class InteractionWater extends InteractionDefault {
         if (this.isValidForMask(room, this.getX() + 1, this.getY() - 1, this.getZ())) {
             _3 = 1;
         }
-        if (this.isValidForMask(room, this.getX() + 2, this.getY() - 1, this.getZ())) {
+        if (this.isValidForMask(room, this.getX() + 2, this.getY() - 1, this.getZ(), true)) {
             _4 = 1;
         }
         if (this.isValidForMask(room, this.getX() - 1, this.getY(), this.getZ())) {
@@ -212,7 +218,7 @@ public class InteractionWater extends InteractionDefault {
         if (this.isValidForMask(room, this.getX() + 2, this.getY() + 1, this.getZ())) {
             _8 = 1;
         }
-        if (this.isValidForMask(room, this.getX() - 1, this.getY() + 2, this.getZ())) {
+        if (this.isValidForMask(room, this.getX() - 1, this.getY() + 2, this.getZ(), true)) {
             _9 = 1;
         }
         if (this.isValidForMask(room, this.getX(), this.getY() + 2, this.getZ())) {
@@ -221,7 +227,7 @@ public class InteractionWater extends InteractionDefault {
         if (this.isValidForMask(room, this.getX() + 1, this.getY() + 2, this.getZ())) {
             _11 = 1;
         }
-        if (this.isValidForMask(room, this.getX() + 2, this.getY() + 2, this.getZ())) {
+        if (this.isValidForMask(room, this.getX() + 2, this.getY() + 2, this.getZ(), true)) {
             _12 = 1;
         }
 
@@ -263,11 +269,24 @@ public class InteractionWater extends InteractionDefault {
     }
 
     private boolean isValidForMask(Room room, int x, int y, double z) {
+        return this.isValidForMask(room, x, y, z, false);
+    }
+
+    private boolean isValidForMask(Room room, int x, int y, double z, boolean corner) {
         for (HabboItem item : room.getItemsAt(x, y, z)) {
             if (item instanceof InteractionWater) {
-                // Only allow masking if both are deepwater or both not.
+                InteractionWater water = (InteractionWater) item;
+
+                // Take out picked up water from the recalculation.
+                if (!water.isInRoom) {
+                    continue;
+                }
+
+                // Allow:
+                // - masking if both are deepwater or both not.
+                // - corners too because otherwise causes ugly clipping issues.
                 // This allows deepwater and normal water to look nice.
-                if (((InteractionWater) item).isDeepWater == this.isDeepWater) {
+                if (corner && !this.isDeepWater || water.isDeepWater == this.isDeepWater) {
                     return true;
                 }
             }
