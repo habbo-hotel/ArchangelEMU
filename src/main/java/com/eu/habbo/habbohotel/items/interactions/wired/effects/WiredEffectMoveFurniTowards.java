@@ -107,6 +107,10 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
             RoomLayout layout = room.getLayout();
             boolean collided = false;
 
+            if (layout == null) {
+                break;
+            }
+
             for (int i = 0; i < 3; i++) {
                 if (target != null)
                     break;
