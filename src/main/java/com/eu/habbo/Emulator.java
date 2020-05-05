@@ -66,6 +66,7 @@ public final class Emulator {
     private static GameServer gameServer;
     private static RCONServer rconServer;
     private static CameraClient cameraClient;
+    private static Logging logging;
     private static Database database;
     private static DatabaseLogger databaseLogger;
     private static ThreadPooling threading;
@@ -100,6 +101,7 @@ public final class Emulator {
             setBuild();
             Emulator.stopped = false;
             ConsoleCommand.load();
+            Emulator.logging = new Logging();
 
             System.out.println(logo);
 
@@ -317,6 +319,14 @@ public final class Emulator {
 
     public static RCONServer getRconServer() {
         return rconServer;
+    }
+
+    /**
+     * @deprecated Do not use. Please use LoggerFactory.getLogger(YourClass.class) to log.
+     */
+    @Deprecated
+    public static Logging getLogging() {
+        return logging;
     }
 
     public static ThreadPooling getThreading() {
