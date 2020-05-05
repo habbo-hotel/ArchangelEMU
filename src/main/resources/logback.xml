@@ -9,14 +9,10 @@
 
     <appender name="FileDebug" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logging/debug.txt</file>
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator class="ch.qos.logback.classic.boolex.GEventEvaluator">
-                <expression>
-                    e.level == DEBUG
-                </expression>
-            </evaluator>
-            <OnMismatch>DENY</OnMismatch>
-            <OnMatch>NEUTRAL</OnMatch>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logging/debug.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
@@ -30,14 +26,10 @@
 
     <appender name="FileErrors" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logging/errors/runtime.txt</file>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>error</level>
-        </filter>
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator>
-                <expression>java.sql.SQLException.class.isInstance(throwable)</expression>
-            </evaluator>
-            <OnMatch>DENY</OnMatch>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logging/errors/runtime.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
@@ -51,13 +43,7 @@
 
     <appender name="FileErrorsSql" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logging/errors/sql.txt</file>
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator>
-                <expression>java.sql.SQLException.class.isInstance(throwable)</expression>
-            </evaluator>
-            <OnMismatch>DENY</OnMismatch>
-            <OnMatch>NEUTRAL</OnMatch>
-        </filter>
+        <filter class="com.eu.habbo.util.logback.SqlExceptionFilter" />
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logging/errors/sql.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
             <maxFileSize>50MB</maxFileSize>
