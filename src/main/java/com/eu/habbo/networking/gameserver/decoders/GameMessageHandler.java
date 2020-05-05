@@ -11,6 +11,8 @@ import io.netty.handler.codec.TooLongFrameException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 @ChannelHandler.Sharable
 public class GameMessageHandler extends ChannelInboundHandlerAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameMessageHandler.class);
@@ -53,6 +55,11 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        if (cause instanceof IOException) {
+            ctx.channel().close();
+            return;
+        }
+
         if (cause instanceof TooLongFrameException) {
             LOGGER.error("Disconnecting client, reason: \"" + cause.getMessage() + "\".");
         } else {
