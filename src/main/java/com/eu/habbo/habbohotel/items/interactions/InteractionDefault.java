@@ -1,6 +1,5 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
@@ -10,11 +9,15 @@ import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ServerMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionDefault extends HabboItem {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionDefault.class);
+
     public InteractionDefault(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -74,7 +77,7 @@ public class InteractionDefault extends HabboItem {
                         try {
                             currentState = Integer.valueOf(this.getExtradata());
                         } catch (NumberFormatException e) {
-                            Emulator.getLogging().logErrorLine("Incorrect extradata (" + this.getExtradata() + ") for item ID (" + this.getId() + ") of type (" + this.getBaseItem().getName() + ")");
+                            LOGGER.error("Incorrect extradata (" + this.getExtradata() + ") for item ID (" + this.getId() + ") of type (" + this.getBaseItem().getName() + ")");
                         }
 
                         this.setExtradata("" + (currentState + 1) % this.getBaseItem().getStateCount());

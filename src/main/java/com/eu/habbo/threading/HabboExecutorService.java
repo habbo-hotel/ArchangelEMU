@@ -1,12 +1,15 @@
 package com.eu.habbo.threading;
 
-import com.eu.habbo.Emulator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 
 public class HabboExecutorService extends ScheduledThreadPoolExecutor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HabboExecutorService.class);
+
     public HabboExecutorService(int corePoolSize, ThreadFactory threadFactory) {
         super(corePoolSize, threadFactory);
     }
@@ -16,10 +19,7 @@ public class HabboExecutorService extends ScheduledThreadPoolExecutor {
         super.afterExecute(r, t);
 
         if (t != null && !(t instanceof IOException)) {
-            try {
-                Emulator.getLogging().logErrorLine(t);
-            } catch (Exception e) {
-            }
+            LOGGER.error("Error in HabboExecutorService", t);
         }
     }
 }

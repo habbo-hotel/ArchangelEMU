@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolBan;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.permissions.Rank;
-import com.eu.habbo.habbohotel.users.inventory.EffectsComponent;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigComposer;
@@ -14,6 +13,8 @@ import com.eu.habbo.messages.outgoing.users.UserPerksComposer;
 import com.eu.habbo.messages.outgoing.users.UserPermissionsComposer;
 import com.eu.habbo.plugin.events.users.UserRankChangedEvent;
 import com.eu.habbo.plugin.events.users.UserRegisteredEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,6 +27,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HabboManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HabboManager.class);
+
     //Configuration. Loaded from database & updated accordingly.
     public static String WELCOME_MESSAGE = "";
     public static boolean NAMECHANGE_ENABLED = false;
@@ -37,7 +41,7 @@ public class HabboManager {
 
         this.onlineHabbos = new ConcurrentHashMap<>();
 
-        Emulator.getLogging().logStart("Habbo Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Habbo Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public static HabboInfo getOfflineHabboInfo(int id) {
@@ -50,7 +54,7 @@ public class HabboManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return info;
@@ -68,7 +72,7 @@ public class HabboManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return info;
@@ -111,7 +115,7 @@ public class HabboManager {
             }
             statement.close();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         habbo = this.cloneCheck(userId);
@@ -144,15 +148,15 @@ public class HabboManager {
                             stmt.setInt(2, habbo.getHabboInfo().getId());
                             stmt.execute();
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            LOGGER.error("Caught SQL exception", e);
                         }
                     }
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         } catch (Exception ex) {
-            Emulator.getLogging().logErrorLine(ex);
+            LOGGER.error("Caught exception", ex);
         }
 
         return habbo;
@@ -193,7 +197,7 @@ public class HabboManager {
 //
 
 
-        Emulator.getLogging().logShutdownLine("Habbo Manager -> Disposed!");
+        LOGGER.info("Habbo Manager -> Disposed!");
     }
 
     public ArrayList<HabboInfo> getCloneAccounts(Habbo habbo, int limit) {
@@ -211,7 +215,7 @@ public class HabboManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return habboInfo;
@@ -229,7 +233,7 @@ public class HabboManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return nameChanges;
@@ -283,7 +287,7 @@ public class HabboManager {
                 statement.setInt(2, userId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
 
@@ -300,7 +304,7 @@ public class HabboManager {
                 statement.setInt(2, userId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }

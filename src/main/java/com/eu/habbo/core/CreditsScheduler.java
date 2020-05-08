@@ -2,10 +2,14 @@ package com.eu.habbo.core;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 public class CreditsScheduler extends Scheduler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CreditsScheduler.class);
 
     public static boolean IGNORE_HOTEL_VIEW;
     public static boolean IGNORE_IDLED;
@@ -48,7 +52,7 @@ public class CreditsScheduler extends Scheduler {
                     habbo.giveCredits(habbo.getHabboInfo().getRank().getCreditsTimerAmount());
                 }
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
     }

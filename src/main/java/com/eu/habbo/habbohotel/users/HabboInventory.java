@@ -1,13 +1,17 @@
 package com.eu.habbo.habbohotel.users;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlace;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceOffer;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceState;
 import com.eu.habbo.habbohotel.users.inventory.*;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HabboInventory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HabboInventory.class);
+
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_ITEMS = 10000;
     private final THashSet<MarketPlaceOffer> items;
@@ -24,37 +28,37 @@ public class HabboInventory {
         try {
             this.badgesComponent = new BadgesComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         try {
             this.botsComponent = new BotsComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         try {
             this.effectsComponent = new EffectsComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         try {
             this.itemsComponent = new ItemsComponent(this, this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         try {
             this.petsComponent = new PetsComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         try {
             this.wardrobeComponent = new WardrobeComponent(this.habbo);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         this.items = MarketPlace.getOwnOffers(this.habbo);

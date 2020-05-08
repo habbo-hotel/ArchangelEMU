@@ -6,6 +6,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.friends.SearchUserEvent;
 import com.eu.habbo.messages.incoming.navigator.SearchRoomsEvent;
 import com.eu.habbo.threading.runnables.AchievementUpdater;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,57 +17,26 @@ import java.util.Map;
 
 public class CleanerThread implements Runnable {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CleanerThread.class);
 
-    public static final int DELAY = 10000;
-
-
-    public static final int RELOAD_HALL_OF_FAME = 1800;
-
-
-    public static final int RELOAD_NEWS_LIST = 3600;
-
-
-    public static final int REMOVE_INACTIVE_ROOMS = 120;
-
-
-    public static final int REMOVE_INACTIVE_GUILDS = 60;
-
-
-    public static final int REMOVE_INACTIVE_TOURS = 600;
-
-
-    public static final int SAVE_ERROR_LOGS = 30;
-
-
-    public static final int CLEAR_CACHED_VALUES = 60 * 60;
-
-
+    private static final int DELAY = 10000;
+    private static final int RELOAD_HALL_OF_FAME = 1800;
+    private static final int RELOAD_NEWS_LIST = 3600;
+    private static final int REMOVE_INACTIVE_ROOMS = 120;
+    private static final int REMOVE_INACTIVE_GUILDS = 60;
+    private static final int REMOVE_INACTIVE_TOURS = 600;
+    private static final int SAVE_ERROR_LOGS = 30;
+    private static final int CLEAR_CACHED_VALUES = 60 * 60;
     private static final int CALLBACK_TIME = 60 * 15;
 
-
     private static int LAST_HOF_RELOAD = Emulator.getIntUnixTimestamp();
-
-
     private static int LAST_NL_RELOAD = Emulator.getIntUnixTimestamp();
-
-
     private static int LAST_INACTIVE_ROOMS_CLEARED = Emulator.getIntUnixTimestamp();
-
-
     private static int LAST_INACTIVE_GUILDS_CLEARED = Emulator.getIntUnixTimestamp();
-
-
     private static int LAST_INACTIVE_TOURS_CLEARED = Emulator.getIntUnixTimestamp();
-
-
     private static int LAST_ERROR_LOGS_SAVED = Emulator.getIntUnixTimestamp();
-
-
     private static int LAST_DAILY_REFILL = Emulator.getIntUnixTimestamp();
-
     private static int LAST_CALLBACK = Emulator.getIntUnixTimestamp();
-
-
     private static int LAST_HABBO_CACHE_CLEARED = Emulator.getIntUnixTimestamp();
 
     public CleanerThread() {
@@ -110,7 +81,7 @@ public class CleanerThread implements Runnable {
         }
 
         if (time - LAST_ERROR_LOGS_SAVED > SAVE_ERROR_LOGS) {
-            Emulator.getLogging().saveLogs();
+            Emulator.getDatabaseLogger().save();
             LAST_ERROR_LOGS_SAVED = time;
         }
 
@@ -156,9 +127,10 @@ public class CleanerThread implements Runnable {
                 statement.execute("DELETE FROM users_effects WHERE total <= 0");
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
-        Emulator.getLogging().logStart("Database -> Cleaned!");
+
+        LOGGER.info("Database -> Cleaned!");
     }
 
     public void refillDailyRespects() {
@@ -167,7 +139,7 @@ public class CleanerThread implements Runnable {
             statement.setInt(2, Emulator.getConfig().getInt("hotel.daily.respect.pets"));
             statement.executeUpdate();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         if (Emulator.isReady) {
@@ -188,7 +160,7 @@ public class CleanerThread implements Runnable {
                     habbo.clearCaches();
                 }
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
     }

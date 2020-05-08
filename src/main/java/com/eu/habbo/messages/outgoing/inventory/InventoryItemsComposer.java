@@ -1,6 +1,5 @@
 package com.eu.habbo.messages.outgoing.inventory;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGift;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -9,8 +8,12 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.procedure.TIntObjectProcedure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InventoryItemsComposer extends MessageComposer implements TIntObjectProcedure<HabboItem> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InventoryItemsComposer.class);
+
     private final int page;
     private final int out;
     private final TIntObjectMap<HabboItem> items;
@@ -32,7 +35,7 @@ public class InventoryItemsComposer extends MessageComposer implements TIntObjec
             this.items.forEachEntry(this);
             return this.response;
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         return null;

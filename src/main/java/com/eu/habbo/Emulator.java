@@ -1,5 +1,8 @@
 package com.eu.habbo;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.ConsoleAppender;
 import com.eu.habbo.core.*;
 import com.eu.habbo.core.consolecommands.ConsoleCommand;
 import com.eu.habbo.database.Database;
@@ -14,7 +17,8 @@ import com.eu.habbo.plugin.events.emulator.EmulatorStartShutdownEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorStoppedEvent;
 import com.eu.habbo.threading.ThreadPooling;
 import com.eu.habbo.util.imager.badges.BadgeImager;
-import org.fusesource.jansi.AnsiConsole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.security.MessageDigest;
@@ -23,20 +27,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class Emulator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Emulator.class);
+    private static final String OS_NAME = System.getProperty("os.name");
+    private static final String CLASS_PATH = System.getProperty("java.class.path");
 
     public final static int MAJOR = 2;
     public final static int MINOR = 4;
     public final static int BUILD = 0;
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_WHITE = "\u001B[37m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-// This Build of 2.4.0 will not be released anytime soon. :)
 
+    // This Build of 2.4.0 will not be released anytime soon. :)
     public final static String PREVIEW = "RC-1";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + "-" + PREVIEW;
@@ -55,8 +58,6 @@ public final class Emulator {
     public static boolean isShuttingDown = false;
     public static boolean stopped = false;
     public static boolean debugging = false;
-    private static String  classPath = System.getProperty("java.class.path");
-    private static String osName = System.getProperty("os.name");
     private static int timeStarted = 0;
     private static Runtime runtime;
     private static ConfigurationManager config;
@@ -65,12 +66,12 @@ public final class Emulator {
     private static GameServer gameServer;
     private static RCONServer rconServer;
     private static CameraClient cameraClient;
-    private static Database database;
     private static Logging logging;
+    private static Database database;
+    private static DatabaseLogger databaseLogger;
     private static ThreadPooling threading;
     private static GameEnvironment gameEnvironment;
     private static PluginManager pluginManager;
-    private static Random random;
     private static BadgeImager badgeImager;
 
     static {
@@ -85,21 +86,31 @@ public final class Emulator {
 
     public static void main(String[] args) throws Exception {
         try {
-            if (osName.startsWith("Windows") && (!classPath.contains("idea_rt.jar"))) {
-                AnsiConsole.systemInstall();
+            // Check if running on Windows and not in IntelliJ.
+            // If so, we need to reconfigure the console appender and enable Jansi for colors.
+            if (OS_NAME.startsWith("Windows") && !CLASS_PATH.contains("idea_rt.jar")) {
+                ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+                ConsoleAppender<ILoggingEvent> appender = (ConsoleAppender<ILoggingEvent>) root.getAppender("Console");
+
+                appender.stop();
+                appender.setWithJansi(true);
+                appender.start();
             }
+
             Locale.setDefault(new Locale("en"));
             setBuild();
             Emulator.stopped = false;
             ConsoleCommand.load();
             Emulator.logging = new Logging();
-            System.out.println(ANSI_PURPLE + logo );
-            System.out.println(ANSI_WHITE + "This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
-            System.out.println(ANSI_BLUE + "[VERSION] " + ANSI_WHITE + version);
-            System.out.println(ANSI_RED + "[BUILD] " + ANSI_WHITE + build + "\n");
-            System.out.println(ANSI_YELLOW + "[KREWS] " + ANSI_WHITE + "Remember to sign up your hotel to join our toplist beta at https://bit.ly/2NN0rxq" );
-            System.out.println(ANSI_YELLOW + "[KREWS] " + ANSI_WHITE + "Join our discord at https://discord.gg/syuqgN" + "\n");
-            random = new Random();
+
+            System.out.println(logo);
+
+            LOGGER.info("This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
+            LOGGER.info("Version: {}", version);
+            LOGGER.info("Build: {}", build);
+            LOGGER.info("Remember to sign up your hotel to join our toplist beta at https://bit.ly/2NN0rxq");
+            LOGGER.info("Join our discord at https://discord.gg/syuqgN");
+
             long startTime = System.nanoTime();
 
             Emulator.runtime = Runtime.getRuntime();
@@ -110,6 +121,7 @@ public final class Emulator {
                     Emulator.getConfig().getValue("enc.n"),
                     Emulator.getConfig().getValue("enc.d"));
             Emulator.database = new Database(Emulator.getConfig());
+            Emulator.databaseLogger = new DatabaseLogger();
             Emulator.config.loaded = true;
             Emulator.config.loadFromDatabase();
             Emulator.threading = new ThreadPooling(Emulator.getConfig().getInt("runtime.threads"));
@@ -129,13 +141,17 @@ public final class Emulator {
             Emulator.rconServer.initializePipeline();
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
-            Emulator.getLogging().logStart("Arcturus Morningstar has succesfully loaded. You're running: " + Emulator.version);
-            Emulator.getLogging().logStart("System launched in: " + (System.nanoTime() - startTime) / 1e6 + "ms. Using: " + (Runtime.getRuntime().availableProcessors() * 2) + " threads!");
-            Emulator.getLogging().logStart("Memory: " + (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024) + "/" + (runtime.freeMemory()) / (1024 * 1024) + "MB");
+
+            LOGGER.info("Arcturus Morningstar has succesfully loaded.");
+            LOGGER.info("System launched in: {}ms. Using {} threads!", (System.nanoTime() - startTime) / 1e6, Runtime.getRuntime().availableProcessors() * 2);
+            LOGGER.info("Memory: {}/{}MB", (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024), (runtime.freeMemory()) / (1024 * 1024));
 
             Emulator.debugging = Emulator.getConfig().getBoolean("debug.mode");
+
             if (debugging) {
-                Emulator.getLogging().logDebugLine("Debugging Enabled!");
+                ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+                root.setLevel(Level.DEBUG);
+                LOGGER.debug("Debugging enabled.");
             }
 
             Emulator.getPluginManager().fireEvent(new EmulatorLoadedEvent());
@@ -143,7 +159,9 @@ public final class Emulator {
             Emulator.timeStarted = getIntUnixTimestamp();
 
             if (Emulator.getConfig().getInt("runtime.threads") < (Runtime.getRuntime().availableProcessors() * 2)) {
-                Emulator.getLogging().logStart("Emulator settings runtime.threads (" + Emulator.getConfig().getInt("runtime.threads") + ") can be increased to " + (Runtime.getRuntime().availableProcessors() * 2) + " to possibly increase performance.");
+                LOGGER.warn("Emulator settings runtime.threads ({}) can be increased to {} to possibly increase performance.",
+                        Emulator.getConfig().getInt("runtime.threads"),
+                        Runtime.getRuntime().availableProcessors() * 2);
             }
 
 
@@ -154,7 +172,6 @@ public final class Emulator {
 
             while (!isShuttingDown && isReady) {
                 try {
-
                     String line = reader.readLine();
 
                     if (line != null) {
@@ -163,7 +180,7 @@ public final class Emulator {
                     System.out.println("Waiting for command: ");
                 } catch (Exception e) {
                     if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
-                        Emulator.getLogging().logErrorLine(e);
+                        LOGGER.error("Error while reading command", e);
                     }
                 }
             }
@@ -199,11 +216,12 @@ public final class Emulator {
     }
 
     private static void dispose() {
-
         Emulator.getThreading().setCanAdd(false);
         Emulator.isShuttingDown = true;
         Emulator.isReady = false;
-        Emulator.getLogging().logShutdownLine("Stopping Arcturus Emulator " + version + "...");
+
+        LOGGER.info("Stopping Arcturus Morningstar {}", version);
+
         try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStartShutdownEvent());
@@ -221,7 +239,6 @@ public final class Emulator {
                 Emulator.rconServer.stop();
         } catch (Exception e) {
         }
-
 
         try {
             if (Emulator.gameEnvironment != null)
@@ -241,8 +258,6 @@ public final class Emulator {
         } catch (Exception e) {
         }
 
-        Emulator.getLogging().saveLogs();
-
         try {
             if (Emulator.config != null) {
                 Emulator.config.saveToDatabase();
@@ -255,16 +270,17 @@ public final class Emulator {
                 Emulator.gameServer.stop();
         } catch (Exception e) {
         }
-        Emulator.getLogging().logShutdownLine("Stopped Arcturus Emulator " + version + "...");
+
+        LOGGER.info("Stopped Arcturus Morningstar {}", version);
 
         if (Emulator.database != null) {
             Emulator.getDatabase().dispose();
         }
         Emulator.stopped = true;
 
-        if (osName.startsWith("Windows") && (!classPath.contains("idea_rt.jar"))) {
-            AnsiConsole.systemUninstall();
-        }
+        // if (osName.startsWith("Windows") && (!classPath.contains("idea_rt.jar"))) {
+        //     AnsiConsole.systemUninstall();
+        // }
         try {
             if (Emulator.threading != null)
 
@@ -289,6 +305,10 @@ public final class Emulator {
         return database;
     }
 
+    public static DatabaseLogger getDatabaseLogger() {
+        return databaseLogger;
+    }
+
     public static Runtime getRuntime() {
         return runtime;
     }
@@ -301,6 +321,10 @@ public final class Emulator {
         return rconServer;
     }
 
+    /**
+     * @deprecated Do not use. Please use LoggerFactory.getLogger(YourClass.class) to log.
+     */
+    @Deprecated
     public static Logging getLogging() {
         return logging;
     }
@@ -318,7 +342,7 @@ public final class Emulator {
     }
 
     public static Random getRandom() {
-        return random;
+        return ThreadLocalRandom.current();
     }
 
     public static BadgeImager getBadgeImager() {
@@ -361,7 +385,7 @@ public final class Emulator {
         try {
             res = format.parse(date);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Error parsing date", e);
         }
         return res;
     }

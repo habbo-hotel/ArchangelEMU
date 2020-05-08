@@ -7,8 +7,12 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceItemPostedComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SellItemEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SellItemEvent.class);
+
     @Override
     public void handle() throws Exception {
         if (!MarketPlace.MARKETPLACE_ENABLED) {
@@ -26,7 +30,7 @@ public class SellItemEvent extends MessageHandler {
             if (!item.getBaseItem().allowMarketplace()) {
                 String message = Emulator.getTexts().getValue("scripter.warning.marketplace.forbidden").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%itemname%", item.getBaseItem().getName()).replace("%credits%", credits + "");
                 ScripterManager.scripterDetected(this.client, message);
-                Emulator.getLogging().logUserLine(message);
+                LOGGER.info(message);
                 this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                 return;
             }
@@ -34,7 +38,7 @@ public class SellItemEvent extends MessageHandler {
             if (credits < 0) {
                 String message = Emulator.getTexts().getValue("scripter.warning.marketplace.negative").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%itemname%", item.getBaseItem().getName()).replace("%credits%", credits + "");
                 ScripterManager.scripterDetected(this.client, message);
-                Emulator.getLogging().logUserLine(message);
+                LOGGER.info(message);
                 this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                 return;
             }

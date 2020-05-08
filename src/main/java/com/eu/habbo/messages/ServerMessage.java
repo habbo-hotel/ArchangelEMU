@@ -1,16 +1,18 @@
 package com.eu.habbo.messages;
 
-import com.eu.habbo.Emulator;
+import com.eu.habbo.util.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
-import io.netty.util.IllegalReferenceCountException;
 import io.netty.util.ReferenceCounted;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 public class ServerMessage implements ReferenceCounted {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerMessage.class);
 
     private int header;
     private ByteBufOutputStream stream;
@@ -29,7 +31,7 @@ public class ServerMessage implements ReferenceCounted {
             this.stream.writeInt(0);
             this.stream.writeShort(header);
         } catch (Exception e) {
-            Emulator.getLogging().handleException(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -42,7 +44,7 @@ public class ServerMessage implements ReferenceCounted {
             this.stream.writeInt(0);
             this.stream.writeShort(id);
         } catch (Exception e) {
-            Emulator.getLogging().handleException(e);
+            LOGGER.error("ServerMessage exception", e);
         }
         return this;
     }
@@ -51,7 +53,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.write(bytes);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -66,7 +68,7 @@ public class ServerMessage implements ReferenceCounted {
             this.stream.writeShort(data.length);
             this.stream.write(data);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -74,7 +76,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeChar(obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -82,7 +84,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeChars(obj.toString());
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -90,7 +92,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeInt(obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -103,7 +105,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeInt((int) obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -111,7 +113,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeInt(obj ? 1 : 0);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -119,7 +121,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeShort((short) obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -127,7 +129,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeByte(b);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -135,7 +137,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeBoolean(obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -143,7 +145,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeDouble(d);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -151,7 +153,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeDouble(obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
     }
 
@@ -159,7 +161,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.write(obj.get().array());
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            LOGGER.error("ServerMessage exception", e);
         }
 
         return this;
@@ -170,19 +172,7 @@ public class ServerMessage implements ReferenceCounted {
     }
 
     public String getBodyString() {
-        ByteBuf buffer = this.stream.buffer().duplicate();
-
-        buffer.setInt(0, buffer.writerIndex() - 4);
-
-        String consoleText = buffer.toString(Charset.forName("UTF-8"));
-
-        for (int i = 0; i < 14; i++) {
-            consoleText = consoleText.replace(Character.toString((char) i), "[" + i + "]");
-        }
-
-        buffer.discardSomeReadBytes();
-
-        return consoleText;
+        return PacketUtils.formatPacket(this.channelBuffer);
     }
 
     public int getHeader() {

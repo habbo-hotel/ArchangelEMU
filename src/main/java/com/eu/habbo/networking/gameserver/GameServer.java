@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClientManager;
 import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.networking.Server;
 import com.eu.habbo.networking.gameserver.decoders.*;
-import com.eu.habbo.networking.gameserver.encoders.ServerMessageEncoder;
+import com.eu.habbo.networking.gameserver.encoders.GameServerMessageEncoder;
 import com.eu.habbo.networking.gameserver.encoders.GameServerMessageLogger;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -30,17 +30,23 @@ public class GameServer extends Server {
             public void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast("logger", new LoggingHandler());
 
+                // Logger.
+
+
                 // Decoders.
-                ch.pipeline().addLast(
-                        new GamePolicyDecoder(),
-                        new GameByteFrameDecoder(),
-                        new GameByteDecoder(),
-                        new GameMessageRateLimit(),
-                        new GameMessageHandler()
-                );
+                ch.pipeline().addLast(new GamePolicyDecoder());
+                ch.pipeline().addLast(new GameByteFrameDecoder());
+                ch.pipeline().addLast(new GameByteDecoder());
+
+                if (PacketManager.DEBUG_SHOW_PACKETS) {
+                    ch.pipeline().addLast(new GameClientMessageLogger());
+                }
+
+                ch.pipeline().addLast(new GameMessageRateLimit());
+                ch.pipeline().addLast(new GameMessageHandler());
 
                 // Encoders.
-                ch.pipeline().addLast(new ServerMessageEncoder());
+                ch.pipeline().addLast(new GameServerMessageEncoder());
 
                 if (PacketManager.DEBUG_SHOW_PACKETS) {
                     ch.pipeline().addLast(new GameServerMessageLogger());

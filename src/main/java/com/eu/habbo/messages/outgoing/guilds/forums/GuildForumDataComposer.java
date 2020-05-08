@@ -12,6 +12,8 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +22,8 @@ import java.sql.SQLException;
 
 
 public class GuildForumDataComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuildForumDataComposer.class);
+
     public final Guild guild;
     public Habbo habbo;
 
@@ -73,7 +77,7 @@ public class GuildForumDataComposer extends MessageComposer {
                 newComments = set.getInt(1);
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         response.appendInt(guild.getId());

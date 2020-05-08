@@ -1,9 +1,8 @@
 package com.eu.habbo.messages;
 
+import com.eu.habbo.util.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
-import java.nio.charset.Charset;
 
 public class ClientMessage {
     private final int header;
@@ -65,13 +64,7 @@ public class ClientMessage {
     }
 
     public String getMessageBody() {
-        String consoleText = this.buffer.toString(Charset.defaultCharset());
-
-        for (int i = -1; i < 31; i++) {
-            consoleText = consoleText.replace(Character.toString((char) i), "[" + i + "]");
-        }
-
-        return consoleText;
+        return PacketUtils.formatPacket(this.buffer);
     }
 
     public int bytesAvailable() {

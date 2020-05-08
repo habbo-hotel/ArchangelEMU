@@ -8,11 +8,15 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.TooLongFrameException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 @ChannelHandler.Sharable
 public class GameMessageHandler extends ChannelInboundHandlerAdapter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameMessageHandler.class);
+
 
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) {
@@ -40,7 +44,7 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
 
             handler.run();
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 
@@ -51,16 +55,21 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        if (cause instanceof IOException) {
+            ctx.channel().close();
+            return;
+        }
+
         if (cause instanceof TooLongFrameException) {
-            Emulator.getLogging().logErrorLine("Disconnecting client, reason: \"" + cause.getMessage() + "\".");
+            LOGGER.error("Disconnecting client, reason: \"" + cause.getMessage() + "\".");
         } else {
             cause.printStackTrace();
 
-            Emulator.getLogging().logErrorLine("Disconnecting client, exception in GameMessageHander:");
-            Emulator.getLogging().logErrorLine(cause.toString());
+            LOGGER.error("Disconnecting client, exception in GameMessageHander:");
+            LOGGER.error(cause.toString());
 
             for (StackTraceElement element : cause.getStackTrace()) {
-                Emulator.getLogging().logErrorLine(element.toString());
+                LOGGER.error(element.toString());
             }
         }
 

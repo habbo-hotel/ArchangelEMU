@@ -4,12 +4,16 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.games.GameTeam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SaveScoreForTeam implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SaveScoreForTeam.class);
+
     public final GameTeam team;
     public final Game game;
 
@@ -34,7 +38,7 @@ public class SaveScoreForTeam implements Runnable {
 
             statement.executeBatch();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 }

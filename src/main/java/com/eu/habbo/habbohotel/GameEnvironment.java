@@ -1,10 +1,7 @@
 package com.eu.habbo.habbohotel;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.CreditsScheduler;
-import com.eu.habbo.core.GotwPointsScheduler;
-import com.eu.habbo.core.PixelScheduler;
-import com.eu.habbo.core.PointsScheduler;
+import com.eu.habbo.core.*;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
@@ -23,8 +20,13 @@ import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.polls.PollManager;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GameEnvironment {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameEnvironment.class);
+
     public CreditsScheduler creditsScheduler;
     public PixelScheduler pixelScheduler;
     public PointsScheduler pointsScheduler;
@@ -49,7 +51,7 @@ public class GameEnvironment {
     private PollManager pollManager;
 
     public void load() throws Exception {
-        Emulator.getLogging().logStart("GameEnvironment -> Loading...");
+        LOGGER.info("GameEnvironment -> Loading...");
 
         this.permissionsManager = new PermissionsManager();
         this.habboManager = new HabboManager();
@@ -85,7 +87,7 @@ public class GameEnvironment {
         Emulator.getThreading().run(this.gotwPointsScheduler);
 
 
-        Emulator.getLogging().logStart("GameEnvironment -> Loaded!");
+        LOGGER.info("GameEnvironment -> Loaded!");
     }
 
     public void dispose() {
@@ -101,7 +103,7 @@ public class GameEnvironment {
         this.roomManager.dispose();
         this.itemManager.dispose();
         this.hotelViewManager.dispose();
-        Emulator.getLogging().logShutdownLine("GameEnvironment -> Disposed!");
+        LOGGER.info("GameEnvironment -> Disposed!");
     }
 
     public HabboManager getHabboManager() {

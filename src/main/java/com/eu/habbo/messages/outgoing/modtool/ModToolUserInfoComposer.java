@@ -8,12 +8,16 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ModToolUserInfoComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModToolUserInfoComposer.class);
+
     private final ResultSet set;
 
     public ModToolUserInfoComposer(ResultSet set) {
@@ -61,7 +65,7 @@ public class ModToolUserInfoComposer extends MessageComposer {
 
             return this.response;
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
         return null;
     }

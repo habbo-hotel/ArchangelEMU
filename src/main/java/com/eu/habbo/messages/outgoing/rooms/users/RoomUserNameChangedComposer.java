@@ -7,25 +7,33 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class RoomUserNameChangedComposer extends MessageComposer {
-    private final Habbo habbo;
-    private final boolean includePrefix;
+
+    private final int userId;
+    private final int roomId;
+    private final String name;
 
     public RoomUserNameChangedComposer(Habbo habbo) {
-        this.habbo = habbo;
-        this.includePrefix = false;
+        this(habbo, false);
     }
 
     public RoomUserNameChangedComposer(Habbo habbo, boolean includePrefix) {
-        this.habbo = habbo;
-        this.includePrefix = includePrefix;
+        this.userId = habbo.getHabboInfo().getId();
+        this.roomId = habbo.getRoomUnit().getId();
+        this.name = (includePrefix ? Room.PREFIX_FORMAT.replace("%color%", habbo.getHabboInfo().getRank().getPrefixColor()).replace("%prefix%", habbo.getHabboInfo().getRank().getPrefix()) : "") + habbo.getHabboInfo().getUsername();
+    }
+
+    public RoomUserNameChangedComposer(int userId, int roomId, String name) {
+        this.userId = userId;
+        this.roomId = roomId;
+        this.name = name;
     }
 
     @Override
     public ServerMessage compose() {
         this.response.init(Outgoing.RoomUserNameChangedComposer);
-        this.response.appendInt(this.habbo.getHabboInfo().getId());
-        this.response.appendInt(this.habbo.getRoomUnit().getId());
-        this.response.appendString((this.includePrefix ? Room.PREFIX_FORMAT.replace("%color%", this.habbo.getHabboInfo().getRank().getPrefixColor()).replace("%prefix%", this.habbo.getHabboInfo().getRank().getPrefix()) : "") + this.habbo.getHabboInfo().getUsername());
+        this.response.appendInt(this.userId);
+        this.response.appendInt(this.roomId);
+        this.response.appendString(this.name);
         return this.response;
     }
 }

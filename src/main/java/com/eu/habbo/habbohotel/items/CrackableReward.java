@@ -1,6 +1,8 @@
 package com.eu.habbo.habbohotel.items;
 
 import com.eu.habbo.Emulator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CrackableReward {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CrackableReward.class);
+
     public final int itemId;
     public final int count;
     public final Map<Integer, Map.Entry<Integer, Integer>> prizes;
@@ -44,7 +48,7 @@ public class CrackableReward {
                     itemId = Integer.valueOf(prize.split(":")[0]);
                     chance = Integer.valueOf(prize.split(":")[1]);
                 } else if (prize.contains(":")) {
-                    Emulator.getLogging().logErrorLine("Invalid configuration of crackable prizes (item id: " + this.itemId + "). '" + prize + "' format should be itemId:chance.");
+                    LOGGER.error("Invalid configuration of crackable prizes (item id: " + this.itemId + "). '" + prize + "' format should be itemId:chance.");
                 } else {
                     itemId = Integer.valueOf(prize.replace(":", ""));
                 }
@@ -52,7 +56,7 @@ public class CrackableReward {
                 this.prizes.put(itemId, new AbstractMap.SimpleEntry<>(this.totalChance, this.totalChance + chance));
                 this.totalChance += chance;
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
     }

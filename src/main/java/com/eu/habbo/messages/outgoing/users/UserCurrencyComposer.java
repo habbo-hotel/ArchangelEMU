@@ -5,8 +5,12 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserCurrencyComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserCurrencyComposer.class);
+
     private final Habbo habbo;
 
     public UserCurrencyComposer(Habbo habbo) {
@@ -23,7 +27,7 @@ public class UserCurrencyComposer extends MessageComposer {
             try {
                 type = Integer.valueOf(s);
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
                 return null;
             }
 

@@ -1,6 +1,5 @@
 package com.eu.habbo.networking.camera;
 
-import com.eu.habbo.core.Logging;
 import com.eu.habbo.networking.camera.messages.outgoing.CameraLoginComposer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.UnpooledByteBufAllocator;
@@ -8,8 +7,13 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CameraClient {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CameraClient.class);
+
     private static final String host = "google.com";
     private static final int port = 1232;
     public static ChannelFuture channelFuture;
@@ -47,10 +51,10 @@ public class CameraClient {
         if (CameraClient.channelFuture.isSuccess()) {
             CameraClient.attemptReconnect = false;
             CameraClient.channel = channelFuture.channel();
-            System.out.println("[" + Logging.ANSI_GREEN + "CAMERA" + Logging.ANSI_RESET + "] Connected to the Camera Server. Attempting to login...");
+            LOGGER.info("Connected to the Camera Server. Attempting to login.");
             this.sendMessage(new CameraLoginComposer());
         } else {
-            System.out.println("[" + Logging.ANSI_RED + "CAMERA" + Logging.ANSI_RESET + "] Failed to connect to the Camera Server. Server unreachable.");
+            LOGGER.error("Failed to connect to the Camera Server. Server unreachable.");
             CameraClient.channel = null;
             CameraClient.channelFuture.channel().close();
             CameraClient.channelFuture = null;
@@ -71,7 +75,7 @@ public class CameraClient {
         channel = null;
         isLoggedIn = false;
 
-        System.out.println("[" + Logging.ANSI_GREEN + "CAMERA" + Logging.ANSI_RESET + "] Disconnected from the camera server.");
+        LOGGER.info("Disconnected from the camera server.");
     }
 
     public void sendMessage(CameraOutgoingMessage outgoingMessage) {
