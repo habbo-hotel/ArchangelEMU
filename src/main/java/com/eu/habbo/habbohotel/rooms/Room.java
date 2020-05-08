@@ -141,7 +141,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     //Use appropriately. Could potentially cause memory leaks when used incorrectly.
     public volatile boolean preventUnloading = false;
     public volatile boolean preventUncaching = false;
-    public THashMap<Short, TIntArrayList> waterTiles;
     public ConcurrentSet<ServerMessage> scheduledComposers = new ConcurrentSet<>();
     public ConcurrentSet<Runnable> scheduledTasks = new ConcurrentSet<>();
     public String wordQuiz = "";
