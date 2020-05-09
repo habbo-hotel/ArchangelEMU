@@ -5,15 +5,13 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.util.IllegalReferenceCountException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class GameServerMessageEncoder extends MessageToByteEncoder<ServerMessage> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameServerMessageEncoder.class);
-
     @Override
-    protected void encode(ChannelHandlerContext ctx, ServerMessage message, ByteBuf out) {
+    protected void encode(ChannelHandlerContext ctx, ServerMessage message, ByteBuf out) throws Exception {
         try {
             ByteBuf buf = message.get();
 
@@ -24,8 +22,7 @@ public class GameServerMessageEncoder extends MessageToByteEncoder<ServerMessage
                 buf.release();
             }
         } catch (IllegalReferenceCountException e) {
-            LOGGER.error("IllegalReferenceCountException happened for packet {}.", message.getHeader());
-            throw e;
+            throw new IOException(String.format("IllegalReferenceCountException happened for ServerMessage with packet id %d.", message.getHeader()), e);
         }
     }
 
