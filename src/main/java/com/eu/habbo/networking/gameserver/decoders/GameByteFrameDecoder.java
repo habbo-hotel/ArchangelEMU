@@ -6,7 +6,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 public class GameByteFrameDecoder extends LengthFieldBasedFrameDecoder {
 
-    private static final int MAX_PACKET_LENGTH = 8192 * 4;
+    private static final int MAX_PACKET_LENGTH = 8192 * 16;
     private static final int LENGTH_FIELD_OFFSET = 0;
     private static final int LENGTH_FIELD_LENGTH = 4;
     private static final int LENGTH_FIELD_ADJUSTMENT = 0;

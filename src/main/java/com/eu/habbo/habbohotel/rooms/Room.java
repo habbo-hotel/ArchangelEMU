@@ -3809,6 +3809,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void botChat(ServerMessage message) {
+        if (message == null) {
+            return;
+        }
+
         message.retain();
 
         try {
