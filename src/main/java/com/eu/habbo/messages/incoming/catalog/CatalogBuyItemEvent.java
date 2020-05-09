@@ -178,8 +178,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
                     this.client.sendResponse(new PurchaseOKComposer(null));
                     this.client.sendResponse(new InventoryRefreshComposer());
-
-                    this.client.getHabbo().getHabboStats().lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
+                    
                     this.client.getHabbo().getHabboStats().run();
                 }
                 return;
