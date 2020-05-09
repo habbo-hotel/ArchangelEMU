@@ -40,7 +40,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         if (!this.room.isLoaded())
             return null;
 

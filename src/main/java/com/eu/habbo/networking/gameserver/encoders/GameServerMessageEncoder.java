@@ -14,6 +14,7 @@ public class GameServerMessageEncoder extends MessageToByteEncoder<ServerMessage
         try {
             out.writeBytes(buf);
         } finally {
+            // Release copied buffer.
             buf.release();
         }
     }

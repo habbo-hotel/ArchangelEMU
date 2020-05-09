@@ -33,7 +33,7 @@ public class GuildMembersComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildMembersComposer);
         this.response.appendInt(this.guild.getId());
         this.response.appendString(this.guild.getName());

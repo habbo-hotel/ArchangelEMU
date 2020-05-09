@@ -16,7 +16,7 @@ public class UnknownRoomDesktopComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UnknownRoomDesktopComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.unknownMap.size());

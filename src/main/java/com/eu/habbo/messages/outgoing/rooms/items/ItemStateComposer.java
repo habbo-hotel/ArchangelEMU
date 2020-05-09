@@ -13,7 +13,7 @@ public class ItemStateComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ItemStateComposer);
         this.response.appendInt(this.item.getId());
         try {

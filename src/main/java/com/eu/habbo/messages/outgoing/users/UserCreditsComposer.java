@@ -13,7 +13,7 @@ public class UserCreditsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserCreditsComposer);
         this.response.appendString(this.habbo.getHabboInfo().getCredits() + ".0");
         return this.response;

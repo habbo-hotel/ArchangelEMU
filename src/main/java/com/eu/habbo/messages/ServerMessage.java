@@ -1,42 +1,43 @@
 package com.eu.habbo.messages;
 
+import com.eu.habbo.util.DebugUtils;
 import com.eu.habbo.util.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+import io.netty.util.IllegalReferenceCountException;
 import io.netty.util.ReferenceCounted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerMessage implements ReferenceCounted {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerMessage.class);
+    private boolean initialized;
 
     private int header;
+    private AtomicInteger refs;
     private ByteBufOutputStream stream;
     private ByteBuf channelBuffer;
 
     public ServerMessage() {
-        this.channelBuffer = Unpooled.buffer();
-        this.stream = new ByteBufOutputStream(this.channelBuffer);
+
     }
 
     public ServerMessage(int header) {
-        this.header = header;
-        this.channelBuffer = Unpooled.buffer();
-        this.stream = new ByteBufOutputStream(this.channelBuffer);
-        try {
-            this.stream.writeInt(0);
-            this.stream.writeShort(header);
-        } catch (Exception e) {
-            LOGGER.error("ServerMessage exception", e);
-        }
+        this.init(header);
     }
 
     public ServerMessage init(int id) {
+        if (this.initialized) {
+            throw new ServerMessageException("ServerMessage was already initialized.");
+        }
+
         this.header = id;
+        this.refs = new AtomicInteger(0);
         this.channelBuffer = Unpooled.buffer();
         this.stream = new ByteBufOutputStream(this.channelBuffer);
 
@@ -44,8 +45,9 @@ public class ServerMessage implements ReferenceCounted {
             this.stream.writeInt(0);
             this.stream.writeShort(id);
         } catch (Exception e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
+
         return this;
     }
 
@@ -53,7 +55,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.write(bytes);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -68,7 +70,7 @@ public class ServerMessage implements ReferenceCounted {
             this.stream.writeShort(data.length);
             this.stream.write(data);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -76,7 +78,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeChar(obj);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -84,7 +86,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeChars(obj.toString());
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -92,7 +94,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeInt(obj);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -105,7 +107,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeInt((int) obj);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -113,7 +115,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeInt(obj ? 1 : 0);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -121,7 +123,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeShort((short) obj);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -129,7 +131,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeByte(b);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -137,7 +139,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeBoolean(obj);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -145,7 +147,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeDouble(d);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -153,7 +155,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.writeDouble(obj);
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -161,7 +163,7 @@ public class ServerMessage implements ReferenceCounted {
         try {
             this.stream.write(obj.get().array());
         } catch (IOException e) {
-            LOGGER.error("ServerMessage exception", e);
+            throw new ServerMessageException(e);
         }
 
         return this;
@@ -187,40 +189,64 @@ public class ServerMessage implements ReferenceCounted {
 
     @Override
     public int refCnt() {
-        return this.channelBuffer.refCnt();
+        return this.refs.get();
     }
 
     @Override
     public ReferenceCounted retain() {
-        this.channelBuffer.retain();
+        int result = this.refs.incrementAndGet();
+
+        if (this.header == 1167 || this.header == 2024 || this.header == 2505) {
+            System.out.printf("retain  Packet: %d Count: %d From: %s%n", this.header, result, DebugUtils.getCallerCallerStacktrace());
+        }
+
         return this;
     }
 
     @Override
     public ReferenceCounted retain(int i) {
-        this.channelBuffer.retain(i);
+        int result = this.refs.addAndGet(i);
+
+        if (this.header == 1167 || this.header == 2024 || this.header == 2505) {
+            System.out.printf("retain  Packet: %d Count: %d From: %s%n", this.header, result, DebugUtils.getCallerCallerStacktrace());
+        }
+
         return this;
     }
 
     @Override
     public ReferenceCounted touch() {
-        this.channelBuffer.touch();
         return this;
     }
 
     @Override
     public ReferenceCounted touch(Object o) {
-        this.channelBuffer.touch(o);
         return this;
     }
 
+    @Override
     public boolean release() {
-        return this.channelBuffer.release();
+        return this.release(1);
     }
 
     @Override
     public boolean release(int i) {
-        return this.channelBuffer.release(i);
+        int value = this.refs.addAndGet(-i);
+
+        if (this.header == 1167 || this.header == 2024 || this.header == 2505) {
+            System.out.printf("release Packet: %d Count: %d From: %s%n", this.header, value, DebugUtils.getCallerCallerStacktrace());
+        }
+
+        if (value < 0) {
+            throw new IllegalReferenceCountException("Decremented below 0 (packet " + this.header + " value " + value + ").");
+        }
+
+        if (value == 0) {
+            this.channelBuffer.release();
+            return true;
+        }
+
+        return false;
     }
 
 }

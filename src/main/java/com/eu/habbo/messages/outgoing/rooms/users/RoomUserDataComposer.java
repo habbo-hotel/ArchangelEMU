@@ -13,7 +13,7 @@ public class RoomUserDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomUserDataComposer);
         this.response.appendInt(this.habbo.getRoomUnit() == null ? -1 : this.habbo.getRoomUnit().getId());
         this.response.appendString(this.habbo.getHabboInfo().getLook());

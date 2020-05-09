@@ -16,7 +16,7 @@ public class UnknownComposer8 extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UnknownComposer8);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.userId);

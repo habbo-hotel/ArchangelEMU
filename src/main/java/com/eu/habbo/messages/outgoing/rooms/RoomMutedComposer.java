@@ -13,7 +13,7 @@ public class RoomMutedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomMutedComposer);
         this.response.appendBoolean(this.room.isMuted());
         return this.response;

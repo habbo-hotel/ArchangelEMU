@@ -16,8 +16,6 @@ import com.eu.habbo.util.pathfinding.Rotation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class InteractionVendingMachine extends HabboItem {

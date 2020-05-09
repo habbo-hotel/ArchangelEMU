@@ -13,7 +13,7 @@ public class RoomChatSettingsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomChatSettingsComposer);
         this.response.appendInt(this.room.getChatMode());
         this.response.appendInt(this.room.getChatWeight());

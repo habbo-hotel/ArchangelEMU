@@ -12,7 +12,7 @@ public class RemoveGuildFromRoomComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RemoveGuildFromRoomComposer);
         this.response.appendInt(this.guildId);
         return this.response;

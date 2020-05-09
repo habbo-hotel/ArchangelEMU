@@ -22,7 +22,7 @@ public class GuildForumThreadsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         ArrayList<ForumThread> threads;
 
         try {

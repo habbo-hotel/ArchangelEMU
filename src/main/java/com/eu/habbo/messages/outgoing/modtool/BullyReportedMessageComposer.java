@@ -18,7 +18,7 @@ public class BullyReportedMessageComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.BullyReportedMessageComposer);
         this.response.appendInt(this.code);
         return this.response;

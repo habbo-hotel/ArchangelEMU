@@ -16,7 +16,7 @@ public class UserPointsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserPointsComposer);
         this.response.appendInt(this.currentAmount);
         this.response.appendInt(this.amountAdded);

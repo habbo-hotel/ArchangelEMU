@@ -13,7 +13,7 @@ public class GuildBoughtComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildBoughtComposer);
         this.response.appendInt(this.guild.getRoomId());
         this.response.appendInt(this.guild.getId());

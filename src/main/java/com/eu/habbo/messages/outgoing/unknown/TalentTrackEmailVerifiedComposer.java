@@ -16,7 +16,7 @@ public class TalentTrackEmailVerifiedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.TalentTrackEmailVerifiedComposer);
         this.response.appendString(this.email);
         this.response.appendBoolean(this.unknownB1);

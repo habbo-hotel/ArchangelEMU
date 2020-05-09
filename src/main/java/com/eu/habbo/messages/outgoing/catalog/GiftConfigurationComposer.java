@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class GiftConfigurationComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GiftConfigurationComposer);
         this.response.appendBoolean(true);
         this.response.appendInt(Emulator.getConfig().getInt("hotel.gifts.special.price", 2));

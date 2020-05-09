@@ -14,7 +14,7 @@ public class JukeBoxPlayListUpdatedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.JukeBoxPlayListUpdatedComposer);
 
         int length = 0;

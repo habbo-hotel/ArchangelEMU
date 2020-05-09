@@ -26,7 +26,7 @@ public class GuildInfoComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         boolean adminPermissions = this.client.getHabbo().getHabboStats().hasGuild(this.guild.getId()) && this.client.getHabbo().hasPermission("acc_guild_admin");
         this.response.init(Outgoing.GuildInfoComposer);
         this.response.appendInt(this.guild.getId());

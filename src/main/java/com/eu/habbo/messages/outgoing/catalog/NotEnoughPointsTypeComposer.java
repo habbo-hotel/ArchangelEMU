@@ -16,7 +16,7 @@ public class NotEnoughPointsTypeComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.NotEnoughPointsTypeComposer);
         this.response.appendBoolean(this.isCredits);
         this.response.appendBoolean(this.isPixels);

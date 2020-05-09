@@ -12,7 +12,7 @@ public class IsFirstLoginOfDayComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.IsFirstLoginOfDayComposer);
         this.response.appendBoolean(this.isFirstLoginOfDay);
         return this.response;

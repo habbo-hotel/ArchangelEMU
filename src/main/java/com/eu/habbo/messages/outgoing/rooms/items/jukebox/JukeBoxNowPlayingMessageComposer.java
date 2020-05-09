@@ -17,7 +17,7 @@ public class JukeBoxNowPlayingMessageComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.JukeBoxNowPlayingMessageComposer);
 
         if (this.track != null) {

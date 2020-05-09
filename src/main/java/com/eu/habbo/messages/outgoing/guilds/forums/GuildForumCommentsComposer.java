@@ -21,7 +21,7 @@ public class GuildForumCommentsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildForumCommentsComposer);
 
         this.response.appendInt(this.guildId); //guild_id

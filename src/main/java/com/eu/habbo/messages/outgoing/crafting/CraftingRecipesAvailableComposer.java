@@ -14,7 +14,7 @@ public class CraftingRecipesAvailableComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CraftingComposerFour);
         this.response.appendInt((this.found ? -1 : 0) + this.count);
         this.response.appendBoolean(this.found);

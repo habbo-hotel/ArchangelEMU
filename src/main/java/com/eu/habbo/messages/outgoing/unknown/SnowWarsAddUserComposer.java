@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 public class SnowWarsAddUserComposer extends MessageComposer {
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(1880);
         this.response.appendInt(3);
         this.response.appendString("Derpface");

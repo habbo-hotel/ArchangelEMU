@@ -13,7 +13,7 @@ public class GuildRefreshMembersListComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildRefreshMembersListComposer);
         this.response.appendInt(this.guild.getId());
         this.response.appendInt(0);

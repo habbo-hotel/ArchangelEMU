@@ -12,7 +12,7 @@ public class PongComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.PongComposer);
         this.response.appendInt(this.id);
         return this.response;

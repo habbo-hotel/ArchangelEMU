@@ -19,7 +19,7 @@ public class CompleteDiffieHandshakeComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CompleteDiffieHandshakeComposer);
         this.response.appendString(this.publicKey);
         this.response.appendBoolean(this.clientEncryption);

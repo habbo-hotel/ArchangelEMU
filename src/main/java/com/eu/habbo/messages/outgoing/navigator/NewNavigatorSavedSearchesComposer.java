@@ -16,7 +16,7 @@ public class NewNavigatorSavedSearchesComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.NewNavigatorSavedSearchesComposer);
         this.response.appendInt(this.searches.size());
 

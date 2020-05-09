@@ -12,7 +12,7 @@ public class RentableSpaceUnknown2Composer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RentableSpaceUnknown2Composer);
         this.response.appendInt(this.itemId);
         return this.response;

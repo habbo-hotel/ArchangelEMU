@@ -14,7 +14,7 @@ public class UserPerksComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserPerksComposer);
         this.response.appendInt(15);
 

@@ -20,7 +20,7 @@ public class ModToolRoomChatlogComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ModToolRoomChatlogComposer);
         this.response.appendByte(1);
         this.response.appendShort(2);

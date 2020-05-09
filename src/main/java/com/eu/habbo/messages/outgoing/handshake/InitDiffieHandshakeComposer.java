@@ -15,7 +15,7 @@ public class InitDiffieHandshakeComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.InitDiffieHandshakeComposer);
         this.response.appendString(this.signedPrime);
         this.response.appendString(this.signedGenerator);

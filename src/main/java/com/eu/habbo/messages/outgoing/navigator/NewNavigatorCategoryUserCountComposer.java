@@ -15,7 +15,7 @@ public class NewNavigatorCategoryUserCountComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.NewNavigatorCategoryUserCountComposer);
         this.response.appendInt(this.roomCategories.size());
 

@@ -12,7 +12,7 @@ public class SnowWarsCompose1 extends MessageComposer {
 
     //:test 1604 i:1 s:a i:10 i:2 i:3 i:4 s:1 i:3 i:10 i:1 s:Admin s:%look% s:M i:0 i:0 i:0 i:0
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(this.header);
         this.response.appendInt(1);
         this.response.appendString("SnowStorm level " + 9);

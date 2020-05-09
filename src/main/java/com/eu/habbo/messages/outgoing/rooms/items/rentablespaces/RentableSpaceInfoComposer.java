@@ -38,7 +38,7 @@ public class RentableSpaceInfoComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         if (!(this.item instanceof InteractionRentableSpace))
             return null;
 

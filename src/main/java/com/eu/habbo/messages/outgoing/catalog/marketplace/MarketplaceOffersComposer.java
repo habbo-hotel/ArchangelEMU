@@ -16,7 +16,7 @@ public class MarketplaceOffersComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.MarketplaceOffersComposer);
         int total = 0;
         this.response.appendInt(this.offers.size());

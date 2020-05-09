@@ -14,7 +14,7 @@ public class ItemIntStateComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ItemStateComposer2);
         this.response.appendInt(this.id);
         this.response.appendInt(this.value);

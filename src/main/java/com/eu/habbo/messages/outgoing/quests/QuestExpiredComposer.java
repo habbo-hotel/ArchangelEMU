@@ -12,7 +12,7 @@ public class QuestExpiredComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.QuestExpiredComposer);
         this.response.appendBoolean(this.expired);
         return this.response;

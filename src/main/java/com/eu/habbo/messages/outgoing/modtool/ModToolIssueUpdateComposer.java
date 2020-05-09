@@ -13,7 +13,7 @@ public class ModToolIssueUpdateComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ModToolIssueUpdateComposer);
         this.issue.serialize(this.response);
         return this.response;

@@ -16,7 +16,7 @@ public class UnknownPollQuestionComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.SimplePollAnswersComposer);
         this.response.appendInt(this.unknownInt);
         this.response.appendInt(this.unknownMap.size());

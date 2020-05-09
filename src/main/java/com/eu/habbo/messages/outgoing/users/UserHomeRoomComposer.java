@@ -14,7 +14,7 @@ public class UserHomeRoomComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserHomeRoomComposer);
         this.response.appendInt(this.homeRoom);
         this.response.appendInt(this.newRoom);

@@ -12,7 +12,7 @@ public class CameraURLComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CameraURLComposer);
         this.response.appendString(this.URL);
         return this.response;

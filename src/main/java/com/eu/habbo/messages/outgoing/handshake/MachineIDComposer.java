@@ -13,7 +13,7 @@ public class MachineIDComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.MachineIDComposer);
         this.response.appendString(this.client.getMachineId());
         return this.response;

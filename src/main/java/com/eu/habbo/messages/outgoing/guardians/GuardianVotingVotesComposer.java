@@ -19,7 +19,7 @@ public class GuardianVotingVotesComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuardianVotingVotesComposer);
 
         ArrayList<GuardianVote> votes = this.ticket.getSortedVotes(this.guardian);

@@ -22,7 +22,7 @@ public class ModToolComposer extends MessageComposer implements TObjectProcedure
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ModToolComposer);
 
         if (this.habbo.hasPermission("acc_modtool_ticket_q")) {

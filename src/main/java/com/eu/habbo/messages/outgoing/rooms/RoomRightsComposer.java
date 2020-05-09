@@ -13,7 +13,7 @@ public class RoomRightsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomRightsComposer);
         this.response.appendInt(this.type.level);
         return this.response;

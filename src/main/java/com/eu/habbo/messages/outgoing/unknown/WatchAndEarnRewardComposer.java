@@ -13,7 +13,7 @@ public class WatchAndEarnRewardComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.WatchAndEarnRewardComposer);
         this.response.appendString(this.item.getType().code);
         this.response.appendInt(this.item.getId());

@@ -13,7 +13,7 @@ public class CatalogSearchResultComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CatalogSearchResultComposer);
         this.item.serialize(this.response);
         return this.response;
