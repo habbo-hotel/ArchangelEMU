@@ -25,12 +25,17 @@ public class HotelAlert extends RCONMessage<HotelAlert.JSONHotelAlert> {
         }
 
         if (serverMessage != null) {
-            for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-                Habbo habbo = set.getValue();
-                if (habbo.getHabboStats().blockStaffAlerts)
-                    continue;
+            serverMessage.retain();
+            try {
+                for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
+                    Habbo habbo = set.getValue();
+                    if (habbo.getHabboStats().blockStaffAlerts)
+                        continue;
 
-                habbo.getClient().sendResponse(serverMessage);
+                    habbo.getClient().sendResponse(serverMessage);
+                }
+            } finally {
+                serverMessage.release();
             }
         }
     }

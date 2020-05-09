@@ -24,15 +24,18 @@ public class HotelAlertCommand extends Command {
             }
 
             ServerMessage msg = new StaffAlertWithLinkComposer(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername(), "").compose();
+            msg.retain();
+            try {
+                for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
+                    Habbo habbo = set.getValue();
+                    if (habbo.getHabboStats().blockStaffAlerts)
+                        continue;
 
-            for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-                Habbo habbo = set.getValue();
-                if (habbo.getHabboStats().blockStaffAlerts)
-                    continue;
-
-                habbo.getClient().sendResponse(msg);
+                    habbo.getClient().sendResponse(msg);
+                }
+            } finally {
+                msg.release();
             }
-
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_ha.forgot_message"), RoomChatMessageBubbles.ALERT);
         }

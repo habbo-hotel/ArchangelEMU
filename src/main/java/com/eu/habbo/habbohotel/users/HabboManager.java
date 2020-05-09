@@ -179,10 +179,15 @@ public class HabboManager {
 
     public void sendPacketToHabbosWithPermission(ServerMessage message, String perm) {
         synchronized (this.onlineHabbos) {
-            for (Habbo habbo : this.onlineHabbos.values()) {
-                if (habbo.hasPermission(perm)) {
-                    habbo.getClient().sendResponse(message);
+            message.retain();
+            try {
+                for (Habbo habbo : this.onlineHabbos.values()) {
+                    if (habbo.hasPermission(perm)) {
+                        habbo.getClient().sendResponse(message);
+                    }
                 }
+            } finally {
+                message.release();
             }
         }
     }
