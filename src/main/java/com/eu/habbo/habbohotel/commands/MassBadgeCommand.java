@@ -32,21 +32,25 @@ public class MassBadgeCommand extends Command {
                 keys.put("image", "${image.library.url}album1584/" + badge + ".gif");
                 keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
                 ServerMessage message = new BubbleAlertComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys).compose();
+                message.retain();
+                try {
+                    for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
+                        Habbo habbo = set.getValue();
 
-                for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-                    Habbo habbo = set.getValue();
+                        if (habbo.isOnline()) {
+                            if (habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && !habbo.getInventory().getBadgesComponent().hasBadge(badge)) {
+                                HabboBadge b = BadgesComponent.createBadge(badge, habbo);
 
-                    if (habbo.isOnline()) {
-                        if (habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && !habbo.getInventory().getBadgesComponent().hasBadge(badge)) {
-                            HabboBadge b = BadgesComponent.createBadge(badge, habbo);
+                                if (b != null) {
+                                    habbo.getClient().sendResponse(new AddUserBadgeComposer(b));
 
-                            if (b != null) {
-                                habbo.getClient().sendResponse(new AddUserBadgeComposer(b));
-
-                                habbo.getClient().sendResponse(message);
+                                    habbo.getClient().sendResponse(message);
+                                }
                             }
                         }
                     }
+                } finally {
+                    message.release();
                 }
             }
             return true;
