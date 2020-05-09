@@ -1,6 +1,8 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CustomRoomLayout extends RoomLayout implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomRoomLayout.class);
+
     private final int roomId;
     private boolean needsUpdate;
 
@@ -30,7 +34,7 @@ public class CustomRoomLayout extends RoomLayout implements Runnable {
                 statement.setInt(5, this.roomId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }

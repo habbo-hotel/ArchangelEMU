@@ -1,6 +1,5 @@
 package com.eu.habbo.threading.runnables;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
@@ -8,10 +7,14 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 
 public class RoomUnitTeleport implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnitTeleport.class);
+
     private RoomUnit roomUnit;
     private Room room;
     private int x;
@@ -42,7 +45,7 @@ public class RoomUnitTeleport implements Runnable {
             try {
                 topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
         this.roomUnit.setPath(new LinkedList<>());

@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.TargetOffer;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlace;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.games.tag.TagGame;
 import com.eu.habbo.habbohotel.items.ItemManager;
@@ -43,6 +44,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gnu.trove.iterator.hash.TObjectHashIterator;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +59,9 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 public class PluginManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameClient.class);
+
     private final THashSet<HabboPlugin> plugins = new THashSet<>();
     private final THashSet<Method> methods = new THashSet<>();
 
@@ -169,7 +175,7 @@ public class PluginManager {
 
         if (!loc.exists()) {
             if (loc.mkdirs()) {
-                Emulator.getLogging().logStart("Created plugins directory!");
+                LOGGER.info("Created plugins directory!");
             }
         }
 
@@ -203,12 +209,12 @@ public class PluginManager {
                         this.plugins.add(plugin);
                         plugin.onEnable();
                     } catch (Exception e) {
-                        Emulator.getLogging().logErrorLine("Could not load plugin " + pluginConfigurtion.name + "!");
-                        Emulator.getLogging().logErrorLine(e);
+                        LOGGER.error("Could not load plugin {}!", pluginConfigurtion.name);
+                        LOGGER.error("Caught exception", e);
                     }
                 }
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
     }
@@ -241,8 +247,8 @@ public class PluginManager {
                 try {
                     method.invoke(null, event);
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine("Could not pass default event " + event.getClass().getName() + " to " + method.getClass().getName() + ":" + method.getName());
-                    Emulator.getLogging().logErrorLine(e);
+                    LOGGER.error("Could not pass default event {} to {}: {}!", event.getClass().getName(), method.getClass().getName(), method.getName());
+                    LOGGER.error("Caught exception", e);
                 }
             }
         }
@@ -260,8 +266,8 @@ public class PluginManager {
                             try {
                                 method.invoke(plugin, event);
                             } catch (Exception e) {
-                                Emulator.getLogging().logErrorLine("Could not pass event " + event.getClass().getName() + " to " + plugin.configuration.name);
-                                Emulator.getLogging().logErrorLine(e);
+                                LOGGER.error("Could not pass event {} to {}", event.getClass().getName(), plugin.configuration.name);
+                                LOGGER.error("Caught exception", e);
                             }
                         }
                     }
@@ -300,7 +306,7 @@ public class PluginManager {
     public void dispose() {
         this.disposePlugins();
 
-        Emulator.getLogging().logShutdownLine("Disposed Plugin Manager!");
+        LOGGER.info("Disposed Plugin Manager!");
     }
 
     private void disposePlugins() {
@@ -316,10 +322,9 @@ public class PluginManager {
                         p.stream.close();
                         p.classLoader.close();
                     } catch (IOException e) {
-                        Emulator.getLogging().logErrorLine(e);
+                        LOGGER.error("Caught exception", e);
                     } catch (Exception ex) {
-                        Emulator.getLogging().logErrorLine("[CRITICAL][PLUGIN] Failed to disable " + p.configuration.name + " caused by: " + ex.getLocalizedMessage());
-                        Emulator.getLogging().logErrorLine(ex);
+                        LOGGER.error("Failed to disable {} because of an exception.", p.configuration.name, ex);
                     }
                 }
             } catch (NoSuchElementException e) {
@@ -336,7 +341,7 @@ public class PluginManager {
 
         this.loadPlugins();
 
-        Emulator.getLogging().logStart("Plugin Manager -> Loaded! " + this.plugins.size() + " plugins! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Plugin Manager -> Loaded! " + this.plugins.size() + " plugins! (" + (System.currentTimeMillis() - millis) + " MS)");
 
         this.registerDefaultEvents();
     }
@@ -355,8 +360,8 @@ public class PluginManager {
             this.methods.add(PluginManager.class.getMethod("globalOnConfigurationUpdated", EmulatorConfigUpdatedEvent.class));
             this.methods.add(WiredHighscoreManager.class.getMethod("onEmulatorLoaded", EmulatorLoadedEvent.class));
         } catch (NoSuchMethodException e) {
-            Emulator.getLogging().logStart("Failed to define default events!");
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.info("Failed to define default events!");
+            LOGGER.error("Caught exception", e);
         }
     }
 

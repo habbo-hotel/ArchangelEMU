@@ -15,6 +15,8 @@ import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxMySongsComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxNowPlayingMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxPlayListComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class TraxManager implements Disposable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TraxManager.class);
     private final Room room;
     private final List<InteractionMusicDisc> songs = new ArrayList<>(0);
     private int totalLength = 0;
@@ -51,7 +54,7 @@ public class TraxManager implements Disposable {
                                 stmt.setInt(2, musicDisc.getId());
                                 stmt.execute();
                             } catch (SQLException e) {
-                                Emulator.getLogging().logSQLException(e);
+                                LOGGER.error("Caught SQL exception", e);
                                 return;
                             }
                         } else {
@@ -67,7 +70,7 @@ public class TraxManager implements Disposable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -157,7 +160,7 @@ public class TraxManager implements Disposable {
                 statement.setInt(2, musicDisc.getId());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
                 return;
             }
 
@@ -184,7 +187,7 @@ public class TraxManager implements Disposable {
                 statement.setInt(2, itemId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
                 return;
             }
 
@@ -277,7 +280,7 @@ public class TraxManager implements Disposable {
             statement.setInt(1, this.room.getId());
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 

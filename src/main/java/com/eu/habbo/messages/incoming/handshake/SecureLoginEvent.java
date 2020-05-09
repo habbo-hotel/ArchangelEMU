@@ -33,12 +33,16 @@ import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 @NoAuthMessage
 public class SecureLoginEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecureLoginEvent.class);
+
 
 
     @Override
@@ -97,7 +101,7 @@ public class SecureLoginEvent extends MessageHandler {
                     Emulator.getThreading().run(habbo);
                     Emulator.getGameEnvironment().getHabboManager().addHabbo(habbo);
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    LOGGER.error("Caught exception", e);
                     Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
                     return;
                 }

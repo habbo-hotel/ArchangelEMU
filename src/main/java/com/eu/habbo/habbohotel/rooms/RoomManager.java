@@ -41,7 +41,6 @@ import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
-import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomCreatedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUncachedEvent;
 import com.eu.habbo.plugin.events.rooms.UserVoteRoomEvent;
@@ -53,13 +52,17 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TIntProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class RoomManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomManager.class);
+
     private static final int page = 0;
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_ROOMS_USER = 25;
@@ -89,7 +92,7 @@ public class RoomManager {
         registerGameType(IceTagGame.class);
         registerGameType(RollerskateGame.class);
 
-        Emulator.getLogging().logStart("Room Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Room Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public void loadRoomModels() {
@@ -99,7 +102,7 @@ public class RoomManager {
                 this.mapNames.add(set.getString("name"));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -113,7 +116,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return layout;
@@ -127,7 +130,7 @@ public class RoomManager {
                 this.roomCategories.put(set.getInt("id"), new RoomCategory(set));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -143,7 +146,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -169,7 +172,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -276,7 +279,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -317,7 +320,7 @@ public class RoomManager {
                 this.activeRooms.put(room.getId(), room);
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return room;
@@ -341,7 +344,7 @@ public class RoomManager {
                     room = this.loadRoom(set.getInt(1));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return room;
@@ -366,7 +369,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -416,7 +419,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return layout;
@@ -450,7 +453,7 @@ public class RoomManager {
                 statement.setInt(2, room.getId());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -910,7 +913,7 @@ public class RoomManager {
             statement.setInt(3, (int) (habbo.getHabboStats().roomEnterTimestamp));
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -961,7 +964,7 @@ public class RoomManager {
                 statement.setInt(3, room.getId());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -1090,7 +1093,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1150,7 +1153,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1217,7 +1220,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         Collections.sort(rooms);
@@ -1263,7 +1266,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         Collections.sort(rooms);
@@ -1286,7 +1289,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1328,7 +1331,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1350,7 +1353,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1454,7 +1457,7 @@ public class RoomManager {
 
         this.activeRooms.clear();
 
-        Emulator.getLogging().logShutdownLine("Room Manager -> Disposed!");
+        LOGGER.info("Room Manager -> Disposed!");
     }
 
     public CustomRoomLayout insertCustomLayout(Room room, String map, int doorX, int doorY, int doorDirection) {
@@ -1471,7 +1474,7 @@ public class RoomManager {
             statement.setString(10, map);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return this.loadCustomLayout(room);

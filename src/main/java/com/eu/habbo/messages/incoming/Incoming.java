@@ -35,7 +35,6 @@ public class Incoming {
     public static final int RoomUserShoutEvent = 2085;
     public static final int ScratchPetEvent = 3202;
     public static final int RoomUserWalkEvent = 3320;
-    public static final int RequestUserTagsEvent = 17;
     public static final int RequestTagsEvent = 826;
     public static final int GetMarketplaceConfigEvent = 2597;
     public static final int RequestHeightmapEvent = 3898;
@@ -114,8 +113,6 @@ public class Incoming {
     public static final int SearchRoomsMyFavoriteEvent = 2578;
     public static final int TradeStartEvent = 1481;
     public static final int RequestTargetOfferEvent = 2487;
-    public static final int ClientActionsMessageEvent = 3457;
-    public static final int UknownMessageEventSomethingSomething = 1827;
     public static final int ChangeRelationEvent = 3768;
     public static final int RoomUserSitEvent = 2235;
     public static final int RequestCanCreateRoomEvent = 2128;
@@ -275,7 +272,6 @@ public class Incoming {
     public static final int GuardianNoUpdatesWantedEvent = 2501;
     public static final int GuardianVoteEvent = 3961;
     public static final int GuardianAcceptRequestEvent = 3365;
-    public static final int RequestGameConfigurationsEvent = 741;
     public static final int RequestAchievementConfigurationEvent = -1;
     public static final int RequestReportUserBullyingEvent = 3786;
     public static final int ReportBullyEvent = 3060;

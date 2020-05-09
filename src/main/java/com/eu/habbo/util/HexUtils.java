@@ -1,4 +1,4 @@
-package com.eu.habbo.crypto.utils;
+package com.eu.habbo.util;
 
 public class HexUtils {
 

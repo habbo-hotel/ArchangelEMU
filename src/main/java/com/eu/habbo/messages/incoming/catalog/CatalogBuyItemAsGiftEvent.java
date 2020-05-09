@@ -25,6 +25,8 @@ import com.eu.habbo.messages.outgoing.users.UserPointsComposer;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,6 +35,8 @@ import java.sql.SQLException;
 import java.util.Calendar;
 
 public class CatalogBuyItemAsGiftEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogBuyItemAsGiftEvent.class);
+
     @Override
     public void handle() throws Exception {
         if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().lastGiftTimestamp >= CatalogManager.PURCHASE_COOLDOWN) {
@@ -104,7 +108,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                                 }
                             }
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            LOGGER.error("Caught SQL exception", e);
                         }
                     } else {
                         userId = habbo.getHabboInfo().getId();
@@ -287,7 +291,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                                                         try {
                                                             guildId = Integer.parseInt(extraData);
                                                         } catch (Exception e) {
-                                                            Emulator.getLogging().logErrorLine(e);
+                                                            LOGGER.error("Caught exception", e);
                                                             this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                                                             return;
                                                         }
@@ -359,7 +363,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
 
                     this.client.sendResponse(new PurchaseOKComposer(item));
                 } catch (Exception e) {
-                    Emulator.getLogging().logPacketError(e);
+                    LOGGER.error("Exception caught", e);
                     this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                 }
             } finally {

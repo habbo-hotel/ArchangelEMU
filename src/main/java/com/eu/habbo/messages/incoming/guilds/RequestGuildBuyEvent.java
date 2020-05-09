@@ -12,8 +12,12 @@ import com.eu.habbo.messages.outgoing.guilds.GuildBoughtComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildEditFailComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.plugin.events.guilds.GuildPurchasedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RequestGuildBuyEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestGuildBuyEvent.class);
+
     @Override
     public void handle() throws Exception {
         if (!this.client.getHabbo().hasPermission("acc_infinite_credits")) {
@@ -95,7 +99,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
             } else {
                 String message = Emulator.getTexts().getValue("scripter.warning.guild.buy.owner").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", r.getName().replace("%owner%", r.getOwnerName()));
                 ScripterManager.scripterDetected(this.client, message);
-                Emulator.getLogging().logUserLine(message);
+                LOGGER.info(message);
             }
         }
     }

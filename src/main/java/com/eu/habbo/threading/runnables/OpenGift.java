@@ -11,6 +11,8 @@ import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryUpdateItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.PresentItemOpenedComposer;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 public class OpenGift implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenGift.class);
+
     private final HabboItem item;
     private final Habbo habbo;
     private final Room room;
@@ -100,7 +104,7 @@ public class OpenGift implements Runnable {
                 this.habbo.getClient().sendResponse(new PresentItemOpenedComposer(inside, "", false));
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 }

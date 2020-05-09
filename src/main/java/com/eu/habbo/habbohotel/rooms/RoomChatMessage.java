@@ -1,21 +1,26 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.Loggable;
+import com.eu.habbo.core.DatabaseLoggable;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.Incoming;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-public class RoomChatMessage implements Runnable, ISerialize, Loggable {
+public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomChatMessage.class);
+    private static final String QUERY = "INSERT INTO chatlogs_room (user_from_id, user_to_id, message, timestamp, room_id) VALUES (?, ?, ?, ?, ?)";
+
     private static final List<String> chatColors = Arrays.asList("@red@", "@cyan@", "@blue@", "@green@", "@purple@");
-    public static String insertQuery = "INSERT INTO chatlogs_room (user_from_id, user_to_id, message, timestamp, room_id) VALUES (?, ?, ?, ?, ?)";
     public static int MAXIMUM_LENGTH = 100;
     //Configuration. Loaded from database & updated accordingly.
     public static boolean SAVE_ROOM_CHATS = false;
@@ -130,10 +135,11 @@ public class RoomChatMessage implements Runnable, ISerialize, Loggable {
             try {
                 this.message = this.message.substring(0, RoomChatMessage.MAXIMUM_LENGTH - 1);
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
-        Emulator.getLogging().addChatLog(this);
+
+        Emulator.getDatabaseLogger().store(this);
     }
 
     public String getMessage() {
@@ -191,7 +197,7 @@ public class RoomChatMessage implements Runnable, ISerialize, Loggable {
             message.appendInt(0);
             message.appendInt(this.getMessage().length());
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 
@@ -216,6 +222,11 @@ public class RoomChatMessage implements Runnable, ISerialize, Loggable {
                 this.message = "";
             }
         }
+    }
+
+    @Override
+    public String getQuery() {
+        return QUERY;
     }
 
     @Override

@@ -14,13 +14,17 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.procedure.TIntIntProcedure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class HabboInfo implements Runnable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HabboInfo.class);
+
     public boolean firstVisit = false;
     private String username;
     private String motto;
@@ -66,8 +70,8 @@ public class HabboInfo implements Runnable {
             this.rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(set.getInt("rank"));
 
             if (this.rank == null) {
-                Emulator.getLogging().logErrorLine("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
-                Emulator.getLogging().logUserLine(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+                LOGGER.error("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+                LOGGER.warn(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
                 this.rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(1);
             }
 
@@ -79,7 +83,7 @@ public class HabboInfo implements Runnable {
             this.online = false;
             this.currentRoom = null;
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         this.loadCurrencies();
@@ -97,7 +101,7 @@ public class HabboInfo implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -113,14 +117,14 @@ public class HabboInfo implements Runnable {
                         statement.setInt(4, b);
                         statement.addBatch();
                     } catch (SQLException e) {
-                        Emulator.getLogging().logSQLException(e);
+                        LOGGER.error("Caught SQL exception", e);
                     }
                     return true;
                 }
             });
             statement.executeBatch();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -135,7 +139,7 @@ public class HabboInfo implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -160,7 +164,7 @@ public class HabboInfo implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -171,7 +175,7 @@ public class HabboInfo implements Runnable {
             statement.setInt(1, search.getId());
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -494,7 +498,7 @@ public class HabboInfo implements Runnable {
             statement.setInt(13, this.id);
             statement.executeUpdate();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 

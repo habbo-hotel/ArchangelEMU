@@ -1,6 +1,5 @@
 package com.eu.habbo.messages.outgoing.friends;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -8,10 +7,14 @@ import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 public class FriendsComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FriendsComposer.class);
+
     private final Habbo habbo;
 
     public FriendsComposer(Habbo habbo) {
@@ -67,7 +70,7 @@ public class FriendsComposer extends MessageComposer {
 
             return this.response;
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
         return null;
     }

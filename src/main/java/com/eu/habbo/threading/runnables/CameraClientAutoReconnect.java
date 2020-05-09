@@ -1,15 +1,19 @@
 package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.Logging;
 import com.eu.habbo.networking.camera.CameraClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CameraClientAutoReconnect implements Runnable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CameraClientAutoReconnect.class);
+
     @Override
     public void run() {
         if (CameraClient.attemptReconnect && !Emulator.isShuttingDown) {
             if (!(CameraClient.channelFuture != null && CameraClient.channelFuture.channel().isRegistered())) {
-                System.out.println("[" + Logging.ANSI_YELLOW + "CAMERA" + Logging.ANSI_RESET + "] Attempting to connect to the Camera server.");
+                LOGGER.info("Attempting to connect to the Camera server.");
                 if (Emulator.getCameraClient() != null) {
                     Emulator.getCameraClient().disconnect();
                 } else {
@@ -19,11 +23,11 @@ public class CameraClientAutoReconnect implements Runnable {
                 try {
                     Emulator.getCameraClient().connect();
                 } catch (Exception e) {
-                    System.out.println("[" + Logging.ANSI_RED + "CAMERA" + Logging.ANSI_RESET + "] Failed to start the camera client.");
+                    LOGGER.error("Failed to start the camera client.", e);
                 }
             } else {
                 CameraClient.attemptReconnect = false;
-                System.out.println("[" + Logging.ANSI_RED + "CAMERA" + Logging.ANSI_RESET + "] Already connected to the camera. Reconnecting not needed!");
+                LOGGER.info("Already connected to the camera. Reconnecting not needed!");
             }
         }
 

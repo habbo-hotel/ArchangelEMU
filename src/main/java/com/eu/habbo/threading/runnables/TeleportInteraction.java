@@ -11,8 +11,12 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserEffectComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class TeleportInteraction extends Thread {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TeleportInteraction.class);
+
     private final Room room;
     private final GameClient client;
     private final HabboItem teleportOne;
@@ -112,7 +116,7 @@ class TeleportInteraction extends Thread {
                 }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 

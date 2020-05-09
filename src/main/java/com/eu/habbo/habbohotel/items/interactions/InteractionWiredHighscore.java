@@ -3,19 +3,23 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreRow;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreClearType;
+import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreRow;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreScoreType;
 import com.eu.habbo.messages.ServerMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 public class InteractionWiredHighscore extends HabboItem {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionWiredHighscore.class);
+
     public WiredHighscoreScoreType scoreType;
     public WiredHighscoreClearType clearType;
 
@@ -33,7 +37,7 @@ public class InteractionWiredHighscore extends HabboItem {
             this.scoreType = WiredHighscoreScoreType.valueOf(name);
             this.clearType = WiredHighscoreClearType.values()[ctype];
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         this.reloadData();
@@ -51,7 +55,7 @@ public class InteractionWiredHighscore extends HabboItem {
             this.scoreType = WiredHighscoreScoreType.valueOf(name);
             this.clearType = WiredHighscoreClearType.values()[ctype];
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         this.reloadData();
@@ -83,7 +87,7 @@ public class InteractionWiredHighscore extends HabboItem {
             this.setExtradata(Math.abs(state - 1) + "");
             room.updateItem(this);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 

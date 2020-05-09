@@ -7,6 +7,8 @@ import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WardrobeComponent {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WardrobeComponent.class);
     private final THashMap<Integer, WardrobeItem> looks;
     private final TIntSet clothing;
 
@@ -42,7 +45,7 @@ public class WardrobeComponent {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -149,7 +152,7 @@ public class WardrobeComponent {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }

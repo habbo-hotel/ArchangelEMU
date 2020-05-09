@@ -17,11 +17,15 @@ import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredEffectMatchFurni extends InteractionWiredEffect {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WiredEffectMatchFurni.class);
+
     private static final WiredEffectType type = WiredEffectType.MATCH_SSHOT;
     public boolean checkForWiredResetPermission = true;
     private THashSet<WiredMatchFurniSetting> settings;
@@ -189,7 +193,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                 }
 
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
 

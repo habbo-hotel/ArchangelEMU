@@ -7,6 +7,8 @@ import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.friends.FriendChatMessageComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MessengerBuddy implements Runnable, ISerialize {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessengerBuddy.class);
 
     private int id;
     private String username;
@@ -44,7 +47,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -56,7 +59,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             this.relation = 0;
             this.userOne = 0;
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -149,7 +152,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             statement.setInt(3, this.id);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
