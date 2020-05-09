@@ -3726,35 +3726,59 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void sendComposer(ServerMessage message) {
-        for (Habbo habbo : this.getHabbos()) {
-            if (habbo.getClient() == null) {
-                this.removeHabbo(habbo, true);
-                continue;
-            }
+        message.retain();
 
-            habbo.getClient().sendResponse(message);
+        try {
+            for (Habbo habbo : this.getHabbos()) {
+                if (habbo.getClient() == null) {
+                    this.removeHabbo(habbo, true);
+                    continue;
+                }
+
+                habbo.getClient().sendResponse(message);
+            }
+        } finally {
+            message.release();
         }
     }
 
     public void sendComposerToHabbosWithRights(ServerMessage message) {
-        for (Habbo habbo : this.getHabbos()) {
-            if (this.hasRights(habbo)) {
-                habbo.getClient().sendResponse(message);
+        message.retain();
+
+        try {
+            for (Habbo habbo : this.getHabbos()) {
+                if (this.hasRights(habbo)) {
+                    habbo.getClient().sendResponse(message);
+                }
             }
+        } finally {
+            message.release();
         }
     }
 
     public void petChat(ServerMessage message) {
-        for (Habbo habbo : this.getHabbos()) {
-            if (!habbo.getHabboStats().ignorePets)
-                habbo.getClient().sendResponse(message);
+        message.retain();
+
+        try {
+            for (Habbo habbo : this.getHabbos()) {
+                if (!habbo.getHabboStats().ignorePets)
+                    habbo.getClient().sendResponse(message);
+            }
+        } finally {
+            message.release();
         }
     }
 
     public void botChat(ServerMessage message) {
-        for (Habbo habbo : this.getHabbos()) {
-            if (!habbo.getHabboStats().ignoreBots)
-                habbo.getClient().sendResponse(message);
+        message.retain();
+
+        try {
+            for (Habbo habbo : this.getHabbos()) {
+                if (!habbo.getHabboStats().ignoreBots)
+                    habbo.getClient().sendResponse(message);
+            }
+        } finally {
+            message.release();
         }
     }
 

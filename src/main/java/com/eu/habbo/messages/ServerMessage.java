@@ -1,6 +1,5 @@
 package com.eu.habbo.messages;
 
-import com.eu.habbo.util.DebugUtils;
 import com.eu.habbo.util.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
@@ -194,23 +193,13 @@ public class ServerMessage implements ReferenceCounted {
 
     @Override
     public ReferenceCounted retain() {
-        int result = this.refs.incrementAndGet();
-
-        if (this.header == 1167 || this.header == 2024 || this.header == 2505) {
-            System.out.printf("retain  Packet: %d Count: %d From: %s%n", this.header, result, DebugUtils.getCallerCallerStacktrace());
-        }
-
+        this.refs.incrementAndGet();
         return this;
     }
 
     @Override
     public ReferenceCounted retain(int i) {
-        int result = this.refs.addAndGet(i);
-
-        if (this.header == 1167 || this.header == 2024 || this.header == 2505) {
-            System.out.printf("retain  Packet: %d Count: %d From: %s%n", this.header, result, DebugUtils.getCallerCallerStacktrace());
-        }
-
+        this.refs.addAndGet(i);
         return this;
     }
 
@@ -232,17 +221,12 @@ public class ServerMessage implements ReferenceCounted {
     @Override
     public boolean release(int i) {
         int value = this.refs.addAndGet(-i);
-
-        if (this.header == 1167 || this.header == 2024 || this.header == 2505) {
-            System.out.printf("release Packet: %d Count: %d From: %s%n", this.header, value, DebugUtils.getCallerCallerStacktrace());
-        }
-
         if (value < 0) {
             throw new IllegalReferenceCountException("Decremented below 0 (packet " + this.header + " value " + value + ").");
         }
 
         if (value == 0) {
-            this.channelBuffer.release();
+            this.channelBuffer.release(this.channelBuffer.refCnt());
             return true;
         }
 
