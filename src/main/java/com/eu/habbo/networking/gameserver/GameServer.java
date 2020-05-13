@@ -30,9 +30,6 @@ public class GameServer extends Server {
             public void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast("logger", new LoggingHandler());
 
-                // Logger.
-
-
                 // Decoders.
                 ch.pipeline().addLast(new GamePolicyDecoder());
                 ch.pipeline().addLast(new GameByteFrameDecoder());

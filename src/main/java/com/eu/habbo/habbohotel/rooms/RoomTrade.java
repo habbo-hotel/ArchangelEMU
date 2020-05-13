@@ -3,7 +3,6 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
@@ -311,16 +310,8 @@ public class RoomTrade {
     }
 
     public void sendMessageToUsers(MessageComposer message) {
-        ServerMessage messageComposed = message.compose();
-
-        messageComposed.retain();
-
-        try {
-            for (RoomTradeUser roomTradeUser : this.users) {
-                roomTradeUser.getHabbo().getClient().sendResponse(message);
-            }
-        } finally {
-            messageComposed.release();
+        for (RoomTradeUser roomTradeUser : this.users) {
+            roomTradeUser.getHabbo().getClient().sendResponse(message);
         }
     }
 

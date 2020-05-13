@@ -134,47 +134,32 @@ public class GameClientManager {
 
 
     public void sendBroadcastResponse(ServerMessage message) {
-        message.retain();
-        try {
-            for (GameClient client : this.clients.values()) {
-                client.sendResponse(message);
-            }
-        } finally {
-            message.release();
+        for (GameClient client : this.clients.values()) {
+            client.sendResponse(message);
         }
     }
 
 
     public void sendBroadcastResponse(ServerMessage message, GameClient exclude) {
-        message.retain();
-        try {
-            for (GameClient client : this.clients.values()) {
-                if (client.equals(exclude))
-                    continue;
+        for (GameClient client : this.clients.values()) {
+            if (client.equals(exclude))
+                continue;
 
-                client.sendResponse(message);
-            }
-        } finally {
-            message.release();
+            client.sendResponse(message);
         }
     }
 
 
     public void sendBroadcastResponse(ServerMessage message, String minPermission, GameClient exclude) {
-        message.retain();
-        try {
-            for (GameClient client : this.clients.values()) {
-                if (client.equals(exclude))
-                    continue;
+        for (GameClient client : this.clients.values()) {
+            if (client.equals(exclude))
+                continue;
 
-                if (client.getHabbo() != null) {
-                    if (client.getHabbo().hasPermission(minPermission)) {
-                        client.sendResponse(message);
-                    }
+            if (client.getHabbo() != null) {
+                if (client.getHabbo().hasPermission(minPermission)) {
+                    client.sendResponse(message);
                 }
             }
-        } finally {
-            message.release();
         }
     }
 }

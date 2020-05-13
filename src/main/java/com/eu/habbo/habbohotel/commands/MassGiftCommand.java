@@ -60,26 +60,20 @@ public class MassGiftCommand extends Command {
             ServerMessage giftNotificiationMessage = new BubbleAlertComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys).compose();
 
             Emulator.getThreading().run(() -> {
-                giftNotificiationMessage.retain();
+                for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
+                    Habbo habbo = set.getValue();
 
-                try {
-                    for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-                        Habbo habbo = set.getValue();
+                    HabboItem item = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, 0, 0, "");
 
-                        HabboItem item = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, 0, 0, "");
+                    Item giftItem = Emulator.getGameEnvironment().getItemManager().getItem((Integer) Emulator.getGameEnvironment().getCatalogManager().giftFurnis.values().toArray()[Emulator.getRandom().nextInt(Emulator.getGameEnvironment().getCatalogManager().giftFurnis.size())]);
 
-                        Item giftItem = Emulator.getGameEnvironment().getItemManager().getItem((Integer) Emulator.getGameEnvironment().getCatalogManager().giftFurnis.values().toArray()[Emulator.getRandom().nextInt(Emulator.getGameEnvironment().getCatalogManager().giftFurnis.size())]);
+                    String extraData = "1\t" + item.getId();
+                    extraData += "\t0\t0\t0\t" + finalMessage + "\t0\t0";
 
-                        String extraData = "1\t" + item.getId();
-                        extraData += "\t0\t0\t0\t" + finalMessage + "\t0\t0";
+                    Emulator.getGameEnvironment().getItemManager().createGift(habbo.getHabboInfo().getUsername(), giftItem, extraData, 0, 0);
 
-                        Emulator.getGameEnvironment().getItemManager().createGift(habbo.getHabboInfo().getUsername(), giftItem, extraData, 0, 0);
-
-                        habbo.getClient().sendResponse(new InventoryRefreshComposer());
-                        habbo.getClient().sendResponse(giftNotificiationMessage);
-                    }
-                } finally {
-                    giftNotificiationMessage.release();
+                    habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                    habbo.getClient().sendResponse(giftNotificiationMessage);
                 }
             });
 

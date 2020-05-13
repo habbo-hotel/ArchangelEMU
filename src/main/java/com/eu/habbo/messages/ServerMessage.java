@@ -4,15 +4,13 @@ import com.eu.habbo.util.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
-import io.netty.util.IllegalReferenceCountException;
-import io.netty.util.ReferenceCounted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ServerMessage implements ReferenceCounted {
+public class ServerMessage {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerMessage.class);
     private boolean initialized;
@@ -35,6 +33,7 @@ public class ServerMessage implements ReferenceCounted {
             throw new ServerMessageException("ServerMessage was already initialized.");
         }
 
+        this.initialized = true;
         this.header = id;
         this.refs = new AtomicInteger(0);
         this.channelBuffer = Unpooled.buffer();
@@ -184,53 +183,6 @@ public class ServerMessage implements ReferenceCounted {
         this.channelBuffer.setInt(0, this.channelBuffer.writerIndex() - 4);
 
         return this.channelBuffer.copy();
-    }
-
-    @Override
-    public int refCnt() {
-        return this.refs.get();
-    }
-
-    @Override
-    public ReferenceCounted retain() {
-        this.refs.incrementAndGet();
-        return this;
-    }
-
-    @Override
-    public ReferenceCounted retain(int i) {
-        this.refs.addAndGet(i);
-        return this;
-    }
-
-    @Override
-    public ReferenceCounted touch() {
-        return this;
-    }
-
-    @Override
-    public ReferenceCounted touch(Object o) {
-        return this;
-    }
-
-    @Override
-    public boolean release() {
-        return this.release(1);
-    }
-
-    @Override
-    public boolean release(int i) {
-        int value = this.refs.addAndGet(-i);
-        if (value < 0) {
-            throw new IllegalReferenceCountException("Decremented below 0 (packet " + this.header + " value " + value + ").");
-        }
-
-        if (value == 0) {
-            this.channelBuffer.release(this.channelBuffer.refCnt());
-            return true;
-        }
-
-        return false;
     }
 
 }

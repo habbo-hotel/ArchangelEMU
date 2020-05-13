@@ -96,7 +96,7 @@ public class GameClient {
                 return;
             }
 
-            this.channel.write(response.retain(), this.channel.voidPromise());
+            this.channel.write(response, this.channel.voidPromise());
             this.channel.flush();
         }
     }
@@ -108,7 +108,7 @@ public class GameClient {
                     return;
                 }
 
-                this.channel.write(response.retain());
+                this.channel.write(response);
             }
 
             this.channel.flush();

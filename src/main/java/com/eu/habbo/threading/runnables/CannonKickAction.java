@@ -38,19 +38,13 @@ public class CannonKickAction implements Runnable {
 
         ServerMessage message = new BubbleAlertComposer("cannon.png", dater).compose();
 
-        message.retain();
-
-        try {
-            for (RoomTile t : tiles) {
-                for (Habbo habbo : this.room.getHabbosAt(t.x, t.y)) {
-                    if (!habbo.hasPermission(Permission.ACC_UNKICKABLE) && !this.room.isOwner(habbo)) {
-                        Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room);
-                        habbo.getClient().sendResponse(message); //kicked composer
-                    }
+        for (RoomTile t : tiles) {
+            for (Habbo habbo : this.room.getHabbosAt(t.x, t.y)) {
+                if (!habbo.hasPermission(Permission.ACC_UNKICKABLE) && !this.room.isOwner(habbo)) {
+                    Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room);
+                    habbo.getClient().sendResponse(message); //kicked composer
                 }
             }
-        } finally {
-            message.release();
         }
     }
 }

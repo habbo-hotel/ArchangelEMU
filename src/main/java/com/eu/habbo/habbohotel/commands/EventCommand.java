@@ -35,18 +35,12 @@ public class EventCommand extends Command {
 
                 ServerMessage msg = new BubbleAlertComposer("hotel.event", codes).compose();
 
-                msg.retain();
+                for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
+                    Habbo habbo = set.getValue();
+                    if (habbo.getHabboStats().blockStaffAlerts)
+                        continue;
 
-                try {
-                    for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-                        Habbo habbo = set.getValue();
-                        if (habbo.getHabboStats().blockStaffAlerts)
-                            continue;
-
-                        habbo.getClient().sendResponse(msg);
-                    }
-                } finally {
-                    msg.release();
+                    habbo.getClient().sendResponse(msg);
                 }
 
                 return true;

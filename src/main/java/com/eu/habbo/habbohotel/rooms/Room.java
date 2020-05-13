@@ -3115,107 +3115,69 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         roomChatMessage.setMessage(trimmedMessage);
 
-        if (prefixMessage != null) {
-            prefixMessage.retain();
-        }
-
-        if (clearPrefixMessage != null) {
-            clearPrefixMessage.retain();
-        }
-
-        try {
-            if (chatType == RoomChatType.WHISPER) {
-                if (roomChatMessage.getTargetHabbo() == null) {
-                    return;
-                }
-
-                RoomChatMessage staffChatMessage = new RoomChatMessage(roomChatMessage);
-                staffChatMessage.setMessage("To " + staffChatMessage.getTargetHabbo().getHabboInfo().getUsername() + ": " + staffChatMessage.getMessage());
-
-                final ServerMessage message = new RoomUserWhisperComposer(roomChatMessage).compose();
-                final ServerMessage staffMessage = new RoomUserWhisperComposer(staffChatMessage).compose();
-
-                message.retain();
-                staffMessage.retain();
-
-                try {
-                    for (Habbo h : this.getHabbos()) {
-                        if (h == roomChatMessage.getTargetHabbo() || h == habbo) {
-                            if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId())) {
-                                if (prefixMessage != null) {
-                                    h.getClient().sendResponse(prefixMessage);
-                                }
-                                h.getClient().sendResponse(message);
-
-                                if (clearPrefixMessage != null) {
-                                    h.getClient().sendResponse(clearPrefixMessage);
-                                }
-                            }
-
-                            continue;
-                        }
-                        if (h.hasPermission("acc_see_whispers")) {
-                            h.getClient().sendResponse(staffMessage);
-                        }
-                    }
-                } finally {
-                    message.release();
-                    staffMessage.release();
-                }
-            } else if (chatType == RoomChatType.TALK) {
-                ServerMessage message = new RoomUserTalkComposer(roomChatMessage).compose();
-                boolean noChatLimit = habbo.hasPermission("acc_chat_no_limit");
-
-                message.retain();
-
-                try {
-                    for (Habbo h : this.getHabbos()) {
-                        if ((h.getRoomUnit().getCurrentLocation().distance(habbo.getRoomUnit().getCurrentLocation()) <= this.chatDistance ||
-                                h.equals(habbo) ||
-                                this.hasRights(h) ||
-                                noChatLimit) && (show == null || RoomLayout.tileInSquare(show, h.getRoomUnit().getCurrentLocation()))) {
-                            if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId())) {
-                                if (prefixMessage != null && !h.getHabboStats().preferOldChat) {
-                                    h.getClient().sendResponse(prefixMessage);
-                                }
-                                h.getClient().sendResponse(message);
-                                if (clearPrefixMessage != null && !h.getHabboStats().preferOldChat) {
-                                    h.getClient().sendResponse(clearPrefixMessage);
-                                }
-                            }
-                        }
-                    }
-                } finally {
-                    message.release();
-                }
-            } else if (chatType == RoomChatType.SHOUT) {
-                ServerMessage message = new RoomUserShoutComposer(roomChatMessage).compose();
-
-                message.retain();
-
-                try {
-                    for (Habbo h : this.getHabbos()) {
-                        if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId()) && (show == null || RoomLayout.tileInSquare(show, h.getRoomUnit().getCurrentLocation()))) {
-                            if (prefixMessage != null && !h.getHabboStats().preferOldChat) {
-                                h.getClient().sendResponse(prefixMessage);
-                            }
-                            h.getClient().sendResponse(message);
-                            if (clearPrefixMessage != null && !h.getHabboStats().preferOldChat) {
-                                h.getClient().sendResponse(clearPrefixMessage);
-                            }
-                        }
-                    }
-                } finally {
-                    message.release();
-                }
-            }
-        } finally {
-            if (prefixMessage != null) {
-                prefixMessage.release();
+        if (chatType == RoomChatType.WHISPER) {
+            if (roomChatMessage.getTargetHabbo() == null) {
+                return;
             }
 
-            if (clearPrefixMessage != null) {
-                clearPrefixMessage.release();
+            RoomChatMessage staffChatMessage = new RoomChatMessage(roomChatMessage);
+            staffChatMessage.setMessage("To " + staffChatMessage.getTargetHabbo().getHabboInfo().getUsername() + ": " + staffChatMessage.getMessage());
+
+            final ServerMessage message = new RoomUserWhisperComposer(roomChatMessage).compose();
+            final ServerMessage staffMessage = new RoomUserWhisperComposer(staffChatMessage).compose();
+
+            for (Habbo h : this.getHabbos()) {
+                if (h == roomChatMessage.getTargetHabbo() || h == habbo) {
+                    if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId())) {
+                        if (prefixMessage != null) {
+                            h.getClient().sendResponse(prefixMessage);
+                        }
+                        h.getClient().sendResponse(message);
+
+                        if (clearPrefixMessage != null) {
+                            h.getClient().sendResponse(clearPrefixMessage);
+                        }
+                    }
+
+                    continue;
+                }
+                if (h.hasPermission("acc_see_whispers")) {
+                    h.getClient().sendResponse(staffMessage);
+                }
+            }
+        } else if (chatType == RoomChatType.TALK) {
+            ServerMessage message = new RoomUserTalkComposer(roomChatMessage).compose();
+            boolean noChatLimit = habbo.hasPermission("acc_chat_no_limit");
+
+            for (Habbo h : this.getHabbos()) {
+                if ((h.getRoomUnit().getCurrentLocation().distance(habbo.getRoomUnit().getCurrentLocation()) <= this.chatDistance ||
+                        h.equals(habbo) ||
+                        this.hasRights(h) ||
+                        noChatLimit) && (show == null || RoomLayout.tileInSquare(show, h.getRoomUnit().getCurrentLocation()))) {
+                    if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId())) {
+                        if (prefixMessage != null && !h.getHabboStats().preferOldChat) {
+                            h.getClient().sendResponse(prefixMessage);
+                        }
+                        h.getClient().sendResponse(message);
+                        if (clearPrefixMessage != null && !h.getHabboStats().preferOldChat) {
+                            h.getClient().sendResponse(clearPrefixMessage);
+                        }
+                    }
+                }
+            }
+        } else if (chatType == RoomChatType.SHOUT) {
+            ServerMessage message = new RoomUserShoutComposer(roomChatMessage).compose();
+
+            for (Habbo h : this.getHabbos()) {
+                if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId()) && (show == null || RoomLayout.tileInSquare(show, h.getRoomUnit().getCurrentLocation()))) {
+                    if (prefixMessage != null && !h.getHabboStats().preferOldChat) {
+                        h.getClient().sendResponse(prefixMessage);
+                    }
+                    h.getClient().sendResponse(message);
+                    if (clearPrefixMessage != null && !h.getHabboStats().preferOldChat) {
+                        h.getClient().sendResponse(clearPrefixMessage);
+                    }
+                }
             }
         }
 
@@ -3765,46 +3727,28 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void sendComposer(ServerMessage message) {
-        message.retain();
-
-        try {
-            for (Habbo habbo : this.getHabbos()) {
-                if (habbo.getClient() == null) {
-                    this.removeHabbo(habbo, true);
-                    continue;
-                }
-
-                habbo.getClient().sendResponse(message);
+        for (Habbo habbo : this.getHabbos()) {
+            if (habbo.getClient() == null) {
+                this.removeHabbo(habbo, true);
+                continue;
             }
-        } finally {
-            message.release();
+
+            habbo.getClient().sendResponse(message);
         }
     }
 
     public void sendComposerToHabbosWithRights(ServerMessage message) {
-        message.retain();
-
-        try {
-            for (Habbo habbo : this.getHabbos()) {
-                if (this.hasRights(habbo)) {
-                    habbo.getClient().sendResponse(message);
-                }
+        for (Habbo habbo : this.getHabbos()) {
+            if (this.hasRights(habbo)) {
+                habbo.getClient().sendResponse(message);
             }
-        } finally {
-            message.release();
         }
     }
 
     public void petChat(ServerMessage message) {
-        message.retain();
-
-        try {
-            for (Habbo habbo : this.getHabbos()) {
-                if (!habbo.getHabboStats().ignorePets)
-                    habbo.getClient().sendResponse(message);
-            }
-        } finally {
-            message.release();
+        for (Habbo habbo : this.getHabbos()) {
+            if (!habbo.getHabboStats().ignorePets)
+                habbo.getClient().sendResponse(message);
         }
     }
 
@@ -3813,15 +3757,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return;
         }
 
-        message.retain();
-
-        try {
-            for (Habbo habbo : this.getHabbos()) {
-                if (!habbo.getHabboStats().ignoreBots)
-                    habbo.getClient().sendResponse(message);
-            }
-        } finally {
-            message.release();
+        for (Habbo habbo : this.getHabbos()) {
+            if (!habbo.getHabboStats().ignoreBots)
+                habbo.getClient().sendResponse(message);
         }
     }
 

@@ -27,7 +27,7 @@ public class GameServerMessageLogger extends MessageToMessageEncoder<ServerMessa
                 this.names.getOutgoingName(message.getHeader()),
                 message.getBodyString()));
 
-        out.add(message.retain());
+        out.add(message);
     }
 
 }
