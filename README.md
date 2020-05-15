@@ -34,6 +34,8 @@ When making an bug report or a feature request use the template we provide so th
 - Skeletor
 - z
 - ArpyAge
+- Mike
+
 
 ## Discord ##
 Join us on Discord at https://discord.gg/BzfFsTp
