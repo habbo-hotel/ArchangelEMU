@@ -16,7 +16,7 @@ public class HotelViewCatalogPageExpiringComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.HotelViewCatalogPageExpiringComposer);
         this.response.appendString(this.name);
         this.response.appendInt(this.time);

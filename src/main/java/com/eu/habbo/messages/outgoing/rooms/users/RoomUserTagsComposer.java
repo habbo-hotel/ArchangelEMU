@@ -13,7 +13,7 @@ public class RoomUserTagsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomUserTagsComposer);
         this.response.appendInt(this.habbo.getRoomUnit().getId());
         this.response.appendInt(this.habbo.getHabboStats().tags.length);

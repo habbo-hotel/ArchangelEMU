@@ -21,7 +21,7 @@ public class TradeStartComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.TradeStartComposer);
         for (RoomTradeUser tradeUser : this.roomTrade.getRoomTradeUsers()) {
             this.response.appendInt(tradeUser.getHabbo().getHabboInfo().getId());

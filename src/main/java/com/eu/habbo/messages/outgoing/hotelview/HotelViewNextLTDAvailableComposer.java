@@ -18,7 +18,7 @@ public class HotelViewNextLTDAvailableComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.HotelViewNextLTDAvailableComposer);
         this.response.appendInt(this.time);
         this.response.appendInt(this.pageId);

@@ -99,7 +99,7 @@ public class GuildForumDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
 
         try {
             this.response.init(Outgoing.GuildForumDataComposer);

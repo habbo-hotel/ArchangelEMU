@@ -13,7 +13,7 @@ public class UpdateUserLookComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UpdateUserLookComposer);
         this.response.appendString(this.habbo.getHabboInfo().getLook());
         this.response.appendString(this.habbo.getHabboInfo().getGender().name());

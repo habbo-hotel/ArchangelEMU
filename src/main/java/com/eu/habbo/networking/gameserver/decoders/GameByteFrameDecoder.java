@@ -6,7 +6,13 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 public class GameByteFrameDecoder extends LengthFieldBasedFrameDecoder {
 
-    private static final int MAX_PACKET_LENGTH = 8192 * 4;
+    /**
+     * MAX_PACKET_LENGTH is based on the maximum camera PNG size.
+     * Source: https://superuser.com/a/759030
+     * Maximum camera packet is 320 * 320 Pixel * 4 Bytes per Pixel = 409600.
+     * Adding some for overhead 409600 + 8192 = 417792
+     */
+    private static final int MAX_PACKET_LENGTH = 417792;
     private static final int LENGTH_FIELD_OFFSET = 0;
     private static final int LENGTH_FIELD_LENGTH = 4;
     private static final int LENGTH_FIELD_ADJUSTMENT = 0;

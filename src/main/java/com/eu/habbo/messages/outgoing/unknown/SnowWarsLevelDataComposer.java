@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 
 public class SnowWarsLevelDataComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(3874);
         this.response.appendInt(0);
         this.response.appendInt(10); //MapID

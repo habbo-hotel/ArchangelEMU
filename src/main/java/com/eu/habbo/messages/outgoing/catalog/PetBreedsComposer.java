@@ -16,7 +16,7 @@ public class PetBreedsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         if (this.petRaces == null)
             return null;
         this.response.init(Outgoing.PetBreedsComposer);

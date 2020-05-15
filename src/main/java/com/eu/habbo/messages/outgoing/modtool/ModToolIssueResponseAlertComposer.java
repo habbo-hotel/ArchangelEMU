@@ -12,7 +12,7 @@ public class ModToolIssueResponseAlertComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ModToolIssueResponseAlertComposer);
         this.response.appendString(this.message);
         return this.response;

@@ -14,7 +14,7 @@ public class VerifyMobilePhoneCodeWindowComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.VerifyMobilePhoneCodeWindowComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.unknownInt2);

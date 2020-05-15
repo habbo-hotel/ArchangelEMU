@@ -27,7 +27,7 @@ public class UpdateStackHeightComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         //TODO: maybe do this another way? doesn't seem to be very clean but gets the job done
         this.response.init(Outgoing.UpdateStackHeightComposer);
         if (this.updateTiles != null) {

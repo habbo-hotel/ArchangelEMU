@@ -13,7 +13,7 @@ public class RoomUserRemoveComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomUserRemoveComposer);
         this.response.appendString(this.roomUnit.getId() + "");
         return this.response;

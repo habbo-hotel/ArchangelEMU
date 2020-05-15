@@ -11,7 +11,7 @@ import gnu.trove.procedure.TObjectProcedure;
 
 public class InventoryAchievementsComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.InventoryAchievementsComposer);
 
         synchronized (Emulator.getGameEnvironment().getAchievementManager().getAchievements()) {

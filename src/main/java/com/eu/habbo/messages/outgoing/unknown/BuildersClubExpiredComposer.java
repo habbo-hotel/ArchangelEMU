@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class BuildersClubExpiredComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.BuildersClubExpiredComposer);
         this.response.appendInt(Integer.MAX_VALUE);
         this.response.appendInt(0);

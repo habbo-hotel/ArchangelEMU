@@ -17,7 +17,7 @@ public class ModToolSanctionDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ModToolSanctionDataComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.accountId);

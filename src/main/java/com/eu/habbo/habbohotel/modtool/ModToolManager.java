@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.modtool;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;

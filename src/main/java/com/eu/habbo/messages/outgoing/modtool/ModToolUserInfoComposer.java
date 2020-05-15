@@ -25,7 +25,7 @@ public class ModToolUserInfoComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ModToolUserInfoComposer);
         try {
             this.response.appendInt(this.set.getInt("user_id"));

@@ -15,7 +15,7 @@ public class FavoriteRoomsCountComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.FavoriteRoomsCountComposer);
         this.response.appendInt(Emulator.getConfig().getInt("hotel.rooms.max.favorite"));
         this.response.appendInt(this.habbo.getHabboStats().getFavoriteRooms().size());

@@ -13,7 +13,7 @@ public class NewNavigatorSettingsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.NewNavigatorSettingsComposer);
         this.response.appendInt(this.windowSettings.x);
         this.response.appendInt(this.windowSettings.y);

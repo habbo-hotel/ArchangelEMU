@@ -16,7 +16,7 @@ public class GuildFavoriteRoomUserUpdateComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildFavoriteRoomUserUpdateComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.guild.getId());

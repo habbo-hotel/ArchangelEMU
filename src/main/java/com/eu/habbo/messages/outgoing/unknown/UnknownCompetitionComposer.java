@@ -18,7 +18,7 @@ public class UnknownCompetitionComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UnknownCompetitionComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendString(this.unknownString1);

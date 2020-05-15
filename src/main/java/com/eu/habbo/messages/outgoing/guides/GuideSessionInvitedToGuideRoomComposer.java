@@ -14,7 +14,7 @@ public class GuideSessionInvitedToGuideRoomComposer extends MessageComposer {
 
     //Helper invites noob
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuideSessionInvitedToGuideRoomComposer);
         this.response.appendInt(this.room != null ? this.room.getId() : 0);
         this.response.appendString(this.room != null ? this.room.getName() : "");

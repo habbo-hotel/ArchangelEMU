@@ -14,7 +14,7 @@ public class HotelViewDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.HotelViewDataComposer);
 
         this.response.appendString(this.data);

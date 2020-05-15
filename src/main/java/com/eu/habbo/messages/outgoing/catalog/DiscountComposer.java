@@ -12,7 +12,7 @@ public class DiscountComposer extends MessageComposer {
     public static int[] ADDITIONAL_DISCOUNT_THRESHOLDS = new int[]{40, 99};
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.DiscountComposer);
 
         this.response.appendInt(MAXIMUM_ALLOWED_ITEMS);

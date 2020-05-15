@@ -13,7 +13,7 @@ public class GuideToolsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuideToolsComposer);
         this.response.appendBoolean(this.onDuty); //OnDuty
         this.response.appendInt(0); //Guides On Duty

@@ -5,7 +5,6 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.networking.gameserver.GameServerAttributes;
 import io.netty.channel.*;
-import io.netty.util.AttributeKey;
 
 import java.util.ArrayList;
 import java.util.List;

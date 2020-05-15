@@ -13,7 +13,7 @@ public class PetLevelUpdatedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.PetLevelUpdatedComposer);
         this.response.appendInt(this.pet.getRoomUnit().getId());
         this.response.appendInt(this.pet.getId());

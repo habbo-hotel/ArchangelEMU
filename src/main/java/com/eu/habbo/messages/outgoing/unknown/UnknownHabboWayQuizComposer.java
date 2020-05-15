@@ -16,7 +16,7 @@ public class UnknownHabboWayQuizComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UnknownHabboWayQuizComposer);
         this.response.appendString(this.unknownString);
         this.response.appendInt(this.unknownIntegerList.size());

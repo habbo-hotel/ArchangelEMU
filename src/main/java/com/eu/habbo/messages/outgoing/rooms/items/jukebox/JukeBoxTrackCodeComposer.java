@@ -13,7 +13,7 @@ public class JukeBoxTrackCodeComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.JukeBoxTrackCodeComposer);
         this.response.appendString(this.track.getCode());
         this.response.appendInt(this.track.getId());

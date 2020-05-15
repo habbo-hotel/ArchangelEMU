@@ -13,7 +13,7 @@ public class RemovePetComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RemovePetComposer);
         this.response.appendInt(this.petId);
         return this.response;

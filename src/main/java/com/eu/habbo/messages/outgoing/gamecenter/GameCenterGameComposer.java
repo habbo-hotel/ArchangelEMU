@@ -17,7 +17,7 @@ public class GameCenterGameComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GameCenterGameComposer);
         this.response.appendInt(this.gameId);
         this.response.appendInt(this.status);

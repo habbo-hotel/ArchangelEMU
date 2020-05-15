@@ -12,7 +12,7 @@ public class TalentTrackEmailFailedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.TalentTrackEmailFailedComposer);
         this.response.appendInt(this.result);
         return this.response;

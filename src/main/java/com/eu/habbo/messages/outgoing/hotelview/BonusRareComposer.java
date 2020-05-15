@@ -14,7 +14,7 @@ public class BonusRareComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.BonusRareComposer);
         this.response.appendString(Emulator.getConfig().getValue("hotelview.promotional.reward.name", "prizetrophy_breed_gold")); //Furniture Name. Note: Image is in external_variables.txt
         this.response.appendInt(Emulator.getConfig().getInt("hotelview.promotional.reward.id", 0)); //Furniture ID

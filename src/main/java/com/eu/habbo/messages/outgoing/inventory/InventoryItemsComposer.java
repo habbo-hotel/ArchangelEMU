@@ -25,7 +25,7 @@ public class InventoryItemsComposer extends MessageComposer implements TIntObjec
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         try {
             this.response.init(Outgoing.InventoryItemsComposer);
             this.response.appendInt(this.out);

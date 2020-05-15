@@ -3120,9 +3120,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 return;
             }
 
-            final ServerMessage message = new RoomUserWhisperComposer(roomChatMessage).compose();
             RoomChatMessage staffChatMessage = new RoomChatMessage(roomChatMessage);
             staffChatMessage.setMessage("To " + staffChatMessage.getTargetHabbo().getHabboInfo().getUsername() + ": " + staffChatMessage.getMessage());
+
+            final ServerMessage message = new RoomUserWhisperComposer(roomChatMessage).compose();
             final ServerMessage staffMessage = new RoomUserWhisperComposer(staffChatMessage).compose();
 
             for (Habbo h : this.getHabbos()) {
@@ -3752,6 +3753,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void botChat(ServerMessage message) {
+        if (message == null) {
+            return;
+        }
+
         for (Habbo habbo : this.getHabbos()) {
             if (!habbo.getHabboStats().ignoreBots)
                 habbo.getClient().sendResponse(message);

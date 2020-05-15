@@ -14,7 +14,7 @@ public class RoomAdErrorComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomAdErrorComposer);
         this.response.appendInt(this.errorCode);
         this.response.appendString(this.unknownString);

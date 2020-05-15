@@ -15,7 +15,7 @@ public class AddWallItemComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.AddWallItemComposer);
         this.item.serializeWallData(this.response);
         this.response.appendString(this.itemOwnerName);

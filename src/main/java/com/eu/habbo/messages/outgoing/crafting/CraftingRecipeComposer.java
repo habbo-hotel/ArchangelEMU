@@ -16,7 +16,7 @@ public class CraftingRecipeComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CraftingRecipeComposer);
         this.response.appendInt(this.recipe.getIngredients().size());
 

@@ -23,7 +23,7 @@ public class ModToolIssueHandledComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ModToolIssueHandledComposer);
         this.response.appendInt(this.code);
         this.response.appendString(this.message);

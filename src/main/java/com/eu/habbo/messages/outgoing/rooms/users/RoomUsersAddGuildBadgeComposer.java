@@ -13,7 +13,7 @@ public class RoomUsersAddGuildBadgeComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomUsersGuildBadgesComposer);
         this.response.appendInt(1);
         this.response.appendInt(this.guild.getId());

@@ -18,7 +18,7 @@ public class UserCurrencyComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserCurrencyComposer);
         String[] pointsTypes = Emulator.getConfig().getValue("seasonal.types").split(";");
         this.response.appendInt(pointsTypes.length);

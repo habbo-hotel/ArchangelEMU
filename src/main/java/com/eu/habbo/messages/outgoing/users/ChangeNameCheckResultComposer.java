@@ -25,7 +25,7 @@ public class ChangeNameCheckResultComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UnknownComposer_2698);
         this.response.appendInt(this.status);
         this.response.appendString(this.name);

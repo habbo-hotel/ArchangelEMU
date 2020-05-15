@@ -14,7 +14,7 @@ public class CameraCompetitionStatusComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CameraCompetitionStatusComposer);
         this.response.appendBoolean(this.unknownBoolean);
         this.response.appendString(this.unknownString);

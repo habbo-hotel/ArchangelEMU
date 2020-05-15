@@ -14,7 +14,7 @@ public class RoomScoreComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomScoreComposer);
         this.response.appendInt(this.score);
         this.response.appendBoolean(this.canVote);

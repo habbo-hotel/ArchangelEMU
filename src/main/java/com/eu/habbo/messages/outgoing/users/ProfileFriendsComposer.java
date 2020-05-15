@@ -57,7 +57,7 @@ public class ProfileFriendsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         try {
             this.response.init(Outgoing.ProfileFriendsComposer);
             this.response.appendInt(this.userId);

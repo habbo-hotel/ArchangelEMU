@@ -28,7 +28,7 @@ public class ThreadUpdatedMessageComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ThreadUpdateMessageComposer);
         this.response.appendInt(this.thread.getGuildId());
         this.thread.serialize(this.response);

@@ -19,7 +19,7 @@ public class RoomBannedUsersComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         int timeStamp = Emulator.getIntUnixTimestamp();
 
         THashSet<RoomBan> roomBans = new THashSet<>();

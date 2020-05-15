@@ -13,7 +13,7 @@ public class GuildForumAddCommentComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildForumAddCommentComposer);
         this.response.appendInt(this.comment.getThread().getGuildId()); //guild_id
         this.response.appendInt(this.comment.getThreadId()); //thread_id

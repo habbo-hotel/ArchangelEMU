@@ -13,7 +13,7 @@ public class RoomPetHorseFigureComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomPetHorseFigureComposer);
         this.response.appendInt(this.pet.getRoomUnit().getId());
         this.response.appendInt(this.pet.getId());

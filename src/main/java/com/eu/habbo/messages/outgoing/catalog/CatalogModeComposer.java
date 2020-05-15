@@ -12,7 +12,7 @@ public class CatalogModeComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CatalogModeComposer);
         this.response.appendInt(this.mode);
         return this.response;

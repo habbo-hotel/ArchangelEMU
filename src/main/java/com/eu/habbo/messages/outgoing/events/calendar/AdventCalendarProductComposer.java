@@ -16,7 +16,7 @@ public class AdventCalendarProductComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.AdventCalendarProductComposer);
         this.response.appendBoolean(this.visible);
         this.response.appendString(this.rewardObject.getItem().getName());

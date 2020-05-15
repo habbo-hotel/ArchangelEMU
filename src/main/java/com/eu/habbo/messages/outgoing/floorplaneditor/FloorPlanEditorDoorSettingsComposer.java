@@ -13,7 +13,7 @@ public class FloorPlanEditorDoorSettingsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.FloorPlanEditorDoorSettingsComposer);
         this.response.appendInt(this.room.getLayout().getDoorX());
         this.response.appendInt(this.room.getLayout().getDoorY());

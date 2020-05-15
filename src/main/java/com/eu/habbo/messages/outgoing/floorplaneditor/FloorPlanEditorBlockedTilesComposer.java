@@ -15,7 +15,7 @@ public class FloorPlanEditorBlockedTilesComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.FloorPlanEditorBlockedTilesComposer);
 
         THashSet<RoomTile> tileList = this.room.getLockedTiles();

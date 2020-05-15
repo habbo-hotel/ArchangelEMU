@@ -24,7 +24,7 @@ public class ClubCenterDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ClubCenterDataComposer);
         this.response.appendInt(this.streakDuration); //streakduration in days
         this.response.appendString(this.joinDate); //joindate
