@@ -153,7 +153,7 @@ public class MarketPlace {
 
         query += " AS B ON a.id = B.id";
 
-        query += " LIMIT 100";
+        query += " LIMIT 250";
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, Emulator.getIntUnixTimestamp() - 172800);
