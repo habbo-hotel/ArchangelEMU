@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.achievements.TalentTrackType;
@@ -602,17 +603,23 @@ public class HabboStats implements Runnable {
         return 0;
     }
 
-    public void ignoreUser(int userId) {
-        if (!this.userIgnored(userId)) {
-            this.ignoredUsers.add(userId);
+    public void ignoreUser(GameClient gameClient, int userId) {
+        Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
+        if (target.getHabboInfo().getRank().getId() >= gameClient.getHabbo().getHabboInfo().getRank().getId()) {
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error.higher_rank"), RoomChatMessageBubbles.ALERT);
+        }
+        else {
+            if (!this.userIgnored(userId)) {
+                this.ignoredUsers.add(userId);
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-                 PreparedStatement statement = connection.prepareStatement("INSERT INTO users_ignored (user_id, target_id) VALUES (?, ?)")) {
-                statement.setInt(1, this.habboInfo.getId());
-                statement.setInt(2, userId);
-                statement.execute();
-            } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+                     PreparedStatement statement = connection.prepareStatement("INSERT INTO users_ignored (user_id, target_id) VALUES (?, ?)")) {
+                    statement.setInt(1, this.habboInfo.getId());
+                    statement.setInt(2, userId);
+                    statement.execute();
+                } catch (SQLException e) {
+                    LOGGER.error("Caught SQL exception", e);
+                }
             }
         }
     }
