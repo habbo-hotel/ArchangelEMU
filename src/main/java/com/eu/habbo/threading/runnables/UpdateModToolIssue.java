@@ -30,5 +30,12 @@ public class UpdateModToolIssue implements Runnable {
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
         }
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET cfh_send = cfh_send + ? WHERE user_id = ?")) {
+            statement.setInt(1, 1);
+            statement.setInt(2, this.issue.senderId);
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
     }
 }
