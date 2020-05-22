@@ -133,36 +133,34 @@ public class YoutubeManager {
 
             InputStream is = conn.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-
-            YoutubePlaylist playlist = null;
-
-            String inputLine;
-            while ((inputLine = br.readLine()) != null) {
-                if (inputLine.contains("window[\"ytInitialData\"]")) {
-                    JsonObject obj = new JsonParser().parse(inputLine.substring(inputLine.indexOf("{")).replace(";", "")).getAsJsonObject();
-
-                    JsonObject meta = obj.get("microformat").getAsJsonObject().get("microformatDataRenderer").getAsJsonObject();
-                    String name = meta.get("title").getAsString();
-                    String description = meta.get("description").getAsString();
-
-                    ArrayList<YoutubeVideo> videos = new ArrayList<>();
-
-                    JsonArray rawVideos = obj.get("contents").getAsJsonObject().get("twoColumnBrowseResultsRenderer").getAsJsonObject().get("tabs").getAsJsonArray().get(0).getAsJsonObject().get("tabRenderer").getAsJsonObject().get("content").getAsJsonObject().get("sectionListRenderer").getAsJsonObject().get("contents").getAsJsonArray().get(0).getAsJsonObject().get("itemSectionRenderer").getAsJsonObject().get("contents").getAsJsonArray().get(0).getAsJsonObject().get("playlistVideoListRenderer").getAsJsonObject().get("contents").getAsJsonArray();
-
-                    for (JsonElement rawVideo : rawVideos) {
-                        JsonObject videoData = rawVideo.getAsJsonObject().get("playlistVideoRenderer").getAsJsonObject();
-                        if (!videoData.has("lengthSeconds")) continue; // removed videos
-                        videos.add(new YoutubeVideo(videoData.get("videoId").getAsString(), Integer.valueOf(videoData.get("lengthSeconds").getAsString())));
+            YoutubePlaylist playlist;
+            try (BufferedReader br = new BufferedReader(isr)) {
+                playlist = null;
+                String inputLine;
+                while ((inputLine = br.readLine()) != null) {
+                    if (inputLine.contains("window[\"ytInitialData\"]")) {
+                        JsonObject obj = new JsonParser().parse(inputLine.substring(inputLine.indexOf("{")).replace(";", "")).getAsJsonObject();
+                        
+                        JsonObject meta = obj.get("microformat").getAsJsonObject().get("microformatDataRenderer").getAsJsonObject();
+                        String name = meta.get("title").getAsString();
+                        String description = meta.get("description").getAsString();
+                        
+                        ArrayList<YoutubeVideo> videos = new ArrayList<>();
+                        
+                        JsonArray rawVideos = obj.get("contents").getAsJsonObject().get("twoColumnBrowseResultsRenderer").getAsJsonObject().get("tabs").getAsJsonArray().get(0).getAsJsonObject().get("tabRenderer").getAsJsonObject().get("content").getAsJsonObject().get("sectionListRenderer").getAsJsonObject().get("contents").getAsJsonArray().get(0).getAsJsonObject().get("itemSectionRenderer").getAsJsonObject().get("contents").getAsJsonArray().get(0).getAsJsonObject().get("playlistVideoListRenderer").getAsJsonObject().get("contents").getAsJsonArray();
+                        
+                        for (JsonElement rawVideo : rawVideos) {
+                            JsonObject videoData = rawVideo.getAsJsonObject().get("playlistVideoRenderer").getAsJsonObject();
+                            if (!videoData.has("lengthSeconds")) continue; // removed videos
+                            videos.add(new YoutubeVideo(videoData.get("videoId").getAsString(), Integer.valueOf(videoData.get("lengthSeconds").getAsString())));
+                        }
+                        
+                        playlist = new YoutubePlaylist(playlistId, name, description, videos);
+                        
+                        break;
                     }
-
-                    playlist = new YoutubePlaylist(playlistId, name, description, videos);
-
-                    break;
                 }
             }
-
-            br.close();
 
             this.playlistCache.put(playlistId, playlist);
 
