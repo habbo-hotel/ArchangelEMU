@@ -38,20 +38,30 @@ public class AllowTradingCommand extends Command {
                 return true;
             } else {
                 boolean found;
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings INNER JOIN users ON users.id = users_settings.id SET can_trade = ? WHERE users.username LIKE ?")) {
-                    statement.setString(1, enabled ? "1" : "0");
-                    statement.setString(2, username);
-                    found = statement.executeUpdate() > 0;
-                }
+                if (enabled == params[2].equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes"))) {
+                    try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings INNER JOIN users ON users.id = users_settings.id SET can_trade = ? WHERE users.username LIKE ?")) {
+                        statement.setString(1, "1");
+                        statement.setString(2, username);
+                        found = statement.executeUpdate() > 0;
+                    }
+                } else if (enabled == params[2].equalsIgnoreCase(Emulator.getTexts().getValue("generic.no"))) {
+                    try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings INNER JOIN users ON users.id = users_settings.id SET can_trade = ?, tradelock_amount = tradelock_amount + ? WHERE users.username LIKE ?")) {
+                        statement.setString(1, "0");
+                        statement.setInt(2, 1);
+                        statement.setString(3, username);
+                        found = statement.executeUpdate() > 0;
+                    }
 
-                if (!found) {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_allow_trading.user_not_found").replace("%username%", params[1]));
-                    return true;
-                }
+                    if (!found) {
+                        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_allow_trading.user_not_found").replace("%username%", params[1]));
+                        return true;
+                    }
 
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_allow_trading." + (enabled ? "enabled" : "disabled")).replace("%username%", params[1]));
+                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_allow_trading." + (enabled ? "enabled" : "disabled")).replace("%username%", params[1]));
+                }
             }
-        } else {
+        }
+            else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_allow_trading.incorrect_setting").replace("%enabled%", Emulator.getTexts().getValue("generic.yes")).replace("%disabled%", Emulator.getTexts().getValue("generic.no")));
         }
         return true;
