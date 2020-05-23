@@ -35,8 +35,6 @@ public class ModToolUserInfoComposer extends MessageComposer {
                        totalBans = set.getInt("totalBans");
                     }
                 }
-            } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
             }
             this.response.appendInt(this.set.getInt("user_id"));
             this.response.appendString(this.set.getString("username"));
