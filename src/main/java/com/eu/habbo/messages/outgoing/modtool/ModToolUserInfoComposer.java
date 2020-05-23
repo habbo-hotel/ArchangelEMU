@@ -38,7 +38,7 @@ public class ModToolUserInfoComposer extends MessageComposer {
             this.response.appendInt(this.set.getInt("cfh_abusive"));
             this.response.appendInt(this.set.getInt("cfh_warnings"));
             this.response.appendInt(this.set.getInt("cfh_bans"));
-            this.response.appendInt(0); //Trading lock count
+            this.response.appendInt(this.set.getInt("tradelock_amount"));
             this.response.appendString(""); //Trading lock expiry timestamp
             this.response.appendString(""); //Last Purchase Timestamp
             this.response.appendInt(this.set.getInt("user_id")); //Personal Identification #
