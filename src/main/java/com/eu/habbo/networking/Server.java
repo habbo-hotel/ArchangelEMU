@@ -67,7 +67,7 @@ public abstract class Server {
         try {
             this.workerGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
             this.bossGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
-        } catch (Exception e) {
+        } catch catch (InterruptedException e) {
             LOGGER.error("Exception during {} shutdown... HARD STOP", this.name, e);
         }
         LOGGER.info("GameServer Stopped!");
