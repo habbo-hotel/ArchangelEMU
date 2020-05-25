@@ -608,8 +608,7 @@ public class HabboStats implements Runnable {
         if (!Emulator.getConfig().getBoolean("hotel.ignore.staffs")) {
             if (target.getHabboInfo().getRank().getId() >= gameClient.getHabbo().getHabboInfo().getRank().getId()) {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error.higher_rank"), RoomChatMessageBubbles.ALERT);
-            } else {
-                if (!this.userIgnored(userId)) {
+            } else if (!this.userIgnored(userId)) {
                     this.ignoredUsers.add(userId);
 
                     try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
@@ -622,7 +621,7 @@ public class HabboStats implements Runnable {
                     }
                 }
             }
-        }
+
         else if (!this.userIgnored(userId)) {
                 this.ignoredUsers.add(userId);
 
