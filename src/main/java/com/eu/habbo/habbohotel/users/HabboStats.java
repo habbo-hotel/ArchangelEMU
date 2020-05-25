@@ -605,11 +605,25 @@ public class HabboStats implements Runnable {
 
     public void ignoreUser(GameClient gameClient, int userId) {
         Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
-        if (target.getHabboInfo().getRank().getId() >= gameClient.getHabbo().getHabboInfo().getRank().getId()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error.higher_rank"), RoomChatMessageBubbles.ALERT);
+        if (!Emulator.getConfig().getBoolean("hotel.ignore.staffs")) {
+            if (target.getHabboInfo().getRank().getId() >= gameClient.getHabbo().getHabboInfo().getRank().getId()) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error.higher_rank"), RoomChatMessageBubbles.ALERT);
+            } else {
+                if (!this.userIgnored(userId)) {
+                    this.ignoredUsers.add(userId);
+
+                    try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+                         PreparedStatement statement = connection.prepareStatement("INSERT INTO users_ignored (user_id, target_id) VALUES (?, ?)")) {
+                        statement.setInt(1, this.habboInfo.getId());
+                        statement.setInt(2, userId);
+                        statement.execute();
+                    } catch (SQLException e) {
+                        LOGGER.error("Caught SQL exception", e);
+                    }
+                }
+            }
         }
-        else {
-            if (!this.userIgnored(userId)) {
+        else if (!this.userIgnored(userId)) {
                 this.ignoredUsers.add(userId);
 
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
@@ -621,8 +635,8 @@ public class HabboStats implements Runnable {
                     LOGGER.error("Caught SQL exception", e);
                 }
             }
+
         }
-    }
 
     public void unignoreUser(int userId) {
         if (this.userIgnored(userId)) {
