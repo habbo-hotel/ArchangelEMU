@@ -5,6 +5,12 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class ScratchPetEvent extends MessageHandler {
+
+    @Override
+    public int getRatelimit() {
+        return 1000;
+    }
+
     @Override
     public void handle() throws Exception {
         int petId = this.packet.readInt();
