@@ -992,7 +992,7 @@ public class RoomManager {
                 rooms.add(room);
             }
         }
-
+        rooms.sort(Room.SORT_ID);
         return rooms;
     }
 
