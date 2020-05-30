@@ -42,7 +42,7 @@ public class ServerMessage {
         try {
             this.stream.writeInt(0);
             this.stream.writeShort(id);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new ServerMessageException(e);
         }
 
