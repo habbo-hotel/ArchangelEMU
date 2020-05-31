@@ -39,8 +39,8 @@ public final class Emulator {
     public final static int MINOR = 4;
     public final static int BUILD = 0;
 
-    // This Build of 2.4.0 will not be released anytime soon. :)
-    public final static String PREVIEW = "RC-1";
+    // Rick and Morty Edition
+    public final static String PREVIEW = "RC-2";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + "-" + PREVIEW;
     private static final String logo =
