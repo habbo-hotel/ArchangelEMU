@@ -114,7 +114,7 @@ public class MarketPlace {
 
     public static List<MarketPlaceOffer> getOffers(int minPrice, int maxPrice, String search, int sort) {
         List<MarketPlaceOffer> offers = new ArrayList<>(10);
-        String query = "SELECT B.* FROM marketplace_items a INNER JOIN (SELECT b.item_id AS base_item_id, b.limited_data AS ltd_data, marketplace_items.*, AVG(price) as avg, MIN(marketplace_items.price) as minPrice, MAX(marketplace_items.price) as maxPrice, COUNT(*) as number, (SELECT COUNT(*) FROM marketplace_items c INNER JOIN items as items_b ON c.item_id = items_b.id WHERE state = 2 AND items_b.item_id = base_item_id AND DATE(from_unixtime(sold_timestamp)) = CURDATE()) as sold_count_today FROM marketplace_items INNER JOIN items b ON marketplace_items.item_id = b.id INNER JOIN items_base bi ON b.item_id = bi.id WHERE price = (SELECT MIN(e.price) FROM marketplace_items e, items d WHERE e.item_id = d.id AND d.item_id = b.item_id AND e.state = 1 AND e.timestamp > ? GROUP BY d.item_id) AND state = 1 AND timestamp > ?";
+        String query = "SELECT B.* FROM marketplace_items a INNER JOIN (SELECT b.item_id AS base_item_id, b.limited_data AS ltd_data, marketplace_items.*, AVG(price) as avg, MIN(marketplace_items.price) as minPrice, MAX(marketplace_items.price) as maxPrice, COUNT(*) as number, (SELECT COUNT(*) FROM marketplace_items c INNER JOIN items as items_b ON c.item_id = items_b.id WHERE state = 2 AND items_b.item_id = base_item_id AND DATE(from_unixtime(sold_timestamp)) = CURDATE()) as sold_count_today FROM marketplace_items INNER JOIN items b ON marketplace_items.item_id = b.id INNER JOIN items_base bi ON b.item_id = bi.id INNER JOIN catalog_items ci ON items_base.id = ci.item_ids WHERE price = (SELECT MIN(e.price) FROM marketplace_items e, items d WHERE e.item_id = d.id AND d.item_id = b.item_id AND e.state = 1 AND e.timestamp > ? GROUP BY d.item_id) AND state = 1 AND timestamp > ?";
         if (minPrice > 0) {
             query += " AND CEIL(price + (price / 100)) >= " + minPrice;
         }
@@ -122,7 +122,7 @@ public class MarketPlace {
             query += " AND CEIL(price + (price / 100)) <= " + maxPrice;
         }
         if (search.length() > 0) {
-            query += " AND bi.public_name LIKE ?";
+            query += " AND bi.public_name LIKE ? OR ci.catalog_name LIKE ?";
         }
 
         query += " GROUP BY base_item_id, ltd_data";
@@ -160,6 +160,7 @@ public class MarketPlace {
             statement.setInt(2, Emulator.getIntUnixTimestamp() - 172800);
             if (search.length() > 0)
                 statement.setString(3, "%" + search + "%");
+                statement.setString(4, "%" + search + "%");
 
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
