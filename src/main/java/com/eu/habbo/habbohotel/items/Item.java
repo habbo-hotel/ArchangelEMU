@@ -54,7 +54,7 @@ public class Item {
             try {
                 int index = Integer.valueOf(item.getExtradata()) % (item.getBaseItem().getMultiHeights().length);
                 return item.getBaseItem().getMultiHeights()[(item.getExtradata().isEmpty() ? 0 : index)];
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
 
             }
         }
