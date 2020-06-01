@@ -73,7 +73,7 @@ public class ForumThread implements Runnable, ISerialize {
 
         try {
             this.lastComment = ForumThreadComment.getById(set.getInt("last_comment_id"));
-        } catch (Exception e) {
+        } catch (SQLException e)) {
         }
 
         this.comments = new THashMap<>();
