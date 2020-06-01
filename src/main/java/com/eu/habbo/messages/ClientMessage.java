@@ -20,7 +20,14 @@ public class ClientMessage {
     public int getMessageId() {
         return this.header;
     }
-
+    
+    
+    /**
+     *
+     * @return
+     * @throws CloneNotSupportedException
+     */
+    @Override
     public ClientMessage clone() throws CloneNotSupportedException {
         return new ClientMessage(this.header, this.buffer.duplicate());
     }
