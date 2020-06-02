@@ -1,5 +1,8 @@
 package com.eu.habbo.util;
 
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class HexUtils {
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
@@ -22,6 +25,17 @@ public class HexUtils {
                     + Character.digit(hexString.charAt(i+1), 16));
         }
         return data;
+    }
+
+    public static String getRandom(int length){
+        Random r = ThreadLocalRandom.current();
+        StringBuilder sb = new StringBuilder();
+
+        while(sb.length() < length){
+            sb.append(Integer.toHexString(r.nextInt()));
+        }
+
+        return sb.toString().substring(0, length);
     }
 
 }

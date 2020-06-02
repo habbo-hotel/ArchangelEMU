@@ -73,17 +73,8 @@ public class GameClient {
         if (machineId == null) {
             throw new RuntimeException("Cannot set machineID to NULL");
         }
-        this.machineId = machineId;
 
-        if (this.habbo != null) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET machine_id = ? WHERE id = ? LIMIT 1")) {
-                statement.setString(1, this.machineId);
-                statement.setInt(2, this.habbo.getHabboInfo().getId());
-                statement.execute();
-            } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
-            }
-        }
+        this.machineId = machineId;
     }
 
     public void sendResponse(MessageComposer composer) {
