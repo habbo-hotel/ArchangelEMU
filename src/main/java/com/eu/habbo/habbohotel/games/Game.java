@@ -74,7 +74,7 @@ public abstract class Game implements Runnable {
                 habbo.getClient().sendResponse(new GuideSessionPartnerIsPlayingComposer(true));
                 return true;
             }
-        } catch (NoSuchMethodException | SecurityException e) {
+        } catch (Exception e) {
             LOGGER.error("Caught exception", e);
         }
 
