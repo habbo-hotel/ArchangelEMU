@@ -1214,13 +1214,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 }
                             }
                             else if (habbo.getHabboStats().chatCounter > 3 && this.hasRights(habbo)) {
-                                    if (this.chatProtection == 0) {
-                                        this.floodMuteHabbo(habbo, 30);
-                                    } else if (this.chatProtection == 1 && habbo.getHabboStats().chatCounter > 4) {
-                                        this.floodMuteHabbo(habbo, 30);
-                                    } else if (this.chatProtection == 2 && habbo.getHabboStats().chatCounter > 5) {
-                                        this.floodMuteHabbo(habbo, 30);
-                                    }
+                                if (this.chatProtection == 0) {
+                                    this.floodMuteHabbo(habbo, 30);
+                                } else if (this.chatProtection == 1 && habbo.getHabboStats().chatCounter > 4) {
+                                    this.floodMuteHabbo(habbo, 30);
+                                } else if (this.chatProtection == 2 && habbo.getHabboStats().chatCounter > 5) {
+                                    this.floodMuteHabbo(habbo, 30);
+                                }
+                            }
 
                         }
                     } else {
