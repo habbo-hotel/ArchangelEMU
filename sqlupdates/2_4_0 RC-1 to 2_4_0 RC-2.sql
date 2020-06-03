@@ -1,1 +1,1 @@
-/* SQLS HERE */
+ALTER TABLE `permissions` ADD `acc_hide_mail` ENUM('0', '1') NOT NULL DEFAULT '0' AFTER `acc_hide_ip`;

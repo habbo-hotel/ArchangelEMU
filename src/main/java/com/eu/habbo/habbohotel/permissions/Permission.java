@@ -15,6 +15,7 @@ public class Permission {
     public static String ACC_UNLIMITED_BOTS = "acc_unlimited_bots";
     public static String ACC_UNLIMITED_PETS = "acc_unlimited_pets";
     public static String ACC_HIDE_IP = "acc_hide_ip";
+    public static String ACC_HIDE_MAIL = "acc_hide_mail";
     public static String ACC_NOT_MIMICED = "acc_not_mimiced";
     public static String ACC_CHAT_NO_FLOOD = "acc_chat_no_flood";
     public static String ACC_STAFF_CHAT = "acc_staff_chat";
