@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.achievements.TalentTrackType;
@@ -602,7 +603,26 @@ public class HabboStats implements Runnable {
         return 0;
     }
 
-    public void ignoreUser(int userId) {
+    /**
+     * Ignore an user.
+     *
+     * @param gameClient The client to which this HabboStats instance belongs.
+     * @param userId The user to ignore.
+     * @return true if successfully ignored, false otherwise.
+     */
+    public boolean ignoreUser(GameClient gameClient, int userId) {
+        final Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
+
+        if (!Emulator.getConfig().getBoolean("hotel.allow.ignore.staffs")) {
+            final int ownRank = gameClient.getHabbo().getHabboInfo().getRank().getId();
+            final int targetRank = target.getHabboInfo().getRank().getId();
+
+            if (targetRank >= ownRank) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error.ignore_higher_rank"), RoomChatMessageBubbles.ALERT);
+                return false;
+            }
+        }
+
         if (!this.userIgnored(userId)) {
             this.ignoredUsers.add(userId);
 
@@ -615,6 +635,8 @@ public class HabboStats implements Runnable {
                 LOGGER.error("Caught SQL exception", e);
             }
         }
+
+        return true;
     }
 
     public void unignoreUser(int userId) {
