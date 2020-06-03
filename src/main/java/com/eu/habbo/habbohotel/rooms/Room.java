@@ -1202,13 +1202,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         {
                             habbo.getHabboStats().chatCounter--;
 
-                            if (habbo.getHabboStats().chatCounter > 3 && !this.hasRights(habbo)) {
-                                if (this.chatProtection == 0) {
-                                    this.floodMuteHabbo(habbo, 30);
-                                } else if (this.chatProtection == 1 && habbo.getHabboStats().chatCounter > 4) {
-                                    this.floodMuteHabbo(habbo, 30);
-                                } else if (this.chatProtection == 2 && habbo.getHabboStats().chatCounter > 5) {
-                                    this.floodMuteHabbo(habbo, 30);
+                            if (habbo.getHabboStats().chatCounter > 3) {
+                                final boolean floodRights = Emulator.getConfig().getBoolean("flood.with.rights");
+                                final boolean hasRights = this.hasRights(habbo);
+
+                                if (floodRights || !hasRights) {
+                                    if (this.chatProtection == 0) {
+                                        this.floodMuteHabbo(habbo, 30);
+                                    } else if (this.chatProtection == 1 && habbo.getHabboStats().chatCounter > 4) {
+                                        this.floodMuteHabbo(habbo, 30);
+                                    } else if (this.chatProtection == 2 && habbo.getHabboStats().chatCounter > 5) {
+                                        this.floodMuteHabbo(habbo, 30);
+                                    }
                                 }
                             }
                         }
