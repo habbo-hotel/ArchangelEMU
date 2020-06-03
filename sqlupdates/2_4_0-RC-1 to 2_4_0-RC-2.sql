@@ -11,5 +11,5 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_softki
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_softkick_error_self', 'You can not softkick yourself!');
 
 -- Rank ignoring
-INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('generic.error.higher_rank', 'You can\'t ignore this user.');
-INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.ignore.staffs', '0');
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('generic.error.ignore_higher_rank', 'You can\'t ignore this user.');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.allow.ignore.staffs', '1');

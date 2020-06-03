@@ -21,8 +21,7 @@ public class IgnoreRoomUserEvent extends MessageHandler {
                 if (habbo == this.client.getHabbo())
                     return;
 
-                {
-                    this.client.getHabbo().getHabboStats().ignoreUser(habbo.getHabboInfo().getId());
+                if (this.client.getHabbo().getHabboStats().ignoreUser(this.client, habbo.getHabboInfo().getId())) {
                     this.client.sendResponse(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.IGNORED));
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModIgnoreSeen"));
                 }

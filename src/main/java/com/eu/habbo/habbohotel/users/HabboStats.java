@@ -603,39 +603,41 @@ public class HabboStats implements Runnable {
         return 0;
     }
 
-    public void ignoreUser(GameClient gameClient, int userId) {
-        Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
-        if (!Emulator.getConfig().getBoolean("hotel.ignore.staffs")) {
-            if (target.getHabboInfo().getRank().getId() >= gameClient.getHabbo().getHabboInfo().getRank().getId()) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error.higher_rank"), RoomChatMessageBubbles.ALERT);
-            } else if (!this.userIgnored(userId)) {
-                    this.ignoredUsers.add(userId);
+    /**
+     * Ignore an user.
+     *
+     * @param gameClient The client to which this HabboStats instance belongs.
+     * @param userId The user to ignore.
+     * @return true if successfully ignored, false otherwise.
+     */
+    public boolean ignoreUser(GameClient gameClient, int userId) {
+        final Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
-                    try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-                         PreparedStatement statement = connection.prepareStatement("INSERT INTO users_ignored (user_id, target_id) VALUES (?, ?)")) {
-                        statement.setInt(1, this.habboInfo.getId());
-                        statement.setInt(2, userId);
-                        statement.execute();
-                    } catch (SQLException e) {
-                        LOGGER.error("Caught SQL exception", e);
-                    }
-                }
+        if (!Emulator.getConfig().getBoolean("hotel.allow.ignore.staffs")) {
+            final int ownRank = gameClient.getHabbo().getHabboInfo().getRank().getId();
+            final int targetRank = target.getHabboInfo().getRank().getId();
+
+            if (targetRank >= ownRank) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error.ignore_higher_rank"), RoomChatMessageBubbles.ALERT);
+                return false;
             }
-
-        else if (!this.userIgnored(userId)) {
-                this.ignoredUsers.add(userId);
-
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-                     PreparedStatement statement = connection.prepareStatement("INSERT INTO users_ignored (user_id, target_id) VALUES (?, ?)")) {
-                    statement.setInt(1, this.habboInfo.getId());
-                    statement.setInt(2, userId);
-                    statement.execute();
-                } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
-                }
-            }
-
         }
+
+        if (!this.userIgnored(userId)) {
+            this.ignoredUsers.add(userId);
+
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+                 PreparedStatement statement = connection.prepareStatement("INSERT INTO users_ignored (user_id, target_id) VALUES (?, ?)")) {
+                statement.setInt(1, this.habboInfo.getId());
+                statement.setInt(2, userId);
+                statement.execute();
+            } catch (SQLException e) {
+                LOGGER.error("Caught SQL exception", e);
+            }
+        }
+
+        return true;
+    }
 
     public void unignoreUser(int userId) {
         if (this.userIgnored(userId)) {

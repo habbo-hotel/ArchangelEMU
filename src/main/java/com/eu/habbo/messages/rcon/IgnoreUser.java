@@ -22,7 +22,7 @@ public class IgnoreUser extends RCONMessage<IgnoreUser.JSONIgnoreUser> {
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(object.user_id);
 
         if (habbo != null) {
-            habbo.getHabboStats().ignoreUser(object.target_id);
+            habbo.getHabboStats().ignoreUser(habbo.getClient(), object.target_id);
         } else {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
                  PreparedStatement statement = connection.prepareStatement("INSERT INTO users_ignored (user_id, target_id) VALUES (?, ?)")) {

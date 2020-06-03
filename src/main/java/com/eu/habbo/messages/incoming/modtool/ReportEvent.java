@@ -73,8 +73,9 @@ public class ReportEvent extends MessageHandler {
                             Emulator.getThreading().run(() -> {
                                 if (issue.state == ModToolTicketState.OPEN) {
                                     if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
-                                        ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(reported.getHabboInfo().getId());
-                                        ReportEvent.this.client.sendResponse(new RoomUserIgnoredComposer(reported, RoomUserIgnoredComposer.IGNORED));
+                                        if (ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(ReportEvent.this.client, reported.getHabboInfo().getId())) {
+                                            ReportEvent.this.client.sendResponse(new RoomUserIgnoredComposer(reported, RoomUserIgnoredComposer.IGNORED));
+                                        }
                                     }
 
                                     ReportEvent.this.client.sendResponse(new ModToolIssueHandledComposer(cfhTopic.reply).compose());
@@ -99,10 +100,11 @@ public class ReportEvent extends MessageHandler {
                     Emulator.getThreading().run(() -> {
                         if (issue.state == ModToolTicketState.OPEN) {
                             if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
-                                ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(issue.reportedId);
-                                Habbo reported = Emulator.getGameEnvironment().getHabboManager().getHabbo(issue.reportedId);
-                                if (reported != null) {
-                                    ReportEvent.this.client.sendResponse(new RoomUserIgnoredComposer(reported, RoomUserIgnoredComposer.IGNORED));
+                                if (ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(ReportEvent.this.client, issue.reportedId)) {
+                                    Habbo reported = Emulator.getGameEnvironment().getHabboManager().getHabbo(issue.reportedId);
+                                    if (reported != null) {
+                                        ReportEvent.this.client.sendResponse(new RoomUserIgnoredComposer(reported, RoomUserIgnoredComposer.IGNORED));
+                                    }
                                 }
                             }
 
