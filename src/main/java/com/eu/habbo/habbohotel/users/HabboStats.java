@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HabboStats implements Runnable {
 
@@ -34,7 +35,7 @@ public class HabboStats implements Runnable {
     public final THashMap<String, Object> cache;
     public final TIntArrayList calendarRewardsClaimed;
     public final TIntObjectMap<HabboOfferPurchase> offerCache = new TIntObjectHashMap<>();
-    private final int timeLoggedIn = Emulator.getIntUnixTimestamp();
+    private final AtomicInteger lastOnlineTime = new AtomicInteger(Emulator.getIntUnixTimestamp());
     private final THashMap<Achievement, Integer> achievementProgress;
     private final THashMap<Achievement, Integer> achievementCache;
     private final THashMap<Integer, CatalogItem> recentPurchases;
@@ -299,6 +300,10 @@ public class HabboStats implements Runnable {
 
     @Override
     public void run() {
+        // Find difference between last sync and update with a new timestamp.
+        int onlineTimeLast = this.lastOnlineTime.getAndUpdate(operand -> Emulator.getIntUnixTimestamp());
+        int onlineTime = Emulator.getIntUnixTimestamp() - onlineTimeLast;
+
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET achievement_score = ?, respects_received = ?, respects_given = ?, daily_respect_points = ?, block_following = ?, block_friendrequests = ?, online_time = online_time + ?, guild_id = ?, daily_pet_respect_points = ?, club_expire_timestamp = ?, login_streak = ?, rent_space_id = ?, rent_space_endtime = ?, volume_system = ?, volume_furni = ?, volume_trax = ?, block_roominvites = ?, old_chat = ?, block_camera_follow = ?, chat_color = ?, hof_points = ?, block_alerts = ?, talent_track_citizenship_level = ?, talent_track_helpers_level = ?, ignore_bots = ?, ignore_pets = ?, nux = ?, mute_end_timestamp = ?, allow_name_change = ?, perk_trade = ?, can_trade = ?, `forums_post_count` = ?, ui_flags = ?, has_gotten_default_saved_searches = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.achievementScore);
@@ -307,7 +312,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(4, this.respectPointsToGive);
                 statement.setString(5, this.blockFollowing ? "1" : "0");
                 statement.setString(6, this.blockFriendRequests ? "1" : "0");
-                statement.setInt(7, Emulator.getIntUnixTimestamp() - this.timeLoggedIn);
+                statement.setInt(7, onlineTime);
                 statement.setInt(8, this.guild);
                 statement.setInt(9, this.petRespectPointsToGive);
                 statement.setInt(10, this.clubExpireTimestamp);
