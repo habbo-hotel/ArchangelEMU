@@ -216,7 +216,12 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
                         return;
                     }
                 } else {
-                    this.habbo.mute(Emulator.getConfig().getInt("hotel.wordfilter.automute"), false);
+                    int muteTime = Emulator.getConfig().getInt("hotel.wordfilter.automute");
+                    if (muteTime > 0) {
+                        this.habbo.mute(muteTime, false);
+                    } else {
+                        LOGGER.error("Invalid hotel.wordfilter.automute defined in emulator_settings ({}).", muteTime);
+                    }
                 }
 
                 this.message = "";

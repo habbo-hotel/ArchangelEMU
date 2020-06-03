@@ -384,6 +384,11 @@ public class Habbo implements Runnable {
     }
 
     public void mute(int seconds, boolean isFlood) {
+        if (seconds <= 0) {
+            LOGGER.warn("Tried to mute user for {} seconds, which is invalid.", seconds);
+            return;
+        }
+
         if (!this.hasPermission("acc_no_mute")) {
             int remaining = this.habboStats.addMuteTime(seconds);
             this.client.sendResponse(new FloodCounterComposer(remaining));
