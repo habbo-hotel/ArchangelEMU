@@ -284,6 +284,7 @@ public class CommandHandler {
         addCommand(new WordQuizCommand());
         addCommand(new UpdateYoutubePlaylistsCommand());
         addCommand(new AddYoutubePlaylistCommand());
+        addCommand(new SoftKickCommand());
 
         addCommand(new TestCommand());
     }
