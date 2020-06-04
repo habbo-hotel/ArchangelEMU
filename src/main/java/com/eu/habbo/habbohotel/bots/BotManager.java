@@ -163,6 +163,7 @@ public class BotManager {
     }
 
     public void pickUpBot(Bot bot, Habbo habbo) {
+        int botConfigSize = Emulator.getConfig().getInt("hotel.bots.max.inventory");
         if (bot != null && habbo != null) {
             BotPickUpEvent pickedUpEvent = new BotPickUpEvent(bot, habbo);
             Emulator.getPluginManager().fireEvent(pickedUpEvent);
@@ -171,8 +172,9 @@ public class BotManager {
                 return;
 
             if (bot.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasPermission(Permission.ACC_ANYROOMOWNER)) {
-                if (!habbo.hasPermission("acc_unlimited_bots") && habbo.getInventory().getBotsComponent().getBots().size() >= 15)
-                    return;
+                if (!habbo.hasPermission("acc_unlimited_bots") && habbo.getInventory().getBotsComponent().getBots().size() >= botConfigSize) {
+                    habbo.alert(Emulator.getTexts().getValue("hotel.bot.max.amount.message").replace("%amount%", botConfigSize + ""));
+                }
 
                 bot.onPickUp(habbo, habbo.getHabboInfo().getCurrentRoom());
                 habbo.getHabboInfo().getCurrentRoom().removeBot(bot);

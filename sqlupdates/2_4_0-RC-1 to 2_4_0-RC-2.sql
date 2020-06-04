@@ -13,3 +13,6 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_softki
 -- Rank ignoring
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('generic.error.ignore_higher_rank', 'You can\'t ignore this user.');
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.allow.ignore.staffs', '1');
+
+-- Bot Inventory Limiting
+INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('hotel.bot.max.amount.message', 'You can\'t buy or pickup anymore bots until you place some, the maximum amount of bots you are allowed is %amount%.');

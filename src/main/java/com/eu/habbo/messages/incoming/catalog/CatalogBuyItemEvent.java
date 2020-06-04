@@ -192,6 +192,13 @@ public class CatalogBuyItemEvent extends MessageHandler {
             else
                 item = page.getCatalogItem(itemId);
             // temp patch, can a dev with better knowledge than me look into this asap pls.
+            if (page instanceof  BotsLayout) {
+                int botConfigSize = Emulator.getConfig().getInt("hotel.bots.max.inventory");
+                if (!this.client.getHabbo().hasPermission("acc_unlimited_bots") && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= botConfigSize) {
+                    this.client.getHabbo().alert(Emulator.getTexts().getValue("hotel.bot.max.amount.message").replace("%amount%", botConfigSize + ""));
+                    return;
+                }
+            }
             if (page instanceof PetsLayout) { // checks it's the petlayout
                 String[] check = extraData.split("\n"); // splits the extradata
                 if ((check.length != 3) || (check[0].length() < PET_NAME_LENGTH_MINIMUM) || (check[0].length() > PET_NAME_LENGTH_MAXIMUM) || (!StringUtils.isAlphanumeric(check[0])))// checks if there's 3 parts (always is with pets, if not it fucks them off)
