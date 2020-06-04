@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.incoming.catalog;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
@@ -28,6 +29,8 @@ import static com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent.PET_NAME_
 import static com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent.PET_NAME_LENGTH_MINIMUM;
 
 public class CatalogBuyItemEvent extends MessageHandler {
+
+
     @Override
     public void handle() throws Exception {
         if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().lastPurchaseTimestamp >= CatalogManager.PURCHASE_COOLDOWN) {
@@ -194,9 +197,8 @@ public class CatalogBuyItemEvent extends MessageHandler {
                 item = page.getCatalogItem(itemId);
             // temp patch, can a dev with better knowledge than me look into this asap pls.
             if (page instanceof  BotsLayout) {
-                int botConfigSize = Emulator.getConfig().getInt("hotel.bots.max.inventory");
-                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= botConfigSize) {
-                    this.client.getHabbo().alert(Emulator.getTexts().getValue("hotel.bot.max.amount.message").replace("%amount%", botConfigSize + ""));
+                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
+                    this.client.getHabbo().alert(Emulator.getTexts().getValue("hotel.bot.max.amount.message").replace("%amount%", BotManager.MAXIMUM_BOT_INVENTORY_SIZE + ""));
                     return;
                 }
             }

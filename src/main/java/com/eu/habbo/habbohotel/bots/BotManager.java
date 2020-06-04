@@ -22,6 +22,8 @@ import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.Map;
 
+
+
 public class BotManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(BotManager.class);
 
@@ -30,7 +32,7 @@ public class BotManager {
     public static int MAXIMUM_CHAT_SPEED = 604800;
     public static int MAXIMUM_CHAT_LENGTH = 120;
     public static int MAXIMUM_NAME_LENGTH = 15;
-
+    public static int MAXIMUM_BOT_INVENTORY_SIZE = 25;
 
     public BotManager() throws Exception {
         long millis = System.currentTimeMillis();
@@ -163,7 +165,7 @@ public class BotManager {
     }
 
     public void pickUpBot(Bot bot, Habbo habbo) {
-        int botConfigSize = Emulator.getConfig().getInt("hotel.bots.max.inventory");
+
         if (bot != null && habbo != null) {
             BotPickUpEvent pickedUpEvent = new BotPickUpEvent(bot, habbo);
             Emulator.getPluginManager().fireEvent(pickedUpEvent);
@@ -172,8 +174,8 @@ public class BotManager {
                 return;
 
             if (bot.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasPermission(Permission.ACC_ANYROOMOWNER)) {
-                if (!habbo.hasPermission(Permission.ACC_UNLIMITED_BOTS) && habbo.getInventory().getBotsComponent().getBots().size() >= botConfigSize) {
-                    habbo.alert(Emulator.getTexts().getValue("hotel.bot.max.amount.message").replace("%amount%", botConfigSize + ""));
+                if (!habbo.hasPermission(Permission.ACC_UNLIMITED_BOTS) && habbo.getInventory().getBotsComponent().getBots().size() >= MAXIMUM_BOT_INVENTORY_SIZE) {
+                    habbo.alert(Emulator.getTexts().getValue("hotel.bot.max.amount.message").replace("%amount%",  MAXIMUM_BOT_INVENTORY_SIZE + ""));
                 }
 
                 bot.onPickUp(habbo, habbo.getHabboInfo().getCurrentRoom());
