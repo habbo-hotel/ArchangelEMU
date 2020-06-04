@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.habbohotel.catalog.ClubOffer;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.items.FurnitureType;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -194,7 +195,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
             // temp patch, can a dev with better knowledge than me look into this asap pls.
             if (page instanceof  BotsLayout) {
                 int botConfigSize = Emulator.getConfig().getInt("hotel.bots.max.inventory");
-                if (!this.client.getHabbo().hasPermission("acc_unlimited_bots") && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= botConfigSize) {
+                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= botConfigSize) {
                     this.client.getHabbo().alert(Emulator.getTexts().getValue("hotel.bot.max.amount.message").replace("%amount%", botConfigSize + ""));
                     return;
                 }

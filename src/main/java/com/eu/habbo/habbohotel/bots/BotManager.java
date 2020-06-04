@@ -172,7 +172,7 @@ public class BotManager {
                 return;
 
             if (bot.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasPermission(Permission.ACC_ANYROOMOWNER)) {
-                if (!habbo.hasPermission("acc_unlimited_bots") && habbo.getInventory().getBotsComponent().getBots().size() >= botConfigSize) {
+                if (!habbo.hasPermission(Permission.ACC_UNLIMITED_BOTS) && habbo.getInventory().getBotsComponent().getBots().size() >= botConfigSize) {
                     habbo.alert(Emulator.getTexts().getValue("hotel.bot.max.amount.message").replace("%amount%", botConfigSize + ""));
                 }
 
