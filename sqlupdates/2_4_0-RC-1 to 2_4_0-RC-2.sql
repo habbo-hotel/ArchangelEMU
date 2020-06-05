@@ -13,3 +13,8 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_softki
 -- Rank ignoring
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('generic.error.ignore_higher_rank', 'You can\'t ignore this user.');
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.allow.ignore.staffs', '1');
+
+-- Inventory Limiting
+INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('error.bots.max.inventory', 'You can\'t buy or pickup anymore bots until you place some, the maximum amount of bots you are allowed is %amount%.');
+
+UPDATE `emulator_texts` SET `value` = 'You\'ve reached the maximum amount of pets in your inventory! The Limit is %amount%!' WHERE `key` = 'error.pets.max.inventory';

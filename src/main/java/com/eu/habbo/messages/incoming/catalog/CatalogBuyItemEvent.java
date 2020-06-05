@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.incoming.catalog;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
@@ -29,6 +30,8 @@ import static com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent.PET_NAME_
 import static com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent.PET_NAME_LENGTH_MINIMUM;
 
 public class CatalogBuyItemEvent extends MessageHandler {
+
+
     @Override
     public void handle() throws Exception {
         if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().lastPurchaseTimestamp >= CatalogManager.PURCHASE_COOLDOWN) {
@@ -201,7 +204,17 @@ public class CatalogBuyItemEvent extends MessageHandler {
             else
                 item = page.getCatalogItem(itemId);
             // temp patch, can a dev with better knowledge than me look into this asap pls.
+            if (page instanceof  BotsLayout) {
+                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
+                    this.client.getHabbo().alert(Emulator.getTexts().getValue("error.bots.max.inventory").replace("%amount%", BotManager.MAXIMUM_BOT_INVENTORY_SIZE + ""));
+                    return;
+                }
+            }
             if (page instanceof PetsLayout) { // checks it's the petlayout
+                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_PETS) && this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= PetManager.MAXIMUM_PET_INVENTORY_SIZE) {
+                    this.client.getHabbo().alert(Emulator.getTexts().getValue("error.pets.max.inventory").replace("%amount%", PetManager.MAXIMUM_PET_INVENTORY_SIZE + ""));
+                    return;
+                }
                 String[] check = extraData.split("\n"); // splits the extradata
                 if ((check.length != 3) || (check[0].length() < PET_NAME_LENGTH_MINIMUM) || (check[0].length() > PET_NAME_LENGTH_MAXIMUM) || (!StringUtils.isAlphanumeric(check[0])))// checks if there's 3 parts (always is with pets, if not it fucks them off)
                     return; // if it does it fucks off.

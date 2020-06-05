@@ -19,6 +19,7 @@ import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.modtool.WordFilter;
 import com.eu.habbo.habbohotel.navigation.EventCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
+import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.habbohotel.users.HabboManager;
@@ -150,6 +151,8 @@ public class PluginManager {
         CameraPurchaseEvent.CAMERA_PURCHASE_POINTS_TYPE = Emulator.getConfig().getInt("camera.price.points.type", 0);
 
         BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE = Emulator.getConfig().getValue("room.promotion.badge", "RADZZ");
+        BotManager.MAXIMUM_BOT_INVENTORY_SIZE = Emulator.getConfig().getInt("hotel.bots.max.inventory");
+        PetManager.MAXIMUM_PET_INVENTORY_SIZE = Emulator.getConfig().getInt("hotel.pets.max.inventory");
 
         NewNavigatorEventCategoriesComposer.CATEGORIES.clear();
         for (String category : Emulator.getConfig().getValue("navigator.eventcategories", "").split(";")) {

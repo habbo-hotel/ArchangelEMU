@@ -3,14 +3,12 @@ package com.eu.habbo.messages.incoming.rooms.pets;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
+import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
 
 public class PetPickupEvent extends MessageHandler {
     @Override
@@ -26,8 +24,8 @@ public class PetPickupEvent extends MessageHandler {
 
         if (pet != null) {
             if (this.client.getHabbo().getHabboInfo().getId() == pet.getId() || room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
-                if (this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= Emulator.getConfig().getInt("hotel.pets.max.inventory") && !this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_PETS)) {
-                    this.client.sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(Emulator.getTexts().getValue("error.pets.max.inventory"), this.client.getHabbo(), this.client.getHabbo(), RoomChatMessageBubbles.ALERT)));
+                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_PETS) && this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= PetManager.MAXIMUM_PET_INVENTORY_SIZE) {
+                    this.client.getHabbo().alert(Emulator.getTexts().getValue("error.pets.max.inventory").replace("%amount%", PetManager.MAXIMUM_PET_INVENTORY_SIZE + ""));
                     return;
                 }
 
