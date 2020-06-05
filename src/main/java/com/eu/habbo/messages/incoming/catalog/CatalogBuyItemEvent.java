@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.habbohotel.catalog.ClubOffer;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.items.FurnitureType;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -17,6 +18,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import gnu.trove.map.hash.THashMap;
@@ -80,22 +82,29 @@ public class CatalogBuyItemEvent extends MessageHandler {
                         }
                     });
 
-                    if (item[0] == null || item[0].getCredits() > this.client.getHabbo().getHabboInfo().getCredits() || item[0].getPoints() > this.client.getHabbo().getHabboInfo().getCurrencyAmount(item[0].getPointsType())) {
+                    CatalogItem roomBundleItem = item[0];
+                    if (roomBundleItem == null || roomBundleItem.getCredits() > this.client.getHabbo().getHabboInfo().getCredits() || roomBundleItem.getPoints() > this.client.getHabbo().getHabboInfo().getCurrencyAmount(roomBundleItem.getPointsType())) {
                         this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                         return;
                     }
+                    int roomCount = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()).size();
+                    int maxRooms = this.client.getHabbo().getHabboStats().hasActiveClub() ? Emulator.getConfig().getInt("hotel.max.rooms.vip") : Emulator.getConfig().getInt("hotel.max.rooms.user");
 
-                    ((RoomBundleLayout) page).buyRoom(this.client.getHabbo());
-
-                    if (!this.client.getHabbo().hasPermission("acc_infinite_credits")) {
-                        this.client.getHabbo().getHabboInfo().addCredits(-item[0].getCredits());
+                    if (roomCount >= maxRooms) { // checks if a user has the maximum rooms
+                       this.client.sendResponse(new CanCreateRoomComposer(roomCount, maxRooms)); // if so throws the max room error.
+                       this.client.sendResponse(new PurchaseOKComposer(null)); // Send this so the alert disappears, not sure if this is how it should be handled :S
+                       return;
                     }
-
-                    if (!this.client.getHabbo().hasPermission("acc_inifinte_points")) {
-                        this.client.getHabbo().getHabboInfo().addCurrencyAmount(item[0].getPointsType(), -item[0].getPoints());
-                    }
-
-                    this.client.sendResponse(new PurchaseOKComposer());
+                        ((RoomBundleLayout) page).buyRoom(this.client.getHabbo());
+                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) { //if the player has this perm disabled
+                            this.client.getHabbo().getHabboInfo().addCredits(-roomBundleItem.getCredits()); // takes their credits away
+                            this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo())); // Sends the updated currency composer window
+                        }
+                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) { //if the player has this perm disabled
+                            this.client.getHabbo().getHabboInfo().addCurrencyAmount(roomBundleItem.getPointsType(), -roomBundleItem.getPoints()); // takes their points away
+                            this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo())); // Sends the updated currency composer window
+                        }
+                        this.client.sendResponse(new PurchaseOKComposer()); // Sends the composer to close the window.
 
                     final boolean[] badgeFound = {false};
                     item[0].getBaseItems().stream().filter(i -> i.getType() == FurnitureType.BADGE).forEach(i -> {
