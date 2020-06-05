@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.catalog.ClubOffer;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.permissions.Permission;
+import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.messages.incoming.MessageHandler;
