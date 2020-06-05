@@ -3040,20 +3040,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (habbo.getHabboInfo().getCurrentRoom() != this)
             return;
 
-        if (!habbo.hasPermission(Permission.ACC_CHAT_NO_FLOOD) && habbo.getHabboStats().chatCounter > 0) {
-            int chatCounter = habbo.getHabboStats().chatCounter - 1;
-
-            if (chatCounter > 3 && !this.hasRights(habbo)) {
-                if (this.chatProtection == 0) {
-                    this.floodMuteHabbo(habbo, 30);
-                } else if (this.chatProtection == 1 && chatCounter > 4) {
-                    this.floodMuteHabbo(habbo, 30);
-                } else if (this.chatProtection == 2 && chatCounter > 5) {
-                    this.floodMuteHabbo(habbo, 30);
-                }
-            }
-        }
-
         long millis = System.currentTimeMillis();
         if (HABBO_CHAT_DELAY) {
             if (millis - habbo.getHabboStats().lastChat < 750) {
