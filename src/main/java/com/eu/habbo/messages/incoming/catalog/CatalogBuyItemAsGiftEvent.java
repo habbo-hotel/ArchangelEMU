@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -347,15 +348,15 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
 
                     AchievementManager.progressAchievement(userId, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GiftReceiver"));
 
-                    if (!this.client.getHabbo().hasPermission("acc_infinite_credits")) {
+                    if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                         if (totalCredits > 0) {
                             this.client.getHabbo().giveCredits(-totalCredits);
                         }
                     }
                     if (totalPoints > 0) {
-                        if (item.getPointsType() == 0 && !this.client.getHabbo().hasPermission("acc_infinite_pixels")) {
+                        if (item.getPointsType() == 0 && !this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_PIXELS)) {
                             this.client.getHabbo().getHabboInfo().addPixels(-totalPoints);
-                        } else if (!this.client.getHabbo().hasPermission("acc_infinite_points")) {
+                        } else if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
                             this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalPoints);
                         }
                         this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -totalPoints, item.getPointsType()));

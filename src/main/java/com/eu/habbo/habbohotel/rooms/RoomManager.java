@@ -510,7 +510,7 @@ public class RoomManager {
             }
         }
 
-        if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission("acc_enteranyroom")) {
+        if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission(Permission.ACC_ENTERANYROOM)) {
             habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
             return;
         }
@@ -528,7 +528,7 @@ public class RoomManager {
                 room.getState() == RoomState.OPEN ||
                 room.getState() == RoomState.INVISIBLE ||
                 habbo.hasPermission(Permission.ACC_ANYROOMOWNER) ||
-                habbo.hasPermission("acc_enteranyroom") ||
+                habbo.hasPermission(Permission.ACC_ENTERANYROOM) ||
                 room.hasRights(habbo) ||
                 (room.hasGuild() && room.guildRightLevel(habbo) > 2)) {
             this.openRoom(habbo, room, doorLocation);
@@ -620,7 +620,7 @@ public class RoomManager {
             return;
         }
 
-        if (room.getUserCount() >= room.getUsersMax() && !habbo.hasPermission("acc_fullrooms") && !room.hasRights(habbo)) {
+        if (room.getUserCount() >= room.getUsersMax() && !habbo.hasPermission(Permission.ACC_FULLROOMS) && !room.hasRights(habbo)) {
             habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_GUESTROOM_FULL));
             return;
         }

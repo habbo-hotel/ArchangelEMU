@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
@@ -35,7 +36,7 @@ public class InteractionGuildGate extends InteractionGuildFurni {
 
         Habbo habbo = room.getHabbo(roomUnit);
 
-        return habbo != null && (habbo.getHabboStats().hasGuild(super.getGuildId()) || habbo.hasPermission("acc_guildgate"));
+        return habbo != null && (habbo.getHabboStats().hasGuild(super.getGuildId()) || habbo.hasPermission(Permission.ACC_GUILDGATE));
     }
 
     @Override

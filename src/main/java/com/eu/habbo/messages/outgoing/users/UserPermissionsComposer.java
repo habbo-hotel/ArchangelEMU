@@ -1,5 +1,6 @@
 package com.eu.habbo.messages.outgoing.users;
 
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -20,7 +21,7 @@ public class UserPermissionsComposer extends MessageComposer {
         this.response.init(Outgoing.UserPermissionsComposer);
         this.response.appendInt(this.clubLevel);
         this.response.appendInt(this.habbo.getHabboInfo().getRank().getLevel());
-        this.response.appendBoolean(this.habbo.hasPermission("acc_ambassador"));
+        this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_AMBASSADOR));
         return this.response;
     }
 }

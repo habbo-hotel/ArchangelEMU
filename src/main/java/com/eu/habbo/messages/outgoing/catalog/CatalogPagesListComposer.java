@@ -2,6 +2,7 @@ package com.eu.habbo.messages.outgoing.catalog;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -21,7 +22,7 @@ public class CatalogPagesListComposer extends MessageComposer {
     public CatalogPagesListComposer(Habbo habbo, String mode) {
         this.habbo = habbo;
         this.mode = mode;
-        this.hasPermission = this.habbo.hasPermission("acc_catalog_ids");
+        this.hasPermission = this.habbo.hasPermission(Permission.ACC_CATALOG_IDS);
     }
 
     @Override

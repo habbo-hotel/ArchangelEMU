@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.outgoing.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -20,7 +21,7 @@ public class UserPerksComposer extends MessageComposer {
 
         this.response.appendString("USE_GUIDE_TOOL");
         this.response.appendString("requirement.unfulfilled.helper_level_4");
-        this.response.appendBoolean(Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this.habbo, "acc_helper_use_guide_tool"));
+        this.response.appendBoolean(Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this.habbo, Permission.ACC_HELPER_USE_GUIDE_TOOL));
 
         this.response.appendString("GIVE_GUIDE_TOURS");
         this.response.appendString("");
@@ -48,7 +49,7 @@ public class UserPerksComposer extends MessageComposer {
 
         this.response.appendString("HEIGHTMAP_EDITOR_BETA");
         this.response.appendString("requirement.unfulfilled.feature_disabled");
-        this.response.appendBoolean(Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this.habbo, "acc_floorplan_editor"));
+        this.response.appendBoolean(Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this.habbo, Permission.ACC_FLOORPLAN_EDITOR));
 
         this.response.appendString("BUILDER_AT_WORK");
         this.response.appendString("");
