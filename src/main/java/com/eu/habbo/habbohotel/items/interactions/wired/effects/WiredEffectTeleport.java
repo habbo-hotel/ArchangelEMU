@@ -47,13 +47,19 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
 
         Room room = roomUnit.getRoom();
 
-        if (room == null)
+        if (room == null) {
             return;
+        }
 
         // makes a temporary effect
+
         roomUnit.getRoom().unIdle(roomUnit.getRoom().getHabbo(roomUnit));
         room.sendComposer(new RoomUserEffectComposer(roomUnit, 4).compose());
         Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), WiredHandler.TELEPORT_DELAY + 1000);
+
+        if (tile == roomUnit.getCurrentLocation()) {
+            return;
+        }
 
         if (tile.state == RoomTileState.INVALID || tile.state == RoomTileState.BLOCKED) {
             RoomTile alternativeTile = null;
@@ -146,6 +152,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
         if (!this.items.isEmpty()) {
             int i = Emulator.getRandom().nextInt(this.items.size());
             HabboItem item = this.items.get(i);
+
             teleportUnitToTile(roomUnit, room.getLayout().getTile(item.getX(), item.getY()));
             return true;
         }
