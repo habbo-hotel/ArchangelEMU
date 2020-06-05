@@ -89,10 +89,11 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                     if (t != null && t.state != RoomTileState.INVALID) {
                         boolean canMove = true;
 
-                        if (t.x == item.getX() && t.y == item.getY()) {
+                        if (t.x == item.getX() && t.y == item.getY() || room.hasHabbosAt(t.x, t.y)) {
                             canMove = !(room.getTopItemAt(t.x, t.y) == item);
                             slideAnimation = false;
                         }
+
 
                         if (canMove && !room.hasHabbosAt(t.x, t.y)) {
                             THashSet<RoomTile> tiles = room.getLayout().getTilesAt(t, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation);
