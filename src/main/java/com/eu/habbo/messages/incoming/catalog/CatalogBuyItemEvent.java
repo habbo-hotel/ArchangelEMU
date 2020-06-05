@@ -166,10 +166,10 @@ public class CatalogBuyItemEvent extends MessageHandler {
                     if (this.client.getHabbo().getHabboInfo().getCredits() < totalCredits)
                         return;
 
-                    if (!this.client.getHabbo().hasPermission("acc_infinite_credits"))
+                    if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS))
                         this.client.getHabbo().getHabboInfo().addCredits(-totalCredits);
 
-                    if (!this.client.getHabbo().hasPermission("acc_infinite_points"))
+                    if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
                         this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalDuckets);
 
                     if (this.client.getHabbo().getHabboStats().getClubExpireTimestamp() <= Emulator.getIntUnixTimestamp())

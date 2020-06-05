@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.GuildConfirmRemoveMemberComposer;
@@ -18,7 +19,7 @@ public class GuildConfirmRemoveMemberEvent extends MessageHandler {
 
         if (guild != null) {
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
-            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || (member != null && member.getRank().equals(GuildRank.OWNER)) || this.client.getHabbo().hasPermission("acc_guild_admin")) {
+            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || (member != null && member.getRank().equals(GuildRank.OWNER)) || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)) {
                 Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());
                 int count = 0;
                 if (room != null) {

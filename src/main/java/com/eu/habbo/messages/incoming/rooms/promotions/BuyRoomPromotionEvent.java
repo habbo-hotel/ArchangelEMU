@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.promotions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
@@ -45,11 +46,11 @@ public class BuyRoomPromotionEvent extends MessageHandler {
                     }
 
                     if (room.isPromoted()) {
-                        if (!this.client.getHabbo().hasPermission("acc_infinite_credits")) {
+                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                             this.client.getHabbo().giveCredits(-item.getCredits());
                         }
 
-                        if (!this.client.getHabbo().hasPermission("acc_infinite_points")) {
+                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
                             this.client.getHabbo().givePoints(item.getPointsType(), -item.getPoints());
                         }
 

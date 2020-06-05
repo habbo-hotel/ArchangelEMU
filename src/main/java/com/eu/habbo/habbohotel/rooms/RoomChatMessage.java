@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.DatabaseLoggable;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
@@ -51,7 +52,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
             this.bubble = RoomChatMessageBubbles.NORMAL;
         }
 
-        if (!message.client.getHabbo().hasPermission("acc_anychatcolor")) {
+        if (!message.client.getHabbo().hasPermission(Permission.ACC_ANYCHATCOLOR)) {
             for (Integer i : RoomChatMessage.BANNED_BUBBLES) {
                 if (i == this.bubble.getType()) {
                     this.bubble = RoomChatMessageBubbles.NORMAL;
@@ -173,7 +174,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
     @Override
     public void serialize(ServerMessage message) {
         if (this.habbo != null && this.bubble.isOverridable()) {
-            if (!this.habbo.hasPermission("acc_anychatcolor")) {
+            if (!this.habbo.hasPermission(Permission.ACC_ANYCHATCOLOR)) {
                 for (Integer i : RoomChatMessage.BANNED_BUBBLES) {
                     if (i == this.bubble.getType()) {
                         this.bubble = RoomChatMessageBubbles.NORMAL;
@@ -209,7 +210,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         }
 
         if (Emulator.getConfig().getBoolean("hotel.wordfilter.enabled") && Emulator.getConfig().getBoolean("hotel.wordfilter.rooms")) {
-            if (!this.habbo.hasPermission("acc_chat_no_filter")) {
+            if (!this.habbo.hasPermission(Permission.ACC_CHAT_NO_FILTER)) {
                 if (!Emulator.getGameEnvironment().getWordFilter().autoReportCheck(this)) {
                     if (!Emulator.getGameEnvironment().getWordFilter().hideMessageCheck(this.message)) {
                         Emulator.getGameEnvironment().getWordFilter().filter(this, this.habbo);

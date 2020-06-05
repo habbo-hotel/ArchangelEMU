@@ -1197,7 +1197,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         habbo.getHabboStats().mutedBubbleTracker = false;
                         this.sendComposer(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.UNIGNORED).compose());
                     }
-                    if (!habbo.hasPermission("acc_chat_no_flood") && habbo.getHabboStats().chatCounter > 0) {
+                    if (!habbo.hasPermission(Permission.ACC_CHAT_NO_FLOOD) && habbo.getHabboStats().chatCounter > 0) {
                         //if (habbo.getRoomUnit().talkTimeOut == 0 || currentTimestamp - habbo.getRoomUnit().talkTimeOut < 0)
                         {
                             habbo.getHabboStats().chatCounter--;
@@ -3088,14 +3088,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (!this.wordFilterWords.isEmpty()) {
-            if (!habbo.hasPermission("acc_chat_no_filter")) {
+            if (!habbo.hasPermission(Permission.ACC_CHAT_NO_FILTER)) {
                 for (String string : this.wordFilterWords) {
                     roomChatMessage.setMessage(roomChatMessage.getMessage().replace(string, "bobba"));
                 }
             }
         }
 
-        if (!habbo.hasPermission("acc_nomute")) {
+        if (!habbo.hasPermission(Permission.ACC_NOMUTE)) {
             if (this.isMuted() && !this.hasRights(habbo)) {
                 return;
             }
@@ -3160,13 +3160,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                     continue;
                 }
-                if (h.hasPermission("acc_see_whispers")) {
+                if (h.hasPermission(Permission.ACC_SEE_WHISPERS)) {
                     h.getClient().sendResponse(staffMessage);
                 }
             }
         } else if (chatType == RoomChatType.TALK) {
             ServerMessage message = new RoomUserTalkComposer(roomChatMessage).compose();
-            boolean noChatLimit = habbo.hasPermission("acc_chat_no_limit");
+            boolean noChatLimit = habbo.hasPermission(Permission.ACC_CHAT_NO_LIMIT);
 
             for (Habbo h : this.getHabbos()) {
                 if ((h.getRoomUnit().getCurrentLocation().distance(habbo.getRoomUnit().getCurrentLocation()) <= this.chatDistance ||
@@ -4229,7 +4229,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         for (Habbo habbo : this.getHabbos()) {
             if (habbo.getHabboInfo().getCurrentRoom() == this) {
                 if (habbo.getHabboInfo().getId() != this.ownerId) {
-                    if (!(habbo.hasPermission(Permission.ACC_ANYROOMOWNER) || habbo.hasPermission("acc_moverotate")))
+                    if (!(habbo.hasPermission(Permission.ACC_ANYROOMOWNER) || habbo.hasPermission(Permission.ACC_MOVEROTATE)))
                         this.refreshRightsForHabbo(habbo);
                 }
             }

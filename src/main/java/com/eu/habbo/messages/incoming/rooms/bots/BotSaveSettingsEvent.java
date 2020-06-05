@@ -80,7 +80,7 @@ public class BotSaveSettingsEvent extends MessageHandler {
                             String result = Emulator.getGameEnvironment().getWordFilter().filter(s, null);
 
                             if (!result.isEmpty()) {
-                                if (!this.client.getHabbo().hasPermission("acc_chat_no_filter")) {
+                                if (!this.client.getHabbo().hasPermission(Permission.ACC_CHAT_NO_FILTER)) {
                                     result = Emulator.getGameEnvironment().getWordFilter().filter(result, this.client.getHabbo());
                                 }
 

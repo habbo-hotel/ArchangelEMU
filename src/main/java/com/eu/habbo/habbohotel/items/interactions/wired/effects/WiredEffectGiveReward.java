@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
@@ -116,7 +117,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if (client.getHabbo().hasPermission("acc_superwired")) {
+        if (client.getHabbo().hasPermission(Permission.ACC_SUPERWIRED)) {
             client.getHabbo().whisper(Emulator.getTexts().getValue("hotel.wired.superwired.info"), RoomChatMessageBubbles.BOT);
         }
     }
@@ -165,7 +166,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
 
     @Override
     public boolean saveData(ClientMessage packet, GameClient gameClient) {
-        if (gameClient.getHabbo().hasPermission("acc_superwired")) {
+        if (gameClient.getHabbo().hasPermission(Permission.ACC_SUPERWIRED)) {
             packet.readInt();
 
             this.rewardTime = packet.readInt();

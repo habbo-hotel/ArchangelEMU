@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.incoming.guides;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guides.GuideToolsComposer;
 
@@ -14,13 +15,13 @@ public class RequestGuideToolEvent extends MessageHandler {
             boolean helperRequests = this.packet.readBoolean();
             boolean bullyReports = this.packet.readBoolean();
 
-            if (!this.client.getHabbo().hasPermission("acc_helper_use_guide_tool"))
+            if (!this.client.getHabbo().hasPermission(Permission.ACC_HELPER_USE_GUIDE_TOOL))
                 return;
 
-            if (helperRequests && !this.client.getHabbo().hasPermission("acc_helper_give_guide_tours"))
+            if (helperRequests && !this.client.getHabbo().hasPermission(Permission.ACC_HELPER_GIVE_GUIDE_TOURS))
                 helperRequests = false;
 
-            if (bullyReports && !this.client.getHabbo().hasPermission("acc_helper_judge_chat_reviews"))
+            if (bullyReports && !this.client.getHabbo().hasPermission(Permission.ACC_HELPER_JUDGE_CHAT_REVIEWS))
                 bullyReports = false;
 
             if (helperRequests) {

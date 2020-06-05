@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -20,7 +21,7 @@ public class GuildAcceptMembershipEvent extends MessageHandler {
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if (guild == null || (guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId() && !Emulator.getGameEnvironment().getGuildManager().getOnlyAdmins(guild).containsKey(this.client.getHabbo().getHabboInfo().getId()) && !this.client.getHabbo().hasPermission("acc_guild_admin")))
+        if (guild == null || (guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId() && !Emulator.getGameEnvironment().getGuildManager().getOnlyAdmins(guild).containsKey(this.client.getHabbo().getHabboInfo().getId()) && !this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)))
             return;
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);

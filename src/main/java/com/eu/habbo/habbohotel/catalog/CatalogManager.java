@@ -11,6 +11,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.SoundTrack;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
@@ -1070,14 +1071,14 @@ public class CatalogManager {
                     }
                 }
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission("acc_infinite_credits")) {
+                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                     if (purchasedEvent.totalCredits > 0) {
                         habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.totalCredits);
                         habbo.getClient().sendResponse(new UserCreditsComposer(habbo.getClient().getHabbo()));
                     }
                 }
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission("acc_infinite_points")) {
+                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
                     if (purchasedEvent.totalPoints > 0) {
                         habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.totalPoints);
                         habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.totalPoints, item.getPointsType()));

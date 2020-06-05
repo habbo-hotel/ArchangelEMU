@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThreadState;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
@@ -36,7 +37,7 @@ public class GuildForumModerateMessageEvent extends MessageHandler {
             return;
         }
 
-        boolean isStaff = this.client.getHabbo().hasPermission("acc_modtool_ticket_q");
+        boolean isStaff = this.client.getHabbo().hasPermission(Permission.ACC_MODTOOL_TICKET_Q);
 
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
         if (member == null) {

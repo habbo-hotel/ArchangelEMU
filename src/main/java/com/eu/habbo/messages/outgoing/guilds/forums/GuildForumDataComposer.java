@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -107,7 +108,7 @@ public class GuildForumDataComposer extends MessageComposer {
 
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo);
             boolean isAdmin = member != null && (member.getRank().type < GuildRank.MEMBER.type || guild.getOwnerId() == this.habbo.getHabboInfo().getId());
-            boolean isStaff = this.habbo.hasPermission("acc_modtool_ticket_q");
+            boolean isStaff = this.habbo.hasPermission(Permission.ACC_MODTOOL_TICKET_Q);
 
             String errorRead = "";
             String errorPost = "";
