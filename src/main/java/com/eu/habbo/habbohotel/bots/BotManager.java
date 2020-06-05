@@ -174,8 +174,9 @@ public class BotManager {
                 return;
 
             if (bot.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasPermission(Permission.ACC_ANYROOMOWNER)) {
-                if (!habbo.hasPermission(Permission.ACC_UNLIMITED_BOTS) && habbo.getInventory().getBotsComponent().getBots().size() >= MAXIMUM_BOT_INVENTORY_SIZE) {
-                    habbo.alert(Emulator.getTexts().getValue("hotel.bot.max.amount.message").replace("%amount%",  MAXIMUM_BOT_INVENTORY_SIZE + ""));
+                if (!habbo.hasPermission(Permission.ACC_UNLIMITED_BOTS) && habbo.getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
+                    habbo.alert(Emulator.getTexts().getValue("error.bots.max.inventory").replace("%amount%", BotManager.MAXIMUM_BOT_INVENTORY_SIZE + ""));
+                    return;
                 }
 
                 bot.onPickUp(habbo, habbo.getHabboInfo().getCurrentRoom());
