@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.incoming.trading;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTrade;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
@@ -20,7 +21,7 @@ public class TradeStartEvent extends MessageHandler {
                 if (userId >= 0 && userId != this.client.getHabbo().getRoomUnit().getId()) {
                     Habbo targetUser = room.getHabboByRoomUnitId(userId);
 
-                    boolean tradeAnywhere = this.client.getHabbo().hasPermission("acc_trade_anywhere");
+                    boolean tradeAnywhere = this.client.getHabbo().hasPermission(Permission.ACC_TRADE_ANYWHERE);
 
                     if (!RoomTrade.TRADING_ENABLED && !tradeAnywhere) {
                         this.client.sendResponse(new TradeStartFailComposer(TradeStartFailComposer.HOTEL_TRADING_NOT_ALLOWED));

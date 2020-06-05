@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.modtool.ModToolBan;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
@@ -42,9 +43,9 @@ public class UserInfoCommand extends Command {
                 Emulator.getTexts().getValue("command.cmd_userinfo.motto") + ": " + habbo.getMotto().replace("<", "[").replace(">", "]") + "\r" +
                 Emulator.getTexts().getValue("command.cmd_userinfo.rank") + ": " + habbo.getRank().getName() + " (" + habbo.getRank().getId() + ") \r" +
                 Emulator.getTexts().getValue("command.cmd_userinfo.online") + ": " + (onlineHabbo == null ? Emulator.getTexts().getValue("generic.no") : Emulator.getTexts().getValue("generic.yes")) + "\r" +
-                ((habbo.getRank().hasPermission("acc_hide_mail", true)) ? "" : Emulator.getTexts().getValue("command.cmd_userinfo.email") + ": " + habbo.getMail() + "\r") +
-                ((habbo.getRank().hasPermission("acc_hide_ip", true)) ? "" : Emulator.getTexts().getValue("command.cmd_userinfo.ip_register") + ": " + habbo.getIpRegister() + "\r") +
-                ((habbo.getRank().hasPermission("acc_hide_ip", true)) || onlineHabbo == null ? "" : Emulator.getTexts().getValue("command.cmd_userinfo.ip_current") + ": " + onlineHabbo.getClient().getChannel().remoteAddress().toString() + "\r") +
+                ((habbo.getRank().hasPermission(Permission.ACC_HIDE_MAIL, true)) ? "" : Emulator.getTexts().getValue("command.cmd_userinfo.email") + ": " + habbo.getMail() + "\r") +
+                ((habbo.getRank().hasPermission(Permission.ACC_HIDE_IP, true)) ? "" : Emulator.getTexts().getValue("command.cmd_userinfo.ip_register") + ": " + habbo.getIpRegister() + "\r") +
+                ((habbo.getRank().hasPermission(Permission.ACC_HIDE_IP, true)) || onlineHabbo == null ? "" : Emulator.getTexts().getValue("command.cmd_userinfo.ip_current") + ": " + onlineHabbo.getClient().getChannel().remoteAddress().toString() + "\r") +
                 (onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.achievement_score") + ": " + onlineHabbo.getHabboStats().achievementScore + "\r" : ""));
 
         ModToolBan ban = Emulator.getGameEnvironment().getModToolManager().checkForBan(habbo.getId());

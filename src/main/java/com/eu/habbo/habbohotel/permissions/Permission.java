@@ -1,7 +1,7 @@
 package com.eu.habbo.habbohotel.permissions;
 
 public class Permission {
-    public static String ACC_ANYCHATCOLOR = "acc_anychatcolor";
+    public static String ACC_ANYCHATCOLOR = "acc_anychatcolor"; // allows them to pick and choose any color from the chat bubbles.
     public static String ACC_ANYROOMOWNER = "acc_anyroomowner";
     public static String ACC_EMPTY_OTHERS = "acc_empty_others";
     public static String ACC_ENABLE_OTHERS = "acc_enable_others";
@@ -18,15 +18,13 @@ public class Permission {
     public static String ACC_HIDE_MAIL = "acc_hide_mail";
     public static String ACC_NOT_MIMICED = "acc_not_mimiced";
     public static String ACC_CHAT_NO_FLOOD = "acc_chat_no_flood";
-    public static String ACC_STAFF_CHAT = "acc_staff_chat";
     public static String ACC_STAFF_PICK = "acc_staff_pick";
-    public static String ACC_ENTERANYROOM = "acc_enteranyroom";
+    public static String ACC_ENTERANYROOM = "acc_enteranyroom"; //
     public static String ACC_FULLROOMS = "acc_fullrooms";
     public static String ACC_INFINITE_CREDITS = "acc_infinite_credits";
     public static String ACC_INFINITE_PIXELS = "acc_infinite_pixels";
     public static String ACC_INFINITE_POINTS = "acc_infinite_points";
     public static String ACC_AMBASSADOR = "acc_ambassador";
-    public static String ACC_DEBUG = "acc_debug";
     public static String ACC_CHAT_NO_LIMIT = "acc_chat_no_limit";
     public static String ACC_CHAT_NO_FILTER = "acc_chat_no_filter";
     public static String ACC_NOMUTE = "acc_nomute";
