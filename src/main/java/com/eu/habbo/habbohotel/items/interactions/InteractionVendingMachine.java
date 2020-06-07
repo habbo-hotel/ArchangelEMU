@@ -164,6 +164,11 @@ public class InteractionVendingMachine extends HabboItem {
     }
 
     private void rotateToMachine(RoomUnit unit) {
+        if (unit.getCurrentLocation().getState() != RoomTileState.OPEN) {
+            // if sitting on a chair or laying on a bed, skip rotating altogether
+            return;
+        }
+
         RoomUserRotation rotation = RoomUserRotation.values()[Rotation.Calculate(unit.getX(), unit.getY(), this.getX(), this.getY())];
         boolean onlyHead = false;
 
