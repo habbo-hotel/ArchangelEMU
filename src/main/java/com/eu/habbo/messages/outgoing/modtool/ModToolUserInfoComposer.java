@@ -34,7 +34,7 @@ public class ModToolUserInfoComposer extends MessageComposer {
                 statement.setInt(1, this.set.getInt("user_id"));
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
-                       totalBans = set.getInt("totalBans");
+                       totalBans = set.getInt("amount");
                     }
                 } catch (SQLException e) {
                     LOGGER.error("Caught SQL exception", e);
@@ -52,12 +52,12 @@ public class ModToolUserInfoComposer extends MessageComposer {
             this.response.appendInt(this.set.getInt("cfh_send"));
             this.response.appendInt(this.set.getInt("cfh_abusive"));
             this.response.appendInt(this.set.getInt("cfh_warnings"));
-            this.response.appendInt(this.set.getInt("cfh_bans"));
+            this.response.appendInt(totalBans); // Number of bans
             this.response.appendInt(this.set.getInt("tradelock_amount"));
             this.response.appendString(""); //Trading lock expiry timestamp
             this.response.appendString(""); //Last Purchase Timestamp
             this.response.appendInt(this.set.getInt("user_id")); //Personal Identification #
-            this.response.appendInt(totalBans); //Number of bans
+            this.response.appendInt(0); // Number of account bans
             this.response.appendString(this.set.getString("mail"));
             this.response.appendString("Rank (" + this.set.getInt("rank_id") + "): " + this.set.getString("rank_name")); //user_class_txt
 
