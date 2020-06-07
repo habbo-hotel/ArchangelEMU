@@ -41,7 +41,7 @@ public class RequestCreateRoomEvent extends MessageHandler {
         if (tradeType > 2)
             return;
 
-        if (name.length() < 3 || name.length() > 25 || !Emulator.getGameEnvironment().getWordFilter().filter(name, this.client.getHabbo()).equals(name))
+        if (name.trim().length() < 3 || name.length() > 25 || !Emulator.getGameEnvironment().getWordFilter().filter(name, this.client.getHabbo()).equals(name))
             return;
 
         if (description.length() > 128 || !Emulator.getGameEnvironment().getWordFilter().filter(description, this.client.getHabbo()).equals(description))
