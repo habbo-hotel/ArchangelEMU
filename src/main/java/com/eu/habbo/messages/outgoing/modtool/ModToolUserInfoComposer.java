@@ -11,8 +11,7 @@ import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ModToolUserInfoComposer extends MessageComposer {
@@ -28,6 +27,22 @@ public class ModToolUserInfoComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ModToolUserInfoComposer);
         try {
+            int totalBans = 0;
+
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+                 PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) AS amount FROM bans WHERE user_id = ?")) {
+                statement.setInt(1, this.set.getInt("user_id"));
+                try (ResultSet set = statement.executeQuery()) {
+                    if (set.next()) {
+                       totalBans = set.getInt("amount");
+                    }
+                } catch (SQLException e) {
+                    LOGGER.error("Caught SQL exception", e);
+                }
+            } catch (SQLException e) {
+                LOGGER.error("Caught SQL exception", e);
+            }
+
             this.response.appendInt(this.set.getInt("user_id"));
             this.response.appendString(this.set.getString("username"));
             this.response.appendString(this.set.getString("look"));
@@ -37,12 +52,12 @@ public class ModToolUserInfoComposer extends MessageComposer {
             this.response.appendInt(this.set.getInt("cfh_send"));
             this.response.appendInt(this.set.getInt("cfh_abusive"));
             this.response.appendInt(this.set.getInt("cfh_warnings"));
-            this.response.appendInt(this.set.getInt("cfh_bans"));
+            this.response.appendInt(totalBans); // Number of bans
             this.response.appendInt(this.set.getInt("tradelock_amount"));
             this.response.appendString(""); //Trading lock expiry timestamp
             this.response.appendString(""); //Last Purchase Timestamp
             this.response.appendInt(this.set.getInt("user_id")); //Personal Identification #
-            this.response.appendInt(0); //Number of bans
+            this.response.appendInt(0); // Number of account bans
             this.response.appendString(this.set.getString("mail"));
             this.response.appendString("Rank (" + this.set.getInt("rank_id") + "): " + this.set.getString("rank_name")); //user_class_txt
 
