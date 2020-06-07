@@ -214,7 +214,13 @@ public class Messenger {
 
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    this.friends.putIfAbsent(set.getInt("id"), new MessengerBuddy(set));
+                    MessengerBuddy buddy = new MessengerBuddy(set);
+
+                    if (buddy.getId() == habbo.getHabboInfo().getId()) {
+                        continue;
+                    }
+
+                    this.friends.putIfAbsent(set.getInt("id"), buddy);
                 }
             }
         } catch (SQLException e) {
