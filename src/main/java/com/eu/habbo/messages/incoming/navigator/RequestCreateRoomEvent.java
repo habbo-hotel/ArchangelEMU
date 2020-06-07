@@ -41,6 +41,12 @@ public class RequestCreateRoomEvent extends MessageHandler {
         if (tradeType > 2)
             return;
 
+        if (name.length() < 3 || name.length() > 25 || !Emulator.getGameEnvironment().getWordFilter().filter(name, this.client.getHabbo()).equals(name))
+            return;
+
+        if (description.length() > 128 || !Emulator.getGameEnvironment().getWordFilter().filter(description, this.client.getHabbo()).equals(description))
+            return;
+
         int count = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()).size();
         int max = this.client.getHabbo().getHabboStats().hasActiveClub() ? RoomManager.MAXIMUM_ROOMS_VIP : RoomManager.MAXIMUM_ROOMS_USER;
 
@@ -49,13 +55,9 @@ public class RequestCreateRoomEvent extends MessageHandler {
             return;
         }
 
-        final Room room = Emulator.getGameEnvironment().getRoomManager().createRoomForHabbo(this.client.getHabbo(), name, description, modelName, maxUsers, categoryId);
+        final Room room = Emulator.getGameEnvironment().getRoomManager().createRoomForHabbo(this.client.getHabbo(), name, description, modelName, maxUsers, categoryId, tradeType);
 
         if (room != null) {
-            if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-                //Emulator.getGameEnvironment().getRoomManager().leaveRoom(this.client.getHabbo(), this.client.getHabbo().getHabboInfo().getCurrentRoom());
-            }
-
             this.client.sendResponse(new RoomCreatedComposer(room));
         }
     }

@@ -327,10 +327,10 @@ public class RoomManager {
     }
 
 
-    public Room createRoom(int ownerId, String ownerName, String name, String description, String modelName, int usersMax, int categoryId) {
+    public Room createRoom(int ownerId, String ownerName, String name, String description, String modelName, int usersMax, int categoryId, int tradeType) {
         Room room = null;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rooms (owner_id, owner_name, name, description, model, users_max, category) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rooms (owner_id, owner_name, name, description, model, users_max, category, trade_mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, ownerId);
             statement.setString(2, ownerName);
             statement.setString(3, name);
@@ -338,6 +338,7 @@ public class RoomManager {
             statement.setString(5, modelName);
             statement.setInt(6, usersMax);
             statement.setInt(7, categoryId);
+            statement.setInt(8, tradeType);
             statement.execute();
             try (ResultSet set = statement.getGeneratedKeys()) {
                 if (set.next())
@@ -351,8 +352,8 @@ public class RoomManager {
     }
 
 
-    public Room createRoomForHabbo(Habbo habbo, String name, String description, String modelName, int usersMax, int categoryId) {
-        Room room = this.createRoom(habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), name, description, modelName, usersMax, categoryId);
+    public Room createRoomForHabbo(Habbo habbo, String name, String description, String modelName, int usersMax, int categoryId, int tradeType) {
+        Room room = this.createRoom(habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), name, description, modelName, usersMax, categoryId, tradeType);
 
         Emulator.getPluginManager().fireEvent(new NavigatorRoomCreatedEvent(habbo, room));
 

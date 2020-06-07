@@ -23,7 +23,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
             if (room.isOwner(this.client.getHabbo())) {
                 String name = this.packet.readString();
 
-                if (name.isEmpty()) {
+                if (name.trim().isEmpty() || name.length() > 60) {
                     this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.ROOM_NAME_MISSING, ""));
                     return;
                 }
@@ -34,6 +34,11 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 }
 
                 String description = this.packet.readString();
+
+                if (description.length() > 255) {
+                    return;
+                }
+
                 if (!Emulator.getGameEnvironment().getWordFilter().filter(description, this.client.getHabbo()).equals(description)) {
                     this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.ROOM_DESCRIPTION_BADWORDS, ""));
                     return;
