@@ -24,6 +24,10 @@ public class RequestDeleteRoomEvent extends MessageHandler {
 
         if (room != null) {
             if (room.isOwner(this.client.getHabbo())) {
+                if (room.getId() == this.client.getHabbo().getHabboInfo().getHomeRoom()) {
+                    return;
+                }
+
                 if (Emulator.getPluginManager().fireEvent(new NavigatorRoomDeletedEvent(this.client.getHabbo(), room)).isCancelled()) {
                     return;
                 }
