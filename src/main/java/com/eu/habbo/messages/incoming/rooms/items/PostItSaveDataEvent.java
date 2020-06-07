@@ -8,30 +8,25 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PostItSaveDataEvent extends MessageHandler {
+    private static List<String> COLORS = Arrays.asList("9CCEFF", "FF9CFF", "9CFF9C", "FFFF33");
+
     @Override
     public void handle() throws Exception {
         int itemId = this.packet.readInt();
         String color = this.packet.readString();
-        String text = this.packet.readString();
+        String text = this.packet.readString().replace(((char) 9) + "", "");
 
         if (text.length() > Emulator.getConfig().getInt("postit.charlimit")) {
-            ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.sticky.size").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%amount%", text.length() + "").replace("%limit%", "366"));
-
-            if (text.length() >= Emulator.getConfig().getInt("postit.charlimit") + 50) {
-                this.client.getHabbo().alert("8=====D~~~~~<br><br>Computer Says:<b><u>NO</u></b>");
-            }
+            ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.sticky.size").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%amount%", text.length() + "").replace("%limit%", Emulator.getConfig().getInt("postit.charlimit") + ""));
             return;
         }
 
-        text = text.replace(((char) 9) + "", "");
-        if (text.startsWith("#") || text.startsWith(" #")) {
-            String colorCheck = text.split(" ")[0].replace(" ", "").replace(" #", "").replace("#", "");
-
-            if (colorCheck.length() == 6) {
-                color = colorCheck;
-                text = text.replace("#" + colorCheck + " ", "");
-            }
+        if (!COLORS.contains(color)) {
+            return;
         }
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
