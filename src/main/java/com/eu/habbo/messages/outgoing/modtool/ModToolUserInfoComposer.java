@@ -28,16 +28,21 @@ public class ModToolUserInfoComposer extends MessageComposer {
         this.response.init(Outgoing.ModToolUserInfoComposer);
         try {
             int totalBans = 0;
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) AS amount FROM bans WHERE user_id = ?")) {
+
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+                 PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) AS amount FROM bans WHERE user_id = ?")) {
                 statement.setInt(1, this.set.getInt("user_id"));
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
                        totalBans = set.getInt("totalBans");
                     }
+                } catch (SQLException e) {
+                    LOGGER.error("Caught SQL exception", e);
                 }
             } catch (SQLException e) {
                 LOGGER.error("Caught SQL exception", e);
             }
+
             this.response.appendInt(this.set.getInt("user_id"));
             this.response.appendString(this.set.getString("username"));
             this.response.appendString(this.set.getString("look"));
