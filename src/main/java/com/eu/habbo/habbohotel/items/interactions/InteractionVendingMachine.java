@@ -18,7 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
-public class InteractionVendingMachine extends HabboItem {
+public class InteractionVendingMachine extends InteractionDefault {
     public InteractionVendingMachine(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
@@ -27,16 +27,6 @@ public class InteractionVendingMachine extends HabboItem {
     public InteractionVendingMachine(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.setExtradata("0");
-    }
-
-    @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        return true;
-    }
-
-    @Override
-    public boolean isWalkable() {
-        return false;
     }
 
     @Override
@@ -123,21 +113,6 @@ public class InteractionVendingMachine extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
     public void run() {
         super.run();
         if (this.getExtradata().equals("1")) {
@@ -147,15 +122,6 @@ public class InteractionVendingMachine extends HabboItem {
                 room.updateItem(this);
             }
         }
-    }
-
-
-    @Override
-    public void serializeExtradata(ServerMessage serverMessage) {
-        serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
-
-        super.serializeExtradata(serverMessage);
     }
 
     @Override
