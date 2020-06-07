@@ -75,6 +75,11 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                     return;
                 }
 
+                if (!GiftConfigurationComposer.BOX_TYPES.contains(color) || !GiftConfigurationComposer.RIBBON_TYPES.contains(ribbonId)) {
+                    this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                    return;
+                }
+
                 Integer iItemId = Emulator.getGameEnvironment().getCatalogManager().giftWrappers.get(spriteId);
 
                 if (iItemId == null)

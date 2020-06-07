@@ -5,9 +5,14 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class GiftConfigurationComposer extends MessageComposer {
+    public static List<Integer> BOX_TYPES = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 8);
+    public static List<Integer> RIBBON_TYPES = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GiftConfigurationComposer);
@@ -19,28 +24,15 @@ public class GiftConfigurationComposer extends MessageComposer {
             this.response.appendInt(i);
         }
 
-        this.response.appendInt(8);
-        this.response.appendInt(0);
-        this.response.appendInt(1);
-        this.response.appendInt(2);
-        this.response.appendInt(3);
-        this.response.appendInt(4);
-        this.response.appendInt(5);
-        this.response.appendInt(6);
-        this.response.appendInt(8);
+        this.response.appendInt(BOX_TYPES.size());
+        for (Integer type : BOX_TYPES) {
+            this.response.appendInt(type);
+        }
 
-        this.response.appendInt(11);
-        this.response.appendInt(0);
-        this.response.appendInt(1);
-        this.response.appendInt(2);
-        this.response.appendInt(3);
-        this.response.appendInt(4);
-        this.response.appendInt(5);
-        this.response.appendInt(6);
-        this.response.appendInt(7);
-        this.response.appendInt(8);
-        this.response.appendInt(9);
-        this.response.appendInt(10);
+        this.response.appendInt(RIBBON_TYPES.size());
+        for (Integer type : RIBBON_TYPES) {
+            this.response.appendInt(type);
+        }
 
         this.response.appendInt(Emulator.getGameEnvironment().getCatalogManager().giftFurnis.size());
 

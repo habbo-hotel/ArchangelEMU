@@ -21,3 +21,7 @@ UPDATE `emulator_texts` SET `value` = 'You\'ve reached the maximum amount of pet
 
 -- Tradelock counter
 ALTER TABLE `users_settings` ADD `tradelock_amount` INT(11) NOT NULL DEFAULT '0' AFTER `helper_level`;
+
+-- Gift wrapping configuration
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.gifts.box_types', '0,1,2,3,4,5,6,8');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.gifts.ribbon_types', '0,1,2,3,4,5,6,7,8,9,10');

@@ -34,6 +34,7 @@ import com.eu.habbo.messages.incoming.hotelview.HotelViewRequestLTDAvailabilityE
 import com.eu.habbo.messages.incoming.rooms.promotions.BuyRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.users.ChangeNameCheckUsernameEvent;
 import com.eu.habbo.messages.outgoing.catalog.DiscountComposer;
+import com.eu.habbo.messages.outgoing.catalog.GiftConfigurationComposer;
 import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
@@ -58,6 +59,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class PluginManager {
 
@@ -153,6 +155,9 @@ public class PluginManager {
         BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE = Emulator.getConfig().getValue("room.promotion.badge", "RADZZ");
         BotManager.MAXIMUM_BOT_INVENTORY_SIZE = Emulator.getConfig().getInt("hotel.bots.max.inventory");
         PetManager.MAXIMUM_PET_INVENTORY_SIZE = Emulator.getConfig().getInt("hotel.pets.max.inventory");
+
+        GiftConfigurationComposer.BOX_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.box_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
+        GiftConfigurationComposer.RIBBON_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.ribbon_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
 
         NewNavigatorEventCategoriesComposer.CATEGORIES.clear();
         for (String category : Emulator.getConfig().getValue("navigator.eventcategories", "").split(";")) {
