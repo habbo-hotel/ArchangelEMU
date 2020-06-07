@@ -1,10 +1,15 @@
 package com.eu.habbo.messages.incoming.navigator;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
+import com.eu.habbo.habbohotel.pets.Pet;
+import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomDeletedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RequestDeleteRoomEvent extends MessageHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestDeleteRoomEvent.class);
@@ -34,6 +41,31 @@ public class RequestDeleteRoomEvent extends MessageHandler {
 
                 room.ejectAll();
                 room.ejectUserFurni(room.getOwnerId());
+
+                List<Bot> bots = new ArrayList<>(room.getCurrentBots().valueCollection());
+                for (Bot bot : bots) {
+                    Emulator.getGameEnvironment().getBotManager().pickUpBot(bot, null);
+                }
+
+                List<Pet> pets = new ArrayList<>(room.getCurrentPets().valueCollection());
+                for (Pet pet : pets) {
+                    if (pet instanceof RideablePet) {
+                        RideablePet rideablePet = (RideablePet) pet;
+                        if (rideablePet.getRider() != null) {
+                            rideablePet.getRider().getHabboInfo().dismountPet(true);
+                        }
+                    }
+
+                    pet.removeFromRoom();
+                    Emulator.getThreading().run(pet);
+
+                    Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(pet.getUserId());
+
+                    if (owner != null) {
+                        owner.getClient().sendResponse(new AddPetComposer(pet));
+                        owner.getInventory().getPetsComponent().addPet(pet);
+                    }
+                }
 
                 if (room.getGuildId() > 0) {
                     Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(room.getGuildId());

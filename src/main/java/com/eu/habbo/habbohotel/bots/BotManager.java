@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
@@ -165,30 +166,34 @@ public class BotManager {
     }
 
     public void pickUpBot(Bot bot, Habbo habbo) {
+        HabboInfo receiverInfo = habbo == null ? Emulator.getGameEnvironment().getHabboManager().getHabboInfo(bot.getOwnerId()) : habbo.getHabboInfo();
 
-        if (bot != null && habbo != null) {
+        if (bot != null) {
             BotPickUpEvent pickedUpEvent = new BotPickUpEvent(bot, habbo);
             Emulator.getPluginManager().fireEvent(pickedUpEvent);
 
             if (pickedUpEvent.isCancelled())
                 return;
 
-            if (bot.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasPermission(Permission.ACC_ANYROOMOWNER)) {
-                if (!habbo.hasPermission(Permission.ACC_UNLIMITED_BOTS) && habbo.getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
+            if (habbo == null || (bot.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasPermission(Permission.ACC_ANYROOMOWNER))) {
+                if (habbo != null && !habbo.hasPermission(Permission.ACC_UNLIMITED_BOTS) && habbo.getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
                     habbo.alert(Emulator.getTexts().getValue("error.bots.max.inventory").replace("%amount%", BotManager.MAXIMUM_BOT_INVENTORY_SIZE + ""));
                     return;
                 }
 
-                bot.onPickUp(habbo, habbo.getHabboInfo().getCurrentRoom());
-                habbo.getHabboInfo().getCurrentRoom().removeBot(bot);
+                bot.onPickUp(habbo, receiverInfo.getCurrentRoom());
+                receiverInfo.getCurrentRoom().removeBot(bot);
                 bot.stopFollowingHabbo();
-                bot.setOwnerId(habbo.getHabboInfo().getId());
-                bot.setOwnerName(habbo.getHabboInfo().getUsername());
+                bot.setOwnerId(receiverInfo.getId());
+                bot.setOwnerName(receiverInfo.getUsername());
                 bot.needsUpdate(true);
                 Emulator.getThreading().run(bot);
 
-                habbo.getInventory().getBotsComponent().addBot(bot);
-                habbo.getClient().sendResponse(new AddBotComposer(bot));
+                Habbo receiver = habbo == null ? Emulator.getGameEnvironment().getHabboManager().getHabbo(receiverInfo.getId()) : habbo;
+                if (receiver != null) {
+                    receiver.getInventory().getBotsComponent().addBot(bot);
+                    receiver.getClient().sendResponse(new AddBotComposer(bot));
+                }
             }
         }
     }
