@@ -1019,23 +1019,23 @@ public class CatalogManager {
                                         return;
                                     }
 
-                                    InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(habbo.getClient().getHabbo().getHabboInfo().getId(), baseItem, limitedStack, limitedNumber, extradata);
-                                    habboItem.setExtradata("");
-                                    habboItem.needsUpdate(true);
+                                    Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-                                    Emulator.getThreading().run(habboItem);
-                                    Emulator.getGameEnvironment().getGuildManager().setGuild(habboItem, guildId);
-                                    itemsList.add(habboItem);
+                                    if (guild != null && Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo) != null) {
+                                        InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(habbo.getClient().getHabbo().getHabboInfo().getId(), baseItem, limitedStack, limitedNumber, extradata);
+                                        habboItem.setExtradata("");
+                                        habboItem.needsUpdate(true);
 
-                                    if (baseItem.getName().equals("guild_forum")) {
-                                        Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
-                                        if (guild != null) {
+                                        Emulator.getThreading().run(habboItem);
+                                        Emulator.getGameEnvironment().getGuildManager().setGuild(habboItem, guildId);
+                                        itemsList.add(habboItem);
+
+                                        if (baseItem.getName().equals("guild_forum")) {
                                             guild.setForum(true);
                                             guild.needsUpdate = true;
                                             guild.run();
                                         }
                                     }
-
                                 } else if (baseItem.getInteractionType().getType() == InteractionMusicDisc.class) {
                                     SoundTrack track = Emulator.getGameEnvironment().getItemManager().getSoundTrack(item.getExtradata());
 
