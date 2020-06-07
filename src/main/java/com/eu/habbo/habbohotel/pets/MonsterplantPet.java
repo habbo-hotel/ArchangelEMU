@@ -353,6 +353,19 @@ public class MonsterplantPet extends Pet implements IPetLook {
         }
     }
 
+    private boolean mayScratch() {
+        // Monsterplant petting is available when:
+        //   ((energy / max_energy) < 0.98) = true
+        // You can find the minimum deathTimestamp by solving (insert a timestamp for timestamp, solve for death_timestamp):
+        //   (((death_timestamp - timestamp) / 259200)) < 0.98
+        // This information was found in the Habbo swf, com.sulake.habbo.ui.widget.infostand.InfoStandPetView.as
+        //   this._Str_2304("pettreat", ((_local_3 / _local_4) < 0.98));
+        final float energy = this.getEnergy();
+        final float energyMax = this.getMaxEnergy();
+
+        return ((energy / energyMax) < 0.98);
+    }
+
     @Override
     public int getMaxEnergy() {
         return MonsterplantPet.timeToLive;
@@ -368,13 +381,15 @@ public class MonsterplantPet extends Pet implements IPetLook {
     }
 
     @Override
-    public void scratched(Habbo habbo) {
-        AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantTreater"), 5);
-        this.setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.timeToLive);
-        this.addHappyness(10);
-        this.addExperience(10);
-        this.room.sendComposer(new PetStatusUpdateComposer(this).compose());
-        this.room.sendComposer(new RoomPetRespectComposer(this, RoomPetRespectComposer.PET_TREATED).compose());
+    public synchronized void scratched(Habbo habbo) {
+        if (this.mayScratch()) {
+            AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantTreater"), 5);
+            this.setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.timeToLive);
+            this.addHappyness(10);
+            this.addExperience(10);
+            this.room.sendComposer(new PetStatusUpdateComposer(this).compose());
+            this.room.sendComposer(new RoomPetRespectComposer(this, RoomPetRespectComposer.PET_TREATED).compose());
+        }
     }
 
     @Override
