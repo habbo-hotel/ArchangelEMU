@@ -82,8 +82,11 @@ public class PetUseItemEvent extends MessageHandler {
             if (((HorsePet) pet).needsUpdate) {
                 Emulator.getThreading().run(pet);
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomPetHorseFigureComposer((HorsePet) pet).compose());
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RemoveFloorItemComposer(item).compose());
-                Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
+
+                room.removeHabboItem(item);
+                room.sendComposer(new RemoveFloorItemComposer(item, true).compose());
+                item.setRoomId(0);
+                Emulator.getGameEnvironment().getItemManager().deleteItem(item);
             }
         } else if (pet instanceof MonsterplantPet) {
             if (item.getBaseItem().getName().equalsIgnoreCase("mnstr_revival")) {
