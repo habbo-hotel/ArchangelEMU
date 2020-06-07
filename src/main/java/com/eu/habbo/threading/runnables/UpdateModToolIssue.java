@@ -20,7 +20,8 @@ public class UpdateModToolIssue implements Runnable {
 
     @Override
     public void run() {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE support_tickets SET state = ?, type = ?, mod_id = ?, category = ? WHERE id = ?")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("UPDATE support_tickets SET state = ?, type = ?, mod_id = ?, category = ? WHERE id = ?")) {
             statement.setInt(1, this.issue.state.getState());
             statement.setInt(2, this.issue.type.getType());
             statement.setInt(3, this.issue.modId);
