@@ -85,6 +85,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Room implements Comparable<Room>, ISerialize, Runnable {
@@ -3076,7 +3077,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (!this.wordFilterWords.isEmpty()) {
             if (!habbo.hasPermission(Permission.ACC_CHAT_NO_FILTER)) {
                 for (String string : this.wordFilterWords) {
-                    roomChatMessage.setMessage(roomChatMessage.getMessage().replace(string, "bobba"));
+                    roomChatMessage.setMessage(roomChatMessage.getMessage().replaceAll("(?i)" + Pattern.quote(string), "bobba"));
                 }
             }
         }
