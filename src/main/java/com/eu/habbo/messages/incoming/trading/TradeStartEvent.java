@@ -52,7 +52,7 @@ public class TradeStartEvent extends MessageHandler {
                         return;
                     }
 
-                    if (!targetUser.getHabboStats().allowTrade() {
+                    if (!targetUser.getHabboStats().allowTrade()) {
                         this.client.sendResponse(new TradeStartFailComposer(TradeStartFailComposer.TARGET_TRADING_NOT_ALLOWED, targetUser.getHabboInfo().getUsername()));
                         return;
                     }
