@@ -204,6 +204,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private int idleCycles;
     private volatile int unitCounter;
     private volatile int rollerSpeed;
+    private int muteTime = Emulator.getConfig().getInt("hotel.flood.mute.time");
     private long rollerCycle = System.currentTimeMillis();
     private volatile int lastTimerReset = Emulator.getIntUnixTimestamp();
     private volatile boolean muted;
@@ -1209,11 +1210,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                                 if (floodRights || !hasRights) {
                                     if (this.chatProtection == 0) {
-                                        this.floodMuteHabbo(habbo, 30);
+                                        this.floodMuteHabbo(habbo, muteTime);
                                     } else if (this.chatProtection == 1 && habbo.getHabboStats().chatCounter > 4) {
-                                        this.floodMuteHabbo(habbo, 30);
+                                        this.floodMuteHabbo(habbo, muteTime);
                                     } else if (this.chatProtection == 2 && habbo.getHabboStats().chatCounter > 5) {
-                                        this.floodMuteHabbo(habbo, 30);
+                                        this.floodMuteHabbo(habbo, muteTime);
                                     }
                                 }
                             }
