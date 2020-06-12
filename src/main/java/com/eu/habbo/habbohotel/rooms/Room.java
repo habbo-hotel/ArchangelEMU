@@ -204,12 +204,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private int idleCycles;
     private volatile int unitCounter;
     private volatile int rollerSpeed;
-    private int muteTime = Emulator.getConfig().getInt("hotel.flood.mute.time");
+    private final int muteTime = Emulator.getConfig().getInt("hotel.flood.mute.time", 30);
     private long rollerCycle = System.currentTimeMillis();
     private volatile int lastTimerReset = Emulator.getIntUnixTimestamp();
     private volatile boolean muted;
     private RoomSpecialTypes roomSpecialTypes;
     private TraxManager traxManager;
+    private boolean cycleOdd;
     private long cycleTimestamp;
 
     public Room(ResultSet set) throws SQLException {
@@ -1118,6 +1119,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     private void cycle() {
+        this.cycleOdd = !this.cycleOdd;
         this.cycleTimestamp = System.currentTimeMillis();
         final boolean[] foundRightHolder = {false};
 
@@ -1199,28 +1201,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         habbo.getHabboStats().mutedBubbleTracker = false;
                         this.sendComposer(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.UNIGNORED).compose());
                     }
-                    if (!habbo.hasPermission(Permission.ACC_CHAT_NO_FLOOD) && habbo.getHabboStats().chatCounter > 0) {
-                        //if (habbo.getRoomUnit().talkTimeOut == 0 || currentTimestamp - habbo.getRoomUnit().talkTimeOut < 0)
-                        {
-                            habbo.getHabboStats().chatCounter--;
 
-                            if (habbo.getHabboStats().chatCounter > 3) {
-                                final boolean floodRights = Emulator.getConfig().getBoolean("flood.with.rights");
-                                final boolean hasRights = this.hasRights(habbo);
-
-                                if (floodRights || !hasRights) {
-                                    if (this.chatProtection == 0) {
-                                        this.floodMuteHabbo(habbo, muteTime);
-                                    } else if (this.chatProtection == 1 && habbo.getHabboStats().chatCounter > 4) {
-                                        this.floodMuteHabbo(habbo, muteTime);
-                                    } else if (this.chatProtection == 2 && habbo.getHabboStats().chatCounter > 5) {
-                                        this.floodMuteHabbo(habbo, muteTime);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        habbo.getHabboStats().chatCounter = 0;
+                    // Substract 1 from the chatCounter every odd cycle, which is every (500ms * 2).
+                    if (this.cycleOdd && habbo.getHabboStats().chatCounter.get() > 0) {
+                        habbo.getHabboStats().chatCounter.decrementAndGet();
                     }
 
                     if (this.cycleRoomUnit(habbo.getRoomUnit(), RoomUnitType.USER)) {
@@ -3019,7 +3003,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public void floodMuteHabbo(Habbo habbo, int timeOut) {
         habbo.getHabboStats().mutedCount++;
         timeOut += (timeOut * (int) Math.ceil(Math.pow(habbo.getHabboStats().mutedCount, 2)));
-        habbo.getHabboStats().chatCounter = 0;
+        habbo.getHabboStats().chatCounter.set(0);
         habbo.mute(timeOut, true);
     }
 
@@ -3050,7 +3034,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
         habbo.getHabboStats().lastChat = millis;
         if (roomChatMessage != null && roomChatMessage.getMessage().equalsIgnoreCase("i am a pirate")) {
-            habbo.getHabboStats().chatCounter += 2;
+            habbo.getHabboStats().chatCounter.addAndGet(1);
             Emulator.getThreading().run(new YouAreAPirate(habbo, this));
             return;
         }
@@ -3109,7 +3093,27 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
 
-        habbo.getHabboStats().chatCounter += 2;
+        if (!habbo.hasPermission(Permission.ACC_CHAT_NO_FLOOD)) {
+            final int chatCounter = habbo.getHabboStats().chatCounter.addAndGet(1);
+
+            if (chatCounter > 3) {
+                final boolean floodRights = Emulator.getConfig().getBoolean("flood.with.rights");
+                final boolean hasRights = this.hasRights(habbo);
+
+                if (floodRights || !hasRights) {
+                    if (this.chatProtection == 0) {
+                        this.floodMuteHabbo(habbo, muteTime);
+                        return;
+                    } else if (this.chatProtection == 1 && chatCounter > 4) {
+                        this.floodMuteHabbo(habbo, muteTime);
+                        return;
+                    } else if (this.chatProtection == 2 && chatCounter > 5) {
+                        this.floodMuteHabbo(habbo, muteTime);
+                        return;
+                    }
+                }
+            }
+        }
 
         ServerMessage prefixMessage = roomChatMessage.getHabbo().getHabboInfo().getRank().hasPrefix() ? new RoomUserNameChangedComposer(habbo, true).compose() : null;
         ServerMessage clearPrefixMessage = prefixMessage != null ? new RoomUserNameChangedComposer(habbo).compose() : null;
