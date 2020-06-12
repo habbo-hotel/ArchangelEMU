@@ -25,3 +25,6 @@ ALTER TABLE `users_settings` ADD `tradelock_amount` INT(11) NOT NULL DEFAULT '0'
 -- Gift wrapping configuration
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.gifts.box_types', '0,1,2,3,4,5,6,8');
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.gifts.ribbon_types', '0,1,2,3,4,5,6,7,8,9,10');
+
+-- Configurable mute time
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.flood.mute.time', '30');
