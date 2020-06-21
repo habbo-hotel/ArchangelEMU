@@ -3116,7 +3116,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
 
-        if(prefixMessage != null) {
+        if(prefixMessage == null) {
             prefixMessage = roomChatMessage.getHabbo().getHabboInfo().getRank().hasPrefix() ? new RoomUserNameChangedComposer(habbo, true).compose() : null;
         }
         ServerMessage clearPrefixMessage = prefixMessage != null ? new RoomUserNameChangedComposer(habbo).compose() : null;
