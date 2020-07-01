@@ -56,7 +56,7 @@ public class VisitorBot extends Bot {
     public void onUserEnter(Habbo habbo) {
         if (!this.showedLog) {
             if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                this.visits = Emulator.getGameEnvironment().getModToolManager().getVisitsForRoom(habbo.getHabboInfo().getCurrentRoom(), 10, true, habbo.getHabboInfo().getLastOnline(), Emulator.getIntUnixTimestamp());
+                this.visits = Emulator.getGameEnvironment().getModToolManager().getVisitsForRoom(habbo.getHabboInfo().getCurrentRoom(), 10, true, habbo.getHabboInfo().getLastOnline(), Emulator.getIntUnixTimestamp(), habbo.getHabboInfo().getCurrentRoom().getOwnerName());
 
                 if (this.visits.isEmpty()) {
                     this.talk(Emulator.getTexts().getValue("bots.visitor.no_visits"));
