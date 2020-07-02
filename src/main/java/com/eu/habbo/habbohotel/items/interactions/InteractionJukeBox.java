@@ -61,15 +61,13 @@ public class InteractionJukeBox extends HabboItem {
     public void onPickUp(Room room) {
         super.onPickUp(room);
         this.setExtradata("0");
-
-        if (room.getTraxManager().isPlaying() && room.getRoomSpecialTypes().getItemsOfType(InteractionJukeBox.class).isEmpty()) {
-            room.getTraxManager().clearPlayList();
-        }
+        room.getTraxManager().removeTraxOnRoom(this);
     }
 
     @Override
     public void onPlace(Room room) {
         super.onPlace(room);
+        room.getTraxManager().addTraxOnRoom(this);
         if (room.getTraxManager().isPlaying()) {
             this.setExtradata("1");
         }

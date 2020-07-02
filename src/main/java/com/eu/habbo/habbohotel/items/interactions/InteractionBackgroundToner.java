@@ -58,9 +58,12 @@ public class InteractionBackgroundToner extends HabboItem {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if (client.getHabbo().getRoomUnit().cmdSit && client.getHabbo().getRoomUnit().getEffectId() == 1337) {
-            Emulator.getThreading().run(new BackgroundAnimation(this, room));
-            return;
+        if(client != null)
+        {
+            if (client.getHabbo().getRoomUnit().cmdSit && client.getHabbo().getRoomUnit().getEffectId() == 1337) {
+                new BackgroundAnimation(this, room).run();
+                return;
+            }
         }
 
         if (this.getExtradata().split(":").length == 4) {
