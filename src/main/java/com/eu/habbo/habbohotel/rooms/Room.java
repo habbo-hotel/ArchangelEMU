@@ -54,10 +54,7 @@ import com.eu.habbo.plugin.events.furniture.*;
 import com.eu.habbo.plugin.events.rooms.RoomLoadedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUnloadedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUnloadingEvent;
-import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
-import com.eu.habbo.plugin.events.users.UserIdleEvent;
-import com.eu.habbo.plugin.events.users.UserRightsTakenEvent;
-import com.eu.habbo.plugin.events.users.UserRolledEvent;
+import com.eu.habbo.plugin.events.users.*;
 import com.eu.habbo.threading.runnables.YouAreAPirate;
 import gnu.trove.TCollections;
 import gnu.trove.iterator.TIntObjectIterator;
@@ -3115,7 +3112,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
 
-        ServerMessage prefixMessage = roomChatMessage.getHabbo().getHabboInfo().getRank().hasPrefix() ? new RoomUserNameChangedComposer(habbo, true).compose() : null;
+        ServerMessage prefixMessage = null;
+
+        if (Emulator.getPluginManager().isRegistered(UsernameTalkEvent.class, true)) {
+            UsernameTalkEvent usernameTalkEvent = (UsernameTalkEvent) Emulator.getPluginManager().fireEvent(new UsernameTalkEvent(habbo, roomChatMessage, chatType));
+            if (usernameTalkEvent.hasCustomComposer()) {
+                prefixMessage = usernameTalkEvent.getCustomComposer();
+            }
+        }
+
+        if(prefixMessage == null) {
+            prefixMessage = roomChatMessage.getHabbo().getHabboInfo().getRank().hasPrefix() ? new RoomUserNameChangedComposer(habbo, true).compose() : null;
+        }
         ServerMessage clearPrefixMessage = prefixMessage != null ? new RoomUserNameChangedComposer(habbo).compose() : null;
 
         Rectangle show = this.roomSpecialTypes.tentAt(habbo.getRoomUnit().getCurrentLocation());
