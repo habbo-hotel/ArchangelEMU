@@ -86,6 +86,8 @@ public class GameTeam {
 
             player.reset();
         }
+
+        this.teamScore = 0;
     }
 
 
