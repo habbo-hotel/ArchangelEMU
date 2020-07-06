@@ -4451,7 +4451,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return fits;
         }
 
-        item.setZ(tile.getStackHeight());
+        double height = tile.getStackHeight();
+
+        if (Emulator.getPluginManager().isRegistered(FurnitureBuildheightEvent.class, true)) {
+            FurnitureBuildheightEvent event = (FurnitureBuildheightEvent) Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, owner, 0.00, height));
+            if (event.hasChangedHeight()) {
+                height = event.getUpdatedHeight();
+            }
+        }
+
+        item.setZ(height);
         item.setX(tile.x);
         item.setY(tile.y);
         item.setRotation(rotation);
@@ -4565,6 +4574,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             height = item.getZ();
         } else {
             height = this.getStackHeight(tile.x, tile.y, false, item);
+        }
+
+        if (Emulator.getPluginManager().isRegistered(FurnitureBuildheightEvent.class, true)) {
+            FurnitureBuildheightEvent event = (FurnitureBuildheightEvent) Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, actor, 0.00, height));
+            if (event.hasChangedHeight()) {
+                height = event.getUpdatedHeight();
+            }
         }
 
         if(height > 40d) return FurnitureMovementError.CANT_STACK;
