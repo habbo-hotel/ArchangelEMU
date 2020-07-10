@@ -52,12 +52,6 @@ public class RedeemCommand extends Command {
                         pointsAmount = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
 
                         points.adjustOrPutValue(pointsType, pointsAmount, pointsAmount);
-                    } else if (item.getBaseItem().getName().startsWith("CF_diamond_")) {
-                        try {
-                            int amount = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
-                            points.adjustOrPutValue(5, amount, amount);
-                        } catch (Exception e) {
-                        }
                     }
                 }
             }
