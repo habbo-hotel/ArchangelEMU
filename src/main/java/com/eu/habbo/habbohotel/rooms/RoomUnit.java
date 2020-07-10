@@ -730,6 +730,7 @@ public class RoomUnit {
     }
 
     public void addOverrideTile(RoomTile tile) {
+        if (!this.canOverrideTile(tile)) { return; } // Test if the Tile is overridable
         int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
         if (!this.overridableTiles.contains(tileIndex)) {
             this.overridableTiles.add(tileIndex);
