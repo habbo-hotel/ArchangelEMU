@@ -86,6 +86,9 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
         List<Bot> bots = room.getBots(this.botName);
 
         for (Bot bot : bots) {
+            if (bots.size() > 1) {
+                return false;
+            }
             if (this.mode == 1)
                 bot.shout(message);
             else

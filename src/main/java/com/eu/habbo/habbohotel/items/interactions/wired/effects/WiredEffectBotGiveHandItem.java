@@ -93,6 +93,9 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
             List<Bot> bots = room.getBots(this.botName);
 
             for (Bot bot : bots) {
+                if (bots.size() > 1) {
+                    return false;
+                }
                 List<Runnable> tasks = new ArrayList<>();
                 tasks.add(new RoomUnitGiveHanditem(habbo.getRoomUnit(), room, this.itemId));
                 tasks.add(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, 0));

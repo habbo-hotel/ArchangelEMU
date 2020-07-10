@@ -89,6 +89,9 @@ public class WiredEffectBotFollowHabbo extends InteractionWiredEffect {
         if (habbo != null) {
             List<Bot> bots = room.getBots(this.botName);
             for (Bot bot : bots) {
+                if (bots.size() > 1) {
+                    return false;
+                }
                 if (this.mode == 1)
                     bot.startFollowingHabbo(habbo);
                 else

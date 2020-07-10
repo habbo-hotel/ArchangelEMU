@@ -109,6 +109,9 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
 
         if (this.items.size() > 0) {
             for (Bot bot : bots) {
+                if (bots.size() > 1) {
+                    return false;
+                }
                 int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
                 int j = 1;
                 for (HabboItem item : this.items) {
