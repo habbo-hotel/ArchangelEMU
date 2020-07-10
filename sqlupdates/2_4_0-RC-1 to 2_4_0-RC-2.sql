@@ -28,3 +28,22 @@ INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.gifts.ribbon_type
 
 -- Configurable mute time
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.flood.mute.time', '30');
+
+-- TraxManager Jukebox Limits
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('jukebox.limit.large', '20');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('jukebox.limit.normal', '10');
+
+-- Table structure for room_trax
+DROP TABLE IF EXISTS `room_trax`;
+CREATE TABLE `room_trax`  (
+  `room_id` int(11) NOT NULL,
+  `trax_item_id` int(11) NOT NULL
+) ENGINE = InnoDB CHARACTER SET = armscii8 COLLATE = armscii8_general_ci ROW_FORMAT = Compact;
+
+-- Table structure for trax_playlist
+DROP TABLE IF EXISTS `trax_playlist`;
+CREATE TABLE `trax_playlist`  (
+  `trax_item_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL
+) ENGINE = InnoDB CHARACTER SET = armscii8 COLLATE = armscii8_general_ci ROW_FORMAT = Compact;
+
