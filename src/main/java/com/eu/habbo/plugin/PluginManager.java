@@ -113,6 +113,8 @@ public class PluginManager {
         NavigatorManager.MAXIMUM_RESULTS_PER_PAGE = Emulator.getConfig().getInt("hotel.navigator.search.maxresults");
         NavigatorManager.CATEGORY_SORT_USING_ORDER_NUM = Emulator.getConfig().getBoolean("hotel.navigator.sort.ordernum");
         RoomChatMessage.MAXIMUM_LENGTH = Emulator.getConfig().getInt("hotel.chat.max.length");
+        TraxManager.LARGE_JUKEBOX_LIMIT = Emulator.getConfig().getInt("hotel.jukebox.limit.large");
+        TraxManager.NORMAL_JUKEBOX_LIMIT = Emulator.getConfig().getInt("hotel.jukebox.limit.normal");
 
         String[] bannedBubbles = Emulator.getConfig().getValue("commands.cmd_chatcolor.banned_numbers").split(";");
         RoomChatMessage.BANNED_BUBBLES = new int[bannedBubbles.length];
@@ -120,6 +122,7 @@ public class PluginManager {
             try {
                 RoomChatMessage.BANNED_BUBBLES[i] = Integer.valueOf(bannedBubbles[i]);
             } catch (Exception e) {
+                LOGGER.error("Caught exception", e);
             }
         }
 

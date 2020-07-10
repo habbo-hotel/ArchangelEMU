@@ -21,6 +21,11 @@ public class RequestGuildBuyEvent extends MessageHandler {
 
     @Override
     public void handle() throws Exception {
+        if (Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && this.client.getHabbo().getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
+            this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.HC_REQUIRED));
+            return;
+        }
+
         if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
             int guildPrice = Emulator.getConfig().getInt("catalog.guild.price");
             if (this.client.getHabbo().getHabboInfo().getCredits() >= guildPrice) {
@@ -29,11 +34,6 @@ public class RequestGuildBuyEvent extends MessageHandler {
                 this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                 return;
             }
-        }
-
-        if (Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && this.client.getHabbo().getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
-            this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.HC_REQUIRED));
-            return;
         }
 
         String name = this.packet.readString();
