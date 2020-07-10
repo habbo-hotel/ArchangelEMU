@@ -30,8 +30,8 @@ INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.gifts.ribbon_type
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.flood.mute.time', '30');
 
 -- TraxManager Jukebox Limits
-INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('jukebox.limit.large', '20');
-INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('jukebox.limit.normal', '10');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.jukebox.limit.large', '20');
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.jukebox.limit.normal', '10');
 
 -- Table structure for room_trax
 DROP TABLE IF EXISTS `room_trax`;
