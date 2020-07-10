@@ -84,11 +84,10 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
                     .replace(Emulator.getTexts().getValue("wired.variable.points"), habbo.getHabboInfo().getCurrencyAmount(Emulator.getConfig().getInt("seasonal.primary.type")) + "");
         }
         List<Bot> bots = room.getBots(this.botName);
-
+        if (bots.size() > 1) {
+            return false;
+        }
         for (Bot bot : bots) {
-            if (bots.size() > 1) {
-                return false;
-            }
             if (this.mode == 1)
                 bot.shout(message);
             else

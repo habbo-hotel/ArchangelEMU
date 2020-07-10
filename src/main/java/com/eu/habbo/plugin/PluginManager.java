@@ -70,6 +70,7 @@ public class PluginManager {
 
     @EventHandler
     public static void globalOnConfigurationUpdated(EmulatorConfigUpdatedEvent event) {
+
         ItemManager.RECYCLER_ENABLED = Emulator.getConfig().getBoolean("hotel.catalog.recycler.enabled");
         MarketPlace.MARKETPLACE_ENABLED = Emulator.getConfig().getBoolean("hotel.marketplace.enabled");
         MarketPlace.MARKETPLACE_CURRENCY = Emulator.getConfig().getInt("hotel.marketplace.currency");
@@ -159,8 +160,6 @@ public class PluginManager {
         BotManager.MAXIMUM_BOT_INVENTORY_SIZE = Emulator.getConfig().getInt("hotel.bots.max.inventory");
         PetManager.MAXIMUM_PET_INVENTORY_SIZE = Emulator.getConfig().getInt("hotel.pets.max.inventory");
 
-        GiftConfigurationComposer.BOX_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.box_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
-        GiftConfigurationComposer.RIBBON_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.ribbon_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
 
         NewNavigatorEventCategoriesComposer.CATEGORIES.clear();
         for (String category : Emulator.getConfig().getValue("navigator.eventcategories", "").split(";")) {
@@ -172,6 +171,9 @@ public class PluginManager {
         }
 
         if (Emulator.isReady) {
+            GiftConfigurationComposer.BOX_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.box_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
+            GiftConfigurationComposer.RIBBON_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.ribbon_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
+
             Emulator.getGameEnvironment().getCreditsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPointsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPixelScheduler().reloadConfig();
