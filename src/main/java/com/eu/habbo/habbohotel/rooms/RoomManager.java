@@ -559,7 +559,7 @@ public class RoomManager {
             if (room.getPassword().equalsIgnoreCase(password))
                 this.openRoom(habbo, room, doorLocation);
             else {
-                habbo.getClient().sendResponse(new GenericErrorMessagesComposer(-100002));
+                habbo.getClient().sendResponse(new GenericErrorMessagesComposer(GenericErrorMessagesComposer.WRONG_PASSWORD_USED));
                 habbo.getClient().sendResponse(new HotelViewComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
             }
