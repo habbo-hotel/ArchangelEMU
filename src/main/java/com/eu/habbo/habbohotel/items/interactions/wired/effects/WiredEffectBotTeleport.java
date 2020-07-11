@@ -139,23 +139,22 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
 
         List<Bot> bots = room.getBots(this.botName);
 
-        if (bots.isEmpty())
-            return false;
-
-        if (bots.size() > 1) {
+        if (bots.size() != 1) {
             return false;
         }
-        for (Bot bot : bots) {
-            int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
-            int j = 1;
-            for (HabboItem item : this.items) {
-                if (item.getRoomId() != 0 && item.getRoomId() == bot.getRoom().getId()) {
-                    if (i == j) {
-                        teleportUnitToTile(bot.getRoomUnit(), room.getLayout().getTile(item.getX(), item.getY()));
-                        return true;
-                    } else {
-                        j++;
-                    }
+
+        Bot bot = bots.get(0);
+
+        int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
+        int j = 1;
+
+        for (HabboItem item : this.items) {
+            if (item.getRoomId() != 0 && item.getRoomId() == bot.getRoom().getId()) {
+                if (i == j) {
+                    teleportUnitToTile(bot.getRoomUnit(), room.getLayout().getTile(item.getX(), item.getY()));
+                    return true;
+                } else {
+                    j++;
                 }
             }
         }
