@@ -122,6 +122,11 @@ public class BotManager {
                 if (room.hasHabbosAt(location.x, location.y) || (!location.isWalkable() && location.state != RoomTileState.SIT && location.state != RoomTileState.LAY))
                     return;
 
+                if (room.hasBotsAt(location.x, location.y)) {
+                    habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_BOTS_SELECTED_TILE_NOT_FREE));
+                    return;
+                }
+
                 RoomUnit roomUnit = new RoomUnit();
                 roomUnit.setRotation(RoomUserRotation.SOUTH);
                 roomUnit.setLocation(location);
