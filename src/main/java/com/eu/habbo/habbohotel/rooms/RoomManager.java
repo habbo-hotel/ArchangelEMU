@@ -394,7 +394,7 @@ public class RoomManager {
     public void clearInactiveRooms() {
         THashSet<Room> roomsToDispose = new THashSet<>();
         for (Room room : this.activeRooms.values()) {
-            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && !Emulator.getGameServer().getGameClientManager().containsHabbo(room.getOwnerId()) && room.isPreLoaded() && !this.roomCategories.get(room.getCategory()).isPublic()) {
+            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && !Emulator.getGameServer().getGameClientManager().containsHabbo(room.getOwnerId()) && room.isPreLoaded()) {
                 roomsToDispose.add(room);
             }
         }
