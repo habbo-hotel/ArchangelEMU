@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -60,6 +61,16 @@ public class InteractionBackgroundToner extends HabboItem {
 
         if(client != null)
         {
+            if (!client.getHabbo().getRoomUnit().getRoom().hasRights(client.getHabbo())) {
+                ScripterManager.scripterDetected(
+                        client,
+                        Emulator.getTexts().getValue("scripter.warning.item.bgtoner.permission").replace("%username%", client.getHabbo().getHabboInfo().getUsername())
+                                .replace("%room%", room.getName())
+                                .replace("%owner%", room.getOwnerName())
+                );
+                return;
+            }
+            
             if (client.getHabbo().getRoomUnit().cmdSit && client.getHabbo().getRoomUnit().getEffectId() == 1337) {
                 new BackgroundAnimation(this, room).run();
                 return;
