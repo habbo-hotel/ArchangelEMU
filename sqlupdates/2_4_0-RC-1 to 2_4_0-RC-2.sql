@@ -33,6 +33,9 @@ INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.flood.mute.time',
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.jukebox.limit.large', '20');
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.jukebox.limit.normal', '10');
 
+-- Background Toner Scripter Warning
+INSERT INTO `emulator_texts`(`key`, `value`) VALUES ('scripter.warning.item.bgtoner.permission', '%username% tried to change the background toner without rights in %room% owned by %owner%');
+
 -- Table structure for room_trax
 DROP TABLE IF EXISTS `room_trax`;
 CREATE TABLE `room_trax`  (
