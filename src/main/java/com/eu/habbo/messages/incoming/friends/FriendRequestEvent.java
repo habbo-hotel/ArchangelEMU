@@ -48,7 +48,7 @@ public class FriendRequestEvent extends MessageHandler {
             return;
         }
 
-        if (habbo == null) {
+        if(!habbo.isOnline()) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users_settings.block_friendrequests, users.id FROM users INNER JOIN users_settings ON users.id = users_settings.user_id WHERE username = ? LIMIT 1")) {
                 statement.setString(1, username);
                 try (ResultSet set = statement.executeQuery()) {
