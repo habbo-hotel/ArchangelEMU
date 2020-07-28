@@ -2,10 +2,8 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.items.interactions.InteractionJukeBox;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import com.eu.habbo.habbohotel.rooms.TraxManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.InventoryItemsComposer;
@@ -34,28 +32,21 @@ public class EmptyInventoryCommand extends Command {
         }
 
         if (params.length >= 2 && params[1].equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes"))) {
-            Habbo habbo = gameClient.getHabbo();
-            if (params.length == 3 && gameClient.getHabbo().hasPermission(Permission.ACC_EMPTY_OTHERS)) {
-                habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]);
-            }
+
+            Habbo habbo = (params.length == 3 && gameClient.getHabbo().hasPermission(Permission.ACC_EMPTY_OTHERS)) ? Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]) : gameClient.getHabbo();
 
             if (habbo != null) {
-
                 TIntObjectMap<HabboItem> items = new TIntObjectHashMap<>();
                 items.putAll(habbo.getInventory().getItemsComponent().getItems());
                 habbo.getInventory().getItemsComponent().getItems().clear();
-
-                for (HabboItem item : items.valueCollection()) {
-                    if(item instanceof InteractionJukeBox)
-                        TraxManager.removeAllSongs((InteractionJukeBox) item);
-                }
-
                 Emulator.getThreading().run(new QueryDeleteHabboItems(items));
 
                 habbo.getClient().sendResponse(new InventoryRefreshComposer());
                 habbo.getClient().sendResponse(new InventoryItemsComposer(0, 1, gameClient.getHabbo().getInventory().getItemsComponent().getItems()));
 
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_empty.cleared"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_empty.cleared").replace("%username%", habbo.getHabboInfo().getUsername()), RoomChatMessageBubbles.ALERT);
+            } else {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_empty"), RoomChatMessageBubbles.ALERT);
             }
         }
 
