@@ -3005,7 +3005,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void talk(Habbo habbo, RoomChatMessage roomChatMessage, RoomChatType chatType) {
-        this.talk(habbo, roomChatMessage, chatType, false);
+        this.talk(habbo, roomChatMessage, chatType, true);
     }
 
     public void talk(final Habbo habbo, final RoomChatMessage roomChatMessage, RoomChatType chatType, boolean ignoreWired) {
@@ -3570,7 +3570,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 HabboItem lowestChair = this.getLowestChair(x, y);
                 if (lowestChair != null && lowestChair != exclude) {
                     canStack = true;
-                    height = lowestChair.getZ() + Item.getCurrentHeight(lowestChair);
+                    height = lowestChair.getZ();
                 }
             }
         }
