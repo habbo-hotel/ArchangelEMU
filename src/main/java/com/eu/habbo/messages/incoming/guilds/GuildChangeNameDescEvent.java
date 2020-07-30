@@ -25,6 +25,9 @@ public class GuildChangeNameDescEvent extends MessageHandler {
                 if (guild.getName().equals(nameEvent.name) && guild.getDescription().equals(nameEvent.description))
                     return;
 
+                if(nameEvent.name.length() > 29 || nameEvent.description.length() > 254)
+                    return;
+
                 guild.setName(nameEvent.name);
                 guild.setDescription(nameEvent.description);
                 guild.needsUpdate = true;
