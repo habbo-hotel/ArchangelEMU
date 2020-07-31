@@ -3005,7 +3005,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void talk(Habbo habbo, RoomChatMessage roomChatMessage, RoomChatType chatType) {
-        this.talk(habbo, roomChatMessage, chatType, true);
+        this.talk(habbo, roomChatMessage, chatType, false);
     }
 
     public void talk(final Habbo habbo, final RoomChatMessage roomChatMessage, RoomChatType chatType, boolean ignoreWired) {
