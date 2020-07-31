@@ -21,6 +21,12 @@ public class RequestGuildBuyEvent extends MessageHandler {
 
     @Override
     public void handle() throws Exception {
+        String name = this.packet.readString();
+        String description = this.packet.readString();
+
+        if(name.length() > 29 || description.length() > 254)
+            return;
+
         if (Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && this.client.getHabbo().getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
             this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.HC_REQUIRED));
             return;
@@ -35,9 +41,6 @@ public class RequestGuildBuyEvent extends MessageHandler {
                 return;
             }
         }
-
-        String name = this.packet.readString();
-        String description = this.packet.readString();
 
         int roomId = this.packet.readInt();
 
