@@ -2,8 +2,10 @@ package com.eu.habbo.messages.incoming.guilds;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.messages.outgoing.guilds.GuildEditFailComposer;
 import com.eu.habbo.plugin.events.guilds.GuildChangedNameEvent;
 
 public class GuildChangeNameDescEvent extends MessageHandler {
@@ -14,9 +16,18 @@ public class GuildChangeNameDescEvent extends MessageHandler {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
         if (guild != null) {
-            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission("acc_guild_admin")) {
+            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)) {
                 GuildChangedNameEvent nameEvent = new GuildChangedNameEvent(guild, this.packet.readString(), this.packet.readString());
                 Emulator.getPluginManager().fireEvent(nameEvent);
+
+                if(nameEvent.name.length() > 29){
+                    this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.INVALID_GUILD_NAME));
+                    return;
+                }
+
+                if(nameEvent.description.length() > 254){
+                    return;
+                }
 
                 if (nameEvent.isCancelled())
                     return;
