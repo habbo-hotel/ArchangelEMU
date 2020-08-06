@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.guilds;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -12,11 +13,15 @@ import com.eu.habbo.messages.outgoing.guilds.GuildBoughtComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildEditFailComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.plugin.events.guilds.GuildPurchasedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RequestGuildBuyEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestGuildBuyEvent.class);
+
     @Override
     public void handle() throws Exception {
-        if (!this.client.getHabbo().hasPermission("acc_infinite_credits")) {
+        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
             int guildPrice = Emulator.getConfig().getInt("catalog.guild.price");
             if (this.client.getHabbo().getHabboInfo().getCredits() >= guildPrice) {
                 this.client.getHabbo().giveCredits(-guildPrice);
@@ -71,6 +76,13 @@ public class RequestGuildBuyEvent extends MessageHandler {
                         base += 3;
                     }
 
+                    if(name.length() > 29){
+                        this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.INVALID_GUILD_NAME));
+                        return;
+                    }
+                    if(description.length() > 254){
+                        return;
+                    }
                     Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), roomId, r.getName(), name, description, badge, colorOne, colorTwo);
 
                     r.setGuild(guild.getId());
@@ -95,7 +107,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
             } else {
                 String message = Emulator.getTexts().getValue("scripter.warning.guild.buy.owner").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", r.getName().replace("%owner%", r.getOwnerName()));
                 ScripterManager.scripterDetected(this.client, message);
-                Emulator.getLogging().logUserLine(message);
+                LOGGER.info(message);
             }
         }
     }
