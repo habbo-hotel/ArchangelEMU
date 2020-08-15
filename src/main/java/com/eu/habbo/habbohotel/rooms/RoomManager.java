@@ -386,8 +386,8 @@ public class RoomManager {
             if (Emulator.getPluginManager().fireEvent(new RoomUncachedEvent(room)).isCancelled())
                 continue;
 
-            this.activeRooms.remove(room.getId());
             room.dispose();
+            this.activeRooms.remove(room.getId());
         }
     }
 
