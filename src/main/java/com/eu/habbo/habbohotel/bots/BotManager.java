@@ -130,12 +130,10 @@ public class BotManager {
                 RoomUnit roomUnit = new RoomUnit();
                 roomUnit.setRotation(RoomUserRotation.SOUTH);
                 roomUnit.setLocation(location);
-                HabboItem topItem = room.getTopItemAt(location.x, location.y);
 
-                double topItemHeight = 0;
-                if (topItem != null) topItemHeight = Item.getCurrentHeight(topItem);
-                roomUnit.setPreviousLocationZ(roomUnit.getCurrentLocation().getStackHeight() - topItemHeight);
-
+                double stackHeight = room.getStackHeight(location.x, location.y, false);
+                roomUnit.setPreviousLocationZ(stackHeight);
+                roomUnit.setZ(stackHeight);
 
                 roomUnit.setPathFinderRoom(room);
                 roomUnit.setRoomUnitType(RoomUnitType.BOT);
@@ -150,6 +148,8 @@ public class BotManager {
                 habbo.getClient().sendResponse(new RemoveBotComposer(bot));
                 bot.onPlace(habbo, room);
 
+                HabboItem topItem = room.getTopItemAt(location.x, location.y);
+
                 if (topItem != null) {
                     try {
                         topItem.onWalkOn(bot.getRoomUnit(), room, null);
@@ -157,6 +157,7 @@ public class BotManager {
                         LOGGER.error("Caught exception", e);
                     }
                 }
+
                 bot.cycle(false);
             } else {
                 habbo.getClient().sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.NO_RIGHTS.errorCode));
