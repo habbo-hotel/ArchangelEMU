@@ -1469,6 +1469,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 if (unit.hasStatus(RoomUnitStatus.SIT)) {
                                     unit.sitUpdate = true;
                                 }
+                                break;
                             }
                         }
 
