@@ -586,11 +586,11 @@ public class RoomManager {
         habbo.getClient().sendResponse(new HideDoorbellComposer(""));
 
         if (habbo.getRoomUnit() != null) {
-            Room existingRoom = habbo.getRoomUnit().getRoom();
-            if (existingRoom != null) {
-                if (habbo.getRoomUnit().getCurrentLocation() != null)
-                    habbo.getRoomUnit().getCurrentLocation().removeUnit(habbo.getRoomUnit());
-                habbo.getRoomUnit().getRoom().sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
+            RoomUnit existingRoom = habbo.getRoomUnit();
+            if (existingRoom.getRoom() != null) {
+                if (existingRoom.getCurrentLocation() != null)
+                    existingRoom.getCurrentLocation().removeUnit(existingRoom);
+                existingRoom.getRoom().sendComposer(new RoomUserRemoveComposer(existingRoom).compose());
             }
             habbo.getRoomUnit().setRoom(null);
         }
