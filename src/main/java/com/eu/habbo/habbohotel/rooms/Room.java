@@ -114,6 +114,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public static int IDLE_CYCLES = 240;
     public static int IDLE_CYCLES_KICK = 480;
     public static String PREFIX_FORMAT = "[<font color=\"%color%\">%prefix%</font>] ";
+    public static int ROLLERS_MAXIMUM_ROLL_AVATARS = 1;
 
     static {
         for (int i = 1; i <= 3; i++) {
@@ -1409,8 +1410,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                             HabboItem nextTileChair = this.getLowestChair(tileInFront);
 
+                            THashSet<Integer> usersRolledThisTile = new THashSet<>();
+
                             for (RoomUnit unit : unitsOnTile) {
                                 if (rolledUnitIds.contains(unit.getId())) continue;
+
+                                if(usersRolledThisTile.size() >= Room.ROLLERS_MAXIMUM_ROLL_AVATARS) break;
 
                                 if (stackContainsRoller && !allowFurniture && !(topItem != null && topItem.isWalkable()))
                                     continue;
@@ -1446,6 +1451,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                     }
                                 }
 
+                                usersRolledThisTile.add(unit.getId());
                                 rolledUnitIds.add(unit.getId());
                                 updatedUnit.remove(unit);
                                 messages.add(new RoomUnitOnRollerComposer(unit, roller, unit.getCurrentLocation(), unit.getZ() + (isRiding ? 1 : 0), tile, tile.getStackHeight() + (isRiding ? 1 : 0) + (nextTileChair != null ? -1 : 0), room));
@@ -1469,7 +1475,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 if (unit.hasStatus(RoomUnitStatus.SIT)) {
                                     unit.sitUpdate = true;
                                 }
-                                break;
                             }
                         }
 
