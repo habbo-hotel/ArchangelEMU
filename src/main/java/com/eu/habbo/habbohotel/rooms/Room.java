@@ -3542,43 +3542,40 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public double getStackHeight(short x, short y, boolean calculateHeightmap, HabboItem exclude) {
+
         if (x < 0 || y < 0 || this.layout == null)
             return calculateHeightmap ? Short.MAX_VALUE : 0.0;
 
+        boolean pluginHelper = false;
+        if (Emulator.getPluginManager().isRegistered(FurnitureStackHeightEvent.class, true)) {
+            FurnitureStackHeightEvent event = Emulator.getPluginManager().fireEvent(new FurnitureStackHeightEvent(x, y, this));
+            if(event.hasPluginHelper()) {
+                return calculateHeightmap ? event.getHeight() * 256.0D : event.getHeight();
+            }
+        }
+
         double height = this.layout.getHeightAtSquare(x, y);
         boolean canStack = true;
-        boolean stackHelper = false;
-        THashSet<HabboItem> items = this.getItemsAt(x, y);
-        if (items != null) {
-            for (HabboItem item : items) {
+
+        THashSet<HabboItem> stackHelpers = this.getItemsAt(InteractionStackHelper.class, x, y);
+
+        if(stackHelpers.size() > 0) {
+            for(HabboItem item : stackHelpers) {
                 if (item == exclude) continue;
-
-                if (item instanceof InteractionStackHelper) {
-                    stackHelper = true;
-                    height = item.getExtradata().isEmpty() ? Double.valueOf("0.0") : (Double.valueOf(item.getExtradata()) / 100);
-                    canStack = true;
-                }
+                return calculateHeightmap ? item.getZ() * 256.0D : item.getZ();
             }
+        }
 
-            boolean pluginHelper = false;
-            if (Emulator.getPluginManager().isRegistered(FurnitureStackHeightEvent.class, true)) {
-                FurnitureStackHeightEvent event = Emulator.getPluginManager().fireEvent(new FurnitureStackHeightEvent(x, y, this));
-                stackHelper = event.hasPluginHelper();
-            }
+        HabboItem item = this.getTopItemAt(x, y, exclude);
+        if (item != null) {
+            canStack = item.getBaseItem().allowStack();
+            height = item.getZ() + Item.getCurrentHeight(item);
+        }
 
-            if (!stackHelper && !pluginHelper) {
-                HabboItem item = this.getTopItemAt(x, y, exclude);
-                if (item != null) {
-                    canStack = item.getBaseItem().allowStack();
-                    height = item.getZ() + Item.getCurrentHeight(item);
-                }
-
-                HabboItem lowestChair = this.getLowestChair(x, y);
-                if (lowestChair != null && lowestChair != exclude) {
-                    canStack = true;
-                    height = lowestChair.getZ() + Item.getCurrentHeight(lowestChair);
-                }
-            }
+        HabboItem lowestChair = this.getLowestChair(x, y);
+        if (lowestChair != null && lowestChair != exclude) {
+            canStack = true;
+            height = lowestChair.getZ();
         }
 
         if (calculateHeightmap) {
