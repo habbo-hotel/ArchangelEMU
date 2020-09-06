@@ -14,7 +14,7 @@ public class PickNewUserGiftEvent extends MessageHandler {
         int index = this.packet.readInt();
 
         if (!Emulator.getPluginManager().fireEvent(new UserPickGiftEvent(this.client.getHabbo(), keyA, keyB, index)).isCancelled()) {
-            if (!this.client.getHabbo().getHabboStats().nuxReward) {
+            if (!this.client.getHabbo().getHabboStats().nuxReward && Emulator.getConfig().getBoolean("hotel.nux.gifts.enabled")){
                 this.client.getHabbo().getHabboStats().nuxReward = true;
                 NewUserGift gift = Emulator.getGameEnvironment().getItemManager().getNewUserGift(index + 1);
 
