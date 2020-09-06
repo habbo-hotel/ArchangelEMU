@@ -38,11 +38,10 @@ public final class Emulator {
     public final static int MAJOR = 2;
     public final static int MINOR = 4;
     public final static int BUILD = 0;
+    
+    public final static String PREVIEW = "";
 
-    // Rick and Morty Edition
-    public final static String PREVIEW = "RC-2";
-
-    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + "-" + PREVIEW;
+    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD;
     private static final String logo =
             "\n" +
             "███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗ \n" +
