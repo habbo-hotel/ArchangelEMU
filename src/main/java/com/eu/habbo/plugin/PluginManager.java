@@ -106,6 +106,7 @@ public class PluginManager {
         Room.HAND_ITEM_TIME = Emulator.getConfig().getInt("hotel.rooms.handitem.time");
         Room.IDLE_CYCLES = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles", 240);
         Room.IDLE_CYCLES_KICK = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles.kick", 480);
+        Room.ROLLERS_MAXIMUM_ROLL_AVATARS = Emulator.getConfig().getInt("hotel.room.rollers.roll_avatars.max", 1);
         RoomManager.MAXIMUM_ROOMS_VIP = Emulator.getConfig().getInt("hotel.max.rooms.vip");
         RoomManager.MAXIMUM_ROOMS_USER = Emulator.getConfig().getInt("hotel.max.rooms.user");
         RoomManager.HOME_ROOM_ID = Emulator.getConfig().getInt("hotel.home.room");
