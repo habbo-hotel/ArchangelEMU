@@ -25,6 +25,10 @@ public class FriendRequestEvent extends MessageHandler {
         String username = this.packet.readString();
         Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(username);
 
+        if (habbo.getHabboInfo().getId() == this.client.getHabbo().getHabboInfo().getId()) {
+            return;
+        }
+
         if (Emulator.getPluginManager().fireEvent(new UserRequestFriendshipEvent(this.client.getHabbo(), username, habbo)).isCancelled()) {
             this.client.sendResponse(new FriendRequestErrorComposer(2));
             return;
@@ -44,7 +48,7 @@ public class FriendRequestEvent extends MessageHandler {
             return;
         }
 
-        if(!habbo.isOnline()) {
+        if (habbo == null) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users_settings.block_friendrequests, users.id FROM users INNER JOIN users_settings ON users.id = users_settings.user_id WHERE username = ? LIMIT 1")) {
                 statement.setString(1, username);
                 try (ResultSet set = statement.executeQuery()) {
