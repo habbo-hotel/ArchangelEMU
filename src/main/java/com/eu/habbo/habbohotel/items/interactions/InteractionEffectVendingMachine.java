@@ -29,7 +29,7 @@ public class InteractionEffectVendingMachine extends InteractionVendingMachine {
     }
 
     @Override
-    public void giveVendingMachineItem(Habbo habbo, Room room) {
-        room.giveEffect(habbo.getRoomUnit(), this.getBaseItem().getRandomVendingItem(), 30);
+    public void giveVendingMachineItem(Room room, RoomUnit unit) {
+        room.giveEffect(unit, this.getBaseItem().getRandomVendingItem(), 30);
     }
 }
