@@ -6,8 +6,9 @@ import com.eu.habbo.habbohotel.commands.Command;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class CommandLog implements Loggable {
-    public static final String insertQuery = "INSERT INTO commandlogs (`user_id`, `timestamp`, `command`, `params`, `succes`) VALUES (?, ?, ?, ?, ?)";
+public class CommandLog implements DatabaseLoggable {
+
+    private static final String INSERT_QUERY = "INSERT INTO commandlogs (`user_id`, `timestamp`, `command`, `params`, `succes`) VALUES (?, ?, ?, ?, ?)";
 
     private final int userId;
     private final int timestamp = Emulator.getIntUnixTimestamp();
@@ -15,12 +16,16 @@ public class CommandLog implements Loggable {
     private final String params;
     private final boolean succes;
 
-
     public CommandLog(int userId, Command command, String params, boolean succes) {
         this.userId = userId;
         this.command = command;
         this.params = params;
         this.succes = succes;
+    }
+
+    @Override
+    public String getQuery() {
+        return CommandLog.INSERT_QUERY;
     }
 
     @Override
@@ -32,4 +37,5 @@ public class CommandLog implements Loggable {
         statement.setString(5, this.succes ? "yes" : "no");
         statement.addBatch();
     }
+
 }

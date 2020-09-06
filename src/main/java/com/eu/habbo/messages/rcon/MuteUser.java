@@ -3,12 +3,16 @@ package com.eu.habbo.messages.rcon;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class MuteUser extends RCONMessage<MuteUser.JSON> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MuteUser.class);
+
     public MuteUser() {
         super(MuteUser.JSON.class);
     }
@@ -31,7 +35,7 @@ public class MuteUser extends RCONMessage<MuteUser.JSON> {
                     this.status = HABBO_NOT_FOUND;
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }

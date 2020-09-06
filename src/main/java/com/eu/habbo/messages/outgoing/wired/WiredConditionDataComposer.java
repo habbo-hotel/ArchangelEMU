@@ -16,7 +16,7 @@ public class WiredConditionDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.WiredConditionDataComposer);
         this.condition.serializeWiredData(this.response, this.room);
         this.condition.needsUpdate(true);

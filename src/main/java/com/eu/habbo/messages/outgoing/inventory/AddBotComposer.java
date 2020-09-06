@@ -13,7 +13,7 @@ public class AddBotComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.AddBotComposer);
         this.response.appendInt(this.bot.getId());
         this.response.appendString(this.bot.getName());

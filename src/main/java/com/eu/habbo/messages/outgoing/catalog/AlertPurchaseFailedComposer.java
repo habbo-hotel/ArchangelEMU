@@ -15,7 +15,7 @@ public class AlertPurchaseFailedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.AlertPurchaseFailedComposer);
         this.response.appendInt(this.error);
         return this.response;

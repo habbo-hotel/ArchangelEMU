@@ -14,7 +14,7 @@ public class MoodLightDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.MoodLightDataComposer);
         this.response.appendInt(3); //PresetCount
 

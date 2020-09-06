@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 
 public class ClubGiftsComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ClubGiftsComposer);
 
         this.response.appendInt(0); //Days Until Next Gift

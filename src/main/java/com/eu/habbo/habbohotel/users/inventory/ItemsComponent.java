@@ -15,6 +15,8 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,6 +25,8 @@ import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
 public class ItemsComponent {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemsComponent.class);
+
     private final TIntObjectMap<HabboItem> items = TCollections.synchronizedMap(new TIntObjectHashMap<>());
 
     private final HabboInventory inventory;
@@ -46,15 +50,15 @@ public class ItemsComponent {
                         if (item != null) {
                             itemsList.put(set.getInt("id"), item);
                         } else {
-                            Emulator.getLogging().logErrorLine("Failed to load HabboItem: " + set.getInt("id"));
+                            LOGGER.error("Failed to load HabboItem: " + set.getInt("id"));
                         }
                     } catch (SQLException e) {
-                        Emulator.getLogging().logSQLException(e);
+                        LOGGER.error("Caught SQL exception", e);
                     }
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return itemsList;
@@ -150,7 +154,7 @@ public class ItemsComponent {
             TIntObjectIterator<HabboItem> items = this.items.iterator();
 
             if (items == null) {
-                Emulator.getLogging().logErrorLine(new RuntimeException("Items is NULL!"));
+                LOGGER.error("Items is NULL!");
                 return;
             }
 

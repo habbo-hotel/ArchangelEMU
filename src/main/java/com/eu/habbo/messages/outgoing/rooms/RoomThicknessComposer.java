@@ -13,7 +13,7 @@ public class RoomThicknessComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomThicknessComposer);
         this.response.appendBoolean(this.room.isHideWall());
         this.response.appendInt(this.room.getWallSize());

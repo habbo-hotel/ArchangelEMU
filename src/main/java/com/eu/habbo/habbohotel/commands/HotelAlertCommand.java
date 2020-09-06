@@ -32,7 +32,6 @@ public class HotelAlertCommand extends Command {
 
                 habbo.getClient().sendResponse(msg);
             }
-
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_ha.forgot_message"), RoomChatMessageBubbles.ALERT);
         }

@@ -12,7 +12,7 @@ public class UnknownAdManagerComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UnknownAdManagerComposer);
         this.response.appendBoolean(this.unknownBoolean);
         return this.response;

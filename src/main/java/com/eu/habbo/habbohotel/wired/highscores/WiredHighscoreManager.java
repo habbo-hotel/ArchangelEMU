@@ -3,6 +3,8 @@ package com.eu.habbo.habbohotel.wired.highscores;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class WiredHighscoreManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WiredHighscoreManager.class);
+
     private final HashMap<Integer, List<WiredHighscoreDataEntry>> data = new HashMap<>();
 
     private final static DayOfWeek firstDayOfWeek = WeekFields.of(new Locale(System.getProperty("user.language"), System.getProperty("user.country"))).getFirstDayOfWeek();
@@ -31,7 +35,7 @@ public class WiredHighscoreManager {
         this.data.clear();
         this.loadHighscoreData();
 
-        Emulator.getLogging().logStart("Highscore Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS, " + this.data.size() + " items)");
+        LOGGER.info("Highscore Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS, " + this.data.size() + " items)");
     }
 
     @EventHandler
@@ -65,7 +69,7 @@ public class WiredHighscoreManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -85,7 +89,7 @@ public class WiredHighscoreManager {
 
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 

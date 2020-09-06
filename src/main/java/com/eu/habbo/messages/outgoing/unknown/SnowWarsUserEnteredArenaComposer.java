@@ -11,7 +11,7 @@ public class SnowWarsUserEnteredArenaComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(3425);
 
         if (this.type == 1) {

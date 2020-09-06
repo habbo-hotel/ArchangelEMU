@@ -7,8 +7,12 @@ import com.eu.habbo.habbohotel.rooms.RoomCategory;
 import com.eu.habbo.habbohotel.rooms.RoomState;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RoomSettingsSaveEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomSettingsSaveEvent.class);
+
     @Override
     public void handle() throws Exception {
         int roomId = this.packet.readInt();
@@ -19,7 +23,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
             if (room.isOwner(this.client.getHabbo())) {
                 String name = this.packet.readString();
 
-                if (name.isEmpty()) {
+                if (name.trim().isEmpty() || name.length() > 60) {
                     this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.ROOM_NAME_MISSING, ""));
                     return;
                 }
@@ -30,6 +34,11 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 }
 
                 String description = this.packet.readString();
+
+                if (description.length() > 255) {
+                    return;
+                }
+
                 if (!Emulator.getGameEnvironment().getWordFilter().filter(description, this.client.getHabbo()).equals(description)) {
                     this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.ROOM_DESCRIPTION_BADWORDS, ""));
                     return;
@@ -93,7 +102,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                     }
 
                     ScripterManager.scripterDetected(this.client, message);
-                    Emulator.getLogging().logUserLine(message);
+                    LOGGER.info(message);
                 }
 
 

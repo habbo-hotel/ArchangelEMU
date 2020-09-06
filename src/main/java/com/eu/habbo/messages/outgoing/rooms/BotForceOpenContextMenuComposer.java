@@ -12,7 +12,7 @@ public class BotForceOpenContextMenuComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.BotForceOpenContextMenuComposer);
         this.response.appendInt(this.botId);
         return this.response;

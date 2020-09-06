@@ -18,7 +18,7 @@ public class GuildListComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildListComposer);
         this.response.appendInt(this.guilds.size());
         for (Guild guild : this.guilds) {

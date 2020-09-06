@@ -60,12 +60,17 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.sql.*;
 import java.util.*;
 
 public class ItemManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemManager.class);
+
     //Configuration. Loaded from database & updated accordingly.
     public static boolean RECYCLER_ENABLED = true;
 
@@ -100,7 +105,7 @@ public class ItemManager {
         this.highscoreManager.load();
         this.loadNewUserGifts();
 
-        Emulator.getLogging().logStart("Item Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Item Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     protected void loadItemInteractions() {
@@ -197,12 +202,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_trg_game_ends", WiredTriggerGameEnds.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_bot_reached_stf", WiredTriggerBotReachedFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_bot_reached_avtr", WiredTriggerBotReachedHabbo.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_says_command", WiredTriggerHabboSaysCommand.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_score_achieved", WiredTriggerScoreAchieved.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_idles", WiredTriggerHabboIdle.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_unidles", WiredTriggerHabboUnidle.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_starts_dancing", WiredTriggerHabboStartsDancing.class));
-        this.interactionsList.add(new ItemInteraction("wf_trg_stops_dancing", WiredTriggerHabboStopsDancing.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_game_team_win", WiredTriggerTeamWins.class));
         this.interactionsList.add(new ItemInteraction("wf_trg_game_team_lose", WiredTriggerTeamLoses.class));
 
@@ -233,22 +233,10 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_act_bot_follow_avatar", WiredEffectBotFollowHabbo.class));
         this.interactionsList.add(new ItemInteraction("wf_act_bot_clothes", WiredEffectBotClothes.class));
         this.interactionsList.add(new ItemInteraction("wf_act_bot_talk_to_avatar", WiredEffectBotTalkToHabbo.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_diamonds", WiredEffectGiveDiamonds.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_credits", WiredEffectGiveCredits.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_duckets", WiredEffectGiveDuckets.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_badge", WiredEffectGiveBadge.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_forward_user", WiredEffectForwardToRoom.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_roller_speed", WiredEffectRollerSpeed.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_raise_furni", WiredEffectRaiseFurni.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_lower_furni", WiredEffectLowerFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_respect", WiredEffectGiveRespect.class));
         this.interactionsList.add(new ItemInteraction("wf_act_alert", WiredEffectAlert.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_handitem", WiredEffectGiveHandItem.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_match_to_sshot2", WiredEffectMatchFurniStaff.class));
         this.interactionsList.add(new ItemInteraction("wf_act_give_effect", WiredEffectGiveEffect.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_open_habbo_pages", WiredEffectOpenHabboPages.class));
-        this.interactionsList.add(new ItemInteraction("wf_act_give_achievement", WiredEffectGiveAchievement.class));
-
 
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_furni_on", WiredConditionFurniHaveFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_furnis_hv_avtrs", WiredConditionFurniHaveHabbo.class));
@@ -274,23 +262,6 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("wf_cnd_trggrer_on_frn", WiredConditionTriggerOnFurni.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_has_handitem", WiredConditionHabboHasHandItem.class));
         this.interactionsList.add(new ItemInteraction("wf_cnd_date_rng_active", WiredConditionDateRangeActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_motto_contains", WiredConditionMottoContains.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_battlebanzai", WiredConditionBattleBanzaiGameActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_battlebanzai", WiredConditionNotBattleBanzaiGameActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_freeze", WiredConditionFreezeGameActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_freeze", WiredConditionNotFreezeGameActive.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_rank", WiredConditionHabboHasRank.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_not_rank", WiredConditionHabboNotRank.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_diamonds", WiredConditionHabboHasDiamonds.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_credits", WiredConditionHabboHasCredits.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_has_duckets", WiredConditionHabboHasDuckets.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_has_diamonds", WiredConditionNotHabboHasDiamonds.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_has_credits", WiredConditionNotHabboHasCredits.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_has_duckets", WiredConditionNotHabboHasDuckets.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_owns_badge", WiredConditionHabboOwnsBadge.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_owns_badge", WiredConditionNotHabboOwnsBadge.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_habbo_is_dancing", WiredConditionHabboIsDancing.class));
-        this.interactionsList.add(new ItemInteraction("wf_cnd_not_habbo_is_dancing", WiredConditionNotHabboIsDancing.class));
 
 
         this.interactionsList.add(new ItemInteraction("wf_xtra_random", WiredExtraRandom.class));
@@ -388,7 +359,7 @@ public class ItemManager {
                 return interaction;
         }
 
-        Emulator.getLogging().logDebugLine("Can't find interaction class:" + type.getName());
+        LOGGER.debug("Can't find interaction class: {}", type.getName());
         return this.getItemInteraction(InteractionDefault.class);
     }
 
@@ -418,12 +389,12 @@ public class ItemManager {
                     else
                         this.items.get(id).update(set);
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine("Failed to load Item (" + set.getInt("id") + ")");
-                    Emulator.getLogging().logErrorLine(e);
+                    LOGGER.error("Failed to load Item ({})", set.getInt("id"));
+                    LOGGER.error("Caught exception", e);
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -436,16 +407,16 @@ public class ItemManager {
                 try {
                     reward = new CrackableReward(set);
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine("Failed to load items_crackable item_id = " + set.getInt("item_id"));
-                    Emulator.getLogging().logErrorLine(e);
+                    LOGGER.error("Failed to load items_crackable item_id = {}", set.getInt("item_id"));
+                    LOGGER.error("Caught exception", e);
                     continue;
                 }
                 this.crackableRewards.put(set.getInt("item_id"), reward);
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 
@@ -479,7 +450,7 @@ public class ItemManager {
                 this.soundTracks.put(set.getString("code"), new SoundTrack(set));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -512,16 +483,16 @@ public class ItemManager {
                         try {
                             return itemClass.getDeclaredConstructor(int.class, int.class, Item.class, String.class, int.class, int.class).newInstance(set.getInt(1), habboId, item, extraData, limitedStack, limitedSells);
                         } catch (Exception e) {
-                            Emulator.getLogging().logErrorLine(e);
+                            LOGGER.error("Caught exception", e);
                             return new InteractionDefault(set.getInt(1), habboId, item, extraData, limitedStack, limitedSells);
                         }
                     }
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
         return null;
     }
@@ -536,7 +507,7 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -561,7 +532,7 @@ public class ItemManager {
             statement.setInt(1, item.getId());
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -588,7 +559,7 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return item;
@@ -628,9 +599,9 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         return item;
@@ -642,7 +613,7 @@ public class ItemManager {
             statement.setInt(2, itemTwoId);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -652,7 +623,7 @@ public class ItemManager {
             statement.setInt(2, hopper.getBaseItem().getId());
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -667,7 +638,7 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return a;
@@ -683,9 +654,9 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         return item;
@@ -706,7 +677,7 @@ public class ItemManager {
 
                 return (HabboItem) c.newInstance(set, baseItem);
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
 
@@ -729,7 +700,7 @@ public class ItemManager {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
 
@@ -737,7 +708,7 @@ public class ItemManager {
             return null;
 
         if (extraData.length() > 1000) {
-            Emulator.getLogging().logErrorLine("Extradata exceeds maximum length of 1000 characters:" + extraData);
+            LOGGER.error("Extradata exceeds maximum length of 1000 characters: {}", extraData);
             extraData = extraData.substring(0, 1000);
         }
 
@@ -754,7 +725,7 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         if (gift != null) {
@@ -808,7 +779,7 @@ public class ItemManager {
         this.items.clear();
         this.highscoreManager.dispose();
 
-        Emulator.getLogging().logShutdownLine("Item Manager -> Disposed!");
+        LOGGER.info("Item Manager -> Disposed!");
     }
 
     public List<String> getInteractionList() {

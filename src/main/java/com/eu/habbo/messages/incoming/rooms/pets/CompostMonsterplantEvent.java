@@ -8,12 +8,16 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.AddFloorItemComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CompostMonsterplantEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompostMonsterplantEvent.class);
+
     @Override
     public void handle() throws Exception {
         int petId = this.packet.readInt();
@@ -42,7 +46,7 @@ public class CompostMonsterplantEvent extends MessageHandler {
                             statement.setInt(1, pet.getId());
                             statement.executeUpdate();
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            LOGGER.error("Caught SQL exception", e);
                         }
                     }
                 }

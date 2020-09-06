@@ -2,6 +2,9 @@ package com.eu.habbo.core;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
+import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +15,8 @@ import java.util.Map;
 import java.util.Properties;
 
 public class ConfigurationManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationManager.class);
 
     private final Properties properties;
     private final String configurationPath;
@@ -24,27 +29,67 @@ public class ConfigurationManager {
         this.reload();
     }
 
-
     public void reload() {
         this.isLoading = true;
         this.properties.clear();
 
         InputStream input = null;
 
-        try {
-            File f = new File(this.configurationPath);
-            input = new FileInputStream(f);
-            this.properties.load(input);
+        String envDbHostname = System.getenv("DB_HOSTNAME");
 
-        } catch (IOException ex) {
-            Emulator.getLogging().logErrorLine("[CRITICAL] FAILED TO LOAD CONFIG FILE! (" + this.configurationPath + ")");
-            ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+        boolean useEnvVarsForDbConnection = envDbHostname != null && envDbHostname.length() > 1;
+
+        if (!useEnvVarsForDbConnection) {
+            try {
+                File f = new File(this.configurationPath);
+                input = new FileInputStream(f);
+                this.properties.load(input);
+
+            } catch (IOException ex) {
+                LOGGER.error("Failed to load config file.", ex);
+                ex.printStackTrace();
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        } else {
+
+            Map<String, String> envMapping = new THashMap<>();
+
+            // Database section
+            envMapping.put("db.hostname", "DB_HOSTNAME");
+            envMapping.put("db.port", "DB_PORT");
+            envMapping.put("db.database", "DB_DATABASE");
+            envMapping.put("db.username", "DB_USERNAME");
+            envMapping.put("db.password", "DB_PASSWORD");
+            envMapping.put("db.params", "DB_PARAMS");
+
+            // Game Configuration
+            envMapping.put("game.host", "EMU_HOST");
+            envMapping.put("game.port", "EMU_PORT");
+
+            // RCON
+            envMapping.put("rcon.host", "RCON_HOST");
+            envMapping.put("rcon.port", "RCON_PORT");
+            envMapping.put("rcon.allowed", "RCON_ALLOWED");
+
+            // Runtime
+            envMapping.put("runtime.threads", "RT_THREADS");
+            envMapping.put("logging.errors.runtime", "RT_LOG_ERRORS");
+
+            for (Map.Entry<String, String> entry : envMapping.entrySet()) {
+                String envValue = System.getenv(entry.getValue());
+
+                if (envValue == null || envValue.length() == 0) {
+                    LOGGER.info("Cannot find environment-value for variable `" + entry.getValue() + "`");
+                } else {
+                    this.properties.setProperty(entry.getKey(), envValue);
                 }
             }
         }
@@ -54,16 +99,15 @@ public class ConfigurationManager {
         }
 
         this.isLoading = false;
-        Emulator.getLogging().logStart("Configuration Manager -> Loaded!");
+        LOGGER.info("Configuration Manager -> Loaded!");
 
         if (Emulator.getPluginManager() != null) {
             Emulator.getPluginManager().fireEvent(new EmulatorConfigUpdatedEvent());
         }
     }
 
-
     public void loadFromDatabase() {
-        Emulator.getLogging().logStart("Loading configuration from database...");
+        LOGGER.info("Loading configuration from database...");
 
         long millis = System.currentTimeMillis();
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement()) {
@@ -75,10 +119,10 @@ public class ConfigurationManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
-        Emulator.getLogging().logStart("Configuration -> loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Configuration -> loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public void saveToDatabase() {
@@ -89,7 +133,7 @@ public class ConfigurationManager {
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -104,16 +148,14 @@ public class ConfigurationManager {
             return defaultValue;
 
         if (!this.properties.containsKey(key)) {
-            Emulator.getLogging().logErrorLine("[CONFIG] Key not found: " + key);
+            LOGGER.error("Config key not found {}", key);
         }
         return this.properties.getProperty(key, defaultValue);
     }
 
-
     public boolean getBoolean(String key) {
         return this.getBoolean(key, false);
     }
-
 
     public boolean getBoolean(String key, boolean defaultValue) {
         if (this.isLoading)
@@ -122,16 +164,14 @@ public class ConfigurationManager {
         try {
             return (this.getValue(key, "0").equals("1")) || (this.getValue(key, "false").equals("true"));
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine("Failed to parse key " + key + " with value " + this.getValue(key) + " to type boolean.");
+            LOGGER.error("Failed to parse key {} with value '{}' to type boolean.", key, this.getValue(key));
         }
         return defaultValue;
     }
 
-
     public int getInt(String key) {
         return this.getInt(key, 0);
     }
-
 
     public int getInt(String key, Integer defaultValue) {
         if (this.isLoading)
@@ -140,16 +180,14 @@ public class ConfigurationManager {
         try {
             return Integer.parseInt(this.getValue(key, defaultValue.toString()));
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine("Failed to parse key " + key + " with value " + this.getValue(key) + " to type integer.");
+            LOGGER.error("Failed to parse key {} with value '{}' to type integer.", key, this.getValue(key));
         }
         return defaultValue;
     }
 
-
     public double getDouble(String key) {
         return this.getDouble(key, 0.0);
     }
-
 
     public double getDouble(String key, Double defaultValue) {
         if (this.isLoading)
@@ -158,12 +196,11 @@ public class ConfigurationManager {
         try {
             return Double.parseDouble(this.getValue(key, defaultValue.toString()));
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine("Failed to parse key " + key + " with value " + this.getValue(key) + " to type double.");
+            LOGGER.error("Failed to parse key {} with value '{}' to type double.", key, this.getValue(key));
         }
 
         return defaultValue;
     }
-
 
     public void update(String key, String value) {
         this.properties.setProperty(key, value);
@@ -178,7 +215,7 @@ public class ConfigurationManager {
             statement.setString(2, value);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         this.update(key, value);

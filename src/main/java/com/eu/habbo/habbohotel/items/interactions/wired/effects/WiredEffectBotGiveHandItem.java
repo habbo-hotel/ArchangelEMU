@@ -88,22 +88,21 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
+        List<Bot> bots = room.getBots(this.botName);
 
-        if (habbo != null) {
-            List<Bot> bots = room.getBots(this.botName);
+        if (habbo != null && bots.size() == 1) {
+            Bot bot = bots.get(0);
 
-            for (Bot bot : bots) {
-                List<Runnable> tasks = new ArrayList<>();
-                tasks.add(new RoomUnitGiveHanditem(habbo.getRoomUnit(), room, this.itemId));
-                tasks.add(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, 0));
+            List<Runnable> tasks = new ArrayList<>();
+            tasks.add(new RoomUnitGiveHanditem(habbo.getRoomUnit(), room, this.itemId));
+            tasks.add(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, 0));
 
-                Emulator.getThreading().run(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, this.itemId));
+            Emulator.getThreading().run(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, this.itemId));
 
-                List<Runnable> failedReach = new ArrayList<>();
-                failedReach.add(() -> tasks.forEach(Runnable::run));
+            List<Runnable> failedReach = new ArrayList<>();
+            failedReach.add(() -> tasks.forEach(Runnable::run));
 
-                Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(bot.getRoomUnit(), habbo.getRoomUnit(), room, tasks, failedReach));
-            }
+            Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(bot.getRoomUnit(), habbo.getRoomUnit(), room, tasks, failedReach));
 
             return true;
         }

@@ -104,16 +104,21 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
 
             List<Bot> bots = room.getBots(this.botName);
 
-            for (Bot bot : bots) {
-                if (this.mode == 1) {
-                    bot.whisper(m, habbo);
-                } else {
-                    bot.talk(habbo.getHabboInfo().getUsername() + ": " + m);
-                }
+            if (bots.size() != 1) {
+                return false;
+            }
+
+            Bot bot = bots.get(0);
+
+            if (this.mode == 1) {
+                bot.whisper(m, habbo);
+            } else {
+                bot.talk(habbo.getHabboInfo().getUsername() + ": " + m);
             }
 
             return true;
         }
+
         return false;
     }
 

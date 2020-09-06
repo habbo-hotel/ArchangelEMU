@@ -13,7 +13,7 @@ public class RoomUserWhisperComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         if (this.roomChatMessage.getMessage().isEmpty())
             return null;
 

@@ -6,18 +6,22 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserEffectComposer;
 import com.eu.habbo.threading.runnables.RoomUnitTeleport;
 import com.eu.habbo.threading.runnables.SendRoomUnitEffectComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 public class WiredEffectBotTeleport extends InteractionWiredEffect {
@@ -34,6 +38,46 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
     public WiredEffectBotTeleport(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.items = new THashSet<>();
+    }
+
+    public static void teleportUnitToTile(RoomUnit roomUnit, RoomTile tile) {
+        if (roomUnit == null || tile == null || roomUnit.isWiredTeleporting)
+            return;
+
+        Room room = roomUnit.getRoom();
+
+        if (room == null) {
+            return;
+        }
+
+        // makes a temporary effect
+
+        roomUnit.getRoom().unIdle(roomUnit.getRoom().getHabbo(roomUnit));
+        room.sendComposer(new RoomUserEffectComposer(roomUnit, 4).compose());
+        Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), WiredHandler.TELEPORT_DELAY + 1000);
+
+        if (tile == roomUnit.getCurrentLocation()) {
+            return;
+        }
+
+        if (tile.state == RoomTileState.INVALID || tile.state == RoomTileState.BLOCKED) {
+            RoomTile alternativeTile = null;
+            List<RoomTile> optionalTiles = room.getLayout().getTilesAround(tile);
+
+            Collections.reverse(optionalTiles);
+            for (RoomTile optionalTile : optionalTiles) {
+                if (optionalTile.state != RoomTileState.INVALID && optionalTile.state != RoomTileState.BLOCKED) {
+                    alternativeTile = optionalTile;
+                    break;
+                }
+            }
+
+            if (alternativeTile != null) {
+                tile = alternativeTile;
+            }
+        }
+
+        Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, tile.x, tile.y, tile.getStackHeight() + (tile.state == RoomTileState.SIT ? -0.5 : 0), roomUnit.getEffectId()), WiredHandler.TELEPORT_DELAY);
     }
 
     @Override
@@ -95,24 +139,22 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
 
         List<Bot> bots = room.getBots(this.botName);
 
-        if (bots.isEmpty())
+        if (bots.size() != 1) {
             return false;
+        }
 
-        for (Bot bot : bots) {
-            int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
-            int j = 1;
-            for (HabboItem item : this.items) {
-                if (item.getRoomId() != 0 && item.getRoomId() == bot.getRoom().getId()) {
-                    if (i == j) {
-                        int currentEffect = bot.getRoomUnit().getEffectId();
+        Bot bot = bots.get(0);
 
-                        room.giveEffect(bot.getRoomUnit(), 4, -1);
-                        Emulator.getThreading().run(() -> room.giveEffect(bot.getRoomUnit(), 0, -1), WiredHandler.TELEPORT_DELAY + 1000);
-                        Emulator.getThreading().run(new RoomUnitTeleport(bot.getRoomUnit(), room, item.getX(), item.getY(), item.getZ() + item.getBaseItem().getHeight() + (item.getBaseItem().allowSit() ? -0.50 : 0D), currentEffect), WiredHandler.TELEPORT_DELAY);
-                        break;
-                    } else {
-                        j++;
-                    }
+        int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
+        int j = 1;
+
+        for (HabboItem item : this.items) {
+            if (item.getRoomId() != 0 && item.getRoomId() == bot.getRoom().getId()) {
+                if (i == j) {
+                    teleportUnitToTile(bot.getRoomUnit(), room.getLayout().getTile(item.getX(), item.getY()));
+                    return true;
+                } else {
+                    j++;
                 }
             }
         }

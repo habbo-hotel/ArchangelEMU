@@ -33,7 +33,7 @@ public class RoomUsersComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomUsersComposer);
         if (this.habbo != null) {
             this.response.appendInt(1);

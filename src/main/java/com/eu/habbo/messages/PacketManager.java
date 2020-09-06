@@ -1,7 +1,6 @@
 package com.eu.habbo.messages;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.Logging;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.messages.incoming.Incoming;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -53,9 +52,9 @@ import com.eu.habbo.messages.incoming.rooms.items.jukebox.*;
 import com.eu.habbo.messages.incoming.rooms.items.lovelock.LoveLockStartConfirmEvent;
 import com.eu.habbo.messages.incoming.rooms.items.rentablespace.RentSpaceCancelEvent;
 import com.eu.habbo.messages.incoming.rooms.items.rentablespace.RentSpaceEvent;
-import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestStateChange;
-import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestPlaylists;
 import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestPlaylistChange;
+import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestPlaylists;
+import com.eu.habbo.messages.incoming.rooms.items.youtube.YoutubeRequestStateChange;
 import com.eu.habbo.messages.incoming.rooms.pets.*;
 import com.eu.habbo.messages.incoming.rooms.promotions.BuyRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.rooms.promotions.RequestPromotionRoomsEvent;
@@ -71,21 +70,28 @@ import com.eu.habbo.messages.incoming.wired.WiredTriggerSaveDataEvent;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PacketManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PacketManager.class);
+
     private static final List<Integer> logList = new ArrayList<>();
     public static boolean DEBUG_SHOW_PACKETS = false;
     public static boolean MULTI_THREADED_PACKET_HANDLING = false;
     private final THashMap<Integer, Class<? extends MessageHandler>> incoming;
     private final THashMap<Integer, List<ICallable>> callables;
-
+    private final PacketNames names;
 
     public PacketManager() throws Exception {
         this.incoming = new THashMap<>();
         this.callables = new THashMap<>();
+        this.names = new PacketNames();
+        this.names.initialize();
 
         this.registerHandshake();
         this.registerCatalog();
@@ -112,6 +118,10 @@ public class PacketManager {
         this.registerGameCenter();
     }
 
+    public PacketNames getNames() {
+        return names;
+    }
+
     @EventHandler
     public static void onConfigurationUpdated(EmulatorConfigUpdatedEvent event) {
         logList.clear();
@@ -119,7 +129,7 @@ public class PacketManager {
         for (String s : Emulator.getConfig().getValue("debug.show.headers").split(";")) {
             try {
                 logList.add(Integer.valueOf(s));
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
 
             }
         }
@@ -165,7 +175,7 @@ public class PacketManager {
 
                 if (client.getHabbo() == null && !handlerClass.isAnnotationPresent(NoAuthMessage.class)) {
                     if (DEBUG_SHOW_PACKETS) {
-                        Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + Logging.ANSI_RED + "NOT LOGGED IN" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
+                        LOGGER.warn("Client packet {} requires an authenticated session.", packet.getMessageId());
                     }
 
                     return;
@@ -176,7 +186,7 @@ public class PacketManager {
                 if (handler.getRatelimit() > 0) {
                     if (client.messageTimestamps.containsKey(handlerClass) && System.currentTimeMillis() - client.messageTimestamps.get(handlerClass) < handler.getRatelimit()) {
                         if (PacketManager.DEBUG_SHOW_PACKETS) {
-                            Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "][" + Logging.ANSI_RED + "RATELIMITED" + Logging.ANSI_RESET + "] => " + packet.getMessageBody());
+                            LOGGER.warn("Client packet {} was ratelimited.", packet.getMessageId());
                         }
 
                         return;
@@ -185,11 +195,8 @@ public class PacketManager {
                     }
                 }
 
-                if (PacketManager.DEBUG_SHOW_PACKETS)
-                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
-
                 if (logList.contains(packet.getMessageId()) && client.getHabbo() != null) {
-                    System.out.println(("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + client.getHabbo().getHabboInfo().getUsername() + "][" + packet.getMessageId() + "] => " + packet.getMessageBody()));
+                    LOGGER.info("User {} sent packet {} with body {}", client.getHabbo().getHabboInfo().getUsername(), packet.getMessageId(), packet.getMessageBody());
                 }
 
                 handler.client = client;
@@ -204,12 +211,9 @@ public class PacketManager {
                 if (!handler.isCancelled) {
                     handler.handle();
                 }
-            } else {
-                if (PacketManager.DEBUG_SHOW_PACKETS)
-                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_CYAN + "CLIENT" + Logging.ANSI_RESET + "][" + Logging.ANSI_YELLOW + "UNDEFINED" + Logging.ANSI_RESET + "][" + packet.getMessageId() + "] => " + packet.getMessageBody());
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 
@@ -260,8 +264,8 @@ public class PacketManager {
 
     private void registerHandshake() throws Exception {
         this.registerHandler(Incoming.ReleaseVersionEvent, ReleaseVersionEvent.class);
-        this.registerHandler(Incoming.GenerateSecretKeyEvent, GenerateSecretKeyEvent.class);
-        this.registerHandler(Incoming.RequestBannerToken, RequestBannerToken.class);
+        this.registerHandler(Incoming.InitDiffieHandshake, InitDiffieHandshakeEvent.class);
+        this.registerHandler(Incoming.CompleteDiffieHandshake, CompleteDiffieHandshakeEvent.class);
         this.registerHandler(Incoming.SecureLoginEvent, SecureLoginEvent.class);
         this.registerHandler(Incoming.MachineIDEvent, MachineIDEvent.class);
         this.registerHandler(Incoming.UsernameEvent, UsernameEvent.class);

@@ -13,7 +13,7 @@ public class LoveLockFurniStartComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.LoveLockFurniStartComposer);
         this.response.appendInt(this.loveLock.getId());
         this.response.appendBoolean(true);

@@ -20,7 +20,7 @@ public class ClubDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ClubDataComposer);
 
         List<ClubOffer> offers = Emulator.getGameEnvironment().getCatalogManager().getClubOffers();

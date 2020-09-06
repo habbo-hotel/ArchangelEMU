@@ -23,7 +23,7 @@ public class PetInformationComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         double days = Math.floor((Emulator.getIntUnixTimestamp() - this.pet.getCreated()) / (3600 * 24));
         this.response.init(Outgoing.PetInformationComposer);
         this.response.appendInt(this.pet.getId());

@@ -3,16 +3,17 @@ package com.eu.habbo.database;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.ConfigurationManager;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Database {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Database.class);
+
     private HikariDataSource dataSource;
-
-
     private DatabasePool databasePool;
 
     public Database(ConfigurationManager config) {
-
         long millis = System.currentTimeMillis();
 
         boolean SQLException = false;
@@ -20,24 +21,22 @@ public class Database {
         try {
             this.databasePool = new DatabasePool();
             if (!this.databasePool.getStoragePooling(config)) {
-                Emulator.getLogging().logStart("Failed to connect to the database. Please check config.ini and make sure the MySQL process is running. Shutting down...");
+                LOGGER.info("Failed to connect to the database. Please check config.ini and make sure the MySQL process is running. Shutting down...");
                 SQLException = true;
                 return;
             }
             this.dataSource = this.databasePool.getDatabase();
         } catch (Exception e) {
             SQLException = true;
-            e.printStackTrace();
-            Emulator.getLogging().logStart("Failed to connect to your database.");
-            Emulator.getLogging().logStart(e.getMessage());
+            LOGGER.error("Failed to connect to your database.", e);
         } finally {
-            if (SQLException)
+            if (SQLException) {
                 Emulator.prepareShutdown();
+            }
         }
 
-        Emulator.getLogging().logStart("Database -> Connected! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Database -> Connected! ({} MS)", System.currentTimeMillis() - millis);
     }
-
 
     public void dispose() {
         if (this.databasePool != null) {
@@ -55,4 +54,3 @@ public class Database {
         return this.databasePool;
     }
 }
-

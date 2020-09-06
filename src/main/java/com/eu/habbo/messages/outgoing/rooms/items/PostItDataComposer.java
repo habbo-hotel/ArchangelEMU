@@ -13,7 +13,7 @@ public class PostItDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         if (this.postIt.getExtradata().isEmpty() || this.postIt.getExtradata().length() < 6) {
             this.postIt.setExtradata("FFFF33");
         }

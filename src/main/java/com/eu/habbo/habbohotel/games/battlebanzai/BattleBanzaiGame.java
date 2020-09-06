@@ -17,12 +17,16 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserActionComposer;
 import com.eu.habbo.threading.runnables.BattleBanzaiTilesFlicker;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class BattleBanzaiGame extends Game {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BattleBanzaiGame.class);
+
 
     public static final int effectId = 32;
 
@@ -149,7 +153,7 @@ public class BattleBanzaiGame extends Game {
                 }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 

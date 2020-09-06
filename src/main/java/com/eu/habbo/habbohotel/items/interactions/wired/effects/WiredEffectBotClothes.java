@@ -68,9 +68,13 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         List<Bot> bots = room.getBots(this.botName);
-        for (Bot bot : bots) {
-            bot.setFigure(this.botLook);
+
+        if (bots.size() != 1) {
+            return false;
         }
+
+        Bot bot = bots.get(0);
+        bot.setFigure(this.botLook);
 
         return true;
     }

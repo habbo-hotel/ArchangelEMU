@@ -4,6 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -18,9 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class NavigatorManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NavigatorManager.class);
+
     public static int MAXIMUM_RESULTS_PER_PAGE = 10;
-
-
     public static boolean CATEGORY_SORT_USING_ORDER_NUM = false;
 
     public final THashMap<Integer, NavigatorPublicCategory> publicCategories = new THashMap<>();
@@ -36,7 +38,7 @@ public class NavigatorManager {
         this.filters.put(NavigatorUserFilter.name, new NavigatorUserFilter());
         this.filters.put(NavigatorFavoriteFilter.name, new NavigatorFavoriteFilter());
 
-        Emulator.getLogging().logStart("Navigator Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Navigator Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public void loadNavigator() {
@@ -49,7 +51,7 @@ public class NavigatorManager {
                         this.publicCategories.put(set.getInt("id"), new NavigatorPublicCategory(set));
                     }
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    LOGGER.error("Caught SQL exception", e);
                 }
 
                 try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM navigator_publics WHERE visible = '1'")) {
@@ -62,12 +64,12 @@ public class NavigatorManager {
                             if (room != null) {
                                 category.addRoom(room);
                             } else {
-                                Emulator.getLogging().logErrorLine("Public room (ID: " + set.getInt("room_id") + " defined in navigator_publics does not exist!");
+                                LOGGER.error("Public room (ID: {} defined in navigator_publics does not exist!", set.getInt("room_id"));
                             }
                         }
                     }
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    LOGGER.error("Caught SQL exception", e);
                 }
             }
 
@@ -83,7 +85,7 @@ public class NavigatorManager {
                                     field = clazz.getDeclaredMethod(s);
                                     clazz = field.getReturnType();
                                 } catch (Exception e) {
-                                    Emulator.getLogging().logErrorLine(e);
+                                    LOGGER.error("Caught exception", e);
                                     break;
                                 }
                             }
@@ -91,7 +93,7 @@ public class NavigatorManager {
                             try {
                                 field = clazz.getDeclaredMethod(set.getString("field"));
                             } catch (Exception e) {
-                                Emulator.getLogging().logErrorLine(e);
+                                LOGGER.error("Caught exception", e);
                                 continue;
                             }
                         }
@@ -101,11 +103,11 @@ public class NavigatorManager {
                         }
                     }
                 } catch (SQLException e) {
-                    Emulator.getLogging().logSQLException(e);
+                    LOGGER.error("Caught SQL exception", e);
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         List<Room> staffPromotedRooms = Emulator.getGameEnvironment().getRoomManager().getRoomsStaffPromoted();

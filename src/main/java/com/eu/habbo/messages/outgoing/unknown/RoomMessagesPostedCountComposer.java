@@ -15,7 +15,7 @@ public class RoomMessagesPostedCountComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomMessagesPostedCountComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendString(this.room.getName());

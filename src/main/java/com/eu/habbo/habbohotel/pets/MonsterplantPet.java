@@ -13,6 +13,8 @@ import com.eu.habbo.messages.outgoing.rooms.pets.PetStatusUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetRespectComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import org.apache.commons.math3.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,35 +25,37 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MonsterplantPet extends Pet implements IPetLook {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MonsterplantPet.class);
+
     public static final Map<Integer, Pair<String, Integer>> bodyRarity = new LinkedHashMap<Integer, Pair<String, Integer>>() {
         {
             this.put(1, new Pair<>("Blungon", 0));
-            this.put(5, new Pair<>("Squarg", 0));
             this.put(2, new Pair<>("Wailzor", 1));
             this.put(3, new Pair<>("Stumpy", 1));
             this.put(4, new Pair<>("Sunspike", 2));
-            this.put(9, new Pair<>("Weggylum", 2));
+            this.put(5, new Pair<>("Squarg", 0));
             this.put(6, new Pair<>("Shroomer", 3));
             this.put(7, new Pair<>("Zuchinu", 3));
+            this.put(8, new Pair<>("Abysswirl", 5));
+            this.put(9, new Pair<>("Weggylum", 2));
             this.put(10, new Pair<>("Wystique", 4));
             this.put(11, new Pair<>("Hairbullis", 4));
-            this.put(8, new Pair<>("Abysswirl", 5));
             this.put(12, new Pair<>("Snozzle", 5)); //Rarity???
         }
     };
     public static final Map<Integer, Pair<String, Integer>> colorRarity = new LinkedHashMap<Integer, Pair<String, Integer>>() {
         {
             this.put(0, new Pair<>("Aenueus", 0));
-            this.put(9, new Pair<>("Fulvus", 0));
             this.put(1, new Pair<>("Griseus", 1));
-            this.put(3, new Pair<>("Viridulus", 1));
             this.put(2, new Pair<>("Phoenicus", 2));
+            this.put(3, new Pair<>("Viridulus", 1));
+            this.put(4, new Pair<>("Cyaneus", 5));
             this.put(5, new Pair<>("Incarnatus", 2));
-            this.put(8, new Pair<>("Amethyst", 3));
-            this.put(10, new Pair<>("Cinereus", 3));
             this.put(6, new Pair<>("Azureus", 4));
             this.put(7, new Pair<>("Atamasc", 4));
-            this.put(4, new Pair<>("Cyaneus", 5));
+            this.put(8, new Pair<>("Amethyst", 3));
+            this.put(9, new Pair<>("Fulvus", 0));
+            this.put(10, new Pair<>("Cinereus", 3));
         }
     };
     public static final ArrayList<Pair<String, Integer>> indexedBody = new ArrayList<>(MonsterplantPet.bodyRarity.values());
@@ -138,7 +142,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                 statement.setInt(13, this.id);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -349,6 +353,19 @@ public class MonsterplantPet extends Pet implements IPetLook {
         }
     }
 
+    private boolean mayScratch() {
+        // Monsterplant petting is available when:
+        //   ((energy / max_energy) < 0.98) = true
+        // You can find the minimum deathTimestamp by solving (insert a timestamp for timestamp, solve for death_timestamp):
+        //   (((death_timestamp - timestamp) / 259200)) < 0.98
+        // This information was found in the Habbo swf, com.sulake.habbo.ui.widget.infostand.InfoStandPetView.as
+        //   this._Str_2304("pettreat", ((_local_3 / _local_4) < 0.98));
+        final float energy = this.getEnergy();
+        final float energyMax = this.getMaxEnergy();
+
+        return ((energy / energyMax) < 0.98);
+    }
+
     @Override
     public int getMaxEnergy() {
         return MonsterplantPet.timeToLive;
@@ -364,13 +381,15 @@ public class MonsterplantPet extends Pet implements IPetLook {
     }
 
     @Override
-    public void scratched(Habbo habbo) {
-        AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantTreater"), 5);
-        this.setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.timeToLive);
-        this.addHappyness(10);
-        this.addExperience(10);
-        this.room.sendComposer(new PetStatusUpdateComposer(this).compose());
-        this.room.sendComposer(new RoomPetRespectComposer(this, RoomPetRespectComposer.PET_TREATED).compose());
+    public synchronized void scratched(Habbo habbo) {
+        if (this.mayScratch()) {
+            AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantTreater"), 5);
+            this.setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.timeToLive);
+            this.addHappyness(10);
+            this.addExperience(10);
+            this.room.sendComposer(new PetStatusUpdateComposer(this).compose());
+            this.room.sendComposer(new RoomPetRespectComposer(this, RoomPetRespectComposer.PET_TREATED).compose());
+        }
     }
 
     @Override

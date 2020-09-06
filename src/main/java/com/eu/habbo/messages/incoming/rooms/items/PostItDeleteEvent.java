@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionExternalImage;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPostIt;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -22,7 +23,7 @@ public class PostItDeleteEvent extends MessageHandler {
         HabboItem item = room.getHabboItem(itemId);
 
         if (item instanceof InteractionPostIt || item instanceof InteractionExternalImage) {
-            if (item.getUserId() == this.client.getHabbo().getHabboInfo().getId() || room.isOwner(this.client.getHabbo())) {
+            if (item.getUserId() == this.client.getHabbo().getHabboInfo().getId() ||  this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
                 item.setRoomId(0);
                 room.removeHabboItem(item);
                 room.sendComposer(new RemoveWallItemComposer(item).compose());

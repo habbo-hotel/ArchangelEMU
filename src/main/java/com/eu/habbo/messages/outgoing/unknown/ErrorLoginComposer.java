@@ -12,7 +12,7 @@ public class ErrorLoginComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ErrorLoginComposer);
         this.response.appendInt(this.errorCode);
         return this.response;

@@ -9,9 +9,6 @@ import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
 
 public class InteractionPuzzleBox extends HabboItem {
     public InteractionPuzzleBox(ResultSet set, Item baseItem) throws SQLException {

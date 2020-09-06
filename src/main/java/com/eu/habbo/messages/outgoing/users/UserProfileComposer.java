@@ -9,6 +9,8 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 
 public class UserProfileComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileComposer.class);
+
     private final HabboInfo habboInfo;
     private Habbo habbo;
     private GameClient viewer;
@@ -36,7 +40,7 @@ public class UserProfileComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         if (this.habboInfo == null)
             return null;
 
@@ -60,7 +64,7 @@ public class UserProfileComposer extends MessageComposer {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
         this.response.appendInt(achievementScore);

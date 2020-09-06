@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.ServerMessage;
 
 public class TestCommand extends Command {
@@ -12,7 +12,7 @@ public class TestCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        if (gameClient.getHabbo() != null || !gameClient.getHabbo().hasPermission("acc_supporttool") || !Emulator.debugging)
+        if (gameClient.getHabbo() != null || !gameClient.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL) || !Emulator.debugging)
             return false;
 
         int header = Integer.valueOf(params[1]);

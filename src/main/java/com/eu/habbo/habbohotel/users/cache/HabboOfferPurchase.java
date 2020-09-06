@@ -2,6 +2,8 @@ package com.eu.habbo.habbohotel.users.cache;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class HabboOfferPurchase {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HabboOfferPurchase.class);
     private final int userId;
     private final int offerId;
     private int state;
@@ -38,7 +41,7 @@ public class HabboOfferPurchase {
                 statement.setInt(2, offerId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
                 return null;
             }
 

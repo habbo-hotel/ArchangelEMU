@@ -17,7 +17,7 @@ public class TalentLevelUpdateComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.TalentLevelUpdateComposer);
         this.response.appendString(this.talentTrackType.name());
         this.response.appendInt(this.talentTrackLevel.level);

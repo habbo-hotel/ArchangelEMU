@@ -1,6 +1,5 @@
 package com.eu.habbo.habbohotel.catalog;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.TCollections;
@@ -8,12 +7,16 @@ import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogPage.class);
+
     protected final TIntArrayList offerIds = new TIntArrayList();
     protected final THashMap<Integer, CatalogPage> childPages = new THashMap<>();
     private final TIntObjectMap<CatalogItem> catalogItems = TCollections.synchronizedMap(new TIntObjectHashMap<>());
@@ -70,8 +73,8 @@ public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize
                 try {
                     this.included.add(Integer.valueOf(id));
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
-                    Emulator.getLogging().logErrorLine("Failed to parse includes column value of (" + id + ") for catalog page (" + this.id + ")");
+                    LOGGER.error("Caught exception", e);
+                    LOGGER.error("Failed to parse includes column value of (" + id + ") for catalog page (" + this.id + ")");
                 }
             }
         }

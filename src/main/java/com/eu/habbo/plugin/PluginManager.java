@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.TargetOffer;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlace;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.games.tag.TagGame;
 import com.eu.habbo.habbohotel.items.ItemManager;
@@ -18,6 +19,7 @@ import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.modtool.WordFilter;
 import com.eu.habbo.habbohotel.navigation.EventCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
+import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.habbohotel.users.HabboManager;
@@ -26,11 +28,13 @@ import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.messages.incoming.camera.CameraPublishToWebEvent;
 import com.eu.habbo.messages.incoming.camera.CameraPurchaseEvent;
+import com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent;
 import com.eu.habbo.messages.incoming.floorplaneditor.FloorPlanEditorSaveEvent;
 import com.eu.habbo.messages.incoming.hotelview.HotelViewRequestLTDAvailabilityEvent;
 import com.eu.habbo.messages.incoming.rooms.promotions.BuyRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.users.ChangeNameCheckUsernameEvent;
 import com.eu.habbo.messages.outgoing.catalog.DiscountComposer;
+import com.eu.habbo.messages.outgoing.catalog.GiftConfigurationComposer;
 import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
@@ -42,6 +46,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gnu.trove.iterator.hash.TObjectHashIterator;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,13 +59,18 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class PluginManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameClient.class);
+
     private final THashSet<HabboPlugin> plugins = new THashSet<>();
     private final THashSet<Method> methods = new THashSet<>();
 
     @EventHandler
     public static void globalOnConfigurationUpdated(EmulatorConfigUpdatedEvent event) {
+
         ItemManager.RECYCLER_ENABLED = Emulator.getConfig().getBoolean("hotel.catalog.recycler.enabled");
         MarketPlace.MARKETPLACE_ENABLED = Emulator.getConfig().getBoolean("hotel.marketplace.enabled");
         MarketPlace.MARKETPLACE_CURRENCY = Emulator.getConfig().getInt("hotel.marketplace.currency");
@@ -91,9 +102,11 @@ public class PluginManager {
         Room.MAXIMUM_BOTS = Emulator.getConfig().getInt("hotel.max.bots.room");
         Room.MAXIMUM_PETS = Emulator.getConfig().getInt("hotel.pets.max.room");
         Room.MAXIMUM_FURNI = Emulator.getConfig().getInt("hotel.room.furni.max", 2500);
+        Room.MAXIMUM_POSTITNOTES = Emulator.getConfig().getInt("hotel.room.stickies.max", 200);
         Room.HAND_ITEM_TIME = Emulator.getConfig().getInt("hotel.rooms.handitem.time");
         Room.IDLE_CYCLES = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles", 240);
         Room.IDLE_CYCLES_KICK = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles.kick", 480);
+        Room.ROLLERS_MAXIMUM_ROLL_AVATARS = Emulator.getConfig().getInt("hotel.room.rollers.roll_avatars.max", 1);
         RoomManager.MAXIMUM_ROOMS_VIP = Emulator.getConfig().getInt("hotel.max.rooms.vip");
         RoomManager.MAXIMUM_ROOMS_USER = Emulator.getConfig().getInt("hotel.max.rooms.user");
         RoomManager.HOME_ROOM_ID = Emulator.getConfig().getInt("hotel.home.room");
@@ -102,6 +115,8 @@ public class PluginManager {
         NavigatorManager.MAXIMUM_RESULTS_PER_PAGE = Emulator.getConfig().getInt("hotel.navigator.search.maxresults");
         NavigatorManager.CATEGORY_SORT_USING_ORDER_NUM = Emulator.getConfig().getBoolean("hotel.navigator.sort.ordernum");
         RoomChatMessage.MAXIMUM_LENGTH = Emulator.getConfig().getInt("hotel.chat.max.length");
+        TraxManager.LARGE_JUKEBOX_LIMIT = Emulator.getConfig().getInt("hotel.jukebox.limit.large");
+        TraxManager.NORMAL_JUKEBOX_LIMIT = Emulator.getConfig().getInt("hotel.jukebox.limit.normal");
 
         String[] bannedBubbles = Emulator.getConfig().getValue("commands.cmd_chatcolor.banned_numbers").split(";");
         RoomChatMessage.BANNED_BUBBLES = new int[bannedBubbles.length];
@@ -109,6 +124,7 @@ public class PluginManager {
             try {
                 RoomChatMessage.BANNED_BUBBLES[i] = Integer.valueOf(bannedBubbles[i]);
             } catch (Exception e) {
+                LOGGER.error("Caught exception", e);
             }
         }
 
@@ -130,6 +146,9 @@ public class PluginManager {
         AchievementManager.TALENTTRACK_ENABLED = Emulator.getConfig().getBoolean("hotel.talenttrack.enabled");
         InteractionRoller.NO_RULES = Emulator.getConfig().getBoolean("hotel.room.rollers.norules");
         RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB = Emulator.getConfig().getBoolean("hotel.navigator.populartab.publics");
+        CheckPetNameEvent.PET_NAME_LENGTH_MINIMUM = Emulator.getConfig().getInt("hotel.pets.name.length.min");
+        CheckPetNameEvent.PET_NAME_LENGTH_MAXIMUM = Emulator.getConfig().getInt("hotel.pets.name.length.max");
+
 
         ChangeNameCheckUsernameEvent.VALID_CHARACTERS = Emulator.getConfig().getValue("allowed.username.characters", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-=!?@:,.");
         CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS = Emulator.getConfig().getInt("camera.price.points.publish", 5);
@@ -139,6 +158,9 @@ public class PluginManager {
         CameraPurchaseEvent.CAMERA_PURCHASE_POINTS_TYPE = Emulator.getConfig().getInt("camera.price.points.type", 0);
 
         BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE = Emulator.getConfig().getValue("room.promotion.badge", "RADZZ");
+        BotManager.MAXIMUM_BOT_INVENTORY_SIZE = Emulator.getConfig().getInt("hotel.bots.max.inventory");
+        PetManager.MAXIMUM_PET_INVENTORY_SIZE = Emulator.getConfig().getInt("hotel.pets.max.inventory");
+
 
         NewNavigatorEventCategoriesComposer.CATEGORIES.clear();
         for (String category : Emulator.getConfig().getValue("navigator.eventcategories", "").split(";")) {
@@ -150,6 +172,9 @@ public class PluginManager {
         }
 
         if (Emulator.isReady) {
+            GiftConfigurationComposer.BOX_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.box_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
+            GiftConfigurationComposer.RIBBON_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.ribbon_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
+
             Emulator.getGameEnvironment().getCreditsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPointsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPixelScheduler().reloadConfig();
@@ -164,7 +189,7 @@ public class PluginManager {
 
         if (!loc.exists()) {
             if (loc.mkdirs()) {
-                Emulator.getLogging().logStart("Created plugins directory!");
+                LOGGER.info("Created plugins directory!");
             }
         }
 
@@ -198,12 +223,12 @@ public class PluginManager {
                         this.plugins.add(plugin);
                         plugin.onEnable();
                     } catch (Exception e) {
-                        Emulator.getLogging().logErrorLine("Could not load plugin " + pluginConfigurtion.name + "!");
-                        Emulator.getLogging().logErrorLine(e);
+                        LOGGER.error("Could not load plugin {}!", pluginConfigurtion.name);
+                        LOGGER.error("Caught exception", e);
                     }
                 }
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
     }
@@ -236,8 +261,8 @@ public class PluginManager {
                 try {
                     method.invoke(null, event);
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine("Could not pass default event " + event.getClass().getName() + " to " + method.getClass().getName() + ":" + method.getName());
-                    Emulator.getLogging().logErrorLine(e);
+                    LOGGER.error("Could not pass default event {} to {}: {}!", event.getClass().getName(), method.getClass().getName(), method.getName());
+                    LOGGER.error("Caught exception", e);
                 }
             }
         }
@@ -255,8 +280,8 @@ public class PluginManager {
                             try {
                                 method.invoke(plugin, event);
                             } catch (Exception e) {
-                                Emulator.getLogging().logErrorLine("Could not pass event " + event.getClass().getName() + " to " + plugin.configuration.name);
-                                Emulator.getLogging().logErrorLine(e);
+                                LOGGER.error("Could not pass event {} to {}", event.getClass().getName(), plugin.configuration.name);
+                                LOGGER.error("Caught exception", e);
                             }
                         }
                     }
@@ -295,7 +320,7 @@ public class PluginManager {
     public void dispose() {
         this.disposePlugins();
 
-        Emulator.getLogging().logShutdownLine("Disposed Plugin Manager!");
+        LOGGER.info("Disposed Plugin Manager!");
     }
 
     private void disposePlugins() {
@@ -311,10 +336,9 @@ public class PluginManager {
                         p.stream.close();
                         p.classLoader.close();
                     } catch (IOException e) {
-                        Emulator.getLogging().logErrorLine(e);
+                        LOGGER.error("Caught exception", e);
                     } catch (Exception ex) {
-                        Emulator.getLogging().logErrorLine("[CRITICAL][PLUGIN] Failed to disable " + p.configuration.name + " caused by: " + ex.getLocalizedMessage());
-                        Emulator.getLogging().logErrorLine(ex);
+                        LOGGER.error("Failed to disable {} because of an exception.", p.configuration.name, ex);
                     }
                 }
             } catch (NoSuchElementException e) {
@@ -331,7 +355,7 @@ public class PluginManager {
 
         this.loadPlugins();
 
-        Emulator.getLogging().logStart("Plugin Manager -> Loaded! " + this.plugins.size() + " plugins! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Plugin Manager -> Loaded! " + this.plugins.size() + " plugins! (" + (System.currentTimeMillis() - millis) + " MS)");
 
         this.registerDefaultEvents();
     }
@@ -350,8 +374,8 @@ public class PluginManager {
             this.methods.add(PluginManager.class.getMethod("globalOnConfigurationUpdated", EmulatorConfigUpdatedEvent.class));
             this.methods.add(WiredHighscoreManager.class.getMethod("onEmulatorLoaded", EmulatorLoadedEvent.class));
         } catch (NoSuchMethodException e) {
-            Emulator.getLogging().logStart("Failed to define default events!");
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.info("Failed to define default events!");
+            LOGGER.error("Caught exception", e);
         }
     }
 

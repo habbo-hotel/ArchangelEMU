@@ -1,8 +1,12 @@
 package com.eu.habbo.habbohotel.hotelview;
 
-import com.eu.habbo.Emulator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HotelViewManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HotelViewManager.class);
+
     private final HallOfFame hallOfFame;
     private final NewsList newsList;
 
@@ -11,7 +15,7 @@ public class HotelViewManager {
         this.hallOfFame = new HallOfFame();
         this.newsList = new NewsList();
 
-        Emulator.getLogging().logStart("Hotelview Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Hotelview Manager -> Loaded! ({} MS)", System.currentTimeMillis() - millis);
     }
 
     public HallOfFame getHallOfFame() {
@@ -23,6 +27,7 @@ public class HotelViewManager {
     }
 
     public void dispose() {
-        Emulator.getLogging().logShutdownLine("HotelView Manager -> Disposed!");
+        LOGGER.info("HotelView Manager -> Disposed!");
     }
+
 }

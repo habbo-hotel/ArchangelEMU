@@ -12,14 +12,14 @@ public class JukeBoxAddSoundTrackEvent extends MessageHandler {
         if (!this.client.getHabbo().getHabboInfo().getCurrentRoom().hasRights(this.client.getHabbo())) return;
 
         int itemId = this.packet.readInt();
-        int unknown = this.packet.readInt();
+        int slotId = this.packet.readInt();
 
         Habbo habbo = this.client.getHabbo();
 
         if (habbo != null) {
             HabboItem item = habbo.getInventory().getItemsComponent().getHabboItem(itemId);
 
-            if (item != null && item instanceof InteractionMusicDisc && item.getRoomId() == 0) {
+            if (item instanceof InteractionMusicDisc && item.getRoomId() == 0) {
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().addSong((InteractionMusicDisc) item, habbo);
             }
         }

@@ -38,7 +38,7 @@ package com.eu.habbo.util.callback;
                 buff.close();
                 in.close();
 
-                Emulator.getLogging().logStart(text.toString());
+                logger.info(text.toString());
                 Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new GenericAlertComposer(text.toString()));
             }
             wr.close();

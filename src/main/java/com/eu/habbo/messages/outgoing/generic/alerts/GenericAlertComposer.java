@@ -17,7 +17,7 @@ public class GenericAlertComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GenericAlertComposer);
 
         this.response.appendString(this.message);

@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.achievements.TalentTrackType;
@@ -13,6 +14,8 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.stack.array.TIntArrayStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,14 +25,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HabboStats implements Runnable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HabboStats.class);
+
     public final TIntArrayList secretRecipes;
     public final HabboNavigatorWindowSettings navigatorWindowSettings;
     public final THashMap<String, Object> cache;
     public final TIntArrayList calendarRewardsClaimed;
     public final TIntObjectMap<HabboOfferPurchase> offerCache = new TIntObjectHashMap<>();
-    private final int timeLoggedIn = Emulator.getIntUnixTimestamp();
+    private final AtomicInteger lastOnlineTime = new AtomicInteger(Emulator.getIntUnixTimestamp());
     private final THashMap<Achievement, Integer> achievementProgress;
     private final THashMap<Achievement, Integer> achievementCache;
     private final THashMap<Integer, CatalogItem> recentPurchases;
@@ -64,7 +71,7 @@ public class HabboStats implements Runnable {
     public int helpersLevel;
     public boolean perkTrade;
     public long roomEnterTimestamp;
-    public int chatCounter;
+    public AtomicInteger chatCounter = new AtomicInteger(0);
     public long lastChat;
     public long lastUsersSearched;
     public boolean nux;
@@ -78,8 +85,8 @@ public class HabboStats implements Runnable {
     public int forumPostsCount;
     public THashMap<Integer, List<Integer>> ltdPurchaseLog = new THashMap<>(0);
     public long lastTradeTimestamp = Emulator.getIntUnixTimestamp();
-    public long lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
     public long lastGiftTimestamp = Emulator.getIntUnixTimestamp();
+    public long lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
     public int uiFlags;
     public boolean hasGottenDefaultSavedSearches;
     private HabboInfo habboInfo;
@@ -135,6 +142,7 @@ public class HabboStats implements Runnable {
         this.forumPostsCount = set.getInt("forums_post_count");
         this.uiFlags = set.getInt("ui_flags");
         this.hasGottenDefaultSavedSearches = set.getInt("has_gotten_default_saved_searches") == 1;
+
         this.nuxReward = this.nux;
 
         try (PreparedStatement statement = set.getStatement().getConnection().prepareStatement("SELECT * FROM user_window_settings WHERE user_id = ? LIMIT 1")) {
@@ -226,7 +234,7 @@ public class HabboStats implements Runnable {
             statement.setInt(1, habboInfo.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return load(habboInfo);
@@ -285,7 +293,7 @@ public class HabboStats implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return stats;
@@ -293,6 +301,10 @@ public class HabboStats implements Runnable {
 
     @Override
     public void run() {
+        // Find difference between last sync and update with a new timestamp.
+        int onlineTimeLast = this.lastOnlineTime.getAndUpdate(operand -> Emulator.getIntUnixTimestamp());
+        int onlineTime = Emulator.getIntUnixTimestamp() - onlineTimeLast;
+
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET achievement_score = ?, respects_received = ?, respects_given = ?, daily_respect_points = ?, block_following = ?, block_friendrequests = ?, online_time = online_time + ?, guild_id = ?, daily_pet_respect_points = ?, club_expire_timestamp = ?, login_streak = ?, rent_space_id = ?, rent_space_endtime = ?, volume_system = ?, volume_furni = ?, volume_trax = ?, block_roominvites = ?, old_chat = ?, block_camera_follow = ?, chat_color = ?, hof_points = ?, block_alerts = ?, talent_track_citizenship_level = ?, talent_track_helpers_level = ?, ignore_bots = ?, ignore_pets = ?, nux = ?, mute_end_timestamp = ?, allow_name_change = ?, perk_trade = ?, can_trade = ?, `forums_post_count` = ?, ui_flags = ?, has_gotten_default_saved_searches = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.achievementScore);
@@ -301,7 +313,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(4, this.respectPointsToGive);
                 statement.setString(5, this.blockFollowing ? "1" : "0");
                 statement.setString(6, this.blockFriendRequests ? "1" : "0");
-                statement.setInt(7, Emulator.getIntUnixTimestamp() - this.timeLoggedIn);
+                statement.setInt(7, onlineTime);
                 statement.setInt(8, this.guild);
                 statement.setInt(9, this.petRespectPointsToGive);
                 statement.setInt(10, this.clubExpireTimestamp);
@@ -329,8 +341,8 @@ public class HabboStats implements Runnable {
                 statement.setInt(32, this.forumPostsCount);
                 statement.setInt(33, this.uiFlags);
                 statement.setInt(34, this.hasGottenDefaultSavedSearches ? 1 : 0);
-
                 statement.setInt(35, this.habboInfo.getId());
+                
                 statement.executeUpdate();
             }
 
@@ -361,7 +373,7 @@ public class HabboStats implements Runnable {
 
             this.navigatorWindowSettings.save(connection);
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -475,7 +487,7 @@ public class HabboStats implements Runnable {
             statement.setInt(2, roomId);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         this.favoriteRooms.add(roomId);
@@ -489,7 +501,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(2, roomId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -515,7 +527,7 @@ public class HabboStats implements Runnable {
             statement.setInt(2, id);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         this.secretRecipes.add(id);
@@ -591,7 +603,26 @@ public class HabboStats implements Runnable {
         return 0;
     }
 
-    public void ignoreUser(int userId) {
+    /**
+     * Ignore an user.
+     *
+     * @param gameClient The client to which this HabboStats instance belongs.
+     * @param userId The user to ignore.
+     * @return true if successfully ignored, false otherwise.
+     */
+    public boolean ignoreUser(GameClient gameClient, int userId) {
+        final Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
+
+        if (!Emulator.getConfig().getBoolean("hotel.allow.ignore.staffs")) {
+            final int ownRank = gameClient.getHabbo().getHabboInfo().getRank().getId();
+            final int targetRank = target.getHabboInfo().getRank().getId();
+
+            if (targetRank >= ownRank) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error.ignore_higher_rank"), RoomChatMessageBubbles.ALERT);
+                return false;
+            }
+        }
+
         if (!this.userIgnored(userId)) {
             this.ignoredUsers.add(userId);
 
@@ -601,9 +632,11 @@ public class HabboStats implements Runnable {
                 statement.setInt(2, userId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
+
+        return true;
     }
 
     public void unignoreUser(int userId) {
@@ -616,7 +649,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(2, userId);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }

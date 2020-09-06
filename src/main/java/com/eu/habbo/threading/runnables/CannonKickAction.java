@@ -33,10 +33,10 @@ public class CannonKickAction implements Runnable {
         dater.put("title", "${notification.room.kick.cannonball.title}");
         dater.put("message", "${notification.room.kick.cannonball.message}");
 
-        ServerMessage message = new BubbleAlertComposer("cannon.png", dater).compose();
-
         int rotation = this.cannon.getRotation();
         List<RoomTile> tiles = this.room.getLayout().getTilesInFront(this.room.getLayout().getTile(this.cannon.getX(), this.cannon.getY()), rotation + 6, 3);
+
+        ServerMessage message = new BubbleAlertComposer("cannon.png", dater).compose();
 
         for (RoomTile t : tiles) {
             for (Habbo habbo : this.room.getHabbosAt(t.x, t.y)) {

@@ -43,6 +43,7 @@ public class ImageHotelAlert extends RCONMessage<ImageHotelAlert.JSON> {
         }
 
         ServerMessage message = new BubbleAlertComposer(json.bubble_key, keys).compose();
+
         for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
             Habbo habbo = set.getValue();
             if (habbo.getHabboStats().blockStaffAlerts)

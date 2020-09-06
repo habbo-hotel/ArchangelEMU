@@ -20,12 +20,14 @@ import com.eu.habbo.plugin.events.games.GameStartedEvent;
 import com.eu.habbo.plugin.events.games.GameStoppedEvent;
 import com.eu.habbo.threading.runnables.SaveScoreForTeam;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class Game implements Runnable {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Game.class);
     protected final THashMap<GameTeamColors, GameTeam> teams = new THashMap<>();
     protected final Room room;
     private final Class<? extends GameTeam> gameTeamClazz;
@@ -73,7 +75,7 @@ public abstract class Game implements Runnable {
                 return true;
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         return false;
@@ -120,6 +122,10 @@ public abstract class Game implements Runnable {
         for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
             ((WiredBlob) item).onGameStart(this.room);
         }
+
+        for (GameTeam team : this.teams.values()) {
+            team.resetScores();
+        }
     }
 
     public void onEnd() {
@@ -135,9 +141,11 @@ public abstract class Game implements Runnable {
         }
 
         GameTeam winningTeam = null;
-        for (GameTeam team : this.teams.values()) {
-            if (winningTeam == null || team.getTotalScore() > winningTeam.getTotalScore()) {
-                winningTeam = team;
+        if(totalPointsGained > 0) {
+            for (GameTeam team : this.teams.values()) {
+                if (winningTeam == null || team.getTotalScore() > winningTeam.getTotalScore()) {
+                    winningTeam = team;
+                }
             }
         }
 
@@ -164,7 +172,7 @@ public abstract class Game implements Runnable {
                     WiredHandler.handleCustomTrigger(WiredTriggerTeamLoses.class, player.getHabbo().getRoomUnit(), this.room, new Object[]{this});
                 }
 
-                if (team.getMembers().size() > 0) {
+                if (team.getMembers().size() > 0 && team.getTotalScore() > 0) {
                     for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
                         Emulator.getGameEnvironment().getItemManager().getHighscoreManager().addHighscoreData(new WiredHighscoreDataEntry(item.getId(), team.getMembers().stream().map(m -> m.getHabbo().getHabboInfo().getId()).collect(Collectors.toList()), team.getTotalScore(), false, Emulator.getIntUnixTimestamp()));
                     }

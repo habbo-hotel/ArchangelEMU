@@ -52,12 +52,9 @@ public class InteractionTrap extends InteractionDefault {
 
 
                         roomUnit.setCanWalk(false);
-                        Emulator.getThreading().run(new Runnable() {
-                            @Override
-                            public void run() {
-                                room.giveEffect(roomUnit, 0, -1);
-                                roomUnit.setCanWalk(true);
-                            }
+                        Emulator.getThreading().run(() -> {
+                            room.giveEffect(roomUnit, 0, -1);
+                            roomUnit.setCanWalk(true);
                         }, delay);
                     }
                 }

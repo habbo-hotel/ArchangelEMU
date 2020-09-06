@@ -16,7 +16,7 @@ public class CameraPriceComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CameraPriceComposer);
         this.response.appendInt(this.credits);
         this.response.appendInt(this.points);

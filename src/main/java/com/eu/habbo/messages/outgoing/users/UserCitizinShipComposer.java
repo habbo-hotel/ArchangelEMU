@@ -12,7 +12,7 @@ public class UserCitizinShipComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserCitizinShipComposer);
         this.response.appendString(this.name);
         this.response.appendInt(4);

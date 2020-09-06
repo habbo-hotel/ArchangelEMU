@@ -18,7 +18,7 @@ public class PetTrainingPanelComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         List<PetCommand> enabled = new ArrayList<>();
         Collections.sort(this.pet.getPetData().getPetCommands());
 

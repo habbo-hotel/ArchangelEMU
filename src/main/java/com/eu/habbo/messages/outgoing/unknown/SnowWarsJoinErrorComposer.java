@@ -9,7 +9,7 @@ public class SnowWarsJoinErrorComposer extends MessageComposer {
     public static final int ERROR_DUPLICATE_MACHINE_ID = 2;
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(1437);
         this.response.appendInt(2);
         return this.response;

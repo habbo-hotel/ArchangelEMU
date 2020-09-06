@@ -25,7 +25,7 @@ public class UserSearchResultComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserSearchResultComposer);
         List<MessengerBuddy> u = new ArrayList<>();
 

@@ -12,7 +12,7 @@ public class GuideSessionPartnerIsTypingComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuideSessionPartnerIsTypingComposer);
         this.response.appendBoolean(this.typing);
         return this.response;

@@ -86,13 +86,15 @@ public class WiredEffectBotFollowHabbo extends InteractionWiredEffect {
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if (habbo != null) {
-            List<Bot> bots = room.getBots(this.botName);
-            for (Bot bot : bots) {
-                if (this.mode == 1)
-                    bot.startFollowingHabbo(habbo);
-                else
-                    bot.stopFollowingHabbo();
+        List<Bot> bots = room.getBots(this.botName);
+
+        if (habbo != null && bots.size() == 1) {
+            Bot bot = bots.get(0);
+
+            if (this.mode == 1) {
+                bot.startFollowingHabbo(habbo);
+            } else {
+                bot.stopFollowingHabbo();
             }
 
             return true;

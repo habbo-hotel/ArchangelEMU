@@ -21,6 +21,8 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.sql.*;
@@ -29,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ModToolManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModToolManager.class);
+
     private final TIntObjectMap<ModToolCategory> category;
     private final THashMap<String, THashSet<String>> presets;
     private final THashMap<Integer, ModToolIssue> tickets;
@@ -41,7 +45,7 @@ public class ModToolManager {
         this.tickets = new THashMap<>();
         this.cfhCategories = new TIntObjectHashMap<>();
         this.loadModTool();
-        Emulator.getLogging().logStart("ModTool Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("ModTool Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public static void requestUserInfo(GameClient client, ClientMessage packet) {
@@ -58,9 +62,9 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 
@@ -78,7 +82,7 @@ public class ModToolManager {
             this.loadTickets(connection);
             this.loadCfhCategories(connection);
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -97,7 +101,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -108,7 +112,7 @@ public class ModToolManager {
                     this.presets.get(set.getString("type")).add(set.getString("preset"));
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -120,7 +124,7 @@ public class ModToolManager {
                     this.tickets.put(set.getInt("id"), new ModToolIssue(set));
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -146,7 +150,7 @@ public class ModToolManager {
                 this.cfhCategories.get(set.getInt("support_cfh_category_id")).addTopic(new CfhTopic(set, this.getIssuePreset(set.getInt("default_sanction"))));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -198,7 +202,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return chatlogs;
@@ -207,7 +211,7 @@ public class ModToolManager {
     public ArrayList<ModToolChatLog> getUserChatlog(int userId) {
         ArrayList<ModToolChatLog> chatlogs = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username, users.id, chatlogs_room.* FROM chatlogs_room INNER JOIN users ON users.id = chatlogs_room.user_from_id WHERE user_from_id = ? ORDER BY timestamp DESC LIMIT 150")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username, users.id, chatlogs_room.* FROM chatlogs_room INNER JOIN users ON users.id = chatlogs_room.user_from_id WHERE user_from_id = ? ORDER BY chatlogs_room.timestamp DESC LIMIT 150")) {
             statement.setInt(1, userId);
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
@@ -215,7 +219,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return chatlogs;
@@ -224,7 +228,7 @@ public class ModToolManager {
     public ArrayList<ModToolChatLog> getMessengerChatlog(int userOneId, int userTwoId) {
         ArrayList<ModToolChatLog> chatLogs = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username, chatlogs_private.* FROM chatlogs_private INNER JOIN users ON users.id = user_from_id WHERE (user_from_id = ? AND user_to_id = ?) OR (user_from_id = ? AND user_to_id = ?) ORDER BY timestamp DESC LIMIT 50")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username, chatlogs_private.* FROM chatlogs_private INNER JOIN users ON users.id = user_from_id WHERE (user_from_id = ? AND user_to_id = ?) OR (user_from_id = ? AND user_to_id = ?) ORDER BY chatlogs_private.timestamp DESC LIMIT 50")) {
             statement.setInt(1, userOneId);
             statement.setInt(2, userTwoId);
             statement.setInt(3, userTwoId);
@@ -235,7 +239,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return chatLogs;
@@ -272,7 +276,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return chatlogs;
@@ -290,7 +294,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return roomVisits;
@@ -348,7 +352,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return roomVisits;
@@ -378,7 +382,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return null;
@@ -495,7 +499,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return ban;
@@ -519,7 +523,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return banned;
@@ -543,7 +547,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return false;
@@ -557,7 +561,7 @@ public class ModToolManager {
             statement.execute();
             return statement.getUpdateCount() > 0;
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return false;
@@ -662,7 +666,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return total;

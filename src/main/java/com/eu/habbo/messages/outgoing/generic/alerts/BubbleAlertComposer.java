@@ -28,7 +28,7 @@ public class BubbleAlertComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.BubbleAlertComposer);
         this.response.appendString(this.errorKey);
         this.response.appendInt(this.keys.size());

@@ -42,12 +42,15 @@ public class InteractionWaterItem extends InteractionDefault {
     public void update() {
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
-        if (room == null)
+        if (room == null) {
             return;
+        }
 
-        Rectangle rectangle = RoomLayout.getRectangle(this.getX(), this.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+        Rectangle rectangle = this.getRectangle();
 
+        // Check if every tile of the furni is in water.
         boolean foundWater = true;
+
         for (short x = (short) rectangle.x; x < rectangle.getWidth() + rectangle.x && foundWater; x++) {
             for (short y = (short) rectangle.y; y < rectangle.getHeight() + rectangle.y && foundWater; y++) {
                 boolean tile = false;
@@ -66,16 +69,14 @@ public class InteractionWaterItem extends InteractionDefault {
             }
         }
 
-        if (foundWater) {
-            this.setExtradata("1");
+        // Update data if changed.
+        String updatedData = foundWater ? "1" : "0";
+
+        if (!this.getExtradata().equals(updatedData)) {
+            this.setExtradata(updatedData);
             this.needsUpdate(true);
             room.updateItem(this);
-            return;
         }
-
-        this.setExtradata("0");
-        this.needsUpdate(true);
-        room.updateItem(this);
     }
 
     @Override

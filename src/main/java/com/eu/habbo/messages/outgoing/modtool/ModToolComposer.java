@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolCategory;
 import com.eu.habbo.habbohotel.modtool.ModToolIssue;
 import com.eu.habbo.habbohotel.modtool.ModToolTicketState;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -22,10 +23,10 @@ public class ModToolComposer extends MessageComposer implements TObjectProcedure
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ModToolComposer);
 
-        if (this.habbo.hasPermission("acc_modtool_ticket_q")) {
+        if (this.habbo.hasPermission(Permission.ACC_MODTOOL_TICKET_Q)) {
             THashSet<ModToolIssue> openTickets = new THashSet<>();
 
             THashMap<Integer, ModToolIssue> tickets = Emulator.getGameEnvironment().getModToolManager().getTickets();
@@ -63,13 +64,13 @@ public class ModToolComposer extends MessageComposer implements TObjectProcedure
 
         Emulator.getGameEnvironment().getModToolManager().getCategory().forEachValue(this);
 
-        this.response.appendBoolean(this.habbo.hasPermission("acc_modtool_ticket_q")); //ticketQueueueuhuehuehuehue
-        this.response.appendBoolean(this.habbo.hasPermission("acc_modtool_user_logs")); //user chatlogs
-        this.response.appendBoolean(this.habbo.hasPermission("acc_modtool_user_alert")); //can send caution
-        this.response.appendBoolean(this.habbo.hasPermission("acc_modtool_user_kick")); //can send kick
-        this.response.appendBoolean(this.habbo.hasPermission("acc_modtool_user_ban")); //can send ban
-        this.response.appendBoolean(this.habbo.hasPermission("acc_modtool_room_info")); //room info ??Not sure
-        this.response.appendBoolean(this.habbo.hasPermission("acc_modtool_room_logs")); //room chatlogs ??Not sure
+        this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_MODTOOL_TICKET_Q)); //ticketQueueueuhuehuehuehue
+        this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_MODTOOL_USER_LOGS)); //user chatlogs
+        this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_MODTOOL_USER_ALERT)); //can send caution
+        this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_MODTOOL_USER_KICK)); //can send kick
+        this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_MODTOOL_USER_BAN)); //can send ban
+        this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_MODTOOL_ROOM_INFO)); //room info ??Not sure
+        this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_MODTOOL_ROOM_LOGS)); //room chatlogs ??Not sure
 
         synchronized (Emulator.getGameEnvironment().getModToolManager().getPresets()) {
             this.response.appendInt(Emulator.getGameEnvironment().getModToolManager().getPresets().get("room").size());

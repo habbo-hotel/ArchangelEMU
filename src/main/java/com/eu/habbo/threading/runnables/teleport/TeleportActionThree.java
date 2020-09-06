@@ -59,14 +59,14 @@ class TeleportActionThree implements Runnable {
         this.client.getHabbo().getRoomUnit().setRotation(RoomUserRotation.values()[targetTeleport.getRotation() % 8]);
 
         if (targetRoom != this.room) {
-            this.room.removeHabbo(this.client.getHabbo(), true);
+            this.room.removeHabbo(this.client.getHabbo(), false);
             Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), targetRoom.getId(), "", Emulator.getConfig().getBoolean("hotel.teleport.locked.allowed"), teleportLocation);
         }
 
         targetTeleport.setExtradata("2");
         targetRoom.updateItem(targetTeleport);
         //targetRoom.updateHabbo(this.client.getHabbo());
-        //System.out.println(targetTeleport.getX() + " | " + targetTeleport.getY());
+        //LOGGER.info((targetTeleport.getX() + " | " + targetTeleport.getY());
         this.client.getHabbo().getHabboInfo().setCurrentRoom(targetRoom);
         //Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), 500);
         Emulator.getThreading().run(new TeleportActionFour(targetTeleport, targetRoom, this.client), this.currentTeleport instanceof InteractionTeleportTile ? 0 : 500);

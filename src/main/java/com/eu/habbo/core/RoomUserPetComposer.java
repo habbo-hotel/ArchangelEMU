@@ -19,7 +19,7 @@ public class RoomUserPetComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomUsersComposer);
         this.response.appendInt(1);
         this.response.appendInt(this.habbo.getHabboInfo().getId());

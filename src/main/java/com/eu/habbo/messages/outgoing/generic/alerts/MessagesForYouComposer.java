@@ -22,7 +22,7 @@ public class MessagesForYouComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.MessagesForYouComposer);
         this.response.appendInt(this.messages.length + this.newMessages.size());
 

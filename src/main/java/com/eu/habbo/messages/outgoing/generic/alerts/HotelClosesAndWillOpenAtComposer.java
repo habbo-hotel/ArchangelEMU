@@ -16,7 +16,7 @@ public class HotelClosesAndWillOpenAtComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.HotelClosesAndWillOpenAtComposer);
         this.response.appendInt(this.hour);
         this.response.appendInt(this.minute);

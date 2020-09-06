@@ -14,7 +14,7 @@ public class InventoryUpdateItemComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.InventoryItemUpdateComposer);
         this.response.appendInt(this.habboItem.getGiftAdjustedId());
         this.response.appendString(this.habboItem.getBaseItem().getType().code);

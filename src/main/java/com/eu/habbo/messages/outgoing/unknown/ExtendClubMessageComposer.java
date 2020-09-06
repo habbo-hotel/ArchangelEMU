@@ -27,7 +27,7 @@ public class ExtendClubMessageComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ExtendClubMessageComposer);
         this.response.appendInt(this.item.getId());
         this.response.appendString(this.item.getName());

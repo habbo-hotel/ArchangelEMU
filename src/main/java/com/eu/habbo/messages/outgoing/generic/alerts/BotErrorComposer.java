@@ -18,7 +18,7 @@ public class BotErrorComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.BotErrorComposer);
         this.response.appendInt(this.errorCode);
         return this.response;

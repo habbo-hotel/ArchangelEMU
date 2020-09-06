@@ -5,19 +5,23 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class ScratchPetEvent extends MessageHandler {
+
     @Override
     public void handle() throws Exception {
-        int petId = this.packet.readInt();
+        final int petId = this.packet.readInt();
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null) {
             return;
+        }
 
-        Pet pet = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(petId);
+        final Pet pet = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(petId);
 
-        if (pet != null) {
-            if (this.client.getHabbo().getHabboStats().petRespectPointsToGive > 0 || pet instanceof MonsterplantPet) {
-                pet.scratched(this.client.getHabbo());
-            }
+        if (pet == null) {
+            return;
+        }
+
+        if (this.client.getHabbo().getHabboStats().petRespectPointsToGive > 0 || pet instanceof MonsterplantPet) {
+            pet.scratched(this.client.getHabbo());
         }
     }
 }

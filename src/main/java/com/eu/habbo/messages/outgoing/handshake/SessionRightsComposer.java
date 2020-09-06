@@ -9,7 +9,7 @@ public class SessionRightsComposer extends MessageComposer {
     private static final boolean unknownBooleanTwo = false;
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.SessionRightsComposer);
 
         this.response.appendBoolean(unknownBooleanOne);

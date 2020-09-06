@@ -2,10 +2,15 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EnableCommand extends Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnableCommand.class);
+
     public EnableCommand() {
         super("cmd_enable", Emulator.getTexts().getValue("commands.keys.cmd_enable").split(";"));
     }
@@ -25,7 +30,7 @@ public class EnableCommand extends Command {
             }
 
             if (target != null) {
-                if (target == gameClient.getHabbo() || gameClient.getHabbo().hasPermission("acc_enable_others")) {
+                if (target == gameClient.getHabbo() || gameClient.getHabbo().hasPermission(Permission.ACC_ENABLE_OTHERS)) {
                     try {
                         if (target.getHabboInfo().getCurrentRoom() != null) {
                             if (target.getHabboInfo().getRiding() == null) {
@@ -38,7 +43,7 @@ public class EnableCommand extends Command {
                             }
                         }
                     } catch (Exception e) {
-                        Emulator.getLogging().logErrorLine(e);
+                        LOGGER.error("Caught exception", e);
                     }
                 }
             }

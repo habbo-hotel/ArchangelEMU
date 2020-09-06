@@ -72,12 +72,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 boolean hasHabbos = false;
                 for (Habbo habbo : room.getHabbosAt(targetTile)) {
                     hasHabbos = true;
-                    Emulator.getThreading().run(new Runnable() {
-                        @Override
-                        public void run() {
-                            WiredHandler.handle(WiredTriggerType.COLLISION, habbo.getRoomUnit(), room, new Object[]{entry.getKey()});
-                        }
-                    });
+                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, habbo.getRoomUnit(), room, new Object[]{entry.getKey()}));
                 }
 
                 if (!hasHabbos) {

@@ -15,7 +15,7 @@ public class InventoryBadgesComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         if (this.habbo == null)
             return null;
 

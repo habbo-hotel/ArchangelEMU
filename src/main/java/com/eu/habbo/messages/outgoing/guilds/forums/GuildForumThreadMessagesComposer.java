@@ -13,7 +13,7 @@ public class GuildForumThreadMessagesComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildForumThreadMessagesComposer);
         this.response.appendInt(this.thread.getGuildId());
         this.thread.serialize(this.response);

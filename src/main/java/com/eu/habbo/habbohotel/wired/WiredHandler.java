@@ -28,6 +28,8 @@ import com.eu.habbo.plugin.events.furniture.wired.WiredStackExecutedEvent;
 import com.eu.habbo.plugin.events.furniture.wired.WiredStackTriggeredEvent;
 import com.eu.habbo.plugin.events.users.UserWiredRewardReceived;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,6 +40,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class WiredHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WiredHandler.class);
+
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_FURNI_SELECTION = 5;
     public static int TELEPORT_DELAY = 500;
@@ -199,7 +203,7 @@ public class WiredHandler {
                             if (!effect.execute(roomUnit, room, stuff)) return;
                             effect.setCooldown(millis);
                         } catch (Exception e) {
-                            Emulator.getLogging().logErrorLine(e);
+                            LOGGER.error("Caught exception", e);
                         }
 
                         effect.activateBox(room);
@@ -235,7 +239,7 @@ public class WiredHandler {
             statement.setInt(1, wiredId);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -250,7 +254,7 @@ public class WiredHandler {
             statement.setInt(4, Emulator.getIntUnixTimestamp());
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         if (reward.badge) {
@@ -404,7 +408,7 @@ public class WiredHandler {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return false;

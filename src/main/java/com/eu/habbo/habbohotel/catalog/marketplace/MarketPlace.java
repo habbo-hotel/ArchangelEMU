@@ -16,6 +16,8 @@ import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemCancelledEvent;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemOfferedEvent;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemSoldEvent;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,6 +28,8 @@ import java.util.List;
 
 
 public class MarketPlace {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MarketPlace.class);
+
     //Configuration. Loaded from database & updated accordingly.
     public static boolean MARKETPLACE_ENABLED = true;
 
@@ -43,7 +47,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return offers;
@@ -101,7 +105,7 @@ public class MarketPlace {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
                 habbo.getClient().sendResponse(new MarketplaceCancelSaleComposer(offer, false));
             }
         }
@@ -110,7 +114,7 @@ public class MarketPlace {
 
     public static List<MarketPlaceOffer> getOffers(int minPrice, int maxPrice, String search, int sort) {
         List<MarketPlaceOffer> offers = new ArrayList<>(10);
-        String query = "SELECT B.* FROM marketplace_items a INNER JOIN (SELECT b.item_id AS base_item_id, b.limited_data AS ltd_data, marketplace_items.*, AVG(price) as avg, MIN(marketplace_items.price) as minPrice, MAX(marketplace_items.price) as maxPrice, COUNT(*) as number, (SELECT COUNT(*) FROM marketplace_items c INNER JOIN items as items_b ON c.item_id = items_b.id WHERE state = 2 AND items_b.item_id = base_item_id AND DATE(from_unixtime(sold_timestamp)) = CURDATE()) as sold_count_today FROM marketplace_items INNER JOIN items b ON marketplace_items.item_id = b.id INNER JOIN items_base bi ON b.item_id = bi.id WHERE price = (SELECT MIN(e.price) FROM marketplace_items e, items d WHERE e.item_id = d.id AND d.item_id = b.item_id AND e.state = 1 AND e.timestamp > ? GROUP BY d.item_id) AND state = 1 AND timestamp > ?";
+        String query = "SELECT B.* FROM marketplace_items a INNER JOIN (SELECT b.item_id AS base_item_id, b.limited_data AS ltd_data, marketplace_items.*, AVG(price) as avg, MIN(marketplace_items.price) as minPrice, MAX(marketplace_items.price) as maxPrice, COUNT(*) as number, (SELECT COUNT(*) FROM marketplace_items c INNER JOIN items as items_b ON c.item_id = items_b.id WHERE state = 2 AND items_b.item_id = base_item_id AND DATE(from_unixtime(sold_timestamp)) = CURDATE()) as sold_count_today FROM marketplace_items INNER JOIN items b ON marketplace_items.item_id = b.id INNER JOIN items_base bi ON b.item_id = bi.id INNER JOIN catalog_items ci ON bi.id = ci.item_ids WHERE price = (SELECT MIN(e.price) FROM marketplace_items e, items d WHERE e.item_id = d.id AND d.item_id = b.item_id AND e.state = 1 AND e.timestamp > ? GROUP BY d.item_id) AND state = 1 AND timestamp > ?";
         if (minPrice > 0) {
             query += " AND CEIL(price + (price / 100)) >= " + minPrice;
         }
@@ -118,7 +122,7 @@ public class MarketPlace {
             query += " AND CEIL(price + (price / 100)) <= " + maxPrice;
         }
         if (search.length() > 0) {
-            query += " AND bi.public_name LIKE ?";
+            query += " AND bi.public_name LIKE ? OR ci.catalog_name LIKE ?";
         }
 
         query += " GROUP BY base_item_id, ltd_data";
@@ -149,13 +153,15 @@ public class MarketPlace {
 
         query += " AS B ON a.id = B.id";
 
-        query += " LIMIT 100";
+        query += " LIMIT 250";
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, Emulator.getIntUnixTimestamp() - 172800);
             statement.setInt(2, Emulator.getIntUnixTimestamp() - 172800);
-            if (search.length() > 0)
+            if (search.length() > 0) {
                 statement.setString(3, "%" + search + "%");
+                statement.setString(4, "%" + search + "%");
+            }
 
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
@@ -163,7 +169,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return offers;
@@ -193,7 +199,7 @@ public class MarketPlace {
             message.appendInt(1);
             message.appendInt(itemId);
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -208,7 +214,7 @@ public class MarketPlace {
                 number = set.getInt("number");
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return number;
@@ -226,7 +232,7 @@ public class MarketPlace {
                 avg = set.getInt("avg");
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return calculateCommision(avg);
@@ -294,7 +300,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -321,7 +327,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -388,7 +394,7 @@ public class MarketPlace {
             statement.setInt(2, offer.getOfferId());
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 

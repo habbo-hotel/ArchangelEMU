@@ -13,7 +13,7 @@ public class RoomModelComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomModelComposer);
         this.response.appendString(this.room.getLayout().getName());
         this.response.appendInt(this.room.getId());

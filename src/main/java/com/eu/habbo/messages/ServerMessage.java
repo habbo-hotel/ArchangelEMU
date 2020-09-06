@@ -1,46 +1,51 @@
 package com.eu.habbo.messages;
 
-import com.eu.habbo.Emulator;
+import com.eu.habbo.util.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerMessage {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerMessage.class);
+    private boolean initialized;
+
     private int header;
+    private AtomicInteger refs;
     private ByteBufOutputStream stream;
     private ByteBuf channelBuffer;
 
     public ServerMessage() {
-        this.channelBuffer = Unpooled.buffer();
-        this.stream = new ByteBufOutputStream(this.channelBuffer);
+
     }
 
     public ServerMessage(int header) {
-        this.header = header;
-        this.channelBuffer = Unpooled.buffer();
-        this.stream = new ByteBufOutputStream(this.channelBuffer);
-        try {
-            this.stream.writeInt(0);
-            this.stream.writeShort(header);
-        } catch (Exception e) {
-            Emulator.getLogging().handleException(e);
-        }
+        this.init(header);
     }
 
     public ServerMessage init(int id) {
+        if (this.initialized) {
+            throw new ServerMessageException("ServerMessage was already initialized.");
+        }
+
+        this.initialized = true;
         this.header = id;
+        this.refs = new AtomicInteger(0);
         this.channelBuffer = Unpooled.buffer();
         this.stream = new ByteBufOutputStream(this.channelBuffer);
 
         try {
             this.stream.writeInt(0);
             this.stream.writeShort(id);
-        } catch (Exception e) {
-            Emulator.getLogging().handleException(e);
+        } catch (IOException e) {
+            throw new ServerMessageException(e);
         }
+
         return this;
     }
 
@@ -48,7 +53,7 @@ public class ServerMessage {
         try {
             this.stream.write(bytes);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -63,7 +68,7 @@ public class ServerMessage {
             this.stream.writeShort(data.length);
             this.stream.write(data);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -71,7 +76,7 @@ public class ServerMessage {
         try {
             this.stream.writeChar(obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -79,7 +84,7 @@ public class ServerMessage {
         try {
             this.stream.writeChars(obj.toString());
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -87,7 +92,7 @@ public class ServerMessage {
         try {
             this.stream.writeInt(obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -100,7 +105,7 @@ public class ServerMessage {
         try {
             this.stream.writeInt((int) obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -108,7 +113,7 @@ public class ServerMessage {
         try {
             this.stream.writeInt(obj ? 1 : 0);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -116,7 +121,7 @@ public class ServerMessage {
         try {
             this.stream.writeShort((short) obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -124,7 +129,7 @@ public class ServerMessage {
         try {
             this.stream.writeByte(b);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -132,7 +137,7 @@ public class ServerMessage {
         try {
             this.stream.writeBoolean(obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -140,7 +145,7 @@ public class ServerMessage {
         try {
             this.stream.writeDouble(d);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -148,7 +153,7 @@ public class ServerMessage {
         try {
             this.stream.writeDouble(obj);
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
     }
 
@@ -156,7 +161,7 @@ public class ServerMessage {
         try {
             this.stream.write(obj.get().array());
         } catch (IOException e) {
-            Emulator.getLogging().logPacketError(e);
+            throw new ServerMessageException(e);
         }
 
         return this;
@@ -167,19 +172,7 @@ public class ServerMessage {
     }
 
     public String getBodyString() {
-        ByteBuf buffer = this.stream.buffer().duplicate();
-
-        buffer.setInt(0, buffer.writerIndex() - 4);
-
-        String consoleText = buffer.toString(Charset.forName("UTF-8"));
-
-        for (int i = 0; i < 14; i++) {
-            consoleText = consoleText.replace(Character.toString((char) i), "[" + i + "]");
-        }
-
-        buffer.discardSomeReadBytes();
-
-        return consoleText;
+        return PacketUtils.formatPacket(this.channelBuffer);
     }
 
     public int getHeader() {
@@ -191,4 +184,5 @@ public class ServerMessage {
 
         return this.channelBuffer.copy();
     }
+
 }

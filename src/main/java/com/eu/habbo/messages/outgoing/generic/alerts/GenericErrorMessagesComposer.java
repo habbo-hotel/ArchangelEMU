@@ -11,6 +11,7 @@ public class GenericErrorMessagesComposer extends MessageComposer {
     public static final int NEED_TO_BE_VIP = 4009;
     public static final int ROOM_NAME_UNACCEPTABLE = 4010;
     public static final int CANNOT_BAN_GROUP_MEMBER = 4011;
+    public static final int WRONG_PASSWORD_USED = -100002;
 
     private final int errorCode;
 
@@ -19,7 +20,7 @@ public class GenericErrorMessagesComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GenericErrorMessages);
         this.response.appendInt(this.errorCode);
         return this.response;

@@ -24,6 +24,8 @@ import com.eu.habbo.util.pathfinding.Rotation;
 import gnu.trove.map.TMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +33,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 
 public class RoomUnit {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnit.class);
+
     public boolean isWiredTeleporting = false;
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
@@ -239,6 +244,7 @@ public class RoomUnit {
             {
                 if (!room.tileWalkable(next)) {
                     this.room = room;
+                    this.path.clear();
                     this.findPath();
 
                     if (this.path.isEmpty()) {
@@ -360,7 +366,7 @@ public class RoomUnit {
             return false;
 
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
             return false;
         }
     }
@@ -724,6 +730,7 @@ public class RoomUnit {
     }
 
     public void addOverrideTile(RoomTile tile) {
+        if (!this.canOverrideTile(tile)) { return; } // Test if the Tile is overridable
         int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
         if (!this.overridableTiles.contains(tileIndex)) {
             this.overridableTiles.add(tileIndex);

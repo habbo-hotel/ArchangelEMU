@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class NewYearResolutionComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         //:test 817 i:230 i:1 i:1 i:1 s:NY2013RES i:3 i:0 i:60000000
         this.response.init(Outgoing.NewYearResolutionComposer);
 
