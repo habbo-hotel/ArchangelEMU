@@ -71,7 +71,7 @@ public class InteractionVendingMachine extends HabboItem {
         this.setExtradata("1");
         room.updateItem(this);
 
-        if(!unit.isWalking()) {
+        if(!unit.isWalking() && !unit.hasStatus(RoomUnitStatus.SIT) && !unit.hasStatus(RoomUnitStatus.LAY)) {
             this.rotateToMachine(room, unit);
         }
 
