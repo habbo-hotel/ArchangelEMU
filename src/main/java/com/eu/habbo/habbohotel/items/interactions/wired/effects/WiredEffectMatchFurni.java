@@ -244,11 +244,6 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
 
     @Override
     public boolean saveData(ClientMessage packet, GameClient gameClient) {
-        this.settings.clear();
-
-        //packet.readInt();
-
-        int count;
         packet.readInt();
 
         this.state = packet.readInt() == 1;
@@ -262,7 +257,10 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
         if (room == null)
             return true;
 
-        count = packet.readInt();
+        int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.settings.clear();
 
         for (int i = 0; i < count; i++) {
             int itemId = packet.readInt();

@@ -67,8 +67,6 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
 
     @Override
     public boolean saveData(ClientMessage packet) {
-        this.settings.clear();
-
         int count;
         packet.readInt();
 
@@ -84,6 +82,9 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
             return true;
 
         count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.settings.clear();
 
         for (int i = 0; i < count; i++) {
             int itemId = packet.readInt();
