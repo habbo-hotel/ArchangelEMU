@@ -938,6 +938,8 @@ public class RoomManager {
             if (room.getOwnerId() != habbo.getHabboInfo().getId()) {
                 AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int) Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000));
             }
+
+            habbo.getMessenger().connectionChanged(habbo, habbo.isOnline(), false);
         }
     }
 
