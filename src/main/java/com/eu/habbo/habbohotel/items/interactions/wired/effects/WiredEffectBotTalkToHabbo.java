@@ -77,6 +77,8 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
 
         if (data.length == 2) {
             this.botName = data[0];
+
+            if (data[1].length() > 64) return false;
             this.message = data[1];
         }
 
