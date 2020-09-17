@@ -7,8 +7,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemIntStateComposer;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
@@ -104,7 +102,7 @@ public class InteractionOneWayGate extends HabboItem {
                     Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
                     room.sendComposer(new ItemIntStateComposer(this.getId(), 1).compose());
                     super.onWalkOn(unit, room, objects);
-                    
+
                     /*
                     room.scheduledTasks.add(new Runnable()
                     {
