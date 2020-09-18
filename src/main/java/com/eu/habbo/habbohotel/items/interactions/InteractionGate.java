@@ -43,17 +43,18 @@ public class InteractionGate extends HabboItem {
         if (client != null && !room.hasRights(client.getHabbo()) && !isWired)
             return;
 
-        // If a Habbo is standing on a tile occupied by the gate, the gate shouldn't be triggered
+        // If a Habbo is standing on a tile occupied by the gate, the gate shouldn't open/close
         if (!isWired) {
             for (RoomTile tile : room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))
                 if (room.hasHabbosAt(tile.x, tile.y))
                     return;
         }
 
+        // Gate closed = 0, open = 1
         if (this.getExtradata().length() == 0)
             this.setExtradata("0");
 
-        this.setExtradata((Integer.valueOf(this.getExtradata()) + 1) % 2 + "");
+        this.setExtradata((Integer.parseInt(this.getExtradata()) + 1) % 2 + "");
         room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
         this.needsUpdate(true);
         room.updateItemState(this);
