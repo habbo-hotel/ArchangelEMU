@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
@@ -42,8 +43,12 @@ public class InteractionGate extends HabboItem {
         if (client != null && !room.hasRights(client.getHabbo()) && !isWired)
             return;
 
-        if (!isWired && !room.getHabbosAt(this.getX(), this.getY()).isEmpty())
-            return;
+        // If a Habbo is standing on a tile occupied by the gate, the gate shouldn't be triggered
+        if (!isWired) {
+            for (RoomTile tile : room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))
+                if (room.hasHabbosAt(tile.x, tile.y))
+                    return;
+        }
 
         if (this.getExtradata().length() == 0)
             this.setExtradata("0");
