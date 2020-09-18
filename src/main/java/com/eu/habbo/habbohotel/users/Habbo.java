@@ -240,7 +240,8 @@ public class Habbo implements Runnable {
             return;
 
         this.getHabboInfo().addCurrencyAmount(event.type, event.points);
-        if (this.client != null) this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
+        if (this.client != null)
+            this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
     }
 
 
@@ -436,9 +437,7 @@ public class Habbo implements Runnable {
 
 
     public void respect(Habbo target) {
-        if (target != null && target != this.client.getHabbo())
-
-        {
+        if (target != null && target != this.client.getHabbo()) {
             target.getHabboStats().respectPointsReceived++;
             this.client.getHabbo().getHabboStats().respectPointsGiven++;
             this.client.getHabbo().getHabboStats().respectPointsToGive--;
@@ -449,6 +448,7 @@ public class Habbo implements Runnable {
             AchievementManager.progressAchievement(target, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RespectEarned"));
 
             this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(this.client.getHabbo());
+            this.client.getHabbo().getHabboInfo().getCurrentRoom().dance(this.client.getHabbo().getRoomUnit(), DanceType.NONE);
         }
     }
 
