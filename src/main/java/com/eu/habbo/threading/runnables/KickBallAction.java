@@ -18,14 +18,16 @@ public class KickBallAction implements Runnable {
     public boolean dead = false; //When true the run() function will not execute. Used when another user kicks the ball whilst it is arleady moving.
     private RoomUserRotation currentDirection; //The current direction the item is moving in
     private int currentStep; //The current step of the move sequence
+    public final boolean isDrag;
 
-    public KickBallAction(InteractionPushable ball, Room room, RoomUnit kicker, RoomUserRotation direction, int steps) {
+    public KickBallAction(InteractionPushable ball, Room room, RoomUnit kicker, RoomUserRotation direction, int steps, boolean isDrag) {
         this.ball = ball;
         this.room = room;
         this.kicker = kicker;
         this.currentDirection = direction;
         this.totalSteps = steps;
         this.currentStep = 0;
+        this.isDrag = isDrag;
     }
 
     @Override
@@ -39,7 +41,10 @@ public class KickBallAction implements Runnable {
 
             if (next == null || !this.ball.validMove(this.room, this.room.getLayout().getTile(this.ball.getX(), this.ball.getY()), next)) {
                 RoomUserRotation oldDirection = this.currentDirection;
-                this.currentDirection = this.ball.getBounceDirection(this.room, this.currentDirection);
+
+                if(!this.isDrag) {
+                    this.currentDirection = this.ball.getBounceDirection(this.room, this.currentDirection);
+                }
 
                 if (this.currentDirection != oldDirection) {
                     this.ball.onBounce(this.room, oldDirection, this.currentDirection, this.kicker);
