@@ -3498,6 +3498,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         if (x < 0 || y < 0 || this.layout == null)
             return calculateHeightmap ? Short.MAX_VALUE : 0.0;
+        
+        if (Emulator.getPluginManager().isRegistered(FurnitureStackHeightEvent.class, true)) {
+            FurnitureStackHeightEvent event = Emulator.getPluginManager().fireEvent(new FurnitureStackHeightEvent(x, y, this));
+            if(event.hasPluginHelper()) {
+                return calculateHeightmap ? event.getHeight() * 256.0D : event.getHeight();
+            }
+        }
 
         double height = this.layout.getHeightAtSquare(x, y);
         boolean canStack = true;
@@ -4391,19 +4398,22 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public FurnitureMovementError placeFloorFurniAt(HabboItem item, RoomTile tile, int rotation, Habbo owner) throws Exception {
+        boolean pluginHelper = false;
         if (Emulator.getPluginManager().isRegistered(FurniturePlacedEvent.class, true)) {
-            Event furniturePlacedEvent = new FurniturePlacedEvent(item, owner, tile);
-            Emulator.getPluginManager().fireEvent(furniturePlacedEvent);
+            FurniturePlacedEvent event = Emulator.getPluginManager().fireEvent(new FurniturePlacedEvent(item, owner, tile));
 
-            if (furniturePlacedEvent.isCancelled())
+            if (event.isCancelled()) {
                 return FurnitureMovementError.CANCEL_PLUGIN_PLACE;
+            }
+
+            pluginHelper = event.hasPluginHelper();
         }
 
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
 
         FurnitureMovementError fits = furnitureFitsAt(tile, item, rotation);
 
-        if (!fits.equals(FurnitureMovementError.NONE)) {
+        if (!fits.equals(FurnitureMovementError.NONE) && !pluginHelper) {
             return fits;
         }
 
@@ -4468,9 +4478,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public FurnitureMovementError moveFurniTo(HabboItem item, RoomTile tile, int rotation, Habbo actor) {
         RoomTile oldLocation = this.layout.getTile(item.getX(), item.getY());
+
+        boolean pluginHelper = false;
         if (Emulator.getPluginManager().isRegistered(FurnitureMovedEvent.class, true)) {
-            if (Emulator.getPluginManager().fireEvent(new FurnitureMovedEvent(item, actor, oldLocation, tile)).isCancelled())
+            FurnitureMovedEvent event = Emulator.getPluginManager().fireEvent(new FurnitureMovedEvent(item, actor, oldLocation, tile));
+            if(event.isCancelled()) {
                 return FurnitureMovementError.CANCEL_PLUGIN_MOVE;
+            }
+            pluginHelper = event.hasPluginHelper();
         }
 
         HabboItem topItem = this.getTopItemAt(tile.x, tile.y);
@@ -4482,7 +4497,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         //Check if can be placed at new position
         THashSet<RoomTile> occupiedTiles = this.layout.getTilesAt(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
 
-        if (!stackHelper.isPresent()) {
+        if (!stackHelper.isPresent() && !pluginHelper) {
             if (topItem != item) {
                 for (RoomTile t : occupiedTiles) {
                     HabboItem tileTopItem = this.getTopItemAt(t.x, t.y);
