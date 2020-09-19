@@ -186,9 +186,10 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
         packet.readInt();
         packet.readString();
 
-        this.items.clear();
-
         int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
 
         for (int i = 0; i < count; i++) {
             this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt()));

@@ -17,6 +17,8 @@ import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemUpdateComposer;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.ResultSet;
@@ -24,6 +26,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WiredEffectMoveRotateFurni.class);
+
     public static final WiredEffectType type = WiredEffectType.MOVE_ROTATE;
     private final THashSet<HabboItem> items = new THashSet<>(WiredHandler.MAXIMUM_FURNI_SELECTION / 2);
     private int direction;
@@ -40,7 +46,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         // remove items that are no longer in the room
-        this.items.removeIf( item -> Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null);
+        this.items.removeIf(item -> Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null);
 
         THashSet<RoomTile> tilesToUpdate = new THashSet<>(Math.min(this.items.size(), 10));
 
@@ -53,10 +59,9 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                 //Verify if rotation result in a valid position
                 FurnitureMovementError rotateError = room.furnitureFitsAt(room.getLayout().getTile(item.getX(), item.getY()), item, newRotation);
                 if (item.getRotation() != newRotation && (rotateError.equals(FurnitureMovementError.TILE_HAS_HABBOS) || rotateError.equals(FurnitureMovementError.TILE_HAS_PETS) ||
-                        rotateError.equals(FurnitureMovementError.TILE_HAS_BOTS) || rotateError.equals(FurnitureMovementError.NONE)))
-                {
+                        rotateError.equals(FurnitureMovementError.TILE_HAS_BOTS) || rotateError.equals(FurnitureMovementError.NONE))) {
                     item.setRotation(newRotation);
-                    if(this.direction == 0) {
+                    if (this.direction == 0) {
                         tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                         room.sendComposer(new FloorItemUpdateComposer(item).compose());
                         for (RoomTile t : tilesToUpdate) {
@@ -135,7 +140,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                         }
 
                         if (validMove) {
-                            if(this.rotation > 0) {
+                            if (this.rotation > 0) {
                                 item.setX(newTile.x);
                                 item.setY(newTile.y);
                                 item.setZ(item.getZ() + offset);
@@ -144,8 +149,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                                     room.updateHabbosAt(t.x, t.y);
                                     room.updateBotsAt(t.x, t.y);
                                 }
-                            }
-                            else {
+                            } else {
                                 room.sendComposer(new FloorItemOnRollerComposer(item, null, newTile, offset, room).compose());
                             }
                         }
@@ -268,6 +272,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
         packet.readString();
 
         int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count", 5)) return false;
 
         this.items.clear();
         for (int i = 0; i < count; i++) {
@@ -282,6 +287,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
 
     /**
      * Returns a new rotation for an item based on the wired options
+     *
      * @param item
      * @return new rotation
      */
@@ -306,6 +312,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
 
     /**
      * Returns the direction of movement based on the wired settings
+     *
      * @return direction
      */
     private RoomUserRotation getMovementDirection() {

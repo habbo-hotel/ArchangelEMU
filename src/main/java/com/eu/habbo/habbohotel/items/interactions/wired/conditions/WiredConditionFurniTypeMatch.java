@@ -104,12 +104,13 @@ public class WiredConditionFurniTypeMatch extends InteractionWiredCondition {
 
     @Override
     public boolean saveData(ClientMessage packet) {
-        this.items.clear();
-
         packet.readInt();
         packet.readString();
 
         int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 

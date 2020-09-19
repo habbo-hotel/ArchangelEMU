@@ -3244,10 +3244,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                             RoomChatMessage itemMessage = new RoomChatMessage(Emulator.getTexts().getValue(item.getBaseItem().getName() + ".message." + randomValue, item.getBaseItem().getName() + ".message." + randomValue + " not found!"), habbo, RoomChatMessageBubbles.getBubble(Emulator.getConfig().getInt(item.getBaseItem().getName() + ".message.bubble", RoomChatMessageBubbles.PARROT.getType())));
 
-                            this.sendComposer(new RoomUserShoutComposer(itemMessage).compose());
+                            this.sendComposer(new RoomUserTalkComposer(itemMessage).compose());
 
                             try {
                                 item.onClick(habbo.getClient(), this, new Object[0]);
+                                item.setExtradata("1");
+                                updateItemState(item);
+
+                                Emulator.getThreading().run(() -> {
+                                    item.setExtradata("0");
+                                    updateItemState(item);
+                                }, 2000);
+
                                 break;
                             } catch (Exception e) {
                                 LOGGER.error("Caught exception", e);

@@ -527,10 +527,10 @@ public class RoomManager {
         if (overrideChecks ||
                 room.isOwner(habbo) ||
                 room.getState() == RoomState.OPEN ||
-                room.getState() == RoomState.INVISIBLE ||
                 habbo.hasPermission(Permission.ACC_ANYROOMOWNER) ||
                 habbo.hasPermission(Permission.ACC_ENTERANYROOM) ||
                 room.hasRights(habbo) ||
+                (room.getState().equals(RoomState.INVISIBLE) && room.hasRights(habbo)) ||
                 (room.hasGuild() && room.guildRightLevel(habbo) > 2)) {
             this.openRoom(habbo, room, doorLocation);
         } else if (room.getState() == RoomState.LOCKED) {
@@ -563,6 +563,9 @@ public class RoomManager {
                 habbo.getClient().sendResponse(new HotelViewComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
             }
+        } else {
+            habbo.getClient().sendResponse(new HotelViewComposer());
+            habbo.getHabboInfo().setLoadingRoom(0);
         }
     }
 
@@ -938,6 +941,8 @@ public class RoomManager {
             if (room.getOwnerId() != habbo.getHabboInfo().getId()) {
                 AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int) Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000));
             }
+
+            habbo.getMessenger().connectionChanged(habbo, habbo.isOnline(), false);
         }
     }
 
