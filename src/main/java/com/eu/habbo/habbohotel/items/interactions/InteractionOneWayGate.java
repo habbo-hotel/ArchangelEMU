@@ -81,7 +81,6 @@ public class InteractionOneWayGate extends HabboItem {
             if (unit == null)
                 return;
 
-
             if (tileInfront.x == unit.getX() && tileInfront.y == unit.getY()) {
                 if (!currentLocation.hasUnits()) {
                     List<Runnable> onSuccess = new ArrayList<Runnable>();
@@ -111,6 +110,7 @@ public class InteractionOneWayGate extends HabboItem {
                     unit.setGoalLocation(currentLocation);
                     Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
                     room.sendComposer(new ItemIntStateComposer(this.getId(), 1).compose());
+                    super.onWalkOn(unit, room, objects);
 
                     /*
                     room.scheduledTasks.add(new Runnable()
