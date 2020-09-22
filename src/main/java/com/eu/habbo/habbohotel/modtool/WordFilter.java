@@ -138,29 +138,14 @@ public class WordFilter {
             filteredMessage = this.normalise(filteredMessage);
         }
 
-        TObjectHashIterator iterator = this.words.iterator();
-
-        boolean foundShit = false;
-
-        while (iterator.hasNext()) {
-            WordFilterWord word = (WordFilterWord) iterator.next();
-
-            if (StringUtils.containsIgnoreCase(filteredMessage, word.key)) {
-                if (habbo != null) {
-                    if (Emulator.getPluginManager().fireEvent(new UserTriggerWordFilterEvent(habbo, word)).isCancelled())
-                        continue;
-                }
-                filteredMessage = filteredMessage.replace("(?i)" + word.key, word.replacement);
-                foundShit = true;
-
-                if (habbo != null && word.muteTime > 0) {
-                    habbo.mute(word.muteTime, false);
-                }
+        for (WordFilterWord word : this.words) {
+            if (!StringUtils.containsIgnoreCase(filteredMessage, word.key)) continue;
+            if (habbo != null) {
+                if (Emulator.getPluginManager().fireEvent(new UserTriggerWordFilterEvent(habbo, word)).isCancelled())
+                    continue;
             }
-        }
 
-        if (!foundShit) {
-            return message;
+            filteredMessage = filteredMessage.replaceAll("(?i)" + Pattern.quote(word.key), word.replacement);
         }
 
         return filteredMessage;
