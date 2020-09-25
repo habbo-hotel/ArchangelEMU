@@ -79,6 +79,13 @@ public class RequestGuildBuyEvent extends MessageHandler {
                         base += 3;
                     }
 
+                    if(name.length() > 29){
+                        this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.INVALID_GUILD_NAME));
+                        return;
+                    }
+                    if(description.length() > 254){
+                        return;
+                    }
                     Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), roomId, r.getName(), name, description, badge, colorOne, colorTwo);
 
                     r.setGuild(guild.getId());
