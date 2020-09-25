@@ -12,7 +12,7 @@ public class DebugConsoleComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.DebugConsoleComposer);
         this.response.appendBoolean(this.debugging);
         return this.response;

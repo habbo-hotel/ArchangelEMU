@@ -48,12 +48,9 @@ public class InteractionTileEffectProvider extends InteractionCustomValues {
         room.updateItem(this);
 
         final InteractionTileEffectProvider proxy = this;
-        Emulator.getThreading().run(new Runnable() {
-            @Override
-            public void run() {
-                proxy.values.put("state", "0");
-                room.updateItem(proxy);
-            }
+        Emulator.getThreading().run(() -> {
+            proxy.values.put("state", "0");
+            room.updateItem(proxy);
         }, 500);
 
         room.giveEffect(roomUnit, effectId, -1);

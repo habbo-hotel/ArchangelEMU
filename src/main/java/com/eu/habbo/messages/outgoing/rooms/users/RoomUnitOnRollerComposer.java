@@ -9,8 +9,11 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RoomUnitOnRollerComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnitOnRollerComposer.class);
     private final RoomUnit roomUnit;
     private final HabboItem roller;
     private final RoomTile oldLocation;
@@ -18,6 +21,8 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
     private final RoomTile newLocation;
     private final double newZ;
     private final Room room;
+    private int x;
+    private int y;
 
     public RoomUnitOnRollerComposer(RoomUnit roomUnit, HabboItem roller, RoomTile oldLocation, double oldZ, RoomTile newLocation, double newZ, Room room) {
         this.roomUnit = roomUnit;
@@ -40,7 +45,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         if (!this.room.isLoaded())
             return null;
 
@@ -58,14 +63,23 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
 
         if (this.roller != null && room.getLayout() != null) {
             RoomTile rollerTile = room.getLayout().getTile(this.roller.getX(), this.roller.getY());
-
+            HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
+            if (topItem != null) {
+                try {
+                    topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
+                } catch (Exception e) {
+                    LOGGER.error("Caught exception", e);
+                }
+            }
             Emulator.getThreading().run(() -> {
                 if (RoomUnitOnRollerComposer.this.oldLocation == rollerTile && RoomUnitOnRollerComposer.this.roomUnit.getGoal() == rollerTile) {
                     RoomUnitOnRollerComposer.this.roomUnit.setLocation(room.getLayout().getTile(newLocation.x, newLocation.y));
                     RoomUnitOnRollerComposer.this.roomUnit.setPreviousLocationZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
                     RoomUnitOnRollerComposer.this.roomUnit.setZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
                     RoomUnitOnRollerComposer.this.roomUnit.sitUpdate = true;
+
                 }
+
             }, this.room.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
         } else {
             this.roomUnit.setLocation(this.newLocation);

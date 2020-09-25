@@ -12,7 +12,7 @@ public class KnockKnockUnknownComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(478); //TODO Hardcoded header
         this.response.appendString(this.habbo.getHabboInfo().getUsername());
         this.response.appendInt(this.habbo.getHabboInfo().getId());

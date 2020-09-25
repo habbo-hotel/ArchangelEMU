@@ -23,7 +23,7 @@ public class MarketplaceBuyErrorComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.MarketplaceBuyErrorComposer);
         this.response.appendInt(this.errorCode); //result
         this.response.appendInt(this.unknown); //newOfferId

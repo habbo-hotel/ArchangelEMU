@@ -25,7 +25,7 @@ public class FloorItemOnRollerComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         short oldX = this.item.getX();
         short oldY = this.item.getY();
 

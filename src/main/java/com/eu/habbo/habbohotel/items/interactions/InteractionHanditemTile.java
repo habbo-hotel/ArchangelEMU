@@ -20,12 +20,9 @@ public class InteractionHanditemTile extends InteractionHanditem {
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         InteractionHanditemTile instance = this;
-        Emulator.getThreading().run(new Runnable() {
-            @Override
-            public void run() {
-                if (roomUnit.getCurrentLocation().x == instance.getX() && roomUnit.getCurrentLocation().y == instance.getY()) {
-                    instance.handle(room, roomUnit);
-                }
+        Emulator.getThreading().run(() -> {
+            if (roomUnit.getCurrentLocation().x == instance.getX() && roomUnit.getCurrentLocation().y == instance.getY()) {
+                instance.handle(room, roomUnit);
             }
         }, 3000);
     }

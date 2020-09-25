@@ -68,9 +68,10 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
         packet.readInt();
         this.botName = packet.readString();
 
-        this.items.clear();
-
         int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
 
         for (int i = 0; i < count; i++) {
             this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt()));
@@ -88,14 +89,13 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (this.items.isEmpty())
-            return false;
-
         List<Bot> bots = room.getBots(this.botName);
 
-        if (bots.isEmpty())
+        if (this.items.isEmpty() || bots.size() != 1) {
             return false;
+        }
 
+        Bot bot = bots.get(0);
         THashSet<HabboItem> items = new THashSet<>();
 
         for (HabboItem item : this.items) {
@@ -108,17 +108,15 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
         }
 
         if (this.items.size() > 0) {
-            for (Bot bot : bots) {
-                int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
-                int j = 1;
-                for (HabboItem item : this.items) {
-                    if (item.getRoomId() != 0 && item.getRoomId() == bot.getRoom().getId()) {
-                        if (i == j) {
-                            bot.getRoomUnit().setGoalLocation(room.getLayout().getTile(item.getX(), item.getY()));
-                            break;
-                        } else {
-                            j++;
-                        }
+            int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
+            int j = 1;
+            for (HabboItem item : this.items) {
+                if (item.getRoomId() != 0 && item.getRoomId() == bot.getRoom().getId()) {
+                    if (i == j) {
+                        bot.getRoomUnit().setGoalLocation(room.getLayout().getTile(item.getX(), item.getY()));
+                        break;
+                    } else {
+                        j++;
                     }
                 }
             }

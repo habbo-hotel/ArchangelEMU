@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class RoomUnknown3Composer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomUnknown3Composer);
         //Empty body
         return this.response;

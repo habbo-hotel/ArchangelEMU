@@ -12,7 +12,7 @@ public class UpdateFailedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UpdateFailedComposer);
         this.response.appendString(this.message);
         return this.response;

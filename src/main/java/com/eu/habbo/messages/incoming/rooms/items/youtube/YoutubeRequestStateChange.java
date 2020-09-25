@@ -1,7 +1,6 @@
 package com.eu.habbo.messages.incoming.rooms.items.youtube;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.items.YoutubeManager;
 import com.eu.habbo.habbohotel.items.interactions.InteractionYoutubeTV;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;

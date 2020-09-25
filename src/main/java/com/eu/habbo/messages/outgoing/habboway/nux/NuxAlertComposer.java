@@ -12,7 +12,7 @@ public class NuxAlertComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.NuxAlertComposer);
         this.response.appendString(this.link);
         return this.response;

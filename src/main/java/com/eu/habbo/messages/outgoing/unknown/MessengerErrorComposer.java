@@ -14,7 +14,7 @@ public class MessengerErrorComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.MessengerErrorComposer);
         this.response.appendInt(this.errors.size());
         for (Map.Entry<Integer, Integer> entry : this.errors.entrySet()) {

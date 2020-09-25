@@ -13,12 +13,14 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import com.eu.habbo.util.pathfinding.Rotation;
+import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ScheduledFuture;
 
 public class InteractionVendingMachine extends HabboItem {
     public InteractionVendingMachine(ResultSet set, Item baseItem) throws SQLException {
@@ -30,112 +32,120 @@ public class InteractionVendingMachine extends HabboItem {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.setExtradata("0");
     }
+    
+    public THashSet<RoomTile> getActivatorTiles(Room room) {
+        THashSet<RoomTile> tiles = new THashSet<>();
+        RoomTile tileInFront = getSquareInFront(room.getLayout(), this);
 
-    @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        return true;
+        if (tileInFront != null)
+            tiles.add(tileInFront);
+
+        tiles.add(room.getLayout().getTile(this.getX(), this.getY()));
+        return tiles;
     }
 
     @Override
-    public boolean isWalkable() {
-        return false;
+    public void serializeExtradata(ServerMessage serverMessage) {
+        serverMessage.appendInt((this.isLimited() ? 256 : 0));
+        serverMessage.appendString(this.getExtradata());
+
+        super.serializeExtradata(serverMessage);
+    }
+
+    private void tryInteract(GameClient client, Room room, RoomUnit unit) {
+        THashSet<RoomTile> activatorTiles = getActivatorTiles(room);
+
+        if(activatorTiles.size() == 0)
+            return;
+
+        boolean inActivatorSpace = false;
+
+        for(RoomTile tile : activatorTiles) {
+            if(unit.getCurrentLocation().is(unit.getX(), unit.getY())) {
+                inActivatorSpace = true;
+            }
+        }
+
+        if(inActivatorSpace) {
+            useVendingMachine(client, room, unit);
+        }
+    }
+
+    private void useVendingMachine(GameClient client, Room room, RoomUnit unit) {
+        this.setExtradata("1");
+        room.updateItem(this);
+
+        if(!unit.isWalking() && !unit.hasStatus(RoomUnitStatus.SIT) && !unit.hasStatus(RoomUnitStatus.LAY)) {
+            this.rotateToMachine(room, unit);
+        }
+
+        Emulator.getThreading().run(() -> {
+
+            giveVendingMachineItem(room, unit);
+
+            if (this.getBaseItem().getEffectM() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.M)
+                room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectM(), -1);
+            if (this.getBaseItem().getEffectF() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.F)
+                room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectF(), -1);
+
+            Emulator.getThreading().run(this, 500);
+        }, 1500);
+    }
+
+    public void giveVendingMachineItem(Room room, RoomUnit unit) {
+        Emulator.getThreading().run(new RoomUnitGiveHanditem(unit, room, this.getBaseItem().getRandomVendingItem()));
     }
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
+        
+        if (client == null) {
+            return;
+        }
 
-        if (client != null) {
-            RoomTile tile = this.getRequiredTile(client.getHabbo(), room);
+        RoomUnit unit = client.getHabbo().getRoomUnit();
 
-            if (tile != null) {
-                if (tile.equals(client.getHabbo().getRoomUnit().getCurrentLocation())) {
-                    if (this.getExtradata().equals("0") || this.getExtradata().length() == 0) {
-                        if (!client.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.SIT) && (!client.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.MOVE) || tile.equals(client.getHabbo().getRoomUnit().getGoal()))) {
-                            room.updateHabbo(client.getHabbo());
-                            this.rotateToMachine(client.getHabbo().getRoomUnit());
-                            client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
-                            room.scheduledComposers.add(new RoomUserStatusComposer(client.getHabbo().getRoomUnit()).compose());
-                        }
+        THashSet<RoomTile> activatorTiles = getActivatorTiles(room);
 
-                        super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
+        if(activatorTiles.size() == 0)
+            return;
 
-                        this.setExtradata("1");
-                        room.scheduledComposers.add(new FloorItemUpdateComposer(this).compose());
+        boolean inActivatorSpace = false;
 
-                        Emulator.getThreading().run(() -> {
-                            Emulator.getThreading().run(this, 1000);
-                            this.giveVendingMachineItem(client.getHabbo(), room);
+        for(RoomTile tile : activatorTiles) {
+            if(unit.getCurrentLocation().is(tile.x, tile.y)) {
+                inActivatorSpace = true;
+            }
+        }
 
-                            if (this.getBaseItem().getEffectM() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.M)
-                                room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectM(), -1);
-                            if (this.getBaseItem().getEffectF() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.F)
-                                room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectF(), -1);
-                        }, 500);
-                    }
-                } else {
-                    if (!tile.isWalkable() && tile.state != RoomTileState.SIT && tile.state != RoomTileState.LAY) {
-                        for (RoomTile t : room.getLayout().getTilesAround(room.getLayout().getTile(this.getX(), this.getY()))) {
-                            if (t != null && t.isWalkable()) {
-                                tile = t;
-                                break;
-                            }
-                        }
-                    }
-
-                    RoomTile finalTile = tile;
-                    client.getHabbo().getRoomUnit().setGoalLocation(tile);
-
-                    Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), tile, room, () -> {
-                        this.setExtradata("1");
-                        room.scheduledComposers.add(new FloorItemUpdateComposer(this).compose());
-
-                        try {
-                            super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        Emulator.getThreading().run(() -> {
-                            client.getHabbo().getRoomUnit().setMoveBlockingTask(Emulator.getThreading().run(() -> {
-                                if (client.getHabbo().getRoomUnit().getCurrentLocation().equals(finalTile)) {
-                                    this.rotateToMachine(client.getHabbo().getRoomUnit());
-                                    room.sendComposer(new RoomUserStatusComposer(client.getHabbo().getRoomUnit()).compose());
-                                }
-
-                                try {
-                                    Emulator.getThreading().run(() -> {
-                                        Emulator.getThreading().run(this, 1000);
-                                        this.giveVendingMachineItem(client.getHabbo(), room);
-
-                                        if (this.getBaseItem().getEffectM() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.M)
-                                            room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectM(), -1);
-                                        if (this.getBaseItem().getEffectF() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.F)
-                                            room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectF(), -1);
-                                    }, 500).get();
-                                } catch (InterruptedException | ExecutionException e) {
-                                    e.printStackTrace();
-                                }
-                            }, 300));
-                        }, 250);
-                    }, null));
+        if(!inActivatorSpace) {
+            RoomTile tileToWalkTo = null;
+            for(RoomTile tile : activatorTiles) {
+                if(room.getLayout().tileWalkable(tile.x, tile.y) && (tileToWalkTo == null || tileToWalkTo.distance(unit.getCurrentLocation()) > tile.distance(unit.getCurrentLocation()))) {
+                    tileToWalkTo = tile;
                 }
             }
+
+            if(tileToWalkTo != null) {
+                List<Runnable> onSuccess = new ArrayList<Runnable>();
+                List<Runnable> onFail = new ArrayList<Runnable>();
+
+                onSuccess.add(() -> {
+                    tryInteract(client, room, unit);
+                });
+
+                unit.setGoalLocation(tileToWalkTo);
+                Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tileToWalkTo, room, onSuccess, onFail));
+            }
+        }
+        else {
+            useVendingMachine(client, room, unit);
         }
     }
 
     @Override
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
 
@@ -151,13 +161,14 @@ public class InteractionVendingMachine extends HabboItem {
         }
     }
 
+    @Override
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
+        return true;
+    }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage) {
-        serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
-
-        super.serializeExtradata(serverMessage);
+    public boolean isWalkable() {
+        return this.getBaseItem().allowWalk();
     }
 
     @Override
@@ -165,44 +176,12 @@ public class InteractionVendingMachine extends HabboItem {
         return true;
     }
 
-    private void rotateToMachine(RoomUnit unit) {
+    private void rotateToMachine(Room room, RoomUnit unit) {
         RoomUserRotation rotation = RoomUserRotation.values()[Rotation.Calculate(unit.getX(), unit.getY(), this.getX(), this.getY())];
-        boolean onlyHead = false;
 
-        switch (unit.getBodyRotation()) {
-            case NORTH_EAST:
-                if (rotation.equals(RoomUserRotation.NORTH) || rotation.equals(RoomUserRotation.EAST))
-                    onlyHead = true;
-                break;
-
-            case NORTH_WEST:
-                if (rotation.equals(RoomUserRotation.NORTH) || rotation.equals(RoomUserRotation.WEST))
-                    onlyHead = true;
-                break;
-
-            case SOUTH_EAST:
-                if (rotation.equals(RoomUserRotation.SOUTH) || rotation.equals(RoomUserRotation.EAST))
-                    onlyHead = true;
-                break;
-
-            case SOUTH_WEST:
-                if (rotation.equals(RoomUserRotation.SOUTH) || rotation.equals(RoomUserRotation.WEST))
-                    onlyHead = true;
-                break;
-        }
-
-        if (onlyHead) {
-            unit.setHeadRotation(rotation);
-        } else {
+        if(Math.abs(unit.getBodyRotation().getValue() - rotation.getValue()) > 1) {
             unit.setRotation(rotation);
+            unit.statusUpdate(true);
         }
-    }
-
-    public void giveVendingMachineItem(Habbo habbo, Room room) {
-        Emulator.getThreading().run(new RoomUnitGiveHanditem(habbo.getRoomUnit(), room, this.getBaseItem().getRandomVendingItem()));
-    }
-
-    public RoomTile getRequiredTile(Habbo habbo, Room room) {
-        return getSquareInFront(room.getLayout(), this);
     }
 }

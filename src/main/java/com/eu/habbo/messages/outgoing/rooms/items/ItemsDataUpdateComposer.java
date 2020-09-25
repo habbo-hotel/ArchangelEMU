@@ -16,7 +16,7 @@ public class ItemsDataUpdateComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ItemsDataUpdateComposer);
         this.response.appendInt(this.items.size());
 

@@ -25,7 +25,7 @@ public class FriendChatMessageComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.FriendChatMessageComposer);
         this.response.appendInt(this.toId);
         this.response.appendString(this.message.getMessage());

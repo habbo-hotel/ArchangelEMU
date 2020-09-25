@@ -8,6 +8,8 @@ import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToRoomUnit;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ButlerBot extends Bot {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ButlerBot.class);
     public static THashMap<THashSet<String>, Integer> serveItems = new THashMap<>();
 
     public ButlerBot(ResultSet set) throws SQLException {
@@ -43,7 +46,7 @@ public class ButlerBot extends Bot {
                 serveItems.put(ks, set.getInt("item"));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -75,20 +78,13 @@ public class ButlerBot extends Bot {
                                 tasks.add(new RoomUnitGiveHanditem(serveEvent.habbo.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), serveEvent.itemId));
                                 tasks.add(new RoomUnitGiveHanditem(this.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), 0));
 
-                                tasks.add(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        b.talk(Emulator.getTexts().getValue("bots.butler.given").replace("%key%", key).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername()));
-                                    }
-                                });
+                                tasks.add(() -> b.talk(Emulator.getTexts().getValue("bots.butler.given").replace("%key%", key).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername())));
 
                                 List<Runnable> failedReached = new ArrayList();
-                                failedReached.add(new Runnable() {
-                                    public void run() {
-                                        if (b.getRoomUnit().getCurrentLocation().distance(serveEvent.habbo.getRoomUnit().getCurrentLocation()) <= Emulator.getConfig().getInt("hotel.bot.butler.servedistance", 8)) {
-                                            for (Runnable t : tasks) {
-                                                t.run();
-                                            }
+                                failedReached.add(() -> {
+                                    if (b.getRoomUnit().getCurrentLocation().distance(serveEvent.habbo.getRoomUnit().getCurrentLocation()) <= Emulator.getConfig().getInt("hotel.bot.butler.servedistance", 8)) {
+                                        for (Runnable t : tasks) {
+                                            t.run();
                                         }
                                     }
                                 });

@@ -18,7 +18,7 @@ public class AchievementProgressComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.AchievementProgressComposer);
 
         int achievementProgress;

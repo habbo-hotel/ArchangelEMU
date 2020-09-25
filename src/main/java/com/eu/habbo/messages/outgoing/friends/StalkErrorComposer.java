@@ -17,7 +17,7 @@ public class StalkErrorComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.StalkErrorComposer);
         this.response.appendInt(this.errorCode);
         return this.response;

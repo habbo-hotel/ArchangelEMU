@@ -14,7 +14,7 @@ public class EffectsListAddComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.EffectsListAddComposer);
         this.response.appendInt(this.effect.effect); //Type
         this.response.appendInt(0); //Unknown Costume?

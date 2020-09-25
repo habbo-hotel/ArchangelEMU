@@ -14,7 +14,7 @@ public class StaffAlertWithLinkComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.StaffAlertWithLinkComposer);
         this.response.appendString(this.message);
         this.response.appendString(this.link);

@@ -12,7 +12,7 @@ public class NewYearResolutionCompletedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.NewYearResolutionCompletedComposer);
         this.response.appendString(this.badge);
         this.response.appendString(this.badge);

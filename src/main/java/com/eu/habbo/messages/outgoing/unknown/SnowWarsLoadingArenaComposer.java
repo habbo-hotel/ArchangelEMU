@@ -11,7 +11,7 @@ public class SnowWarsLoadingArenaComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(3850);
         this.response.appendInt(this.count); //GameID?
         this.response.appendInt(0); //Count

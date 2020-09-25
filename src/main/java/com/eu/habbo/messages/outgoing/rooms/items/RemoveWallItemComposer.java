@@ -13,7 +13,7 @@ public class RemoveWallItemComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RemoveWallItemComposer);
         this.response.appendString(this.item.getId() + "");
         this.response.appendInt(this.item.getUserId());

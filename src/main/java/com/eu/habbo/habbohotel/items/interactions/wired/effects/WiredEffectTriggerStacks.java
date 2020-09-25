@@ -87,9 +87,10 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
         packet.readInt();
         packet.readString();
 
-        this.items.clear();
-
         int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
 
         for (int i = 0; i < count; i++) {
             this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt()));
@@ -102,7 +103,8 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (stuff != null && stuff.length >= 1 && stuff[stuff.length - 1] instanceof WiredEffectTriggerStacks) {
+
+        if (stuff == null || (stuff.length >= 1 && stuff[stuff.length - 1] instanceof WiredEffectTriggerStacks)) {
             return false;
         }
 
@@ -126,14 +128,14 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
                 }
             }
         }
+            Object[] newStuff = new Object[stuff.length + 1];
+            System.arraycopy(stuff, 0, newStuff, 0, stuff.length);
+            newStuff[newStuff.length - 1] = this;
+            WiredHandler.executeEffectsAtTiles(usedTiles, roomUnit, room, stuff);
 
-        Object[] newStuff = new Object[stuff.length + 1];
-        System.arraycopy(stuff, 0, newStuff, 0, stuff.length);
-        newStuff[newStuff.length - 1] = this;
-        WiredHandler.executeEffectsAtTiles(usedTiles, roomUnit, room, stuff);
+            return true;
+        }
 
-        return true;
-    }
 
     @Override
     public String getWiredData() {

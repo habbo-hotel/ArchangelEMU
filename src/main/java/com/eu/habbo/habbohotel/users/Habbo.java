@@ -20,6 +20,8 @@ import com.eu.habbo.plugin.events.users.UserPointsEvent;
 import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -28,6 +30,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Habbo implements Runnable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Habbo.class);
+
     private final HabboInfo habboInfo;
     private final HabboStats habboStats;
     private final Messenger messenger;
@@ -122,7 +127,7 @@ public class Habbo implements Runnable {
         this.messenger.connectionChanged(this, true, false);
 
         Emulator.getGameEnvironment().getRoomManager().loadRoomsForHabbo(this);
-        Emulator.getLogging().logUserLine(this.habboInfo.getUsername() + " logged in from IP " + this.habboInfo.getIpLogin());
+        LOGGER.info("{} logged in from IP {}", this.habboInfo.getUsername(), this.habboInfo.getIpLogin());
     }
 
 
@@ -148,7 +153,7 @@ public class Habbo implements Runnable {
                 }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         try {
@@ -164,13 +169,13 @@ public class Habbo implements Runnable {
 
             this.habboStats.dispose();
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
             return;
         } finally {
             Emulator.getGameEnvironment().getRoomManager().unloadRoomsForHabbo(this);
             Emulator.getGameEnvironment().getHabboManager().removeHabbo(this);
         }
-        Emulator.getLogging().logUserLine(this.habboInfo.getUsername() + " disconnected.");
+        LOGGER.info("{} disconnected.", this.habboInfo.getUsername());
         this.client = null;
     }
 
@@ -235,7 +240,8 @@ public class Habbo implements Runnable {
             return;
 
         this.getHabboInfo().addCurrencyAmount(event.type, event.points);
-        if (this.client != null) this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
+        if (this.client != null)
+            this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
     }
 
 
@@ -379,6 +385,11 @@ public class Habbo implements Runnable {
     }
 
     public void mute(int seconds, boolean isFlood) {
+        if (seconds <= 0) {
+            LOGGER.warn("Tried to mute user for {} seconds, which is invalid.", seconds);
+            return;
+        }
+
         if (!this.hasPermission("acc_no_mute")) {
             int remaining = this.habboStats.addMuteTime(seconds);
             this.client.sendResponse(new FloodCounterComposer(remaining));
@@ -426,9 +437,7 @@ public class Habbo implements Runnable {
 
 
     public void respect(Habbo target) {
-        if (target != null && target != this.client.getHabbo())
-
-        {
+        if (target != null && target != this.client.getHabbo()) {
             target.getHabboStats().respectPointsReceived++;
             this.client.getHabbo().getHabboStats().respectPointsGiven++;
             this.client.getHabbo().getHabboStats().respectPointsToGive--;
@@ -439,6 +448,7 @@ public class Habbo implements Runnable {
             AchievementManager.progressAchievement(target, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RespectEarned"));
 
             this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(this.client.getHabbo());
+            this.client.getHabbo().getHabboInfo().getCurrentRoom().dance(this.client.getHabbo().getRoomUnit(), DanceType.NONE);
         }
     }
 

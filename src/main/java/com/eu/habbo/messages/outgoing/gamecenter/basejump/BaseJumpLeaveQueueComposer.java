@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class BaseJumpLeaveQueueComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.BaseJumpLeaveQueueComposer);
         this.response.appendInt(3);
         return this.response;

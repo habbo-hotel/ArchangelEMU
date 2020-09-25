@@ -14,7 +14,7 @@ public class UserClubComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserClubComposer);
 
         this.response.appendString("club_habbo");

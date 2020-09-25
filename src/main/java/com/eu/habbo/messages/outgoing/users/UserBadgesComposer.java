@@ -17,7 +17,7 @@ public class UserBadgesComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserBadgesComposer);
         this.response.appendInt(this.habbo);
         synchronized (this.badges) {

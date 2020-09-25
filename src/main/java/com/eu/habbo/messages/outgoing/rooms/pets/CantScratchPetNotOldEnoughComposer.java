@@ -14,7 +14,7 @@ public class CantScratchPetNotOldEnoughComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CantScratchPetNotOldEnoughComposer);
         this.response.appendInt(this.currentAge);
         this.response.appendInt(this.requiredAge);

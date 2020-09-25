@@ -22,7 +22,7 @@ public class AdventCalendarDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.AdventCalendarDataComposer);
         this.response.appendString(this.eventName);
         this.response.appendString("");

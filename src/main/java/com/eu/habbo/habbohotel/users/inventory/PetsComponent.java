@@ -8,6 +8,8 @@ import gnu.trove.TCollections;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,6 +19,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class PetsComponent {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PetsComponent.class);
     private final TIntObjectMap<Pet> pets = TCollections.synchronizedMap(new TIntObjectHashMap<>());
 
     public PetsComponent(Habbo habbo) {
@@ -34,7 +37,7 @@ public class PetsComponent {
                     }
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }

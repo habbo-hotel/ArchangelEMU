@@ -15,7 +15,7 @@ public class WiredEffectSaveDataEvent extends MessageHandler {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if (room != null) {
-            if (room.hasRights(this.client.getHabbo()) || room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermission("acc_moverotate")) {
+            if (room.hasRights(this.client.getHabbo()) || room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermission(Permission.ACC_MOVEROTATE)) {
                 InteractionWiredEffect effect = room.getRoomSpecialTypes().getEffect(itemId);
 
                 if (effect != null) {

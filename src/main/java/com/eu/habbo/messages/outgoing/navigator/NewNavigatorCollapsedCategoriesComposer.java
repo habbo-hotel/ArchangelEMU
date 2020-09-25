@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class NewNavigatorCollapsedCategoriesComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.NewNavigatorCollapsedCategoriesComposer);
         this.response.appendInt(46);
         this.response.appendString("new_ads");

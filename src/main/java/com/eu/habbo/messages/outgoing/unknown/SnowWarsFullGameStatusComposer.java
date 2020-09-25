@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 
 public class SnowWarsFullGameStatusComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(0);
         this.response.appendInt(0); //Unused
         this.response.appendInt(0);

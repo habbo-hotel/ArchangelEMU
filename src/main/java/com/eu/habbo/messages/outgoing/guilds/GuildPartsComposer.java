@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class GuildPartsComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GroupPartsComposer);
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getBases().size());
         for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBases()) {

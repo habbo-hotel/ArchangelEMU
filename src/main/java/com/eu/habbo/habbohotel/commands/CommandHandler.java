@@ -15,6 +15,8 @@ import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,6 +24,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class CommandHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandHandler.class);
+
     private final static THashMap<String, Command> commands = new THashMap<>(5);
     private static final Comparator<Command> ALPHABETICAL_ORDER = new Comparator<Command>() {
         public int compare(Command c1, Command c2) {
@@ -33,7 +38,7 @@ public class CommandHandler {
     public CommandHandler() {
         long millis = System.currentTimeMillis();
         this.reloadCommands();
-        Emulator.getLogging().logStart("Command Handler -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Command Handler -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public static void addCommand(Command command) {
@@ -48,9 +53,9 @@ public class CommandHandler {
         try {
             //command.getConstructor().setAccessible(true);
             addCommand(command.newInstance());
-            Emulator.getLogging().logDebugLine("Added command: " + command.getName());
+            LOGGER.debug("Added command: {}", command.getName());
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 
@@ -67,7 +72,7 @@ public class CommandHandler {
                         for (String s : command.keys) {
                             if (s.toLowerCase().equals(parts[0].toLowerCase())) {
                                 boolean succes = false;
-                                if (command.permission == null || gameClient.getHabbo().hasPermission(command.permission, gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && (gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) || gameClient.getHabbo().hasPermission("acc_placefurni") || (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboInfo().getCurrentRoom().getGuildId() > 0 && gameClient.getHabbo().getHabboInfo().getCurrentRoom().guildRightLevel(gameClient.getHabbo()) >= 2))) {
+                                if (command.permission == null || gameClient.getHabbo().hasPermission(command.permission, gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && (gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) || gameClient.getHabbo().hasPermission(Permission.ACC_PLACEFURNI) || (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboInfo().getCurrentRoom().getGuildId() > 0 && gameClient.getHabbo().getHabboInfo().getCurrentRoom().guildRightLevel(gameClient.getHabbo()) >= 2))) {
                                     try {
                                         Emulator.getPluginManager().fireEvent(new UserExecuteCommandEvent(gameClient.getHabbo(), command, parts));
 
@@ -79,11 +84,11 @@ public class CommandHandler {
 
                                         succes = event.succes;
                                     } catch (Exception e) {
-                                        Emulator.getLogging().logErrorLine(e);
+                                        LOGGER.error("Caught exception", e);
                                     }
 
                                     if (gameClient.getHabbo().getHabboInfo().getRank().isLogCommands()) {
-                                        Emulator.getLogging().addLog(new CommandLog(gameClient.getHabbo().getHabboInfo().getId(), command, commandLine, succes));
+                                        Emulator.getDatabaseLogger().store(new CommandLog(gameClient.getHabbo().getHabboInfo().getId(), command, commandLine, succes));
                                     }
                                 }
 
@@ -279,6 +284,7 @@ public class CommandHandler {
         addCommand(new WordQuizCommand());
         addCommand(new UpdateYoutubePlaylistsCommand());
         addCommand(new AddYoutubePlaylistCommand());
+        addCommand(new SoftKickCommand());
 
         addCommand(new TestCommand());
     }
@@ -305,7 +311,6 @@ public class CommandHandler {
 
     public void dispose() {
         commands.clear();
-
-        Emulator.getLogging().logShutdownLine("Command Handler -> Disposed!");
+        LOGGER.info("Command Handler -> Disposed!");
     }
 }

@@ -17,6 +17,8 @@ import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WiredEffectToggleRandom extends InteractionWiredEffect {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WiredEffectToggleRandom.class);
+
     public static final WiredEffectType type = WiredEffectType.TOGGLE_RANDOM;
 
     private final THashSet<HabboItem> items = new THashSet<>();
@@ -120,7 +124,7 @@ public class WiredEffectToggleRandom extends InteractionWiredEffect {
                 item.setExtradata(Emulator.getRandom().nextInt(item.getBaseItem().getStateCount() + 1) + "");
                 room.updateItem(item);
             } catch (Exception e) {
-                Emulator.getLogging().logErrorLine(e);
+                LOGGER.error("Caught exception", e);
             }
         }
         return true;

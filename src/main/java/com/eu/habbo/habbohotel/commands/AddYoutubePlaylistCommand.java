@@ -3,12 +3,16 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.YoutubeManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class AddYoutubePlaylistCommand extends Command {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AddYoutubePlaylistCommand.class);
+
     public AddYoutubePlaylistCommand() {
         super("cmd_add_youtube_playlist", Emulator.getTexts().getValue("commands.keys.cmd_add_youtube_playlist").split(";"));
     }
@@ -49,7 +53,7 @@ public class AddYoutubePlaylistCommand extends Command {
 
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_add_youtube_playlist"));

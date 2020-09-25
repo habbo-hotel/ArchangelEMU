@@ -13,7 +13,7 @@ public class RoomHeightMapComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomHeightMapComposer);
         this.response.appendBoolean(true);
         this.response.appendInt(this.room.getWallHeight()); //FixedWallsHeight

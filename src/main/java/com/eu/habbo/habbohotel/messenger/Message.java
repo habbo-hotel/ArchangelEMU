@@ -1,12 +1,16 @@
 package com.eu.habbo.habbohotel.messenger;
 
 import com.eu.habbo.Emulator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Message implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Message.class);
+
     private final int fromId;
     private final int toId;
     private final int timestamp;
@@ -31,7 +35,7 @@ public class Message implements Runnable {
                 statement.setInt(4, this.timestamp);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }

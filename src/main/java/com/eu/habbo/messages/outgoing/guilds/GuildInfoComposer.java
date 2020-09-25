@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildMembershipStatus;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -26,8 +27,8 @@ public class GuildInfoComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
-        boolean adminPermissions = this.client.getHabbo().getHabboStats().hasGuild(this.guild.getId()) && this.client.getHabbo().hasPermission("acc_guild_admin");
+    protected ServerMessage composeInternal() {
+        boolean adminPermissions = this.client.getHabbo().getHabboStats().hasGuild(this.guild.getId()) && this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN);
         this.response.init(Outgoing.GuildInfoComposer);
         this.response.appendInt(this.guild.getId());
         this.response.appendBoolean(true);

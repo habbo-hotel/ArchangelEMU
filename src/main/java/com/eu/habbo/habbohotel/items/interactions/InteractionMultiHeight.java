@@ -11,7 +11,6 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import gnu.trove.set.hash.THashSet;
-import org.apache.commons.math3.util.Pair;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

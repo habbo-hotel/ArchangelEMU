@@ -13,7 +13,7 @@ public class NewUserIdentityComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.NewUserIdentityComposer);
         this.response.appendInt(this.habbo.noobStatus());
         return this.response;

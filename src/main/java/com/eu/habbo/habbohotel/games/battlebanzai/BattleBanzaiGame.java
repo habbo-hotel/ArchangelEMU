@@ -17,12 +17,16 @@ import com.eu.habbo.messages.outgoing.rooms.users.RoomUserActionComposer;
 import com.eu.habbo.threading.runnables.BattleBanzaiTilesFlicker;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class BattleBanzaiGame extends Game {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BattleBanzaiGame.class);
+
 
     public static final int effectId = 32;
 
@@ -40,6 +44,7 @@ public class BattleBanzaiGame extends Game {
     private final THashMap<Integer, HabboItem> gameTiles;
     private int tileCount;
     private int countDown;
+    private int countDown2;
 
     public BattleBanzaiGame(Room room) {
         super(BattleBanzaiGameTeam.class, BattleBanzaiGamePlayer.class, room, true);
@@ -54,8 +59,12 @@ public class BattleBanzaiGame extends Game {
     public void initialise() {
         if (!this.state.equals(GameState.IDLE))
             return;
-
+        
+        /* The first countdown is activated for the first two seconds emitting only the blue light (second interaction),
+            the second, after another two seconds, completely activates the sphere (third interaction).
+         */
         this.countDown = 3;
+        this.countDown2 = 2;
 
         this.resetMap();
 
@@ -101,8 +110,15 @@ public class BattleBanzaiGame extends Game {
 
                 if (this.countDown == 0) {
                     for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
-                        item.setExtradata("2");
+                        item.setExtradata("1");
                         this.room.updateItemState(item);
+                        if(this.countDown2 > 0) {
+                            this.countDown2--;
+                            if(this.countDown2 == 0) {
+                                item.setExtradata("2");
+                                this.room.updateItemState(item);
+                            }
+                        }
                     }
                 }
 
@@ -149,7 +165,7 @@ public class BattleBanzaiGame extends Game {
                 }
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 

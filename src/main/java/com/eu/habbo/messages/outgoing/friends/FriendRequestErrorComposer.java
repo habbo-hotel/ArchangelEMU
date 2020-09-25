@@ -16,7 +16,7 @@ public class FriendRequestErrorComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.FriendRequestErrorComposer);
         this.response.appendInt(0);
         this.response.appendInt(this.errorCode);

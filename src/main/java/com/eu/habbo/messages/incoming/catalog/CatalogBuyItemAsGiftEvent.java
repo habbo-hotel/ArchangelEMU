@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -25,6 +26,8 @@ import com.eu.habbo.messages.outgoing.users.UserPointsComposer;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,6 +36,8 @@ import java.sql.SQLException;
 import java.util.Calendar;
 
 public class CatalogBuyItemAsGiftEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogBuyItemAsGiftEvent.class);
+
     @Override
     public void handle() throws Exception {
         if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().lastGiftTimestamp >= CatalogManager.PURCHASE_COOLDOWN) {
@@ -66,6 +71,11 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                 int userId = 0;
 
                 if (!Emulator.getGameEnvironment().getCatalogManager().giftWrappers.containsKey(spriteId) && !Emulator.getGameEnvironment().getCatalogManager().giftFurnis.containsKey(spriteId)) {
+                    this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                    return;
+                }
+
+                if (!GiftConfigurationComposer.BOX_TYPES.contains(color) || !GiftConfigurationComposer.RIBBON_TYPES.contains(ribbonId)) {
                     this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
                     return;
                 }
@@ -104,7 +114,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                                 }
                             }
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            LOGGER.error("Caught SQL exception", e);
                         }
                     } else {
                         userId = habbo.getHabboInfo().getId();
@@ -287,7 +297,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                                                         try {
                                                             guildId = Integer.parseInt(extraData);
                                                         } catch (Exception e) {
-                                                            Emulator.getLogging().logErrorLine(e);
+                                                            LOGGER.error("Caught exception", e);
                                                             this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                                                             return;
                                                         }
@@ -343,15 +353,15 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
 
                     AchievementManager.progressAchievement(userId, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GiftReceiver"));
 
-                    if (!this.client.getHabbo().hasPermission("acc_infinite_credits")) {
+                    if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                         if (totalCredits > 0) {
                             this.client.getHabbo().giveCredits(-totalCredits);
                         }
                     }
                     if (totalPoints > 0) {
-                        if (item.getPointsType() == 0 && !this.client.getHabbo().hasPermission("acc_infinite_pixels")) {
+                        if (item.getPointsType() == 0 && !this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_PIXELS)) {
                             this.client.getHabbo().getHabboInfo().addPixels(-totalPoints);
-                        } else if (!this.client.getHabbo().hasPermission("acc_infinite_points")) {
+                        } else if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
                             this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalPoints);
                         }
                         this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -totalPoints, item.getPointsType()));
@@ -359,7 +369,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
 
                     this.client.sendResponse(new PurchaseOKComposer(item));
                 } catch (Exception e) {
-                    Emulator.getLogging().logPacketError(e);
+                    LOGGER.error("Exception caught", e);
                     this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                 }
             } finally {

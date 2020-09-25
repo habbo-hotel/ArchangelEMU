@@ -72,12 +72,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 boolean hasHabbos = false;
                 for (Habbo habbo : room.getHabbosAt(targetTile)) {
                     hasHabbos = true;
-                    Emulator.getThreading().run(new Runnable() {
-                        @Override
-                        public void run() {
-                            WiredHandler.handle(WiredTriggerType.COLLISION, habbo.getRoomUnit(), room, new Object[]{entry.getKey()});
-                        }
-                    });
+                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, habbo.getRoomUnit(), room, new Object[]{entry.getKey()}));
                 }
 
                 if (!hasHabbos) {
@@ -167,14 +162,17 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
 
     @Override
     public boolean saveData(ClientMessage packet, GameClient gameClient) {
-        this.items.clear();
         packet.readInt();
         this.startRotation = RoomUserRotation.fromValue(packet.readInt());
         this.rotateAction = packet.readInt();
         packet.readString();
 
-        int furniCount = packet.readInt();
-        for (int i = 0; i < furniCount; i++) {
+        int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
+
+        for (int i = 0; i < count; i++) {
             HabboItem item = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(packet.readInt());
 
             if (item != null) {

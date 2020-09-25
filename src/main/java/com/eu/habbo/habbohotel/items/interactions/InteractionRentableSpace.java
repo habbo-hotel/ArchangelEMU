@@ -12,6 +12,8 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.rentablespaces.RentableSpaceInfoComposer;
 import com.eu.habbo.threading.runnables.ClearRentedSpace;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.Connection;
@@ -20,6 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionRentableSpace extends HabboItem {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionRentableSpace.class);
+
     private int renterId;
     private String renterName;
     private int endTimestamp;
@@ -50,7 +54,7 @@ public class InteractionRentableSpace extends HabboItem {
                                 }
                             }
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            LOGGER.error("Caught SQL exception", e);
                         }
                     }
                 } else {
@@ -180,7 +184,7 @@ public class InteractionRentableSpace extends HabboItem {
                 statement.setInt(1, zero);
                 statement.setInt(2, zero);
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
 

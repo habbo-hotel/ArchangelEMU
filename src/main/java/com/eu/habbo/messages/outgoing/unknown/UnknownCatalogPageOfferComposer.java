@@ -15,7 +15,7 @@ public class UnknownCatalogPageOfferComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UnknownCatalogPageOfferComposer);
         this.response.appendInt(this.pageId);
         this.catalogItem.serialize(this.response);

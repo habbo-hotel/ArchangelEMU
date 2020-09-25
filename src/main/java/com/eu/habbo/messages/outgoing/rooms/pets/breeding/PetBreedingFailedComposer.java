@@ -14,7 +14,7 @@ public class PetBreedingFailedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.PetBreedingFailedComposer);
         this.response.appendInt(this.anInt1);
         this.response.appendInt(this.anInt2);

@@ -13,7 +13,7 @@ public class MeMenuSettingsComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.MeMenuSettingsComposer);
         this.response.appendInt(this.habbo.getHabboStats().volumeSystem);
         this.response.appendInt(this.habbo.getHabboStats().volumeFurni);

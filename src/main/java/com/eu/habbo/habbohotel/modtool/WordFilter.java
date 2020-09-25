@@ -9,6 +9,8 @@ import com.eu.habbo.plugin.events.users.UserTriggerWordFilterEvent;
 import gnu.trove.iterator.hash.TObjectHashIterator;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -18,6 +20,8 @@ import java.text.Normalizer;
 import java.util.regex.Pattern;
 
 public class WordFilter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WordFilter.class);
+
     private static final Pattern DIACRITICS_AND_FRIENDS = Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
     //Configuration. Loaded from database & updated accordingly.
     public static boolean ENABLED_FRIENDCHAT = true;
@@ -29,7 +33,7 @@ public class WordFilter {
     public WordFilter() {
         long start = System.currentTimeMillis();
         this.reload();
-        Emulator.getLogging().logStart("WordFilter -> Loaded! (" + (System.currentTimeMillis() - start) + " MS)");
+        LOGGER.info("WordFilter -> Loaded! (" + (System.currentTimeMillis() - start) + " MS)");
     }
 
     private static String stripDiacritics(String str) {
@@ -54,7 +58,7 @@ public class WordFilter {
                     try {
                         word = new WordFilterWord(set);
                     } catch (SQLException e) {
-                        Emulator.getLogging().logSQLException(e);
+                        LOGGER.error("Caught SQL exception", e);
                         continue;
                     }
 
@@ -67,7 +71,7 @@ public class WordFilter {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -134,29 +138,14 @@ public class WordFilter {
             filteredMessage = this.normalise(filteredMessage);
         }
 
-        TObjectHashIterator iterator = this.words.iterator();
-
-        boolean foundShit = false;
-
-        while (iterator.hasNext()) {
-            WordFilterWord word = (WordFilterWord) iterator.next();
-
-            if (StringUtils.containsIgnoreCase(filteredMessage, word.key)) {
-                if (habbo != null) {
-                    if (Emulator.getPluginManager().fireEvent(new UserTriggerWordFilterEvent(habbo, word)).isCancelled())
-                        continue;
-                }
-                filteredMessage = filteredMessage.replace("(?i)" + word.key, word.replacement);
-                foundShit = true;
-
-                if (habbo != null && word.muteTime > 0) {
-                    habbo.mute(word.muteTime, false);
-                }
+        for (WordFilterWord word : this.words) {
+            if (!StringUtils.containsIgnoreCase(filteredMessage, word.key)) continue;
+            if (habbo != null) {
+                if (Emulator.getPluginManager().fireEvent(new UserTriggerWordFilterEvent(habbo, word)).isCancelled())
+                    continue;
             }
-        }
 
-        if (!foundShit) {
-            return message;
+            filteredMessage = filteredMessage.replaceAll("(?i)" + Pattern.quote(word.key), word.replacement);
         }
 
         return filteredMessage;

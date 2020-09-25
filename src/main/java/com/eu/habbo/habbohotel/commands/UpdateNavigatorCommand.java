@@ -13,7 +13,7 @@ public class UpdateNavigatorCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         Emulator.getGameEnvironment().getNavigatorManager().loadNavigator();
         Emulator.getGameEnvironment().getRoomManager().loadRoomModels();
-
+        Emulator.getGameEnvironment().getRoomManager().loadPublicRooms();
         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_navigator"), RoomChatMessageBubbles.ALERT);
 
         return true;

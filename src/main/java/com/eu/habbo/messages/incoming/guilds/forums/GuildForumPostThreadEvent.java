@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumAddCommentComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadMessagesComposer;
@@ -18,7 +19,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
     public int getRatelimit() {
         return 1000;
     }
-
+    
     @Override
     public void handle() throws Exception {
         int guildId = this.packet.readInt();
@@ -38,7 +39,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
             return;
         }
 
-        boolean isStaff = this.client.getHabbo().hasPermission("acc_modtool_ticket_q");
+        boolean isStaff = this.client.getHabbo().hasPermission(Permission.ACC_MODTOOL_TICKET_Q);
 
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
 

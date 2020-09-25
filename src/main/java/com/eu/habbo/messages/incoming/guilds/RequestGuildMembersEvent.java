@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.GuildMembersComposer;
 
@@ -18,7 +19,7 @@ public class RequestGuildMembersEvent extends MessageHandler {
         Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(groupId);
 
         if (g != null) {
-            boolean isAdmin = this.client.getHabbo().hasPermission("acc_guild_admin");
+            boolean isAdmin = this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN);
             if (!isAdmin && this.client.getHabbo().getHabboStats().hasGuild(g.getId())) {
                 GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(g, this.client.getHabbo());
                 isAdmin = member != null && (member.getRank().equals(GuildRank.OWNER) || member.getRank().equals(GuildRank.ADMIN));

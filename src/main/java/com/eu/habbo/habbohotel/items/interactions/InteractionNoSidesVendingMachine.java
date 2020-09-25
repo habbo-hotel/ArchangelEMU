@@ -4,6 +4,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
+import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +19,18 @@ public class InteractionNoSidesVendingMachine extends InteractionVendingMachine 
     }
 
     @Override
-    public RoomTile getRequiredTile(Habbo habbo, Room room) {
-        return habbo.getRoomUnit().getClosestAdjacentTile(this.getX(), this.getY(), true);
+    public THashSet<RoomTile> getActivatorTiles(Room room) {
+
+        THashSet<RoomTile> tiles = new THashSet<RoomTile>();
+        for(int x = -1; x <= 1; x++) {
+            for(int y = -1; y <= 1; y++) {
+                RoomTile tile = room.getLayout().getTile((short)(this.getX() + x), (short)(this.getY() + y));
+                if(tile != null) {
+                    tiles.add(tile);
+                }
+            }
+        }
+
+        return tiles;
     }
 }

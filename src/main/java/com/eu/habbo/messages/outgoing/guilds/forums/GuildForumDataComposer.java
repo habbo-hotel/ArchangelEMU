@@ -6,12 +6,15 @@ import com.eu.habbo.habbohotel.guilds.GuildMember;
 import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,6 +23,8 @@ import java.sql.SQLException;
 
 
 public class GuildForumDataComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuildForumDataComposer.class);
+
     public final Guild guild;
     public Habbo habbo;
 
@@ -73,7 +78,7 @@ public class GuildForumDataComposer extends MessageComposer {
                 newComments = set.getInt(1);
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         response.appendInt(guild.getId());
@@ -95,7 +100,7 @@ public class GuildForumDataComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
 
         try {
             this.response.init(Outgoing.GuildForumDataComposer);
@@ -103,7 +108,7 @@ public class GuildForumDataComposer extends MessageComposer {
 
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo);
             boolean isAdmin = member != null && (member.getRank().type < GuildRank.MEMBER.type || guild.getOwnerId() == this.habbo.getHabboInfo().getId());
-            boolean isStaff = this.habbo.hasPermission("acc_modtool_ticket_q");
+            boolean isStaff = this.habbo.hasPermission(Permission.ACC_MODTOOL_TICKET_Q);
 
             String errorRead = "";
             String errorPost = "";

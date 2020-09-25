@@ -56,24 +56,14 @@ public class InteractionPressurePlate extends HabboItem {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Emulator.getThreading().run(new Runnable() {
-            @Override
-            public void run() {
-                updateState(room);
-            }
-        }, 100);
+        Emulator.getThreading().run(() -> updateState(room), 100);
     }
 
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        Emulator.getThreading().run(new Runnable() {
-            @Override
-            public void run() {
-                updateState(room);
-            }
-        }, 100);
+        Emulator.getThreading().run(() -> updateState(room), 100);
     }
 
     @Override

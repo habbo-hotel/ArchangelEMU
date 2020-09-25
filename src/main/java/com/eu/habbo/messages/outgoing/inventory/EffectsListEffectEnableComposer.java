@@ -13,7 +13,7 @@ public class EffectsListEffectEnableComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.EffectsListEffectEnableComposer);
         this.response.appendInt(this.effect.effect); //Type
         this.response.appendInt(this.effect.duration); //Duration

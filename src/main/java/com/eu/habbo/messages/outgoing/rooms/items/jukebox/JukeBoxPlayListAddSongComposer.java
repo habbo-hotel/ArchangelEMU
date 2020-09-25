@@ -13,7 +13,7 @@ public class JukeBoxPlayListAddSongComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.JukeBoxPlayListAddSongComposer);
         this.response.appendInt(this.track.getId());
         this.response.appendInt(this.track.getLength() * 1000);

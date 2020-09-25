@@ -1,15 +1,14 @@
 package com.eu.habbo.habbohotel.gameclients;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.Logging;
+import com.eu.habbo.crypto.HabboEncryption;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.PacketManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.MessageComposer;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,29 +17,69 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GameClient {
-    public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameClient.class);
+
     private final Channel channel;
-    public long lastPacketCounterCleared = Emulator.getIntUnixTimestamp();
+    private final HabboEncryption encryption;
+
     private Habbo habbo;
+    private boolean handshakeFinished;
     private String machineId = "";
+
+    public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
     public final ConcurrentHashMap<Class<? extends MessageHandler>, Long> messageTimestamps = new ConcurrentHashMap<>();
+    public long lastPacketCounterCleared = Emulator.getIntUnixTimestamp();
 
     public GameClient(Channel channel) {
         this.channel = channel;
+        this.encryption = Emulator.getCrypto().isEnabled()
+                ? new HabboEncryption(
+                    Emulator.getCrypto().getExponent(),
+                    Emulator.getCrypto().getModulus(),
+                    Emulator.getCrypto().getPrivateExponent())
+                : null;
     }
 
+    public Channel getChannel() {
+        return this.channel;
+    }
+
+    public HabboEncryption getEncryption() {
+        return encryption;
+    }
+
+    public Habbo getHabbo() {
+        return this.habbo;
+    }
+
+    public void setHabbo(Habbo habbo) {
+        this.habbo = habbo;
+    }
+
+    public boolean isHandshakeFinished() {
+        return handshakeFinished;
+    }
+
+    public void setHandshakeFinished(boolean handshakeFinished) {
+        this.handshakeFinished = handshakeFinished;
+    }
+
+    public String getMachineId() {
+        return this.machineId;
+    }
+
+    public void setMachineId(String machineId) {
+        if (machineId == null) {
+            throw new RuntimeException("Cannot set machineID to NULL");
+        }
+
+        this.machineId = machineId;
+    }
 
     public void sendResponse(MessageComposer composer) {
-        if (this.channel.isOpen()) {
-            try {
-                ServerMessage msg = composer.compose();
-                this.sendResponse(msg);
-            } catch (Exception e) {
-                Emulator.getLogging().logPacketError(e);
-            }
-        }
+        this.sendResponse(composer.compose());
     }
-
 
     public void sendResponse(ServerMessage response) {
         if (this.channel.isOpen()) {
@@ -48,35 +87,24 @@ public class GameClient {
                 return;
             }
 
-            if (PacketManager.DEBUG_SHOW_PACKETS)
-                Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
-
-            this.channel.write(response.get(), this.channel.voidPromise());
+            this.channel.write(response, this.channel.voidPromise());
             this.channel.flush();
         }
     }
 
-
     public void sendResponses(ArrayList<ServerMessage> responses) {
-        ByteBuf buffer = Unpooled.buffer();
-
         if (this.channel.isOpen()) {
             for (ServerMessage response : responses) {
                 if (response == null || response.getHeader() <= 0) {
                     return;
                 }
 
-                if (PacketManager.DEBUG_SHOW_PACKETS)
-                    Emulator.getLogging().logPacketLine("[" + Logging.ANSI_PURPLE + "SERVER" + Logging.ANSI_RESET + "] => [" + response.getHeader() + "] -> " + response.getBodyString());
-
-                buffer.writeBytes(response.get());
+                this.channel.write(response);
             }
-            this.channel.write(buffer.copy(), this.channel.voidPromise());
+
             this.channel.flush();
         }
-        buffer.release();
     }
-
 
     public void dispose() {
         try {
@@ -91,40 +119,7 @@ public class GameClient {
                 this.habbo = null;
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
-        }
-    }
-
-    public Channel getChannel() {
-        return this.channel;
-    }
-
-    public Habbo getHabbo() {
-        return this.habbo;
-    }
-
-    public void setHabbo(Habbo habbo) {
-        this.habbo = habbo;
-    }
-
-    public String getMachineId() {
-        return this.machineId;
-    }
-
-    public void setMachineId(String machineId) {
-        if (machineId == null) {
-            throw new RuntimeException("Cannot set machineID to NULL");
-        }
-        this.machineId = machineId;
-
-        if (this.habbo != null) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET machine_id = ? WHERE id = ? LIMIT 1")) {
-                statement.setString(1, this.machineId);
-                statement.setInt(2, this.habbo.getHabboInfo().getId());
-                statement.execute();
-            } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
-            }
+            LOGGER.error("Caught exception", e);
         }
     }
 }

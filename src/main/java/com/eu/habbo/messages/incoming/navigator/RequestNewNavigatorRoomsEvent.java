@@ -8,10 +8,14 @@ import com.eu.habbo.habbohotel.rooms.RoomCategory;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.navigator.NewNavigatorSearchResultsComposer;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class RequestNewNavigatorRoomsEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestNewNavigatorRoomsEvent.class);
+
     @Override
     public void handle() throws Exception {
         String view = this.packet.readString();
@@ -89,7 +93,7 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler {
             resultLists = toQueryResults(resultLists);
             this.client.sendResponse(new NewNavigatorSearchResultsComposer(view, query, resultLists));
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
 
         /*
@@ -104,7 +108,7 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler {
         }
         catch (Exception e)
         {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
         */
     }
@@ -119,7 +123,7 @@ public class RequestNewNavigatorRoomsEvent extends MessageHandler {
             }
         }
 
-        SearchResultList list = new SearchResultList(0, "query", "", SearchAction.NONE, ListMode.LIST, DisplayMode.VISIBLE, new ArrayList<Room>(searchRooms.values()), true, this.client.getHabbo().hasPermission("acc_enter_anyroom") || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER), DisplayOrder.ACTIVITY, -1);
+        SearchResultList list = new SearchResultList(0, "query", "", SearchAction.NONE, ListMode.LIST, DisplayMode.VISIBLE, new ArrayList<Room>(searchRooms.values()), true, this.client.getHabbo().hasPermission(Permission.ACC_ENTERANYROOM) || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER), DisplayOrder.ACTIVITY, -1);
         nList.add(list);
         return nList;
     }

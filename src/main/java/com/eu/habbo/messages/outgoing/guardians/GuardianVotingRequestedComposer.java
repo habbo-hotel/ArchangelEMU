@@ -17,7 +17,7 @@ public class GuardianVotingRequestedComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         TIntIntHashMap mappedUsers = new TIntIntHashMap();
         mappedUsers.put(this.ticket.getReported().getHabboInfo().getId(), 0);
 

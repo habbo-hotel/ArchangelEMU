@@ -15,7 +15,7 @@ public class RoomPaneComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomPaneComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendBoolean(this.roomOwner);

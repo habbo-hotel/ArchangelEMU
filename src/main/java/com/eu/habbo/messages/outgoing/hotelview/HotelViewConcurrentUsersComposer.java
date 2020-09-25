@@ -20,7 +20,7 @@ public class HotelViewConcurrentUsersComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.HotelViewConcurrentUsersComposer);
         this.response.appendInt(this.state);
         this.response.appendInt(this.userCount);

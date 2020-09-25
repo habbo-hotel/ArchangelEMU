@@ -60,26 +60,30 @@ public class InteractionMannequin extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        String[] lookCode = this.getExtradata().split(":")[1].split("\\.");
+        String lookCode = this.getExtradata().split(":")[1];
+        String newFigure = "";
 
-        StringBuilder look = new StringBuilder();
-        for (String part : client.getHabbo().getHabboInfo().getLook().split("\\.")) {
-            String type = part.split("-")[0];
-
-            boolean found = false;
-            for (String s : lookCode) {
-                if (s.contains(type)) {
-                    found = true;
-                    look.append(s).append(".");
-                }
-            }
-
-            if (!found) {
-                look.append(part).append(".");
-            }
+        for (String playerFigurePart : client.getHabbo().getHabboInfo().getLook().split("\\.")) {
+            if (!playerFigurePart.startsWith("ch") && !playerFigurePart.startsWith("lg"))
+                newFigure += playerFigurePart + ".";
         }
 
-        client.getHabbo().getHabboInfo().setLook(look.substring(0, look.length() - 1));
+        if (lookCode.isEmpty()) return;
+        String newFigureParts = lookCode;
+
+        for (String newFigurePart : newFigureParts.split("\\.")) {
+            if (newFigurePart.startsWith("hd"))
+                newFigureParts = newFigureParts.replace(newFigurePart, "");
+        }
+
+        if (newFigureParts.equals("")) return;
+
+        final String figure = newFigure + newFigureParts;
+
+        if (figure.length() > 512)
+            return;
+
+        client.getHabbo().getHabboInfo().setLook(figure);
         room.sendComposer(new RoomUserDataComposer(client.getHabbo()).compose());
         client.sendResponse(new UserDataComposer(client.getHabbo()));
     }

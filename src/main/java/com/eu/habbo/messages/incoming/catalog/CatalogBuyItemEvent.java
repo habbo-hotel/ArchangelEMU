@@ -1,12 +1,15 @@
 package com.eu.habbo.messages.incoming.catalog;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.habbohotel.catalog.ClubOffer;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.items.FurnitureType;
+import com.eu.habbo.habbohotel.permissions.Permission;
+import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -17,6 +20,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import gnu.trove.map.hash.THashMap;
@@ -27,6 +31,8 @@ import static com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent.PET_NAME_
 import static com.eu.habbo.messages.incoming.catalog.CheckPetNameEvent.PET_NAME_LENGTH_MINIMUM;
 
 public class CatalogBuyItemEvent extends MessageHandler {
+
+
     @Override
     public void handle() throws Exception {
         if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().lastPurchaseTimestamp >= CatalogManager.PURCHASE_COOLDOWN) {
@@ -80,22 +86,29 @@ public class CatalogBuyItemEvent extends MessageHandler {
                         }
                     });
 
-                    if (item[0] == null || item[0].getCredits() > this.client.getHabbo().getHabboInfo().getCredits() || item[0].getPoints() > this.client.getHabbo().getHabboInfo().getCurrencyAmount(item[0].getPointsType())) {
+                    CatalogItem roomBundleItem = item[0];
+                    if (roomBundleItem == null || roomBundleItem.getCredits() > this.client.getHabbo().getHabboInfo().getCredits() || roomBundleItem.getPoints() > this.client.getHabbo().getHabboInfo().getCurrencyAmount(roomBundleItem.getPointsType())) {
                         this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                         return;
                     }
+                    int roomCount = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()).size();
+                    int maxRooms = this.client.getHabbo().getHabboStats().hasActiveClub() ? Emulator.getConfig().getInt("hotel.max.rooms.vip") : Emulator.getConfig().getInt("hotel.max.rooms.user");
 
-                    ((RoomBundleLayout) page).buyRoom(this.client.getHabbo());
-
-                    if (!this.client.getHabbo().hasPermission("acc_infinite_credits")) {
-                        this.client.getHabbo().getHabboInfo().addCredits(-item[0].getCredits());
+                    if (roomCount >= maxRooms) { // checks if a user has the maximum rooms
+                       this.client.sendResponse(new CanCreateRoomComposer(roomCount, maxRooms)); // if so throws the max room error.
+                       this.client.sendResponse(new PurchaseOKComposer(null)); // Send this so the alert disappears, not sure if this is how it should be handled :S
+                       return;
                     }
-
-                    if (!this.client.getHabbo().hasPermission("acc_inifinte_points")) {
-                        this.client.getHabbo().getHabboInfo().addCurrencyAmount(item[0].getPointsType(), -item[0].getPoints());
-                    }
-
-                    this.client.sendResponse(new PurchaseOKComposer());
+                        ((RoomBundleLayout) page).buyRoom(this.client.getHabbo());
+                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) { //if the player has this perm disabled
+                            this.client.getHabbo().getHabboInfo().addCredits(-roomBundleItem.getCredits()); // takes their credits away
+                            this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo())); // Sends the updated currency composer window
+                        }
+                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) { //if the player has this perm disabled
+                            this.client.getHabbo().getHabboInfo().addCurrencyAmount(roomBundleItem.getPointsType(), -roomBundleItem.getPoints()); // takes their points away
+                            this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo())); // Sends the updated currency composer window
+                        }
+                        this.client.sendResponse(new PurchaseOKComposer()); // Sends the composer to close the window.
 
                     final boolean[] badgeFound = {false};
                     item[0].getBaseItems().stream().filter(i -> i.getType() == FurnitureType.BADGE).forEach(i -> {
@@ -157,10 +170,10 @@ public class CatalogBuyItemEvent extends MessageHandler {
                     if (this.client.getHabbo().getHabboInfo().getCredits() < totalCredits)
                         return;
 
-                    if (!this.client.getHabbo().hasPermission("acc_infinite_credits"))
+                    if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS))
                         this.client.getHabbo().getHabboInfo().addCredits(-totalCredits);
 
-                    if (!this.client.getHabbo().hasPermission("acc_infinite_points"))
+                    if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
                         this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalDuckets);
 
                     if (this.client.getHabbo().getHabboStats().getClubExpireTimestamp() <= Emulator.getIntUnixTimestamp())
@@ -178,6 +191,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
                     this.client.sendResponse(new PurchaseOKComposer(null));
                     this.client.sendResponse(new InventoryRefreshComposer());
+                    
                     this.client.getHabbo().getHabboStats().run();
                 }
                 return;
@@ -187,13 +201,25 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
             if (page instanceof RecentPurchasesLayout)
                 item = this.client.getHabbo().getHabboStats().getRecentPurchases().get(itemId);
+
             else
                 item = page.getCatalogItem(itemId);
+            // temp patch, can a dev with better knowledge than me look into this asap pls.
+            if (page instanceof  BotsLayout) {
+                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
+                    this.client.getHabbo().alert(Emulator.getTexts().getValue("error.bots.max.inventory").replace("%amount%", BotManager.MAXIMUM_BOT_INVENTORY_SIZE + ""));
+                    return;
+                }
+            }
             if (page instanceof PetsLayout) { // checks it's the petlayout
+                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_PETS) && this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= PetManager.MAXIMUM_PET_INVENTORY_SIZE) {
+                    this.client.getHabbo().alert(Emulator.getTexts().getValue("error.pets.max.inventory").replace("%amount%", PetManager.MAXIMUM_PET_INVENTORY_SIZE + ""));
+                    return;
+                }
                 String[] check = extraData.split("\n"); // splits the extradata
                 if ((check.length != 3) || (check[0].length() < PET_NAME_LENGTH_MINIMUM) || (check[0].length() > PET_NAME_LENGTH_MAXIMUM) || (!StringUtils.isAlphanumeric(check[0])))// checks if there's 3 parts (always is with pets, if not it fucks them off)
                     return; // if it does it fucks off.
-            }
+                }
 
             Emulator.getGameEnvironment().getCatalogManager().purchaseItem(page, item, this.client.getHabbo(), count, extraData, false);
 

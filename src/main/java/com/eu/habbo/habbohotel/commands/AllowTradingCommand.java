@@ -25,22 +25,32 @@ public class AllowTradingCommand extends Command {
             return true;
         }
 
-        if (params[2].equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes")) || params[2].equalsIgnoreCase(Emulator.getTexts().getValue("generic.no"))) {
-            String username = params[1];
-            boolean enabled = params[2].equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes"));
+        final String username = params[1];
+        final String option = params[2];
 
-            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
+        if (option.equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes")) || option.equalsIgnoreCase(Emulator.getTexts().getValue("generic.no"))) {
+            final boolean enabled = option.equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes"));
+            final Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
 
             if (habbo != null) {
+                if (!enabled) {
+                    try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+                         PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET tradelock_amount = tradelock_amount + 1 WHERE user_id = ?")) {
+                        statement.setInt(1, habbo.getHabboInfo().getId());
+                        statement.executeUpdate();
+                    }
+                }
                 habbo.getHabboStats().setAllowTrade(enabled);
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_allow_trading." + (enabled ? "enabled" : "disabled")).replace("%username%", params[1]));
                 habbo.getClient().sendResponse(new UserPerksComposer(habbo));
                 return true;
             } else {
                 boolean found;
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings INNER JOIN users ON users.id = users_settings.id SET can_trade = ? WHERE users.username LIKE ?")) {
+                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+                     PreparedStatement statement = connection.prepareStatement("UPDATE users_settings INNER JOIN users ON users.id = users_settings.user_id SET can_trade = ?, tradelock_amount = tradelock_amount + ? WHERE users.username LIKE ?")) {
                     statement.setString(1, enabled ? "1" : "0");
-                    statement.setString(2, username);
+                    statement.setInt(2, enabled ? 0 : 1);
+                    statement.setString(3, username);
                     found = statement.executeUpdate() > 0;
                 }
 

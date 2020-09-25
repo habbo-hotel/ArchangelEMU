@@ -13,7 +13,9 @@ public enum FurnitureMovementError {
     TILE_HAS_BOTS("${room.error.cant_set_item}"),
     MAX_DIMMERS("${room.error.max_dimmers}"),
     MAX_SOUNDFURNI("${room.errors.max_soundfurni}"),
-    MAX_ITEMS("${room.error.max_furniture}");
+    MAX_ITEMS("${room.error.max_furniture}"),
+    MAX_STICKIES("${room.error.max_stickies}");
+
 
     public final String errorCode;
 

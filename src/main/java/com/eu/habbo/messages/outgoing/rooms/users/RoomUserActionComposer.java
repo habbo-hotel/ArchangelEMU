@@ -16,7 +16,7 @@ public class RoomUserActionComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomUserActionComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.action.getAction());

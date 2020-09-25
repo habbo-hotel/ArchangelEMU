@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 
 public class SnowWarsOnStageEnding extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(1140);
         this.response.appendInt(1); //idk
         return this.response;

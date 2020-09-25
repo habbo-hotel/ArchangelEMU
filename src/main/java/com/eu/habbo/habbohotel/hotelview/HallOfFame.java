@@ -2,6 +2,8 @@ package com.eu.habbo.habbohotel.hotelview;
 
 import com.eu.habbo.Emulator;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -9,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class HallOfFame {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HallOfFame.class);
 
     private final THashMap<Integer, HallOfFameWinner> winners = new THashMap<>();
 
@@ -32,7 +35,7 @@ public class HallOfFame {
                     this.winners.put(winner.getId(), winner);
                 }
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }

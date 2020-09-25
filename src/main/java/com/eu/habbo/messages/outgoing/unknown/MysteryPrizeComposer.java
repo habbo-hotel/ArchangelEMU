@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 
 public class MysteryPrizeComposer extends MessageComposer {
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(427);
         this.response.appendString("s");
         this.response.appendInt(230);

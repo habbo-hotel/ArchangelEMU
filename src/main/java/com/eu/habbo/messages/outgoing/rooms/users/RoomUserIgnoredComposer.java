@@ -19,7 +19,7 @@ public class RoomUserIgnoredComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomUserIgnoredComposer);
         this.response.appendInt(this.state);
         this.response.appendString(this.habbo.getHabboInfo().getUsername());

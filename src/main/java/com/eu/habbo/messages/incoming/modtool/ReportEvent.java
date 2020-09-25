@@ -70,18 +70,16 @@ public class ReportEvent extends MessageHandler {
 
                     if (cfhTopic != null) {
                         if (cfhTopic.action != CfhActionType.MODS) {
-                            Emulator.getThreading().run(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (issue.state == ModToolTicketState.OPEN) {
-                                        if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
-                                            ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(reported.getHabboInfo().getId());
+                            Emulator.getThreading().run(() -> {
+                                if (issue.state == ModToolTicketState.OPEN) {
+                                    if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
+                                        if (ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(ReportEvent.this.client, reported.getHabboInfo().getId())) {
                                             ReportEvent.this.client.sendResponse(new RoomUserIgnoredComposer(reported, RoomUserIgnoredComposer.IGNORED));
                                         }
-
-                                        ReportEvent.this.client.sendResponse(new ModToolIssueHandledComposer(cfhTopic.reply).compose());
-                                        Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                                     }
+
+                                    ReportEvent.this.client.sendResponse(new ModToolIssueHandledComposer(cfhTopic.reply).compose());
+                                    Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                                 }
                             }, 30 * 1000);
                         }
@@ -99,21 +97,19 @@ public class ReportEvent extends MessageHandler {
 
             if (cfhTopic != null) {
                 if (cfhTopic.action != CfhActionType.MODS) {
-                    Emulator.getThreading().run(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (issue.state == ModToolTicketState.OPEN) {
-                                if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
-                                    ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(issue.reportedId);
+                    Emulator.getThreading().run(() -> {
+                        if (issue.state == ModToolTicketState.OPEN) {
+                            if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
+                                if (ReportEvent.this.client.getHabbo().getHabboStats().ignoreUser(ReportEvent.this.client, issue.reportedId)) {
                                     Habbo reported = Emulator.getGameEnvironment().getHabboManager().getHabbo(issue.reportedId);
                                     if (reported != null) {
                                         ReportEvent.this.client.sendResponse(new RoomUserIgnoredComposer(reported, RoomUserIgnoredComposer.IGNORED));
                                     }
                                 }
-
-                                ReportEvent.this.client.sendResponse(new ModToolIssueHandledComposer(cfhTopic.reply).compose());
-                                Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                             }
+
+                            ReportEvent.this.client.sendResponse(new ModToolIssueHandledComposer(cfhTopic.reply).compose());
+                            Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                         }
                     }, 30 * 1000);
                 }

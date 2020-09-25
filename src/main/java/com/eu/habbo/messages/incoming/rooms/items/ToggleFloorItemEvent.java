@@ -2,8 +2,8 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDice;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionMonsterPlantSeed;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWired;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionMonsterPlantSeed;
 import com.eu.habbo.habbohotel.pets.MonsterplantPet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -12,8 +12,12 @@ import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetPackageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ToggleFloorItemEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ToggleFloorItemEvent.class);
+
     @Override
     public void handle() throws Exception {
         try {
@@ -81,14 +85,19 @@ public class ToggleFloorItemEvent extends MessageHandler {
             if (item instanceof InteractionMonsterPlantSeed) {
                 Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                 int rarity = 0;
-                if (item.getExtradata().isEmpty()) rarity = InteractionMonsterPlantSeed.randomRarityLevel();
+
+                boolean isRare = item.getBaseItem().getName().contains("rare");
+
+                if ((!item.getExtradata().isEmpty() && Integer.valueOf(item.getExtradata()) - 1 < 0) || item.getExtradata().isEmpty()) {
+                    rarity = isRare ? InteractionMonsterPlantSeed.randomGoldenRarityLevel() : InteractionMonsterPlantSeed.randomRarityLevel();
+                }
                 else {
                     try {
                         rarity = Integer.valueOf(item.getExtradata()) - 1;
                     } catch (Exception e) {
                     }
                 }
-                MonsterplantPet pet = Emulator.getGameEnvironment().getPetManager().createMonsterplant(room, this.client.getHabbo(), item.getBaseItem().getName().contains("rare"), room.getLayout().getTile(item.getX(), item.getY()), rarity);
+                MonsterplantPet pet = Emulator.getGameEnvironment().getPetManager().createMonsterplant(room, this.client.getHabbo(), isRare, room.getLayout().getTile(item.getX(), item.getY()), rarity);
                 room.sendComposer(new RemoveFloorItemComposer(item, true).compose());
                 room.removeHabboItem(item);
                 room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
@@ -115,7 +124,7 @@ public class ToggleFloorItemEvent extends MessageHandler {
                 this.client.getHabbo().getRoomUnit().setGoalLocation(this.client.getHabbo().getRoomUnit().getCurrentLocation());
             }
         } catch (Exception e) {
-            Emulator.getLogging().logErrorLine(e);
+            LOGGER.error("Caught exception", e);
         }
     }
 }

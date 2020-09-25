@@ -13,7 +13,7 @@ public class EffectsListRemoveComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.EffectsListRemoveComposer);
         this.response.appendInt(this.effect.effect);
         return this.response;

@@ -17,7 +17,7 @@ public class WelcomeGiftErrorComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.WelcomeGiftErrorComposer);
         this.response.appendInt(this.error);
         return this.response;

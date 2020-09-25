@@ -20,7 +20,7 @@ public class GuildFurniWidgetComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildFurniWidgetComposer);
         this.response.appendInt(item.getId());
         this.response.appendInt(this.guild.getId());

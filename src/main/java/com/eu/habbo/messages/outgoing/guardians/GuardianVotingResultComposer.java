@@ -19,7 +19,7 @@ public class GuardianVotingResultComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuardianVotingResultComposer);
         this.response.appendInt(this.ticket.getVerdict().getType()); //Final Verdict
         this.response.appendInt(this.vote.type.getType()); //Your vote

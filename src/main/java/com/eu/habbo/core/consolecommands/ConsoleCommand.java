@@ -1,24 +1,20 @@
 package com.eu.habbo.core.consolecommands;
 
-import com.eu.habbo.Emulator;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ConsoleCommand {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleCommand.class);
     private static final THashMap<String, ConsoleCommand> commands = new THashMap<>();
 
-
     public final String key;
-
-
     public final String usage;
-
 
     public ConsoleCommand(String key, String usage) {
         this.key = key;
         this.usage = usage;
     }
-
 
     public static void load() {
         addCommand(new ConsoleShutdownCommand());
@@ -27,6 +23,7 @@ public abstract class ConsoleCommand {
         addCommand(new ConsoleReconnectCameraCommand());
         addCommand(new ShowInteractionsCommand());
         addCommand(new ShowRCONCommands());
+        addCommand(new ThankyouArcturusCommand());
     }
 
     public static void addCommand(ConsoleCommand command) {
@@ -48,14 +45,14 @@ public abstract class ConsoleCommand {
                     command.handle(message);
                     return true;
                 } catch (Exception e) {
-                    Emulator.getLogging().logErrorLine(e);
+                    LOGGER.error("Caught exception", e);
                 }
             } else {
-                System.out.println("Unknown Console Command " + message[0]);
-                System.out.println("Commands Available (" + commands.size() + "): ");
+                LOGGER.info("Unknown Console Command " + message[0]);
+                LOGGER.info("Commands Available (" + commands.size() + "): ");
 
                 for (ConsoleCommand c : commands.values()) {
-                    System.out.println(c.key + " - " + c.usage);
+                    LOGGER.info(c.key + " - " + c.usage);
                 }
             }
         }
@@ -64,4 +61,5 @@ public abstract class ConsoleCommand {
     }
 
     public abstract void handle(String[] args) throws Exception;
+
 }

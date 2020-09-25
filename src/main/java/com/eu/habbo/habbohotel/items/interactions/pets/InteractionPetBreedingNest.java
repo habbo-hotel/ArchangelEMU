@@ -150,24 +150,21 @@ public class InteractionPetBreedingNest extends HabboItem {
         HabboItem box = this;
         Pet petOne = this.petOne;
         Pet petTwo = this.petTwo;
-        Emulator.getThreading().run(new Runnable() {
-            @Override
-            public void run() {
-                Pet offspring = Emulator.getGameEnvironment().getPetManager().createPet(petOne.getPetData().getOffspringType(), (int) Math.min(Math.round(Math.max(1d, PetManager.getNormalDistributionForBreeding(petOne.getLevel(), petTwo.getLevel()).sample())), 20), name, habbo.getClient());
+        Emulator.getThreading().run(() -> {
+            Pet offspring = Emulator.getGameEnvironment().getPetManager().createPet(petOne.getPetData().getOffspringType(), (int) Math.min(Math.round(Math.max(1d, PetManager.getNormalDistributionForBreeding(petOne.getLevel(), petTwo.getLevel()).sample())), 20), name, habbo.getClient());
 
-                //habbo.getClient().sendResponse(new PetPackageNameValidationComposer(box.getId(), PetPackageNameValidationComposer.CLOSE_WIDGET, ""));
-                habbo.getHabboInfo().getCurrentRoom().placePet(offspring, box.getX(), box.getY(), box.getZ(), box.getRotation());
-                offspring.needsUpdate = true;
-                offspring.run();
-                InteractionPetBreedingNest.this.freePets();
-                habbo.getHabboInfo().getCurrentRoom().removeHabboItem(box);
-                habbo.getClient().sendResponse(new PetBreedingCompleted(offspring.getId(), Emulator.getGameEnvironment().getPetManager().getRarityForOffspring(offspring)));
+            //habbo.getClient().sendResponse(new PetPackageNameValidationComposer(box.getId(), PetPackageNameValidationComposer.CLOSE_WIDGET, ""));
+            habbo.getHabboInfo().getCurrentRoom().placePet(offspring, box.getX(), box.getY(), box.getZ(), box.getRotation());
+            offspring.needsUpdate = true;
+            offspring.run();
+            InteractionPetBreedingNest.this.freePets();
+            habbo.getHabboInfo().getCurrentRoom().removeHabboItem(box);
+            habbo.getClient().sendResponse(new PetBreedingCompleted(offspring.getId(), Emulator.getGameEnvironment().getPetManager().getRarityForOffspring(offspring)));
 
-                if (box.getBaseItem().getName().startsWith("pet_breeding_")) {
-                    String boxType = box.getBaseItem().getName().replace("pet_breeding_", "");
-                    String achievement = boxType.substring(0, 1).toUpperCase() + boxType.substring(1) + "Breeder";
-                    AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement(achievement));
-                }
+            if (box.getBaseItem().getName().startsWith("pet_breeding_")) {
+                String boxType = box.getBaseItem().getName().replace("pet_breeding_", "");
+                String achievement = boxType.substring(0, 1).toUpperCase() + boxType.substring(1) + "Breeder";
+                AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement(achievement));
             }
         }, 2000);
 

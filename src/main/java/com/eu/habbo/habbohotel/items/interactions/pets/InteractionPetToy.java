@@ -45,14 +45,11 @@ public class InteractionPetToy extends InteractionDefault {
             pet.getRoomUnit().setStatus(RoomUnitStatus.PLAY, "0");
             pet.packetUpdate = true;
             HabboItem item = this;
-            Emulator.getThreading().run(new Runnable() {
-                @Override
-                public void run() {
-                    pet.addHappyness(25);
-                    item.setExtradata("0");
-                    room.updateItem(item);
-                    new PetClearPosture(pet, RoomUnitStatus.PLAY, null, true).run();
-                }
+            Emulator.getThreading().run(() -> {
+                pet.addHappyness(25);
+                item.setExtradata("0");
+                room.updateItem(item);
+                new PetClearPosture(pet, RoomUnitStatus.PLAY, null, true).run();
             }, 2500 + (Emulator.getRandom().nextInt(20) * 500));
             this.setExtradata("1");
             room.updateItemState(this);

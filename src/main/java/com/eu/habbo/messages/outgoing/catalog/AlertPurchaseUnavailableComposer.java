@@ -15,7 +15,7 @@ public class AlertPurchaseUnavailableComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.AlertPurchaseUnavailableComposer);
         this.response.appendInt(this.code);
         return this.response;

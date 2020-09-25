@@ -47,13 +47,19 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
 
         Room room = roomUnit.getRoom();
 
-        if (room == null)
+        if (room == null) {
             return;
+        }
 
         // makes a temporary effect
+
         roomUnit.getRoom().unIdle(roomUnit.getRoom().getHabbo(roomUnit));
         room.sendComposer(new RoomUserEffectComposer(roomUnit, 4).compose());
         Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), WiredHandler.TELEPORT_DELAY + 1000);
+
+        if (tile == roomUnit.getCurrentLocation()) {
+            return;
+        }
 
         if (tile.state == RoomTileState.INVALID || tile.state == RoomTileState.BLOCKED) {
             RoomTile alternativeTile = null;
@@ -125,9 +131,10 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
         packet.readInt();
         packet.readString();
 
-        this.items.clear();
-
         int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
 
         for (int i = 0; i < count; i++) {
             this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt()));
@@ -146,6 +153,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
         if (!this.items.isEmpty()) {
             int i = Emulator.getRandom().nextInt(this.items.size());
             HabboItem item = this.items.get(i);
+
             teleportUnitToTile(roomUnit, room.getLayout().getTile(item.getX(), item.getY()));
             return true;
         }

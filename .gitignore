@@ -6,7 +6,6 @@ target/**
 TODO.txt
 packet.pkt
 plugins/**
-src/main/resources/
 src/test/
 target/
 config.ini
@@ -14,3 +13,5 @@ config.ini
 *.jar
 *.log
 *.zip
+.DS_Store
+

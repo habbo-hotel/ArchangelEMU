@@ -17,7 +17,7 @@ public class PetPlaceEvent extends MessageHandler {
         if (room == null)
             return;
 
-        if (this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId() && !room.isAllowPets() && !(this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermission("acc_placefurni"))) {
+        if (this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId() && !room.isAllowPets() && !(this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermission(Permission.ACC_PLACEFURNI))) {
             this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_PETS_FORBIDDEN_IN_FLAT));
             return;
         }
@@ -29,7 +29,7 @@ public class PetPlaceEvent extends MessageHandler {
         if (pet == null) {
             return;
         }
-        if (room.getCurrentPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasPermission("acc_unlimited_pets")) {
+        if (room.getCurrentPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_PETS)) {
             this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_MAX_PETS));
             return;
         }

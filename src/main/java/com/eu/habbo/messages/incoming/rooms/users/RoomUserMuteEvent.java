@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.rooms.users;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -17,7 +18,7 @@ public class RoomUserMuteEvent extends MessageHandler {
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
         if (room != null) {
-            if (room.hasRights(this.client.getHabbo()) || this.client.getHabbo().hasPermission("cmd_mute") || this.client.getHabbo().hasPermission("acc_ambassador")) {
+            if (room.hasRights(this.client.getHabbo()) || this.client.getHabbo().hasPermission("cmd_mute") || this.client.getHabbo().hasPermission(Permission.ACC_AMBASSADOR)) {
                 Habbo habbo = room.getHabbo(userId);
 
                 if (habbo != null) {

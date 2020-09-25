@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.messages.outgoing.inventory.InventoryPetsComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TObjectProcedure;
@@ -30,25 +31,24 @@ public class EmptyPetsInventoryCommand extends Command {
         }
 
         if (params.length >= 2 && params[1].equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes"))) {
-            Habbo habbo = gameClient.getHabbo();
-            if (params.length == 3 && gameClient.getHabbo().hasPermission(Permission.ACC_EMPTY_OTHERS)) {
-                habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]);
-            }
+
+            Habbo habbo = (params.length == 3 && gameClient.getHabbo().hasPermission(Permission.ACC_EMPTY_OTHERS)) ? Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]) : gameClient.getHabbo();
 
             if (habbo != null) {
                 TIntObjectHashMap<Pet> pets = new TIntObjectHashMap<>();
                 pets.putAll(habbo.getInventory().getPetsComponent().getPets());
                 habbo.getInventory().getPetsComponent().getPets().clear();
-                pets.forEachValue(new TObjectProcedure<Pet>() {
-                    @Override
-                    public boolean execute(Pet object) {
-                        Emulator.getGameEnvironment().getPetManager().deletePet(object);
-                        return true;
-                    }
+                pets.forEachValue(object -> {
+                    Emulator.getGameEnvironment().getPetManager().deletePet(object);
+                    return true;
                 });
 
                 habbo.getClient().sendResponse(new InventoryRefreshComposer());
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_empty_pets.cleared"), RoomChatMessageBubbles.ALERT);
+                habbo.getClient().sendResponse(new InventoryPetsComposer(habbo));
+
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_empty_pets.cleared").replace("%username%", habbo.getHabboInfo().getUsername()), RoomChatMessageBubbles.ALERT);
+            } else {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_empty_pets"), RoomChatMessageBubbles.ALERT);
             }
         }
 

@@ -12,7 +12,7 @@ public class UnknownAvatarEditorComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UnknownAvatarEditorComposer);
         this.response.appendInt(this.type);
         return this.response;

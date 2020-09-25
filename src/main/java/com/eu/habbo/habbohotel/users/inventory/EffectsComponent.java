@@ -6,7 +6,8 @@ import com.eu.habbo.messages.outgoing.inventory.EffectsListAddComposer;
 import com.eu.habbo.messages.outgoing.inventory.EffectsListEffectEnableComposer;
 import com.eu.habbo.messages.outgoing.inventory.EffectsListRemoveComposer;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectProcedure;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class EffectsComponent {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EffectsComponent.class);
+
     public final THashMap<Integer, HabboEffect> effects = new THashMap<>();
     public final Habbo habbo;
     public int activatedEffect = 0;
@@ -28,7 +31,7 @@ public class EffectsComponent {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
         if(habbo.getHabboInfo().getRank().getRoomEffect() > 0)
             this.createRankEffect(habbo.getHabboInfo().getRank().getRoomEffect());
@@ -89,7 +92,7 @@ public class EffectsComponent {
                             statement.setInt(5, effect.effect);
                             statement.addBatch();
                         } catch (SQLException e) {
-                            Emulator.getLogging().logSQLException(e);
+                            LOGGER.error("Caught SQL exception", e);
                         }
                     }
                     return true;
@@ -97,7 +100,7 @@ public class EffectsComponent {
 
                 statement.executeBatch();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
 
             this.effects.clear();
@@ -205,7 +208,7 @@ public class EffectsComponent {
                 statement.setInt(4, this.duration);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
 
@@ -215,7 +218,7 @@ public class EffectsComponent {
                 statement.setInt(2, this.effect);
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }

@@ -14,7 +14,7 @@ public class CanCreateRoomComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CanCreateRoomComposer);
 
         this.response.appendInt(this.count >= this.max ? 1 : 0);

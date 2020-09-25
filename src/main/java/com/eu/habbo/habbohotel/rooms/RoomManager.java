@@ -41,7 +41,6 @@ import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
-import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomCreatedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUncachedEvent;
 import com.eu.habbo.plugin.events.rooms.UserVoteRoomEvent;
@@ -53,13 +52,17 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TIntProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class RoomManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoomManager.class);
+
     private static final int page = 0;
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_ROOMS_USER = 25;
@@ -89,7 +92,7 @@ public class RoomManager {
         registerGameType(IceTagGame.class);
         registerGameType(RollerskateGame.class);
 
-        Emulator.getLogging().logStart("Room Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        LOGGER.info("Room Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public void loadRoomModels() {
@@ -99,7 +102,7 @@ public class RoomManager {
                 this.mapNames.add(set.getString("name"));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -113,7 +116,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return layout;
@@ -127,7 +130,7 @@ public class RoomManager {
                 this.roomCategories.put(set.getInt("id"), new RoomCategory(set));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -143,7 +146,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -169,7 +172,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -276,7 +279,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -317,17 +320,17 @@ public class RoomManager {
                 this.activeRooms.put(room.getId(), room);
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return room;
     }
 
 
-    public Room createRoom(int ownerId, String ownerName, String name, String description, String modelName, int usersMax, int categoryId) {
+    public Room createRoom(int ownerId, String ownerName, String name, String description, String modelName, int usersMax, int categoryId, int tradeType) {
         Room room = null;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rooms (owner_id, owner_name, name, description, model, users_max, category) VALUES (?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO rooms (owner_id, owner_name, name, description, model, users_max, category, trade_mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, ownerId);
             statement.setString(2, ownerName);
             statement.setString(3, name);
@@ -335,21 +338,22 @@ public class RoomManager {
             statement.setString(5, modelName);
             statement.setInt(6, usersMax);
             statement.setInt(7, categoryId);
+            statement.setInt(8, tradeType);
             statement.execute();
             try (ResultSet set = statement.getGeneratedKeys()) {
                 if (set.next())
                     room = this.loadRoom(set.getInt(1));
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return room;
     }
 
 
-    public Room createRoomForHabbo(Habbo habbo, String name, String description, String modelName, int usersMax, int categoryId) {
-        Room room = this.createRoom(habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), name, description, modelName, usersMax, categoryId);
+    public Room createRoomForHabbo(Habbo habbo, String name, String description, String modelName, int usersMax, int categoryId, int tradeType) {
+        Room room = this.createRoom(habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername(), name, description, modelName, usersMax, categoryId, tradeType);
 
         Emulator.getPluginManager().fireEvent(new NavigatorRoomCreatedEvent(habbo, room));
 
@@ -366,7 +370,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -382,15 +386,15 @@ public class RoomManager {
             if (Emulator.getPluginManager().fireEvent(new RoomUncachedEvent(room)).isCancelled())
                 continue;
 
-            this.activeRooms.remove(room.getId());
             room.dispose();
+            this.activeRooms.remove(room.getId());
         }
     }
 
     public void clearInactiveRooms() {
         THashSet<Room> roomsToDispose = new THashSet<>();
         for (Room room : this.activeRooms.values()) {
-            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && !Emulator.getGameServer().getGameClientManager().containsHabbo(room.getOwnerId()) && room.isPreLoaded() && !this.roomCategories.get(room.getCategory()).isPublic()) {
+            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && !Emulator.getGameServer().getGameClientManager().containsHabbo(room.getOwnerId()) && room.isPreLoaded()) {
                 roomsToDispose.add(room);
             }
         }
@@ -416,7 +420,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return layout;
@@ -450,7 +454,7 @@ public class RoomManager {
                 statement.setInt(2, room.getId());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -507,7 +511,7 @@ public class RoomManager {
             }
         }
 
-        if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission("acc_enteranyroom")) {
+        if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission(Permission.ACC_ENTERANYROOM)) {
             habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
             return;
         }
@@ -523,10 +527,10 @@ public class RoomManager {
         if (overrideChecks ||
                 room.isOwner(habbo) ||
                 room.getState() == RoomState.OPEN ||
-                room.getState() == RoomState.INVISIBLE ||
                 habbo.hasPermission(Permission.ACC_ANYROOMOWNER) ||
-                habbo.hasPermission("acc_enteranyroom") ||
+                habbo.hasPermission(Permission.ACC_ENTERANYROOM) ||
                 room.hasRights(habbo) ||
+                (room.getState().equals(RoomState.INVISIBLE) && room.hasRights(habbo)) ||
                 (room.hasGuild() && room.guildRightLevel(habbo) > 2)) {
             this.openRoom(habbo, room, doorLocation);
         } else if (room.getState() == RoomState.LOCKED) {
@@ -555,10 +559,13 @@ public class RoomManager {
             if (room.getPassword().equalsIgnoreCase(password))
                 this.openRoom(habbo, room, doorLocation);
             else {
-                habbo.getClient().sendResponse(new GenericErrorMessagesComposer(-100002));
+                habbo.getClient().sendResponse(new GenericErrorMessagesComposer(GenericErrorMessagesComposer.WRONG_PASSWORD_USED));
                 habbo.getClient().sendResponse(new HotelViewComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
             }
+        } else {
+            habbo.getClient().sendResponse(new HotelViewComposer());
+            habbo.getHabboInfo().setLoadingRoom(0);
         }
     }
 
@@ -582,11 +589,11 @@ public class RoomManager {
         habbo.getClient().sendResponse(new HideDoorbellComposer(""));
 
         if (habbo.getRoomUnit() != null) {
-            Room existingRoom = habbo.getRoomUnit().getRoom();
-            if (existingRoom != null) {
-                if (habbo.getRoomUnit().getCurrentLocation() != null)
-                    habbo.getRoomUnit().getCurrentLocation().removeUnit(habbo.getRoomUnit());
-                habbo.getRoomUnit().getRoom().sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
+            RoomUnit existingRoom = habbo.getRoomUnit();
+            if (existingRoom.getRoom() != null) {
+                if (existingRoom.getCurrentLocation() != null)
+                    existingRoom.getCurrentLocation().removeUnit(existingRoom);
+                existingRoom.getRoom().sendComposer(new RoomUserRemoveComposer(existingRoom).compose());
             }
             habbo.getRoomUnit().setRoom(null);
         }
@@ -617,7 +624,7 @@ public class RoomManager {
             return;
         }
 
-        if (room.getUserCount() >= room.getUsersMax() && !habbo.hasPermission("acc_fullrooms") && !room.hasRights(habbo)) {
+        if (room.getUserCount() >= room.getUsersMax() && !habbo.hasPermission(Permission.ACC_FULLROOMS) && !room.hasRights(habbo)) {
             habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_GUESTROOM_FULL));
             return;
         }
@@ -910,7 +917,7 @@ public class RoomManager {
             statement.setInt(3, (int) (habbo.getHabboStats().roomEnterTimestamp));
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
     }
 
@@ -934,6 +941,8 @@ public class RoomManager {
             if (room.getOwnerId() != habbo.getHabboInfo().getId()) {
                 AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int) Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000));
             }
+
+            habbo.getMessenger().connectionChanged(habbo, habbo.isOnline(), false);
         }
     }
 
@@ -961,7 +970,7 @@ public class RoomManager {
                 statement.setInt(3, room.getId());
                 statement.execute();
             } catch (SQLException e) {
-                Emulator.getLogging().logSQLException(e);
+                LOGGER.error("Caught SQL exception", e);
             }
         }
     }
@@ -989,7 +998,7 @@ public class RoomManager {
                 rooms.add(room);
             }
         }
-
+        rooms.sort(Room.SORT_ID);
         return rooms;
     }
 
@@ -1090,7 +1099,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1150,7 +1159,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1217,7 +1226,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         Collections.sort(rooms);
@@ -1263,7 +1272,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         Collections.sort(rooms);
@@ -1286,7 +1295,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1328,7 +1337,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1350,7 +1359,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1454,7 +1463,7 @@ public class RoomManager {
 
         this.activeRooms.clear();
 
-        Emulator.getLogging().logShutdownLine("Room Manager -> Disposed!");
+        LOGGER.info("Room Manager -> Disposed!");
     }
 
     public CustomRoomLayout insertCustomLayout(Room room, String map, int doorX, int doorY, int doorDirection) {
@@ -1471,7 +1480,7 @@ public class RoomManager {
             statement.setString(10, map);
             statement.execute();
         } catch (SQLException e) {
-            Emulator.getLogging().logSQLException(e);
+            LOGGER.error("Caught SQL exception", e);
         }
 
         return this.loadCustomLayout(room);

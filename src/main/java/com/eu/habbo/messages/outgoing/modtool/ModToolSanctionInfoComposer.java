@@ -24,7 +24,7 @@ public class ModToolSanctionInfoComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
 
         Date probationEndTime;

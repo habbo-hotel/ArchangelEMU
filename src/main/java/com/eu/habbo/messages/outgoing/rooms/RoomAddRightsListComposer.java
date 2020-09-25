@@ -17,7 +17,7 @@ public class RoomAddRightsListComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RoomAddRightsListComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendInt(this.userId);

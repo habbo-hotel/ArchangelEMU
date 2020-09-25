@@ -22,7 +22,7 @@ public class CompetitionEntrySubmitResultComposer extends MessageComposer {
     }
 
     @Override
-    public ServerMessage compose() {
+    protected ServerMessage composeInternal() {
         this.response.init(Outgoing.CompetitionEntrySubmitResultComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendString(this.unknownString1);
