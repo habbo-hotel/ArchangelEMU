@@ -20,6 +20,8 @@ import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.polls.PollManager;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboManager;
+import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionManager;
+import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +33,8 @@ public class GameEnvironment {
     public PixelScheduler pixelScheduler;
     public PointsScheduler pointsScheduler;
     public GotwPointsScheduler gotwPointsScheduler;
+    public SubscriptionScheduler subscriptionScheduler;
+
     private HabboManager habboManager;
     private NavigatorManager navigatorManager;
     private GuildManager guildManager;
@@ -49,6 +53,7 @@ public class GameEnvironment {
     private WordFilter wordFilter;
     private CraftingManager craftingManager;
     private PollManager pollManager;
+    private SubscriptionManager subscriptionManager;
 
     public void load() throws Exception {
         LOGGER.info("GameEnvironment -> Loading...");
@@ -86,6 +91,11 @@ public class GameEnvironment {
         this.gotwPointsScheduler = new GotwPointsScheduler();
         Emulator.getThreading().run(this.gotwPointsScheduler);
 
+        this.subscriptionManager = new SubscriptionManager();
+        this.subscriptionManager.init();
+
+        this.subscriptionScheduler = new SubscriptionScheduler();
+        Emulator.getThreading().run(this.subscriptionScheduler);
 
         LOGGER.info("GameEnvironment -> Loaded!");
     }
@@ -103,6 +113,7 @@ public class GameEnvironment {
         this.roomManager.dispose();
         this.itemManager.dispose();
         this.hotelViewManager.dispose();
+        this.subscriptionManager.dispose();
         LOGGER.info("GameEnvironment -> Disposed!");
     }
 
@@ -190,5 +201,9 @@ public class GameEnvironment {
     }
 
     public GotwPointsScheduler getGotwPointsScheduler() { return this.gotwPointsScheduler;
+    }
+
+    public SubscriptionManager getSubscriptionManager() {
+        return this.subscriptionManager;
     }
 }

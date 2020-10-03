@@ -30,7 +30,7 @@ public class FriendsComposer extends MessageComposer {
             //this.response.appendInt(300);
             //this.response.appendInt(3); //Club level
             this.response.appendInt(this.habbo.hasPermission("acc_infinite_friends") ? Integer.MAX_VALUE : Messenger.MAXIMUM_FRIENDS);
-            this.response.appendInt(this.habbo.hasPermission("acc_infinite_friends") ? Integer.MAX_VALUE : Messenger.MAXIMUM_FRIENDS);
+            this.response.appendInt(this.habbo.hasPermission("acc_infinite_friends") ? Integer.MAX_VALUE : Messenger.MAXIMUM_FRIENDS_HC);
             this.response.appendInt(this.habbo.getMessenger().getFriends().size()/* + (this.habbo.hasPermission("acc_staff_chat") ? 1 : 0)*/);
 
             for (Map.Entry<Integer, MessengerBuddy> row : this.habbo.getMessenger().getFriends().entrySet()) {

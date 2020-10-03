@@ -66,7 +66,7 @@ public class RoomManager {
     private static final int page = 0;
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_ROOMS_USER = 25;
-    public static int MAXIMUM_ROOMS_VIP = 35;
+    public static int MAXIMUM_ROOMS_HC = 35;
     public static int HOME_ROOM_ID = 0;
     public static boolean SHOW_PUBLIC_IN_POPULAR_TAB = false;
     private final THashMap<Integer, RoomCategory> roomCategories;

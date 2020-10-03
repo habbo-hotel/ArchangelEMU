@@ -2,9 +2,14 @@ package com.eu.habbo.messages.outgoing.users;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+
+import java.time.Period;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class UserClubComposer extends MessageComposer {
     private final Habbo habbo;
@@ -19,6 +24,47 @@ public class UserClubComposer extends MessageComposer {
 
         this.response.appendString("club_habbo");
 
+        Subscription subscription = this.habbo.getHabboStats().getSubscription(Subscription.HABBO_CLUB);
+
+        int days = 0;
+        int minutes = 0;
+        int timeRemaining = 0;
+
+        if(subscription != null) {
+            timeRemaining = subscription.getRemaining();
+            days = (int) Math.floor(timeRemaining / 86400.0);
+            minutes = (int) Math.ceil(timeRemaining / 60.0);
+
+            if(days < 1 && minutes > 0) {
+                days = 1;
+            }
+        }
+
+        this.response.appendInt(days); // daysToPeriodEnd
+        this.response.appendInt(0); // memberPeriods
+        this.response.appendInt(0); // periodsSubscribedAhead
+        this.response.appendInt(0); // responseType
+        this.response.appendBoolean(true); // hasEverBeenMember
+        this.response.appendBoolean(true); // isVIP
+        this.response.appendInt(0); // pastClubDays
+        this.response.appendInt(0); // pastVIPdays
+        this.response.appendInt(minutes); // minutesTillExpiration
+        this.response.appendInt((Emulator.getIntUnixTimestamp() - this.habbo.getHabboStats().hcMessageLastModified) / 60); // minutesSinceLastModified
+        this.habbo.getHabboStats().hcMessageLastModified = Emulator.getIntUnixTimestamp();
+
+        // int - daysToPeriodEnd
+        // int - memberPeriods
+        // int - periodsSubscribedAhead
+        // int - responseType
+        // bool - hasEverBeenMember
+        // bool - isVIP
+        // int - pastClubDays
+        // int - pastVIPdays
+        // int - minutesTillExpiration
+        // (optional) int - minutesSinceLastModified
+
+
+        /*
         int endTimestamp = this.habbo.getHabboStats().getClubExpireTimestamp();
         int now = Emulator.getIntUnixTimestamp();
 
@@ -48,6 +94,7 @@ public class UserClubComposer extends MessageComposer {
             this.response.appendInt(0);
             this.response.appendInt(1);
         }
+
         this.response.appendBoolean(true);
         this.response.appendBoolean(true);
         this.response.appendInt(0);
@@ -60,6 +107,7 @@ public class UserClubComposer extends MessageComposer {
         } else {
             this.response.appendInt((int) remaining);
         }
+        */
 
         return this.response;
     }

@@ -21,8 +21,11 @@ import com.eu.habbo.habbohotel.navigation.EventCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.habbohotel.users.HabboManager;
+import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
+import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionManager;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.messages.PacketManager;
@@ -59,6 +62,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class PluginManager {
@@ -97,8 +101,8 @@ public class PluginManager {
         Bot.PLACEMENT_MESSAGES = Emulator.getConfig().getValue("hotel.bot.placement.messages", "Yo!;Hello I'm a real party animal!;Hello!").split(";");
 
         HabboInventory.MAXIMUM_ITEMS = Emulator.getConfig().getInt("hotel.inventory.max.items");
-        Messenger.MAXIMUM_FRIENDS = Emulator.getConfig().getInt("hotel.max.friends");
-        Messenger.MAXIMUM_FRIENDS_HC = Emulator.getConfig().getInt("hotel.max.friends.hc");
+        Messenger.MAXIMUM_FRIENDS = Emulator.getConfig().getInt("hotel.users.max.friends", 300);
+        Messenger.MAXIMUM_FRIENDS_HC = Emulator.getConfig().getInt("hotel.users.max.friends.hc", 1100);
         Room.MAXIMUM_BOTS = Emulator.getConfig().getInt("hotel.max.bots.room");
         Room.MAXIMUM_PETS = Emulator.getConfig().getInt("hotel.pets.max.room");
         Room.MAXIMUM_FURNI = Emulator.getConfig().getInt("hotel.room.furni.max", 2500);
@@ -107,8 +111,8 @@ public class PluginManager {
         Room.IDLE_CYCLES = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles", 240);
         Room.IDLE_CYCLES_KICK = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles.kick", 480);
         Room.ROLLERS_MAXIMUM_ROLL_AVATARS = Emulator.getConfig().getInt("hotel.room.rollers.roll_avatars.max", 1);
-        RoomManager.MAXIMUM_ROOMS_VIP = Emulator.getConfig().getInt("hotel.max.rooms.vip");
-        RoomManager.MAXIMUM_ROOMS_USER = Emulator.getConfig().getInt("hotel.max.rooms.user");
+        RoomManager.MAXIMUM_ROOMS_USER = Emulator.getConfig().getInt("hotel.users.max.rooms", 50);
+        RoomManager.MAXIMUM_ROOMS_HC = Emulator.getConfig().getInt("hotel.users.max.rooms.hc", 75);
         RoomManager.HOME_ROOM_ID = Emulator.getConfig().getInt("hotel.home.room");
         WiredHandler.MAXIMUM_FURNI_SELECTION = Emulator.getConfig().getInt("hotel.wired.furni.selection.count");
         WiredHandler.TELEPORT_DELAY = Emulator.getConfig().getInt("wired.effect.teleport.delay", 500);
@@ -162,6 +166,49 @@ public class PluginManager {
         PetManager.MAXIMUM_PET_INVENTORY_SIZE = Emulator.getConfig().getInt("hotel.pets.max.inventory");
 
 
+        SubscriptionHabboClub.HC_PAYDAY_ENABLED = Emulator.getConfig().getBoolean("subscriptions.hc.payday.enabled", false);
+
+        try {
+            SubscriptionHabboClub.HC_PAYDAY_NEXT_DATE = (int) (Emulator.stringToDate(Emulator.getConfig().getValue("subscriptions.hc.payday.next_date")).getTime() / 1000);
+        }
+        catch(Exception e) { SubscriptionHabboClub.HC_PAYDAY_NEXT_DATE = Integer.MAX_VALUE; }
+
+        SubscriptionHabboClub.HC_PAYDAY_INTERVAL = Emulator.getConfig().getValue("subscriptions.hc.payday.interval");
+        SubscriptionHabboClub.HC_PAYDAY_QUERY = Emulator.getConfig().getValue("subscriptions.hc.payday.query");
+        SubscriptionHabboClub.HC_PAYDAY_CURRENCY = Emulator.getConfig().getValue("subscriptions.hc.payday.currency");
+        SubscriptionHabboClub.HC_PAYDAY_KICKBACK_PERCENTAGE = Emulator.getConfig().getInt("subscriptions.hc.payday.percentage", 10) / 100.0;
+        SubscriptionHabboClub.HC_PAYDAY_COINSSPENT_RESET_ON_EXPIRE = Emulator.getConfig().getBoolean("subscriptions.hc.payday.creditsspent_reset_on_expire", false);
+
+        SubscriptionHabboClub.HC_PAYDAY_STREAK.clear();
+        for (String streak : Emulator.getConfig().getValue("subscriptions.hc.payday.streak", "7=5;30=10;60=15;90=20;180=25;365=30").split(Pattern.quote(";"))) {
+            if(streak.contains("=")) {
+                SubscriptionHabboClub.HC_PAYDAY_STREAK.put(Integer.parseInt(streak.split(Pattern.quote("="))[0]), Integer.parseInt(streak.split(Pattern.quote("="))[1]));
+            }
+        }
+
+        ClothingValidationManager.VALIDATE_ON_HC_EXPIRE = Emulator.getConfig().getBoolean("hotel.users.clothingvalidation.onhcexpired", false);
+        ClothingValidationManager.VALIDATE_ON_LOGIN = Emulator.getConfig().getBoolean("hotel.users.clothingvalidation.onlogin", false);
+        ClothingValidationManager.VALIDATE_ON_CHANGE_LOOKS = Emulator.getConfig().getBoolean("hotel.users.clothingvalidation.onchangelooks", false);
+        ClothingValidationManager.VALIDATE_ON_MIMIC = Emulator.getConfig().getBoolean("hotel.users.clothingvalidation.onmimic", false);
+        ClothingValidationManager.VALIDATE_ON_MANNEQUIN = Emulator.getConfig().getBoolean("hotel.users.clothingvalidation.onmannequin", false);
+        ClothingValidationManager.VALIDATE_ON_FBALLGATE = Emulator.getConfig().getBoolean("hotel.users.clothingvalidation.onfballgate", false);
+
+        String newUrl = Emulator.getConfig().getValue("gamedata.figuredata.url");
+        if(!ClothingValidationManager.FIGUREDATA_URL.equals(newUrl)) {
+            ClothingValidationManager.FIGUREDATA_URL = newUrl;
+            ClothingValidationManager.reloadFiguredata(newUrl);
+        }
+
+        if(newUrl.isEmpty()) {
+            ClothingValidationManager.VALIDATE_ON_HC_EXPIRE = false;
+            ClothingValidationManager.VALIDATE_ON_LOGIN = false;
+            ClothingValidationManager.VALIDATE_ON_CHANGE_LOOKS = false;
+            ClothingValidationManager.VALIDATE_ON_MIMIC = false;
+            ClothingValidationManager.VALIDATE_ON_MANNEQUIN = false;
+            ClothingValidationManager.VALIDATE_ON_FBALLGATE = false;
+        }
+
+
         NewNavigatorEventCategoriesComposer.CATEGORIES.clear();
         for (String category : Emulator.getConfig().getValue("navigator.eventcategories", "").split(";")) {
             try {
@@ -179,6 +226,7 @@ public class PluginManager {
             Emulator.getGameEnvironment().getPointsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPixelScheduler().reloadConfig();
             Emulator.getGameEnvironment().getGotwPointsScheduler().reloadConfig();
+            Emulator.getGameEnvironment().subscriptionScheduler.reloadConfig();
         }
     }
 

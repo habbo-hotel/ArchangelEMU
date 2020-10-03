@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
@@ -120,7 +121,7 @@ public class InteractionFootballGate extends HabboItem {
                 UserSavedLookEvent lookEvent = new UserSavedLookEvent(habbo, habbo.getHabboInfo().getGender(), oldlook);
                 Emulator.getPluginManager().fireEvent(lookEvent);
                 if (!lookEvent.isCancelled()) {
-                    habbo.getHabboInfo().setLook(lookEvent.newLook);
+                    habbo.getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_FBALLGATE ? ClothingValidationManager.validateLook(habbo, lookEvent.newLook, lookEvent.gender.name()) : lookEvent.newLook);
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
                     room.sendComposer(new RoomUserDataComposer(habbo).compose());
@@ -134,7 +135,7 @@ public class InteractionFootballGate extends HabboItem {
                 Emulator.getPluginManager().fireEvent(lookEvent);
                 if (!lookEvent.isCancelled()) {
                     habbo.getHabboStats().cache.put(CACHE_KEY, habbo.getHabboInfo().getLook());
-                    habbo.getHabboInfo().setLook(lookEvent.newLook);
+                    habbo.getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_FBALLGATE ? ClothingValidationManager.validateLook(habbo, lookEvent.newLook, lookEvent.gender.name()) : lookEvent.newLook);
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
                     room.sendComposer(new RoomUserDataComposer(habbo).compose());

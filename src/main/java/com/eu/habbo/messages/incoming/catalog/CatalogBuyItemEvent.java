@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInventory;
+import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseUnavailableComposer;
@@ -176,12 +177,19 @@ public class CatalogBuyItemEvent extends MessageHandler {
                     if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
                         this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalDuckets);
 
-                    if (this.client.getHabbo().getHabboStats().getClubExpireTimestamp() <= Emulator.getIntUnixTimestamp())
+
+                    if(this.client.getHabbo().getHabboStats().createSubscription(Subscription.HABBO_CLUB, (totalDays * 86400)) == null) {
+                        this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                        throw new Exception("Unable to create or extend subscription");
+                    }
+
+                    /*if (this.client.getHabbo().getHabboStats().getClubExpireTimestamp() <= Emulator.getIntUnixTimestamp())
                         this.client.getHabbo().getHabboStats().setClubExpireTimestamp(Emulator.getIntUnixTimestamp());
 
                     this.client.getHabbo().getHabboStats().setClubExpireTimestamp(this.client.getHabbo().getHabboStats().getClubExpireTimestamp() + (totalDays * 86400));
+
                     this.client.sendResponse(new UserPermissionsComposer(this.client.getHabbo()));
-                    this.client.sendResponse(new UserClubComposer(this.client.getHabbo()));
+                    this.client.sendResponse(new UserClubComposer(this.client.getHabbo()));*/
 
                     if (totalCredits > 0)
                         this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
