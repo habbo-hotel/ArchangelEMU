@@ -7,6 +7,7 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class ClubOffer implements ISerialize {
 
@@ -91,17 +92,17 @@ public class ClubOffer implements ISerialize {
         message.appendInt(this.pointsType);
         message.appendBoolean(this.vip);
 
-        long seconds = this.days * 86400L;
+        long seconds = this.days * 86400;
 
         long secondsTotal = seconds;
 
-        int totalYears = (int) Math.floor((int) seconds / 86400 * 31 * 12);
-        seconds -= totalYears * 86400 * 31 * 12;
+        int totalYears = (int) Math.floor((int) seconds / (86400.0 * 31 * 12));
+        seconds -= totalYears * (86400 * 31 * 12);
 
-        int totalMonths = (int) Math.floor((int) seconds / 86400 * 31);
-        seconds -= totalMonths * 86400 * 31;
+        int totalMonths = (int) Math.floor((int) seconds / (86400.0 * 31));
+        seconds -= totalMonths * (86400 * 31);
 
-        int totalDays = (int) Math.floor((int) seconds / 86400);
+        int totalDays = (int) Math.floor((int) seconds / 86400.0);
         seconds -= totalDays * 86400;
 
         message.appendInt((int) secondsTotal / 86400 / 31);
@@ -112,9 +113,10 @@ public class ClubOffer implements ISerialize {
         hcExpireTimestamp += secondsTotal;
 
         Calendar cal = Calendar.getInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
         cal.setTimeInMillis(hcExpireTimestamp * 1000L);
         message.appendInt(cal.get(Calendar.YEAR));
-        message.appendInt(cal.get(Calendar.MONTH));
+        message.appendInt(cal.get(Calendar.MONTH) + 1);
         message.appendInt(cal.get(Calendar.DAY_OF_MONTH));
     }
 }
