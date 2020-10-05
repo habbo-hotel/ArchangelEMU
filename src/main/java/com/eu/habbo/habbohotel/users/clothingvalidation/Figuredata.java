@@ -9,7 +9,11 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -38,12 +42,11 @@ public class Figuredata {
 
         Element rootElement = document.getDocumentElement();
 
-        if(!rootElement.getTagName().equalsIgnoreCase("figuredata")) {
-            throw new Exception("The passed file is not in figuredata format. Received " + document.toString());
-        }
-
-        if(document.getElementsByTagName("colors") == null || document.getElementsByTagName("sets") == null) {
-            throw new Exception("The passed file is not in figuredata format. Received " + document.toString());
+        if(!rootElement.getTagName().equalsIgnoreCase("figuredata") || document.getElementsByTagName("colors") == null || document.getElementsByTagName("sets") == null) {
+            StringWriter writer = new StringWriter();
+            TransformerFactory.newInstance().newTransformer().transform(new DOMSource(document), new StreamResult(writer));
+            String documentString = writer.getBuffer().toString();
+            throw new Exception("The passed file is not in figuredata format. Received " + documentString.substring(0, Math.min(documentString.length(), 200)));
         }
 
         NodeList palettesList = document.getElementsByTagName("colors").item(0).getChildNodes();

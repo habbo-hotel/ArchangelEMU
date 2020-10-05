@@ -82,7 +82,7 @@ public class ClubOffer implements ISerialize {
     }
 
     public void serialize(ServerMessage message, int hcExpireTimestamp) {
-        hcExpireTimestamp = Math.min(Emulator.getIntUnixTimestamp(), hcExpireTimestamp);
+        hcExpireTimestamp = Math.max(Emulator.getIntUnixTimestamp(), hcExpireTimestamp);
         message.appendInt(this.id);
         message.appendString(this.name);
         message.appendBoolean(false); //unused
