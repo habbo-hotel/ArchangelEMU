@@ -29,7 +29,7 @@ public class Figuredata {
      * @throws IOException
      * @throws SAXException
      */
-    public void parseXML(String uri) throws ParserConfigurationException, IOException, SAXException {
+    public void parseXML(String uri) throws Exception, ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
@@ -37,6 +37,15 @@ public class Figuredata {
         Document document = builder.parse(uri);
 
         Element rootElement = document.getDocumentElement();
+
+        if(!rootElement.getTagName().equalsIgnoreCase("figuredata")) {
+            throw new Exception("The passed file is not in figuredata format. Received " + document.toString());
+        }
+
+        if(document.getElementsByTagName("colors") == null || document.getElementsByTagName("sets") == null) {
+            throw new Exception("The passed file is not in figuredata format. Received " + document.toString());
+        }
+
         NodeList palettesList = document.getElementsByTagName("colors").item(0).getChildNodes();
         NodeList settypesList = document.getElementsByTagName("sets").item(0).getChildNodes();
 
