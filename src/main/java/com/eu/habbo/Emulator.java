@@ -141,7 +141,7 @@ public final class Emulator {
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
 
-            LOGGER.info("Arcturus Morningstar has succesfully loaded.");
+            LOGGER.info("Arcturus Morningstar has successfully loaded.");
             LOGGER.info("System launched in: {}ms. Using {} threads!", (System.nanoTime() - startTime) / 1e6, Runtime.getRuntime().availableProcessors() * 2);
             LOGGER.info("Memory: {}/{}MB", (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024), (runtime.freeMemory()) / (1024 * 1024));
 
