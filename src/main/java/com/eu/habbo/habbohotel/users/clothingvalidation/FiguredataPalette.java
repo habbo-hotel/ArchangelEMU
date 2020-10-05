@@ -1,11 +1,10 @@
 package com.eu.habbo.habbohotel.users.clothingvalidation;
 
-import java.util.Map;
 import java.util.TreeMap;
 
 public class FiguredataPalette {
     public int id;
-    public Map<Integer, FiguredataPaletteColor> colors;
+    public TreeMap<Integer, FiguredataPaletteColor> colors;
 
     public FiguredataPalette(int id) {
         this.id = id;
@@ -20,11 +19,8 @@ public class FiguredataPalette {
         return this.colors.get(colorId);
     }
 
-    /**
-     * @return First non-club and selectable color
-     */
     public FiguredataPaletteColor getFirstNonHCColor() {
-        for(FiguredataPaletteColor color : this.colors.values()) {
+        for(FiguredataPaletteColor color : this.colors.descendingMap().values()) {
             if(!color.club && color.selectable)
                 return color;
         }

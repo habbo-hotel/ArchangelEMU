@@ -178,6 +178,9 @@ public class PluginManager {
         SubscriptionHabboClub.HC_PAYDAY_CURRENCY = Emulator.getConfig().getValue("subscriptions.hc.payday.currency");
         SubscriptionHabboClub.HC_PAYDAY_KICKBACK_PERCENTAGE = Emulator.getConfig().getInt("subscriptions.hc.payday.percentage", 10) / 100.0;
         SubscriptionHabboClub.HC_PAYDAY_COINSSPENT_RESET_ON_EXPIRE = Emulator.getConfig().getBoolean("subscriptions.hc.payday.creditsspent_reset_on_expire", false);
+        SubscriptionHabboClub.ACHIEVEMENT_NAME = Emulator.getConfig().getValue("subscriptions.hc.achievement", "VipHC");
+        SubscriptionHabboClub.DISCOUNT_ENABLED = Emulator.getConfig().getBoolean("subscriptions.hc.discount.enabled", false);
+        SubscriptionHabboClub.DISCOUNT_DAYS_BEFORE_END = Emulator.getConfig().getInt("subscriptions.hc.discount.days_before_end", 7);
 
         SubscriptionHabboClub.HC_PAYDAY_STREAK.clear();
         for (String streak : Emulator.getConfig().getValue("subscriptions.hc.payday.streak", "7=5;30=10;60=15;90=20;180=25;365=30").split(Pattern.quote(";"))) {

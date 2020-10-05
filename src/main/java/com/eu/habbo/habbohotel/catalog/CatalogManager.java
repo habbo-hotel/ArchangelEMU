@@ -615,6 +615,16 @@ public class CatalogManager {
                 .findAny().orElse(null);
     }
 
+    public CatalogPage getCatalogPageByLayout(String layoutName) {
+        return this.catalogPages.valueCollection().stream()
+                .filter(p -> p != null &&
+                        p.isVisible() &&
+                        p.isEnabled() &&
+                        p.getRank() < 2 &&
+                        p.getLayout() != null && p.getLayout().equalsIgnoreCase(layoutName)
+                )
+                .findAny().orElse(null);
+    }
 
     public CatalogItem getCatalogItem(int id) {
         final CatalogItem[] item = {null};

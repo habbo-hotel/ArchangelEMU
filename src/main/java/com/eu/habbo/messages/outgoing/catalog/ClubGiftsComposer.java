@@ -3,63 +3,60 @@ package com.eu.habbo.messages.outgoing.catalog;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
+import com.eu.habbo.habbohotel.catalog.CatalogPageLayouts;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.iterator.TIntObjectIterator;
+import gnu.trove.procedure.TObjectProcedure;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class ClubGiftsComposer extends MessageComposer {
+
+    private final int daysTillNextGift;
+    private final int availableGifts;
+    private final int daysAsHc;
+
+    public ClubGiftsComposer(int daysTillNextGift, int availableGifts, int daysAsHc) {
+        this.daysTillNextGift = daysTillNextGift;
+        this.availableGifts = availableGifts;
+        this.daysAsHc = daysAsHc;
+    }
+
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.ClubGiftsComposer);
 
-        this.response.appendInt(0); //Days Until Next Gift
-        this.response.appendInt(1); //Gift Selectable
+        this.response.appendInt(this.daysTillNextGift); //Days Until Next Gift
+        this.response.appendInt(this.availableGifts); //Gift Selectable
 
-        CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(Emulator.getConfig().getInt("catalog.page.vipgifts"));
+        CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPageByLayout(CatalogPageLayouts.club_gift.name().toLowerCase());
 
         if (page != null) {
-            this.response.appendInt(page.getCatalogItems().size());
+            final List<CatalogItem> items = new ArrayList<>(page.getCatalogItems().valueCollection());
+            Collections.sort(items);
 
-            TIntObjectIterator<CatalogItem> iterator = page.getCatalogItems().iterator();
-            for (int i = page.getCatalogItems().size(); i-- > 0; ) {
-                try {
-                    iterator.advance();
-
-                    CatalogItem item = iterator.value();
-
-                    if (item != null) {
-                        item.serialize(this.response);
-                    }
-                } catch (NoSuchElementException e) {
-                    break;
-                }
+            this.response.appendInt(items.size());
+            for(CatalogItem item : items) {
+                item.serialize(this.response);
             }
 
-            this.response.appendInt(page.getCatalogItems().size());
-            iterator = page.getCatalogItems().iterator();
-            for (int i = page.getCatalogItems().size(); i-- > 0; ) {
+            this.response.appendInt(items.size());
+            for(CatalogItem item : items) {
+                int daysRequired = 0;
                 try {
-                    iterator.advance();
-
-                    CatalogItem item = iterator.value();
-
-                    if (item != null) {
-                        this.response.appendInt(item.getId());
-                        this.response.appendBoolean(true);
-                        this.response.appendInt(i);
-                        this.response.appendBoolean(true);
-                    } else {
-                        this.response.appendInt(-100);
-                        this.response.appendBoolean(false);
-                        this.response.appendInt(-100);
-                        this.response.appendBoolean(false);
-                    }
-                } catch (NoSuchElementException e) {
-                    break;
+                    daysRequired = Integer.parseInt(item.getExtradata());
                 }
+                catch (NumberFormatException ignored) { }
+
+                this.response.appendInt(item.getId());
+                this.response.appendBoolean(item.isClubOnly());
+                this.response.appendInt(Math.max(daysRequired - daysAsHc, 0));
+                this.response.appendBoolean(daysRequired <= daysAsHc);
             }
         } else {
             this.response.appendInt(0);

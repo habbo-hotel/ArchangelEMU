@@ -9,6 +9,5 @@ public class RequestClubDataEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         this.client.sendResponse(new ClubDataComposer(this.client.getHabbo(), this.packet.readInt()));
-        this.client.sendResponse(SubscriptionHabboClub.calculatePayday(this.client.getHabbo().getHabboInfo()));
     }
 }

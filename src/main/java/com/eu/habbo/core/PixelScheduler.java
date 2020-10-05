@@ -13,6 +13,7 @@ public class PixelScheduler extends Scheduler {
 
     public static boolean IGNORE_HOTEL_VIEW;
     public static boolean IGNORE_IDLED;
+    public static double HC_MODIFIER;
 
     public PixelScheduler() {
         super(Emulator.getConfig().getInt("hotel.auto.pixels.interval"));
@@ -23,6 +24,7 @@ public class PixelScheduler extends Scheduler {
         if (Emulator.getConfig().getBoolean("hotel.auto.pixels.enabled")) {
             IGNORE_HOTEL_VIEW = Emulator.getConfig().getBoolean("hotel.auto.pixels.ignore.hotelview");
             IGNORE_IDLED = Emulator.getConfig().getBoolean("hotel.auto.pixels.ignore.idled");
+            HC_MODIFIER = Emulator.getConfig().getDouble("hotel.auto.pixels.hc_modifier", 1.0);
             if (this.disposed) {
                 this.disposed = false;
                 this.run();
@@ -47,7 +49,7 @@ public class PixelScheduler extends Scheduler {
                     if (habbo.getRoomUnit().isIdle() && IGNORE_IDLED)
                         continue;
 
-                    habbo.givePixels(habbo.getHabboInfo().getRank().getPixelsTimerAmount());
+                    habbo.givePixels((int)(habbo.getHabboInfo().getRank().getPixelsTimerAmount() * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
                 }
             } catch (Exception e) {
                 LOGGER.error("Caught exception", e);

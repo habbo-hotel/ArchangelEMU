@@ -3,12 +3,14 @@ package com.eu.habbo.habbohotel.items;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionMultiHeight;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.messages.ISerialize;
+import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Item {
+public class Item implements ISerialize {
 
     private int id;
     private int spriteId;
@@ -220,4 +222,30 @@ public class Item {
     }
 
     public String getClothingOnWalk() { return clothingOnWalk; }
+
+    @Override
+    public void serialize(ServerMessage message) {
+        message.appendString(this.type.code.toLowerCase());
+
+        if (type == FurnitureType.BADGE) {
+            message.appendString(this.customParams);
+        } else {
+            message.appendInt(this.spriteId);
+
+            if (this.getName().contains("wallpaper_single") || this.getName().contains("floor_single") || this.getName().contains("landscape_single")) {
+                message.appendString(this.name.split("_")[2]);
+            } else if (type == FurnitureType.ROBOT) {
+                message.appendString(this.customParams);
+            } else if (name.equalsIgnoreCase("poster")) {
+                message.appendString(this.customParams);
+            } else if (name.startsWith("SONG ")) {
+                message.appendString(this.customParams);
+            } else {
+                message.appendString("");
+            }
+
+            message.appendInt(1); // productCount
+            message.appendBoolean(false);
+        }
+    }
 }

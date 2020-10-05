@@ -3,6 +3,8 @@ package com.eu.habbo.messages.outgoing.users;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
+import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
+import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -13,22 +15,59 @@ import java.util.concurrent.TimeUnit;
 
 public class UserClubComposer extends MessageComposer {
     private final Habbo habbo;
+    private final String subscriptionType;
+    private final int responseType;
+
+    public static int RESPONSE_TYPE_NORMAL = 0;
+    public static int RESPONSE_TYPE_LOGIN = 1;
+    public static int RESPONSE_TYPE_PURCHASE = 2; // closes the catalog after buying
+    public static int RESPONSE_TYPE_DISCOUNT_AVAILABLE = 3;
+    public static int RESPONSE_TYPE_CITIZENSHIP_DISCOUNT = 4;
 
     public UserClubComposer(Habbo habbo) {
         this.habbo = habbo;
+        this.subscriptionType = SubscriptionHabboClub.HABBO_CLUB.toLowerCase();
+        this.responseType = 0;
+    }
+
+    public UserClubComposer(Habbo habbo, String subscriptionType) {
+        this.habbo = habbo;
+        this.subscriptionType = subscriptionType;
+        this.responseType = 0;
+    }
+
+    public UserClubComposer(Habbo habbo, String subscriptionType, int responseType) {
+        this.habbo = habbo;
+        this.subscriptionType = subscriptionType;
+        this.responseType = responseType;
     }
 
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserClubComposer);
 
-        this.response.appendString("club_habbo");
+        this.response.appendString(this.subscriptionType.toLowerCase());
 
-        Subscription subscription = this.habbo.getHabboStats().getSubscription(Subscription.HABBO_CLUB);
+        if(Emulator.getGameEnvironment().getSubscriptionManager().getSubscriptionClass(this.subscriptionType.toUpperCase()) == null) {
+            this.response.appendInt(0); // daysToPeriodEnd
+            this.response.appendInt(0); // memberPeriods
+            this.response.appendInt(0); // periodsSubscribedAhead
+            this.response.appendInt(0); // responseType
+            this.response.appendBoolean(false); // hasEverBeenMember
+            this.response.appendBoolean(false); // isVIP
+            this.response.appendInt(0); // pastClubDays
+            this.response.appendInt(0); // pastVIPdays
+            this.response.appendInt(0); // minutesTillExpiration
+            this.response.appendInt(0); // minutesSinceLastModified
+            return this.response;
+        }
+
+        Subscription subscription = this.habbo.getHabboStats().getSubscription(this.subscriptionType);
 
         int days = 0;
         int minutes = 0;
         int timeRemaining = 0;
+        int pastTimeAsHC = this.habbo.getHabboStats().getPastTimeAsClub();
 
         if(subscription != null) {
             timeRemaining = subscription.getRemaining();
@@ -40,14 +79,16 @@ public class UserClubComposer extends MessageComposer {
             }
         }
 
+        int responseType = ((this.responseType <= RESPONSE_TYPE_LOGIN) && timeRemaining > 0 && SubscriptionHabboClub.DISCOUNT_ENABLED && days <= SubscriptionHabboClub.DISCOUNT_DAYS_BEFORE_END) ? RESPONSE_TYPE_DISCOUNT_AVAILABLE : this.responseType;
+
         this.response.appendInt(days); // daysToPeriodEnd
         this.response.appendInt(0); // memberPeriods
         this.response.appendInt(0); // periodsSubscribedAhead
-        this.response.appendInt(0); // responseType
-        this.response.appendBoolean(true); // hasEverBeenMember
+        this.response.appendInt(responseType); // responseType
+        this.response.appendBoolean(pastTimeAsHC > 0); // hasEverBeenMember
         this.response.appendBoolean(true); // isVIP
         this.response.appendInt(0); // pastClubDays
-        this.response.appendInt(0); // pastVIPdays
+        this.response.appendInt((int) Math.floor(pastTimeAsHC / 86400.0)); // pastVIPdays
         this.response.appendInt(minutes); // minutesTillExpiration
         this.response.appendInt((Emulator.getIntUnixTimestamp() - this.habbo.getHabboStats().hcMessageLastModified) / 60); // minutesSinceLastModified
         this.habbo.getHabboStats().hcMessageLastModified = Emulator.getIntUnixTimestamp();
@@ -62,6 +103,14 @@ public class UserClubComposer extends MessageComposer {
         // int - pastVIPdays
         // int - minutesTillExpiration
         // (optional) int - minutesSinceLastModified
+
+        /*
+            responseType:
+                1 = RESPONSE_TYPE_LOGIN
+                2 = RESPONSE_TYPE_PURCHASE
+                3 = RESPONSE_TYPE_DISCOUNT_AVAILABLE
+                4 = RESPONSE_TYPE_CITIZENSHIP_DISCOUNT
+         */
 
 
         /*

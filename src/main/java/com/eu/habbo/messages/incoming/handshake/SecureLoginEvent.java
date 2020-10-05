@@ -138,7 +138,7 @@ public class SecureLoginEvent extends MessageHandler {
 
                 //messages.add(new MessengerInitComposer(this.client.getHabbo()).compose());
                 //messages.add(new FriendsComposer(this.client.getHabbo()).compose());
-                messages.add(new UserClubComposer(this.client.getHabbo()).compose());
+                messages.add(new UserClubComposer(this.client.getHabbo(), SubscriptionHabboClub.HABBO_CLUB, UserClubComposer.RESPONSE_TYPE_LOGIN).compose());
 
                 if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
                     messages.add(new ModToolComposer(this.client.getHabbo()).compose());

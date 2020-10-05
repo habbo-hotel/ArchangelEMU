@@ -2,10 +2,7 @@ package com.eu.habbo.messages.incoming.catalog;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.BotManager;
-import com.eu.habbo.habbohotel.catalog.CatalogItem;
-import com.eu.habbo.habbohotel.catalog.CatalogManager;
-import com.eu.habbo.habbohotel.catalog.CatalogPage;
-import com.eu.habbo.habbohotel.catalog.ClubOffer;
+import com.eu.habbo.habbohotel.catalog.*;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.permissions.Permission;
@@ -66,16 +63,22 @@ public class CatalogBuyItemEvent extends MessageHandler {
                 if (searchedItem.getOfferId() > 0) {
                     page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(searchedItem.getPageId());
 
-                    if (page.getCatalogItem(itemId).getOfferId() <= 0) {
-                        page = null;
-                    } else {
-                        if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
+                    if(page != null) {
+                        if (page.getCatalogItem(itemId).getOfferId() <= 0) {
+                            page = null;
+                        } else if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
+                            page = null;
+                        } else if (page.getLayout() != null && page.getLayout().equalsIgnoreCase(CatalogPageLayouts.club_gift.name())) {
                             page = null;
                         }
                     }
                 }
             } else {
                 page = Emulator.getGameEnvironment().getCatalogManager().catalogPages.get(pageId);
+
+                if(page != null && page.getLayout() != null && page.getLayout().equalsIgnoreCase(CatalogPageLayouts.club_gift.name())) {
+                    page = null;
+                }
 
                 if (page instanceof RoomBundleLayout) {
                     final CatalogItem[] item = new CatalogItem[1];

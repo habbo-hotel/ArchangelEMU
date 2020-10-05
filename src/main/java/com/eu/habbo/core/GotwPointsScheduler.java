@@ -14,6 +14,7 @@ public class GotwPointsScheduler extends Scheduler {
     public static boolean IGNORE_HOTEL_VIEW;
     public static boolean IGNORE_IDLED;
     public static String GOTW_POINTS_NAME;
+    public static double HC_MODIFIER;
 
     public GotwPointsScheduler() { //TODO MOVE TO A PLUGIN. IS NOT PART OF OFFICIAL HABBO.
 
@@ -25,6 +26,7 @@ public class GotwPointsScheduler extends Scheduler {
         if (Emulator.getConfig().getBoolean("hotel.auto.gotwpoints.enabled")) {
             IGNORE_HOTEL_VIEW = Emulator.getConfig().getBoolean("hotel.auto.gotwpoints.ignore.hotelview");
             IGNORE_IDLED = Emulator.getConfig().getBoolean("hotel.auto.gotwpoints.ignore.idled");
+            HC_MODIFIER = Emulator.getConfig().getDouble("hotel.auto.gotwpoints.hc_modifier", 1.0);
             GOTW_POINTS_NAME =  Emulator.getConfig().getValue("hotel.auto.gotwpoints.name");
 
             if (this.disposed) {
@@ -62,8 +64,7 @@ public class GotwPointsScheduler extends Scheduler {
                     }
                     type = Emulator.getConfig().getInt("seasonal.currency." + GOTW_POINTS_NAME, -1);
                     if (found || type != -1) {
-
-                        habbo.givePoints(type, habbo.getHabboInfo().getRank().getGotwTimerAmount());
+                        habbo.givePoints(type, (int)(habbo.getHabboInfo().getRank().getGotwTimerAmount() * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
                     }
                 }
             } catch (Exception e) {
