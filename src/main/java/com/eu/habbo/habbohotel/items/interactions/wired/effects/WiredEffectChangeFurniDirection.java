@@ -68,7 +68,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 count++;
             }
 
-            if (targetTile != null && targetTile.state == RoomTileState.OPEN) {
+            if (targetTile != null && targetTile.state != RoomTileState.INVALID) {
                 boolean hasHabbos = false;
                 for (Habbo habbo : room.getHabbosAt(targetTile)) {
                     hasHabbos = true;
