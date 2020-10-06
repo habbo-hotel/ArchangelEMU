@@ -41,7 +41,7 @@ public class BattleBanzaiTilesFlicker implements Runnable {
 
         this.room.sendComposer(new ItemsDataUpdateComposer(this.items).compose());
 
-        if (this.count == 5) {
+        if (this.count == 9) {
             for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
                 item.setExtradata("0");
                 this.room.updateItemState(item);
