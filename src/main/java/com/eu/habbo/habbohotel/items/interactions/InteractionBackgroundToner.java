@@ -52,7 +52,7 @@ public class InteractionBackgroundToner extends HabboItem {
 
     @Override
     public boolean isWalkable() {
-        return false;
+        return this.getBaseItem().allowWalk();
     }
 
     @Override
