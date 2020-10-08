@@ -36,12 +36,12 @@ public final class Emulator {
     private static final String CLASS_PATH = System.getProperty("java.class.path");
 
     public final static int MAJOR = 2;
-    public final static int MINOR = 4;
+    public final static int MINOR = 5;
     public final static int BUILD = 0;
     
-    public final static String PREVIEW = "";
+    public final static String PREVIEW = "RC-1";
 
-    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD;
+    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
             "\n" +
             "███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗ \n" +
@@ -50,7 +50,7 @@ public final class Emulator {
                     "██║╚██╔╝██║██║   ██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚════██║   ██║   ██╔══██║██╔══██╗\n" +
                     "██║ ╚═╝ ██║╚██████╔╝██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝███████║   ██║   ██║  ██║██║  ██║\n" +
                     "╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝\n" +
-                    "                                                                                             ";
+                    "Emulator goes zoom.";
 
     public static String build = "";
     public static boolean isReady = false;
