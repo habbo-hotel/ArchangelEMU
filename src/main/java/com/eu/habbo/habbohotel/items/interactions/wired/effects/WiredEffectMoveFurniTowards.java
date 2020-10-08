@@ -82,7 +82,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
 
-        THashSet<HabboItem> items = new THashSet<HabboItem>();
+        THashSet<HabboItem> items = new THashSet<>();
 
         for (HabboItem item : this.items) {
             if (Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
@@ -103,7 +103,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
             RoomUserRotation lastDirection = lastDirections.get(item.getId());
 
             // 1. Check if any user is within 3 tiles from the item
-            Habbo target = null; // closest found user
+            RoomUnit target = null; // closest found user
             RoomLayout layout = room.getLayout();
             boolean collided = false;
 
@@ -128,12 +128,12 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                     }
 
                     if (startTile != null && layout.tileExists(startTile.x, startTile.y)) {
-                        THashSet<Habbo> habbosAtTile = room.getHabbosAt(startTile.x, startTile.y);
-                        if (habbosAtTile.size() > 0) {
-                            target = habbosAtTile.iterator().next();
+                        THashSet<RoomUnit> roomUnitsAtTile = room.getHabbosAndBotsAt(startTile.x, startTile.y);
+                        if (roomUnitsAtTile.size() > 0) {
+                            target = roomUnitsAtTile.iterator().next();
                             if (i == 0) { // i = 0 means right next to it
                                 collided = true;
-                                Emulator.getThreading().run(new WiredCollissionRunnable(target.getRoomUnit(), room, new Object[]{item}));
+                                Emulator.getThreading().run(new WiredCollissionRunnable(target, room, new Object[]{item}));
                             }
                             break;
                         }
@@ -145,23 +145,23 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                 continue;
 
             if (target != null) {
-                if (target.getRoomUnit().getX() == item.getX()) {
-                    if (item.getY() < target.getRoomUnit().getY())
+                if (target.getX() == item.getX()) {
+                    if (item.getY() < target.getY())
                         moveDirection = RoomUserRotation.SOUTH;
                     else
                         moveDirection = RoomUserRotation.NORTH;
-                } else if (target.getRoomUnit().getY() == item.getY()) {
-                    if (item.getX() < target.getRoomUnit().getX())
+                } else if (target.getY() == item.getY()) {
+                    if (item.getX() < target.getX())
                         moveDirection = RoomUserRotation.EAST;
                     else
                         moveDirection = RoomUserRotation.WEST;
-                } else if (target.getRoomUnit().getX() - item.getX() > target.getRoomUnit().getY() - item.getY()) {
-                    if (target.getRoomUnit().getX() - item.getX() > 0)
+                } else if (target.getX() - item.getX() > target.getY() - item.getY()) {
+                    if (target.getX() - item.getX() > 0)
                         moveDirection = RoomUserRotation.EAST;
                     else
                         moveDirection = RoomUserRotation.WEST;
                 } else {
-                    if (target.getRoomUnit().getY() - item.getY() > 0)
+                    if (target.getY() - item.getY() > 0)
                         moveDirection = RoomUserRotation.SOUTH;
                     else
                         moveDirection = RoomUserRotation.NORTH;
@@ -246,12 +246,12 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
         String[] wiredData = set.getString("wired_data").split("\t");
 
         if (wiredData.length >= 1) {
-            this.setDelay(Integer.valueOf(wiredData[0]));
+            this.setDelay(Integer.parseInt(wiredData[0]));
         }
         if (wiredData.length == 2) {
             if (wiredData[1].contains(";")) {
                 for (String s : wiredData[1].split(";")) {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(s));
+                    HabboItem item = room.getHabboItem(Integer.parseInt(s));
 
                     if (item != null)
                         this.items.add(item);

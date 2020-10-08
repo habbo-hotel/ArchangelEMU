@@ -75,7 +75,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
             //handle movement
             if (this.direction > 0) {
                 RoomUserRotation moveDirection = this.getMovementDirection();
-                boolean validMove = false;
+                boolean validMove;
                 RoomLayout layout = room.getLayout();
                 if (layout == null) return false;
 
@@ -85,13 +85,13 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                 );
 
                 if (newTile != null) {
-                    boolean hasHabbos = false;
-                    for (Habbo habbo : room.getHabbosAt(newTile)) {
-                        hasHabbos = true;
-                        WiredHandler.handle(WiredTriggerType.COLLISION, habbo.getRoomUnit(), room, new Object[]{item});
+                    boolean hasRoomUnits = false;
+                    for (RoomUnit _roomUnit : room.getHabbosAndBotsAt(newTile)) {
+                        hasRoomUnits = true;
+                        WiredHandler.handle(WiredTriggerType.COLLISION, _roomUnit, room, new Object[]{item});
                     }
 
-                    if (!hasHabbos && room.getStackHeight(newTile.x, newTile.y, true, item) != Short.MAX_VALUE) {
+                    if (!hasRoomUnits && room.getStackHeight(newTile.x, newTile.y, true, item) != Short.MAX_VALUE) {
                         java.awt.Rectangle rectangle = new Rectangle(newTile.x,
                                 newTile.y,
                                 item.getBaseItem().getWidth(),
@@ -203,6 +203,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                 this.rotation = Integer.parseInt(data[1]);
                 this.setDelay(Integer.parseInt(data[2]));
             } catch (Exception e) {
+                System.out.println(e);
             }
 
             for (String s : data[3].split("\r")) {
@@ -288,7 +289,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
     /**
      * Returns a new rotation for an item based on the wired options
      *
-     * @param item
+     * @param item HabboItem
      * @return new rotation
      */
     private int getNewRotation(HabboItem item) {
@@ -326,17 +327,13 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
                 movemementDirection = RoomUserRotation.WEST;
             }
         } else if (this.direction == 3) {
-            if (Emulator.getRandom().nextInt(2) == 1) {
-                movemementDirection = RoomUserRotation.NORTH;
-            } else {
+            if (Emulator.getRandom().nextInt(2) != 1) {
                 movemementDirection = RoomUserRotation.SOUTH;
             }
         } else if (this.direction == 4) {
             movemementDirection = RoomUserRotation.SOUTH;
         } else if (this.direction == 5) {
             movemementDirection = RoomUserRotation.EAST;
-        } else if (this.direction == 6) {
-            movemementDirection = RoomUserRotation.NORTH;
         } else if (this.direction == 7) {
             movemementDirection = RoomUserRotation.WEST;
         }
