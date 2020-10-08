@@ -3,8 +3,17 @@ package com.eu.habbo.database;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.ConfigurationManager;
 import com.zaxxer.hikari.HikariDataSource;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Database {
 
@@ -52,5 +61,53 @@ public class Database {
 
     public DatabasePool getDatabasePool() {
         return this.databasePool;
+    }
+
+    public static PreparedStatement preparedStatementWithParams(Connection connection, String query, THashMap<String, Object> queryParams) throws SQLException {
+        THashMap<Integer, Object> params = new THashMap<Integer, Object>();
+        THashSet<String> quotedParams = new THashSet<>();
+
+        for(String key : queryParams.keySet()) {
+            quotedParams.add(Pattern.quote(key));
+        }
+
+        String regex = "(" + String.join("|", quotedParams) + ")";
+
+        Matcher m = Pattern.compile(regex).matcher(query);
+
+        int i = 1;
+
+        while (m.find()) {
+            try {
+                params.put(i, queryParams.get(m.group(1)));
+                i++;
+            }
+            catch (Exception ignored) { }
+        }
+
+        PreparedStatement statement = connection.prepareStatement(query.replaceAll(regex, "?"));
+
+        for(Map.Entry<Integer, Object> set : params.entrySet()) {
+            if(set.getValue().getClass() == String.class) {
+                statement.setString(set.getKey(), (String)set.getValue());
+            }
+            else if(set.getValue().getClass() == Integer.class) {
+                statement.setInt(set.getKey(), (Integer)set.getValue());
+            }
+            else if(set.getValue().getClass() == Double.class) {
+                statement.setDouble(set.getKey(), (Double)set.getValue());
+            }
+            else if(set.getValue().getClass() == Float.class) {
+                statement.setFloat(set.getKey(), (Float)set.getValue());
+            }
+            else if(set.getValue().getClass() == Long.class) {
+                statement.setLong(set.getKey(), (Long)set.getValue());
+            }
+            else {
+                statement.setObject(set.getKey(), set.getValue());
+            }
+        }
+
+        return statement;
     }
 }

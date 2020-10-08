@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
@@ -35,7 +36,7 @@ public class UserSaveLookEvent extends MessageHandler {
         if (lookEvent.isCancelled())
             return;
 
-        this.client.getHabbo().getHabboInfo().setLook(lookEvent.newLook);
+        this.client.getHabbo().getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_CHANGE_LOOKS ? ClothingValidationManager.validateLook(this.client.getHabbo(), lookEvent.newLook, lookEvent.gender.name()) : lookEvent.newLook);
         this.client.getHabbo().getHabboInfo().setGender(lookEvent.gender);
         Emulator.getThreading().run(this.client.getHabbo().getHabboInfo());
         this.client.sendResponse(new UpdateUserLookComposer(this.client.getHabbo()));

@@ -14,15 +14,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 public class WardrobeComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(WardrobeComponent.class);
     private final THashMap<Integer, WardrobeItem> looks;
     private final TIntSet clothing;
+    private final TIntSet clothingSets;
 
     public WardrobeComponent(Habbo habbo) {
         this.looks = new THashMap<>();
         this.clothing = new TIntHashSet();
+        this.clothingSets = new TIntHashSet();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_wardrobe WHERE user_id = ?")) {
@@ -34,13 +37,19 @@ public class WardrobeComponent {
                 }
             }
 
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_clothing WHERE user_id = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT users_clothing.*, catalog_clothing.setid FROM users_clothing LEFT JOIN catalog_clothing ON catalog_clothing.id = users_clothing.clothing_id WHERE users_clothing.user_id = ?")) {
                 statement.setInt(1, habbo.getHabboInfo().getId());
                 try (ResultSet set = statement.executeQuery()) {
                     while (set.next()) {
                         int value = set.getInt("clothing_id");
-
                         this.clothing.add(value);
+
+                        for(String x : set.getString("setid").split(Pattern.quote(","))) {
+                            try {
+                                this.clothingSets.add(Integer.parseInt(x));
+                            }
+                            catch (Exception e) { }
+                        }
                     }
                 }
             }
@@ -59,6 +68,10 @@ public class WardrobeComponent {
 
     public TIntCollection getClothing() {
         return this.clothing;
+    }
+
+    public TIntCollection getClothingSets() {
+        return this.clothingSets;
     }
 
     public void dispose() {

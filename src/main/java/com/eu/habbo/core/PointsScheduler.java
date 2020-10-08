@@ -13,6 +13,7 @@ public class PointsScheduler extends Scheduler {
 
     public static boolean IGNORE_HOTEL_VIEW;
     public static boolean IGNORE_IDLED;
+    public static double HC_MODIFIER;
 
     public PointsScheduler() {
 
@@ -24,6 +25,7 @@ public class PointsScheduler extends Scheduler {
         if (Emulator.getConfig().getBoolean("hotel.auto.points.enabled")) {
             IGNORE_HOTEL_VIEW = Emulator.getConfig().getBoolean("hotel.auto.points.ignore.hotelview");
             IGNORE_IDLED = Emulator.getConfig().getBoolean("hotel.auto.points.ignore.idled");
+            HC_MODIFIER = Emulator.getConfig().getDouble("hotel.auto.points.hc_modifier", 1.0);
             if (this.disposed) {
                 this.disposed = false;
                 this.run();
@@ -50,7 +52,7 @@ public class PointsScheduler extends Scheduler {
                         continue;
 
                     //habbo.givePoints(POINTS);
-                    habbo.givePoints(habbo.getHabboInfo().getRank().getDiamondsTimerAmount());
+                    habbo.givePoints((int)(habbo.getHabboInfo().getRank().getDiamondsTimerAmount() * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
                 }
             } catch (Exception e) {
                 LOGGER.error("Caught exception", e);

@@ -40,6 +40,9 @@ public class Incoming {
     public static final int RequestHeightmapEvent = 3898;
     public static final int TradeCloseEvent = 2551;
     public static final int CatalogBuyItemEvent = 3492;
+    public static final int CatalogSelectClubGiftEvent = 2276;
+    public static final int CatalogRequestClubDiscountEvent = 2462;
+    public static final int CatalogBuyClubDiscountEvent = 3407;
     public static final int RequestGuildMembersEvent = 312;
     public static final int RequestPetInformationEvent = 2934;
     public static final int RoomUserWhisperEvent = 1543;
@@ -72,6 +75,7 @@ public class Incoming {
     public static final int RequestPromotedRoomsEvent = 2908;
     public static final int GuildSetAdminEvent = 2894;
     public static final int GetClubDataEvent = 3285;
+    public static final int RequestClubCenterEvent = 869;
     public static final int RequestMeMenuSettingsEvent = 2388;
     public static final int MannequinSaveNameEvent = 2850;
     public static final int SellItemEvent = 3447;
