@@ -32,6 +32,7 @@ public abstract class RCONMessage<T> {
     public abstract void handle(Gson gson, T json);
 
     public static class RCONMessageSerializer implements JsonSerializer<RCONMessage> {
+        @Override
         public JsonElement serialize(final RCONMessage rconMessage, final Type type, final JsonSerializationContext context) {
             JsonObject result = new JsonObject();
             result.add("status", new JsonPrimitive(rconMessage.status));

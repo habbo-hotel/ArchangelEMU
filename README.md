@@ -12,7 +12,7 @@ Arcturus Morningstar is released under the [GNU General Public License v3](https
 
 ## Versions ##
 ![image](https://img.shields.io/badge/VERSION-2.4.0-success.svg?style=for-the-badge&logo=appveyor)
-![image](https://img.shields.io/badge/STATUS-UNSTABLE-red.svg?style=for-the-badge&logo=appveyor)
+![image](https://img.shields.io/badge/STATUS-STABLE-blue.svg?style=for-the-badge&logo=appveyor)
 
 Compiled Download: https://git.krews.org/morningstar/Arcturus-Community/releases
 
