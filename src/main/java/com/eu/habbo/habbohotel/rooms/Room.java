@@ -962,7 +962,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         Emulator.getPluginManager().fireEvent(new RoomUnloadedEvent(this));
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public int compareTo(Room o) {
         if (o.getUserCount() != this.getUserCount()) {
@@ -1397,7 +1396,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 roomUserRolledEvent = new UserRolledEvent(null, null, null);
                             }
 
-                            ArrayList<RoomUnit> unitsOnTile = new ArrayList<RoomUnit>(rollerTile.getUnits());
+                            ArrayList<RoomUnit> unitsOnTile = new ArrayList<>(rollerTile.getUnits());
 
                             for (RoomUnit unit : rollerTile.getUnits()) {
                                 if (unit.getRoomUnitType() == RoomUnitType.PET) {
@@ -1946,7 +1945,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                     if (extraData.length == 4) {
                         if (extraData[0].equalsIgnoreCase("1")) {
-                            return Color.getHSBColor(Integer.valueOf(extraData[1]), Integer.valueOf(extraData[2]), Integer.valueOf(extraData[3]));
+                            return Color.getHSBColor(Integer.parseInt(extraData[1]), Integer.parseInt(extraData[2]), Integer.parseInt(extraData[3]));
                         }
                     }
                 }
@@ -2162,7 +2161,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         synchronized (this.games) {
             for (Game game : this.games) {
-                if (game != null && gameType.isInstance(game)) {
+                if (gameType.isInstance(game)) {
                     return game;
                 }
             }
@@ -2900,6 +2899,25 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return habbos;
     }
 
+    public THashSet<RoomUnit> getHabbosAndBotsAt(short x, short y) {
+        return this.getHabbosAndBotsAt(this.layout.getTile(x, y));
+    }
+
+    public THashSet<RoomUnit> getHabbosAndBotsAt(RoomTile tile) {
+        THashSet<RoomUnit> list = new THashSet<>();
+
+        for (Bot bot : this.getBotsAt(tile)) {
+            list.add(bot.getRoomUnit());
+        }
+
+        for(Habbo habbo : this.getHabbosAt(tile))
+        {
+            list.add(habbo.getRoomUnit());
+        }
+
+        return list;
+    }
+
     public THashSet<Habbo> getHabbosOnItem(HabboItem item) {
         THashSet<Habbo> habbos = new THashSet<>();
         for (short x = item.getX(); x < item.getX() + item.getBaseItem().getLength(); x++) {
@@ -3130,7 +3148,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         ServerMessage prefixMessage = null;
 
         if (Emulator.getPluginManager().isRegistered(UsernameTalkEvent.class, true)) {
-            UsernameTalkEvent usernameTalkEvent = (UsernameTalkEvent) Emulator.getPluginManager().fireEvent(new UsernameTalkEvent(habbo, roomChatMessage, chatType));
+            UsernameTalkEvent usernameTalkEvent = Emulator.getPluginManager().fireEvent(new UsernameTalkEvent(habbo, roomChatMessage, chatType));
             if (usernameTalkEvent.hasCustomComposer()) {
                 prefixMessage = usernameTalkEvent.getCustomComposer();
             }
@@ -4397,7 +4415,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return FurnitureMovementError.NONE;
     }
 
-    public FurnitureMovementError placeFloorFurniAt(HabboItem item, RoomTile tile, int rotation, Habbo owner) throws Exception {
+    public FurnitureMovementError placeFloorFurniAt(HabboItem item, RoomTile tile, int rotation, Habbo owner) {
         boolean pluginHelper = false;
         if (Emulator.getPluginManager().isRegistered(FurniturePlacedEvent.class, true)) {
             FurniturePlacedEvent event = Emulator.getPluginManager().fireEvent(new FurniturePlacedEvent(item, owner, tile));
@@ -4420,7 +4438,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         double height = tile.getStackHeight();
 
         if (Emulator.getPluginManager().isRegistered(FurnitureBuildheightEvent.class, true)) {
-            FurnitureBuildheightEvent event = (FurnitureBuildheightEvent) Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, owner, 0.00, height));
+            FurnitureBuildheightEvent event = Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, owner, 0.00, height));
             if (event.hasChangedHeight()) {
                 height = event.getUpdatedHeight();
             }
@@ -4540,7 +4558,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         double height;
 
         if (stackHelper.isPresent()) {
-            height = stackHelper.get().getExtradata().isEmpty() ? Double.valueOf("0.0") : (Double.valueOf(stackHelper.get().getExtradata()) / 100);
+            height = stackHelper.get().getExtradata().isEmpty() ? Double.parseDouble("0.0") : (Double.parseDouble(stackHelper.get().getExtradata()) / 100);
         } else if (item.equals(topItem) && tile.x == item.getX() && tile.y == item.getY()) {
             height = item.getZ();
         } else {
@@ -4548,7 +4566,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (Emulator.getPluginManager().isRegistered(FurnitureBuildheightEvent.class, true)) {
-            FurnitureBuildheightEvent event = (FurnitureBuildheightEvent) Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, actor, 0.00, height));
+            FurnitureBuildheightEvent event = Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, actor, 0.00, height));
             if (event.hasChangedHeight()) {
                 height = event.getUpdatedHeight();
             }
