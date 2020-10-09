@@ -22,7 +22,7 @@ import com.eu.habbo.messages.outgoing.habboway.nux.NewUserIdentityComposer;
 import com.eu.habbo.messages.outgoing.handshake.DebugConsoleComposer;
 import com.eu.habbo.messages.outgoing.handshake.SecureLoginOKComposer;
 import com.eu.habbo.messages.outgoing.handshake.SessionRightsComposer;
-import com.eu.habbo.messages.outgoing.handshake.SomeConnectionComposer;
+import com.eu.habbo.messages.outgoing.handshake.PingComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryAchievementsComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.inventory.UserEffectsListComposer;
@@ -124,7 +124,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new NewUserIdentityComposer(habbo).compose());
                 messages.add(new UserPermissionsComposer(this.client.getHabbo()).compose());
                 messages.add(new SessionRightsComposer().compose());
-                messages.add(new SomeConnectionComposer().compose());
+                messages.add(new PingComposer().compose());
                 messages.add(new DebugConsoleComposer(Emulator.debugging).compose());
                 messages.add(new UserAchievementScoreComposer(this.client.getHabbo()).compose());
                 messages.add(new IsFirstLoginOfDayComposer(true).compose());
