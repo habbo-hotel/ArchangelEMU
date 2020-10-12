@@ -290,7 +290,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
         this.position = setPosition;
         this.settings.clear();
         this.settings.addAll(newSettings);
-        this.setDelay(packet.readInt());
+        this.setDelay(delay);
 
         return true;
     }
