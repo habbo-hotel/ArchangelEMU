@@ -57,16 +57,7 @@ public class WiredTriggerBotReachedHabbo extends InteractionWiredTrigger {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (stuff.length == 0)
-            return false;
-
-        List<Bot> bots = room.getBots(this.botName);
-
-        for (Bot bot : bots) {
-            if (bot.getRoomUnit().equals(stuff[0]))
-                return true;
-        }
-        return false;
+        return room.getBots(this.botName).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
     }
 
     @Override

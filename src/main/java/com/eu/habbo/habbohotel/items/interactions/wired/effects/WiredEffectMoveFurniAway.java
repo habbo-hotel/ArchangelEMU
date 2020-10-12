@@ -12,11 +12,15 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.FLEE;
@@ -44,45 +48,35 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
 
         for (HabboItem item : this.items) {
             RoomTile t = room.getLayout().getTile(item.getX(), item.getY());
-            double shortest = 1000.0D;
 
-            Habbo target = null;
-
-            for (Habbo habbo : room.getHabbos()) {
-                if (habbo.getRoomUnit().getCurrentLocation().distance(t) <= shortest) {
-                    shortest = habbo.getRoomUnit().getCurrentLocation().distance(t);
-                    target = habbo;
-                }
-            }
+            RoomUnit target = room.getRoomUnits().stream().min(Comparator.comparingDouble(a -> a.getCurrentLocation().distance(t))).orElse(null);
 
             if (target != null) {
-                if (RoomLayout.tilesAdjecent(target.getRoomUnit().getCurrentLocation(), room.getLayout().getTile(item.getX(), item.getY())) && (target.getRoomUnit().getX() == item.getX() || target.getRoomUnit().getY() == item.getY())) {
-                    final Habbo finalTarget = target;
-                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, finalTarget.getRoomUnit(), room, new Object[]{item}), 500);
-
+                if (target.getCurrentLocation().distance(t) <= 1) {
+                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, target, room, new Object[]{item}), 500);
                     continue;
                 }
 
                 int x = 0;
                 int y = 0;
 
-                if (target.getRoomUnit().getX() == item.getX()) {
-                    if (item.getY() < target.getRoomUnit().getY())
+                if (target.getX() == item.getX()) {
+                    if (item.getY() < target.getY())
                         y--;
                     else
                         y++;
-                } else if (target.getRoomUnit().getY() == item.getY()) {
-                    if (item.getX() < target.getRoomUnit().getX())
+                } else if (target.getY() == item.getY()) {
+                    if (item.getX() < target.getX())
                         x--;
                     else
                         x++;
-                } else if (target.getRoomUnit().getX() - item.getX() > target.getRoomUnit().getY() - item.getY()) {
-                    if (target.getRoomUnit().getX() - item.getX() > 0)
+                } else if (target.getX() - item.getX() > target.getY() - item.getY()) {
+                    if (target.getX() - item.getX() > 0)
                         x--;
                     else
                         x++;
                 } else {
-                    if (target.getRoomUnit().getY() - item.getY() > 0)
+                    if (target.getY() - item.getY() > 0)
                         y--;
                     else
                         y++;
@@ -182,20 +176,35 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
         packet.readString();
+        int itemsCount = packet.readInt();
 
-        int count = packet.readInt();
-        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
-
-        this.items.clear();
-
-        for (int i = 0; i < count; i++) {
-            this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt()));
+        if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
+            throw new WiredSaveException("Too many furni selected");
         }
 
-        this.setDelay(packet.readInt());
+        List<HabboItem> newItems = new ArrayList<>();
+
+        for (int i = 0; i < itemsCount; i++) {
+            int itemId = packet.readInt();
+            HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
+
+            if(it == null)
+                throw new WiredSaveException(String.format("Item %s not found", itemId));
+
+            newItems.add(it);
+        }
+
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.items.clear();
+        this.items.addAll(newItems);
+        this.setDelay(delay);
 
         return true;
     }

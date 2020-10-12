@@ -25,7 +25,7 @@ import java.util.List;
 public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
     private static final Logger LOGGER = LoggerFactory.getLogger(WiredTriggerBotReachedFurni.class);
 
-    public final static WiredTriggerType type = WiredTriggerType.BOT_REACHED_STF;
+    public final static WiredTriggerType type = WiredTriggerType.WALKS_ON_FURNI;
 
     private THashSet<HabboItem> items;
     private String botName = "";
@@ -73,7 +73,7 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
         message.appendString(this.botName);
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(WiredTriggerType.BOT_REACHED_STF.code);
 
         if (!this.isTriggeredByRoomUnit()) {
             List<Integer> invalidTriggers = new ArrayList<>();
@@ -114,17 +114,11 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        List<Bot> bots = room.getBots(this.botName);
-
-        for (Bot bot : bots) {
-            if (bot.getRoomUnit().equals(roomUnit)) {
-                for (Object o : stuff) {
-                    if (this.items.contains(o))
-                        return true;
-                }
+        if (stuff.length >= 1) {
+            if (stuff[0] instanceof HabboItem) {
+                return this.items.contains(stuff[0]) && room.getBots(this.botName).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
             }
         }
-
         return false;
     }
 

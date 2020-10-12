@@ -15,6 +15,7 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
@@ -22,6 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class WiredEffectMatchFurni extends InteractionWiredEffect {
     private static final Logger LOGGER = LoggerFactory.getLogger(WiredEffectMatchFurni.class);
@@ -57,6 +61,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                 if (this.state && (this.checkForWiredResetPermission && item.allowWiredResetState())) {
                     if (!setting.state.equals(" ")) {
                         item.setExtradata(setting.state);
+                        room.updateItemState(item);
                         tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                     }
                 }
@@ -180,17 +185,17 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split(":");
 
-        int itemCount = Integer.valueOf(data[0]);
+        int itemCount = Integer.parseInt(data[0]);
 
-        String[] items = data[1].split(";");
+        String[] items = data[1].split(Pattern.quote(";"));
 
         for (int i = 0; i < items.length; i++) {
             try {
 
-                String[] stuff = items[i].split("-");
+                String[] stuff = items[i].split(Pattern.quote("-"));
 
                 if (stuff.length >= 5) {
-                    this.settings.add(new WiredMatchFurniSetting(Integer.valueOf(stuff[0]), stuff[1], Integer.valueOf(stuff[2]), Integer.valueOf(stuff[3]), Integer.valueOf(stuff[4])));
+                    this.settings.add(new WiredMatchFurniSetting(Integer.parseInt(stuff[0]), stuff[1], Integer.parseInt(stuff[2]), Integer.parseInt(stuff[3]), Integer.parseInt(stuff[4])));
                 }
 
             } catch (Exception e) {
@@ -201,7 +206,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
         this.state = data[2].equals("1");
         this.direction = data[3].equals("1");
         this.position = data[4].equals("1");
-        this.setDelay(Integer.valueOf(data[5]));
+        this.setDelay(Integer.parseInt(data[5]));
     }
 
     @Override
@@ -243,33 +248,48 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
 
-        this.state = packet.readInt() == 1;
-        this.direction = packet.readInt() == 1;
-        this.position = packet.readInt() == 1;
+        boolean setState = packet.readInt() == 1;
+        boolean setDirection = packet.readInt() == 1;
+        boolean setPosition = packet.readInt() == 1;
 
         packet.readString();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
         if (room == null)
-            return true;
+            throw new WiredSaveException("Trying to save wired in unloaded room");
 
-        int count = packet.readInt();
-        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+        int itemsCount = packet.readInt();
 
-        this.settings.clear();
-
-        for (int i = 0; i < count; i++) {
-            int itemId = packet.readInt();
-            HabboItem item = room.getHabboItem(itemId);
-
-            if (item != null)
-                this.settings.add(new WiredMatchFurniSetting(item.getId(), this.checkForWiredResetPermission && item.allowWiredResetState() ? item.getExtradata() : " ", item.getRotation(), item.getX(), item.getY()));
+        if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
+            throw new WiredSaveException("Too many furni selected");
         }
 
+        List<WiredMatchFurniSetting> newSettings = new ArrayList<>();
+
+        for (int i = 0; i < itemsCount; i++) {
+            int itemId = packet.readInt();
+            HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
+
+            if(it == null)
+                throw new WiredSaveException(String.format("Item %s not found", itemId));
+
+            newSettings.add(new WiredMatchFurniSetting(it.getId(), this.checkForWiredResetPermission && it.allowWiredResetState() ? it.getExtradata() : " ", it.getRotation(), it.getX(), it.getY()));
+        }
+
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.state = setState;
+        this.direction = setDirection;
+        this.position = setPosition;
+        this.settings.clear();
+        this.settings.addAll(newSettings);
         this.setDelay(packet.readInt());
 
         return true;

@@ -37,12 +37,8 @@ public class WiredConditionNotTriggerOnFurni extends InteractionWiredCondition {
         if (this.items.isEmpty())
             return true;
 
-        for (HabboItem item : this.items) {
-            if (RoomLayout.getRectangle(item.getX(), item.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()).contains(roomUnit.getX(), roomUnit.getY()))
-                return false;
-        }
-
-        return true;
+        THashSet<HabboItem> itemsAtUser = room.getItemsAt(roomUnit.getCurrentLocation());
+        return this.items.stream().noneMatch(itemsAtUser::contains);
     }
 
     @Override

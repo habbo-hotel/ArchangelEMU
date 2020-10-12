@@ -86,9 +86,10 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
 
                 if (newTile != null) {
                     boolean hasRoomUnits = false;
-                    for (RoomUnit _roomUnit : room.getHabbosAndBotsAt(newTile)) {
+                    for (RoomUnit _roomUnit : room.getRoomUnitsAt(newTile)) {
                         hasRoomUnits = true;
-                        WiredHandler.handle(WiredTriggerType.COLLISION, _roomUnit, room, new Object[]{item});
+                        // this wired isn't meant to do a collision
+                        //WiredHandler.handle(WiredTriggerType.COLLISION, _roomUnit, room, new Object[]{item});
                     }
 
                     if (!hasRoomUnits && room.getStackHeight(newTile.x, newTile.y, true, item) != Short.MAX_VALUE) {

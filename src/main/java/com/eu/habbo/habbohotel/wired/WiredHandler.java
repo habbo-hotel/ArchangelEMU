@@ -126,7 +126,6 @@ public class WiredHandler {
     public static boolean handle(InteractionWiredTrigger trigger, final RoomUnit roomUnit, final Room room, final Object[] stuff) {
         long millis = System.currentTimeMillis();
         if (Emulator.isReady && trigger.canExecute(millis) && trigger.execute(roomUnit, room, stuff)) {
-            trigger.setCooldown(millis);
             trigger.activateBox(room);
 
             THashSet<InteractionWiredCondition> conditions = room.getRoomSpecialTypes().getConditions(trigger.getX(), trigger.getY());
@@ -152,6 +151,7 @@ public class WiredHandler {
                 }
             }
 
+            trigger.setCooldown(millis);
 
             boolean hasExtraRandom = room.getRoomSpecialTypes().hasExtraType(trigger.getX(), trigger.getY(), WiredExtraRandom.class);
             boolean hasExtraUnseen = room.getRoomSpecialTypes().hasExtraType(trigger.getX(), trigger.getY(), WiredExtraUnseen.class);

@@ -5,13 +5,13 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -57,25 +57,29 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
         }
 
         if (this.items.isEmpty()) return false;
+
         for (Map.Entry<HabboItem, RoomUserRotation> entry : this.items.entrySet()) {
-            RoomUserRotation currentRotation = entry.getValue();
             RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getValue().getValue());
 
             int count = 1;
-            while ((targetTile == null || !targetTile.getAllowStack() || targetTile.state == RoomTileState.INVALID || targetTile.state == RoomTileState.BLOCKED) && count < 8) {
+            while ((targetTile == null || !targetTile.getAllowStack() || targetTile.state == RoomTileState.INVALID) && count < 8) {
                 entry.setValue(this.nextRotation(entry.getValue()));
                 targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getValue().getValue());
                 count++;
             }
+        }
+
+        for (Map.Entry<HabboItem, RoomUserRotation> entry : this.items.entrySet()) {
+            RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getValue().getValue());
 
             if (targetTile != null && targetTile.state != RoomTileState.INVALID) {
                 boolean hasRoomUnits = false;
-                for (RoomUnit _roomUnit : room.getHabbosAndBotsAt(targetTile)) {
+                for (RoomUnit _roomUnit : room.getRoomUnitsAt(targetTile)) {
                     hasRoomUnits = true;
                     Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, _roomUnit, room, new Object[]{entry.getKey()}));
                 }
 
-                if (!hasRoomUnits) {
+                if (!hasRoomUnits && targetTile.getAllowStack() && targetTile.state != RoomTileState.INVALID) {
                     THashSet<RoomTile> refreshTiles = room.getLayout().getTilesAt(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getKey().getBaseItem().getWidth(), entry.getKey().getBaseItem().getLength(), entry.getKey().getRotation());
                     room.sendComposer(new FloorItemOnRollerComposer(entry.getKey(), null, targetTile, targetTile.getStackHeight() - entry.getKey().getZ(), room).compose());
                     room.getLayout().getTilesAt(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getKey().getBaseItem().getWidth(), entry.getKey().getBaseItem().getLength(), entry.getKey().getRotation());
@@ -89,7 +93,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        StringBuilder data = new StringBuilder(this.getDelay() + this.startRotation.getValue() + "\t" + this.rotateAction + "\t" + this.items.size());
+        StringBuilder data = new StringBuilder(this.getDelay() + "\t" + this.startRotation.getValue() + "\t" + this.rotateAction + "\t" + this.items.size());
 
         for (Map.Entry<HabboItem, RoomUserRotation> entry : this.items.entrySet()) {
             data.append("\t").append(entry.getKey().getId()).append(":").append(entry.getValue().getValue());
@@ -102,17 +106,15 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String[] data = set.getString("wired_data").split("\t");
 
-        if (data.length >= 1) {
+        if (data.length >= 4) {
             this.setDelay(Integer.parseInt(data[0]));
-        }
-        if (data.length >= 3) {
-            this.startRotation = RoomUserRotation.fromValue(Integer.parseInt(data[0]));
-            this.rotateAction = Integer.parseInt(data[1]);
+            this.startRotation = RoomUserRotation.fromValue(Integer.parseInt(data[1]));
+            this.rotateAction = Integer.parseInt(data[2]);
 
-            int itemCount = Integer.parseInt(data[2]);
+            int itemCount = Integer.parseInt(data[3]);
 
             if (itemCount > 0) {
-                for (int i = 3; i < data.length; i++) {
+                for (int i = 4; i < data.length; i++) {
                     String[] subData = data[i].split(":");
 
                     if (subData.length == 2) {
@@ -161,25 +163,53 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
-        this.startRotation = RoomUserRotation.fromValue(packet.readInt());
-        this.rotateAction = packet.readInt();
+        int startRotationInt = packet.readInt();
+
+        if(startRotationInt < 0 || startRotationInt > 7 || (startRotationInt % 2) != 0) {
+            throw new WiredSaveException("Direction is invalid");
+        }
+
+        RoomUserRotation startRotation = RoomUserRotation.fromValue(startRotationInt);
+
+        int rotateAction = packet.readInt();
+
+        if(rotateAction < 0 || rotateAction > 6) {
+            throw new WiredSaveException("Blocked action is invalid");
+        }
+
         packet.readString();
 
-        int count = packet.readInt();
-        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+        int itemsCount = packet.readInt();
+
+        if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
+            throw new WiredSaveException("Too many furni selected");
+        }
+
+        THashMap<HabboItem, RoomUserRotation> newItems = new THashMap<>();
+
+        for (int i = 0; i < itemsCount; i++) {
+            int itemId = packet.readInt();
+            HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
+
+            if(it == null)
+                throw new WiredSaveException(String.format("Item %s not found", itemId));
+
+            newItems.put(it, startRotation);
+        }
+
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
 
         this.items.clear();
+        this.items.putAll(newItems);
+        this.startRotation = startRotation;
+        this.rotateAction = rotateAction;
+        this.setDelay(delay);
 
-        for (int i = 0; i < count; i++) {
-            HabboItem item = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(packet.readInt());
-
-            if (item != null) {
-                this.items.put(item, this.startRotation);
-            }
-        }
-        this.setDelay(packet.readInt());
         return true;
     }
 

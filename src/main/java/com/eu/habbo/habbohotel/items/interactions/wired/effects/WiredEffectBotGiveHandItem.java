@@ -7,13 +7,17 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
-import com.eu.habbo.threading.runnables.RoomUnitWalkToRoomUnit;
+import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import gnu.trove.procedure.TObjectProcedure;
 
 import java.sql.ResultSet;
@@ -70,13 +74,25 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
 
-        this.itemId = packet.readInt();
-        this.botName = packet.readString();
+        int itemId = packet.readInt();
+
+        if(itemId < 0)
+            itemId = 0;
+
+        String botName = packet.readString();
         packet.readInt();
-        this.setDelay(packet.readInt());
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.itemId = itemId;
+        this.botName = botName.substring(0, Math.min(botName.length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
+        this.setDelay(delay);
+
         return true;
     }
 
@@ -94,15 +110,22 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
             Bot bot = bots.get(0);
 
             List<Runnable> tasks = new ArrayList<>();
-            tasks.add(new RoomUnitGiveHanditem(habbo.getRoomUnit(), room, this.itemId));
+            tasks.add(new RoomUnitGiveHanditem(roomUnit, room, this.itemId));
             tasks.add(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, 0));
+            tasks.add(() -> {
+                if(roomUnit.getRoom() != null && roomUnit.getRoom().getId() == room.getId() && roomUnit.getCurrentLocation().distance(bot.getRoomUnit().getCurrentLocation()) < 2) {
+                    WiredHandler.handle(WiredTriggerType.BOT_REACHED_AVTR, bot.getRoomUnit(), room, new Object[]{});
+                }
+            });
+
+            RoomTile tile = bot.getRoomUnit().getClosestAdjacentTile(roomUnit.getX(), roomUnit.getY(), true);
+
+            if(tile != null) {
+                bot.getRoomUnit().setGoalLocation(tile);
+            }
 
             Emulator.getThreading().run(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, this.itemId));
-
-            List<Runnable> failedReach = new ArrayList<>();
-            failedReach.add(() -> tasks.forEach(Runnable::run));
-
-            Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(bot.getRoomUnit(), habbo.getRoomUnit(), room, tasks, failedReach));
+            Emulator.getThreading().run(new RoomUnitWalkToLocation(bot.getRoomUnit(), tile, room, tasks, tasks));
 
             return true;
         }

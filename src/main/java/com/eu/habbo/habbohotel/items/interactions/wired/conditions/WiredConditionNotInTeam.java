@@ -31,13 +31,10 @@ public class WiredConditionNotInTeam extends InteractionWiredCondition {
         Habbo habbo = room.getHabbo(roomUnit);
 
         if (habbo != null) {
-            if (habbo.getHabboInfo().getGamePlayer() != null) {
-                return !habbo.getHabboInfo().getGamePlayer().getTeamColor().equals(this.teamColor);
-            }
-            return true; // user is not part of any team
+            return habbo.getHabboInfo().getGamePlayer() == null || !habbo.getHabboInfo().getGamePlayer().getTeamColor().equals(this.teamColor); // user is not part of any team
         }
 
-        return false;
+        return true;
     }
 
     @Override

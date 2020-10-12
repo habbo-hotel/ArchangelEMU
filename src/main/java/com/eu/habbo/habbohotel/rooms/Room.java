@@ -73,6 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1458,7 +1459,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 if (itemsOnRoller.isEmpty()) {
                                     HabboItem item = room.getTopItemAt(tileInFront.x, tileInFront.y);
 
-                                    if (item != null && itemsNewTile.contains(item)) {
+                                    if (item != null && itemsNewTile.contains(item) && !itemsOnRoller.contains(item)) {
                                         Emulator.getThreading().run(() -> {
                                             if (unit.getGoal() == rollerTile) {
                                                 try {
@@ -2168,6 +2169,20 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         return null;
+    }
+
+    public Game getGameOrCreate(Class<? extends Game> gameType) {
+        Game game = this.getGame(gameType);
+        if(game == null) {
+            try {
+                game = gameType.getDeclaredConstructor(Room.class).newInstance(this);
+                this.addGame(game);
+            } catch (Exception e) {
+                LOGGER.error("Error getting game " + gameType.getName(), e);
+            }
+        }
+
+        return game;
     }
 
     public ConcurrentSet<Game> getGames() {
@@ -4677,5 +4692,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         return units;
+    }
+
+    public Collection<RoomUnit> getRoomUnitsAt(RoomTile tile) {
+        THashSet<RoomUnit> roomUnits = getRoomUnits();
+        return roomUnits.stream().filter(unit -> unit.getCurrentLocation() == tile).collect(Collectors.toSet());
     }
 }

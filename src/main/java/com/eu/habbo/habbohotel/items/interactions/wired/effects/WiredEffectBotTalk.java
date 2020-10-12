@@ -9,12 +9,16 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class WiredEffectBotTalk extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.BOT_TALK;
@@ -48,22 +52,35 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
 
-        this.mode = packet.readInt();
+        int mode = packet.readInt();
 
-        String[] data = packet.readString().split(((char) 9) + "");
+        if(mode != 0 && mode != 1)
+            throw new WiredSaveException("Mode is invalid");
 
-        if (data.length == 2) {
-            this.botName = data[0];
+        String dataString = packet.readString();
 
-            if (data[1].length() > 64) return false;
-            this.message = data[1];
-        }
+        String splitBy = "\t";
+        if(!dataString.contains(splitBy))
+            throw new WiredSaveException("Malformed data string");
+
+        String[] data = dataString.split(Pattern.quote(splitBy));
+
+        if (data.length != 2)
+            throw new WiredSaveException("Malformed data string. Invalid data length");
 
         packet.readInt();
-        this.setDelay(packet.readInt());
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.setDelay(delay);
+        this.botName = data[0].substring(0, Math.min(data[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
+        this.message = data[1].substring(0, Math.min(data[1].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
+        this.mode = mode;
 
         return true;
     }
@@ -88,16 +105,16 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
 
         List<Bot> bots = room.getBots(this.botName);
 
-        if (bots.size() != 1) {
-            return false;
-        }
+        if (bots.size() == 1) {
+            Bot bot = bots.get(0);
 
-        Bot bot = bots.get(0);
-
-        if (this.mode == 1) {
-            bot.shout(message);
-        } else {
-            bot.talk(message);
+            if(!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, bot.getRoomUnit(), room, new Object[]{ message })) {
+                if (this.mode == 1) {
+                    bot.shout(message);
+                } else {
+                    bot.talk(message);
+                }
+            }
         }
 
         return true;

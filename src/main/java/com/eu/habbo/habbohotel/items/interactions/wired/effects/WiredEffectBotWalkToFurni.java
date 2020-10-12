@@ -12,26 +12,28 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.BOT_MOVE;
 
-    private THashSet<HabboItem> items;
+    private List<HabboItem> items;
     private String botName = "";
 
     public WiredEffectBotWalkToFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.items = new THashSet<>();
+        this.items = new ArrayList<>();
     }
 
     public WiredEffectBotWalkToFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.items = new THashSet<>();
+        this.items = new ArrayList<>();
     }
 
     @Override
@@ -64,20 +66,36 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
-        this.botName = packet.readString();
+        String botName = packet.readString();
+        int itemsCount = packet.readInt();
 
-        int count = packet.readInt();
-        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
-
-        this.items.clear();
-
-        for (int i = 0; i < count; i++) {
-            this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt()));
+        if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
+            throw new WiredSaveException("Too many furni selected");
         }
 
-        this.setDelay(packet.readInt());
+        List<HabboItem> newItems = new ArrayList<>();
+
+        for (int i = 0; i < itemsCount; i++) {
+            int itemId = packet.readInt();
+            HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
+
+            if(it == null)
+                throw new WiredSaveException(String.format("Item %s not found", itemId));
+
+            newItems.add(it);
+        }
+
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.items.clear();
+        this.items.addAll(newItems);
+        this.botName = botName.substring(0, Math.min(botName.length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
+        this.setDelay(delay);
 
         return true;
     }
@@ -92,33 +110,18 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
         List<Bot> bots = room.getBots(this.botName);
 
         if (this.items.isEmpty() || bots.size() != 1) {
-            return false;
+            return true;
         }
 
         Bot bot = bots.get(0);
-        THashSet<HabboItem> items = new THashSet<>();
+        this.items.removeIf(item -> item == null || item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null);
 
-        for (HabboItem item : this.items) {
-            if (Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                items.add(item);
-        }
-
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
-
+        // wtf was that
         if (this.items.size() > 0) {
-            int i = Emulator.getRandom().nextInt(this.items.size()) + 1;
-            int j = 1;
-            for (HabboItem item : this.items) {
-                if (item.getRoomId() != 0 && item.getRoomId() == bot.getRoom().getId()) {
-                    if (i == j) {
-                        bot.getRoomUnit().setGoalLocation(room.getLayout().getTile(item.getX(), item.getY()));
-                        break;
-                    } else {
-                        j++;
-                    }
-                }
+            HabboItem item = this.items.get(Emulator.getRandom().nextInt(this.items.size()));
+
+            if (item.getRoomId() != 0 && item.getRoomId() == bot.getRoom().getId()) {
+                bot.getRoomUnit().setGoalLocation(room.getLayout().getTile(item.getX(), item.getY()));
             }
         }
 
@@ -142,7 +145,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        this.items = new THashSet<>();
+        this.items = new ArrayList<>();
         String[] wiredData = set.getString("wired_data").split("\t");
 
         if (wiredData.length > 1) {

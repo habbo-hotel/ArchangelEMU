@@ -37,6 +37,7 @@ public class RoomUnit {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnit.class);
 
     public boolean isWiredTeleporting = false;
+    public boolean isLeavingTeleporter = false;
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
     public boolean canRotate = true;

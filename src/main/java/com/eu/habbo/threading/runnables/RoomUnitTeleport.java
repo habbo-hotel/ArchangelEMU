@@ -30,12 +30,11 @@ public class RoomUnitTeleport implements Runnable {
         this.y = y;
         this.z = z;
         this.newEffect = newEffect;
-        roomUnit.isWiredTeleporting = true;
     }
 
     @Override
     public void run() {
-        if (roomUnit == null || roomUnit.getRoom() == null || room.getLayout() == null)
+        if (roomUnit == null || roomUnit.getRoom() == null || room.getLayout() == null || roomUnit.isLeavingTeleporter)
             return;
         
         RoomTile t = this.room.getLayout().getTile((short) this.x, (short) this.y);

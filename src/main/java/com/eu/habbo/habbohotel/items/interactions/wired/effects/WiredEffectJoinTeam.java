@@ -1,6 +1,8 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.games.wired.WiredGame;
 import com.eu.habbo.habbohotel.items.Item;
@@ -12,6 +14,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.procedure.TObjectProcedure;
 
 import java.sql.ResultSet;
@@ -37,16 +40,19 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
         Habbo habbo = room.getHabbo(roomUnit);
 
         if (habbo != null) {
-            if (habbo.getHabboInfo().getGamePlayer() == null) {
-                WiredGame game = (WiredGame) room.getGame(WiredGame.class);
+            WiredGame game = (WiredGame) room.getGameOrCreate(WiredGame.class);
 
-                if (game == null) {
-                    game = new WiredGame(room);
-                    room.addGame(game);
-                }
-
-                return game.addHabbo(habbo, this.teamColor);
+            if (habbo.getHabboInfo().getGamePlayer() != null && habbo.getHabboInfo().getCurrentGame() != null && (habbo.getHabboInfo().getCurrentGame() != WiredGame.class || (habbo.getHabboInfo().getCurrentGame() == WiredGame.class && habbo.getHabboInfo().getGamePlayer().getTeamColor() != this.teamColor))) {
+                // remove from current game
+                Game currentGame = room.getGame(habbo.getHabboInfo().getCurrentGame());
+                currentGame.removeHabbo(habbo);
             }
+
+            if(habbo.getHabboInfo().getGamePlayer() == null) {
+                game.addHabbo(habbo, this.teamColor);
+            }
+
+            return true;
         }
 
         return false;
@@ -116,12 +122,22 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
-        this.teamColor = GameTeamColors.values()[packet.readInt()];
-        int unknownInt = packet.readInt();
+        int team = packet.readInt();
+
+        if(team < 1 || team > 4)
+            throw new WiredSaveException("Team is invalid");
+
+        packet.readInt();
         packet.readString();
-        this.setDelay(packet.readInt());
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.teamColor = GameTeamColors.values()[packet.readInt()];
+        this.setDelay(delay);
 
         return true;
     }

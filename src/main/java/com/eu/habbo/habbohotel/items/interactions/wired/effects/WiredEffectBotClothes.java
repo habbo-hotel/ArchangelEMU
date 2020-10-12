@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
@@ -9,10 +10,12 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class WiredEffectBotClothes extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.BOT_CLOTHES;
@@ -44,18 +47,27 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
-
-        String[] data = packet.readString().split(((char) 9) + "");
-
-        if (data.length == 2) {
-            this.botName = data[0];
-            this.botLook = data[1];
-        }
-
+        String dataString = packet.readString();
         packet.readInt();
-        this.setDelay(packet.readInt());
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        String splitBy = "\t";
+        if(!dataString.contains(splitBy))
+            throw new WiredSaveException("Malformed data string");
+
+        String[] data = dataString.split(Pattern.quote(splitBy));
+
+        if (data.length != 2)
+            throw new WiredSaveException("Malformed data string. Invalid data length");
+
+        this.botName = data[0].substring(0, Math.min(data[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
+        this.botLook = data[1];
+        this.setDelay(delay);
 
         return true;
     }
@@ -69,12 +81,10 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         List<Bot> bots = room.getBots(this.botName);
 
-        if (bots.size() != 1) {
-            return false;
+        if (bots.size() == 1) {
+            Bot bot = bots.get(0);
+            bot.setFigure(this.botLook);
         }
-
-        Bot bot = bots.get(0);
-        bot.setFigure(this.botLook);
 
         return true;
     }

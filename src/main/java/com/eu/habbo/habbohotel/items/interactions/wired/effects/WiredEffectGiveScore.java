@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.items.Item;
@@ -11,6 +12,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
@@ -61,7 +63,7 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
                         if (iterator.value() < this.count) {
                             iterator.setValue(iterator.value() + 1);
 
-                            habbo.getHabboInfo().getGamePlayer().addScore(this.score);
+                            habbo.getHabboInfo().getGamePlayer().addScore(this.score, true);
 
                             return true;
                         }
@@ -74,7 +76,7 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
             this.data.put(new AbstractMap.SimpleEntry<>(game.getStartTime(), habbo.getHabboInfo().getId()), 1);
 
             if (habbo.getHabboInfo().getGamePlayer() != null) {
-                habbo.getHabboInfo().getGamePlayer().addScore(this.score);
+                habbo.getHabboInfo().getGamePlayer().addScore(this.score, true);
             }
 
             return true;
@@ -147,14 +149,30 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
 
-        this.score = packet.readInt();
-        this.count = packet.readInt();
+        int score = packet.readInt();
+
+        if(score < 1 || score > 100)
+            throw new WiredSaveException("Score is invalid");
+
+        int timesPerGame = packet.readInt();
+
+        if(timesPerGame < 1 || timesPerGame > 10)
+            throw new WiredSaveException("Times per game is invalid");
+
         packet.readString();
         packet.readInt();
-        this.setDelay(packet.readInt());
+
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.score = score;
+        this.count = timesPerGame;
+        this.setDelay(delay);
 
         return true;
     }

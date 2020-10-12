@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +24,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
     private final Room room;
     private int x;
     private int y;
+    private HabboItem oldTopItem;
 
     public RoomUnitOnRollerComposer(RoomUnit roomUnit, HabboItem roller, RoomTile oldLocation, double oldZ, RoomTile newLocation, double newZ, Room room) {
         this.roomUnit = roomUnit;
@@ -32,6 +34,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         this.newLocation = newLocation;
         this.newZ = newZ;
         this.room = room;
+        oldTopItem = this.room.getTopItemAt(oldLocation.x, oldLocation.y);
     }
 
     public RoomUnitOnRollerComposer(RoomUnit roomUnit, RoomTile newLocation, Room room) {
@@ -42,6 +45,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         this.newLocation = newLocation;
         this.newZ = this.newLocation.getStackHeight();
         this.room = room;
+        this.oldTopItem = null;
     }
 
     @Override
@@ -64,7 +68,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         if (this.roller != null && room.getLayout() != null) {
             RoomTile rollerTile = room.getLayout().getTile(this.roller.getX(), this.roller.getY());
             HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
-            if (topItem != null) {
+            if (topItem != null && (topItem == roller || oldTopItem != topItem)) {
                 try {
                     topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
                 } catch (Exception e) {

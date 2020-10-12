@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.outgoing.rooms.items.ItemStateComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -99,7 +100,7 @@ public class InteractionPressurePlate extends HabboItem {
         }
 
         this.setExtradata(occupied ? "1" : "0");
-        room.updateItem(this);
+        room.updateItemState(this);
     }
 
     @Override
