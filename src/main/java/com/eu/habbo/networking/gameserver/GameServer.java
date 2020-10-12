@@ -7,9 +7,11 @@ import com.eu.habbo.networking.Server;
 import com.eu.habbo.networking.gameserver.decoders.*;
 import com.eu.habbo.networking.gameserver.encoders.GameServerMessageEncoder;
 import com.eu.habbo.networking.gameserver.encoders.GameServerMessageLogger;
+import com.eu.habbo.networking.gameserver.handlers.IdleTimeoutHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
 public class GameServer extends Server {
     private final PacketManager packetManager;
@@ -29,6 +31,9 @@ public class GameServer extends Server {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast("logger", new LoggingHandler());
+
+                ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(60, 30, 0));
+                ch.pipeline().addAfter("idleStateHandler", "idleEventHandler", new IdleTimeoutHandler());
 
                 // Decoders.
                 ch.pipeline().addLast(new GamePolicyDecoder());
