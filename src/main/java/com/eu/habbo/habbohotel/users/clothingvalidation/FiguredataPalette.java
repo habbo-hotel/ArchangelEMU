@@ -20,7 +20,7 @@ public class FiguredataPalette {
     }
 
     public FiguredataPaletteColor getFirstNonHCColor() {
-        for(FiguredataPaletteColor color : this.colors.descendingMap().values()) {
+        for(FiguredataPaletteColor color : this.colors.values()) {
             if(!color.club && color.selectable)
                 return color;
         }
