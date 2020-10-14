@@ -68,14 +68,14 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 count++;
             }
 
-            if (targetTile != null && targetTile.state == RoomTileState.OPEN) {
-                boolean hasHabbos = false;
-                for (Habbo habbo : room.getHabbosAt(targetTile)) {
-                    hasHabbos = true;
-                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, habbo.getRoomUnit(), room, new Object[]{entry.getKey()}));
+            if (targetTile != null && targetTile.state != RoomTileState.INVALID) {
+                boolean hasRoomUnits = false;
+                for (RoomUnit _roomUnit : room.getHabbosAndBotsAt(targetTile)) {
+                    hasRoomUnits = true;
+                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, _roomUnit, room, new Object[]{entry.getKey()}));
                 }
 
-                if (!hasHabbos) {
+                if (!hasRoomUnits) {
                     THashSet<RoomTile> refreshTiles = room.getLayout().getTilesAt(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getKey().getBaseItem().getWidth(), entry.getKey().getBaseItem().getLength(), entry.getKey().getRotation());
                     room.sendComposer(new FloorItemOnRollerComposer(entry.getKey(), null, targetTile, targetTile.getStackHeight() - entry.getKey().getZ(), room).compose());
                     room.getLayout().getTilesAt(room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY()), entry.getKey().getBaseItem().getWidth(), entry.getKey().getBaseItem().getLength(), entry.getKey().getRotation());
@@ -103,23 +103,23 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
         String[] data = set.getString("wired_data").split("\t");
 
         if (data.length >= 1) {
-            this.setDelay(Integer.valueOf(data[0]));
+            this.setDelay(Integer.parseInt(data[0]));
         }
         if (data.length >= 3) {
-            this.startRotation = RoomUserRotation.fromValue(Integer.valueOf(data[0]));
-            this.rotateAction = Integer.valueOf(data[1]);
+            this.startRotation = RoomUserRotation.fromValue(Integer.parseInt(data[0]));
+            this.rotateAction = Integer.parseInt(data[1]);
 
-            int itemCount = Integer.valueOf(data[2]);
+            int itemCount = Integer.parseInt(data[2]);
 
             if (itemCount > 0) {
                 for (int i = 3; i < data.length; i++) {
                     String[] subData = data[i].split(":");
 
                     if (subData.length == 2) {
-                        HabboItem item = room.getHabboItem(Integer.valueOf(subData[0]));
+                        HabboItem item = room.getHabboItem(Integer.parseInt(subData[0]));
 
                         if (item != null) {
-                            this.items.put(item, RoomUserRotation.fromValue(Integer.valueOf(subData[1])));
+                            this.items.put(item, RoomUserRotation.fromValue(Integer.parseInt(subData[1])));
                         }
                     }
                 }

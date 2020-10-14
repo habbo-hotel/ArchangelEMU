@@ -52,7 +52,7 @@ public class SecureLoginEvent_BACKUP extends MessageHandler {
                 messages.add(new UserPerksComposer(habbo).compose());
                 messages.add(new SessionRightsComposer().compose());
                 messages.add(new FavoriteRoomsCountComposer(habbo).compose());
-                messages.add(new FriendsComposer(this.client.getHabbo()).compose());
+                //messages.add(new FriendsComposer(this.client.getHabbo()).compose());
                 //messages.add(new NewUserIdentityComposer().compose());
                 //messages.add(new UserDataComposer(this.client.getHabbo()).compose());
                 //messages.add(new SessionRightsComposer().compose());

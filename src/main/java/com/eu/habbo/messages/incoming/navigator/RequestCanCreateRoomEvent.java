@@ -9,7 +9,7 @@ public class RequestCanCreateRoomEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         int count = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()).size();
-        int max = this.client.getHabbo().getHabboStats().hasActiveClub() ? RoomManager.MAXIMUM_ROOMS_VIP : RoomManager.MAXIMUM_ROOMS_USER;
+        int max = this.client.getHabbo().getHabboStats().maxRooms;
         this.client.sendResponse(new CanCreateRoomComposer(count, max));
     }
 }

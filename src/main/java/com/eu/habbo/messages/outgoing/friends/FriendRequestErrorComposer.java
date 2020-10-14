@@ -6,6 +6,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class FriendRequestErrorComposer extends MessageComposer {
     public static final int FRIEND_LIST_OWN_FULL = 1;
+    public static final int FRIEND_LIST_TARGET_FULL = 2;
     public static final int TARGET_NOT_ACCEPTING_REQUESTS = 3;
     public static final int TARGET_NOT_FOUND = 4;
 

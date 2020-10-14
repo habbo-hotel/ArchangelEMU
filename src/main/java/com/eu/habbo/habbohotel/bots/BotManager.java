@@ -12,6 +12,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.inventory.AddBotComposer;
 import com.eu.habbo.messages.outgoing.inventory.RemoveBotComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.plugin.events.bots.BotPickUpEvent;
 import com.eu.habbo.plugin.events.bots.BotPlacedEvent;
@@ -48,13 +49,8 @@ public class BotManager {
     }
 
     public static void addBotDefinition(String type, Class<? extends Bot> botClazz) throws Exception {
-        if (botClazz.getDeclaredConstructor(ResultSet.class) == null) {
-            throw new Exception("Missing Bot(ResultSet) constructor!");
-        } else {
-            botClazz.getDeclaredConstructor(ResultSet.class).setAccessible(true);
-
-            botDefenitions.put(type, botClazz);
-        }
+        botClazz.getDeclaredConstructor(ResultSet.class).setAccessible(true);
+        botDefenitions.put(type, botClazz);
     }
 
     public boolean reload() {
@@ -144,6 +140,7 @@ public class BotManager {
                 room.addBot(bot);
                 Emulator.getThreading().run(bot);
                 room.sendComposer(new RoomUsersComposer(bot).compose());
+                room.sendComposer(new RoomUserStatusComposer(bot.getRoomUnit()).compose());
                 habbo.getInventory().getBotsComponent().removeBot(bot);
                 habbo.getClient().sendResponse(new RemoveBotComposer(bot));
                 bot.onPlace(habbo, room);

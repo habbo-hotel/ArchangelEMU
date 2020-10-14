@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
@@ -77,5 +78,9 @@ public abstract class InteractionCustomValues extends HabboItem {
         }
 
         super.serializeExtradata(serverMessage);
+    }
+
+    public void onCustomValuesSaved(Room room, GameClient client) {
+
     }
 }

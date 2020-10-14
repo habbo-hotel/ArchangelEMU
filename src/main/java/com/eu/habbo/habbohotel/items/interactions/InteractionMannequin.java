@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UserDataComposer;
@@ -60,7 +61,17 @@ public class InteractionMannequin extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        String lookCode = this.getExtradata().split(":")[1];
+        String[] data = this.getExtradata().split(":");
+
+        if(data.length < 2)
+            return;
+
+        String gender = data[0];
+        String figure = data[1];
+
+        if (gender.isEmpty() || figure.isEmpty() || (!gender.equalsIgnoreCase("m") && !gender.equalsIgnoreCase("f")) || !client.getHabbo().getHabboInfo().getGender().name().equalsIgnoreCase(gender))
+            return;
+
         String newFigure = "";
 
         for (String playerFigurePart : client.getHabbo().getHabboInfo().getLook().split("\\.")) {
@@ -68,8 +79,7 @@ public class InteractionMannequin extends HabboItem {
                 newFigure += playerFigurePart + ".";
         }
 
-        if (lookCode.isEmpty()) return;
-        String newFigureParts = lookCode;
+        String newFigureParts = figure;
 
         for (String newFigurePart : newFigureParts.split("\\.")) {
             if (newFigurePart.startsWith("hd"))
@@ -78,12 +88,12 @@ public class InteractionMannequin extends HabboItem {
 
         if (newFigureParts.equals("")) return;
 
-        final String figure = newFigure + newFigureParts;
+        String newLook = newFigure + newFigureParts;
 
-        if (figure.length() > 512)
+        if (newLook.length() > 512)
             return;
 
-        client.getHabbo().getHabboInfo().setLook(figure);
+        client.getHabbo().getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_MANNEQUIN ? ClothingValidationManager.validateLook(client.getHabbo(), newLook, client.getHabbo().getHabboInfo().getGender().name()) : newLook);
         room.sendComposer(new RoomUserDataComposer(client.getHabbo()).compose());
         client.sendResponse(new UserDataComposer(client.getHabbo()));
     }

@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UserDataComposer;
 import com.eu.habbo.util.figure.FigureUtil;
@@ -35,7 +36,7 @@ public class MimicCommand extends Command {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mimic.forbidden_clothing"), RoomChatMessageBubbles.ALERT);
                 return true;
             } else {
-                gameClient.getHabbo().getHabboInfo().setLook(habbo.getHabboInfo().getLook());
+                gameClient.getHabbo().getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_MIMIC ? ClothingValidationManager.validateLook(gameClient.getHabbo(), habbo.getHabboInfo().getLook(), habbo.getHabboInfo().getGender().name()) : habbo.getHabboInfo().getLook());
                 gameClient.getHabbo().getHabboInfo().setGender(habbo.getHabboInfo().getGender());
                 gameClient.sendResponse(new UserDataComposer(gameClient.getHabbo()));
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(gameClient.getHabbo()).compose());

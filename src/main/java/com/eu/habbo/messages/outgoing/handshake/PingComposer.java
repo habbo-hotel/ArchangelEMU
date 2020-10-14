@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class SomeConnectionComposer extends MessageComposer {
+public class PingComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.SomeConnectionComposer);
+        this.response.init(Outgoing.PingComposer);
         return this.response;
     }
 }

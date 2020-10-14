@@ -167,18 +167,6 @@ public class Messenger {
         return map;
     }
 
-    public static int friendLimit(Habbo habbo) {
-        if (habbo.hasPermission("acc_infinite_friends")) {
-            return Integer.MAX_VALUE;
-        }
-
-        if (habbo.getHabboStats().hasActiveClub()) {
-            return MAXIMUM_FRIENDS_HC;
-        }
-
-        return MAXIMUM_FRIENDS;
-    }
-
     public static void checkFriendSizeProgress(Habbo habbo) {
         int progress = habbo.getHabboStats().getAchievementProgress(Emulator.getGameEnvironment().getAchievementManager().getAchievement("FriendListSize"));
 

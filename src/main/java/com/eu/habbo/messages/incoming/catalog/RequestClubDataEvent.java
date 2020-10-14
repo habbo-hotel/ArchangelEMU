@@ -1,6 +1,8 @@
 package com.eu.habbo.messages.incoming.catalog;
 
+import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.messages.outgoing.catalog.ClubCenterDataComposer;
 import com.eu.habbo.messages.outgoing.catalog.ClubDataComposer;
 
 public class RequestClubDataEvent extends MessageHandler {

@@ -24,10 +24,10 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class Emulator {
 
@@ -36,12 +36,12 @@ public final class Emulator {
     private static final String CLASS_PATH = System.getProperty("java.class.path");
 
     public final static int MAJOR = 2;
-    public final static int MINOR = 4;
+    public final static int MINOR = 5;
     public final static int BUILD = 0;
     
-    public final static String PREVIEW = "";
+    public final static String PREVIEW = "RC-1";
 
-    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD;
+    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
             "\n" +
             "███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗ \n" +
@@ -50,7 +50,7 @@ public final class Emulator {
                     "██║╚██╔╝██║██║   ██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚════██║   ██║   ██╔══██║██╔══██╗\n" +
                     "██║ ╚═╝ ██║╚██████╔╝██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝███████║   ██║   ██║  ██║██║  ██║\n" +
                     "╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝\n" +
-                    "                                                                                             ";
+                    "Emulator goes zoom.";
 
     public static String build = "";
     public static boolean isReady = false;
@@ -141,7 +141,7 @@ public final class Emulator {
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
 
-            LOGGER.info("Arcturus Morningstar has succesfully loaded.");
+            LOGGER.info("Arcturus Morningstar has successfully loaded.");
             LOGGER.info("System launched in: {}ms. Using {} threads!", (System.nanoTime() - startTime) / 1e6, Runtime.getRuntime().availableProcessors() * 2);
             LOGGER.info("Memory: {}/{}MB", (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024), (runtime.freeMemory()) / (1024 * 1024));
 
@@ -368,6 +368,65 @@ public final class Emulator {
         System.exit(0);
     }
 
+    public static int timeStringToSeconds(String timeString) {
+        int totalSeconds = 0;
+
+        Matcher m = Pattern.compile("(([0-9]*) (second|minute|hour|day|week|month|year))").matcher(timeString);
+        Map<String,Integer> map = new HashMap<String,Integer>() {
+            {
+                put("second", 1);
+                put("minute", 60);
+                put("hour", 3600);
+                put("day", 86400);
+                put("week", 604800);
+                put("month", 2628000);
+                put("year", 31536000);
+            }
+        };
+
+        while (m.find()) {
+            try {
+                int amount = Integer.parseInt(m.group(2));
+                String what = m.group(3);
+                totalSeconds += amount * map.get(what);
+            }
+            catch (Exception ignored) { }
+        }
+
+        return totalSeconds;
+    }
+
+    public static Date modifyDate(Date date, String timeString) {
+        int totalSeconds = 0;
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+
+        Matcher m = Pattern.compile("(([0-9]*) (second|minute|hour|day|week|month|year))").matcher(timeString);
+        Map<String, Integer> map = new HashMap<String, Integer>() {
+            {
+                put("second", Calendar.SECOND);
+                put("minute", Calendar.MINUTE);
+                put("hour", Calendar.HOUR);
+                put("day", Calendar.DAY_OF_MONTH);
+                put("week", Calendar.WEEK_OF_MONTH);
+                put("month", Calendar.MONTH);
+                put("year", Calendar.YEAR);
+            }
+        };
+
+        while (m.find()) {
+            try {
+                int amount = Integer.parseInt(m.group(2));
+                String what = m.group(3);
+                c.add(map.get(what), amount);
+            }
+            catch (Exception ignored) { }
+        }
+
+        return c.getTime();
+    }
+
     private static String dateToUnixTimestamp(Date date) {
         String res = "";
         Date aux = stringToDate("1970-01-01 00:00:00");
@@ -378,7 +437,7 @@ public final class Emulator {
         return res + seconds;
     }
 
-    private static Date stringToDate(String date) {
+    public static Date stringToDate(String date) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date res = null;
         try {

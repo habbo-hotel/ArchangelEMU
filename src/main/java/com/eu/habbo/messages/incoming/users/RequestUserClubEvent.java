@@ -6,6 +6,7 @@ import com.eu.habbo.messages.outgoing.users.UserClubComposer;
 public class RequestUserClubEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        this.client.sendResponse(new UserClubComposer(this.client.getHabbo()));
+        String subscriptionType = this.packet.readString();
+        this.client.sendResponse(new UserClubComposer(this.client.getHabbo(), subscriptionType));
     }
 }

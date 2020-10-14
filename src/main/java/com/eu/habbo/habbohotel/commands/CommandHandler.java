@@ -285,6 +285,7 @@ public class CommandHandler {
         addCommand(new UpdateYoutubePlaylistsCommand());
         addCommand(new AddYoutubePlaylistCommand());
         addCommand(new SoftKickCommand());
+        addCommand(new SubscriptionCommand());
 
         addCommand(new TestCommand());
     }

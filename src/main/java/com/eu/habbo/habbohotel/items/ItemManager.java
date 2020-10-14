@@ -685,13 +685,14 @@ public class ItemManager {
     }
 
     public HabboItem createGift(String username, Item item, String extraData, int limitedStack, int limitedSells) {
-        HabboItem gift = null;
-        int userId = 0;
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
+
+        int userId = 0;
 
         if (habbo != null) {
             userId = habbo.getHabboInfo().getId();
-        } else {
+        }
+        else {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT id FROM users WHERE username = ?")) {
                 statement.setString(1, username);
                 try (ResultSet set = statement.executeQuery()) {
@@ -704,6 +705,14 @@ public class ItemManager {
             }
         }
 
+        if(userId > 0) {
+            return createGift(userId, item, extraData, limitedStack, limitedSells);
+        }
+
+        return null;
+    }
+
+    public HabboItem createGift(int userId, Item item, String extraData, int limitedStack, int limitedSells) {
         if (userId == 0)
             return null;
 
@@ -712,26 +721,12 @@ public class ItemManager {
             extraData = extraData.substring(0, 1000);
         }
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO items (user_id, item_id, extra_data, limited_data) VALUES (?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-            statement.setInt(1, userId);
-            statement.setInt(2, item.getId());
-            statement.setString(3, extraData);
-            statement.setString(4, limitedStack + ":" + limitedSells);
-            statement.execute();
-
-            try (ResultSet set = statement.getGeneratedKeys()) {
-                if (set.next()) {
-                    gift = new InteractionGift(set.getInt(1), userId, item, extraData, limitedStack, limitedSells);
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
+        HabboItem gift = this.createItem(userId, item, limitedStack, limitedSells, extraData);
 
         if (gift != null) {
+            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
             if (habbo != null) {
                 habbo.getInventory().getItemsComponent().addItem(gift);
-
                 habbo.getClient().sendResponse(new AddHabboItemComposer(gift));
             }
         }

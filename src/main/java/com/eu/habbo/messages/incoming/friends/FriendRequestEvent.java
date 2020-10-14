@@ -74,10 +74,16 @@ public class FriendRequestEvent extends MessageHandler {
                 return;
             }
 
-            if (this.client.getHabbo().getMessenger().getFriends().values().size() >= Messenger.friendLimit(this.client.getHabbo()) && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
+            if (this.client.getHabbo().getMessenger().getFriends().values().size() >= this.client.getHabbo().getHabboStats().maxFriends && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
                 this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.FRIEND_LIST_OWN_FULL));
                 return;
             }
+
+            if (habbo.getMessenger().getFriends().values().size() >= habbo.getHabboStats().maxFriends && !habbo.hasPermission("acc_infinite_friends")) {
+                this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.FRIEND_LIST_TARGET_FULL));
+                return;
+            }
+
             Messenger.makeFriendRequest(this.client.getHabbo().getHabboInfo().getId(), id);
         } else {
             this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_FOUND));

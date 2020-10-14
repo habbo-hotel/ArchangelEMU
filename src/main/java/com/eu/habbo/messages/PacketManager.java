@@ -255,6 +255,10 @@ public class PacketManager {
         this.registerHandler(Incoming.CatalogSearchedItemEvent, CatalogSearchedItemEvent.class);
         this.registerHandler(Incoming.PurchaseTargetOfferEvent, PurchaseTargetOfferEvent.class);
         this.registerHandler(Incoming.TargetOfferStateEvent, TargetOfferStateEvent.class);
+        this.registerHandler(Incoming.CatalogSelectClubGiftEvent, CatalogSelectClubGiftEvent.class);
+        this.registerHandler(Incoming.RequestClubCenterEvent, RequestClubCenterEvent.class);
+        this.registerHandler(Incoming.CatalogRequestClubDiscountEvent, CatalogRequestClubDiscountEvent.class);
+        this.registerHandler(Incoming.CatalogBuyClubDiscountEvent, CatalogBuyClubDiscountEvent.class);
     }
 
     private void registerEvent() throws Exception {
