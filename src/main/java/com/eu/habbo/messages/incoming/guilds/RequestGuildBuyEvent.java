@@ -27,7 +27,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
         if(name.length() > 29 || description.length() > 254)
             return;
 
-        if (Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && this.client.getHabbo().getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
+        if (Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && !this.client.getHabbo().getHabboStats().hasActiveClub()) {
             this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.HC_REQUIRED));
             return;
         }
