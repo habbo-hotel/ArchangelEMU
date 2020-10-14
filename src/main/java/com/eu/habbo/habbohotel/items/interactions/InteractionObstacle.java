@@ -180,12 +180,12 @@ public class InteractionObstacle extends HabboItem implements ICycleable {
                         continue;
 
                     RoomTile tileInfront = room.getLayout().getTileInFront(unit.getCurrentLocation(), unit.getBodyRotation().getValue());
-                    if(tileInfront.state != RoomTileState.INVALID && tileInfront.state != RoomTileState.BLOCKED) {
+                    if(tileInfront.state != RoomTileState.INVALID && tileInfront.state != RoomTileState.BLOCKED && room.getRoomUnitsAt(tileInfront).size() == 0) {
                         unit.setGoalLocation(tileInfront);
                     }
                     else {
                         RoomTile tileBehind = room.getLayout().getTileInFront(unit.getCurrentLocation(), Objects.requireNonNull(unit.getBodyRotation().getOpposite()).getValue());
-                        if(tileBehind.state != RoomTileState.INVALID && tileBehind.state != RoomTileState.BLOCKED) {
+                        if(tileBehind.state != RoomTileState.INVALID && tileBehind.state != RoomTileState.BLOCKED && room.getRoomUnitsAt(tileBehind).size() == 0) {
                             unit.setGoalLocation(tileBehind);
                         }
                     }
