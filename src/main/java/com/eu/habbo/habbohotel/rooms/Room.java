@@ -782,13 +782,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
 
             if(habbo.getRoomUnit().getCurrentLocation().is(x, y) && (oldZ != z || updated || oldRotation != habbo.getRoomUnit().getBodyRotation())) {
-                roomUnits.add(habbo.getRoomUnit());
+                habbo.getRoomUnit().statusUpdate(true);
+                //roomUnits.add(habbo.getRoomUnit());
             }
         }
 
-        if (!roomUnits.isEmpty()) {
+        /*if (!roomUnits.isEmpty()) {
             this.sendComposer(new RoomUserStatusComposer(roomUnits, true).compose());
-        }
+        }*/
     }
 
     public void updateBotsAt(short x, short y) {
@@ -4684,9 +4685,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     t.x,
                     t.y,
                     this.getHabbosAt(t.x, t.y)
-                            .stream()
-                            .filter(h -> !h.getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
-                            .collect(Collectors.toCollection(THashSet::new))
+                            /*.stream()
+                            .filter(h -> !h.getRoomUnit().hasStatus(RoomUnitStatus.MOVE) || h.getRoomUnit().getGoal() == t)
+                            .collect(Collectors.toCollection(THashSet::new))*/
             );
             this.updateBotsAt(t.x, t.y);
         }

@@ -87,7 +87,7 @@ public class InteractionMultiHeight extends HabboItem {
 
             THashSet<RoomUnit> updatedUnits = new THashSet<>();
             for (RoomUnit unit : unitsOnItem) {
-                if (unit.hasStatus(RoomUnitStatus.MOVE))
+                if (unit.hasStatus(RoomUnitStatus.MOVE) && unit.getGoal() != tile)
                     continue;
 
                 this.getBaseItem().getMultiHeights();
