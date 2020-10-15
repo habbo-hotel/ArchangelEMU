@@ -4498,6 +4498,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         double height = tile.getStackHeight();
 
+        for(RoomTile tile2 : occupiedTiles) {
+            double sHeight = tile2.getStackHeight();
+            if(sHeight > height) {
+                height = sHeight;
+            }
+        }
+
         if (Emulator.getPluginManager().isRegistered(FurnitureBuildheightEvent.class, true)) {
             FurnitureBuildheightEvent event = Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, owner, 0.00, height));
             if (event.hasChangedHeight()) {
