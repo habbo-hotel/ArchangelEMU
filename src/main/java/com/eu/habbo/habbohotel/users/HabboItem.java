@@ -330,7 +330,9 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
 
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        WiredHandler.handle(WiredTriggerType.WALKS_OFF_FURNI, roomUnit, room, new Object[]{this});
+        if(objects != null && objects.length > 0) {
+            WiredHandler.handle(WiredTriggerType.WALKS_OFF_FURNI, roomUnit, room, new Object[]{this});
+        }
     }
 
     public abstract void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception;
