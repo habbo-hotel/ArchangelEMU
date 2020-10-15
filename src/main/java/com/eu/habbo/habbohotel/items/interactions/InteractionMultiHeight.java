@@ -15,6 +15,7 @@ import gnu.trove.set.hash.THashSet;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -68,39 +69,42 @@ public class InteractionMultiHeight extends HabboItem {
                     this.setExtradata("0");
 
                 if (this.getBaseItem().getMultiHeights().length > 0) {
-                    this.setExtradata("" + (Integer.valueOf(this.getExtradata()) + 1) % (this.getBaseItem().getMultiHeights().length));
+                    this.setExtradata("" + (Integer.parseInt(this.getExtradata()) + 1) % (this.getBaseItem().getMultiHeights().length));
                     this.needsUpdate(true);
                     room.updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()));
                     room.updateItemState(this);
                     //room.sendComposer(new UpdateStackHeightComposer(this.getX(), this.getY(), this.getBaseItem().getMultiHeights()[Integer.valueOf(this.getExtradata())] * 256.0D).compose());
                 }
-
-                if (this.isWalkable()) {
-                    List<RoomUnit> unitsOnItem = new ArrayList<>();
-                    unitsOnItem.addAll(room.getHabbosOnItem(this).stream().map(Habbo::getRoomUnit).filter(Objects::nonNull).collect(Collectors.toList()));
-                    unitsOnItem.addAll(room.getBotsOnItem(this).stream().map(Bot::getRoomUnit).filter(Objects::nonNull).collect(Collectors.toList()));
-
-                    THashSet<RoomUnit> updatedUnits = new THashSet<>();
-                    for (RoomUnit unit : unitsOnItem) {
-                        if (unit.hasStatus(RoomUnitStatus.MOVE))
-                            continue;
-
-                        if (this.getBaseItem().getMultiHeights().length >= 0) {
-                            if (this.getBaseItem().allowSit()) {
-                                unit.setStatus(RoomUnitStatus.SIT, this.getBaseItem().getMultiHeights()[(this.getExtradata().isEmpty() ? 0 : Integer.valueOf(this.getExtradata()) % (this.getBaseItem().getMultiHeights().length))] * 1.0D + "");
-                            } else {
-                                unit.setZ(unit.getCurrentLocation().getStackHeight());
-                                unit.setPreviousLocationZ(unit.getZ());
-                            }
-                        }
-
-                        updatedUnits.add(unit);
-                    }
-
-                    room.sendComposer(new RoomUserStatusComposer(updatedUnits, true).compose());
-                }
             }
         }
+    }
+
+    public void updateUnitsOnItem(Room room) {
+        Collection<RoomUnit> unitsOnItem = room.getRoomUnitsAt(room.getLayout().getTile(this.getX(), this.getY()));
+
+        THashSet<RoomUnit> updatedUnits = new THashSet<>();
+        for (RoomUnit unit : unitsOnItem) {
+            if (unit.hasStatus(RoomUnitStatus.MOVE))
+                continue;
+
+            this.getBaseItem().getMultiHeights();
+            /*if (this.getBaseItem().allowSit()) {
+                unit.setStatus(RoomUnitStatus.SIT, this.getBaseItem().getMultiHeights()[(this.getExtradata().isEmpty() ? 0 : Integer.parseInt(this.getExtradata()) % (this.getBaseItem().getMultiHeights().length))] * 1.0D + "");
+            } else {
+
+            }*/
+
+            if(this.getBaseItem().allowSit() || unit.hasStatus(RoomUnitStatus.SIT)) {
+                unit.sitUpdate = true;
+            }
+
+            unit.setZ(unit.getCurrentLocation().getStackHeight());
+            unit.setPreviousLocationZ(unit.getZ());
+
+            updatedUnits.add(unit);
+        }
+
+        room.sendComposer(new RoomUserStatusComposer(updatedUnits, true).compose());
     }
 
     @Override

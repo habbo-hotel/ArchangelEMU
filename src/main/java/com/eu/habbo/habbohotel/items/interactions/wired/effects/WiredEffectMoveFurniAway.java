@@ -82,20 +82,13 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
                         y++;
                 }
 
-                RoomTile newTile = room.getLayout().getTile((short) (item.getX() + x), (short) (item.getY() + y));
+                RoomTile newLocation = room.getLayout().getTile((short) (item.getX() + x), (short) (item.getY() + y));
+                RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
+                double oldZ = item.getZ();
 
-                if (newTile != null && newTile.state == RoomTileState.OPEN) {
-                    if (room.getLayout().tileExists(newTile.x, newTile.y)) {
-                        HabboItem topItem = room.getTopItemAt(newTile.x, newTile.y);
-
-                        if (topItem == null || topItem.getBaseItem().allowStack()) {
-                            double offsetZ = 0;
-
-                            if (topItem != null)
-                                offsetZ = topItem.getZ() + topItem.getBaseItem().getHeight() - item.getZ();
-
-                            room.sendComposer(new FloorItemOnRollerComposer(item, null, newTile, offsetZ, room).compose());
-                        }
+                if(newLocation != null && newLocation.state != RoomTileState.INVALID && room.furnitureFitsAt(newLocation, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
+                    if(room.moveFurniTo(item, newLocation, item.getRotation(), null, false) == FurnitureMovementError.NONE) {
+                        room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                     }
                 }
             }

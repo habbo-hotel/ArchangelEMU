@@ -215,13 +215,15 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
 
             RoomTile newTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), moveDirection.getValue());
 
-            if (newTile != null) {
-                lastDirections.put(item.getId(), moveDirection);
+            RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
+            double oldZ = item.getZ();
 
-                FurnitureMovementError error = room.furnitureFitsAt(newTile, item, item.getRotation());
-                if (error == FurnitureMovementError.NONE) {
-                    double offset = room.getStackHeight(newTile.x, newTile.y, false, item) - item.getZ();
-                    room.sendComposer(new FloorItemOnRollerComposer(item, null, newTile, offset, room).compose());
+            if(newTile != null) {
+                lastDirections.put(item.getId(), moveDirection);
+                if(newTile.state != RoomTileState.INVALID && room.furnitureFitsAt(newTile, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
+                    if (room.moveFurniTo(item, newTile, item.getRotation(), null, false) == FurnitureMovementError.NONE) {
+                        room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newTile, item.getZ(), 0, room).compose());
+                    }
                 }
             }
         }

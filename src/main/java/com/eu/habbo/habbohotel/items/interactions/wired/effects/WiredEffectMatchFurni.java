@@ -3,12 +3,10 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.items.interactions.InteractionMultiHeight;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomTileState;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
@@ -49,11 +47,9 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        THashSet<RoomTile> tilesToUpdate = new THashSet<>(this.settings.size());
-        //this.refresh();
 
         if(this.settings.isEmpty())
-            return false;
+            return true;
 
         for (WiredMatchFurniSetting setting : this.settings) {
             HabboItem item = room.getHabboItem(setting.itemId);
@@ -62,92 +58,32 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                     if (!setting.state.equals(" ")) {
                         item.setExtradata(setting.state);
                         room.updateItemState(item);
-                        tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                     }
                 }
 
-                int oldRotation = item.getRotation();
-                boolean slideAnimation = true;
-                double offsetZ = 0;
+                RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
+                double oldZ = item.getZ();
 
-                if (this.direction && item.getRotation() != setting.rotation) {
-                    item.setRotation(setting.rotation);
-                    slideAnimation = false;
-
-                    room.scheduledTasks.add(() -> {
-                        room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation).forEach(t -> {
-                            room.updateBotsAt(t.x, t.y);
-                            room.updateHabbosAt(t.x, t.y);
-                        });
-                        room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation).forEach(t -> {
-                            room.updateBotsAt(t.x, t.y);
-                            room.updateHabbosAt(t.x, t.y);
-                        });
-                    });
+                if(this.direction && !this.position) {
+                    if(item.getRotation() != setting.rotation && room.furnitureFitsAt(oldLocation, item, setting.rotation, false) == FurnitureMovementError.NONE) {
+                        room.moveFurniTo(item, oldLocation, setting.rotation, null, true);
+                    }
                 }
+                else if(this.position) {
+                    boolean slideAnimation = !this.direction || item.getRotation() == setting.rotation;
+                    RoomTile newLocation = room.getLayout().getTile((short) setting.x, (short) setting.y);
 
-                RoomTile t = null;
-
-                if (this.position) {
-                    t = room.getLayout().getTile((short) setting.x, (short) setting.y);
-
-                    if (t != null && t.state != RoomTileState.INVALID) {
-                        boolean canMove = true;
-
-                        if (t.x == item.getX() && t.y == item.getY() || room.hasHabbosAt(t.x, t.y)) {
-                            canMove = !(room.getTopItemAt(t.x, t.y) == item);
-                            slideAnimation = false;
-                        }
-
-
-                        if (canMove && !room.hasHabbosAt(t.x, t.y)) {
-                            THashSet<RoomTile> tiles = room.getLayout().getTilesAt(t, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation);
-                            double highestZ = -1d;
-                            for (RoomTile tile : tiles) {
-                                if (tile.state == RoomTileState.INVALID) {
-                                    highestZ = -1d;
-                                    break;
-                                }
-
-                                if (item instanceof InteractionRoller && room.hasItemsAt(tile.x, tile.y)) {
-                                    highestZ = -1d;
-                                    break;
-                                }
-
-                                double stackHeight = room.getStackHeight(tile.x, tile.y, false, item);
-                                if (stackHeight > highestZ) {
-                                    highestZ = stackHeight;
-                                }
-                            }
-
-                            if (highestZ != -1d) {
-                                tilesToUpdate.addAll(tiles);
-
-                                offsetZ = highestZ - item.getZ();
-                                double totalHeight = item.getZ() + offsetZ;
-                                if (totalHeight > 40) break;
-                                tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation));
-
-                                if (!slideAnimation) {
-                                    item.setX(t.x);
-                                    item.setY(t.y);
-                                }
+                    if(newLocation != null && newLocation.state != RoomTileState.INVALID && room.furnitureFitsAt(newLocation, item, this.direction ? setting.rotation : item.getRotation(), true) == FurnitureMovementError.NONE) {
+                        if(room.moveFurniTo(item, newLocation, this.direction ? setting.rotation : item.getRotation(), null, !slideAnimation) == FurnitureMovementError.NONE) {
+                            if(slideAnimation) {
+                                room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                             }
                         }
                     }
                 }
 
-                if (slideAnimation && t != null) {
-                    room.sendComposer(new FloorItemOnRollerComposer(item, null, t, offsetZ, room).compose());
-                } else {
-                    room.updateItem(item);
-                }
-
-                item.needsUpdate(true);
             }
         }
-
-        room.updateTiles(tilesToUpdate);
 
         return true;
     }

@@ -243,6 +243,8 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
         return this.limitedSells;
     }
 
+    public int getMaximumRotations() { return this.baseItem.getRotations(); }
+
     @Override
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
