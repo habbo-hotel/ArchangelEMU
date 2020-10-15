@@ -26,7 +26,7 @@ public class InteractionFootballGoal extends InteractionGameTeamItem {
 
     @Override
     public boolean isWalkable() {
-        return true;
+        return this.getBaseItem().allowWalk();
     }
 
     @Override

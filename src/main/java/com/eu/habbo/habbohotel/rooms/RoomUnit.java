@@ -512,14 +512,14 @@ public class RoomUnit {
         this.startLocation = this.currentLocation;
 
         if (goalLocation != null && !noReset) {
+            boolean isWalking = this.hasStatus(RoomUnitStatus.MOVE);
             this.goalLocation = goalLocation;
             this.findPath(); ///< Quadral: this is where we start formulating a path
             if (!this.path.isEmpty()) {
-                this.tilesWalked = 0;
+                this.tilesWalked = isWalking ? this.tilesWalked : 0;
                 this.cmdSit = false;
             } else {
                 this.goalLocation = this.currentLocation;
-
             }
         }
     }
