@@ -41,14 +41,6 @@ public class InteractionPressurePlate extends InteractionDefault {
     }
 
     @Override
-    public void serializeExtradata(ServerMessage serverMessage) {
-        serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
-
-        super.serializeExtradata(serverMessage);
-    }
-
-    @Override
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
 
     }
