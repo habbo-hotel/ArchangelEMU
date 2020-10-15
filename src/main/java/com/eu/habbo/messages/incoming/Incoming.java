@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.incoming;
 
 public class Incoming {
+    public static final int PongEvent = 2596;
     public static final int ChangeNameCheckUsernameEvent = 3950;
     public static final int ConfirmChangeNameEvent = 2977;
     public static final int ActivateEffectEvent = 2959;

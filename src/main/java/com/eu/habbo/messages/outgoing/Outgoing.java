@@ -493,7 +493,7 @@ public class Outgoing {
 
     public final static int SimplePollAnswerComposer = 2589;
 
-    public final static int SomeConnectionComposer = 3928;
+    public final static int PingComposer = 3928;
     public final static int TradingWaitingConfirmComposer = 2720;
     public final static int BaseJumpJoinQueueComposer = 2260;
     public final static int ClubCenterDataComposer = 3277;

@@ -82,6 +82,7 @@ public class PluginManager {
         PacketManager.DEBUG_SHOW_PACKETS = Emulator.getConfig().getBoolean("debug.show.packets");
         PacketManager.MULTI_THREADED_PACKET_HANDLING = Emulator.getConfig().getBoolean("io.client.multithreaded.handler");
         Room.HABBO_CHAT_DELAY = Emulator.getConfig().getBoolean("room.chat.delay", false);
+        Room.MUTEAREA_CAN_WHISPER = Emulator.getConfig().getBoolean("room.chat.mutearea.allow_whisper", false);
         RoomChatMessage.SAVE_ROOM_CHATS = Emulator.getConfig().getBoolean("save.room.chats", false);
         RoomLayout.MAXIMUM_STEP_HEIGHT = Emulator.getConfig().getDouble("pathfinder.step.maximum.height", 1.1);
         RoomLayout.ALLOW_FALLING = Emulator.getConfig().getBoolean("pathfinder.step.allow.falling", true);

@@ -116,6 +116,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public static int IDLE_CYCLES_KICK = 480;
     public static String PREFIX_FORMAT = "[<font color=\"%color%\">%prefix%</font>] ";
     public static int ROLLERS_MAXIMUM_ROLL_AVATARS = 1;
+    public static boolean MUTEAREA_CAN_WHISPER = false;
 
     static {
         for (int i = 1; i <= 3; i++) {
@@ -3112,9 +3113,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (roomChatMessage == null || roomChatMessage.getMessage() == null || roomChatMessage.getMessage().equals(""))
             return;
 
-        for (HabboItem area : this.getRoomSpecialTypes().getItemsOfType(InteractionMuteArea.class)) {
-            if (((InteractionMuteArea) area).inSquare(habbo.getRoomUnit().getCurrentLocation())) {
-                return;
+        if(!habbo.hasPermission(Permission.ACC_NOMUTE) && (!MUTEAREA_CAN_WHISPER || chatType != RoomChatType.WHISPER)) {
+            for (HabboItem area : this.getRoomSpecialTypes().getItemsOfType(InteractionMuteArea.class)) {
+                if (((InteractionMuteArea) area).inSquare(habbo.getRoomUnit().getCurrentLocation())) {
+                    return;
+                }
             }
         }
 
