@@ -3572,7 +3572,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 if(!item.getBaseItem().allowSit())
                     continue;
 
-                if(lowestChair != null && lowestChair.getZ() + Item.getCurrentHeight(lowestChair) < item.getZ() + Item.getCurrentHeight(item))
+                if(lowestChair != null && lowestChair.getZ() + Item.getCurrentHeight(lowestChair) > item.getZ() + Item.getCurrentHeight(item))
                     continue;
 
                 lowestChair = item;
