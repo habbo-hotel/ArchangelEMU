@@ -66,7 +66,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
             boolean slideAnimation = item.getRotation() == newRotation;
 
             FurnitureMovementError furniMoveTest = room.furnitureFitsAt(newLocation, item, newRotation, true);
-            if(newLocation != null && newLocation.state != RoomTileState.INVALID && (furniMoveTest == FurnitureMovementError.NONE || ((furniMoveTest == FurnitureMovementError.TILE_HAS_BOTS || furniMoveTest == FurnitureMovementError.TILE_HAS_HABBOS || furniMoveTest == FurnitureMovementError.TILE_HAS_PETS) && newLocation == oldLocation))) {
+            if(newLocation != null && newLocation.state != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && (furniMoveTest == FurnitureMovementError.NONE || ((furniMoveTest == FurnitureMovementError.TILE_HAS_BOTS || furniMoveTest == FurnitureMovementError.TILE_HAS_HABBOS || furniMoveTest == FurnitureMovementError.TILE_HAS_PETS) && newLocation == oldLocation))) {
                 if(room.furnitureFitsAt(newLocation, item, newRotation, false) == FurnitureMovementError.NONE && room.moveFurniTo(item, newLocation, newRotation, null, !slideAnimation) == FurnitureMovementError.NONE) {
                     if(slideAnimation) {
                         room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());

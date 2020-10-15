@@ -220,7 +220,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
 
             if(newTile != null) {
                 lastDirections.put(item.getId(), moveDirection);
-                if(newTile.state != RoomTileState.INVALID && room.furnitureFitsAt(newTile, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
+                if(newTile.state != RoomTileState.INVALID && newTile != oldLocation && room.furnitureFitsAt(newTile, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
                     if (room.moveFurniTo(item, newTile, item.getRotation(), null, false) == FurnitureMovementError.NONE) {
                         room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newTile, item.getZ(), 0, room).compose());
                     }

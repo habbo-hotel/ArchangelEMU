@@ -55,7 +55,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
             HabboItem item = room.getHabboItem(setting.itemId);
             if (item != null) {
                 if (this.state && (this.checkForWiredResetPermission && item.allowWiredResetState())) {
-                    if (!setting.state.equals(" ")) {
+                    if (!setting.state.equals(" ") && !item.getExtradata().equals(setting.state)) {
                         item.setExtradata(setting.state);
                         room.updateItemState(item);
                     }
@@ -72,9 +72,10 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                 else if(this.position) {
                     boolean slideAnimation = !this.direction || item.getRotation() == setting.rotation;
                     RoomTile newLocation = room.getLayout().getTile((short) setting.x, (short) setting.y);
+                    int newRotation = this.direction ? setting.rotation : item.getRotation();
 
-                    if(newLocation != null && newLocation.state != RoomTileState.INVALID && room.furnitureFitsAt(newLocation, item, this.direction ? setting.rotation : item.getRotation(), true) == FurnitureMovementError.NONE) {
-                        if(room.moveFurniTo(item, newLocation, this.direction ? setting.rotation : item.getRotation(), null, !slideAnimation) == FurnitureMovementError.NONE) {
+                    if(newLocation != null && newLocation.state != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && room.furnitureFitsAt(newLocation, item, newRotation, true) == FurnitureMovementError.NONE) {
+                        if(room.moveFurniTo(item, newLocation, newRotation, null, !slideAnimation) == FurnitureMovementError.NONE) {
                             if(slideAnimation) {
                                 room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                             }
