@@ -2971,7 +2971,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.teleportRoomUnitToLocation(roomUnit, x, y, 0.0);
     }
 
-    void teleportRoomUnitToLocation(RoomUnit roomUnit, short x, short y, double z) {
+    public void teleportRoomUnitToLocation(RoomUnit roomUnit, short x, short y, double z) {
         if (this.loaded) {
             RoomTile tile = this.layout.getTile(x, y);
 
