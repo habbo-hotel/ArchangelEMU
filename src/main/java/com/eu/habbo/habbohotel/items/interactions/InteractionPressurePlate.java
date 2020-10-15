@@ -14,7 +14,7 @@ import gnu.trove.set.hash.THashSet;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionPressurePlate extends HabboItem {
+public class InteractionPressurePlate extends InteractionDefault {
     public InteractionPressurePlate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
