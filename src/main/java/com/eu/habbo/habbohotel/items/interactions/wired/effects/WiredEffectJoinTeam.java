@@ -136,7 +136,7 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
 
-        this.teamColor = GameTeamColors.values()[packet.readInt()];
+        this.teamColor = GameTeamColors.values()[team];
         this.setDelay(delay);
 
         return true;
