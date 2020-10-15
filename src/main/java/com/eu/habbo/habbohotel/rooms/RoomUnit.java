@@ -726,13 +726,12 @@ public class RoomUnit {
         if (room.getItemsAt(tile).stream().anyMatch(i -> i.canOverrideTile(this, room, tile)))
             return true;
 
-        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        int tileIndex = (tile.x & 0xFF) | (tile.y << 12);
         return this.overridableTiles.contains(tileIndex);
     }
 
     public void addOverrideTile(RoomTile tile) {
-        if (!this.canOverrideTile(tile)) { return; } // Test if the Tile is overridable
-        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        int tileIndex = (tile.x & 0xFF) | (tile.y << 12);
         if (!this.overridableTiles.contains(tileIndex)) {
             this.overridableTiles.add(tileIndex);
         }
@@ -741,7 +740,7 @@ public class RoomUnit {
     public void removeOverrideTile(RoomTile tile) {
         if (room == null || room.getLayout() == null) return;
 
-        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        int tileIndex = (tile.x & 0xFF) | (tile.y << 12);
         this.overridableTiles.remove(tileIndex);
     }
 
