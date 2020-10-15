@@ -4420,8 +4420,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return FurnitureMovementError.MAX_ITEMS;
         }
 
-
-
         rotation %= 8;
         if (this.hasRights(habbo) || this.guildRightLevel(habbo) >= 2 || habbo.hasPermission(Permission.ACC_MOVEROTATE)) {
             return FurnitureMovementError.NONE;
@@ -4589,7 +4587,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         HabboItem topItem = this.getTopItemAt(occupiedTiles, null);
 
         if (!stackHelper.isPresent() && !pluginHelper) {
-            if (topItem != item) {
+            if (oldLocation != tile) {
                 for (RoomTile t : occupiedTiles) {
                     HabboItem tileTopItem = this.getTopItemAt(t.x, t.y);
                     if (!magicTile && ((tileTopItem != null && tileTopItem != item ? (t.state.equals(RoomTileState.INVALID) || !t.getAllowStack() || !tileTopItem.getBaseItem().allowStack()) : this.calculateTileState(t, item).equals(RoomTileState.INVALID))))
