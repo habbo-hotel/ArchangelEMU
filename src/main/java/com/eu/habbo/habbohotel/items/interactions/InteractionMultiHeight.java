@@ -90,13 +90,6 @@ public class InteractionMultiHeight extends HabboItem {
                 if (unit.hasStatus(RoomUnitStatus.MOVE) && unit.getGoal() != tile)
                     continue;
 
-                this.getBaseItem().getMultiHeights();
-            /*if (this.getBaseItem().allowSit()) {
-                unit.setStatus(RoomUnitStatus.SIT, this.getBaseItem().getMultiHeights()[(this.getExtradata().isEmpty() ? 0 : Integer.parseInt(this.getExtradata()) % (this.getBaseItem().getMultiHeights().length))] * 1.0D + "");
-            } else {
-
-            }*/
-
                 if (this.getBaseItem().allowSit() || unit.hasStatus(RoomUnitStatus.SIT)) {
                     unit.sitUpdate = true;
                     unit.statusUpdate(true);
