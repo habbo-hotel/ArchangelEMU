@@ -57,7 +57,7 @@ public class InteractionBattleBanzaiTeleporter extends HabboItem {
         super.onWalkOn(roomUnit, room, objects);
 
         if(objects.length < 3) {
-            HabboItem target = room.getRoomSpecialTypes().getRandomTeleporter(this.getBaseItem(), this);
+            HabboItem target = room.getRoomSpecialTypes().getRandomTeleporter(null, this);
             if (target == null) return;
 
             this.setExtradata("1");
