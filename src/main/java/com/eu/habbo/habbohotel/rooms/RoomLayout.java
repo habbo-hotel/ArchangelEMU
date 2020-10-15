@@ -273,6 +273,8 @@ public class RoomLayout {
         List<RoomTile> closedList = new LinkedList<>();
         openList.add(oldTile.copy());
 
+        RoomTile doorTile = this.room.getLayout().getDoorTile();
+
         while (!openList.isEmpty()) {
             RoomTile current = this.lowestFInOpen(openList);
             if (current.x == newTile.x && current.y == newTile.y) {
@@ -301,9 +303,14 @@ public class RoomLayout {
                 }
 
                 double height = currentAdj.getStackHeight() - current.getStackHeight();
-                if (!ALLOW_FALLING && height < -MAXIMUM_STEP_HEIGHT) continue;
-                if (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT) continue;
-                if (currentAdj.hasUnits() && ((!isWalktroughRetry && !this.room.isAllowWalkthrough()) || currentAdj.equals(goalLocation))) {
+
+                if ((!ALLOW_FALLING && height < -MAXIMUM_STEP_HEIGHT) || (currentAdj.state == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT)) {
+                    closedList.add(currentAdj);
+                    openList.remove(currentAdj);
+                    continue;
+                }
+
+                if (currentAdj.hasUnits() && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
                     closedList.add(currentAdj);
                     openList.remove(currentAdj);
                     continue;
@@ -321,7 +328,7 @@ public class RoomLayout {
             }
         }
 
-        if (this.room.isAllowWalkthrough() && isWalktroughRetry) {
+        if (this.room.isAllowWalkthrough() && !isWalktroughRetry) {
             return this.findPath(oldTile, newTile, goalLocation, roomUnit, true);
         }
 
