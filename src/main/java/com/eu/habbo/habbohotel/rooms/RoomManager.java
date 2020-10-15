@@ -377,7 +377,7 @@ public class RoomManager {
     public void unloadRoomsForHabbo(Habbo habbo) {
         List<Room> roomsToDispose = new ArrayList<>();
         for (Room room : this.activeRooms.values()) {
-            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && room.getOwnerId() == habbo.getHabboInfo().getId() && room.getUserCount() == 0 && !this.roomCategories.get(room.getCategory()).isPublic()) {
+            if (!room.isPublicRoom() && !room.isStaffPromotedRoom() && room.getOwnerId() == habbo.getHabboInfo().getId() && room.getUserCount() == 0 && (this.roomCategories.get(room.getCategory()) == null || !this.roomCategories.get(room.getCategory()).isPublic())) {
                 roomsToDispose.add(room);
             }
         }
