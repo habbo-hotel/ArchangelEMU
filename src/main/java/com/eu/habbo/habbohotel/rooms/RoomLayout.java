@@ -288,7 +288,7 @@ public class RoomLayout {
             for (RoomTile currentAdj : adjacentNodes) {
                 if (closedList.contains(currentAdj)) continue;
 
-                if (roomUnit.canOverrideTile(currentAdj) || (currentAdj.state != RoomTileState.BLOCKED && currentAdj.x == doorX && currentAdj.y == doorY)) {
+                if (roomUnit.canOverrideTile(currentAdj)) {
                     currentAdj.setPrevious(current);
                     currentAdj.sethCosts(this.findTile(openList, newTile.x, newTile.y));
                     currentAdj.setgCosts(current);
