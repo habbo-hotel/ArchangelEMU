@@ -260,10 +260,10 @@ public class RoomUnit {
             boolean canSitNextTile = room.canSitAt(next.x, next.y);
 
             if (canSitNextTile) {
-                HabboItem lowestChair = room.getLowestChair(next);
+                HabboItem tallestChair = room.getTallestChair(next);
 
-                if (lowestChair != null)
-                    item = lowestChair;
+                if (tallestChair != null)
+                    item = tallestChair;
             }
 
             if (next.equals(this.goalLocation) && next.state == RoomTileState.SIT && !overrideChecks) {

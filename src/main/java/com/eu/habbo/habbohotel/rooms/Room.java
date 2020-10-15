@@ -566,11 +566,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return RoomTileState.INVALID;
 
         RoomTileState result = RoomTileState.OPEN;
-        HabboItem highestItem = null;
-        HabboItem lowestChair = this.getLowestChair(tile);
+        //HabboItem highestItem = null;
+        //HabboItem lowestChair = this.getLowestChair(tile);
         THashSet<HabboItem> items = this.getItemsAt(tile);
 
         if (items == null) return RoomTileState.INVALID;
+
+        HabboItem tallestItem = null;
 
         for (HabboItem item : items) {
             if (exclude != null && item == exclude) continue;
@@ -579,13 +581,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 return RoomTileState.LAY;
             }
 
-            if (highestItem != null && highestItem.getZ() + Item.getCurrentHeight(highestItem) > item.getZ() + Item.getCurrentHeight(item))
+            /*if (highestItem != null && highestItem.getZ() + Item.getCurrentHeight(highestItem) > item.getZ() + Item.getCurrentHeight(item))
                 continue;
 
-            highestItem = item;
-            if (result == RoomTileState.OPEN) {
-                result = this.checkStateForItem(item, tile);
-            }
+            highestItem = item;*/
+
+            if(tallestItem != null && tallestItem.getZ() + Item.getCurrentHeight(tallestItem) > item.getZ() + Item.getCurrentHeight(item))
+                continue;
+
+            result = this.checkStateForItem(item, tile);
+            tallestItem = item;
 
             /*if (lowestChair != null && item.getZ() > lowestChair.getZ() + 1.5) {
                 continue;
@@ -602,7 +607,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }*/
         }
 
-        if (lowestChair != null) return RoomTileState.SIT;
+        //if (lowestChair != null) return RoomTileState.SIT;
 
         return result;
     }
@@ -751,13 +756,20 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         THashSet<RoomUnit> roomUnits = new THashSet<>();
         for (Habbo habbo : habbos) {
 
+            double oldZ = habbo.getRoomUnit().getZ();
+            RoomUserRotation oldRotation = habbo.getRoomUnit().getBodyRotation();
             double z = habbo.getRoomUnit().getCurrentLocation().getStackHeight();
+            boolean updated = false;
 
-            if ((item == null && !habbo.getRoomUnit().cmdSit) || (item != null && !item.getBaseItem().allowSit()))
+            if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.SIT) && ((item == null && !habbo.getRoomUnit().cmdSit) || (item != null && !item.getBaseItem().allowSit()))) {
                 habbo.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
+                updated = true;
+            }
 
-            if ((item == null && !habbo.getRoomUnit().cmdLay) || (item != null && !item.getBaseItem().allowLay()))
+            if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.LAY) && ((item == null && !habbo.getRoomUnit().cmdLay) || (item != null && !item.getBaseItem().allowLay()))) {
                 habbo.getRoomUnit().removeStatus(RoomUnitStatus.LAY);
+                updated = true;
+            }
 
             if (item != null && (item.getBaseItem().allowSit() || item.getBaseItem().allowLay())) {
                 habbo.getRoomUnit().setZ(item.getZ());
@@ -767,7 +779,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 habbo.getRoomUnit().setZ(z);
                 habbo.getRoomUnit().setPreviousLocationZ(z);
             }
-            roomUnits.add(habbo.getRoomUnit());
+
+            if(habbo.getRoomUnit().getCurrentLocation().is(x, y) && (oldZ != z || updated || oldRotation != habbo.getRoomUnit().getBodyRotation())) {
+                roomUnits.add(habbo.getRoomUnit());
+            }
         }
 
         if (!roomUnits.isEmpty()) {
@@ -1408,7 +1423,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 }
                             }
 
-                            HabboItem nextTileChair = this.getLowestChair(tileInFront);
+                            HabboItem nextTileChair = this.getTallestChair(tileInFront);
 
                             THashSet<Integer> usersRolledThisTile = new THashSet<>();
 
@@ -1463,7 +1478,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                         Emulator.getThreading().run(() -> {
                                             if (unit.getGoal() == rollerTile) {
                                                 try {
-                                                    item.onWalkOn(unit, room, null);
+                                                    item.onWalkOn(unit, room, new Object[] { rollerTile, tileInFront });
                                                 } catch (Exception e) {
                                                     LOGGER.error("Caught exception", e);
                                                 }
@@ -1602,23 +1617,22 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
 
             if (!unit.isWalking() && !unit.cmdSit) {
-                HabboItem topItem = this.getLowestChair(this.getLayout().getTile(unit.getX(), unit.getY()));
+                RoomTile thisTile = this.getLayout().getTile(unit.getX(), unit.getY());
+                HabboItem topItem = this.getTallestChair(thisTile);
 
                 if (topItem == null || !topItem.getBaseItem().allowSit()) {
                     if (unit.hasStatus(RoomUnitStatus.SIT)) {
                         unit.removeStatus(RoomUnitStatus.SIT);
                         update = true;
                     }
-                } else {
-                    if (!unit.hasStatus(RoomUnitStatus.SIT) || unit.sitUpdate) {
-                        this.dance(unit, DanceType.NONE);
-                        //int tileHeight = this.layout.getTile(topItem.getX(), topItem.getY()).z;
-                        unit.setStatus(RoomUnitStatus.SIT, (Item.getCurrentHeight(topItem) * 1.0D) + "");
-                        unit.setZ(topItem.getZ());
-                        unit.setRotation(RoomUserRotation.values()[topItem.getRotation()]);
-                        unit.sitUpdate = false;
-                        return true;
-                    }
+                } else if (thisTile.state == RoomTileState.SIT && (!unit.hasStatus(RoomUnitStatus.SIT) || unit.sitUpdate)) {
+                    this.dance(unit, DanceType.NONE);
+                    //int tileHeight = this.layout.getTile(topItem.getX(), topItem.getY()).z;
+                    unit.setStatus(RoomUnitStatus.SIT, (Item.getCurrentHeight(topItem) * 1.0D) + "");
+                    unit.setZ(topItem.getZ());
+                    unit.setRotation(RoomUserRotation.values()[topItem.getRotation()]);
+                    unit.sitUpdate = false;
+                    return true;
                 }
             }
         }
@@ -3548,6 +3562,26 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return lowestChair;
     }
 
+    public HabboItem getTallestChair(RoomTile tile) {
+        HabboItem lowestChair = null;
+
+        THashSet<HabboItem> items = this.getItemsAt(tile);
+        if (items != null && !items.isEmpty()) {
+            for (HabboItem item : items) {
+
+                if(!item.getBaseItem().allowSit())
+                    continue;
+
+                if(lowestChair != null && lowestChair.getZ() + Item.getCurrentHeight(lowestChair) < item.getZ() + Item.getCurrentHeight(item))
+                    continue;
+
+                lowestChair = item;
+            }
+        }
+
+        return lowestChair;
+    }
+
     public double getStackHeight(short x, short y, boolean calculateHeightmap, HabboItem exclude) {
 
         if (x < 0 || y < 0 || this.layout == null)
@@ -3578,11 +3612,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             height = item.getZ() + Item.getCurrentHeight(item);
         }
 
-        HabboItem lowestChair = this.getLowestChair(x, y);
+        /*HabboItem lowestChair = this.getLowestChair(x, y);
         if (lowestChair != null && lowestChair != exclude) {
             canStack = true;
             height = lowestChair.getZ();
-        }
+        }*/
 
         if (calculateHeightmap) {
             return (canStack ? height * 256.0D : Short.MAX_VALUE);
@@ -3658,41 +3692,19 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (items == null)
             return false;
 
-        HabboItem topItem = null;
-        HabboItem lowestSitItem = null;
-        boolean canSitUnder = false;
+        HabboItem tallestItem = null;
 
         for (HabboItem item : items) {
-            if ((lowestSitItem == null || lowestSitItem.getZ() > item.getZ()) && item.getBaseItem().allowSit()) {
-                lowestSitItem = item;
-                canSitUnder = true;
-            }
+            if(tallestItem != null && tallestItem.getZ() + Item.getCurrentHeight(tallestItem) > item.getZ() + Item.getCurrentHeight(item))
+                continue;
 
-            if (lowestSitItem != null && canSitUnder) {
-                if (item != lowestSitItem) {
-                    double distance = item.getZ() - lowestSitItem.getZ();
-
-                    if (distance >= 0 && distance < 0.8) {
-                        canSitUnder = false;
-                    }
-                }
-            }
-
-            if (topItem == null || Item.getCurrentHeight(item) > Item.getCurrentHeight(topItem)) {
-                topItem = item;
-            }
+            tallestItem = item;
         }
 
-        if (topItem == null)
+        if (tallestItem == null)
             return false;
 
-        if (lowestSitItem == null)
-            return false;
-
-        if (topItem == lowestSitItem)
-            return true;
-
-        return topItem.getZ() <= lowestSitItem.getZ() || (canSitUnder);
+        return tallestItem.getBaseItem().allowSit();
     }
 
     public boolean canLayAt(int x, int y) {

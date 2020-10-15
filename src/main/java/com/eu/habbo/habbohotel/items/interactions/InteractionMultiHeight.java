@@ -80,31 +80,35 @@ public class InteractionMultiHeight extends HabboItem {
     }
 
     public void updateUnitsOnItem(Room room) {
-        Collection<RoomUnit> unitsOnItem = room.getRoomUnitsAt(room.getLayout().getTile(this.getX(), this.getY()));
+        THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
 
-        THashSet<RoomUnit> updatedUnits = new THashSet<>();
-        for (RoomUnit unit : unitsOnItem) {
-            if (unit.hasStatus(RoomUnitStatus.MOVE))
-                continue;
+        for(RoomTile tile : occupiedTiles) {
+            Collection<RoomUnit> unitsOnItem = room.getRoomUnitsAt(room.getLayout().getTile(tile.x, tile.y));
 
-            this.getBaseItem().getMultiHeights();
+            THashSet<RoomUnit> updatedUnits = new THashSet<>();
+            for (RoomUnit unit : unitsOnItem) {
+                if (unit.hasStatus(RoomUnitStatus.MOVE))
+                    continue;
+
+                this.getBaseItem().getMultiHeights();
             /*if (this.getBaseItem().allowSit()) {
                 unit.setStatus(RoomUnitStatus.SIT, this.getBaseItem().getMultiHeights()[(this.getExtradata().isEmpty() ? 0 : Integer.parseInt(this.getExtradata()) % (this.getBaseItem().getMultiHeights().length))] * 1.0D + "");
             } else {
 
             }*/
 
-            if(this.getBaseItem().allowSit() || unit.hasStatus(RoomUnitStatus.SIT)) {
-                unit.sitUpdate = true;
+                if (this.getBaseItem().allowSit() || unit.hasStatus(RoomUnitStatus.SIT)) {
+                    unit.sitUpdate = true;
+                    unit.statusUpdate(true);
+                } else {
+                    unit.setZ(unit.getCurrentLocation().getStackHeight());
+                    unit.setPreviousLocationZ(unit.getZ());
+                    unit.statusUpdate(true);
+                }
             }
-
-            unit.setZ(unit.getCurrentLocation().getStackHeight());
-            unit.setPreviousLocationZ(unit.getZ());
-
-            updatedUnits.add(unit);
         }
 
-        room.sendComposer(new RoomUserStatusComposer(updatedUnits, true).compose());
+        //room.sendComposer(new RoomUserStatusComposer(updatedUnits, true).compose());
     }
 
     @Override
