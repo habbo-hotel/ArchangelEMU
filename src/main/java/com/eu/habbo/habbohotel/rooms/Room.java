@@ -4272,14 +4272,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void dance(RoomUnit unit, DanceType danceType) {
-        boolean isDancing = !unit.getDanceType().equals(DanceType.NONE);
-        unit.setDanceType(danceType);
-        this.sendComposer(new RoomUserDanceComposer(unit).compose());
+        if(unit.getDanceType() != danceType) {
+            boolean isDancing = !unit.getDanceType().equals(DanceType.NONE);
+            unit.setDanceType(danceType);
+            this.sendComposer(new RoomUserDanceComposer(unit).compose());
 
-        if (danceType.equals(DanceType.NONE) && isDancing) {
-            WiredHandler.handle(WiredTriggerType.STOPS_DANCING, unit, this, new Object[]{unit});
-        } else if (!danceType.equals(DanceType.NONE) && !isDancing) {
-            WiredHandler.handle(WiredTriggerType.STARTS_DANCING, unit, this, new Object[]{unit});
+            if (danceType.equals(DanceType.NONE) && isDancing) {
+                WiredHandler.handle(WiredTriggerType.STOPS_DANCING, unit, this, new Object[]{unit});
+            } else if (!danceType.equals(DanceType.NONE) && !isDancing) {
+                WiredHandler.handle(WiredTriggerType.STARTS_DANCING, unit, this, new Object[]{unit});
+            }
         }
     }
 

@@ -308,7 +308,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
 
         WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, roomUnit, room, new Object[]{this});
 
-        if ((this.getBaseItem().allowSit() || this.getBaseItem().allowLay()) && roomUnit.getDanceType() != DanceType.NONE) {
+        if ((this.getBaseItem().allowSit() || this.getBaseItem().allowLay()) && !roomUnit.getDanceType().equals(DanceType.NONE)) {
             roomUnit.setDanceType(DanceType.NONE);
             room.sendComposer(new RoomUserDanceComposer(roomUnit).compose());
         }
