@@ -48,15 +48,17 @@ public class InteractionDefault extends HabboItem {
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         super.onMove(room, oldLocation, newLocation);
 
-        for (RoomUnit unit : room.getRoomUnits()) {
-            if (!oldLocation.unitIsOnFurniOnTile(unit, this.getBaseItem()))
-                continue; // If the unit was previously on the furni...
-            if (newLocation.unitIsOnFurniOnTile(unit, this.getBaseItem())) continue; // but is not anymore...
+        if(room.getItemsAt(oldLocation).stream().noneMatch(item -> item.getClass().isAssignableFrom(InteractionRoller.class))) {
+            for (RoomUnit unit : room.getRoomUnits()) {
+                if (!oldLocation.unitIsOnFurniOnTile(unit, this.getBaseItem()))
+                    continue; // If the unit was previously on the furni...
+                if (newLocation.unitIsOnFurniOnTile(unit, this.getBaseItem())) continue; // but is not anymore...
 
-            try {
-                this.onWalkOff(unit, room, new Object[]{ oldLocation, newLocation }); // the unit walked off!
-            } catch (Exception ignored) {
+                try {
+                    this.onWalkOff(unit, room, new Object[]{oldLocation, newLocation}); // the unit walked off!
+                } catch (Exception ignored) {
 
+                }
             }
         }
     }

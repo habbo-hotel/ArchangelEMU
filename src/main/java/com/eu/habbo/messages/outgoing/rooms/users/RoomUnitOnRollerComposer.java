@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -66,25 +67,53 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         this.response.appendString(this.newZ + "");
 
         if (this.roller != null && room.getLayout() != null) {
-            RoomTile rollerTile = room.getLayout().getTile(this.roller.getX(), this.roller.getY());
-            HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
-            if (topItem != null && (topItem == roller || oldTopItem != topItem)) {
-                try {
-                    topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
-                } catch (Exception e) {
-                    LOGGER.error("Caught exception", e);
-                }
-            }
             Emulator.getThreading().run(() -> {
-                if (RoomUnitOnRollerComposer.this.oldLocation == rollerTile && RoomUnitOnRollerComposer.this.roomUnit.getGoal() == rollerTile) {
-                    RoomUnitOnRollerComposer.this.roomUnit.setLocation(room.getLayout().getTile(newLocation.x, newLocation.y));
-                    RoomUnitOnRollerComposer.this.roomUnit.setPreviousLocationZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
-                    RoomUnitOnRollerComposer.this.roomUnit.setZ(RoomUnitOnRollerComposer.this.newLocation.getStackHeight());
-                    RoomUnitOnRollerComposer.this.roomUnit.sitUpdate = true;
+                if(!this.roomUnit.isWalking() && this.roomUnit.getCurrentLocation() == this.oldLocation) {
+                    HabboItem topItem = this.room.getTopItemAt(this.oldLocation.x, this.oldLocation.y);
+                    HabboItem topItemNewLocation = this.room.getTopItemAt(this.newLocation.x, this.newLocation.y);
 
+                    if (topItem != null && (oldTopItem == null || oldTopItem != topItemNewLocation)) {
+                        try {
+                            topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
+                        } catch (Exception e) {
+                            LOGGER.error("Caught exception", e);
+                        }
+                    }
+
+                    this.roomUnit.setLocation(this.newLocation);
+                    this.roomUnit.setZ(this.newLocation.getStackHeight());
+                    this.roomUnit.setPreviousLocationZ(this.newLocation.getStackHeight());
+
+                    if (topItemNewLocation != null && topItemNewLocation != roller && oldTopItem != topItemNewLocation) {
+                        try {
+                            topItemNewLocation.onWalkOn(this.roomUnit, this.room, new Object[]{this});
+                        } catch (Exception e) {
+                            LOGGER.error("Caught exception", e);
+                        }
+                    }
                 }
-
             }, this.room.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
+            /*
+            RoomTile rollerTile = room.getLayout().getTile(this.roller.getX(), this.roller.getY());
+            Emulator.getThreading().run(() -> {
+                if (this.oldLocation == rollerTile && this.roomUnit.getGoal() == rollerTile) {
+                    this.roomUnit.setLocation(newLocation);
+                    this.roomUnit.setGoalLocation(newLocation);
+                    this.roomUnit.setPreviousLocationZ(newLocation.getStackHeight());
+                    this.roomUnit.setZ(newLocation.getStackHeight());
+                    this.roomUnit.sitUpdate = true;
+
+                    HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
+                    if (topItem != null && topItem != roller && oldTopItem != topItem) {
+                        try {
+                            topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
+                        } catch (Exception e) {
+                            LOGGER.error("Caught exception", e);
+                        }
+                    }
+                }
+            }, this.room.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
+             */
         } else {
             this.roomUnit.setLocation(this.newLocation);
             this.roomUnit.setZ(this.newZ);

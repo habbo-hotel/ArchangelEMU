@@ -1462,7 +1462,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                             tile.setStackHeight(ridingUnit.getZ() + zOffset);
                                             rolledUnitIds.add(ridingUnit.getId());
                                             updatedUnit.remove(ridingUnit);
-                                            messages.add(new RoomUnitOnRollerComposer(ridingUnit, roller, ridingUnit.getCurrentLocation(), ridingUnit.getZ(), tile, tile.getStackHeight() + (nextTileChair != null ? -1 : 0), room));
+                                            messages.add(new RoomUnitOnRollerComposer(ridingUnit, roller, ridingUnit.getCurrentLocation(), ridingUnit.getZ(), tile, tile.getStackHeight(), room));
                                             isRiding = true;
                                         }
                                     }
@@ -1471,7 +1471,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 usersRolledThisTile.add(unit.getId());
                                 rolledUnitIds.add(unit.getId());
                                 updatedUnit.remove(unit);
-                                messages.add(new RoomUnitOnRollerComposer(unit, roller, unit.getCurrentLocation(), unit.getZ() + (isRiding ? 1 : 0), tile, tile.getStackHeight() + (isRiding ? 1 : 0) + (nextTileChair != null ? -1 : 0), room));
+                                messages.add(new RoomUnitOnRollerComposer(unit, roller, unit.getCurrentLocation(), unit.getZ() + (isRiding ? 1 : 0), tile, tile.getStackHeight() + (isRiding ? 1 : 0), room));
 
                                 if (itemsOnRoller.isEmpty()) {
                                     HabboItem item = room.getTopItemAt(tileInFront.x, tileInFront.y);
@@ -3613,7 +3613,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         HabboItem item = this.getTopItemAt(x, y, exclude);
         if (item != null) {
             canStack = item.getBaseItem().allowStack();
-            height = item.getZ() + Item.getCurrentHeight(item);
+            height = item.getZ() + (item.getBaseItem().allowSit() ? 0 : Item.getCurrentHeight(item));
         }
 
         /*HabboItem lowestChair = this.getLowestChair(x, y);
