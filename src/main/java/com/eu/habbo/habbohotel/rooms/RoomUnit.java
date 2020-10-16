@@ -243,7 +243,8 @@ public class RoomUnit {
 
             //if(!(this.path.size() == 0 && canSitNextTile))
             {
-                if (!room.tileWalkable(next)) {
+                double height = next.getStackHeight() - this.currentLocation.getStackHeight();
+                if (!room.tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.state == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
                     this.room = room;
                     this.path.clear();
                     this.findPath();
