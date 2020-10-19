@@ -57,6 +57,7 @@ public class RoomUnitTeleport implements Runnable {
         //ServerMessage teleportMessage = new RoomUnitOnRollerComposer(this.roomUnit, newLocation, this.room).compose();
         this.roomUnit.setLocation(newLocation);
         //this.room.sendComposer(teleportMessage);
+        this.roomUnit.statusUpdate(true);
         roomUnit.isWiredTeleporting = false;
 
         this.room.updateHabbosAt(newLocation.x, newLocation.y);
