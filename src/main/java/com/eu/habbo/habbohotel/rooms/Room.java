@@ -117,6 +117,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public static String PREFIX_FORMAT = "[<font color=\"%color%\">%prefix%</font>] ";
     public static int ROLLERS_MAXIMUM_ROLL_AVATARS = 1;
     public static boolean MUTEAREA_CAN_WHISPER = false;
+    public static double MAXIMUM_FURNI_HEIGHT = 40d;
 
     static {
         for (int i = 1; i <= 3; i++) {
@@ -4611,9 +4612,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         THashSet<RoomTile> oldOccupiedTiles = this.layout.getTilesAt(this.layout.getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
 
         int oldRotation = item.getRotation();
-        item.setRotation(rotation);
 
         if (oldRotation != rotation) {
+            item.setRotation(rotation);
             if (Emulator.getPluginManager().isRegistered(FurnitureRotatedEvent.class, true)) {
                 Event furnitureRotatedEvent = new FurnitureRotatedEvent(item, actor, oldRotation);
                 Emulator.getPluginManager().fireEvent(furnitureRotatedEvent);
@@ -4623,6 +4624,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     return FurnitureMovementError.CANCEL_PLUGIN_ROTATE;
                 }
             }
+
+            if((!stackHelper.isPresent() && topItem != null && topItem != item && !topItem.getBaseItem().allowStack())|| (topItem != null && topItem != item && topItem.getZ() + Item.getCurrentHeight(topItem) + Item.getCurrentHeight(item) > MAXIMUM_FURNI_HEIGHT))
+            {
+                item.setRotation(oldRotation);
+                return FurnitureMovementError.CANT_STACK;
+            }
+
+            // )
         }
         //Place at new position
 
@@ -4630,7 +4639,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         if (stackHelper.isPresent()) {
             height = stackHelper.get().getExtradata().isEmpty() ? Double.parseDouble("0.0") : (Double.parseDouble(stackHelper.get().getExtradata()) / 100);
-        } else if (item.equals(topItem)) {
+        } else if (item == topItem) {
             height = item.getZ();
         } else {
             height = this.getStackHeight(tile.x, tile.y, false, item);
@@ -4649,7 +4658,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
 
-        if(height > 40d) return FurnitureMovementError.CANT_STACK;
+        if(height > MAXIMUM_FURNI_HEIGHT) return FurnitureMovementError.CANT_STACK;
+        if(height < this.getLayout().getHeightAtSquare(tile.x, tile.y)) return FurnitureMovementError.CANT_STACK; //prevent furni going under the floor
 
         item.setX(tile.x);
         item.setY(tile.y);
@@ -4658,8 +4668,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             item.setZ(tile.z);
             item.setExtradata("" + item.getZ() * 100);
         }
-        if (item.getZ() > 40d) {
-            item.setZ(40);
+        if (item.getZ() > MAXIMUM_FURNI_HEIGHT) {
+            item.setZ(MAXIMUM_FURNI_HEIGHT);
         }
 
 
@@ -4721,8 +4731,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             item.setZ(tile.z);
             item.setExtradata("" + item.getZ() * 100);
         }
-        if (item.getZ() > 40d) {
-            item.setZ(40);
+        if (item.getZ() > MAXIMUM_FURNI_HEIGHT) {
+            item.setZ(MAXIMUM_FURNI_HEIGHT);
         }
         double offset = this.getStackHeight(tile.x, tile.y, false, item) - item.getZ();
         this.sendComposer(new FloorItemOnRollerComposer(item, null, tile, offset, this).compose());
