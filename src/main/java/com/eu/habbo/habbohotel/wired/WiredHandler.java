@@ -68,6 +68,9 @@ public class WiredHandler {
         if (triggers == null || triggers.isEmpty())
             return false;
 
+        long millis = System.currentTimeMillis();
+        THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<InteractionWiredEffect>();
+
         List<RoomTile> triggeredTiles = new ArrayList<>();
         for (InteractionWiredTrigger trigger : triggers) {
             RoomTile tile = room.getLayout().getTile(trigger.getX(), trigger.getY());
@@ -75,7 +78,11 @@ public class WiredHandler {
             if (triggeredTiles.contains(tile))
                 continue;
 
-            if (handle(trigger, roomUnit, room, stuff)) {
+            THashSet<InteractionWiredEffect> tEffectsToExecute = new THashSet<InteractionWiredEffect>();
+
+            if (handle(trigger, roomUnit, room, stuff, tEffectsToExecute)) {
+                effectsToExecute.addAll(tEffectsToExecute);
+
                 if (triggerType.equals(WiredTriggerType.SAY_SOMETHING))
                     talked = true;
 
@@ -83,12 +90,14 @@ public class WiredHandler {
             }
         }
 
+        for (InteractionWiredEffect effect : effectsToExecute) {
+            triggerEffect(effect, roomUnit, room, stuff, millis);
+        }
+
         return talked;
     }
 
     public static boolean handleCustomTrigger(Class<? extends InteractionWiredTrigger> triggerType, RoomUnit roomUnit, Room room, Object[] stuff) {
-        boolean talked = false;
-
         if (!Emulator.isReady)
             return false;
 
@@ -106,6 +115,9 @@ public class WiredHandler {
         if (triggers == null || triggers.isEmpty())
             return false;
 
+        long millis = System.currentTimeMillis();
+        THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<InteractionWiredEffect>();
+
         List<RoomTile> triggeredTiles = new ArrayList<>();
         for (InteractionWiredTrigger trigger : triggers) {
             if (trigger.getClass() != triggerType) continue;
@@ -115,15 +127,35 @@ public class WiredHandler {
             if (triggeredTiles.contains(tile))
                 continue;
 
-            if (handle(trigger, roomUnit, room, stuff)) {
+            THashSet<InteractionWiredEffect> tEffectsToExecute = new THashSet<InteractionWiredEffect>();
+
+            if (handle(trigger, roomUnit, room, stuff, tEffectsToExecute)) {
+                effectsToExecute.addAll(tEffectsToExecute);
                 triggeredTiles.add(tile);
             }
         }
 
-        return talked;
+        for (InteractionWiredEffect effect : effectsToExecute) {
+            triggerEffect(effect, roomUnit, room, stuff, millis);
+        }
+
+        return effectsToExecute.size() > 0;
     }
 
     public static boolean handle(InteractionWiredTrigger trigger, final RoomUnit roomUnit, final Room room, final Object[] stuff) {
+        long millis = System.currentTimeMillis();
+        THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<InteractionWiredEffect>();
+
+        if(handle(trigger, roomUnit, room, stuff, effectsToExecute)) {
+            for (InteractionWiredEffect effect : effectsToExecute) {
+                triggerEffect(effect, roomUnit, room, stuff, millis);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean handle(InteractionWiredTrigger trigger, final RoomUnit roomUnit, final Room room, final Object[] stuff, final THashSet<InteractionWiredEffect> effectsToExecute) {
         long millis = System.currentTimeMillis();
         if (Emulator.isReady && trigger.canExecute(millis) && trigger.execute(roomUnit, room, stuff)) {
             trigger.activateBox(room);
@@ -173,13 +205,13 @@ public class WiredHandler {
                     if (extra instanceof WiredExtraUnseen) {
                         extra.setExtradata(extra.getExtradata().equals("1") ? "0" : "1");
                         InteractionWiredEffect effect = ((WiredExtraUnseen) extra).getUnseenEffect(effectList);
-                        triggerEffect(effect, roomUnit, room, stuff, millis);
+                        effectsToExecute.add(effect); // triggerEffect(effect, roomUnit, room, stuff, millis);
                         break;
                     }
                 }
             } else {
                 for (final InteractionWiredEffect effect : effectList) {
-                    boolean executed = triggerEffect(effect, roomUnit, room, stuff, millis);
+                    boolean executed = effectsToExecute.add(effect); //triggerEffect(effect, roomUnit, room, stuff, millis);
                     if (hasExtraRandom && executed) {
                         break;
                     }

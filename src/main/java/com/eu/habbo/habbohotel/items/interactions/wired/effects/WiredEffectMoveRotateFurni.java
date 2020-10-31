@@ -2,32 +2,25 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.FloorItemUpdateComposer;
 import gnu.trove.set.hash.THashSet;
-import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
 
-public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
-
+public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implements ICycleable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WiredEffectMoveRotateFurni.class);
 
@@ -35,13 +28,16 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
     private final THashSet<HabboItem> items = new THashSet<>(WiredHandler.MAXIMUM_FURNI_SELECTION / 2);
     private int direction;
     private int rotation;
+    private THashSet<HabboItem> itemCooldowns;
 
     public WiredEffectMoveRotateFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
+        this.itemCooldowns = new THashSet<>();
     }
 
     public WiredEffectMoveRotateFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.itemCooldowns = new THashSet<>();
     }
 
     @Override
@@ -50,6 +46,9 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
         this.items.removeIf(item -> Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null);
 
         for (HabboItem item : this.items) {
+            if(this.itemCooldowns.contains(item))
+                continue;
+
             int newRotation = this.rotation > 0 ? this.getNewRotation(item) : item.getRotation();
             RoomTile newLocation = room.getLayout().getTile(item.getX(), item.getY());
             RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
@@ -68,6 +67,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
             FurnitureMovementError furniMoveTest = room.furnitureFitsAt(newLocation, item, newRotation, true);
             if(newLocation != null && newLocation.state != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && (furniMoveTest == FurnitureMovementError.NONE || ((furniMoveTest == FurnitureMovementError.TILE_HAS_BOTS || furniMoveTest == FurnitureMovementError.TILE_HAS_HABBOS || furniMoveTest == FurnitureMovementError.TILE_HAS_PETS) && newLocation == oldLocation))) {
                 if(room.furnitureFitsAt(newLocation, item, newRotation, false) == FurnitureMovementError.NONE && room.moveFurniTo(item, newLocation, newRotation, null, !slideAnimation) == FurnitureMovementError.NONE) {
+                    this.itemCooldowns.add(item);
                     if(slideAnimation) {
                         room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                     }
@@ -297,5 +297,10 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect {
             movemementDirection = RoomUserRotation.WEST;
         }
         return movemementDirection;
+    }
+
+    @Override
+    public void cycle(Room room) {
+        this.itemCooldowns.clear();
     }
 }

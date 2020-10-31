@@ -50,8 +50,8 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
                 boolean positionMatches = !this.position || (setting.x == item.getX() && setting.y == item.getY());
                 boolean directionMatches = !this.rotation || setting.rotation == item.getRotation();
 
-                if (stateMatches && positionMatches && directionMatches)
-                    return false;
+                if (!stateMatches || !positionMatches || !directionMatches)
+                    return true;
             } else {
                 s.add(setting);
             }
@@ -63,7 +63,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
             }
         }
 
-        return true;
+        return false;
     }
 
     @Override

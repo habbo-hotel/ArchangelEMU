@@ -86,19 +86,19 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 room.moveFurniTo(entry.getKey(), targetTile, entry.getValue().rotation, null, true);
             }
 
-            if (targetTile != null && targetTile.state != RoomTileState.INVALID && room.furnitureFitsAt(targetTile, item, item.getRotation(), false) == FurnitureMovementError.NONE) {
-                boolean hasRoomUnits = false;
-                THashSet<RoomTile> newOccupiedTiles = room.getLayout().getTilesAt(targetTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
-                for(RoomTile tile : newOccupiedTiles) {
-                    for (RoomUnit _roomUnit : room.getRoomUnits(tile)) {
-                        hasRoomUnits = true;
-                        if(_roomUnit.getCurrentLocation() == targetTile) {
-                            Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, _roomUnit, room, new Object[]{entry.getKey()}));
-                            break;
-                        }
+            boolean hasRoomUnits = false;
+            THashSet<RoomTile> newOccupiedTiles = room.getLayout().getTilesAt(targetTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+            for(RoomTile tile : newOccupiedTiles) {
+                for (RoomUnit _roomUnit : room.getRoomUnits(tile)) {
+                    hasRoomUnits = true;
+                    if(_roomUnit.getCurrentLocation() == targetTile) {
+                        Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, _roomUnit, room, new Object[]{entry.getKey()}));
+                        break;
                     }
                 }
+            }
 
+            if (targetTile != null && targetTile.state != RoomTileState.INVALID && room.furnitureFitsAt(targetTile, item, item.getRotation(), false) == FurnitureMovementError.NONE) {
                 if (!hasRoomUnits) {
                     RoomTile oldLocation = room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY());
                     double oldZ = entry.getKey().getZ();
@@ -243,7 +243,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
     private RoomUserRotation nextRotation(RoomUserRotation currentRotation) {
         switch (this.blockedAction) {
             case ACTION_TURN_BACK:
-                return RoomUserRotation.fromValue(currentRotation.getValue() + 4);
+                return RoomUserRotation.fromValue(currentRotation.getValue()).getOpposite();
             case ACTION_TURN_LEFT_45:
                 return RoomUserRotation.counterClockwise(currentRotation);
             case ACTION_TURN_LEFT_90:
