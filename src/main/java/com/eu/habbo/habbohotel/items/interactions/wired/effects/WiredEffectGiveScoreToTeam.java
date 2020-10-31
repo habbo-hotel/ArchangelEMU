@@ -3,13 +3,13 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.Game;
+import com.eu.habbo.habbohotel.games.GameState;
 import com.eu.habbo.habbohotel.games.GameTeam;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
@@ -38,33 +38,23 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        Habbo habbo = room.getHabbo(roomUnit);
+        for (Game game : room.getGames()) {
+            if (game != null && game.state.equals(GameState.RUNNING)) {
+                int c = this.startTimes.get(game.getStartTime());
 
-        if (habbo != null) {
-            Class<? extends Game> game = habbo.getHabboInfo().getCurrentGame();
+                if (c < this.count) {
+                    GameTeam team = game.getTeam(this.teamColor);
 
-            if (game != null) {
-                Game g = room.getGame(game);
+                    if (team != null) {
+                        team.addTeamScore(this.points);
 
-                if (g != null) {
-                    int c = this.startTimes.get(g.getStartTime());
-
-                    if (c < this.count) {
-                        GameTeam team = g.getTeam(this.teamColor);
-
-                        if (team != null) {
-                            team.addTeamScore(this.points);
-
-                            this.startTimes.put(g.getStartTime(), c++);
-
-                            return true;
-                        }
+                        this.startTimes.put(game.getStartTime(), c + 1);
                     }
                 }
             }
         }
 
-        return false;
+        return true;
     }
 
     @Override
