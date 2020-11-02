@@ -43,21 +43,6 @@ public abstract class InteractionWiredEffect extends InteractionWired {
         }
     }
 
-    @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
     public abstract boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException;
 
     public int getDelay() {
