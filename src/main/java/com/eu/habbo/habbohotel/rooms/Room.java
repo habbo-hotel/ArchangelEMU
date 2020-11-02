@@ -3396,9 +3396,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return items;
 
         if (this.loaded) {
-            if (this.tileCache.containsKey(tile)) {
-                return this.tileCache.get(tile);
-            }
+            THashSet<HabboItem> cachedItems = this.tileCache.get(tile);
+            if(cachedItems != null)
+                return cachedItems;
         }
 
         TIntObjectIterator<HabboItem> iterator = this.roomItems.iterator();
