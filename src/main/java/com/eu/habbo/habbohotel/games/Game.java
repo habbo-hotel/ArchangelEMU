@@ -240,7 +240,10 @@ public abstract class Game implements Runnable {
         if (this.room == null)
             return;
 
-        for (Map.Entry<GameTeamColors, GameTeam> teamEntry : this.teams.entrySet()) {
+        THashMap<GameTeamColors, GameTeam> teamsCopy = new THashMap<>();
+        teamsCopy.putAll(this.teams);
+
+        for (Map.Entry<GameTeamColors, GameTeam> teamEntry : teamsCopy.entrySet()) {
             Emulator.getThreading().run(new SaveScoreForTeam(teamEntry.getValue(), this));
         }
     }
