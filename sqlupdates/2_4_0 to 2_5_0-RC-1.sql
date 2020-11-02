@@ -78,6 +78,8 @@ INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.auto.points.hc_mo
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.auto.credits.hc_modifier', '1');
 INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('hotel.auto.gotwpoints.hc_modifier', '1');
 
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('room.chat.mutearea.allow_whisper', '1');
+
 DELETE FROM `emulator_settings` WHERE `key` IN ('hotel.max.rooms.per.user', 'hotel.max.rooms.user', 'hotel.max.rooms.vip', 'max.friends', 'hotel.max.friends', 'max.friends.hc', 'hotel.max.friends.hc');
 
 ALTER TABLE `users_settings` ADD COLUMN `max_friends` int(10) NULL DEFAULT 300 AFTER `has_gotten_default_saved_searches`;
@@ -101,3 +103,7 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('subscriptions.hc.payday.m
 
 -- OPTIONAL HC MIGRATION
 -- INSERT INTO users_subscriptions SELECT NULL, user_id, 'HABBO_CLUB' as `subscription_type`, UNIX_TIMESTAMP() AS `timestamp_start`, (club_expire_timestamp - UNIX_TIMESTAMP()) AS `duration`, 1 AS `active` FROM users_settings WHERE club_expire_timestamp > UNIX_TIMESTAMP();
+
+ALTER TABLE `bots`
+ADD COLUMN `bubble_id`  int(3) NULL DEFAULT 31 AFTER `effect`;
+

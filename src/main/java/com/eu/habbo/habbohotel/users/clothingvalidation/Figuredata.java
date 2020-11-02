@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.users.clothingvalidation;
 
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -57,55 +58,64 @@ public class Figuredata {
 
         for(int i = 0; i < palettesList.getLength(); i++) {
             Node nNode = palettesList.item(i);
-            Element element = (Element)nNode;
-            int paletteId = Integer.parseInt(element.getAttribute("id"));
-            FiguredataPalette palette = new FiguredataPalette(paletteId);
+            if(nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = (Element) nNode;
+                int paletteId = Integer.parseInt(element.getAttribute("id"));
+                FiguredataPalette palette = new FiguredataPalette(paletteId);
 
-            NodeList colorsList = nNode.getChildNodes();
-            for(int ii = 0; ii < colorsList.getLength(); ii++) {
-                Element colorElement = (Element)colorsList.item(ii);
-                FiguredataPaletteColor color = new FiguredataPaletteColor(
-                        Integer.parseInt(colorElement.getAttribute("id")),
-                        Integer.parseInt(colorElement.getAttribute("index")),
-                        !colorElement.getAttribute("club").equals("0"),
-                        colorElement.getAttribute("selectable").equals("1"),
-                        colorElement.getTextContent()
-                );
-                palette.addColor(color);
+                NodeList colorsList = nNode.getChildNodes();
+                for (int ii = 0; ii < colorsList.getLength(); ii++) {
+                    if(colorsList.item(ii).getNodeType() == Node.ELEMENT_NODE) {
+                        Element colorElement = (Element) colorsList.item(ii);
+                        FiguredataPaletteColor color = new FiguredataPaletteColor(
+                                Integer.parseInt(colorElement.getAttribute("id")),
+                                Integer.parseInt(colorElement.getAttribute("index")),
+                                !colorElement.getAttribute("club").equals("0"),
+                                colorElement.getAttribute("selectable").equals("1"),
+                                colorElement.getTextContent()
+                        );
+                        palette.addColor(color);
+                    }
+                }
+
+                palettes.put(palette.id, palette);
             }
-
-            palettes.put(palette.id, palette);
         }
 
         for(int i = 0; i < settypesList.getLength(); i++) {
             Node nNode = settypesList.item(i);
-            Element element = (Element)nNode;
 
-            String type = element.getAttribute("type");
-            int paletteId = Integer.parseInt(element.getAttribute("paletteid"));
-            boolean mandM0 = element.getAttribute("mand_m_0").equals("1");
-            boolean mandF0 = element.getAttribute("mand_f_0").equals("1");
-            boolean mandM1 = element.getAttribute("mand_m_1").equals("1");
-            boolean mandF1 = element.getAttribute("mand_f_1").equals("1");
+            if(nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = (Element) nNode;
 
-            FiguredataSettype settype = new FiguredataSettype(type, paletteId, mandM0, mandF0, mandM1, mandF1);
+                String type = element.getAttribute("type");
+                int paletteId = Integer.parseInt(element.getAttribute("paletteid"));
+                boolean mandM0 = element.getAttribute("mand_m_0").equals("1");
+                boolean mandF0 = element.getAttribute("mand_f_0").equals("1");
+                boolean mandM1 = element.getAttribute("mand_m_1").equals("1");
+                boolean mandF1 = element.getAttribute("mand_f_1").equals("1");
 
-            NodeList setsList = nNode.getChildNodes();
-            for(int ii = 0; ii < setsList.getLength(); ii++) {
-                Element setElement = (Element)setsList.item(ii);
-                FiguredataSettypeSet set = new FiguredataSettypeSet(
-                        Integer.parseInt(setElement.getAttribute("id")),
-                        setElement.getAttribute("gender"),
-                        !setElement.getAttribute("club").equals("0"),
-                        setElement.getAttribute("colorable").equals("1"),
-                        setElement.getAttribute("selectable").equals("1"),
-                        setElement.getAttribute("preselectable").equals("1"),
-                        setElement.getAttribute("sellable").equals("1")
-                );
-                settype.addSet(set);
+                FiguredataSettype settype = new FiguredataSettype(type, paletteId, mandM0, mandF0, mandM1, mandF1);
+
+                NodeList setsList = nNode.getChildNodes();
+                for (int ii = 0; ii < setsList.getLength(); ii++) {
+                    if(setsList.item(ii).getNodeType() == Node.ELEMENT_NODE) {
+                        Element setElement = (Element) setsList.item(ii);
+                        FiguredataSettypeSet set = new FiguredataSettypeSet(
+                                Integer.parseInt(setElement.getAttribute("id")),
+                                setElement.getAttribute("gender"),
+                                !setElement.getAttribute("club").equals("0"),
+                                setElement.getAttribute("colorable").equals("1"),
+                                setElement.getAttribute("selectable").equals("1"),
+                                setElement.getAttribute("preselectable").equals("1"),
+                                setElement.getAttribute("sellable").equals("1")
+                        );
+                        settype.addSet(set);
+                    }
+                }
+
+                settypes.put(settype.type, settype);
             }
-
-            settypes.put(settype.type, settype);
         }
 
     }
