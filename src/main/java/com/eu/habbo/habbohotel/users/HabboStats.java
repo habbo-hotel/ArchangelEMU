@@ -506,8 +506,8 @@ public class HabboStats implements Runnable {
                             Constructor<? extends Subscription> c = subClazz.getConstructor(Integer.class, Integer.class, String.class, Integer.class, Integer.class, Boolean.class);
                             c.setAccessible(true);
                             Subscription sub = c.newInstance(set.getInt(1), this.habboInfo.getId(), subscriptionType, startTimestamp, duration, true);
-                            sub.onCreated();
                             this.subscriptions.add(sub);
+                            sub.onCreated();
                             return sub;
                         }
                         catch (Exception e) {
