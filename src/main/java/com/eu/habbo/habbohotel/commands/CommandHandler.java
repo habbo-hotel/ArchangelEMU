@@ -74,7 +74,12 @@ public class CommandHandler {
                                 boolean succes = false;
                                 if (command.permission == null || gameClient.getHabbo().hasPermission(command.permission, gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && (gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) || gameClient.getHabbo().hasPermission(Permission.ACC_PLACEFURNI) || (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboInfo().getCurrentRoom().getGuildId() > 0 && gameClient.getHabbo().getHabboInfo().getCurrentRoom().guildRightLevel(gameClient.getHabbo()) >= 2))) {
                                     try {
-                                        Emulator.getPluginManager().fireEvent(new UserExecuteCommandEvent(gameClient.getHabbo(), command, parts));
+                                        UserExecuteCommandEvent userExecuteCommandEvent = new UserExecuteCommandEvent(gameClient.getHabbo(), command, parts);
+                                        Emulator.getPluginManager().fireEvent(userExecuteCommandEvent);
+
+                                        if(userExecuteCommandEvent.isCancelled()) {
+                                            return userExecuteCommandEvent.isSuccess();
+                                        }
 
                                         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null)
                                             gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserTypingComposer(gameClient.getHabbo().getRoomUnit(), false).compose());
