@@ -126,7 +126,7 @@ public class InteractionVendingMachine extends HabboItem {
         if(!inActivatorSpace) {
             RoomTile tileToWalkTo = null;
             for(RoomTile tile : activatorTiles) {
-                if(room.getLayout().tileWalkable(tile.x, tile.y) && (tileToWalkTo == null || tileToWalkTo.distance(unit.getCurrentLocation()) > tile.distance(unit.getCurrentLocation()))) {
+                if((tile.state == RoomTileState.OPEN || tile.state == RoomTileState.SIT) && (tileToWalkTo == null || tileToWalkTo.distance(unit.getCurrentLocation()) > tile.distance(unit.getCurrentLocation()))) {
                     tileToWalkTo = tile;
                 }
             }
