@@ -27,6 +27,7 @@ import com.eu.habbo.plugin.events.furniture.wired.WiredConditionFailedEvent;
 import com.eu.habbo.plugin.events.furniture.wired.WiredStackExecutedEvent;
 import com.eu.habbo.plugin.events.furniture.wired.WiredStackTriggeredEvent;
 import com.eu.habbo.plugin.events.users.UserWiredRewardReceived;
+import com.google.gson.GsonBuilder;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,8 @@ public class WiredHandler {
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_FURNI_SELECTION = 5;
     public static int TELEPORT_DELAY = 500;
+
+    private static GsonBuilder gsonBuilder = null;
 
     public static boolean handle(WiredTriggerType triggerType, RoomUnit roomUnit, Room room, Object[] stuff) {
         if (triggerType == WiredTriggerType.CUSTOM) return false;
@@ -247,6 +250,12 @@ public class WiredHandler {
         return executed;
     }
 
+    public static GsonBuilder getGsonBuilder() {
+        if(gsonBuilder == null) {
+            gsonBuilder = new GsonBuilder();
+        }
+        return gsonBuilder;
+    }
 
     public static boolean executeEffectsAtTiles(THashSet<RoomTile> tiles, final RoomUnit roomUnit, final Room room, final Object[] stuff) {
         for (RoomTile tile : tiles) {

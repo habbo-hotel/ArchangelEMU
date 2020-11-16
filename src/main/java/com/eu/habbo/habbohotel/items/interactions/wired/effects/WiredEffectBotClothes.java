@@ -8,9 +8,11 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
+import com.google.gson.Gson;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -91,19 +93,29 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "" + ((char) 9) + "" +
-                this.botName + ((char) 9) +
-                this.botLook;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.botLook, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(((char) 9) + "");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length >= 3) {
-            this.setDelay(Integer.valueOf(data[0]));
-            this.botName = data[1];
-            this.botLook = data[2];
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.botName = data.bot_name;
+            this.botLook = data.look;
+        }
+        else {
+            String[] data = wiredData.split(((char) 9) + "");
+
+            if (data.length >= 3) {
+                this.setDelay(Integer.valueOf(data[0]));
+                this.botName = data[1];
+                this.botLook = data[2];
+            }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -128,5 +140,17 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
 
     public void setBotLook(String botLook) {
         this.botLook = botLook;
+    }
+
+    static class JsonData {
+        String bot_name;
+        String look;
+        int delay;
+
+        public JsonData(String bot_name, String look, int delay) {
+            this.bot_name = bot_name;
+            this.look = look;
+            this.delay = delay;
+        }
     }
 }

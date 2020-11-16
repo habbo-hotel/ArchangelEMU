@@ -11,6 +11,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
@@ -59,18 +60,31 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.points + ";" + this.count + ";" + this.teamColor.type + ";" + this.getDelay();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.points, this.count, this.teamColor, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(";");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length == 4) {
-            this.points = Integer.valueOf(data[0]);
-            this.count = Integer.valueOf(data[1]);
-            this.teamColor = GameTeamColors.values()[Integer.valueOf(data[2])];
-            this.setDelay(Integer.valueOf(data[3]));
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.points = data.score;
+            this.count = data.count;
+            this.teamColor = data.team;
+            this.setDelay(data.delay);
+        }
+        else {
+            String[] data = set.getString("wired_data").split(";");
+
+            if (data.length == 4) {
+                this.points = Integer.valueOf(data[0]);
+                this.count = Integer.valueOf(data[1]);
+                this.teamColor = GameTeamColors.values()[Integer.valueOf(data[2])];
+                this.setDelay(Integer.valueOf(data[3]));
+            }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -139,5 +153,19 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
         this.setDelay(delay);
 
         return true;
+    }
+
+    static class JsonData {
+        int score;
+        int count;
+        GameTeamColors team;
+        int delay;
+
+        public JsonData(int score, int count, GameTeamColors team, int delay) {
+            this.score = score;
+            this.count = count;
+            this.team = team;
+            this.delay = delay;
+        }
     }
 }

@@ -16,6 +16,8 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
@@ -114,45 +116,63 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        StringBuilder data = new StringBuilder(this.getDelay() + "\t" + this.startRotation.getValue() + "\t" + this.blockedAction + "\t" + this.items.size());
-
-        for (Map.Entry<HabboItem, WiredChangeDirectionSetting> entry : this.items.entrySet()) {
-            data.append("\t").append(entry.getKey().getId()).append(":").append(entry.getValue().direction.getValue()).append(":").append(entry.getValue().rotation);
-        }
-
-        return data.toString();
+        ArrayList<WiredChangeDirectionSetting> settings = new ArrayList<>(this.items.values());
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.startRotation, this.blockedAction, settings, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split("\t");
 
-        if (data.length >= 4) {
-            this.setDelay(Integer.parseInt(data[0]));
-            this.startRotation = RoomUserRotation.fromValue(Integer.parseInt(data[1]));
-            this.blockedAction = Integer.parseInt(data[2]);
+        this.items.clear();
 
-            int itemCount = Integer.parseInt(data[3]);
+        String wiredData = set.getString("wired_data");
 
-            if (itemCount > 0) {
-                for (int i = 4; i < data.length; i++) {
-                    String[] subData = data[i].split(":");
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.startRotation = data.start_direction;
+            this.blockedAction = data.blocked_action;
 
-                    if (subData.length >= 2) {
-                        HabboItem item = room.getHabboItem(Integer.parseInt(subData[0]));
+            for(WiredChangeDirectionSetting setting : data.items) {
+                HabboItem item = room.getHabboItem(setting.item_id);
 
-                        if (item != null) {
-                            int rotation = item.getRotation();
+                if (item != null) {
+                    this.items.put(item, setting);
+                }
+            }
+        }
+        else {
+            String[] data = wiredData.split("\t");
 
-                            if(subData.length > 2) {
-                                rotation = Integer.parseInt(subData[2]);
+            if (data.length >= 4) {
+                this.setDelay(Integer.parseInt(data[0]));
+                this.startRotation = RoomUserRotation.fromValue(Integer.parseInt(data[1]));
+                this.blockedAction = Integer.parseInt(data[2]);
+
+                int itemCount = Integer.parseInt(data[3]);
+
+                if (itemCount > 0) {
+                    for (int i = 4; i < data.length; i++) {
+                        String[] subData = data[i].split(":");
+
+                        if (subData.length >= 2) {
+                            HabboItem item = room.getHabboItem(Integer.parseInt(subData[0]));
+
+                            if (item != null) {
+                                int rotation = item.getRotation();
+
+                                if (subData.length > 2) {
+                                    rotation = Integer.parseInt(subData[2]);
+                                }
+
+                                this.items.put(item, new WiredChangeDirectionSetting(item.getId(), rotation, RoomUserRotation.fromValue(Integer.parseInt(subData[1]))));
                             }
-
-                            this.items.put(item, new WiredChangeDirectionSetting(item.getId(), rotation, RoomUserRotation.fromValue(Integer.parseInt(subData[1]))));
                         }
                     }
                 }
             }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -181,7 +201,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
         message.appendInt(this.getId());
         message.appendString("");
         message.appendInt(2);
-        message.appendInt(this.startRotation.getValue());
+        message.appendInt(this.startRotation != null ? this.startRotation.getValue() : 0);
         message.appendInt(this.blockedAction);
         message.appendInt(0);
         message.appendInt(this.getType().code);
@@ -263,5 +283,19 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
     @Override
     protected long requiredCooldown() {
         return 495;
+    }
+
+    static class JsonData {
+        RoomUserRotation start_direction;
+        int blocked_action;
+        List<WiredChangeDirectionSetting> items;
+        int delay;
+
+        public JsonData(RoomUserRotation start_direction, int blocked_action, List<WiredChangeDirectionSetting> items, int delay) {
+            this.start_direction = start_direction;
+            this.blocked_action = blocked_action;
+            this.items = items;
+            this.delay = delay;
+        }
     }
 }

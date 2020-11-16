@@ -43,7 +43,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
         THashSet<WiredMatchFurniSetting> s = new THashSet<>();
 
         for (WiredMatchFurniSetting setting : this.settings) {
-            HabboItem item = room.getHabboItem(setting.itemId);
+            HabboItem item = room.getHabboItem(setting.item_id);
 
             if (item != null) {
                 boolean stateMatches = !this.state || item.getExtradata().equals(setting.state);
@@ -124,7 +124,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
         message.appendInt(this.settings.size());
 
         for (WiredMatchFurniSetting item : this.settings)
-            message.appendInt(item.itemId);
+            message.appendInt(item.item_id);
 
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
@@ -178,7 +178,7 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
             THashSet<WiredMatchFurniSetting> remove = new THashSet<>();
 
             for (WiredMatchFurniSetting setting : this.settings) {
-                HabboItem item = room.getHabboItem(setting.itemId);
+                HabboItem item = room.getHabboItem(setting.item_id);
                 if (item == null) {
                     remove.add(setting);
                 }

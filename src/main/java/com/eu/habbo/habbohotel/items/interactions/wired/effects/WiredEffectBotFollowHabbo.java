@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
@@ -119,17 +120,29 @@ public class WiredEffectBotFollowHabbo extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "" + ((char) 9) + "" + this.mode + "" + ((char) 9) + this.botName;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.mode, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(((char) 9) + "");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length == 3) {
-            this.setDelay(Integer.valueOf(data[0]));
-            this.mode = (data[1].equalsIgnoreCase("1") ? 1 : 0);
-            this.botName = data[2];
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.mode = data.mode;
+            this.botName = data.bot_name;
+        }
+        else {
+            String[] data = wiredData.split(((char) 9) + "");
+
+            if (data.length == 3) {
+                this.setDelay(Integer.valueOf(data[0]));
+                this.mode = (data[1].equalsIgnoreCase("1") ? 1 : 0);
+                this.botName = data[2];
+            }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -143,5 +156,17 @@ public class WiredEffectBotFollowHabbo extends InteractionWiredEffect {
     @Override
     public boolean requiresTriggeringUser() {
         return true;
+    }
+
+    static class JsonData {
+        String bot_name;
+        int mode;
+        int delay;
+
+        public JsonData(String bot_name, int mode, int delay) {
+            this.bot_name = bot_name;
+            this.mode = mode;
+            this.delay = delay;
+        }
     }
 }

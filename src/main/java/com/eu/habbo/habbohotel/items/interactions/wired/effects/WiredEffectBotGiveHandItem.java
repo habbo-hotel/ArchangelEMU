@@ -135,17 +135,29 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "" + ((char) 9) + "" + this.itemId + "" + ((char) 9) + "" + this.botName;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.itemId, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(((char) 9) + "");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length == 3) {
-            this.setDelay(Integer.valueOf(data[0]));
-            this.itemId = Integer.valueOf(data[1]);
-            this.botName = data[2];
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.itemId = data.item_id;
+            this.botName = data.bot_name;
+        }
+        else {
+            String[] data = wiredData.split(((char) 9) + "");
+
+            if (data.length == 3) {
+                this.setDelay(Integer.valueOf(data[0]));
+                this.itemId = Integer.valueOf(data[1]);
+                this.botName = data[2];
+            }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -159,5 +171,17 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
     @Override
     public boolean requiresTriggeringUser() {
         return true;
+    }
+
+    static class JsonData {
+        String bot_name;
+        int item_id;
+        int delay;
+
+        public JsonData(String bot_name, int item_id, int delay) {
+            this.bot_name = bot_name;
+            this.item_id = item_id;
+            this.delay = delay;
+        }
     }
 }

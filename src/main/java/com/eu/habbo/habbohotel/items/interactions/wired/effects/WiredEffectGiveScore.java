@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
@@ -87,17 +88,29 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.score + ";" + this.count + ";" + this.getDelay();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.score, this.count, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(";");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length == 3) {
-            this.score = Integer.valueOf(data[0]);
-            this.count = Integer.valueOf(data[1]);
-            this.setDelay(Integer.valueOf(data[2]));
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.score = data.score;
+            this.count = data.count;
+            this.setDelay(data.delay);
+        }
+        else {
+            String[] data = wiredData.split(";");
+
+            if (data.length == 3) {
+                this.score = Integer.valueOf(data[0]);
+                this.count = Integer.valueOf(data[1]);
+                this.setDelay(Integer.valueOf(data[2]));
+            }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -180,5 +193,17 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
     @Override
     public boolean requiresTriggeringUser() {
         return true;
+    }
+
+    static class JsonData {
+        int score;
+        int count;
+        int delay;
+
+        public JsonData(int score, int count, int delay) {
+            this.score = score;
+            this.count = count;
+            this.delay = delay;
+        }
     }
 }

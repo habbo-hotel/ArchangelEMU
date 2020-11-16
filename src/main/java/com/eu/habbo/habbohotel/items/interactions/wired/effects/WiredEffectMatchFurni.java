@@ -2,9 +2,8 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.InteractionMultiHeight;
-import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -52,7 +51,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
             return true;
 
         for (WiredMatchFurniSetting setting : this.settings) {
-            HabboItem item = room.getHabboItem(setting.itemId);
+            HabboItem item = room.getHabboItem(setting.item_id);
             if (item != null) {
                 if (this.state && (this.checkForWiredResetPermission && item.allowWiredResetState())) {
                     if (!setting.state.equals(" ") && !item.getExtradata().equals(setting.state)) {
@@ -92,58 +91,49 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
     @Override
     public String getWiredData() {
         this.refresh();
-
-        StringBuilder data = new StringBuilder(this.settings.size() + ":");
-
-        if (this.settings.isEmpty()) {
-            data.append(";");
-        } else {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-
-            for (WiredMatchFurniSetting item : this.settings) {
-                HabboItem i;
-
-                if (room != null) {
-                    i = room.getHabboItem(item.itemId);
-
-                    if (i != null) {
-                        data.append(item.toString(this.checkForWiredResetPermission && i.allowWiredResetState())).append(";");
-                    }
-                }
-            }
-        }
-
-        data.append(":").append(this.state ? 1 : 0).append(":").append(this.direction ? 1 : 0).append(":").append(this.position ? 1 : 0).append(":").append(this.getDelay());
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.state, this.direction, this.position, new ArrayList<WiredMatchFurniSetting>(this.settings), this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(":");
+        String wiredData = set.getString("wired_data");
 
-        int itemCount = Integer.parseInt(data[0]);
-
-        String[] items = data[1].split(Pattern.quote(";"));
-
-        for (int i = 0; i < items.length; i++) {
-            try {
-
-                String[] stuff = items[i].split(Pattern.quote("-"));
-
-                if (stuff.length >= 5) {
-                    this.settings.add(new WiredMatchFurniSetting(Integer.parseInt(stuff[0]), stuff[1], Integer.parseInt(stuff[2]), Integer.parseInt(stuff[3]), Integer.parseInt(stuff[4])));
-                }
-
-            } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
-            }
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.state = data.state;
+            this.direction = data.direction;
+            this.position = data.position;
+            this.settings.clear();
+            this.settings.addAll(data.items);
         }
+        else {
+            String[] data = set.getString("wired_data").split(":");
 
-        this.state = data[2].equals("1");
-        this.direction = data[3].equals("1");
-        this.position = data[4].equals("1");
-        this.setDelay(Integer.parseInt(data[5]));
+            int itemCount = Integer.parseInt(data[0]);
+
+            String[] items = data[1].split(Pattern.quote(";"));
+
+            for (int i = 0; i < items.length; i++) {
+                try {
+
+                    String[] stuff = items[i].split(Pattern.quote("-"));
+
+                    if (stuff.length >= 5) {
+                        this.settings.add(new WiredMatchFurniSetting(Integer.parseInt(stuff[0]), stuff[1], Integer.parseInt(stuff[2]), Integer.parseInt(stuff[3]), Integer.parseInt(stuff[4])));
+                    }
+
+                } catch (Exception e) {
+                    LOGGER.error("Caught exception", e);
+                }
+            }
+
+            this.state = data[2].equals("1");
+            this.direction = data[3].equals("1");
+            this.position = data[4].equals("1");
+            this.setDelay(Integer.parseInt(data[5]));
+            this.needsUpdate(true);
+        }
     }
 
     @Override
@@ -169,7 +159,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
         message.appendInt(this.settings.size());
 
         for (WiredMatchFurniSetting item : this.settings)
-            message.appendInt(item.itemId);
+            message.appendInt(item.item_id);
 
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
@@ -239,7 +229,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
             THashSet<WiredMatchFurniSetting> remove = new THashSet<>();
 
             for (WiredMatchFurniSetting setting : this.settings) {
-                HabboItem item = room.getHabboItem(setting.itemId);
+                HabboItem item = room.getHabboItem(setting.item_id);
                 if (item == null) {
                     remove.add(setting);
                 }
@@ -248,6 +238,22 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
             for (WiredMatchFurniSetting setting : remove) {
                 this.settings.remove(setting);
             }
+        }
+    }
+
+    static class JsonData {
+        boolean state;
+        boolean direction;
+        boolean position;
+        List<WiredMatchFurniSetting> items;
+        int delay;
+
+        public JsonData(boolean state, boolean direction, boolean position, List<WiredMatchFurniSetting> items, int delay) {
+            this.state = state;
+            this.direction = direction;
+            this.position = position;
+            this.items = items;
+            this.delay = delay;
         }
     }
 }

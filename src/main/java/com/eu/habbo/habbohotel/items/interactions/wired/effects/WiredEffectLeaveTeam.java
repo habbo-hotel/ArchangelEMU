@@ -11,6 +11,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
@@ -55,12 +56,20 @@ public class WiredEffectLeaveTeam extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        this.setDelay(Integer.valueOf(set.getString("wired_data")));
+        String wiredData = set.getString("wired_data");
+
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+        }
+        else {
+            this.setDelay(Integer.valueOf(wiredData));
+        }
     }
 
     @Override
@@ -118,5 +127,13 @@ public class WiredEffectLeaveTeam extends InteractionWiredEffect {
 
         this.setDelay(delay);
         return true;
+    }
+
+    static class JsonData {
+        int delay;
+
+        public JsonData(int delay) {
+            this.delay = delay;
+        }
     }
 }

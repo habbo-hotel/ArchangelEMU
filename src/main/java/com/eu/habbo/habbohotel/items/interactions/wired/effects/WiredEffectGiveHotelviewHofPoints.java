@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.procedure.TObjectProcedure;
@@ -101,21 +102,31 @@ public class WiredEffectGiveHotelviewHofPoints extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "\t" + this.amount;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.amount, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String wireData = set.getString("wired_data");
-        this.amount = 0;
+        String wiredData = set.getString("wired_data");
 
-        if (wireData.split("\t").length >= 2) {
-            super.setDelay(Integer.valueOf(wireData.split("\t")[0]));
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.amount = data.amount;
+            this.setDelay(data.delay);
+        }
+        else {
+            this.amount = 0;
 
-            try {
-                this.amount = Integer.valueOf(this.getWiredData().split("\t")[1]);
-            } catch (Exception e) {
+            if (wiredData.split("\t").length >= 2) {
+                super.setDelay(Integer.valueOf(wiredData.split("\t")[0]));
+
+                try {
+                    this.amount = Integer.valueOf(this.getWiredData().split("\t")[1]);
+                } catch (Exception e) {
+                }
             }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -128,5 +139,15 @@ public class WiredEffectGiveHotelviewHofPoints extends InteractionWiredEffect {
     @Override
     public boolean requiresTriggeringUser() {
         return true;
+    }
+
+    static class JsonData {
+        int amount;
+        int delay;
+
+        public JsonData(int amount, int delay) {
+            this.amount = amount;
+            this.delay = delay;
+        }
     }
 }

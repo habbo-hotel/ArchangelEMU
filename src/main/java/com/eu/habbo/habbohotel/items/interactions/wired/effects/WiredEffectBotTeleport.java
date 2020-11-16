@@ -25,6 +25,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredEffectBotTeleport extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.BOT_TELEPORT;
@@ -184,38 +185,57 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        StringBuilder wiredData = new StringBuilder(this.getDelay() + "\t" + this.botName + ";");
+        ArrayList<Integer> itemIds = new ArrayList<>();
 
-        if (this.items != null && !this.items.isEmpty()) {
+        if (this.items != null) {
             for (HabboItem item : this.items) {
                 if (item.getRoomId() != 0) {
-                    wiredData.append(item.getId()).append(";");
+                    itemIds.add(item.getId());
                 }
             }
         }
 
-        return wiredData.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, itemIds, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items = new THashSet<>();
-        String[] wiredData = set.getString("wired_data").split("\t");
 
-        if (wiredData.length >= 2) {
-            this.setDelay(Integer.valueOf(wiredData[0]));
-            String[] data = wiredData[1].split(";");
+        String wiredData = set.getString("wired_data");
 
-            if (data.length > 1) {
-                this.botName = data[0];
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.botName = data.bot_name;
 
-                for (int i = 1; i < data.length; i++) {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(data[i]));
+            for(int itemId : data.items) {
+                HabboItem item = room.getHabboItem(itemId);
 
-                    if (item != null)
-                        this.items.add(item);
+                if (item != null)
+                    this.items.add(item);
+            }
+        }
+        else {
+            String[] wiredDataSplit = set.getString("wired_data").split("\t");
+
+            if (wiredDataSplit.length >= 2) {
+                this.setDelay(Integer.valueOf(wiredDataSplit[0]));
+                String[] data = wiredDataSplit[1].split(";");
+
+                if (data.length > 1) {
+                    this.botName = data[0];
+
+                    for (int i = 1; i < data.length; i++) {
+                        HabboItem item = room.getHabboItem(Integer.valueOf(data[i]));
+
+                        if (item != null)
+                            this.items.add(item);
+                    }
                 }
             }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -224,5 +244,17 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
         this.botName = "";
         this.items.clear();
         this.setDelay(0);
+    }
+
+    static class JsonData {
+        String bot_name;
+        List<Integer> items;
+        int delay;
+
+        public JsonData(String bot_name, List<Integer> items, int delay) {
+            this.bot_name = bot_name;
+            this.items = items;
+            this.delay = delay;
+        }
     }
 }

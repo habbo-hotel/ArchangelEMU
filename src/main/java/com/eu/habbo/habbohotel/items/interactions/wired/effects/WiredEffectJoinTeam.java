@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
@@ -60,19 +61,30 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "\t" + this.teamColor.type + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.teamColor, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split("\t");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length >= 1) {
-            this.setDelay(Integer.valueOf(data[0]));
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.teamColor = data.team;
+        }
+        else {
+            String[] data = set.getString("wired_data").split("\t");
 
-            if (data.length >= 2) {
-                this.teamColor = GameTeamColors.values()[Integer.valueOf(data[1])];
+            if (data.length >= 1) {
+                this.setDelay(Integer.valueOf(data[0]));
+
+                if (data.length >= 2) {
+                    this.teamColor = GameTeamColors.values()[Integer.valueOf(data[1])];
+                }
             }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -145,5 +157,15 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
     @Override
     public boolean requiresTriggeringUser() {
         return true;
+    }
+
+    static class JsonData {
+        GameTeamColors team;
+        int delay;
+
+        public JsonData(GameTeamColors team, int delay) {
+            this.team = team;
+            this.delay = delay;
+        }
     }
 }

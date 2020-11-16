@@ -122,19 +122,31 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "" + ((char) 9) + "" + this.mode + "" + ((char) 9) + "" + this.botName + "" + ((char) 9) + "" + this.message;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.mode, this.message, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String d = set.getString("wired_data");
-        String[] data = d.split(((char) 9) + "");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length == 4) {
-            this.setDelay(Integer.valueOf(data[0]));
-            this.mode = data[1].equalsIgnoreCase("1") ? 1 : 0;
-            this.botName = data[2];
-            this.message = data[3];
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.mode = data.mode;
+            this.botName = data.bot_name;
+            this.message = data.message;
+        }
+        else {
+            String[] data = wiredData.split(((char) 9) + "");
+
+            if (data.length == 4) {
+                this.setDelay(Integer.valueOf(data[0]));
+                this.mode = data[1].equalsIgnoreCase("1") ? 1 : 0;
+                this.botName = data[2];
+                this.message = data[3];
+            }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -173,5 +185,19 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
     @Override
     protected long requiredCooldown() {
         return 500;
+    }
+
+    static class JsonData {
+        String bot_name;
+        int mode;
+        String message;
+        int delay;
+
+        public JsonData(String bot_name, int mode, String message, int delay) {
+            this.bot_name = bot_name;
+            this.mode = mode;
+            this.message = message;
+            this.delay = delay;
+        }
     }
 }
