@@ -77,7 +77,11 @@ public class InteractionVendingMachine extends HabboItem {
         this.setExtradata("1");
         room.updateItem(this);
 
-        WiredHandler.handle(WiredTriggerType.STATE_CHANGED, client.getHabbo().getRoomUnit(), room, new Object[]{ this });
+        try {
+            super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if(!unit.isWalking() && !unit.hasStatus(RoomUnitStatus.SIT) && !unit.hasStatus(RoomUnitStatus.LAY)) {
             this.rotateToMachine(room, unit);
@@ -102,8 +106,6 @@ public class InteractionVendingMachine extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        super.onClick(client, room, objects);
-        
         if (client == null) {
             return;
         }
