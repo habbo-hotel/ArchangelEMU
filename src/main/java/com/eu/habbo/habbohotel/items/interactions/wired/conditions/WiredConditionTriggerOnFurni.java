@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -33,15 +32,34 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (roomUnit == null) return false;
+        if (roomUnit == null)
+            return false;
 
         this.refresh();
 
         if (this.items.isEmpty())
             return false;
 
-        THashSet<HabboItem> itemsAtUser = room.getItemsAt(roomUnit.getCurrentLocation());
-        return this.items.stream().anyMatch(itemsAtUser::contains);
+        /*
+        * 1. If a Habbo IS NOT walking we only have to check if the Habbo is on one of the selected tiles.
+        * 2. If a Habbo IS walking we have to check if the very first tile in the walking path since the startlocation
+        *    is one of the selected items
+        * */
+        if (!roomUnit.isWalking()) {
+            THashSet<HabboItem> itemsAtUser = room.getItemsAt(roomUnit.getCurrentLocation());
+            return this.items.stream().anyMatch(itemsAtUser::contains);
+        } else {
+            RoomTile firstTileInPath = room.getLayout()
+                    .findPath(roomUnit.getStartLocation(), roomUnit.getGoal(), roomUnit.getGoal(), roomUnit)
+                    .peek();
+
+            return this.items
+                    .stream()
+                    .anyMatch(conditionItem -> conditionItem
+                            .getOccupyingTiles(room.getLayout())
+                            .contains(firstTileInPath)
+                    );
+        }
     }
 
     @Override
@@ -64,7 +82,7 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
         String[] data = set.getString("wired_data").split(";");
 
         for (String s : data) {
-            HabboItem item = room.getHabboItem(Integer.valueOf(s));
+            HabboItem item = room.getHabboItem(Integer.parseInt(s));
 
             if (item != null) {
                 this.items.add(item);
