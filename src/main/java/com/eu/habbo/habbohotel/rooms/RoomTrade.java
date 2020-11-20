@@ -8,6 +8,8 @@ import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.trading.*;
+import com.eu.habbo.plugin.events.furniture.FurnitureRedeemedEvent;
+import com.eu.habbo.plugin.events.trading.TradeConfirmEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
@@ -144,6 +146,12 @@ public class RoomTrade {
 
         RoomTradeUser userOne = this.users.get(0);
         RoomTradeUser userTwo = this.users.get(1);
+
+        boolean tradeConfirmEventRegistered = Emulator.getPluginManager().isRegistered(TradeConfirmEvent.class, true);
+        TradeConfirmEvent tradeConfirmEvent = new TradeConfirmEvent(userOne, userTwo);
+        if (tradeConfirmEventRegistered) {
+            Emulator.getPluginManager().fireEvent(tradeConfirmEvent);
+        }
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
 
