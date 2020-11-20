@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GameState;
+import com.eu.habbo.habbohotel.games.wired.WiredGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -98,11 +99,15 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
     }
 
     public void endGame(Room room) {
+        endGame(room, false);
+    }
+
+    public void endGame(Room room, boolean isStart) {
         this.isRunning = false;
         this.isPaused = false;
 
         for (Game game : room.getGames()) {
-            if (!game.getState().equals(GameState.IDLE)) {
+            if (!game.getState().equals(GameState.IDLE) && !(isStart && game instanceof WiredGame)) {
                 game.onEnd();
                 game.stop();
             }
@@ -226,7 +231,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
                 return;
 
             boolean wasPaused = this.isPaused;
-            this.endGame(room);
+            this.endGame(room, true);
 
             if(wasPaused) {
                 WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, room, new Object[]{});

@@ -2,19 +2,17 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomTileState;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
@@ -22,6 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class WiredEffectMatchFurni extends InteractionWiredEffect {
     private static final Logger LOGGER = LoggerFactory.getLogger(WiredEffectMatchFurni.class);
@@ -45,104 +46,44 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        THashSet<RoomTile> tilesToUpdate = new THashSet<>(this.settings.size());
-        //this.refresh();
 
         if(this.settings.isEmpty())
-            return false;
+            return true;
 
         for (WiredMatchFurniSetting setting : this.settings) {
-            HabboItem item = room.getHabboItem(setting.itemId);
+            HabboItem item = room.getHabboItem(setting.item_id);
             if (item != null) {
                 if (this.state && (this.checkForWiredResetPermission && item.allowWiredResetState())) {
-                    if (!setting.state.equals(" ")) {
+                    if (!setting.state.equals(" ") && !item.getExtradata().equals(setting.state)) {
                         item.setExtradata(setting.state);
-                        tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
+                        room.updateItemState(item);
                     }
                 }
 
-                int oldRotation = item.getRotation();
-                boolean slideAnimation = true;
-                double offsetZ = 0;
+                RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
+                double oldZ = item.getZ();
 
-                if (this.direction && item.getRotation() != setting.rotation) {
-                    item.setRotation(setting.rotation);
-                    slideAnimation = false;
-
-                    room.scheduledTasks.add(() -> {
-                        room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation).forEach(t -> {
-                            room.updateBotsAt(t.x, t.y);
-                            room.updateHabbosAt(t.x, t.y);
-                        });
-                        room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation).forEach(t -> {
-                            room.updateBotsAt(t.x, t.y);
-                            room.updateHabbosAt(t.x, t.y);
-                        });
-                    });
+                if(this.direction && !this.position) {
+                    if(item.getRotation() != setting.rotation && room.furnitureFitsAt(oldLocation, item, setting.rotation, false) == FurnitureMovementError.NONE) {
+                        room.moveFurniTo(item, oldLocation, setting.rotation, null, true);
+                    }
                 }
+                else if(this.position) {
+                    boolean slideAnimation = !this.direction || item.getRotation() == setting.rotation;
+                    RoomTile newLocation = room.getLayout().getTile((short) setting.x, (short) setting.y);
+                    int newRotation = this.direction ? setting.rotation : item.getRotation();
 
-                RoomTile t = null;
-
-                if (this.position) {
-                    t = room.getLayout().getTile((short) setting.x, (short) setting.y);
-
-                    if (t != null && t.state != RoomTileState.INVALID) {
-                        boolean canMove = true;
-
-                        if (t.x == item.getX() && t.y == item.getY() || room.hasHabbosAt(t.x, t.y)) {
-                            canMove = !(room.getTopItemAt(t.x, t.y) == item);
-                            slideAnimation = false;
-                        }
-
-
-                        if (canMove && !room.hasHabbosAt(t.x, t.y)) {
-                            THashSet<RoomTile> tiles = room.getLayout().getTilesAt(t, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), setting.rotation);
-                            double highestZ = -1d;
-                            for (RoomTile tile : tiles) {
-                                if (tile.state == RoomTileState.INVALID) {
-                                    highestZ = -1d;
-                                    break;
-                                }
-
-                                if (item instanceof InteractionRoller && room.hasItemsAt(tile.x, tile.y)) {
-                                    highestZ = -1d;
-                                    break;
-                                }
-
-                                double stackHeight = room.getStackHeight(tile.x, tile.y, false, item);
-                                if (stackHeight > highestZ) {
-                                    highestZ = stackHeight;
-                                }
-                            }
-
-                            if (highestZ != -1d) {
-                                tilesToUpdate.addAll(tiles);
-
-                                offsetZ = highestZ - item.getZ();
-                                double totalHeight = item.getZ() + offsetZ;
-                                if (totalHeight > 40) break;
-                                tilesToUpdate.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), oldRotation));
-
-                                if (!slideAnimation) {
-                                    item.setX(t.x);
-                                    item.setY(t.y);
-                                }
+                    if(newLocation != null && newLocation.state != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && room.furnitureFitsAt(newLocation, item, newRotation, true) == FurnitureMovementError.NONE) {
+                        if(room.moveFurniTo(item, newLocation, newRotation, null, !slideAnimation) == FurnitureMovementError.NONE) {
+                            if(slideAnimation) {
+                                room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                             }
                         }
                     }
                 }
 
-                if (slideAnimation && t != null) {
-                    room.sendComposer(new FloorItemOnRollerComposer(item, null, t, offsetZ, room).compose());
-                } else {
-                    room.updateItem(item);
-                }
-
-                item.needsUpdate(true);
             }
         }
-
-        room.updateTiles(tilesToUpdate);
 
         return true;
     }
@@ -150,58 +91,49 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
     @Override
     public String getWiredData() {
         this.refresh();
-
-        StringBuilder data = new StringBuilder(this.settings.size() + ":");
-
-        if (this.settings.isEmpty()) {
-            data.append(";");
-        } else {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-
-            for (WiredMatchFurniSetting item : this.settings) {
-                HabboItem i;
-
-                if (room != null) {
-                    i = room.getHabboItem(item.itemId);
-
-                    if (i != null) {
-                        data.append(item.toString(this.checkForWiredResetPermission && i.allowWiredResetState())).append(";");
-                    }
-                }
-            }
-        }
-
-        data.append(":").append(this.state ? 1 : 0).append(":").append(this.direction ? 1 : 0).append(":").append(this.position ? 1 : 0).append(":").append(this.getDelay());
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.state, this.direction, this.position, new ArrayList<WiredMatchFurniSetting>(this.settings), this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(":");
+        String wiredData = set.getString("wired_data");
 
-        int itemCount = Integer.valueOf(data[0]);
-
-        String[] items = data[1].split(";");
-
-        for (int i = 0; i < items.length; i++) {
-            try {
-
-                String[] stuff = items[i].split("-");
-
-                if (stuff.length >= 5) {
-                    this.settings.add(new WiredMatchFurniSetting(Integer.valueOf(stuff[0]), stuff[1], Integer.valueOf(stuff[2]), Integer.valueOf(stuff[3]), Integer.valueOf(stuff[4])));
-                }
-
-            } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
-            }
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.state = data.state;
+            this.direction = data.direction;
+            this.position = data.position;
+            this.settings.clear();
+            this.settings.addAll(data.items);
         }
+        else {
+            String[] data = set.getString("wired_data").split(":");
 
-        this.state = data[2].equals("1");
-        this.direction = data[3].equals("1");
-        this.position = data[4].equals("1");
-        this.setDelay(Integer.valueOf(data[5]));
+            int itemCount = Integer.parseInt(data[0]);
+
+            String[] items = data[1].split(Pattern.quote(";"));
+
+            for (int i = 0; i < items.length; i++) {
+                try {
+
+                    String[] stuff = items[i].split(Pattern.quote("-"));
+
+                    if (stuff.length >= 5) {
+                        this.settings.add(new WiredMatchFurniSetting(Integer.parseInt(stuff[0]), stuff[1], Integer.parseInt(stuff[2]), Integer.parseInt(stuff[3]), Integer.parseInt(stuff[4])));
+                    }
+
+                } catch (Exception e) {
+                    LOGGER.error("Caught exception", e);
+                }
+            }
+
+            this.state = data[2].equals("1");
+            this.direction = data[3].equals("1");
+            this.position = data[4].equals("1");
+            this.setDelay(Integer.parseInt(data[5]));
+            this.needsUpdate(true);
+        }
     }
 
     @Override
@@ -227,7 +159,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
         message.appendInt(this.settings.size());
 
         for (WiredMatchFurniSetting item : this.settings)
-            message.appendInt(item.itemId);
+            message.appendInt(item.item_id);
 
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
@@ -243,34 +175,49 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
 
-        this.state = packet.readInt() == 1;
-        this.direction = packet.readInt() == 1;
-        this.position = packet.readInt() == 1;
+        boolean setState = packet.readInt() == 1;
+        boolean setDirection = packet.readInt() == 1;
+        boolean setPosition = packet.readInt() == 1;
 
         packet.readString();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
         if (room == null)
-            return true;
+            throw new WiredSaveException("Trying to save wired in unloaded room");
 
-        int count = packet.readInt();
-        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+        int itemsCount = packet.readInt();
 
-        this.settings.clear();
-
-        for (int i = 0; i < count; i++) {
-            int itemId = packet.readInt();
-            HabboItem item = room.getHabboItem(itemId);
-
-            if (item != null)
-                this.settings.add(new WiredMatchFurniSetting(item.getId(), this.checkForWiredResetPermission && item.allowWiredResetState() ? item.getExtradata() : " ", item.getRotation(), item.getX(), item.getY()));
+        if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
+            throw new WiredSaveException("Too many furni selected");
         }
 
-        this.setDelay(packet.readInt());
+        List<WiredMatchFurniSetting> newSettings = new ArrayList<>();
+
+        for (int i = 0; i < itemsCount; i++) {
+            int itemId = packet.readInt();
+            HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
+
+            if(it == null)
+                throw new WiredSaveException(String.format("Item %s not found", itemId));
+
+            newSettings.add(new WiredMatchFurniSetting(it.getId(), this.checkForWiredResetPermission && it.allowWiredResetState() ? it.getExtradata() : " ", it.getRotation(), it.getX(), it.getY()));
+        }
+
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.state = setState;
+        this.direction = setDirection;
+        this.position = setPosition;
+        this.settings.clear();
+        this.settings.addAll(newSettings);
+        this.setDelay(delay);
 
         return true;
     }
@@ -282,7 +229,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
             THashSet<WiredMatchFurniSetting> remove = new THashSet<>();
 
             for (WiredMatchFurniSetting setting : this.settings) {
-                HabboItem item = room.getHabboItem(setting.itemId);
+                HabboItem item = room.getHabboItem(setting.item_id);
                 if (item == null) {
                     remove.add(setting);
                 }
@@ -291,6 +238,22 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
             for (WiredMatchFurniSetting setting : remove) {
                 this.settings.remove(setting);
             }
+        }
+    }
+
+    static class JsonData {
+        boolean state;
+        boolean direction;
+        boolean position;
+        List<WiredMatchFurniSetting> items;
+        int delay;
+
+        public JsonData(boolean state, boolean direction, boolean position, List<WiredMatchFurniSetting> items, int delay) {
+            this.state = state;
+            this.direction = direction;
+            this.position = position;
+            this.items = items;
+            this.delay = delay;
         }
     }
 }

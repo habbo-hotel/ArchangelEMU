@@ -34,7 +34,7 @@ public class SetStackHelperHeightEvent extends MessageHandler {
                         }
                     }
                 } else {
-                    stackerHeight = Math.min(Math.max(stackerHeight, itemTile.z * 100), 4000);
+                    stackerHeight = Math.min(Math.max(stackerHeight, itemTile.z * 100), Room.MAXIMUM_FURNI_HEIGHT * 100);
                 }
 
                 double height = 0;

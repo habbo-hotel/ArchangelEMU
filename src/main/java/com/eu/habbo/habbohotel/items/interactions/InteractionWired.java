@@ -15,7 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class InteractionWired extends HabboItem {
+public abstract class InteractionWired extends InteractionDefault {
     private static final Logger LOGGER = LoggerFactory.getLogger(InteractionWired.class);
     private long cooldown;
 
@@ -36,25 +36,6 @@ public abstract class InteractionWired extends HabboItem {
     public abstract void serializeWiredData(ServerMessage message, Room room);
 
     public abstract void loadWiredData(ResultSet set, Room room) throws SQLException;
-
-    @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        super.onWalkOn(roomUnit, room, objects);
-    }
-
-    @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        super.onWalkOff(roomUnit, room, objects);
-    }
-
-
-    @Override
-    public void serializeExtradata(ServerMessage serverMessage) {
-        serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
-
-        super.serializeExtradata(serverMessage);
-    }
 
     @Override
     public void run() {

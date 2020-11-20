@@ -24,6 +24,11 @@ public class InteractionMannequin extends HabboItem {
     }
 
     @Override
+    public int getMaximumRotations() {
+        return 8;
+    }
+
+    @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt(1 + (this.isLimited() ? 256 : 0));
         serverMessage.appendInt(3);

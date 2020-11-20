@@ -7,10 +7,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPushable;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTeamItem;
 import com.eu.habbo.habbohotel.items.interactions.games.football.goals.InteractionFootballGoal;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemStateComposer;
 import com.eu.habbo.util.pathfinding.Rotation;
@@ -32,7 +29,7 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public int getWalkOnVelocity(RoomUnit roomUnit, Room room) {
-        if (roomUnit.getPath().isEmpty() && roomUnit.tilesWalked() == 2)
+        if (roomUnit.getPath().isEmpty() && roomUnit.tilesWalked() == 2 && this.getExtradata().equals("1"))
             return 0;
 
         if (roomUnit.getPath().size() == 0 && roomUnit.tilesWalked() == 1)
@@ -43,7 +40,7 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public int getWalkOffVelocity(RoomUnit roomUnit, Room room) {
-        if (roomUnit.getPath().size() == 0)
+        if (roomUnit.getPath().size() == 0 && roomUnit.tilesWalked() == 0)
             return 6;
 
         return 1;
@@ -152,9 +149,9 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public boolean validMove(Room room, RoomTile from, RoomTile to) {
-        if (to == null) return false;
+        if (to == null || to.state == RoomTileState.INVALID) return false;
         HabboItem topItem = room.getTopItemAt(to.x, to.y, this);
-        return !(!room.getLayout().tileWalkable(to.x, to.y) || (topItem != null && (!topItem.getBaseItem().allowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
+        return (topItem == null || topItem.getBaseItem().allowStack());
     }
 
     //Events

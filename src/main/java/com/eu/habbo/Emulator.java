@@ -38,8 +38,7 @@ public final class Emulator {
     public final static int MAJOR = 2;
     public final static int MINOR = 5;
     public final static int BUILD = 0;
-    
-    public final static String PREVIEW = "RC-1";
+    public final static String PREVIEW = "Beta 1";
 
     public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
@@ -49,8 +48,8 @@ public final class Emulator {
                     "██╔████╔██║██║   ██║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗███████╗   ██║   ███████║██████╔╝\n" +
                     "██║╚██╔╝██║██║   ██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚════██║   ██║   ██╔══██║██╔══██╗\n" +
                     "██║ ╚═╝ ██║╚██████╔╝██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝███████║   ██║   ██║  ██║██║  ██║\n" +
-                    "╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝\n" +
-                    "Emulator goes zoom.";
+                    "╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝\n" ;
+
 
     public static String build = "";
     public static boolean isReady = false;
@@ -83,6 +82,13 @@ public final class Emulator {
         Runtime.getRuntime().addShutdownHook(hook);
     }
 
+    public static void promptEnterKey(){
+        System.out.println("\n");
+        System.out.println("Press \"ENTER\" if you agree to the terms stated above...");
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
+    }
+
     public static void main(String[] args) throws Exception {
         try {
             // Check if running on Windows and not in IntelliJ.
@@ -103,6 +109,12 @@ public final class Emulator {
             Emulator.logging = new Logging();
 
             System.out.println(logo);
+
+            // Checks if this is a BETA build before allowing them to continue.
+            if (PREVIEW.toLowerCase().contains("beta")) {
+                System.out.println("Warning, this is a beta build, this means that there may be unintended consequences so make sure you take regular backups while using this build. If you notice any issues you should make an issue on the Krews Git.");
+                promptEnterKey();
+            }
 
             LOGGER.info("This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
             LOGGER.info("Version: {}", version);

@@ -32,15 +32,14 @@ public class WiredConditionNotFurniTypeMatch extends InteractionWiredCondition {
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         this.refresh();
 
+        if(items.isEmpty())
+            return true;
+
         if (stuff != null) {
             if (stuff.length >= 1) {
                 if (stuff[0] instanceof HabboItem) {
-                    HabboItem item = (HabboItem) stuff[0];
-
-                    for (HabboItem i : this.items) {
-                        if (i.getBaseItem().getId() == item.getBaseItem().getId())
-                            return false;
-                    }
+                    HabboItem triggeringItem = (HabboItem)stuff[0];
+                    return this.items.stream().noneMatch(item -> item == triggeringItem);
                 }
             }
         }

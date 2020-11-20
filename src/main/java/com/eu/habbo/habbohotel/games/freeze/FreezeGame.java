@@ -287,9 +287,9 @@ public class FreezeGame extends Game {
             players.addAll(team.getMembers());
 
             for (GamePlayer p : players) {
-                if (p.getScore() > 0) {
+                if (p.getScoreAchievementValue() > 0) {
                     if (team.equals(winningTeam)) {
-                        AchievementManager.progressAchievement(p.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("FreezeWinner"), p.getScore());
+                        AchievementManager.progressAchievement(p.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("FreezeWinner"), p.getScoreAchievementValue());
                         this.room.sendComposer(new RoomUserActionComposer(p.getHabbo().getRoomUnit(), RoomUserAction.WAVE).compose());
                     }
 

@@ -1,33 +1,34 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
-import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.HorsePet;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.pets.PetTasks;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.threading.runnables.HabboItemNewState;
+import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
-public class InteractionObstacle extends HabboItem {
+public class InteractionObstacle extends HabboItem implements ICycleable {
+
+    private THashSet<RoomTile> middleTiles;
+
     public InteractionObstacle(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
+        this.middleTiles = new THashSet<>();
     }
 
     public InteractionObstacle(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.setExtradata("0");
+        this.middleTiles = new THashSet<>();
     }
 
     @Override
@@ -40,20 +41,12 @@ public class InteractionObstacle extends HabboItem {
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Pet pet = room.getPet(roomUnit);
-
-        if (pet instanceof HorsePet) {
-            HorsePet horsePet = (HorsePet) pet;
-
-            return horsePet.getRider() != null;
-        }
-
-        return false;
+        return true;
     }
 
     @Override
     public boolean isWalkable() {
-        return false;
+        return true;
     }
 
     @Override
@@ -63,36 +56,32 @@ public class InteractionObstacle extends HabboItem {
 
     @Override
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        Habbo habbo = room.getHabbo(roomUnit);
+        /*Pet pet = room.getPet(roomUnit);
 
-        if (habbo != null) {
-            Pet pet = room.getPet(roomUnit);
+        if (pet instanceof HorsePet && ((HorsePet) pet).getRider() != null) {
+            if (pet.getTask() != null && pet.getTask().equals(PetTasks.RIDE)) {
+                if (pet.getRoomUnit().hasStatus(RoomUnitStatus.JUMP)) {
+                    pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
+                    Emulator.getThreading().run(new HabboItemNewState(this, room, "0"), 2000);
+                } else {
+                    int state = 0;
+                    for (int i = 0; i < 2; i++) {
+                        state = Emulator.getRandom().nextInt(4) + 1;
 
-            if (pet instanceof HorsePet && ((HorsePet) pet).getRider() != null) {
-                if (pet.getTask() != null && pet.getTask().equals(PetTasks.RIDE)) {
-                    if (pet.getRoomUnit().hasStatus(RoomUnitStatus.JUMP)) {
-                        pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
-                        Emulator.getThreading().run(new HabboItemNewState(this, room, "0"), 2000);
-                    } else {
-                        int state = 0;
-                        for (int i = 0; i < 2; i++) {
-                            state = Emulator.getRandom().nextInt(4) + 1;
-
-                            if (state == 4)
-                                break;
-                        }
-
-                        this.setExtradata(state + "");
-                        pet.getRoomUnit().setStatus(RoomUnitStatus.JUMP, "0");
-
-                        AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("HorseConsecutiveJumpsCount"));
-                        AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("HorseJumping"));
+                        if (state == 4)
+                            break;
                     }
 
-                    room.updateItemState(this);
+                    this.setExtradata(state + "");
+                    pet.getRoomUnit().setStatus(RoomUnitStatus.JUMP, "0");
+
+                    AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("HorseConsecutiveJumpsCount"));
+                    AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("HorseJumping"));
                 }
+
+                room.updateItemState(this);
             }
-        }
+        }*/
     }
 
     @Override
@@ -135,6 +124,72 @@ public class InteractionObstacle extends HabboItem {
 
             if (pet instanceof HorsePet && ((HorsePet) pet).getRider() != null) {
                 pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
+            }
+        }
+    }
+
+    @Override
+    public void onPlace(Room room) {
+        super.onPlace(room);
+        this.calculateMiddleTiles(room);
+    }
+
+    @Override
+    public void onPickUp(Room room) {
+        super.onPickUp(room);
+        middleTiles.clear();
+    }
+
+    @Override
+    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
+        super.onMove(room, oldLocation, newLocation);
+        this.calculateMiddleTiles(room);
+    }
+
+    private void calculateMiddleTiles(Room room) {
+        middleTiles.clear();
+
+        if(this.getRotation() == 2) {
+            middleTiles.add(room.getLayout().getTile((short)(this.getX() + 1), this.getY()));
+            middleTiles.add(room.getLayout().getTile((short)(this.getX() + 1), (short)(this.getY() + 1)));
+        }
+        else if(this.getRotation() == 4) {
+            middleTiles.add(room.getLayout().getTile(this.getX(), (short)(this.getY() + 1)));
+            middleTiles.add(room.getLayout().getTile((short)(this.getX() + 1), (short)(this.getY() + 1)));
+        }
+    }
+
+    @Override
+    public RoomTileState getOverrideTileState(RoomTile tile, Room room) {
+        if(this.middleTiles.contains(tile))
+            return RoomTileState.BLOCKED;
+
+        return null;
+    }
+
+    @Override
+    public void cycle(Room room) {
+        if(this.middleTiles.size() == 0) {
+            this.calculateMiddleTiles(room);
+        }
+
+        for(RoomTile tile : this.middleTiles) {
+            for(RoomUnit unit : tile.getUnits()) {
+                if(unit.getPath().size() == 0 && !unit.hasStatus(RoomUnitStatus.MOVE)) {
+                    if(unit.getBodyRotation().getValue() != this.getRotation() && Objects.requireNonNull(unit.getBodyRotation().getOpposite()).getValue() != this.getRotation())
+                        continue;
+
+                    RoomTile tileInfront = room.getLayout().getTileInFront(unit.getCurrentLocation(), unit.getBodyRotation().getValue());
+                    if(tileInfront.state != RoomTileState.INVALID && tileInfront.state != RoomTileState.BLOCKED && room.getRoomUnitsAt(tileInfront).size() == 0) {
+                        unit.setGoalLocation(tileInfront);
+                    }
+                    else {
+                        RoomTile tileBehind = room.getLayout().getTileInFront(unit.getCurrentLocation(), Objects.requireNonNull(unit.getBodyRotation().getOpposite()).getValue());
+                        if(tileBehind.state != RoomTileState.INVALID && tileBehind.state != RoomTileState.BLOCKED && room.getRoomUnitsAt(tileBehind).size() == 0) {
+                            unit.setGoalLocation(tileBehind);
+                        }
+                    }
+                }
             }
         }
     }

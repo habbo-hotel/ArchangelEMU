@@ -37,6 +37,7 @@ public class RoomUnit {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnit.class);
 
     public boolean isWiredTeleporting = false;
+    public boolean isLeavingTeleporter = false;
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
     public boolean canRotate = true;
@@ -242,7 +243,8 @@ public class RoomUnit {
 
             //if(!(this.path.size() == 0 && canSitNextTile))
             {
-                if (!room.tileWalkable(next)) {
+                double height = next.getStackHeight() - this.currentLocation.getStackHeight();
+                if (!room.tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.state == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
                     this.room = room;
                     this.path.clear();
                     this.findPath();
@@ -259,10 +261,10 @@ public class RoomUnit {
             boolean canSitNextTile = room.canSitAt(next.x, next.y);
 
             if (canSitNextTile) {
-                HabboItem lowestChair = room.getLowestChair(next);
+                HabboItem tallestChair = room.getTallestChair(next);
 
-                if (lowestChair != null)
-                    item = lowestChair;
+                if (tallestChair != null)
+                    item = tallestChair;
             }
 
             if (next.equals(this.goalLocation) && next.state == RoomTileState.SIT && !overrideChecks) {
@@ -511,14 +513,14 @@ public class RoomUnit {
         this.startLocation = this.currentLocation;
 
         if (goalLocation != null && !noReset) {
+            boolean isWalking = this.hasStatus(RoomUnitStatus.MOVE);
             this.goalLocation = goalLocation;
             this.findPath(); ///< Quadral: this is where we start formulating a path
             if (!this.path.isEmpty()) {
-                this.tilesWalked = 0;
+                this.tilesWalked = isWalking ? this.tilesWalked : 0;
                 this.cmdSit = false;
             } else {
                 this.goalLocation = this.currentLocation;
-
             }
         }
     }
@@ -725,13 +727,12 @@ public class RoomUnit {
         if (room.getItemsAt(tile).stream().anyMatch(i -> i.canOverrideTile(this, room, tile)))
             return true;
 
-        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        int tileIndex = (tile.x & 0xFF) | (tile.y << 12);
         return this.overridableTiles.contains(tileIndex);
     }
 
     public void addOverrideTile(RoomTile tile) {
-        if (!this.canOverrideTile(tile)) { return; } // Test if the Tile is overridable
-        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        int tileIndex = (tile.x & 0xFF) | (tile.y << 12);
         if (!this.overridableTiles.contains(tileIndex)) {
             this.overridableTiles.add(tileIndex);
         }
@@ -740,7 +741,7 @@ public class RoomUnit {
     public void removeOverrideTile(RoomTile tile) {
         if (room == null || room.getLayout() == null) return;
 
-        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        int tileIndex = (tile.x & 0xFF) | (tile.y << 12);
         this.overridableTiles.remove(tileIndex);
     }
 

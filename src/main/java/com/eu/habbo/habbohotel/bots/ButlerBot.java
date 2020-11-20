@@ -3,6 +3,8 @@ package com.eu.habbo.habbohotel.bots;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.plugin.events.bots.BotServerItemEvent;
 import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToRoomUnit;
@@ -78,7 +80,14 @@ public class ButlerBot extends Bot {
                                 tasks.add(new RoomUnitGiveHanditem(serveEvent.habbo.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), serveEvent.itemId));
                                 tasks.add(new RoomUnitGiveHanditem(this.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), 0));
 
-                                tasks.add(() -> b.talk(Emulator.getTexts().getValue("bots.butler.given").replace("%key%", key).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername())));
+                                tasks.add(() -> {
+                                    if(this.getRoom() != null) {
+                                        String msg = Emulator.getTexts().getValue("bots.butler.given").replace("%key%", key).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername());
+                                        if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), this.getRoom(), new Object[]{msg})) {
+                                            b.talk(msg);
+                                        }
+                                    }
+                                });
 
                                 List<Runnable> failedReached = new ArrayList();
                                 failedReached.add(() -> {
@@ -98,7 +107,13 @@ public class ButlerBot extends Bot {
                                 }
                             } else {
                                 this.getRoom().giveHandItem(serveEvent.habbo, serveEvent.itemId);
-                                this.talk(Emulator.getTexts().getValue("bots.butler.given").replace("%key%", s).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername()));
+
+                                if(this.getRoom() != null) {
+                                    String msg = Emulator.getTexts().getValue("bots.butler.given").replace("%key%", s).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername());
+                                    if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), this.getRoom(), new Object[]{msg})) {
+                                        this.talk(msg);
+                                    }
+                                }
                             }
                             return;
                         }

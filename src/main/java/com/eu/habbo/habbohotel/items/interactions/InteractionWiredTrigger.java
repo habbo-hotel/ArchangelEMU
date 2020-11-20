@@ -42,21 +42,6 @@ public abstract class InteractionWiredTrigger extends InteractionWired {
         }
     }
 
-    @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
     public abstract WiredTriggerType getType();
 
     public abstract boolean saveData(ClientMessage packet);

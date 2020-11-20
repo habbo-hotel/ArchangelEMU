@@ -12,8 +12,10 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
 import com.eu.habbo.threading.runnables.RoomUnitKick;
 import gnu.trove.procedure.TObjectProcedure;
@@ -69,24 +71,35 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "\t" + this.message;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.message, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        try {
-            String[] data = set.getString("wired_data").split("\t");
+        String wiredData = set.getString("wired_data");
 
-            if (data.length >= 1) {
-                this.setDelay(Integer.valueOf(data[0]));
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.message = data.message;
+        }
+        else {
+            try {
+                String[] data = set.getString("wired_data").split("\t");
 
-                if (data.length >= 2) {
-                    this.message = data[1];
+                if (data.length >= 1) {
+                    this.setDelay(Integer.valueOf(data[0]));
+
+                    if (data.length >= 2) {
+                        this.message = data[1];
+                    }
                 }
+            } catch (Exception e) {
+                this.message = "";
+                this.setDelay(0);
             }
-        } catch (Exception e) {
-            this.message = "";
-            this.setDelay(0);
+
+            this.needsUpdate(true);
         }
     }
 
@@ -135,11 +148,17 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
-        this.message = packet.readString();
+        String message = packet.readString();
         packet.readInt();
-        this.setDelay(packet.readInt());
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.message = message.substring(0, Math.min(message.length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
+        this.setDelay(delay);
 
         return true;
     }
@@ -147,5 +166,15 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
     @Override
     public boolean requiresTriggeringUser() {
         return true;
+    }
+
+    static class JsonData {
+        String message;
+        int delay;
+
+        public JsonData(String message, int delay) {
+            this.message = message;
+            this.delay = delay;
+        }
     }
 }

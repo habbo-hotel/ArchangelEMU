@@ -178,7 +178,7 @@ public class BattleBanzaiGame extends Game {
         for (GameTeam team : this.teams.values()) {
             if (!singleTeamGame) {
                 for (GamePlayer player : team.getMembers()) {
-                    if (player.getScore() > 0) {
+                    if (player.getScoreAchievementValue() > 0) {
                         AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallPlayer"));
                     }
                 }
@@ -192,7 +192,7 @@ public class BattleBanzaiGame extends Game {
         if (winningTeam != null) {
             if (!singleTeamGame) {
                 for (GamePlayer player : winningTeam.getMembers()) {
-                    if (player.getScore() > 0) {
+                    if (player.getScoreAchievementValue() > 0) {
                         this.room.sendComposer(new RoomUserActionComposer(player.getHabbo().getRoomUnit(), RoomUserAction.WAVE).compose());
                         AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallWinner"));
                     }

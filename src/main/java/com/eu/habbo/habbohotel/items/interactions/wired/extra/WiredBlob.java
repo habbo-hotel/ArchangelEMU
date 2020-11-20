@@ -68,7 +68,7 @@ public class WiredBlob extends InteractionDefault {
             GamePlayer player = habbo.getHabboInfo().getGamePlayer();
 
             if (player != null) {
-                player.addScore(this.POINTS_REWARD);
+                player.addScore(this.POINTS_REWARD, true);
 
                 BattleBanzaiGame battleBanzaiGame = (BattleBanzaiGame) room.getGame(BattleBanzaiGame.class);
 
