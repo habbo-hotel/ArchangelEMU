@@ -5,21 +5,28 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.CustomNotificationComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.CloseGate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
-public class InteractionHabboClubGate extends InteractionDefault implements ConditionalGate {
-    public InteractionHabboClubGate(ResultSet set, Item baseItem) throws SQLException {
+public class InteractionCostumeGate extends InteractionDefault implements ConditionalGate {
+    public InteractionCostumeGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
     }
 
-    public InteractionHabboClubGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
+    public InteractionCostumeGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.setExtradata("0");
     }
@@ -31,9 +38,34 @@ public class InteractionHabboClubGate extends InteractionDefault implements Cond
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
+        if (roomUnit == null || room == null)
+            return false;
+
         Habbo habbo = room.getHabbo(roomUnit);
 
-        return habbo != null && habbo.getHabboStats().hasActiveClub();
+        if (habbo != null && habbo.getHabboInfo() != null) {
+            /*
+             * Get all figureparts. Figureparts are seperated by dots and each figurepart has this format:
+             * figureType-partID-colorID1-colorID2...-colorIDn
+             */
+            List<String> figureParts = Arrays.asList(habbo.getHabboInfo().getLook().split("\\."));
+
+            List<String> allowedPartIds = Arrays.asList(Emulator.getConfig()
+                    .getValue("hotel.item.condition.costume.partids")
+                    .split(";")
+            );
+
+            // Check if at least one of the figureparts is configured as a costume and thus allowed
+            return figureParts.stream().anyMatch(figurePart -> {
+                String[] partInfo = figurePart.split("-");
+                if (partInfo.length >= 2) {
+                    String partID = partInfo[1]; // index 0 is the part, index 1 is the ID
+                    return allowedPartIds.contains(partID);
+                }
+                return false;
+            });
+        }
+        return false;
     }
 
     @Override
@@ -70,7 +102,7 @@ public class InteractionHabboClubGate extends InteractionDefault implements Cond
             return;
 
         room.getHabbo(roomUnit).getClient().sendResponse(
-                new CustomNotificationComposer(CustomNotificationComposer.GATE_NO_HC)
+                new CustomNotificationComposer(CustomNotificationComposer.HOPPER_NO_COSTUME)
         );
     }
 }
