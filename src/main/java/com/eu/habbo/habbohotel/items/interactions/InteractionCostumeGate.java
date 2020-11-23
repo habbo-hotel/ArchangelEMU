@@ -67,11 +67,6 @@ public class InteractionCostumeGate extends InteractionDefault implements Condit
 
     @Override
     public void onRejected(RoomUnit roomUnit, Room room, Object[] objects) {
-        if (roomUnit == null || room == null)
-            return;
-
-        room.getHabbo(roomUnit).getClient().sendResponse(
-                new CustomNotificationComposer(CustomNotificationComposer.HOPPER_NO_COSTUME)
-        );
+        
     }
 }
