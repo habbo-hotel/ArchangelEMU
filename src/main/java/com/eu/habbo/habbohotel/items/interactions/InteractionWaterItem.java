@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
@@ -13,7 +14,7 @@ import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionWaterItem extends InteractionDefault {
+public class InteractionWaterItem extends InteractionMultiHeight {
     public InteractionWaterItem(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -30,13 +31,20 @@ public class InteractionWaterItem extends InteractionDefault {
 
     @Override
     public void onPickUp(Room room) {
+        super.onPickUp(room);
         this.setExtradata("0");
         this.needsUpdate(true);
     }
 
     @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
+        super.onMove(room, oldLocation, newLocation);
         this.update();
+    }
+
+    @Override
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+        super.onClick(client, room, new Object[] { });
     }
 
     public void update() {
@@ -75,17 +83,12 @@ public class InteractionWaterItem extends InteractionDefault {
         if (!this.getExtradata().equals(updatedData)) {
             this.setExtradata(updatedData);
             this.needsUpdate(true);
-            room.updateItem(this);
+            room.updateItemState(this);
         }
     }
 
     @Override
     public boolean allowWiredResetState() {
-        return false;
-    }
-
-    @Override
-    public boolean canToggle(Habbo habbo, Room room) {
         return false;
     }
 }

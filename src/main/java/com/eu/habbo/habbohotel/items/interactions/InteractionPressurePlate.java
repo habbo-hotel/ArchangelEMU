@@ -8,12 +8,13 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.outgoing.rooms.items.ItemStateComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionPressurePlate extends HabboItem {
+public class InteractionPressurePlate extends InteractionDefault {
     public InteractionPressurePlate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
@@ -37,14 +38,6 @@ public class InteractionPressurePlate extends HabboItem {
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
-    }
-
-    @Override
-    public void serializeExtradata(ServerMessage serverMessage) {
-        serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
-
-        super.serializeExtradata(serverMessage);
     }
 
     @Override
@@ -99,7 +92,7 @@ public class InteractionPressurePlate extends HabboItem {
         }
 
         this.setExtradata(occupied ? "1" : "0");
-        room.updateItem(this);
+        room.updateItemState(this);
     }
 
     @Override

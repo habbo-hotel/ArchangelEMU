@@ -10,14 +10,18 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.procedure.TObjectProcedure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.BOT_TALK_TO_AVATAR;
@@ -69,21 +73,34 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
 
-        this.mode = packet.readInt();
-        String[] data = packet.readString().split("" + ((char) 9));
+        int mode = packet.readInt();
 
-        if (data.length == 2) {
-            this.botName = data[0];
+        if(mode != 0 && mode != 1)
+            throw new WiredSaveException("Mode is invalid");
 
-            if (data[1].length() > 64) return false;
-            this.message = data[1];
-        }
+        String dataString = packet.readString();
+        String splitBy = "\t";
+        if(!dataString.contains(splitBy))
+            throw new WiredSaveException("Malformed data string");
+
+        String[] data = dataString.split(Pattern.quote(splitBy));
+
+        if (data.length != 2)
+            throw new WiredSaveException("Malformed data string. Invalid data length");
 
         packet.readInt();
-        this.setDelay(packet.readInt());
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.botName = data[0].substring(0, Math.min(data[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
+        this.message = data[1].substring(0, Math.min(data[1].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
+        this.mode = mode;
+        this.setDelay(delay);
 
         return true;
     }
@@ -112,10 +129,12 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
 
             Bot bot = bots.get(0);
 
-            if (this.mode == 1) {
-                bot.whisper(m, habbo);
-            } else {
-                bot.talk(habbo.getHabboInfo().getUsername() + ": " + m);
+            if(!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, bot.getRoomUnit(), room, new Object[]{ m })) {
+                if (this.mode == 1) {
+                    bot.whisper(m, habbo);
+                } else {
+                    bot.talk(habbo.getHabboInfo().getUsername() + ": " + m);
+                }
             }
 
             return true;
@@ -126,18 +145,31 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "" + ((char) 9) + "" + this.mode + "" + ((char) 9) + "" + this.botName + "" + ((char) 9) + "" + this.message;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.mode, this.message, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(((char) 9) + "");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length == 4) {
-            this.setDelay(Integer.valueOf(data[0]));
-            this.mode = data[1].equalsIgnoreCase("1") ? 1 : 0;
-            this.botName = data[2];
-            this.message = data[3];
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.mode = data.mode;
+            this.botName = data.bot_name;
+            this.message = data.message;
+        }
+        else {
+            String[] data = wiredData.split(((char) 9) + "");
+
+            if (data.length == 4) {
+                this.setDelay(Integer.valueOf(data[0]));
+                this.mode = data[1].equalsIgnoreCase("1") ? 1 : 0;
+                this.botName = data[2];
+                this.message = data[3];
+            }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -152,5 +184,19 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
     @Override
     public boolean requiresTriggeringUser() {
         return true;
+    }
+
+    static class JsonData {
+        String bot_name;
+        int mode;
+        String message;
+        int delay;
+
+        public JsonData(String bot_name, int mode, String message, int delay) {
+            this.bot_name = bot_name;
+            this.mode = mode;
+            this.message = message;
+            this.delay = delay;
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionOperator;
@@ -37,14 +38,10 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
         this.refresh();
 
         if (this.items.isEmpty())
-            return true;
+            return false;
 
-        for (HabboItem item : this.items) {
-            if (RoomLayout.getRectangle(item.getX(), item.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()).contains(roomUnit.getX(), roomUnit.getY()))
-                return true;
-        }
-
-        return false;
+        THashSet<HabboItem> itemsAtUser = room.getItemsAt(roomUnit.getCurrentLocation());
+        return this.items.stream().anyMatch(itemsAtUser::contains);
     }
 
     @Override
@@ -149,6 +146,6 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
 
     @Override
     public WiredConditionOperator operator() {
-        return WiredConditionOperator.OR;
+        return WiredConditionOperator.AND;
     }
 }

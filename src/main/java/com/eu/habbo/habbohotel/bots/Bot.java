@@ -178,11 +178,11 @@ public class Bot implements Runnable {
                         int timeOut = Emulator.getRandom().nextInt(20) * 2;
                         this.roomUnit.setWalkTimeOut((timeOut < 10 ? 5 : timeOut) + Emulator.getIntUnixTimestamp());
                     }
-                } else {
+                }/* else {
                     for (RoomTile t : this.room.getLayout().getTilesAround(this.room.getLayout().getTile(this.getRoomUnit().getX(), this.getRoomUnit().getY()))) {
                         WiredHandler.handle(WiredTriggerType.BOT_REACHED_STF, this.roomUnit, this.room, this.room.getItemsAt(t).toArray());
                     }
-                }
+                }*/
             }
 
             if (!this.chatLines.isEmpty() && this.chatTimeOut <= Emulator.getIntUnixTimestamp() && this.chatAuto) {
@@ -193,12 +193,16 @@ public class Bot implements Runnable {
                         this.lastChatIndex = 0;
                     }
 
-                    this.talk(this.chatLines.get(this.lastChatIndex)
+                    String message = this.chatLines.get(this.lastChatIndex)
                             .replace("%owner%", this.room.getOwnerName())
                             .replace("%item_count%", this.room.itemCount() + "")
                             .replace("%name%", this.name)
                             .replace("%roomname%", this.room.getName())
-                            .replace("%user_count%", this.room.getUserCount() + ""));
+                            .replace("%user_count%", this.room.getUserCount() + "");
+
+                    if(!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), room, new Object[]{ message })) {
+                        this.talk(message);
+                    }
 
                     this.chatTimeOut = Emulator.getIntUnixTimestamp() + this.chatDelay;
                 }
@@ -252,7 +256,12 @@ public class Bot implements Runnable {
             room.giveEffect(this.roomUnit, this.effect, -1);
         }
 
-        this.talk(PLACEMENT_MESSAGES[Emulator.getRandom().nextInt(PLACEMENT_MESSAGES.length)]);
+        if(PLACEMENT_MESSAGES.length > 0) {
+            String message = PLACEMENT_MESSAGES[Emulator.getRandom().nextInt(PLACEMENT_MESSAGES.length)];
+            if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), room, new Object[]{message})) {
+                this.talk(message);
+            }
+        }
     }
 
     public void onPickUp(Habbo habbo, Room room) {

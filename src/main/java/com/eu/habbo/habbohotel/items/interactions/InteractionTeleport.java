@@ -93,7 +93,7 @@ public class InteractionTeleport extends HabboItem {
             // set state 1 and walk on item
             this.roomUnitID = unit.getId();
             this.setExtradata("1");
-            room.updateItem(this);
+            room.updateItemState(this);
             unit.setGoalLocation(infrontTile);
 
             List<Runnable> onSuccess = new ArrayList<Runnable>();
@@ -111,7 +111,7 @@ public class InteractionTeleport extends HabboItem {
                 walkable = this.getBaseItem().allowWalk();
                 room.updateTile(currentLocation);
                 this.setExtradata("0");
-                room.updateItem(this);
+                room.updateItemState(this);
                 this.roomUnitID = -1;
                 unit.removeOverrideTile(currentLocation);
                 unit.setCanLeaveRoomByDoor(true);

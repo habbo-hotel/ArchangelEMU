@@ -3,11 +3,10 @@ package com.eu.habbo.threading.runnables.teleport;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 
@@ -29,6 +28,7 @@ class TeleportActionFive implements Runnable {
     public void run() {
         RoomUnit unit = this.client.getHabbo().getRoomUnit();
 
+        unit.isLeavingTeleporter = false;
         unit.isTeleporting = false;
         unit.setCanWalk(true);
 
@@ -46,11 +46,16 @@ class TeleportActionFive implements Runnable {
             List<Runnable> onSuccess = new ArrayList<Runnable>();
             onSuccess.add(() -> {
                 unit.setCanLeaveRoomByDoor(true);
+
+                Emulator.getThreading().run(() -> {
+                    unit.isLeavingTeleporter = false;
+                }, 300);
             });
 
             unit.setCanLeaveRoomByDoor(false);
             unit.setGoalLocation(tile);
             unit.statusUpdate(true);
+            unit.isLeavingTeleporter = true;
             Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onSuccess, onSuccess));
         }
 

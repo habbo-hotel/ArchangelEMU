@@ -51,43 +51,16 @@ public class WiredConditionFurniHaveHabbo extends InteractionWiredCondition {
         if (this.items.isEmpty())
             return true;
 
-        THashMap<HabboItem, THashSet<RoomTile>> tiles = new THashMap<>();
-        for (HabboItem item : this.items) {
-            tiles.put(item, room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
-        }
-
         Collection<Habbo> habbos = room.getHabbos();
         Collection<Bot> bots = room.getCurrentBots().valueCollection();
         Collection<Pet> pets = room.getCurrentPets().valueCollection();
 
-        for (Map.Entry<HabboItem, THashSet<RoomTile>> set : tiles.entrySet()) {
-            boolean found = false;
-            for (Habbo habbo : habbos) {
-                if (set.getValue().contains(habbo.getRoomUnit().getCurrentLocation())) {
-                    found = true;
-                }
-            }
-
-            if (!found) {
-                for (Bot bot : bots) {
-                    if (set.getValue().contains(bot.getRoomUnit().getCurrentLocation())) {
-                        found = true;
-                    }
-                }
-            }
-
-            if (!found) {
-                for (Pet pet : pets) {
-                    if (set.getValue().contains(pet.getRoomUnit().getCurrentLocation())) {
-                        found = true;
-                    }
-                }
-            }
-
-            if (!found) return false;
-        }
-
-        return true;
+        return this.items.stream().allMatch(item -> {
+            THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+            return habbos.stream().anyMatch(character -> occupiedTiles.contains(character.getRoomUnit().getCurrentLocation())) ||
+                    bots.stream().anyMatch(character -> occupiedTiles.contains(character.getRoomUnit().getCurrentLocation())) ||
+                    pets.stream().anyMatch(character -> occupiedTiles.contains(character.getRoomUnit().getCurrentLocation()));
+        });
     }
 
     @Override

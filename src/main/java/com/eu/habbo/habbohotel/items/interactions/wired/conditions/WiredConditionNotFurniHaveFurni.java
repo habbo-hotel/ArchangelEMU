@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionOperator;
@@ -39,19 +40,20 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
         if (this.items.isEmpty())
             return true;
 
-        for (HabboItem item : this.items) {
-            THashSet<HabboItem> things = room.getItemsAt(item.getX(), item.getY(), item.getZ() + Item.getCurrentHeight(item));
-            things.removeAll(this.items);
-            if (!things.isEmpty()) {
-                if (this.all)
-                    return false;
-                else
-                    continue;
-            }
-            return true;
+        if(this.all) {
+            return this.items.stream().allMatch(item -> {
+                double minZ = item.getZ() + Item.getCurrentHeight(item);
+                THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+                return occupiedTiles.stream().noneMatch(tile -> room.getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
+            });
         }
-
-        return false;
+        else {
+            return this.items.stream().anyMatch(item -> {
+                double minZ = item.getZ() + Item.getCurrentHeight(item);
+                THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+                return occupiedTiles.stream().noneMatch(tile -> room.getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
+            });
+        }
     }
 
     @Override
@@ -79,7 +81,7 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
                 String[] items = data[1].split(";");
 
                 for (String s : items) {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(s));
+                    HabboItem item = room.getHabboItem(Integer.parseInt(s));
 
                     if (item != null)
                         this.items.add(item);
@@ -169,6 +171,8 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
 
     @Override
     public WiredConditionOperator operator() {
-        return this.all ? WiredConditionOperator.AND : WiredConditionOperator.OR;
+        // NICE TRY BUT THAT'S NOT HOW IT WORKS. NOTHING IN HABBO IS AN "OR" CONDITION - EVERY CONDITION MUST BE SUCCESS FOR THE STACK TO EXECUTE, BUT LET'S LEAVE IT IMPLEMENTED FOR PLUGINS TO USE.
+        //return this.all ? WiredConditionOperator.AND : WiredConditionOperator.OR;
+        return WiredConditionOperator.AND;
     }
 }

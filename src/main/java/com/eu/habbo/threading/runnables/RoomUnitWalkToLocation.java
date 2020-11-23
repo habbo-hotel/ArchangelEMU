@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class RoomUnitWalkToLocation implements Runnable {
             return;
         }
 
-        if (!this.walker.getGoal().equals(this.goalTile)) {
+        if (!this.walker.getGoal().equals(this.goalTile) || (this.walker.getPath().size() == 0 && !this.walker.hasStatus(RoomUnitStatus.MOVE))) {
             onFail();
             return;
         }

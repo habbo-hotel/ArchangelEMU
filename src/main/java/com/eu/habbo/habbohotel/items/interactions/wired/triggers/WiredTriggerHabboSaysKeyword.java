@@ -28,14 +28,11 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        Habbo habbo = room.getHabbo(roomUnit);
-
-        if (habbo != null) {
-            if (this.key.length() > 0) {
-                if (stuff[0] instanceof String) {
-                    if (((String) stuff[0]).toLowerCase().contains(this.key.toLowerCase())) {
-                        return !this.ownerOnly || room.getOwnerId() == habbo.getHabboInfo().getId();
-                    }
+        if (this.key.length() > 0) {
+            if (stuff[0] instanceof String) {
+                if (((String) stuff[0]).toLowerCase().contains(this.key.toLowerCase())) {
+                    Habbo habbo = room.getHabbo(roomUnit);
+                    return !this.ownerOnly || (habbo != null && room.getOwnerId() == habbo.getHabboInfo().getId());
                 }
             }
         }

@@ -1070,9 +1070,6 @@ public class CatalogManager {
                     }
                 }
 
-                UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
-                Emulator.getPluginManager().fireEvent(purchasedEvent);
-
                 if (badgeFound) {
                     habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.ALREADY_HAVE_BADGE));
 
@@ -1080,6 +1077,9 @@ public class CatalogManager {
                         return;
                     }
                 }
+
+                UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
+                Emulator.getPluginManager().fireEvent(purchasedEvent);
 
                 if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                     if (purchasedEvent.totalCredits > 0) {

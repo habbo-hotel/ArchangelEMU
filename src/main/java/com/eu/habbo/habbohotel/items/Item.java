@@ -38,6 +38,7 @@ public class Item implements ISerialize {
     private String clothingOnWalk;
 
     private ItemInteraction interactionType;
+    private int rotations;
 
     public Item(ResultSet set) throws SQLException {
         this.load(set);
@@ -119,6 +120,13 @@ public class Item implements ISerialize {
                 this.multiHeights = new double[0];
             }
         }
+
+        this.rotations = 4;
+
+        try {
+            this.rotations = set.getInt("rotations");
+        }
+        catch (SQLException ignored) { }
     }
 
     public int getId() {
@@ -222,6 +230,10 @@ public class Item implements ISerialize {
     }
 
     public String getClothingOnWalk() { return clothingOnWalk; }
+
+    public int getRotations() {
+        return rotations;
+    }
 
     @Override
     public void serialize(ServerMessage message) {
