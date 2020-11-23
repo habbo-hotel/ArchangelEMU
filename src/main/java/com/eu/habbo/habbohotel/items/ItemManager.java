@@ -141,7 +141,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("puzzle_box", InteractionPuzzleBox.class));
         this.interactionsList.add(new ItemInteraction("hopper", InteractionHopper.class));
         this.interactionsList.add(new ItemInteraction("costume_hopper", InteractionCostumeHopper.class));
-        this.interactionsList.add(new ItemInteraction("costume_gate", InteractionCostumeGate.class));
+        this.interactionsList.add(new ItemInteraction("effect_gate", InteractionEffectGate.class));
         this.interactionsList.add(new ItemInteraction("club_hopper", InteractionHabboClubHopper.class));
         this.interactionsList.add(new ItemInteraction("club_gate", InteractionHabboClubGate.class));
         this.interactionsList.add(new ItemInteraction("club_teleporttile", InteractionHabboClubTeleportTile.class));
