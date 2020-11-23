@@ -6,16 +6,14 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.generic.alerts.CustomNotificationComposer;
 import com.eu.habbo.threading.runnables.CloseGate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
 public class InteractionCostumeGate extends InteractionDefault implements ConditionalGate {
+
     public InteractionCostumeGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
@@ -36,31 +34,7 @@ public class InteractionCostumeGate extends InteractionDefault implements Condit
         if (roomUnit == null || room == null)
             return false;
 
-        Habbo habbo = room.getHabbo(roomUnit);
-
-        if (habbo != null && habbo.getHabboInfo() != null) {
-            /*
-             * Get all figureparts. Figureparts are seperated by dots and each figurepart has this format:
-             * figureType-partID-colorID1-colorID2...-colorIDn
-             */
-            List<String> figureParts = Arrays.asList(habbo.getHabboInfo().getLook().split("\\."));
-
-            List<String> allowedPartIds = Arrays.asList(Emulator.getConfig()
-                    .getValue("hotel.item.condition.costume.partids")
-                    .split(";")
-            );
-
-            // Check if at least one of the figureparts is configured as a costume and thus allowed
-            return figureParts.stream().anyMatch(figurePart -> {
-                String[] partInfo = figurePart.split("-");
-                if (partInfo.length >= 2) {
-                    String partID = partInfo[1]; // index 0 is the part, index 1 is the ID
-                    return allowedPartIds.contains(partID);
-                }
-                return false;
-            });
-        }
-        return false;
+        return roomUnit.getEffectId() > 0;
     }
 
     @Override
