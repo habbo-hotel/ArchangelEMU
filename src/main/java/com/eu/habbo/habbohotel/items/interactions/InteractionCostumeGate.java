@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.messages.outgoing.generic.alerts.CustomNotificationComposer;
 import com.eu.habbo.threading.runnables.CloseGate;
 
 import java.sql.ResultSet;
@@ -49,13 +48,7 @@ public class InteractionCostumeGate extends InteractionDefault implements Condit
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        if (client != null) {
-            if (this.canWalkOn(client.getHabbo().getRoomUnit(), room, null)) {
-                super.onClick(client, room, objects);
-            } else {
-                client.sendResponse(new CustomNotificationComposer(CustomNotificationComposer.GATE_NO_HC));
-            }
-        }
+        super.onClick(client, room, objects);
     }
 
     @Override
@@ -67,6 +60,6 @@ public class InteractionCostumeGate extends InteractionDefault implements Condit
 
     @Override
     public void onRejected(RoomUnit roomUnit, Room room, Object[] objects) {
-        
+
     }
 }
