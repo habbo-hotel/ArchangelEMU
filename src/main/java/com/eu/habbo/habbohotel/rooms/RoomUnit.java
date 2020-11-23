@@ -10,7 +10,6 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.generic.alerts.CustomNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
