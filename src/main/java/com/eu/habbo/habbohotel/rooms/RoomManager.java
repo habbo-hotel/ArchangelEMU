@@ -531,14 +531,14 @@ public class RoomManager {
                 habbo.hasPermission(Permission.ACC_ENTERANYROOM) ||
                 room.hasRights(habbo) ||
                 (room.getState().equals(RoomState.INVISIBLE) && room.hasRights(habbo)) ||
-                (room.hasGuild() && room.guildRightLevel(habbo) > 2)) {
+                (room.hasGuild() && room.getGuildRightLevel(habbo).isGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
             this.openRoom(habbo, room, doorLocation);
         } else if (room.getState() == RoomState.LOCKED) {
             boolean rightsFound = false;
 
             synchronized (room.roomUnitLock) {
                 for (Habbo current : room.getHabbos()) {
-                    if (room.hasRights(current) || current.getHabboInfo().getId() == room.getOwnerId() || (room.hasGuild() && room.guildRightLevel(current) >= 2)) {
+                    if (room.hasRights(current) || current.getHabboInfo().getId() == room.getOwnerId() || (room.hasGuild() && room.getGuildRightLevel(current).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
                         current.getClient().sendResponse(new DoorbellAddUserComposer(habbo.getHabboInfo().getUsername()));
                         rightsFound = true;
                     }
@@ -875,7 +875,7 @@ public class RoomManager {
 
         habbo.getClient().sendResponse(new RoomUsersGuildBadgesComposer(guildBadges));
 
-        if (room.hasRights(habbo) || (room.hasGuild() && room.guildRightLevel(habbo) >= 2)) {
+        if (room.hasRights(habbo) || (room.hasGuild() && room.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
             if (!room.getHabboQueue().isEmpty()) {
                 for (Habbo waiting : room.getHabboQueue().valueCollection()) {
                     habbo.getClient().sendResponse(new DoorbellAddUserComposer(waiting.getHabboInfo().getUsername()));

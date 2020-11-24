@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
@@ -35,7 +36,7 @@ public class BuyRoomPromotionEvent extends MessageHandler {
                 if (this.client.getHabbo().getHabboInfo().canBuy(item)) {
                     Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
-                    if (!(room.isOwner(this.client.getHabbo()) || room.hasRights(this.client.getHabbo()) || room.guildRightLevel(this.client.getHabbo()) == 3)) {
+                    if (!(room.isOwner(this.client.getHabbo()) || room.hasRights(this.client.getHabbo()) || room.getGuildRightLevel(this.client.getHabbo()).equals(RoomRightLevels.GUILD_ADMIN))) {
                         return;
                     }
 
