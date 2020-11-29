@@ -13,9 +13,11 @@ public class SaveMottoEvent extends MessageHandler {
         UserSavedMottoEvent event = new UserSavedMottoEvent(this.client.getHabbo(), this.client.getHabbo().getHabboInfo().getMotto(), motto);
         Emulator.getPluginManager().fireEvent(event);
         motto = event.newMotto;
-
-        this.client.getHabbo().getHabboInfo().setMotto(motto);
-        this.client.getHabbo().getHabboInfo().run();
+        
+        if(motto.length() <= Emulator.getConfig().getInt("motto.max_length", 38)) {
+            this.client.getHabbo().getHabboInfo().setMotto(motto);
+            this.client.getHabbo().getHabboInfo().run();
+        }
 
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(this.client.getHabbo()).compose());
