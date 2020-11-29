@@ -3130,7 +3130,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         ServerMessage prefixMessage = null;
 
         if (Emulator.getPluginManager().isRegistered(UsernameTalkEvent.class, true)) {
-            UsernameTalkEvent usernameTalkEvent = (UsernameTalkEvent) Emulator.getPluginManager().fireEvent(new UsernameTalkEvent(habbo, roomChatMessage, chatType));
+            UsernameTalkEvent usernameTalkEvent = Emulator.getPluginManager().fireEvent(new UsernameTalkEvent(habbo, roomChatMessage, chatType));
             if (usernameTalkEvent.hasCustomComposer()) {
                 prefixMessage = usernameTalkEvent.getCustomComposer();
             }
@@ -3141,7 +3141,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
         ServerMessage clearPrefixMessage = prefixMessage != null ? new RoomUserNameChangedComposer(habbo).compose() : null;
 
-        Rectangle show = this.roomSpecialTypes.tentAt(habbo.getRoomUnit().getCurrentLocation());
+        Rectangle tentRectangle = this.roomSpecialTypes.tentAt(habbo.getRoomUnit().getCurrentLocation());
 
         String trimmedMessage = roomChatMessage.getMessage().replaceAll("\\s+$","");
 
@@ -3187,7 +3187,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 if ((h.getRoomUnit().getCurrentLocation().distance(habbo.getRoomUnit().getCurrentLocation()) <= this.chatDistance ||
                         h.equals(habbo) ||
                         this.hasRights(h) ||
-                        noChatLimit) && (show == null || RoomLayout.tileInSquare(show, h.getRoomUnit().getCurrentLocation()))) {
+                        noChatLimit) && (tentRectangle == null || RoomLayout.tileInSquare(tentRectangle, h.getRoomUnit().getCurrentLocation()))) {
                     if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId())) {
                         if (prefixMessage != null && !h.getHabboStats().preferOldChat) {
                             h.getClient().sendResponse(prefixMessage);
@@ -3197,13 +3197,19 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                             h.getClient().sendResponse(clearPrefixMessage);
                         }
                     }
+                    continue;
                 }
+                // Staff should be able to see the tent chat anyhow
+                showTentChatMessageOutsideTentIfPermitted(h, roomChatMessage, tentRectangle);
             }
         } else if (chatType == RoomChatType.SHOUT) {
             ServerMessage message = new RoomUserShoutComposer(roomChatMessage).compose();
 
             for (Habbo h : this.getHabbos()) {
-                if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId()) && (show == null || RoomLayout.tileInSquare(show, h.getRoomUnit().getCurrentLocation()))) {
+                // Show the message
+                // If the receiving Habbo has not ignored the sending Habbo
+                // AND the sending Habbo is NOT in a tent OR the receiving Habbo is in the same tent as the sending Habbo
+                if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId()) && (tentRectangle == null || RoomLayout.tileInSquare(tentRectangle, h.getRoomUnit().getCurrentLocation()))) {
                     if (prefixMessage != null && !h.getHabboStats().preferOldChat) {
                         h.getClient().sendResponse(prefixMessage);
                     }
@@ -3211,7 +3217,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     if (clearPrefixMessage != null && !h.getHabboStats().preferOldChat) {
                         h.getClient().sendResponse(clearPrefixMessage);
                     }
+                    continue;
                 }
+                // Staff should be able to see the tent chat anyhow, even when not in the same tent
+                showTentChatMessageOutsideTentIfPermitted(h, roomChatMessage, tentRectangle);
             }
         }
 
@@ -3263,8 +3272,22 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         }
                     }
                 }
-
             }
+        }
+    }
+
+    /**
+     * Sends the given message to the receiving Habbo if the Habbo has the ACC_SEE_TENTCHAT permission and is not within the tent
+     * @param receivingHabbo The receiving Habbo
+     * @param roomChatMessage The message to receive
+     * @param tentRectangle The whole tent area from where the sending Habbo is saying something
+     */
+    private void showTentChatMessageOutsideTentIfPermitted(Habbo receivingHabbo, RoomChatMessage roomChatMessage, Rectangle tentRectangle) {
+        if (receivingHabbo != null && receivingHabbo.hasPermission(Permission.ACC_SEE_TENTCHAT) && tentRectangle != null && !RoomLayout.tileInSquare(tentRectangle, receivingHabbo.getRoomUnit().getCurrentLocation())) {
+            RoomChatMessage staffChatMessage = new RoomChatMessage(roomChatMessage);
+            staffChatMessage.setMessage("[" + Emulator.getTexts().getValue("hotel.room.tent.prefix") + "] " + staffChatMessage.getMessage());
+            final ServerMessage staffMessage = new RoomUserWhisperComposer(staffChatMessage).compose();
+            receivingHabbo.getClient().sendResponse(staffMessage);
         }
     }
 
@@ -4420,7 +4443,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         double height = tile.getStackHeight();
 
         if (Emulator.getPluginManager().isRegistered(FurnitureBuildheightEvent.class, true)) {
-            FurnitureBuildheightEvent event = (FurnitureBuildheightEvent) Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, owner, 0.00, height));
+            FurnitureBuildheightEvent event = Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, owner, 0.00, height));
             if (event.hasChangedHeight()) {
                 height = event.getUpdatedHeight();
             }
@@ -4548,7 +4571,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (Emulator.getPluginManager().isRegistered(FurnitureBuildheightEvent.class, true)) {
-            FurnitureBuildheightEvent event = (FurnitureBuildheightEvent) Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, actor, 0.00, height));
+            FurnitureBuildheightEvent event = Emulator.getPluginManager().fireEvent(new FurnitureBuildheightEvent(item, actor, 0.00, height));
             if (event.hasChangedHeight()) {
                 height = event.getUpdatedHeight();
             }

@@ -81,7 +81,6 @@ public class InteractionOneWayGate extends HabboItem {
             if (unit == null)
                 return;
 
-
             if (tileInfront.x == unit.getX() && tileInfront.y == unit.getY()) {
                 if (!currentLocation.hasUnits()) {
                     List<Runnable> onSuccess = new ArrayList<Runnable>();
