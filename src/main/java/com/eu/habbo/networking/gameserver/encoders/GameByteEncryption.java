@@ -6,28 +6,25 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
+import io.netty.util.ReferenceCountUtil;
 
 public class GameByteEncryption extends ChannelOutboundHandlerAdapter {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        // Convert msg to ByteBuf.
-        ByteBuf out = (ByteBuf) msg;
+        // convert to Bytebuf
+        ByteBuf in = (ByteBuf) msg;
 
-        // Read all available bytes.
-        byte[] data;
+        // read available bytes
+        ByteBuf data = (in).readBytes(in.readableBytes());
 
-        if (out.hasArray()) {
-            data = out.array();
-        } else {
-            data = out.readBytes(out.readableBytes()).array();
-        }
+        //release old object
+        ReferenceCountUtil.release(in);
 
         // Encrypt.
-        ctx.channel().attr(GameServerAttributes.CRYPTO_SERVER).get().parse(data);
+        ctx.channel().attr(GameServerAttributes.CRYPTO_SERVER).get().parse(data.array());
 
         // Continue in the pipeline.
-        ctx.write(Unpooled.wrappedBuffer(data));
+        ctx.write(data, promise);
     }
-
 }
