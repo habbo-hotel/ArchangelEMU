@@ -107,3 +107,6 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('subscriptions.hc.payday.m
 ALTER TABLE `bots`
 ADD COLUMN `bubble_id`  int(3) NULL DEFAULT 31 AFTER `effect`;
 
+-- Permissions to see tent chat
+ALTER TABLE `permissions` ADD `acc_see_tentchat` ENUM('0', '1') NOT NULL DEFAULT '0' AFTER `acc_see_whispers`;
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('hotel.room.tent.prefix', 'Tent');
