@@ -180,10 +180,10 @@ public class MessengerBuddy implements Runnable, ISerialize {
         message.appendBoolean(this.online == 1);
         message.appendBoolean(this.inRoom); //IN ROOM
         message.appendString(this.look);
-        message.appendInt(0);
+        message.appendInt(0); // Friends category ID
         message.appendString(this.motto);
-        message.appendString("");
-        message.appendString("");
+        message.appendString(""); //Last seen as DATETIMESTRING
+        message.appendString(""); // Realname or Facebookame as String
         message.appendBoolean(false); //Offline messaging.
         message.appendBoolean(false);
         message.appendBoolean(false);
