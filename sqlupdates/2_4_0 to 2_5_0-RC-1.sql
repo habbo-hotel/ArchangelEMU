@@ -104,6 +104,8 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('subscriptions.hc.payday.m
 -- OPTIONAL HC MIGRATION
 -- INSERT INTO users_subscriptions SELECT NULL, user_id, 'HABBO_CLUB' as `subscription_type`, UNIX_TIMESTAMP() AS `timestamp_start`, (club_expire_timestamp - UNIX_TIMESTAMP()) AS `duration`, 1 AS `active` FROM users_settings WHERE club_expire_timestamp > UNIX_TIMESTAMP();
 
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('easter_eggs.enabled', '1');
+
 ALTER TABLE `bots`
 ADD COLUMN `bubble_id`  int(3) NULL DEFAULT 31 AFTER `effect`;
 
