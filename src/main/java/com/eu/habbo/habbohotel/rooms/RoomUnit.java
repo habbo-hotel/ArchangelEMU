@@ -3,16 +3,13 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.InteractionGuildGate;
-import com.eu.habbo.habbohotel.items.interactions.InteractionHabboClubGate;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
+import com.eu.habbo.habbohotel.items.interactions.*;
+import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.generic.alerts.CustomNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
@@ -301,17 +298,16 @@ public class RoomUnit {
                 if (item != habboItem || !RoomLayout.pointInSquare(item.getX(), item.getY(), item.getX() + item.getBaseItem().getWidth() - 1, item.getY() + item.getBaseItem().getLength() - 1, this.getX(), this.getY())) {
                     if (item.canWalkOn(this, room, null)) {
                         item.onWalkOn(this, room, new Object[]{this.getCurrentLocation(), next});
-                    } else if (item instanceof InteractionGuildGate || item instanceof InteractionHabboClubGate) {
+                    } else if (item instanceof ConditionalGate) {
                         this.setRotation(oldRotation);
                         this.tilesWalked--;
                         this.setGoalLocation(this.currentLocation);
                         this.status.remove(RoomUnitStatus.MOVE);
                         room.sendComposer(new RoomUserStatusComposer(this).compose());
 
-                        if (item instanceof InteractionHabboClubGate && habbo != null) {
-                            habbo.getClient().sendResponse(new CustomNotificationComposer(CustomNotificationComposer.GATE_NO_HC));
+                        if (habbo != null) {
+                            ((ConditionalGate) item).onRejected(this, this.getRoom(), new Object[]{});
                         }
-
                         return false;
                     }
                 } else {

@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
@@ -13,7 +14,7 @@ import com.eu.habbo.threading.runnables.CloseGate;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionGuildGate extends InteractionGuildFurni {
+public class InteractionGuildGate extends InteractionGuildFurni implements ConditionalGate {
     public InteractionGuildGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
@@ -60,5 +61,10 @@ public class InteractionGuildGate extends InteractionGuildFurni {
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         this.setExtradata("0");
         room.updateItemState(this);
+    }
+
+    @Override
+    public void onRejected(RoomUnit roomUnit, Room room, Object[] objects) {
+
     }
 }
