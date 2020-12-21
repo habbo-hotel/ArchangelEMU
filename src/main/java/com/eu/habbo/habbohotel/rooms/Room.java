@@ -73,7 +73,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -3864,20 +3863,27 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
     }
 
-    //TODO: Return Enum
-    public int guildRightLevel(Habbo habbo) {
+    public RoomRightLevels getGuildRightLevel(Habbo habbo) {
         if (this.guild > 0 && habbo.getHabboStats().hasGuild(this.guild)) {
             Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(this.guild);
 
             if (Emulator.getGameEnvironment().getGuildManager().getOnlyAdmins(guild).get(habbo.getHabboInfo().getId()) != null)
-                return 3;
+                return RoomRightLevels.GUILD_ADMIN;
 
             if (guild.getRights()) {
-                return 2;
+                return RoomRightLevels.GUILD_RIGHTS;
             }
         }
 
-        return 0;
+        return RoomRightLevels.NONE;
+    }
+
+    /**
+     * @deprecated Deprecated since 2.5.0. Use {@link #getGuildRightLevel(Habbo)} instead.
+     */
+    @Deprecated
+    public int guildRightLevel(Habbo habbo) {
+        return this.getGuildRightLevel(habbo).level;
     }
 
     public boolean isOwner(Habbo habbo) {
@@ -3994,15 +4000,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         } else if (this.hasRights(habbo) && !this.hasGuild()) {
             flatCtrl = RoomRightLevels.RIGHTS;
         } else if (this.hasGuild()) {
-            int level = this.guildRightLevel(habbo);
-
-            if (level == 3) {
-                flatCtrl = RoomRightLevels.GUILD_ADMIN;
-            } else if (level == 2) {
-                flatCtrl = RoomRightLevels.GUILD_RIGHTS;
-            }
+            flatCtrl = this.getGuildRightLevel(habbo);
         }
-
 
         habbo.getClient().sendResponse(new RoomRightsComposer(flatCtrl));
         habbo.getRoomUnit().setStatus(RoomUnitStatus.FLAT_CONTROL, flatCtrl.level + "");
@@ -4445,7 +4444,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         rotation %= 8;
-        if (this.hasRights(habbo) || this.guildRightLevel(habbo) >= 2 || habbo.hasPermission(Permission.ACC_MOVEROTATE)) {
+        if (this.hasRights(habbo) || this.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS) || habbo.hasPermission(Permission.ACC_MOVEROTATE)) {
             return FurnitureMovementError.NONE;
         }
 
@@ -4560,7 +4559,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public FurnitureMovementError placeWallFurniAt(HabboItem item, String wallPosition, Habbo owner) {
-        if (!(this.hasRights(owner) || this.guildRightLevel(owner) >= 2)) {
+        if (!(this.hasRights(owner) || this.getGuildRightLevel(owner).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
             return FurnitureMovementError.NO_RIGHTS;
         }
 
