@@ -35,8 +35,8 @@ public final class Emulator {
     private static final String OS_NAME = System.getProperty("os.name");
     private static final String CLASS_PATH = System.getProperty("java.class.path");
 
-    public final static int MAJOR = 2;
-    public final static int MINOR = 5;
+    public final static int MAJOR = 3;
+    public final static int MINOR = 0;
     public final static int BUILD = 0;
     public final static String PREVIEW = "Beta 1";
 

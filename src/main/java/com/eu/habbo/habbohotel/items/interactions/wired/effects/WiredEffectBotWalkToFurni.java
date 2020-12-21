@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.BOT_MOVE;
@@ -116,9 +117,14 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
         Bot bot = bots.get(0);
         this.items.removeIf(item -> item == null || item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null);
 
-        // wtf was that
-        if (this.items.size() > 0) {
-            HabboItem item = this.items.get(Emulator.getRandom().nextInt(this.items.size()));
+        // Bots shouldn't walk to the tile they are already standing on
+        List<HabboItem> possibleItems = this.items.stream()
+                .filter(item -> !room.getBotsOnItem(item).contains(bot))
+                .collect(Collectors.toList());
+
+        // Get a random tile of possible tiles to walk to
+        if (possibleItems.size() > 0) {
+            HabboItem item = possibleItems.get(Emulator.getRandom().nextInt(possibleItems.size()));
 
             if (item.getRoomId() != 0 && item.getRoomId() == bot.getRoom().getId()) {
                 bot.getRoomUnit().setGoalLocation(room.getLayout().getTile(item.getX(), item.getY()));
