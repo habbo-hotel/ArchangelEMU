@@ -3094,7 +3094,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
         habbo.getHabboStats().lastChat = millis;
-        if (roomChatMessage != null && roomChatMessage.getMessage().equalsIgnoreCase("i am a pirate")) {
+        if (roomChatMessage != null && Emulator.getConfig().getBoolean("easter_eggs.enabled") && roomChatMessage.getMessage().equalsIgnoreCase("i am a pirate")) {
             habbo.getHabboStats().chatCounter.addAndGet(1);
             Emulator.getThreading().run(new YouAreAPirate(habbo, this));
             return;
