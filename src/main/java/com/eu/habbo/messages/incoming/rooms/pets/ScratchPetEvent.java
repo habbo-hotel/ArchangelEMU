@@ -25,7 +25,6 @@ public class ScratchPetEvent extends MessageHandler {
             pet.scratched(this.client.getHabbo());
 
             // Update the stats to the database.
-            pet.needsUpdate = true;
             Emulator.getThreading().run(pet);
         }
     }
