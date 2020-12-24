@@ -1,5 +1,6 @@
 package com.eu.habbo.messages.incoming.rooms.pets;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.pets.MonsterplantPet;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -22,6 +23,10 @@ public class ScratchPetEvent extends MessageHandler {
 
         if (this.client.getHabbo().getHabboStats().petRespectPointsToGive > 0 || pet instanceof MonsterplantPet) {
             pet.scratched(this.client.getHabbo());
+
+            // Update the stats to the database.
+            pet.needsUpdate = true;
+            Emulator.getThreading().run(pet);
         }
     }
 }
