@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.bots.VisitorBot;
 import com.eu.habbo.habbohotel.commands.CommandHandler;
@@ -1217,6 +1218,19 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 if (!event.isCancelled()) {
                                     toKick.add(habbo);
                                 }
+                            }
+                        }
+                    }
+
+                    if (Emulator.getConfig().getBoolean("hotel.rooms.deco_hosting")) {
+                        //Check if the user isn't the owner id
+                        if (this.ownerId != habbo.getHabboInfo().getId()) {
+                            //Check if the time already have 1 minute (120 / 2 = 60s) 
+                            if (habbo.getRoomUnit().getTimeInRoom() >= 120) {
+                                AchievementManager.progressAchievement(this.ownerId, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"));
+                                habbo.getRoomUnit().resetTimeInRoom();
+                            } else {
+                                habbo.getRoomUnit().increaseTimeInRoom();
                             }
                         }
                     }
