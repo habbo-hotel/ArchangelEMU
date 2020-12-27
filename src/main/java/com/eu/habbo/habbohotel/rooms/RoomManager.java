@@ -672,7 +672,7 @@ public class RoomManager {
             habbo.getClient().sendResponse(new RoomPromotionMessageComposer(null, null));
         }
 
-        if (room.getOwnerId() != habbo.getHabboInfo().getId()) {
+        if (room.getOwnerId() != habbo.getHabboInfo().getId() && !habbo.getHabboStats().visitedRoom(room.getId())) {
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomEntry"));
         }
     }
@@ -916,6 +916,9 @@ public class RoomManager {
             statement.setInt(2, habbo.getHabboInfo().getId());
             statement.setInt(3, (int) (habbo.getHabboStats().roomEnterTimestamp));
             statement.execute();
+
+            if (!habbo.getHabboStats().visitedRoom(room.getId()))
+                habbo.getHabboStats().addVisitRoom(room.getId());
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
         }
