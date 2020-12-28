@@ -578,6 +578,7 @@ public class Pet implements ISerialize, Runnable {
         this.addHappyness(10);
         this.addExperience(10);
         this.addRespect();
+        this.needsUpdate = true;
 
         if (habbo != null) {
             habbo.getHabboStats().petRespectPointsToGive--;
