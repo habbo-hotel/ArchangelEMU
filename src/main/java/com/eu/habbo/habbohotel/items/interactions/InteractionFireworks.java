@@ -44,7 +44,7 @@ public class InteractionFireworks extends InteractionDefault {
      * Checked in Habbo on 2021-01-03
      * - Fireworks should be charged to be able to detonate them
      * - Habbos with Rights can detonate fireworks from anywhere in a room
-     * - Habbos without rights have to walk to an adjecent tile to be able to detonate (see Iteraction Switch)
+     * - Habbos without rights have to walk to an adjecent tile to be able to detonate (see Interaction Switch)
      * - Wired can always detonate fireworks
      */
     @Override
