@@ -101,8 +101,8 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
     public String getWiredData() {
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
                 this.getDelay(),
-                this.items.stream().map(HabboItem::getId).collect(Collectors.toList()))
-        );
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
