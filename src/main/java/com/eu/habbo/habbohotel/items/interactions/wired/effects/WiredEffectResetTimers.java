@@ -85,17 +85,25 @@ public class WiredEffectResetTimers extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.delay + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.delay
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String data = set.getString("wired_data");
 
-        try {
-            if (!data.equals(""))
-                this.delay = Integer.valueOf(data);
-        } catch (Exception e) {
+        if (data.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.delay = data.delay;
+        } else {
+            try {
+                if (!data.equals("")) {
+                    this.delay = Integer.valueOf(data);
+                }
+            } catch (Exception e) {
+            }
         }
 
         this.setDelay(this.delay);
@@ -110,5 +118,13 @@ public class WiredEffectResetTimers extends InteractionWiredEffect {
     @Override
     public WiredEffectType getType() {
         return type;
+    }
+
+    static class JsonData {
+        int delay;
+
+        public JsonData(int delay) {
+            this.delay = delay;
+        }
     }
 }
