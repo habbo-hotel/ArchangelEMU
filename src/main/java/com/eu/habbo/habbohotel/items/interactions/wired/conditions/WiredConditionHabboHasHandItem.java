@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import org.slf4j.Logger;
@@ -66,13 +67,22 @@ public class WiredConditionHabboHasHandItem extends InteractionWiredCondition {
 
     @Override
     public String getWiredData() {
-        return this.handItem + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.handItem
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         try {
-            this.handItem = Integer.valueOf(set.getString("wired_data"));
+            String wiredData = set.getString("wired_data");
+
+            if (wiredData.startsWith("{")) {
+                JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+                this.handItem = data.handItemId;
+            } else {
+                this.handItem = Integer.parseInt(wiredData);
+            }
         } catch (Exception e) {
             LOGGER.error("Caught exception", e);
         }
@@ -81,5 +91,13 @@ public class WiredConditionHabboHasHandItem extends InteractionWiredCondition {
     @Override
     public void onPickUp() {
         this.handItem = 0;
+    }
+
+    static class JsonData {
+        int handItemId;
+
+        public JsonData(int handItemId) {
+            this.handItemId = handItemId;
+        }
     }
 }
