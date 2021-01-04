@@ -121,7 +121,7 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
                 super.setDelay(Integer.parseInt(wiredData.split("\t")[0]));
 
                 try {
-                    this.amount = Integer.parseInt(this.getWiredData().split("\t")[1]);
+                    this.amount = Integer.parseInt(wiredData.split("\t")[1]);
                 } catch (Exception e) {
                 }
             }
