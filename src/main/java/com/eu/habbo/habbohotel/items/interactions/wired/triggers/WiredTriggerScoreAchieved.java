@@ -4,6 +4,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
@@ -51,7 +52,7 @@ public class WiredTriggerScoreAchieved extends InteractionWiredTrigger {
             this.score = data.score;
         } else {
             try {
-                this.score = Integer.valueOf(wiredData);
+                this.score = Integer.parseInt(wiredData);
             } catch (Exception e) {
             }
         }

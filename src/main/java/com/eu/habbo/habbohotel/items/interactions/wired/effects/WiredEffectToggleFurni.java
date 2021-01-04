@@ -35,6 +35,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredEffectToggleFurni extends InteractionWiredEffect {
     private static final Logger LOGGER = LoggerFactory.getLogger(WiredEffectToggleFurni.class);
@@ -193,7 +194,7 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
                     int state = 0;
                     if (!item.getExtradata().isEmpty()) {
                         try {
-                            state = Integer.valueOf(item.getExtradata()); // assumes that extradata is state, could be something else for trophies etc.
+                            state = Integer.parseInt(item.getExtradata()); // assumes that extradata is state, could be something else for trophies etc.
                         } catch (NumberFormatException ignored) {
 
                         }
@@ -241,12 +242,12 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
             String[] wiredDataOld = wiredData.split("\t");
 
             if (wiredDataOld.length >= 1) {
-                this.setDelay(Integer.valueOf(wiredDataOld[0]));
+                this.setDelay(Integer.parseInt(wiredDataOld[0]));
             }
             if (wiredDataOld.length == 2) {
                 if (wiredDataOld[1].contains(";")) {
                     for (String s : wiredDataOld[1].split(";")) {
-                        HabboItem item = room.getHabboItem(Integer.valueOf(s));
+                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
 
                         if (item instanceof InteractionFreezeBlock || item instanceof InteractionFreezeTile || item instanceof InteractionCrackable)
                             continue;

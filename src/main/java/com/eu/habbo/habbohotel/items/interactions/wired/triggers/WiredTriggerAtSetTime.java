@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
@@ -40,7 +41,7 @@ public class WiredTriggerAtSetTime extends InteractionWiredTrigger implements Wi
     @Override
     public String getWiredData() {
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.executeTime
+            this.executeTime
         ));
     }
 
@@ -53,7 +54,7 @@ public class WiredTriggerAtSetTime extends InteractionWiredTrigger implements Wi
             this.executeTime = data.executeTime;
         } else {
             if (wiredData.length() >= 1) {
-                this.executeTime = (Integer.valueOf(wiredData));
+                this.executeTime = (Integer.parseInt(wiredData));
             }
         }
 

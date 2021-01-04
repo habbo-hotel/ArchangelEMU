@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredEffectTriggerStacks extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.CALL_STACKS;
@@ -180,12 +181,12 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
             String[] wiredDataOld = wiredData.split("\t");
 
             if (wiredDataOld.length >= 1) {
-                this.setDelay(Integer.valueOf(wiredDataOld[0]));
+                this.setDelay(Integer.parseInt(wiredDataOld[0]));
             }
             if (wiredDataOld.length == 2) {
                 if (wiredDataOld[1].contains(";")) {
                     for (String s : wiredDataOld[1].split(";")) {
-                        HabboItem item = room.getHabboItem(Integer.valueOf(s));
+                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
 
                         if (item != null)
                             this.items.add(item);

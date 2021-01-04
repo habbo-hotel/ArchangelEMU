@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
     private static final Logger LOGGER = LoggerFactory.getLogger(WiredTriggerBotReachedFurni.class);
@@ -154,9 +155,9 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
 
                 String[] items = data[1].split(";");
 
-                for (int i = 0; i < items.length; i++) {
+                for (String id : items) {
                     try {
-                        HabboItem item = room.getHabboItem(Integer.valueOf(items[i]));
+                        HabboItem item = room.getHabboItem(Integer.parseInt(id));
 
                         if (item != null)
                             this.items.add(item);

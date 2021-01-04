@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredEffectTeleport extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.TELEPORT;
@@ -182,8 +183,8 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
     @Override
     public String getWiredData() {
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.delay,
-                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+            this.getDelay(),
+            this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
         ));
     }
 
@@ -205,12 +206,12 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
             String[] wiredDataOld = wiredData.split("\t");
 
             if (wiredDataOld.length >= 1) {
-                this.setDelay(Integer.valueOf(wiredDataOld[0]));
+                this.setDelay(Integer.parseInt(wiredDataOld[0]));
             }
             if (wiredDataOld.length == 2) {
                 if (wiredDataOld[1].contains(";")) {
                     for (String s : wiredDataOld[1].split(";")) {
-                        HabboItem item = room.getHabboItem(Integer.valueOf(s));
+                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
 
                         if (item != null)
                             this.items.add(item);
