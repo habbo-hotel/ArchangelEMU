@@ -179,7 +179,8 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
         List<Integer> itemIds;
 
         public JsonData(String botName, List<Integer> itemIds) {
-            this.executeTime = executeTime;
+            this.botName = botName;
+            this.itemIds = itemIds;
         }
     }
 }
