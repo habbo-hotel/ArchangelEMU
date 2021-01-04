@@ -68,7 +68,6 @@ public class WiredTriggerFurniStateToggled extends InteractionWiredTrigger {
 
         if (wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            super.setDelay(1000);
             for (Integer id: data.itemIds) {
                 HabboItem item = room.getHabboItem(id);
                 if (item != null) {
