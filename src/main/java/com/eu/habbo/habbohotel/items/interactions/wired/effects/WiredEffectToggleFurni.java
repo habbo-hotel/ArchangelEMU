@@ -212,35 +212,48 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        StringBuilder wiredData = new StringBuilder(this.getDelay() + "\t");
-
-        if (this.items != null && !this.items.isEmpty()) {
-            for (HabboItem item : this.items) {
-                wiredData.append(item.getId()).append(";");
-            }
-        }
-
-        return wiredData.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.getDelay(),
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
-        String[] wiredData = set.getString("wired_data").split("\t");
+        String wiredData = set.getString("wired_data");
 
-        if (wiredData.length >= 1) {
-            this.setDelay(Integer.valueOf(wiredData[0]));
-        }
-        if (wiredData.length == 2) {
-            if (wiredData[1].contains(";")) {
-                for (String s : wiredData[1].split(";")) {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(s));
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            for (Integer id: data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
 
-                    if (item instanceof InteractionFreezeBlock || item instanceof InteractionFreezeTile || item instanceof InteractionCrackable)
-                        continue;
+                if (item instanceof InteractionFreezeBlock || item instanceof InteractionFreezeTile || item instanceof InteractionCrackable) {
+                    continue;
+                }
 
-                    if (item != null)
-                        this.items.add(item);
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        } else {
+            String[] wiredDataOld = wiredData.split("\t");
+
+            if (wiredDataOld.length >= 1) {
+                this.setDelay(Integer.valueOf(wiredDataOld[0]));
+            }
+            if (wiredDataOld.length == 2) {
+                if (wiredDataOld[1].contains(";")) {
+                    for (String s : wiredDataOld[1].split(";")) {
+                        HabboItem item = room.getHabboItem(Integer.valueOf(s));
+
+                        if (item instanceof InteractionFreezeBlock || item instanceof InteractionFreezeTile || item instanceof InteractionCrackable)
+                            continue;
+
+                        if (item != null)
+                            this.items.add(item);
+                    }
                 }
             }
         }
@@ -255,5 +268,15 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
     @Override
     public WiredEffectType getType() {
         return type;
+    }
+
+    static class JsonData {
+        int delay;
+        List<Integer> itemIds;
+
+        public JsonData(int delay, List<Integer> itemIds) {
+            this.delay = delay;
+            this.itemIds = itemIds;
+        }
     }
 }
