@@ -118,5 +118,5 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('hotel.room.tent.prefix', 
 -- Roombadge command
 ALTER TABLE `permissions` ADD `cmd_roombadge` ENUM('0', '1') NOT NULL DEFAULT '0' AFTER `cmd_massbadge`;
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_roombadge.no_badge', 'No badge specified!');
-INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.keys.cmd_massbadge', 'roombadge');
-INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.description.cmd_massbadge', ':roombadge <badge>');
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.keys.cmd_roombadge', 'roombadge');
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.description.cmd_roombadge', ':roombadge <badge>');
