@@ -217,6 +217,7 @@ public class CommandHandler {
         addCommand(new LayCommand());
         addCommand(new MachineBanCommand());
         addCommand(new MassBadgeCommand());
+        addCommand(new RoomBadgeCommand());
         addCommand(new MassCreditsCommand());
         addCommand(new MassGiftCommand());
         addCommand(new MassPixelsCommand());
