@@ -114,3 +114,9 @@ ADD COLUMN `bubble_id`  int(3) NULL DEFAULT 31 AFTER `effect`;
 -- Permissions to see tent chat
 ALTER TABLE `permissions` ADD `acc_see_tentchat` ENUM('0', '1') NOT NULL DEFAULT '0' AFTER `acc_see_whispers`;
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('hotel.room.tent.prefix', 'Tent');
+
+-- Roombadge command
+ALTER TABLE `permissions` ADD `cmd_roombadge` ENUM('0', '1') NOT NULL DEFAULT '0' AFTER `cmd_massbadge`;
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_roombadge.no_badge', 'No badge specified!');
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.keys.cmd_massbadge', 'roombadge');
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.description.cmd_massbadge', ':roombadge <badge>');
