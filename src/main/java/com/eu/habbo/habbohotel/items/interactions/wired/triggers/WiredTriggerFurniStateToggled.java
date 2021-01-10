@@ -16,12 +16,13 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredTriggerFurniStateToggled extends InteractionWiredTrigger {
     private static final WiredTriggerType type = WiredTriggerType.STATE_CHANGED;
 
     private THashSet<HabboItem> items;
-    private String message = "";
 
     public WiredTriggerFurniStateToggled(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -55,34 +56,35 @@ public class WiredTriggerFurniStateToggled extends InteractionWiredTrigger {
 
     @Override
     public String getWiredData() {
-        StringBuilder wiredData = new StringBuilder(super.getDelay() + ":\t:");
-
-        if (this.items != null) {
-            if (!this.items.isEmpty()) {
-                for (HabboItem item : this.items) {
-                    wiredData.append(item.getId()).append(";");
-                }
-            } else
-                wiredData.append("\t");
-        }
-
-        return wiredData.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+            this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items = new THashSet<>();
         String wiredData = set.getString("wired_data");
-        if (wiredData.split(":").length >= 3) {
-            super.setDelay(Integer.valueOf(wiredData.split(":")[0]));
-            this.message = wiredData.split(":")[1];
 
-            if (!wiredData.split(":")[2].equals("\t")) {
-                for (String s : wiredData.split(":")[2].split(";")) {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(s));
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            for (Integer id: data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        } else {
+            if (wiredData.split(":").length >= 3) {
+                super.setDelay(Integer.parseInt(wiredData.split(":")[0]));
 
-                    if (item != null)
-                        this.items.add(item);
+                if (!wiredData.split(":")[2].equals("\t")) {
+                    for (String s : wiredData.split(":")[2].split(";")) {
+                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                        if (item != null)
+                            this.items.add(item);
+                    }
                 }
             }
         }
@@ -91,7 +93,6 @@ public class WiredTriggerFurniStateToggled extends InteractionWiredTrigger {
     @Override
     public void onPickUp() {
         this.items.clear();
-        this.message = "";
     }
 
     @Override
@@ -126,7 +127,7 @@ public class WiredTriggerFurniStateToggled extends InteractionWiredTrigger {
         }
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
-        message.appendString(this.message);
+        message.appendString("");
         message.appendInt(0);
         message.appendInt(0);
         message.appendInt(this.getType().code);
@@ -152,5 +153,13 @@ public class WiredTriggerFurniStateToggled extends InteractionWiredTrigger {
     @Override
     public boolean isTriggeredByRoomUnit() {
         return true;
+    }
+
+    static class JsonData {
+        List<Integer> itemIds;
+
+        public JsonData(List<Integer> itemIds) {
+            this.itemIds = itemIds;
+        }
     }
 }

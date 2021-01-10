@@ -16,6 +16,8 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.NOT_FURNI_HAVE_FURNI;
@@ -59,32 +61,43 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
     @Override
     public String getWiredData() {
         this.refresh();
-
-        StringBuilder data = new StringBuilder((this.all ? "1" : "0") + ":");
-
-        for (HabboItem item : this.items)
-            data.append(item.getId()).append(";");
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.all,
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
+        String wiredData = set.getString("wired_data");
 
-        String[] data = set.getString("wired_data").split(":");
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.all = data.all;
 
-        if (data.length >= 1) {
-            this.all = (data[0].equals("1"));
+            for (int id : data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
 
-            if (data.length == 2) {
-                String[] items = data[1].split(";");
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        } else {
+            String[] data = wiredData.split(":");
 
-                for (String s : items) {
-                    HabboItem item = room.getHabboItem(Integer.parseInt(s));
+            if (data.length >= 1) {
+                this.all = (data[0].equals("1"));
 
-                    if (item != null)
-                        this.items.add(item);
+                if (data.length == 2) {
+                    String[] items = data[1].split(";");
+
+                    for (String s : items) {
+                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                        if (item != null)
+                            this.items.add(item);
+                    }
                 }
             }
         }
@@ -174,5 +187,15 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
         // NICE TRY BUT THAT'S NOT HOW IT WORKS. NOTHING IN HABBO IS AN "OR" CONDITION - EVERY CONDITION MUST BE SUCCESS FOR THE STACK TO EXECUTE, BUT LET'S LEAVE IT IMPLEMENTED FOR PLUGINS TO USE.
         //return this.all ? WiredConditionOperator.AND : WiredConditionOperator.OR;
         return WiredConditionOperator.AND;
+    }
+
+    static class JsonData {
+        boolean all;
+        List<Integer> itemIds;
+
+        public JsonData(boolean all, List<Integer> itemIds) {
+            this.all = all;
+            this.itemIds = itemIds;
+        }
     }
 }

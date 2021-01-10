@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 
@@ -32,12 +33,21 @@ public class WiredConditionNotHabboHasEffect extends InteractionWiredCondition {
 
     @Override
     public String getWiredData() {
-        return this.effectId + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.effectId
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        this.effectId = Integer.valueOf(set.getString("wired_data"));
+        String wiredData = set.getString("wired_data");
+
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.effectId = data.effectId;
+        } else {
+            this.effectId = Integer.parseInt(wiredData);
+        }
     }
 
     @Override
@@ -72,5 +82,13 @@ public class WiredConditionNotHabboHasEffect extends InteractionWiredCondition {
         this.effectId = packet.readInt();
 
         return true;
+    }
+
+    static class JsonData {
+        int effectId;
+
+        public JsonData(int effectId) {
+            this.effectId = effectId;
+        }
     }
 }

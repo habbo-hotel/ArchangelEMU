@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.MOVE_FURNI_TO;
@@ -123,24 +124,23 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        THashSet<HabboItem> items = new THashSet<>();
+        THashSet<HabboItem> itemsToRemove = new THashSet<>();
 
         for (HabboItem item : this.items) {
             if (item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                items.add(item);
+                itemsToRemove.add(item);
         }
 
-        for (HabboItem item : items) {
+        for (HabboItem item : itemsToRemove) {
             this.items.remove(item);
         }
 
-        StringBuilder data = new StringBuilder(this.direction + "\t" + this.spacing + "\t" + this.getDelay() + "\t");
-
-        for (HabboItem item : this.items) {
-            data.append(item.getId()).append("\r");
-        }
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.direction,
+                this.spacing,
+                this.getDelay(),
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
@@ -176,22 +176,37 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
+        String wiredData = set.getString("wired_data");
 
-        String[] data = set.getString("wired_data").split("\t");
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.direction = data.direction;
+            this.spacing = data.spacing;
+            this.setDelay(data.delay);
 
-        if (data.length == 4) {
-            try {
-                this.direction = Integer.valueOf(data[0]);
-                this.spacing = Integer.valueOf(data[1]);
-                this.setDelay(Integer.valueOf(data[2]));
-            } catch (Exception e) {
-            }
-
-            for (String s : data[3].split("\r")) {
-                HabboItem item = room.getHabboItem(Integer.valueOf(s));
-
-                if (item != null)
+            for (Integer id: data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
+                if (item != null) {
                     this.items.add(item);
+                }
+            }
+        } else {
+            String[] data = wiredData.split("\t");
+
+            if (data.length == 4) {
+                try {
+                    this.direction = Integer.parseInt(data[0]);
+                    this.spacing = Integer.parseInt(data[1]);
+                    this.setDelay(Integer.parseInt(data[2]));
+                } catch (Exception e) {
+                }
+
+                for (String s : data[3].split("\r")) {
+                    HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                    if (item != null)
+                        this.items.add(item);
+                }
             }
         }
     }
@@ -208,5 +223,19 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
     @Override
     protected long requiredCooldown() {
         return 495;
+    }
+
+    static class JsonData {
+        int direction;
+        int spacing;
+        int delay;
+        List<Integer> itemIds;
+
+        public JsonData(int direction, int spacing, int delay, List<Integer> itemIds) {
+            this.direction = direction;
+            this.spacing = spacing;
+            this.delay = delay;
+            this.itemIds = itemIds;
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 
@@ -64,18 +65,29 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
 
     @Override
     public String getWiredData() {
-        return this.startDate + "\t" + this.endDate;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.startDate,
+                this.endDate
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split("\t");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length == 2) {
-            try {
-                this.startDate = Integer.valueOf(data[0]);
-                this.endDate = Integer.valueOf(data[1]);
-            } catch (Exception e) {
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.startDate = data.startDate;
+            this.endDate = data.endDate;
+        } else {
+            String[] data = wiredData.split("\t");
+
+            if (data.length == 2) {
+                try {
+                    this.startDate = Integer.parseInt(data[0]);
+                    this.endDate = Integer.parseInt(data[1]);
+                } catch (Exception e) {
+                }
             }
         }
     }
@@ -84,5 +96,15 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
     public void onPickUp() {
         this.startDate = 0;
         this.endDate = 0;
+    }
+
+    static class JsonData {
+        int startDate;
+        int endDate;
+
+        public JsonData(int startDate, int endDate) {
+            this.startDate = startDate;
+            this.endDate = endDate;
+        }
     }
 }
