@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class WiredEffectApplySetConditionsEvent extends MessageHandler {
+public class WiredApplySetConditionsEvent extends MessageHandler {
 
     @Override
     public void handle() throws Exception {

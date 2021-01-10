@@ -65,7 +65,7 @@ import com.eu.habbo.messages.incoming.unknown.RequestResolutionEvent;
 import com.eu.habbo.messages.incoming.unknown.UnknownEvent1;
 import com.eu.habbo.messages.incoming.users.*;
 import com.eu.habbo.messages.incoming.wired.WiredConditionSaveDataEvent;
-import com.eu.habbo.messages.incoming.wired.WiredEffectApplySetConditionsEvent;
+import com.eu.habbo.messages.incoming.wired.WiredApplySetConditionsEvent;
 import com.eu.habbo.messages.incoming.wired.WiredEffectSaveDataEvent;
 import com.eu.habbo.messages.incoming.wired.WiredTriggerSaveDataEvent;
 import com.eu.habbo.plugin.EventHandler;
@@ -580,7 +580,7 @@ public class PacketManager {
         this.registerHandler(Incoming.WiredTriggerSaveDataEvent, WiredTriggerSaveDataEvent.class);
         this.registerHandler(Incoming.WiredEffectSaveDataEvent, WiredEffectSaveDataEvent.class);
         this.registerHandler(Incoming.WiredConditionSaveDataEvent, WiredConditionSaveDataEvent.class);
-        this.registerHandler(Incoming.WiredEffectApplySetConditionsEvent, WiredEffectApplySetConditionsEvent.class);
+        this.registerHandler(Incoming.WiredEffectApplySetConditionsEvent, WiredApplySetConditionsEvent.class);
     }
 
     void registerUnknown() throws Exception {
