@@ -21,7 +21,7 @@ public class WiredApplySetConditionsEvent extends MessageHandler {
     public int getRatelimit() {
         return 500;
     }
-    
+
     @Override
     public void handle() throws Exception {
         int itemId = this.packet.readInt();

@@ -580,7 +580,7 @@ public class PacketManager {
         this.registerHandler(Incoming.WiredTriggerSaveDataEvent, WiredTriggerSaveDataEvent.class);
         this.registerHandler(Incoming.WiredEffectSaveDataEvent, WiredEffectSaveDataEvent.class);
         this.registerHandler(Incoming.WiredConditionSaveDataEvent, WiredConditionSaveDataEvent.class);
-        this.registerHandler(Incoming.WiredEffectApplySetConditionsEvent, WiredApplySetConditionsEvent.class);
+        this.registerHandler(Incoming.WiredApplySetConditionsEvent, WiredApplySetConditionsEvent.class);
     }
 
     void registerUnknown() throws Exception {
