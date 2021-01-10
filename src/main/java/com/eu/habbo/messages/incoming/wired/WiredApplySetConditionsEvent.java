@@ -18,6 +18,11 @@ import java.util.Optional;
 public class WiredApplySetConditionsEvent extends MessageHandler {
 
     @Override
+    public int getRatelimit() {
+        return 500;
+    }
+    
+    @Override
     public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
