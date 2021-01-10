@@ -101,6 +101,8 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_subscr
 
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('subscriptions.hc.payday.message', 'Woohoo HC Payday has arrived! You have received %amount% credits to your purse. Enjoy!');
 
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.roomuser.idle.not_dancing.ignore.wired_idle', '0');
+
 -- OPTIONAL HC MIGRATION
 -- INSERT INTO users_subscriptions SELECT NULL, user_id, 'HABBO_CLUB' as `subscription_type`, UNIX_TIMESTAMP() AS `timestamp_start`, (club_expire_timestamp - UNIX_TIMESTAMP()) AS `duration`, 1 AS `active` FROM users_settings WHERE club_expire_timestamp > UNIX_TIMESTAMP();
 
