@@ -65,6 +65,7 @@ import com.eu.habbo.messages.incoming.unknown.RequestResolutionEvent;
 import com.eu.habbo.messages.incoming.unknown.UnknownEvent1;
 import com.eu.habbo.messages.incoming.users.*;
 import com.eu.habbo.messages.incoming.wired.WiredConditionSaveDataEvent;
+import com.eu.habbo.messages.incoming.wired.WiredEffectApplySetConditionsEvent;
 import com.eu.habbo.messages.incoming.wired.WiredEffectSaveDataEvent;
 import com.eu.habbo.messages.incoming.wired.WiredTriggerSaveDataEvent;
 import com.eu.habbo.plugin.EventHandler;
@@ -81,7 +82,7 @@ public class PacketManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(PacketManager.class);
 
     private static final List<Integer> logList = new ArrayList<>();
-    public static boolean DEBUG_SHOW_PACKETS = false;
+    public static boolean DEBUG_SHOW_PACKETS = true;
     public static boolean MULTI_THREADED_PACKET_HANDLING = false;
     private final THashMap<Integer, Class<? extends MessageHandler>> incoming;
     private final THashMap<Integer, List<ICallable>> callables;
@@ -579,6 +580,7 @@ public class PacketManager {
         this.registerHandler(Incoming.WiredTriggerSaveDataEvent, WiredTriggerSaveDataEvent.class);
         this.registerHandler(Incoming.WiredEffectSaveDataEvent, WiredEffectSaveDataEvent.class);
         this.registerHandler(Incoming.WiredConditionSaveDataEvent, WiredConditionSaveDataEvent.class);
+        this.registerHandler(Incoming.WiredEffectApplySetConditionsEvent, WiredEffectApplySetConditionsEvent.class);
     }
 
     void registerUnknown() throws Exception {
