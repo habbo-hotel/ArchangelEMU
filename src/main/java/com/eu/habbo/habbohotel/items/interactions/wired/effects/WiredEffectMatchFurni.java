@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.InteractionWiredMatchFurniSettings;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class WiredEffectMatchFurni extends InteractionWiredEffect {
+public class WiredEffectMatchFurni extends InteractionWiredEffect implements InteractionWiredMatchFurniSettings {
     private static final Logger LOGGER = LoggerFactory.getLogger(WiredEffectMatchFurni.class);
 
     private static final WiredEffectType type = WiredEffectType.MATCH_SSHOT;
@@ -239,6 +240,26 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect {
                 this.settings.remove(setting);
             }
         }
+    }
+
+    @Override
+    public THashSet<WiredMatchFurniSetting> getMatchFurniSettings() {
+        return this.settings;
+    }
+
+    @Override
+    public boolean shouldMatchState() {
+        return this.state;
+    }
+
+    @Override
+    public boolean shouldMatchRotation() {
+        return this.direction;
+    }
+
+    @Override
+    public boolean shouldMatchPosition() {
+        return this.position;
     }
 
     static class JsonData {
