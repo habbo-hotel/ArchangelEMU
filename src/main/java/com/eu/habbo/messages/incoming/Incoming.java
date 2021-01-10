@@ -155,7 +155,6 @@ public class Incoming {
     public static final int RequestInventoryItemsEvent = 3150;
     public static final int ModToolRoomAlertEvent = 3842;
     public static final int WiredEffectSaveDataEvent = 2281;
-    public static final int WiredApplySetConditionsEvent = 3373;
     public static final int CheckPetNameEvent = 2109;
     public static final int SecureLoginEvent = 2419;
     public static final int BotSaveSettingsEvent = 2624;
