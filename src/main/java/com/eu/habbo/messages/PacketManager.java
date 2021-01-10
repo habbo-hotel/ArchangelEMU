@@ -82,7 +82,7 @@ public class PacketManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(PacketManager.class);
 
     private static final List<Integer> logList = new ArrayList<>();
-    public static boolean DEBUG_SHOW_PACKETS = true;
+    public static boolean DEBUG_SHOW_PACKETS = false;
     public static boolean MULTI_THREADED_PACKET_HANDLING = false;
     private final THashMap<Integer, Class<? extends MessageHandler>> incoming;
     private final THashMap<Integer, List<ICallable>> callables;
