@@ -3,7 +3,6 @@ package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
-import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.InteractionWiredMatchFurniSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -17,7 +16,7 @@ import gnu.trove.set.hash.THashSet;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionMatchStatePosition extends InteractionWiredCondition implements InteractionWiredMatchFurniSettings {
+public class WiredConditionMatchStatePosition extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.MATCH_SSHOT;
 
     private THashSet<WiredMatchFurniSetting> settings;
@@ -198,25 +197,5 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
                 this.settings.remove(setting);
             }
         }
-    }
-
-    @Override
-    public THashSet<WiredMatchFurniSetting> getMatchFurniSettings() {
-        return this.settings;
-    }
-
-    @Override
-    public boolean shouldMatchState() {
-        return this.state;
-    }
-
-    @Override
-    public boolean shouldMatchRotation() {
-        return this.direction;
-    }
-
-    @Override
-    public boolean shouldMatchPosition() {
-        return this.position;
     }
 }
