@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.InteractionWiredMatchFurniSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -18,7 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WiredConditionNotMatchStatePosition extends InteractionWiredCondition {
+public class WiredConditionNotMatchStatePosition extends InteractionWiredCondition implements InteractionWiredMatchFurniSettings {
     public static final WiredConditionType type = WiredConditionType.NOT_MATCH_SSHOT;
 
     private THashSet<WiredMatchFurniSetting> settings;
@@ -194,6 +195,26 @@ public class WiredConditionNotMatchStatePosition extends InteractionWiredConditi
                 this.settings.remove(setting);
             }
         }
+    }
+
+    @Override
+    public THashSet<WiredMatchFurniSetting> getMatchFurniSettings() {
+        return this.settings;
+    }
+
+    @Override
+    public boolean shouldMatchState() {
+        return this.state;
+    }
+
+    @Override
+    public boolean shouldMatchRotation() {
+        return this.rotation;
+    }
+
+    @Override
+    public boolean shouldMatchPosition() {
+        return this.position;
     }
 
     static class JsonData {
