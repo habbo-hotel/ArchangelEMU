@@ -6,10 +6,9 @@ import java.net.SocketAddress;
 
 public class UserLoginEvent extends UserEvent {
 
-    public final SocketAddress ip;
+    public final String ip;
 
-
-    public UserLoginEvent(Habbo habbo, SocketAddress ip) {
+    public UserLoginEvent(Habbo habbo, String ip) {
         super(habbo);
 
         this.ip = ip;
