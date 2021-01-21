@@ -12,7 +12,7 @@ FROM java:8 AS runner
 COPY --from=builder /target/Habbo.jar /
 
 # Save the script to wait for the database, among running the Arcturus Emulator
-RUN echo "#!/bin/bash \n java  -jar /Habbo.jar" > /entrypoint.sh
+RUN echo "#!/bin/bash \n java -Dfile.encoding=UTF-8 -jar /Habbo.jar" > /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Run the Emulator with Java
