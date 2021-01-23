@@ -112,10 +112,3 @@ ADD COLUMN `bubble_id`  int(3) NULL DEFAULT 31 AFTER `effect`;
 -- Permissions to see tent chat
 ALTER TABLE `permissions` ADD `acc_see_tentchat` ENUM('0', '1') NOT NULL DEFAULT '0' AFTER `acc_see_whispers`;
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('hotel.room.tent.prefix', 'Tent');
-
--- Wired variables for bots
-INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('wired.variable.name', '%name%');
-INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('wired.variable.roomname', '%roomname%');
-INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('wired.variable.user_count', '%user_count%');
-INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('wired.variable.owner', '%owner%');
-INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('wired.variable.item_count', '%item_count%');
