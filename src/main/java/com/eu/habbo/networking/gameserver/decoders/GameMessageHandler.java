@@ -59,13 +59,13 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
             ctx.channel().close();
             return;
         }
-
-        if (cause instanceof TooLongFrameException) {
-            LOGGER.error("Disconnecting client, reason: \"" + cause.getMessage() + "\".");
-        } else {
-            LOGGER.error("Disconnecting client, exception in GameMessageHander.", cause);
+        if (Emulator.getConfig().getBoolean("debug.mode")) {
+            if (cause instanceof TooLongFrameException) {
+                LOGGER.error("Disconnecting client, reason: \"" + cause.getMessage() + "\".");
+            } else {
+                LOGGER.error("Disconnecting client, exception in GameMessageHander.", cause);
+            }
         }
-
         ctx.channel().close();
     }
 

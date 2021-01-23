@@ -41,6 +41,7 @@ public class HabboStats implements Runnable {
     private final THashMap<Integer, CatalogItem> recentPurchases;
     private final TIntArrayList favoriteRooms;
     private final TIntArrayList ignoredUsers;
+    private TIntArrayList roomsVists;
     public int achievementScore;
     public int respectPointsReceived;
     public int respectPointsGiven;
@@ -106,6 +107,7 @@ public class HabboStats implements Runnable {
         this.recentPurchases = new THashMap<>(0);
         this.favoriteRooms = new TIntArrayList(0);
         this.ignoredUsers = new TIntArrayList(0);
+        this.roomsVists = new TIntArrayList(0);
         this.secretRecipes = new TIntArrayList(0);
         this.calendarRewardsClaimed = new TIntArrayList(0);
 
@@ -233,6 +235,15 @@ public class HabboStats implements Runnable {
             try (ResultSet offerSet = loadOfferPurchaseStatement.executeQuery()) {
                 while (offerSet.next()) {
                     this.offerCache.put(offerSet.getInt("offer_id"), new HabboOfferPurchase(offerSet));
+                }
+            }
+        }
+
+        try (PreparedStatement loadRoomsVisit = set.getStatement().getConnection().prepareStatement("SELECT DISTINCT room_id FROM room_enter_log WHERE user_id = ?")) {
+            loadRoomsVisit.setInt(1, this.habboInfo.getId());
+            try (ResultSet roomSet = loadRoomsVisit.executeQuery()) {
+                while (roomSet.next()) {
+                    this.roomsVists.add(roomSet.getInt("room_id"));
                 }
             }
         }
@@ -621,6 +632,10 @@ public class HabboStats implements Runnable {
     public boolean hasFavoriteRoom(int roomId) {
         return this.favoriteRooms.contains(roomId);
     }
+
+    public boolean visitedRoom(int roomId) { return this.roomsVists.contains(roomId); }
+
+    public void addVisitRoom(int roomId) { this.roomsVists.add(roomId); }
 
     public TIntArrayList getFavoriteRooms() {
         return this.favoriteRooms;

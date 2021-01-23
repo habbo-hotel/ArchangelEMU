@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implements ICycleable {
 
@@ -80,50 +82,61 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
 
     @Override
     public String getWiredData() {
-        THashSet<HabboItem> items = new THashSet<>(this.items.size() / 2);
+        THashSet<HabboItem> itemsToRemove = new THashSet<>(this.items.size() / 2);
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
         for (HabboItem item : this.items) {
             if (item.getRoomId() != this.getRoomId() || (room != null && room.getHabboItem(item.getId()) == null))
-                items.add(item);
+                itemsToRemove.add(item);
         }
 
-        for (HabboItem item : items) {
+        for (HabboItem item : itemsToRemove) {
             this.items.remove(item);
         }
 
-        StringBuilder data = new StringBuilder(this.direction + "\t" +
-                this.rotation + "\t" +
-                this.getDelay() + "\t");
-
-        for (HabboItem item : this.items) {
-            data.append(item.getId()).append("\r");
-        }
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.direction,
+                this.rotation,
+                this.getDelay(),
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
+        String wiredData = set.getString("wired_data");
 
-        String[] data = set.getString("wired_data").split("\t");
-
-        if (data.length == 4) {
-            try {
-                this.direction = Integer.parseInt(data[0]);
-                this.rotation = Integer.parseInt(data[1]);
-                this.setDelay(Integer.parseInt(data[2]));
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-
-            for (String s : data[3].split("\r")) {
-                HabboItem item = room.getHabboItem(Integer.parseInt(s));
-
-                if (item != null)
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.direction = data.direction;
+            this.rotation = data.rotation;
+            for (Integer id: data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
+                if (item != null) {
                     this.items.add(item);
+                }
+            }
+        } else {
+            String[] data = wiredData.split("\t");
+
+            if (data.length == 4) {
+                try {
+                    this.direction = Integer.parseInt(data[0]);
+                    this.rotation = Integer.parseInt(data[1]);
+                    this.setDelay(Integer.parseInt(data[2]));
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+
+                for (String s : data[3].split("\r")) {
+                    HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                    if (item != null)
+                        this.items.add(item);
+                }
             }
         }
     }
@@ -302,5 +315,19 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
     @Override
     public void cycle(Room room) {
         this.itemCooldowns.clear();
+    }
+
+    static class JsonData {
+        int direction;
+        int rotation;
+        int delay;
+        List<Integer> itemIds;
+
+        public JsonData(int direction, int rotation, int delay, List<Integer> itemIds) {
+            this.direction = direction;
+            this.rotation = rotation;
+            this.delay = delay;
+            this.itemIds = itemIds;
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 
@@ -34,14 +35,25 @@ public class WiredConditionNotHabboCount extends InteractionWiredCondition {
 
     @Override
     public String getWiredData() {
-        return this.lowerLimit + ":" + this.upperLimit;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.lowerLimit,
+                this.upperLimit
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(":");
-        this.lowerLimit = Integer.valueOf(data[0]);
-        this.upperLimit = Integer.valueOf(data[1]);
+        String wiredData = set.getString("wired_data");
+
+        if (wiredData.startsWith("{")) {
+            WiredConditionHabboCount.JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredConditionHabboCount.JsonData.class);
+            this.lowerLimit = data.lowerLimit;
+            this.upperLimit = data.upperLimit;
+        } else {
+            String[] data = wiredData.split(":");
+            this.lowerLimit = Integer.parseInt(data[0]);
+            this.upperLimit = Integer.parseInt(data[1]);
+        }
     }
 
     @Override
@@ -80,5 +92,15 @@ public class WiredConditionNotHabboCount extends InteractionWiredCondition {
         this.upperLimit = packet.readInt();
 
         return true;
+    }
+
+    static class JsonData {
+        int lowerLimit;
+        int upperLimit;
+
+        public JsonData(int lowerLimit, int upperLimit) {
+            this.lowerLimit = lowerLimit;
+            this.upperLimit = upperLimit;
+        }
     }
 }

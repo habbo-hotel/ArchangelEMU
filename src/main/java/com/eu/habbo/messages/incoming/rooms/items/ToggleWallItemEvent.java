@@ -4,6 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.plugin.Event;
+import com.eu.habbo.plugin.events.furniture.FurnitureToggleEvent;
 
 public class ToggleWallItemEvent extends MessageHandler {
     @Override
@@ -19,6 +21,12 @@ public class ToggleWallItemEvent extends MessageHandler {
         HabboItem item = room.getHabboItem(itemId);
 
         if (item == null)
+            return;
+
+        Event furnitureToggleEvent = new FurnitureToggleEvent(item, this.client.getHabbo(), state);
+        Emulator.getPluginManager().fireEvent(furnitureToggleEvent);
+
+        if (furnitureToggleEvent.isCancelled())
             return;
 
         if (item.getBaseItem().getName().equalsIgnoreCase("poster"))

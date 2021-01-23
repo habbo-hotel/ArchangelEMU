@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 
@@ -32,16 +33,23 @@ public class WiredConditionLessTimeElapsed extends InteractionWiredCondition {
 
     @Override
     public String getWiredData() {
-        return this.cycles + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.cycles
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String data = set.getString("wired_data");
+        String wiredData = set.getString("wired_data");
 
         try {
-            if (!data.equals(""))
-                this.cycles = Integer.valueOf(data);
+            if (wiredData.startsWith("{")) {
+                JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+                this.cycles = data.cycles;
+            } else {
+                if (!wiredData.equals(""))
+                    this.cycles = Integer.parseInt(wiredData);
+            }
         } catch (Exception e) {
         }
     }
@@ -79,5 +87,13 @@ public class WiredConditionLessTimeElapsed extends InteractionWiredCondition {
         this.cycles = packet.readInt();
 
         return true;
+    }
+
+    static class JsonData {
+        int cycles;
+
+        public JsonData(int cycles) {
+            this.cycles = cycles;
+        }
     }
 }

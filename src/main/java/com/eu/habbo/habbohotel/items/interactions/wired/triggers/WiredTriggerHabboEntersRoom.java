@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
@@ -41,12 +42,21 @@ public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger {
 
     @Override
     public String getWiredData() {
-        return this.username;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+            this.username
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        this.username = set.getString("wired_data");
+        String wiredData = set.getString("wired_data");
+
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.username = data.username;
+        } else {
+            this.username = wiredData;
+        }
     }
 
     @Override
@@ -85,5 +95,13 @@ public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger {
     @Override
     public boolean isTriggeredByRoomUnit() {
         return true;
+    }
+
+    static class JsonData {
+        String username;
+
+        public JsonData(String username) {
+            this.username = username;
+        }
     }
 }

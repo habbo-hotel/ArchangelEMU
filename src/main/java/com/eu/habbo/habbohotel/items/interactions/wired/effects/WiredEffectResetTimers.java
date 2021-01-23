@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.WiredResetTimers;
@@ -85,17 +86,25 @@ public class WiredEffectResetTimers extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.delay + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+            this.delay
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String data = set.getString("wired_data");
+        String wiredData = set.getString("wired_data");
 
-        try {
-            if (!data.equals(""))
-                this.delay = Integer.valueOf(data);
-        } catch (Exception e) {
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.delay = data.delay;
+        } else {
+            try {
+                if (!wiredData.equals("")) {
+                    this.delay = Integer.parseInt(wiredData);
+                }
+            } catch (Exception e) {
+            }
         }
 
         this.setDelay(this.delay);
@@ -110,5 +119,13 @@ public class WiredEffectResetTimers extends InteractionWiredEffect {
     @Override
     public WiredEffectType getType() {
         return type;
+    }
+
+    static class JsonData {
+        int delay;
+
+        public JsonData(int delay) {
+            this.delay = delay;
+        }
     }
 }

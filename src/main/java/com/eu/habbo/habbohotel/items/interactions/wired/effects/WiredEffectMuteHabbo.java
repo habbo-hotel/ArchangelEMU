@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
@@ -79,19 +80,32 @@ public class WiredEffectMuteHabbo extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "\t" + this.length + "\t" + this.message;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.getDelay(),
+                this.length,
+                this.message
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split("\t");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length >= 3) {
-            try {
-                this.setDelay(Integer.valueOf(data[0]));
-                this.length = Integer.valueOf(data[1]);
-                this.message = data[2];
-            } catch (Exception e) {
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.length = data.length;
+            this.message = data.message;
+        } else {
+            String[] data = wiredData.split("\t");
+
+            if (data.length >= 3) {
+                try {
+                    this.setDelay(Integer.valueOf(data[0]));
+                    this.length = Integer.valueOf(data[1]);
+                    this.message = data[2];
+                } catch (Exception e) {
+                }
             }
         }
     }
@@ -111,5 +125,17 @@ public class WiredEffectMuteHabbo extends InteractionWiredEffect {
     @Override
     public boolean requiresTriggeringUser() {
         return true;
+    }
+
+    static class JsonData {
+        int delay;
+        int length;
+        String message;
+
+        public JsonData(int delay, int length, String message) {
+            this.delay = delay;
+            this.length = length;
+            this.message = message;
+        }
     }
 }

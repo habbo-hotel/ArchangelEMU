@@ -40,13 +40,22 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
 
     @Override
     public String getWiredData() {
-        return this.repeatTime + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+            this.repeatTime
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        if (set.getString("wired_data").length() >= 1) {
-            this.repeatTime = (Integer.valueOf(set.getString("wired_data")));
+        String wiredData = set.getString("wired_data");
+
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.repeatTime = data.repeatTime;
+        } else {
+            if (wiredData.length() >= 1) {
+                this.repeatTime = (Integer.valueOf(wiredData));
+            }
         }
 
         if (this.repeatTime < 5000) {
@@ -128,6 +137,14 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
             if (room != null && room.isLoaded()) {
                 WiredHandler.handle(this, null, room, new Object[]{this});
             }
+        }
+    }
+
+    static class JsonData {
+        int repeatTime;
+
+        public JsonData(int repeatTime) {
+            this.repeatTime = repeatTime;
         }
     }
 }

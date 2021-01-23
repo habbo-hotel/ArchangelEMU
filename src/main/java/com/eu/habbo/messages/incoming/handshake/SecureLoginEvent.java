@@ -77,19 +77,13 @@ public class SecureLoginEvent extends MessageHandler {
         if (this.client.getHabbo() == null) {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().loadHabbo(sso);
             if (habbo != null) {
-                if (Emulator.getGameEnvironment().getModToolManager().hasMACBan(this.client)) {
-                    Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
-                    return;
-                }
-                if (Emulator.getGameEnvironment().getModToolManager().hasIPBan(this.client.getChannel())) {
-                    Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
-                    return;
-                }
-
                 try {
                     habbo.setClient(this.client);
                     this.client.setHabbo(habbo);
-                    this.client.getHabbo().connect();
+                    if(!this.client.getHabbo().connect()) {
+                        Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+                        return;
+                    }
 
                     if (this.client.getHabbo().getHabboInfo() == null) {
                         Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
@@ -191,7 +185,7 @@ public class SecureLoginEvent extends MessageHandler {
                     }
                 }
 
-                Emulator.getPluginManager().fireEvent(new UserLoginEvent(habbo, this.client.getChannel().localAddress()));
+                Emulator.getPluginManager().fireEvent(new UserLoginEvent(habbo, this.client.getHabbo().getHabboInfo().getIpLogin()));
 
                 if (Emulator.getConfig().getBoolean("hotel.welcome.alert.enabled")) {
                     final Habbo finalHabbo = habbo;

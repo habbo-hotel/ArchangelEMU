@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 
@@ -39,16 +40,23 @@ public class WiredConditionNotInTeam extends InteractionWiredCondition {
 
     @Override
     public String getWiredData() {
-        return this.teamColor.type + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.teamColor
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String data = set.getString("wired_data");
-
         try {
-            if (!data.equals(""))
-                this.teamColor = GameTeamColors.values()[Integer.valueOf(data)];
+            String wiredData = set.getString("wired_data");
+
+            if (wiredData.startsWith("{")) {
+                JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+                this.teamColor = data.teamColor;
+            } else {
+                if (!wiredData.equals(""))
+                    this.teamColor = GameTeamColors.values()[Integer.parseInt(wiredData)];
+            }
         } catch (Exception e) {
             this.teamColor = GameTeamColors.RED;
         }
@@ -87,5 +95,13 @@ public class WiredConditionNotInTeam extends InteractionWiredCondition {
         this.teamColor = GameTeamColors.values()[packet.readInt()];
 
         return true;
+    }
+
+    static class JsonData {
+        GameTeamColors teamColor;
+
+        public JsonData(GameTeamColors teamColor) {
+            this.teamColor = teamColor;
+        }
     }
 }

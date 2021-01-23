@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.bots.VisitorBot;
 import com.eu.habbo.habbohotel.commands.CommandHandler;
@@ -381,6 +382,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     item.setExtradata("1");
                     this.updateItem(item);
                 }
+            }
+
+            for (HabboItem item : this.roomSpecialTypes.getItemsOfType(InteractionFireworks.class)) {
+                item.setExtradata("1");
+                this.updateItem(item);
             }
         }
 
@@ -1204,8 +1210,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                             habbo.getRoomUnit().increaseIdleTimer();
 
                             if (habbo.getRoomUnit().isIdle()) {
-                                this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
-                                WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
+                                boolean danceIsNone = (habbo.getRoomUnit().getDanceType() == DanceType.NONE);
+                                if (danceIsNone)
+                                    this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
+                                if (danceIsNone && !Emulator.getConfig().getBoolean("hotel.roomuser.idle.not_dancing.ignore.wired_idle"))
+                                    WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
                             }
                         } else {
                             habbo.getRoomUnit().increaseIdleTimer();
@@ -1217,6 +1226,19 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 if (!event.isCancelled()) {
                                     toKick.add(habbo);
                                 }
+                            }
+                        }
+                    }
+
+                    if (Emulator.getConfig().getBoolean("hotel.rooms.deco_hosting")) {
+                        //Check if the user isn't the owner id
+                        if (this.ownerId != habbo.getHabboInfo().getId()) {
+                            //Check if the time already have 1 minute (120 / 2 = 60s) 
+                            if (habbo.getRoomUnit().getTimeInRoom() >= 120) {
+                                AchievementManager.progressAchievement(this.ownerId, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"));
+                                habbo.getRoomUnit().resetTimeInRoom();
+                            } else {
+                                habbo.getRoomUnit().increaseTimeInRoom();
                             }
                         }
                     }
@@ -2405,7 +2427,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionSnowboardSlope) {
                 this.roomSpecialTypes.addUndefined(item);
+            } else if (item instanceof InteractionFireworks) {
+                this.roomSpecialTypes.addUndefined(item);
             }
+
         }
     }
 
