@@ -57,7 +57,7 @@ public class SecureLoginEvent extends MessageHandler {
         if (!Emulator.isReady)
             return;
 
-        if (Emulator.getCrypto().isEnabled() && !this.client.isHandshakeFinished()) {
+        if (Emulator.getConfig().getBoolean("encryption.forced", false) && Emulator.getCrypto().isEnabled() && !this.client.isHandshakeFinished()) {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
             return;
         }
