@@ -59,6 +59,7 @@ public class SecureLoginEvent extends MessageHandler {
 
         if (Emulator.getConfig().getBoolean("encryption.forced", false) && Emulator.getCrypto().isEnabled() && !this.client.isHandshakeFinished()) {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+            LOGGER.warn("Encryption is forced and TLS Handshake isn't finished! Closed connection...");
             return;
         }
 
@@ -66,11 +67,13 @@ public class SecureLoginEvent extends MessageHandler {
 
         if (Emulator.getPluginManager().fireEvent(new SSOAuthenticationEvent(sso)).isCancelled()) {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+            LOGGER.info("SSO Authentication is cancelled by a plugin. Closed connection...");
             return;
         }
 
         if (sso.isEmpty()) {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+            LOGGER.warn("Client is trying to connect without SSO ticket! Closed connection...");
             return;
         }
 
@@ -216,6 +219,7 @@ public class SecureLoginEvent extends MessageHandler {
                 }
             } else {
                 Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+                LOGGER.warn("Someone tried to login with a non-existing SSO token! Closed connection...");
             }
         } else {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
