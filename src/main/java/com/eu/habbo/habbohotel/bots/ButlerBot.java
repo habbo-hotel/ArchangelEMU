@@ -90,7 +90,6 @@ public class ButlerBot extends Bot {
 
                                 // Step 2: Prepare tasks for when the Bot (carrying the handitem) reaches the Habbo
                                 final List<Runnable> tasks = new ArrayList<>();
-                                tasks.add(() -> System.out.println("Serving drinks!"));
                                 tasks.add(new RoomUnitGiveHanditem(serveEvent.habbo.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), serveEvent.itemId));
                                 tasks.add(new RoomUnitGiveHanditem(this.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), 0));
 
@@ -110,7 +109,6 @@ public class ButlerBot extends Bot {
                                 List<Runnable> failedReached = new ArrayList<>();
                                 failedReached.add(() -> {
                                     if (distanceBetweenBotAndHabbo <= Emulator.getConfig().getInt("hotel.bot.butler.servedistance", 8)) {
-                                        System.out.println("Failed reached!");
                                         for (Runnable task : tasks) {
                                             task.run();
                                         }
