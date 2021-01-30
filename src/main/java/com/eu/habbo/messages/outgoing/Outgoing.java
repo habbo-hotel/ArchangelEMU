@@ -84,7 +84,7 @@ public class Outgoing {
     public final static int RoomScoreComposer = 482;
     public final static int DoorbellAddUserComposer = 2309;
     public final static int SecureLoginOKComposer = 2491;
-    public final static int SessionRightsComposer = 2033;
+    public final static int AvailabilityStatusMessageComposer = 2033;
     public final static int GuildMemberUpdateComposer = 265;
     public final static int RoomFloorItemsComposer = 1778;
     public final static int InventoryItemsComposer = 994;
