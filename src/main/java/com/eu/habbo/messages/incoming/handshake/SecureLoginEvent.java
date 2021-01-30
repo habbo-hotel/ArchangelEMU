@@ -21,7 +21,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.NewUserIdentityComposer;
 import com.eu.habbo.messages.outgoing.handshake.DebugConsoleComposer;
 import com.eu.habbo.messages.outgoing.handshake.SecureLoginOKComposer;
-import com.eu.habbo.messages.outgoing.handshake.SessionRightsComposer;
+import com.eu.habbo.messages.outgoing.handshake.AvailabilityStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.PingComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryAchievementsComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
@@ -120,7 +120,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new UserClothesComposer(this.client.getHabbo()).compose());
                 messages.add(new NewUserIdentityComposer(habbo).compose());
                 messages.add(new UserPermissionsComposer(this.client.getHabbo()).compose());
-                messages.add(new SessionRightsComposer().compose());
+                messages.add(new AvailabilityStatusMessageComposer(true, false, true).compose());
                 messages.add(new PingComposer().compose());
                 messages.add(new DebugConsoleComposer(Emulator.debugging).compose());
                 messages.add(new UserAchievementScoreComposer(this.client.getHabbo()).compose());
