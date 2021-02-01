@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.TRIGGER_ON_FURNI;
 
-    private THashSet<HabboItem> items = new THashSet<>();
+    protected THashSet<HabboItem> items = new THashSet<>();
 
     public WiredConditionTriggerOnFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -42,10 +42,14 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
         if (this.items.isEmpty())
             return false;
 
+        return triggerOnFurni(roomUnit, room);
+    }
+
+    protected boolean triggerOnFurni(RoomUnit roomUnit, Room room) {
         /*
-        * 1. If a Habbo IS NOT walking we only have to check if the Habbo is on one of the selected tiles.
-        * 2. If a Habbo IS walking we have to check if the next tile in the walking path is one of the selected items
-        * */
+         * 1. If a Habbo IS NOT walking we only have to check if the Habbo is on one of the selected tiles.
+         * 2. If a Habbo IS walking we have to check if the next tile in the walking path is one of the selected items
+         * */
         if (!roomUnit.isWalking()) {
             THashSet<HabboItem> itemsAtUser = room.getItemsAt(roomUnit.getCurrentLocation());
             return this.items.stream().anyMatch(itemsAtUser::contains);
@@ -158,7 +162,7 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
         return true;
     }
 
-    private void refresh() {
+    protected void refresh() {
         THashSet<HabboItem> items = new THashSet<>();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
