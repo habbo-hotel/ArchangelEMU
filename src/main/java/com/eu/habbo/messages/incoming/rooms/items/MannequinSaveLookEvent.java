@@ -1,16 +1,19 @@
 package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class MannequinSaveLookEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Habbo habbo = this.client.getHabbo();
+        Room room = habbo.getHabboInfo().getCurrentRoom();
 
-        if (room == null || this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())
+        if (room == null || !room.isOwner(habbo))
             return;
 
         HabboItem item = room.getHabboItem(this.packet.readInt());
