@@ -14,6 +14,7 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.threading.runnables.games.GameTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +64,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
             String[] data = set.getString("extra_data").split("\t");
 
             if (data.length >= 2) {
-                this.baseTime = Integer.valueOf(data[1]);
+                this.baseTime = Integer.parseInt(data[1]);
                 this.timeNow = this.baseTime;
             }
 
@@ -149,33 +150,6 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
         if (this.needsUpdate() || this.needsDelete()) {
             super.run();
         }
-
-        if (this.getRoomId() == 0) {
-            this.threadActive = false;
-            return;
-        }
-
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-
-        if (room == null || !this.isRunning || this.isPaused) {
-            this.threadActive = false;
-            return;
-        }
-
-        this.timeNow--;
-        if (this.timeNow < 0) this.timeNow = 0;
-
-        if (this.timeNow > 0) {
-            this.threadActive = true;
-            Emulator.getThreading().run(this, 1000);
-        } else {
-            this.threadActive = false;
-            this.timeNow = 0;
-            this.endGame(room);
-            WiredHandler.handle(WiredTriggerType.GAME_ENDS, null, room, new Object[]{});
-        }
-
-        room.updateItem(this);
     }
 
     @Override
@@ -248,7 +222,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
 
             if (!this.threadActive) {
                 this.threadActive = true;
-                Emulator.getThreading().run(this, 1000);
+                Emulator.getThreading().run(new GameTimer(this), 1000);
             }
         } else if (client != null) {
             if (!(room.hasRights(client.getHabbo()) || client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)))
@@ -271,7 +245,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
 
                             if (!this.threadActive) {
                                 this.threadActive = true;
-                                Emulator.getThreading().run(this);
+                                Emulator.getThreading().run(new GameTimer(this));
                             }
                         }
                     } else {
@@ -285,7 +259,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
 
                         if (!this.threadActive) {
                             this.threadActive = true;
-                            Emulator.getThreading().run(this, 1000);
+                            Emulator.getThreading().run(new GameTimer(this), 1000);
                         }
                     }
 
@@ -350,10 +324,30 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
     }
 
     public boolean isRunning() {
-        return isRunning;
+        return this.isRunning;
     }
 
     public void setRunning(boolean running) {
-        isRunning = running;
+        this.isRunning = running;
+    }
+
+    public void setThreadActive(boolean threadActive) {
+        this.threadActive = threadActive;
+    }
+
+    public boolean isPaused() {
+        return this.isPaused;
+    }
+
+    public void reduceTime() {
+        this.timeNow--;
+    }
+
+    public int getTimeNow() {
+        return this.timeNow;
+    }
+
+    public void setTimeNow(int timeNow) {
+        this.timeNow = timeNow;
     }
 }
