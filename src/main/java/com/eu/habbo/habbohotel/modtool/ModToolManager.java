@@ -428,6 +428,16 @@ public class ModToolManager {
             return bans;
         }
 
+        //if machine id is empty, downgrade ban type to IP ban
+        if( (type == ModToolBanType.MACHINE || type == ModToolBanType.SUPER) && (offlineInfo == null || offlineInfo.getMachineID().isEmpty())) {
+            type = ModToolBanType.IP;
+        }
+
+        //if ip address is empty, downgrade ban type to account ban
+        if( (type == ModToolBanType.IP || type == ModToolBanType.SUPER) && (offlineInfo == null || offlineInfo.getIpLogin().isEmpty())) {
+            type = ModToolBanType.ACCOUNT;
+        }
+
         ModToolBan ban = new ModToolBan(targetUserId, offlineInfo != null ? offlineInfo.getIpLogin() : "offline", offlineInfo != null ? offlineInfo.getMachineID() : "offline", moderator.getHabboInfo().getId(), Emulator.getIntUnixTimestamp() + duration, reason, type, cfhTopic);
         Emulator.getPluginManager().fireEvent(new SupportUserBannedEvent(moderator, target, ban));
         Emulator.getThreading().run(ban);
