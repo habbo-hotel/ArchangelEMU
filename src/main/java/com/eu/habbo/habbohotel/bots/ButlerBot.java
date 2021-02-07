@@ -58,58 +58,76 @@ public class ButlerBot extends Bot {
 
     @Override
     public void onUserSay(final RoomChatMessage message) {
-        if (this.getRoomUnit().hasStatus(RoomUnitStatus.MOVE))
+        if (this.getRoomUnit().hasStatus(RoomUnitStatus.MOVE) || this.getRoom() == null) {
             return;
+        }
 
-        if (this.getRoomUnit().getCurrentLocation().distance(message.getHabbo().getRoomUnit().getCurrentLocation()) <= Emulator.getConfig().getInt("hotel.bot.butler.commanddistance"))
+        double distanceBetweenBotAndHabbo = this.getRoomUnit().getCurrentLocation().distance(message.getHabbo().getRoomUnit().getCurrentLocation());
+
+        if (distanceBetweenBotAndHabbo <= Emulator.getConfig().getInt("hotel.bot.butler.commanddistance")) {
+
             if (message.getUnfilteredMessage() != null) {
                 for (Map.Entry<THashSet<String>, Integer> set : serveItems.entrySet()) {
-                    for (String s : set.getKey()) {
-                        if (message.getUnfilteredMessage().toLowerCase().contains(s)) {
+                    for (String keyword : set.getKey()) {
+
+                        // Check if the string contains a certain keyword using a regex.
+                        // If keyword = tea, teapot wouldn't trigger it.
+                        if (message.getUnfilteredMessage().toLowerCase().matches("\\b" + keyword + "\\b")) {
+
+                            // Enable plugins to cancel this event
                             BotServerItemEvent serveEvent = new BotServerItemEvent(this, message.getHabbo(), set.getValue());
                             if (Emulator.getPluginManager().fireEvent(serveEvent).isCancelled()) {
                                 return;
                             }
 
+                            // Start give handitem process
                             if (this.getRoomUnit().canWalk()) {
-                                final String key = s;
-                                final Bot b = this;
-                                b.lookAt(serveEvent.habbo);
+                                final String key = keyword;
+                                final Bot bot = this;
 
-                                final List<Runnable> tasks = new ArrayList();
+                                // Step 1: Look at Habbo
+                                bot.lookAt(serveEvent.habbo);
+
+                                // Step 2: Prepare tasks for when the Bot (carrying the handitem) reaches the Habbo
+                                final List<Runnable> tasks = new ArrayList<>();
                                 tasks.add(new RoomUnitGiveHanditem(serveEvent.habbo.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), serveEvent.itemId));
                                 tasks.add(new RoomUnitGiveHanditem(this.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), 0));
 
                                 tasks.add(() -> {
                                     if(this.getRoom() != null) {
-                                        String msg = Emulator.getTexts().getValue("bots.butler.given").replace("%key%", key).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername());
-                                        if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), this.getRoom(), new Object[]{msg})) {
-                                            b.talk(msg);
+                                        String botMessage = Emulator.getTexts()
+                                                .getValue("bots.butler.given")
+                                                .replace("%key%", key)
+                                                .replace("%username%", serveEvent.habbo.getHabboInfo().getUsername());
+
+                                        if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), this.getRoom(), new Object[]{ botMessage })) {
+                                            bot.talk(botMessage);
                                         }
                                     }
                                 });
 
-                                List<Runnable> failedReached = new ArrayList();
+                                List<Runnable> failedReached = new ArrayList<>();
                                 failedReached.add(() -> {
-                                    if (b.getRoomUnit().getCurrentLocation().distance(serveEvent.habbo.getRoomUnit().getCurrentLocation()) <= Emulator.getConfig().getInt("hotel.bot.butler.servedistance", 8)) {
-                                        for (Runnable t : tasks) {
-                                            t.run();
+                                    if (distanceBetweenBotAndHabbo <= Emulator.getConfig().getInt("hotel.bot.butler.servedistance", 8)) {
+                                        for (Runnable task : tasks) {
+                                            task.run();
                                         }
                                     }
                                 });
 
+                                // Give bot the handitem that it's going to give the Habbo
                                 Emulator.getThreading().run(new RoomUnitGiveHanditem(this.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), serveEvent.itemId));
 
-                                if (b.getRoomUnit().getCurrentLocation().distance(serveEvent.habbo.getRoomUnit().getCurrentLocation()) > Emulator.getConfig().getInt("hotel.bot.butler.reachdistance", 3)) {
+                                if (distanceBetweenBotAndHabbo > Emulator.getConfig().getInt("hotel.bot.butler.reachdistance", 3)) {
                                     Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(this.getRoomUnit(), serveEvent.habbo.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), tasks, failedReached, Emulator.getConfig().getInt("hotel.bot.butler.reachdistance", 3)));
                                 } else {
                                     Emulator.getThreading().run(failedReached.get(0), 1000);
                                 }
                             } else {
-                                this.getRoom().giveHandItem(serveEvent.habbo, serveEvent.itemId);
-
                                 if(this.getRoom() != null) {
-                                    String msg = Emulator.getTexts().getValue("bots.butler.given").replace("%key%", s).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername());
+                                    this.getRoom().giveHandItem(serveEvent.habbo, serveEvent.itemId);
+
+                                    String msg = Emulator.getTexts().getValue("bots.butler.given").replace("%key%", keyword).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername());
                                     if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), this.getRoom(), new Object[]{msg})) {
                                         this.talk(msg);
                                     }
@@ -120,5 +138,6 @@ public class ButlerBot extends Bot {
                     }
                 }
             }
+        }
     }
 }

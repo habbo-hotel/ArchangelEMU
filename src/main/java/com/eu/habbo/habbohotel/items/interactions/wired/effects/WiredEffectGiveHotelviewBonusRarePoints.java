@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.hotelview.BonusRareComposer;
@@ -70,7 +71,7 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
         packet.readInt();
 
         try {
-            this.amount = Integer.valueOf(packet.readString());
+            this.amount = Integer.parseInt(packet.readString());
         } catch (Exception e) {
             return false;
         }
@@ -103,20 +104,26 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "\t" + this.amount;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.getDelay(), this.amount));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String wireData = set.getString("wired_data");
+        String wiredData = set.getString("wired_data");
         this.amount = 0;
 
-        if (wireData.split("\t").length >= 2) {
-            super.setDelay(Integer.valueOf(wireData.split("\t")[0]));
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            this.amount = data.amount;
+        } else {
+            if (wiredData.split("\t").length >= 2) {
+                super.setDelay(Integer.parseInt(wiredData.split("\t")[0]));
 
-            try {
-                this.amount = Integer.valueOf(this.getWiredData().split("\t")[1]);
-            } catch (Exception e) {
+                try {
+                    this.amount = Integer.parseInt(wiredData.split("\t")[1]);
+                } catch (Exception e) {
+                }
             }
         }
     }
@@ -130,5 +137,15 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
     @Override
     public boolean requiresTriggeringUser() {
         return true;
+    }
+
+    static class JsonData {
+        int delay;
+        int amount;
+
+        public JsonData(int delay, int amount) {
+            this.delay = delay;
+            this.amount = amount;
+        }
     }
 }

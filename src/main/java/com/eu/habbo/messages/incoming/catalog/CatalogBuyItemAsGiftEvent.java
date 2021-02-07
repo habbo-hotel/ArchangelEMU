@@ -336,7 +336,10 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                         return;
                     }
 
-                    AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("GiftGiver"));
+                    if (this.client.getHabbo().getHabboInfo().getId() != userId) {
+                        AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("GiftGiver"));
+                    }
+
                     if (habbo != null) {
                         habbo.getClient().sendResponse(new AddHabboItemComposer(gift));
                         habbo.getClient().getHabbo().getInventory().getItemsComponent().addItem(gift);
@@ -351,7 +354,9 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                         habbo.getClient().sendResponse(new BubbleAlertComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys));
                     }
 
-                    AchievementManager.progressAchievement(userId, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GiftReceiver"));
+                    if (this.client.getHabbo().getHabboInfo().getId() != userId) {
+                        AchievementManager.progressAchievement(userId, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GiftReceiver"));
+                    }
 
                     if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                         if (totalCredits > 0) {

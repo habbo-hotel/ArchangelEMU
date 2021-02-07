@@ -383,6 +383,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     this.updateItem(item);
                 }
             }
+
+            for (HabboItem item : this.roomSpecialTypes.getItemsOfType(InteractionFireworks.class)) {
+                item.setExtradata("1");
+                this.updateItem(item);
+            }
         }
 
         Emulator.getPluginManager().fireEvent(new RoomLoadedEvent(this));
@@ -1205,8 +1210,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                             habbo.getRoomUnit().increaseIdleTimer();
 
                             if (habbo.getRoomUnit().isIdle()) {
-                                this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
-                                WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
+                                boolean danceIsNone = (habbo.getRoomUnit().getDanceType() == DanceType.NONE);
+                                if (danceIsNone)
+                                    this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
+                                if (danceIsNone && !Emulator.getConfig().getBoolean("hotel.roomuser.idle.not_dancing.ignore.wired_idle"))
+                                    WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
                             }
                         } else {
                             habbo.getRoomUnit().increaseIdleTimer();
@@ -2424,7 +2432,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionSnowboardSlope) {
                 this.roomSpecialTypes.addUndefined(item);
+            } else if (item instanceof InteractionFireworks) {
+                this.roomSpecialTypes.addUndefined(item);
             }
+
         }
     }
 

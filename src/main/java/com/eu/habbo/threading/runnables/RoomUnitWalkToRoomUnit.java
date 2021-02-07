@@ -42,17 +42,15 @@ public class RoomUnitWalkToRoomUnit implements Runnable {
         if (this.goalTile == null) {
             this.findNewLocation();
             Emulator.getThreading().run(this, 500);
-        }
-
-        if (this.goalTile == null)
             return;
+        }
 
         if (this.walker.getGoal().equals(this.goalTile)) { // check that the action hasn't been cancelled by changing the goal
             if (this.walker.getCurrentLocation().distance(this.goalTile) <= this.minDistance) {
                 for (Runnable r : this.targetReached) {
                     Emulator.getThreading().run(r);
 
-                    WiredHandler.handle(WiredTriggerType.BOT_REACHED_AVTR, this.target, this.room, new Object[]{this.walker});
+                    WiredHandler.handle(WiredTriggerType.BOT_REACHED_AVTR, this.target, this.room, new Object[]{ this.walker });
                 }
             } else {
                 Emulator.getThreading().run(this, 500);

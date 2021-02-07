@@ -101,6 +101,8 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_subscr
 
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('subscriptions.hc.payday.message', 'Woohoo HC Payday has arrived! You have received %amount% credits to your purse. Enjoy!');
 
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.roomuser.idle.not_dancing.ignore.wired_idle', '0');
+
 -- OPTIONAL HC MIGRATION
 -- INSERT INTO users_subscriptions SELECT NULL, user_id, 'HABBO_CLUB' as `subscription_type`, UNIX_TIMESTAMP() AS `timestamp_start`, (club_expire_timestamp - UNIX_TIMESTAMP()) AS `duration`, 1 AS `active` FROM users_settings WHERE club_expire_timestamp > UNIX_TIMESTAMP();
 
@@ -114,3 +116,13 @@ ADD COLUMN `bubble_id`  int(3) NULL DEFAULT 31 AFTER `effect`;
 -- Permissions to see tent chat
 ALTER TABLE `permissions` ADD `acc_see_tentchat` ENUM('0', '1') NOT NULL DEFAULT '0' AFTER `acc_see_whispers`;
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('hotel.room.tent.prefix', 'Tent');
+
+-- Roombadge command
+ALTER TABLE `permissions` ADD `cmd_roombadge` ENUM('0', '1') NOT NULL DEFAULT '0' AFTER `cmd_massbadge`;
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_roombadge.no_badge', 'No badge specified!');
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.keys.cmd_roombadge', 'roombadge');
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.description.cmd_roombadge', ':roombadge <badge>');
+
+-- Making items.wired_data column bigger since wired data is saved as JSON now
+ALTER TABLE `items` MODIFY COLUMN `wired_data` varchar(10000);
+

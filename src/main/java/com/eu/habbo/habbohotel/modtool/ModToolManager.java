@@ -428,6 +428,16 @@ public class ModToolManager {
             return bans;
         }
 
+        //if machine id is empty, downgrade ban type to IP ban
+        if( (type == ModToolBanType.MACHINE || type == ModToolBanType.SUPER) && (offlineInfo == null || offlineInfo.getMachineID().isEmpty())) {
+            type = ModToolBanType.IP;
+        }
+
+        //if ip address is empty, downgrade ban type to account ban
+        if( (type == ModToolBanType.IP || type == ModToolBanType.SUPER) && (offlineInfo == null || offlineInfo.getIpLogin().isEmpty())) {
+            type = ModToolBanType.ACCOUNT;
+        }
+
         ModToolBan ban = new ModToolBan(targetUserId, offlineInfo != null ? offlineInfo.getIpLogin() : "offline", offlineInfo != null ? offlineInfo.getMachineID() : "offline", moderator.getHabboInfo().getId(), Emulator.getIntUnixTimestamp() + duration, reason, type, cfhTopic);
         Emulator.getPluginManager().fireEvent(new SupportUserBannedEvent(moderator, target, ban));
         Emulator.getThreading().run(ban);
@@ -505,6 +515,7 @@ public class ModToolManager {
         return ban;
     }
 
+    @Deprecated
     public boolean hasIPBan(Channel habbo) {
         if (habbo == null)
             return false;
@@ -512,9 +523,13 @@ public class ModToolManager {
         if (habbo.remoteAddress() == null || ((InetSocketAddress) habbo.remoteAddress()).getAddress() == null)
             return false;
 
+        return this.hasIPBan(((InetSocketAddress) habbo.remoteAddress()).getAddress().getHostAddress());
+    }
+
+    public boolean hasIPBan(String ipAddress) {
         boolean banned = false;
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM bans WHERE ip = ? AND (type = 'ip' OR type = 'super')  AND ban_expire > ? LIMIT 1")) {
-            statement.setString(1, ((InetSocketAddress) habbo.remoteAddress()).getAddress().getHostAddress());
+            statement.setString(1, ipAddress);
             statement.setInt(2, Emulator.getIntUnixTimestamp());
 
             try (ResultSet set = statement.executeQuery()) {
@@ -525,7 +540,6 @@ public class ModToolManager {
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
         }
-
         return banned;
     }
 

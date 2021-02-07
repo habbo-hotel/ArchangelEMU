@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
     public static final WiredEffectType type = WiredEffectType.FLEE;
@@ -98,32 +99,40 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        StringBuilder wiredData = new StringBuilder(this.getDelay() + "\t");
-
-        if (this.items != null && !this.items.isEmpty()) {
-            for (HabboItem item : this.items) {
-                wiredData.append(item.getId()).append(";");
-            }
-        }
-
-        return wiredData.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.getDelay(),
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items = new THashSet<>();
-        String[] wiredData = set.getString("wired_data").split("\t");
+        String wiredData = set.getString("wired_data");
 
-        if (wiredData.length >= 1) {
-            this.setDelay(Integer.valueOf(wiredData[0]));
-        }
-        if (wiredData.length == 2) {
-            if (wiredData[1].contains(";")) {
-                for (String s : wiredData[1].split(";")) {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(s));
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+            for (Integer id: data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        } else {
+            String[] wiredDataOld = wiredData.split("\t");
 
-                    if (item != null)
-                        this.items.add(item);
+            if (wiredDataOld.length >= 1) {
+                this.setDelay(Integer.parseInt(wiredDataOld[0]));
+            }
+            if (wiredDataOld.length == 2) {
+                if (wiredDataOld[1].contains(";")) {
+                    for (String s : wiredDataOld[1].split(";")) {
+                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                        if (item != null)
+                            this.items.add(item);
+                    }
                 }
             }
         }
@@ -205,5 +214,15 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
     @Override
     protected long requiredCooldown() {
         return 495;
+    }
+
+    static class JsonData {
+        int delay;
+        List<Integer> itemIds;
+
+        public JsonData(int delay, List<Integer> itemIds) {
+            this.delay = delay;
+            this.itemIds = itemIds;
+        }
     }
 }
