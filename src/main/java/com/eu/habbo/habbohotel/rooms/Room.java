@@ -1514,6 +1514,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 if (unit.hasStatus(RoomUnitStatus.SIT)) {
                                     unit.sitUpdate = true;
                                 }
+
+                                unit.setPreviousLocation(unit.getPreviousLocation());
+                                unit.setPreviousLocationZ(unit.getPreviousLocation().getStackHeight());
+                                unit.setCurrentLocation(this.getLayout().getTile(tile.x, tile.y));
+                                unit.setZ(unit.getCurrentLocation().getStackHeight());
                             }
                         }
 

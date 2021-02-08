@@ -2,15 +2,17 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class MannequinSaveLookEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Habbo habbo = this.client.getHabbo();
+        Room room = habbo.getHabboInfo().getCurrentRoom();
 
-        if (room == null || this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())
+        if (room == null || !room.isOwner(habbo))
             return;
 
         HabboItem item = room.getHabboItem(this.packet.readInt());
@@ -22,7 +24,7 @@ public class MannequinSaveLookEvent extends MessageHandler {
 
         StringBuilder look = new StringBuilder();
 
-        for (String s : this.client.getHabbo().getHabboInfo().getLook().split("\\.")) {
+        for (String s : habbo.getHabboInfo().getLook().split("\\.")) {
             if (!s.contains("hr") && !s.contains("hd") && !s.contains("he") && !s.contains("ea") && !s.contains("ha") && !s.contains("fa")) {
                 look.append(s).append(".");
             }
@@ -33,9 +35,9 @@ public class MannequinSaveLookEvent extends MessageHandler {
         }
 
         if (data.length == 3) {
-            item.setExtradata(this.client.getHabbo().getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + data[2]);
+            item.setExtradata(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + data[2]);
         } else {
-            item.setExtradata(this.client.getHabbo().getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + this.client.getHabbo().getHabboInfo().getUsername() + "'s look.");
+            item.setExtradata(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + habbo.getHabboInfo().getUsername() + "'s look.");
         }
 
         item.needsUpdate(true);
