@@ -32,9 +32,6 @@ public class GameServer extends Server {
             public void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast("logger", new LoggingHandler());
 
-                ch.pipeline().addLast("idleStateHandler", new IdleStateHandler(60, 30, 0));
-                ch.pipeline().addAfter("idleStateHandler", "idleEventHandler", new IdleTimeoutHandler());
-
                 // Decoders.
                 ch.pipeline().addLast(new GamePolicyDecoder());
                 ch.pipeline().addLast(new GameByteFrameDecoder());
@@ -43,7 +40,7 @@ public class GameServer extends Server {
                 if (PacketManager.DEBUG_SHOW_PACKETS) {
                     ch.pipeline().addLast(new GameClientMessageLogger());
                 }
-
+                ch.pipeline().addLast("idleEventHandler", new IdleTimeoutHandler(30, 60));
                 ch.pipeline().addLast(new GameMessageRateLimit());
                 ch.pipeline().addLast(new GameMessageHandler());
 
