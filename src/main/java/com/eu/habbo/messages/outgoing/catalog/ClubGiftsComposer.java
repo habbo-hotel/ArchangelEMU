@@ -55,7 +55,7 @@ public class ClubGiftsComposer extends MessageComposer {
 
                 this.response.appendInt(item.getId());
                 this.response.appendBoolean(item.isClubOnly());
-                this.response.appendInt(Math.max(daysRequired - daysAsHc, 0));
+                this.response.appendInt(daysRequired);
                 this.response.appendBoolean(daysRequired <= daysAsHc);
             }
         } else {
