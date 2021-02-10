@@ -205,6 +205,8 @@ public class SecureLoginEvent extends MessageHandler {
                     SubscriptionHabboClub.processUnclaimed(habbo);
                 }
 
+                SubscriptionHabboClub.processClubBadge(habbo);
+
                 Messenger.checkFriendSizeProgress(habbo);
 
                 if (!habbo.getHabboStats().hasGottenDefaultSavedSearches) {

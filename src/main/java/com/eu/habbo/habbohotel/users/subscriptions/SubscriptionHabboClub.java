@@ -78,16 +78,18 @@ public class SubscriptionHabboClub extends Subscription {
         progressAchievement(habboInfo);
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId());
-        if(habbo != null && habbo.getClient() != null) {
+        if (habbo != null && habbo.getClient() != null) {
 
-            if(habbo.getHabboStats().getRemainingClubGifts() > 0) {
+            if (habbo.getHabboStats().getRemainingClubGifts() > 0) {
                 habbo.getClient().sendResponse(new PickMonthlyClubGiftNotificationComposer(habbo.getHabboStats().getRemainingClubGifts()));
             }
 
-            if((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().hcMessageLastModified) < 60) {
-                Emulator.getThreading().run(() -> { habbo.getClient().sendResponse(new UserClubComposer(habbo)); habbo.getClient().sendResponse(new UserPermissionsComposer(habbo)); }, (Emulator.getIntUnixTimestamp() - habbo.getHabboStats().hcMessageLastModified));
-            }
-            else {
+            if ((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().hcMessageLastModified) < 60) {
+                Emulator.getThreading().run(() -> {
+                    habbo.getClient().sendResponse(new UserClubComposer(habbo));
+                    habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
+                }, (Emulator.getIntUnixTimestamp() - habbo.getHabboStats().hcMessageLastModified));
+            } else {
                 habbo.getClient().sendResponse(new UserClubComposer(habbo, SubscriptionHabboClub.HABBO_CLUB, UserClubComposer.RESPONSE_TYPE_NORMAL));
                 habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
             }
@@ -104,9 +106,9 @@ public class SubscriptionHabboClub extends Subscription {
     public void addDuration(int amount) {
         super.addDuration(amount);
 
-        if(amount < 0) {
+        if (amount < 0) {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId());
-            if(habbo != null && habbo.getClient() != null) {
+            if (habbo != null && habbo.getClient() != null) {
                 habbo.getClient().sendResponse(new UserClubComposer(habbo, SubscriptionHabboClub.HABBO_CLUB, UserClubComposer.RESPONSE_TYPE_NORMAL));
                 habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
             }
@@ -125,7 +127,7 @@ public class SubscriptionHabboClub extends Subscription {
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId());
 
-        if(habbo != null && habbo.getClient() != null) {
+        if (habbo != null && habbo.getClient() != null) {
             habbo.getClient().sendResponse(new UserClubComposer(habbo, SubscriptionHabboClub.HABBO_CLUB, UserClubComposer.RESPONSE_TYPE_NORMAL));
             habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
         }
@@ -151,11 +153,11 @@ public class SubscriptionHabboClub extends Subscription {
         stats.maxRooms = RoomManager.MAXIMUM_ROOMS_USER;
         Emulator.getThreading().run(stats);
 
-        if(habbo != null && ClothingValidationManager.VALIDATE_ON_HC_EXPIRE) {
+        if (habbo != null && ClothingValidationManager.VALIDATE_ON_HC_EXPIRE) {
             habboInfo.setLook(ClothingValidationManager.validateLook(habbo, habboInfo.getLook(), habboInfo.getGender().name()));
             Emulator.getThreading().run(habbo.getHabboInfo());
 
-            if(habbo.getClient() != null) {
+            if (habbo.getClient() != null) {
                 habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
             }
 
@@ -164,7 +166,7 @@ public class SubscriptionHabboClub extends Subscription {
             }
         }
 
-        if(habbo != null && habbo.getClient() != null) {
+        if (habbo != null && habbo.getClient() != null) {
             habbo.getClient().sendResponse(new UserClubComposer(habbo, SubscriptionHabboClub.HABBO_CLUB, UserClubComposer.RESPONSE_TYPE_NORMAL));
             habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
         }
@@ -172,6 +174,7 @@ public class SubscriptionHabboClub extends Subscription {
 
     /**
      * Calculate's a users upcoming HC Pay day rewards
+     *
      * @param habbo User to calculate for
      * @return ClubCenterDataComposer
      */
@@ -184,27 +187,27 @@ public class SubscriptionHabboClub extends Subscription {
         int creditRewardForMonthlySpent = 0;
         int timeUntilPayday = 0;
 
-        for(Subscription sub : habbo.getHabboStats().subscriptions) {
-            if(sub.getSubscriptionType().equalsIgnoreCase(Subscription.HABBO_CLUB)) {
+        for (Subscription sub : habbo.getHabboStats().subscriptions) {
+            if (sub.getSubscriptionType().equalsIgnoreCase(Subscription.HABBO_CLUB)) {
 
-                if(firstEverSub == null || sub.getTimestampStart() < firstEverSub.getTimestampStart()) {
+                if (firstEverSub == null || sub.getTimestampStart() < firstEverSub.getTimestampStart()) {
                     firstEverSub = sub;
                 }
 
-                if(sub.isActive()) {
+                if (sub.isActive()) {
                     activeSub = sub;
                 }
             }
         }
 
-        if(HC_PAYDAY_ENABLED && activeSub != null) {
-            currentHcStreak = (int)Math.floor((Emulator.getIntUnixTimestamp() - activeSub.getTimestampStart()) / (60 * 60 * 24.0));
-            if(currentHcStreak < 1) {
+        if (HC_PAYDAY_ENABLED && activeSub != null) {
+            currentHcStreak = (int) Math.floor((Emulator.getIntUnixTimestamp() - activeSub.getTimestampStart()) / (60 * 60 * 24.0));
+            if (currentHcStreak < 1) {
                 currentHcStreak = 0;
             }
 
-            for(Map.Entry<Integer, Integer> set : HC_PAYDAY_STREAK.entrySet()) {
-                if(currentHcStreak >= set.getKey() && set.getValue() > creditRewardForStreakBonus) {
+            for (Map.Entry<Integer, Integer> set : HC_PAYDAY_STREAK.entrySet()) {
+                if (currentHcStreak >= set.getKey() && set.getValue() > creditRewardForStreakBonus) {
                     creditRewardForStreakBonus = set.getValue();
                 }
             }
@@ -227,21 +230,21 @@ public class SubscriptionHabboClub extends Subscription {
                 SubscriptionManager.LOGGER.error("Caught SQL exception", e);
             }
 
-            creditRewardForMonthlySpent = (int)Math.floor(totalCreditsSpent * HC_PAYDAY_KICKBACK_PERCENTAGE);
+            creditRewardForMonthlySpent = (int) Math.floor(totalCreditsSpent * HC_PAYDAY_KICKBACK_PERCENTAGE);
 
             timeUntilPayday = (HC_PAYDAY_NEXT_DATE - Emulator.getIntUnixTimestamp()) / 60;
         }
 
         return new ClubCenterDataComposer(
-            currentHcStreak,
-            (firstEverSub != null ? new SimpleDateFormat("dd-MM-yyyy").format(new Date(firstEverSub.getTimestampStart() * 1000L)) : ""),
-            HC_PAYDAY_KICKBACK_PERCENTAGE,
-            0,
-            0,
-            totalCreditsSpent,
-            creditRewardForStreakBonus,
-            creditRewardForMonthlySpent,
-            timeUntilPayday
+                currentHcStreak,
+                (firstEverSub != null ? new SimpleDateFormat("dd-MM-yyyy").format(new Date(firstEverSub.getTimestampStart() * 1000L)) : ""),
+                HC_PAYDAY_KICKBACK_PERCENTAGE,
+                0,
+                0,
+                totalCreditsSpent,
+                creditRewardForStreakBonus,
+                creditRewardForMonthlySpent,
+                timeUntilPayday
         );
     }
 
@@ -265,15 +268,14 @@ public class SubscriptionHabboClub extends Subscription {
                         HabboStats stats = habboInfo.getHabboStats();
                         ClubCenterDataComposer calculated = calculatePayday(habboInfo);
                         int totalReward = (calculated.creditRewardForMonthlySpent + calculated.creditRewardForStreakBonus);
-                        if(totalReward > 0) {
+                        if (totalReward > 0) {
                             boolean claimed = claimPayDay(Emulator.getGameEnvironment().getHabboManager().getHabbo(userId), totalReward, HC_PAYDAY_CURRENCY);
                             HcPayDayLogEntry le = new HcPayDayLogEntry(timestampNow, userId, calculated.currentHcStreak, calculated.totalCreditsSpent, calculated.creditRewardForMonthlySpent, calculated.creditRewardForStreakBonus, totalReward, HC_PAYDAY_CURRENCY, claimed);
                             Emulator.getThreading().run(le);
                         }
                         stats.lastHCPayday = timestampNow;
                         Emulator.getThreading().run(stats);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         SubscriptionManager.LOGGER.error("Exception processing HC payday for user #" + set.getInt("user_id"), e);
                     }
                 }
@@ -281,24 +283,23 @@ public class SubscriptionHabboClub extends Subscription {
 
             Date date = new java.util.Date(HC_PAYDAY_NEXT_DATE * 1000L);
             date = Emulator.modifyDate(date, HC_PAYDAY_INTERVAL);
-            HC_PAYDAY_NEXT_DATE = (int)(date.getTime() / 1000L);
+            HC_PAYDAY_NEXT_DATE = (int) (date.getTime() / 1000L);
 
-            try(PreparedStatement stm2 = connection.prepareStatement("UPDATE `emulator_settings` SET `value` = ? WHERE `key` = ?")) {
+            try (PreparedStatement stm2 = connection.prepareStatement("UPDATE `emulator_settings` SET `value` = ? WHERE `key` = ?")) {
                 SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 stm2.setString(1, sdf.format(date));
                 stm2.setString(2, "subscriptions.hc.payday.next_date");
                 stm2.execute();
             }
 
-            try(PreparedStatement stm2 = connection.prepareStatement("UPDATE users_settings SET last_hc_payday = ? WHERE user_id IN (SELECT user_id FROM `users_subscriptions` WHERE subscription_type = '" + Subscription.HABBO_CLUB + "' AND `active` = 1 AND `timestamp_start` < ? AND (`timestamp_start` + `duration`) > ? GROUP BY user_id)")) {
+            try (PreparedStatement stm2 = connection.prepareStatement("UPDATE users_settings SET last_hc_payday = ? WHERE user_id IN (SELECT user_id FROM `users_subscriptions` WHERE subscription_type = '" + Subscription.HABBO_CLUB + "' AND `active` = 1 AND `timestamp_start` < ? AND (`timestamp_start` + `duration`) > ? GROUP BY user_id)")) {
                 stm2.setInt(1, timestampNow);
                 stm2.setInt(2, timestampNow);
                 stm2.setInt(3, timestampNow);
                 stm2.execute();
             }
 
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             SubscriptionManager.LOGGER.error("Caught SQL exception", e);
         }
         isExecuting = false;
@@ -306,13 +307,14 @@ public class SubscriptionHabboClub extends Subscription {
 
     /**
      * Called when a user logs in. Checks for any unclaimed HC Pay day rewards and issues rewards.
+     *
      * @param habbo User to process
      */
     public static void processUnclaimed(Habbo habbo) {
 
         progressAchievement(habbo.getHabboInfo());
 
-        if(habbo.getHabboStats().getRemainingClubGifts() > 0) {
+        if (habbo.getHabboStats().getRemainingClubGifts() > 0) {
             habbo.getClient().sendResponse(new PickMonthlyClubGiftNotificationComposer(habbo.getHabboStats().getRemainingClubGifts()));
         }
 
@@ -328,23 +330,29 @@ public class SubscriptionHabboClub extends Subscription {
                         int totalPayout = set.getInt("total_payout");
                         String currency = set.getString("currency");
 
-                        if(claimPayDay(habbo, totalPayout, currency)) {
-                            try(PreparedStatement stm2 = connection.prepareStatement("UPDATE logs_hc_payday SET claimed = 1 WHERE id = ?")) {
+                        if (claimPayDay(habbo, totalPayout, currency)) {
+                            try (PreparedStatement stm2 = connection.prepareStatement("UPDATE logs_hc_payday SET claimed = 1 WHERE id = ?")) {
                                 stm2.setInt(1, logId);
                                 stm2.execute();
                             }
                         }
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         SubscriptionManager.LOGGER.error("Exception processing HC payday for user #" + set.getInt("user_id"), e);
                     }
                 }
             }
 
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             SubscriptionManager.LOGGER.error("Caught SQL exception", e);
         }
+    }
+
+    /**
+     *
+     * Seperated these because Beny shouldn't have tied them to Payday.
+     */
+    public static void processClubBadge(Habbo habbo) {
+        progressAchievement(habbo.getHabboInfo());
     }
 
     /**
