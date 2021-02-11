@@ -650,9 +650,11 @@ public class CatalogManager {
             @Override
             public boolean execute(CatalogPage object) {
                 if (object.getRank() <= habbo.getHabboInfo().getRank().getId() && object.visible) {
+                    if (object.isClubOnly() && !habbo.getHabboStats().hasActiveClub()) {
+                        return false;
+                    }
                     pages.add(object);
                 }
-
                 return true;
             }
         });
