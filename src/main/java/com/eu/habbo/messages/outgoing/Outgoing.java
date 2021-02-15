@@ -116,7 +116,7 @@ public class Outgoing {
     public final static int CatalogModeComposer = 3828; // PRODUCTION-201611291003-338511768
     public final static int ChangeNameUpdateComposer = 118; // PRODUCTION-201611291003-338511768
     public final static int AddFloorItemComposer = 1534; // PRODUCTION-201611291003-338511768
-    public final static int DebugConsoleComposer = 3284; // PRODUCTION-201611291003-338511768
+    public final static int EnableNotificationsComposer = 3284; // PRODUCTION-201611291003-338511768
     public final static int HallOfFameComposer = 3005; // PRODUCTION-201611291003-338511768
     public final static int WiredSavedComposer = 1155; // PRODUCTION-201611291003-338511768
     public final static int RoomPaintComposer = 2454; // PRODUCTION-201611291003-338511768

@@ -19,7 +19,7 @@ import com.eu.habbo.messages.outgoing.gamecenter.GameCenterGameListComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.NewUserIdentityComposer;
-import com.eu.habbo.messages.outgoing.handshake.DebugConsoleComposer;
+import com.eu.habbo.messages.outgoing.handshake.EnableNotificationsComposer;
 import com.eu.habbo.messages.outgoing.handshake.SecureLoginOKComposer;
 import com.eu.habbo.messages.outgoing.handshake.AvailabilityStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.PingComposer;
@@ -122,7 +122,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new UserPermissionsComposer(this.client.getHabbo()).compose());
                 messages.add(new AvailabilityStatusMessageComposer(true, false, true).compose());
                 messages.add(new PingComposer().compose());
-                messages.add(new DebugConsoleComposer(Emulator.debugging).compose());
+                messages.add(new EnableNotificationsComposer(Emulator.getConfig().getBoolean("bubblealerts.enabled", true)).compose());
                 messages.add(new UserAchievementScoreComposer(this.client.getHabbo()).compose());
                 messages.add(new IsFirstLoginOfDayComposer(true).compose());
                 messages.add(new UnknownComposer5().compose());
