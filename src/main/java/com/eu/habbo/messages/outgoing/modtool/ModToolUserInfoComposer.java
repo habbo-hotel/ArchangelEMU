@@ -58,7 +58,7 @@ public class ModToolUserInfoComposer extends MessageComposer {
             this.response.appendString(""); //Last Purchase Timestamp
             this.response.appendInt(this.set.getInt("user_id")); //Personal Identification #
             this.response.appendInt(0); // Number of account bans
-            this.response.appendString(this.set.getString("mail"));
+            this.response.appendString(this.set.getBoolean("hide_mail") ? "" : this.set.getString("mail"));
             this.response.appendString("Rank (" + this.set.getInt("rank_id") + "): " + this.set.getString("rank_name")); //user_class_txt
 
             ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
