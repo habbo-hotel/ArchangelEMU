@@ -1176,7 +1176,6 @@ public class RoomManager {
                 continue;
 
             Habbo friend = Emulator.getGameEnvironment().getHabboManager().getHabbo(buddy.getId());
-
             if (friend == null || friend.getHabboInfo().getCurrentRoom() == null)
                 continue;
 
@@ -1313,7 +1312,7 @@ public class RoomManager {
             if (friend == null || friend.getHabboInfo() == null) continue;
 
             Room room = friend.getHabboInfo().getCurrentRoom();
-            if (room != null) rooms.add(room);
+            if (room != null && !rooms.contains(room)) rooms.add(room);
 
             if (rooms.size() >= limit) break;
         }
