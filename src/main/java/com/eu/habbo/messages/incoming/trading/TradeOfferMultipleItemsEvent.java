@@ -21,7 +21,7 @@ public class TradeOfferMultipleItemsEvent extends MessageHandler {
         int count = this.packet.readInt();
         for (int i = 0; i < count; i++) {
             HabboItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(this.packet.readInt());
-            if (item != null) {
+            if (item != null && item.getBaseItem().allowTrade()) {
                 items.add(item);
             }
         }
