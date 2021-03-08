@@ -46,7 +46,7 @@ public class NavigatorManager {
             synchronized (this.publicCategories) {
                 this.publicCategories.clear();
 
-                try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM navigator_publiccats WHERE visible = '1'")) {
+                try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM navigator_publiccats WHERE visible = '1' ORDER BY order_num DESC")) {
                     while (set.next()) {
                         this.publicCategories.put(set.getInt("id"), new NavigatorPublicCategory(set));
                     }
