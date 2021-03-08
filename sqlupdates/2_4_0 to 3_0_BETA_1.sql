@@ -126,3 +126,7 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.description.cmd_
 -- Making items.wired_data column bigger since wired data is saved as JSON now
 ALTER TABLE `items` MODIFY COLUMN `wired_data` varchar(10000);
 
+-- Mute area sqls
+INSERT INTO `emulator_settings`(`key`, `value`) VALUES ('room.chat.mutearea.allow_whisper', 'false');
+
+

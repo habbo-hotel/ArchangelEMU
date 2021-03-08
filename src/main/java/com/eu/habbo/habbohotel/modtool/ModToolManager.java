@@ -54,7 +54,7 @@ public class ModToolManager {
         if (userId <= 0)
             return;
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.*, users_settings.*, permissions.rank_name, permissions.id as rank_id FROM users INNER JOIN users_settings ON users.id = users_settings.user_id INNER JOIN permissions ON permissions.id = users.rank WHERE users.id = ? LIMIT 1")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.*, users_settings.*, permissions.rank_name, permissions.acc_hide_mail AS hide_mail, permissions.id AS rank_id FROM users INNER JOIN users_settings ON users.id = users_settings.user_id INNER JOIN permissions ON permissions.id = users.rank WHERE users.id = ? LIMIT 1")) {
             statement.setInt(1, userId);
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
@@ -426,6 +426,16 @@ public class ModToolManager {
 
         if (moderator.getHabboInfo().getRank().getId() < offlineInfo.getRank().getId()) {
             return bans;
+        }
+
+        //if machine id is empty, downgrade ban type to IP ban
+        if( (type == ModToolBanType.MACHINE || type == ModToolBanType.SUPER) && (offlineInfo == null || offlineInfo.getMachineID().isEmpty())) {
+            type = ModToolBanType.IP;
+        }
+
+        //if ip address is empty, downgrade ban type to account ban
+        if( (type == ModToolBanType.IP || type == ModToolBanType.SUPER) && (offlineInfo == null || offlineInfo.getIpLogin().isEmpty())) {
+            type = ModToolBanType.ACCOUNT;
         }
 
         ModToolBan ban = new ModToolBan(targetUserId, offlineInfo != null ? offlineInfo.getIpLogin() : "offline", offlineInfo != null ? offlineInfo.getMachineID() : "offline", moderator.getHabboInfo().getId(), Emulator.getIntUnixTimestamp() + duration, reason, type, cfhTopic);

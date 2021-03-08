@@ -662,7 +662,6 @@ public class CatalogManager {
                 if (isVisiblePage && hasRightRank && clubRightsOkay) {
                     pages.add(object);
                 }
-
                 return true;
             }
         });
