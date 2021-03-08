@@ -649,10 +649,17 @@ public class CatalogManager {
         this.catalogPages.get(parentId).childPages.forEachValue(new TObjectProcedure<CatalogPage>() {
             @Override
             public boolean execute(CatalogPage object) {
-                if (object.getRank() <= habbo.getHabboInfo().getRank().getId() && object.visible) {
-                    if (object.isClubOnly() && !habbo.getHabboStats().hasActiveClub()) {
-                        return false;
-                    }
+
+                boolean isVisiblePage = object.visible;
+                boolean hasRightRank = object.getRank() <= habbo.getHabboInfo().getRank().getId();
+
+                boolean clubRightsOkay = true;
+
+                if(object.isClubOnly() && !habbo.getHabboInfo().getHabboStats().hasActiveClub()) {
+                    clubRightsOkay = false;
+                }
+
+                if (isVisiblePage && hasRightRank && clubRightsOkay) {
                     pages.add(object);
                 }
                 return true;
