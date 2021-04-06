@@ -2,16 +2,15 @@ package com.eu.habbo.messages.incoming.catalog;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.BotManager;
-import com.eu.habbo.habbohotel.catalog.CatalogItem;
-import com.eu.habbo.habbohotel.catalog.CatalogManager;
-import com.eu.habbo.habbohotel.catalog.CatalogPage;
-import com.eu.habbo.habbohotel.catalog.ClubOffer;
+import com.eu.habbo.habbohotel.catalog.*;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.PetManager;
+import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInventory;
+import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseUnavailableComposer;
@@ -65,16 +64,22 @@ public class CatalogBuyItemEvent extends MessageHandler {
                 if (searchedItem.getOfferId() > 0) {
                     page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(searchedItem.getPageId());
 
-                    if (page.getCatalogItem(itemId).getOfferId() <= 0) {
-                        page = null;
-                    } else {
-                        if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
+                    if(page != null) {
+                        if (page.getCatalogItem(itemId).getOfferId() <= 0) {
+                            page = null;
+                        } else if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
+                            page = null;
+                        } else if (page.getLayout() != null && page.getLayout().equalsIgnoreCase(CatalogPageLayouts.club_gift.name())) {
                             page = null;
                         }
                     }
                 }
             } else {
                 page = Emulator.getGameEnvironment().getCatalogManager().catalogPages.get(pageId);
+
+                if(page != null && page.getLayout() != null && page.getLayout().equalsIgnoreCase(CatalogPageLayouts.club_gift.name())) {
+                    page = null;
+                }
 
                 if (page instanceof RoomBundleLayout) {
                     final CatalogItem[] item = new CatalogItem[1];
@@ -92,7 +97,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                         return;
                     }
                     int roomCount = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()).size();
-                    int maxRooms = this.client.getHabbo().getHabboStats().hasActiveClub() ? Emulator.getConfig().getInt("hotel.max.rooms.vip") : Emulator.getConfig().getInt("hotel.max.rooms.user");
+                    int maxRooms = this.client.getHabbo().getHabboStats().hasActiveClub() ? RoomManager.MAXIMUM_ROOMS_HC : RoomManager.MAXIMUM_ROOMS_USER;
 
                     if (roomCount >= maxRooms) { // checks if a user has the maximum rooms
                        this.client.sendResponse(new CanCreateRoomComposer(roomCount, maxRooms)); // if so throws the max room error.
@@ -176,12 +181,19 @@ public class CatalogBuyItemEvent extends MessageHandler {
                     if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
                         this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalDuckets);
 
-                    if (this.client.getHabbo().getHabboStats().getClubExpireTimestamp() <= Emulator.getIntUnixTimestamp())
+
+                    if(this.client.getHabbo().getHabboStats().createSubscription(Subscription.HABBO_CLUB, (totalDays * 86400)) == null) {
+                        this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                        throw new Exception("Unable to create or extend subscription");
+                    }
+
+                    /*if (this.client.getHabbo().getHabboStats().getClubExpireTimestamp() <= Emulator.getIntUnixTimestamp())
                         this.client.getHabbo().getHabboStats().setClubExpireTimestamp(Emulator.getIntUnixTimestamp());
 
                     this.client.getHabbo().getHabboStats().setClubExpireTimestamp(this.client.getHabbo().getHabboStats().getClubExpireTimestamp() + (totalDays * 86400));
+
                     this.client.sendResponse(new UserPermissionsComposer(this.client.getHabbo()));
-                    this.client.sendResponse(new UserClubComposer(this.client.getHabbo()));
+                    this.client.sendResponse(new UserClubComposer(this.client.getHabbo()));*/
 
                     if (totalCredits > 0)
                         this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));

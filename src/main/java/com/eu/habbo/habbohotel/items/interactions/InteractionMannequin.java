@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UserDataComposer;
@@ -20,6 +21,11 @@ public class InteractionMannequin extends HabboItem {
 
     public InteractionMannequin(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+    }
+
+    @Override
+    public int getMaximumRotations() {
+        return 8;
     }
 
     @Override
@@ -60,26 +66,39 @@ public class InteractionMannequin extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        String[] lookCode = this.getExtradata().split(":")[1].split("\\.");
+        String[] data = this.getExtradata().split(":");
 
-        StringBuilder look = new StringBuilder();
-        for (String part : client.getHabbo().getHabboInfo().getLook().split("\\.")) {
-            String type = part.split("-")[0];
+        if(data.length < 2)
+            return;
 
-            boolean found = false;
-            for (String s : lookCode) {
-                if (s.contains(type)) {
-                    found = true;
-                    look.append(s).append(".");
-                }
-            }
+        String gender = data[0];
+        String figure = data[1];
 
-            if (!found) {
-                look.append(part).append(".");
-            }
+        if (gender.isEmpty() || figure.isEmpty() || (!gender.equalsIgnoreCase("m") && !gender.equalsIgnoreCase("f")) || !client.getHabbo().getHabboInfo().getGender().name().equalsIgnoreCase(gender))
+            return;
+
+        String newFigure = "";
+
+        for (String playerFigurePart : client.getHabbo().getHabboInfo().getLook().split("\\.")) {
+            if (!playerFigurePart.startsWith("ch") && !playerFigurePart.startsWith("lg"))
+                newFigure += playerFigurePart + ".";
         }
 
-        client.getHabbo().getHabboInfo().setLook(look.substring(0, look.length() - 1));
+        String newFigureParts = figure;
+
+        for (String newFigurePart : newFigureParts.split("\\.")) {
+            if (newFigurePart.startsWith("hd"))
+                newFigureParts = newFigureParts.replace(newFigurePart, "");
+        }
+
+        if (newFigureParts.equals("")) return;
+
+        String newLook = newFigure + newFigureParts;
+
+        if (newLook.length() > 512)
+            return;
+
+        client.getHabbo().getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_MANNEQUIN ? ClothingValidationManager.validateLook(client.getHabbo(), newLook, client.getHabbo().getHabboInfo().getGender().name()) : newLook);
         room.sendComposer(new RoomUserDataComposer(client.getHabbo()).compose());
         client.sendResponse(new UserDataComposer(client.getHabbo()));
     }

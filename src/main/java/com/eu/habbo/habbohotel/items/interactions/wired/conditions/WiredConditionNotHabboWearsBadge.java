@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 
@@ -45,12 +46,21 @@ public class WiredConditionNotHabboWearsBadge extends InteractionWiredCondition 
 
     @Override
     public String getWiredData() {
-        return this.badge;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.badge
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        this.badge = set.getString("wired_data");
+        String wiredData = set.getString("wired_data");
+
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.badge = data.badge;
+        } else {
+            this.badge = wiredData;
+        }
     }
 
     @Override
@@ -85,5 +95,13 @@ public class WiredConditionNotHabboWearsBadge extends InteractionWiredCondition 
         this.badge = packet.readString();
 
         return true;
+    }
+
+    static class JsonData {
+        String badge;
+
+        public JsonData(String badge) {
+            this.badge = badge;
+        }
     }
 }

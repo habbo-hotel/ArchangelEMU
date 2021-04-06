@@ -11,10 +11,11 @@ TheGeneral's own words were "dont like it then dont use it". We did not like wha
 Arcturus Morningstar is released under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.txt).
 
 ## Versions ##
-![image](https://img.shields.io/badge/VERSION-2.4.0-success.svg?style=for-the-badge&logo=appveyor)
-![image](https://img.shields.io/badge/STATUS-STABLE-blue.svg?style=for-the-badge&logo=appveyor)
+[![image](https://img.shields.io/badge/VERSION-3.0.0-success.svg?style=for-the-badge&logo=appveyor)](#)
+[![image](https://img.shields.io/badge/STATUS-STABLE-blue.svg?style=for-the-badge&logo=appveyor)](#)
+[![image](https://img.shields.io/discord/557240155040251905?style=for-the-badge&logo=discord&color=7289DA&label=DISCORD&logoColor=fff)](https://discord.gg/BzfFsTp)
 
-Compiled Download: https://git.krews.org/morningstar/Arcturus-Community/releases
+Compiled Download: https://git.krews.org/morningstar/Arcturus-Community/-/releases
 
 Client build: **PRODUCTION-201611291003-338511768**
 
@@ -24,17 +25,36 @@ When making an bug report or a feature request use the template we provide so th
 
 ## Credits ##
 - TheGeneral
-- Capheus (Decompilation.)
-- Harmonic
 - Beny
-- Claudio
 - Alejandro
-- Harmony
-- Quadral (Pathfinder)
+- Capheus
 - Skeletor
-- z
-- ArpyAge
+- Harmonic
 - Mike
+- Remco
+- zGrav
+- Quadral
+- Harmony
+- Swirny
+- ArpyAge
+- Mikkel
+- Rodolfo
+- Rasmus
+- Kitt Mustang
+- Snaiker
+- nttzx
+- necmi
+- Dome
+- Jose Flores
+- Cam
+- Oliver
+- Narzo
+- Tenshie
+- MartenM
+- Ridge
+- SenpaiDipper
+- Snaiker
+- Thijmen
 
 
 ## Discord ##

@@ -13,7 +13,7 @@ public class BreedMonsterplantsEvent extends MessageHandler {
             Pet petOne = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(this.packet.readInt());
             Pet petTwo = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(this.packet.readInt());
 
-            if (petOne == null || petTwo == null) {
+            if (petOne == null || petTwo == null || petOne == petTwo) {
                 //TODO Add error
                 return;
             }

@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ClientMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.wired.WiredEffectDataComposer;
 
 import java.sql.ResultSet;
@@ -42,22 +43,7 @@ public abstract class InteractionWiredEffect extends InteractionWired {
         }
     }
 
-    @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-
-    }
-
-    public abstract boolean saveData(ClientMessage packet, GameClient gameClient);
+    public abstract boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException;
 
     public int getDelay() {
         return this.delay;

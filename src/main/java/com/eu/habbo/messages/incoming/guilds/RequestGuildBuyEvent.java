@@ -27,7 +27,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
         if(name.length() > 29 || description.length() > 254)
             return;
 
-        if (Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && this.client.getHabbo().getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
+        if (Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && !this.client.getHabbo().getHabboStats().hasActiveClub()) {
             this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.HC_REQUIRED));
             return;
         }
@@ -79,6 +79,13 @@ public class RequestGuildBuyEvent extends MessageHandler {
                         base += 3;
                     }
 
+                    if(name.length() > 29){
+                        this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.INVALID_GUILD_NAME));
+                        return;
+                    }
+                    if(description.length() > 254){
+                        return;
+                    }
                     Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), roomId, r.getName(), name, description, badge, colorOne, colorTwo);
 
                     r.setGuild(guild.getId());

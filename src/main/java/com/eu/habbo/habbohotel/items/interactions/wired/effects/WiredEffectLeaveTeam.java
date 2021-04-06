@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.wired.WiredGame;
@@ -10,8 +11,10 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.procedure.TObjectProcedure;
 
 import java.sql.ResultSet;
@@ -39,7 +42,7 @@ public class WiredEffectLeaveTeam extends InteractionWiredEffect {
                 Game game = room.getGame(habbo.getHabboInfo().getCurrentGame());
 
                 if (game == null) {
-                    game = room.getGame(WiredGame.class);
+                    game = room.getGameOrCreate(WiredGame.class);
                 }
 
                 if (game != null) {
@@ -53,12 +56,20 @@ public class WiredEffectLeaveTeam extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return this.getDelay() + "";
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        this.setDelay(Integer.valueOf(set.getString("wired_data")));
+        String wiredData = set.getString("wired_data");
+
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
+        }
+        else {
+            this.setDelay(Integer.valueOf(wiredData));
+        }
     }
 
     @Override
@@ -105,11 +116,24 @@ public class WiredEffectLeaveTeam extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
         packet.readString();
         packet.readInt();
-        this.setDelay(packet.readInt());
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.setDelay(delay);
         return true;
+    }
+
+    static class JsonData {
+        int delay;
+
+        public JsonData(int delay) {
+            this.delay = delay;
+        }
     }
 }

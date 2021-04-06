@@ -23,7 +23,7 @@ public class ConfigurationManager {
     public boolean loaded = false;
     public boolean isLoading = false;
 
-    public ConfigurationManager(String configurationPath) throws Exception {
+    public ConfigurationManager(String configurationPath) {
         this.properties = new Properties();
         this.configurationPath = configurationPath;
         this.reload();
@@ -37,7 +37,12 @@ public class ConfigurationManager {
 
         String envDbHostname = System.getenv("DB_HOSTNAME");
 
-        boolean useEnvVarsForDbConnection = envDbHostname != null && envDbHostname.length() > 1;
+        boolean useEnvVarsForDbConnection = false;
+
+        if(envDbHostname != null)
+        {
+            useEnvVarsForDbConnection = envDbHostname.length() > 1;
+        }
 
         if (!useEnvVarsForDbConnection) {
             try {

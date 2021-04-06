@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.users.UserClubComposer;
 import com.eu.habbo.messages.outgoing.users.UserPermissionsComposer;
@@ -120,16 +121,10 @@ public class InteractionCrackable extends HabboItem {
                         // subscriptions are given immediately upon cracking
                         switch (rewardData.subscriptionType) {
                             case HABBO_CLUB:
-                                if (habbo.getHabboStats().getClubExpireTimestamp() <= Emulator.getIntUnixTimestamp())
-                                    habbo.getHabboStats().setClubExpireTimestamp(Emulator.getIntUnixTimestamp());
-
-                                habbo.getHabboStats().setClubExpireTimestamp(habbo.getHabboStats().getClubExpireTimestamp() + (rewardData.subscriptionDuration * 86400));
-                                habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
-                                habbo.getClient().sendResponse(new UserClubComposer(habbo));
-                                habbo.getHabboStats().run();
+                                habbo.getHabboStats().createSubscription(SubscriptionHabboClub.HABBO_CLUB, rewardData.subscriptionDuration * 86400);
                                 break;
                             case BUILDERS_CLUB:
-                                habbo.alert("Builders club has not been implemented yet. Sorry!");
+                                habbo.getHabboStats().createSubscription("BUILDERS_CLUB", rewardData.subscriptionDuration * 86400);
                                 break;
                         }
                     }

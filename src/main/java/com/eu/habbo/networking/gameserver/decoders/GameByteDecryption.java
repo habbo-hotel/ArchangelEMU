@@ -17,13 +17,13 @@ public class GameByteDecryption extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
         // Read all available bytes.
-        byte[] data = in.readBytes(in.readableBytes()).array();
+        ByteBuf data = in.readBytes(in.readableBytes());
 
         // Decrypt.
-        ctx.channel().attr(GameServerAttributes.CRYPTO_CLIENT).get().parse(data);
+        ctx.channel().attr(GameServerAttributes.CRYPTO_CLIENT).get().parse(data.array());
 
         // Continue in the pipeline.
-        out.add(Unpooled.wrappedBuffer(data));
+        out.add(data);
     }
 
 }

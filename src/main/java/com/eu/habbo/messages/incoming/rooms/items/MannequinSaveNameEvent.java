@@ -9,7 +9,7 @@ public class MannequinSaveNameEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-        if (room == null || this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())
+        if (room == null || !room.isOwner(this.client.getHabbo()))
             return;
 
         HabboItem item = room.getHabboItem(this.packet.readInt());

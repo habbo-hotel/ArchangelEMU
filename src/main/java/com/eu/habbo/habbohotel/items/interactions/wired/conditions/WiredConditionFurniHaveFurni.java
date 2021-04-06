@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
@@ -14,6 +15,8 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.FURNI_HAS_FURNI;
@@ -35,68 +38,65 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         this.refresh();
 
-        boolean foundSomething = false;
-        for (HabboItem item : this.items) {
-            boolean found = false;
+        if(this.items.isEmpty())
+            return true;
 
-            THashSet<HabboItem> stackedItems = room.getItemsAt(room.getLayout().getTile(item.getX(), item.getY()));
-
-            if (stackedItems == null)
-                continue;
-
-            if (stackedItems.isEmpty() && this.all)
-                return false;
-
-            for (HabboItem i : stackedItems) {
-                if (i == item)
-                    continue;
-
-                if (i.getZ() >= item.getZ()) {
-                    found = true;
-                    foundSomething = true;
-                }
-            }
-
-            if (this.all) {
-                if (!found)
-                    return false;
-            } else {
-                if (found)
-                    return true;
-            }
+        if(this.all) {
+            return this.items.stream().allMatch(item -> {
+                double minZ = item.getZ() + Item.getCurrentHeight(item);
+                THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+                return occupiedTiles.stream().anyMatch(tile -> room.getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
+            });
         }
-
-        return this.items.isEmpty() || foundSomething;
-
+        else {
+            return this.items.stream().anyMatch(item -> {
+                double minZ = item.getZ() + Item.getCurrentHeight(item);
+                THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+                return occupiedTiles.stream().anyMatch(tile -> room.getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
+            });
+        }
     }
 
     @Override
     public String getWiredData() {
         this.refresh();
-
-        StringBuilder data = new StringBuilder((this.all ? "1" : "0") + ":");
-
-        for (HabboItem item : this.items)
-            data.append(item.getId()).append(";");
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.all,
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(":");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length >= 1) {
-            this.all = (data[0].equals("1"));
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.all = data.all;
 
-            if (data.length == 2) {
-                String[] items = data[1].split(";");
+            for(int id : data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
 
-                for (String s : items) {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(s));
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
 
-                    if (item != null)
-                        this.items.add(item);
+        } else {
+            String[] data = wiredData.split(":");
+
+            if (data.length >= 1) {
+                this.all = (data[0].equals("1"));
+
+                if (data.length == 2) {
+                    String[] items = data[1].split(";");
+
+                    for (String s : items) {
+                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                        if (item != null)
+                            this.items.add(item);
+                    }
                 }
             }
         }
@@ -137,8 +137,6 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
 
     @Override
     public boolean saveData(ClientMessage packet) {
-        this.items.clear();
-
         int count;
         packet.readInt();
 
@@ -147,6 +145,9 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
         packet.readString();
 
         count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
@@ -178,6 +179,16 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
 
         for (HabboItem item : items) {
             this.items.remove(item);
+        }
+    }
+
+    static class JsonData {
+        boolean all;
+        List<Integer> itemIds;
+
+        public JsonData(boolean all, List<Integer> itemIds) {
+            this.all = all;
+            this.itemIds = itemIds;
         }
     }
 }

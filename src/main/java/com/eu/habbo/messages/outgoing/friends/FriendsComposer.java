@@ -1,24 +1,28 @@
 package com.eu.habbo.messages.outgoing.friends;
 
-import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class FriendsComposer extends MessageComposer {
     private static final Logger LOGGER = LoggerFactory.getLogger(FriendsComposer.class);
 
-    private final Habbo habbo;
+    private final int totalPages;
+    private final int pageIndex;
+    private final Collection<MessengerBuddy> friends;
 
-    public FriendsComposer(Habbo habbo) {
-        this.habbo = habbo;
+    public FriendsComposer(int totalPages, int pageIndex, Collection<MessengerBuddy> friends) {
+        this.totalPages = totalPages;
+        this.pageIndex = pageIndex;
+        this.friends = friends;
     }
 
     @Override
@@ -26,52 +30,54 @@ public class FriendsComposer extends MessageComposer {
         try {
             this.response.init(Outgoing.FriendsComposer);
 
-            //this.response.appendInt(300);
-            //this.response.appendInt(300);
-            //this.response.appendInt(3); //Club level
-            this.response.appendInt(this.habbo.hasPermission("acc_infinite_friends") ? Integer.MAX_VALUE : Messenger.MAXIMUM_FRIENDS);
-            this.response.appendInt(this.habbo.hasPermission("acc_infinite_friends") ? Integer.MAX_VALUE : Messenger.MAXIMUM_FRIENDS);
-            this.response.appendInt(this.habbo.getMessenger().getFriends().size()/* + (this.habbo.hasPermission("acc_staff_chat") ? 1 : 0)*/);
+            this.response.appendInt(this.totalPages);
+            this.response.appendInt(this.pageIndex);
+            this.response.appendInt(this.friends.size());
 
-            for (Map.Entry<Integer, MessengerBuddy> row : this.habbo.getMessenger().getFriends().entrySet()) {
-                this.response.appendInt(row.getKey());
-                this.response.appendString(row.getValue().getUsername());
-                this.response.appendInt(row.getValue().getGender().equals(HabboGender.M) ? 0 : 1);
-                this.response.appendBoolean(row.getValue().getOnline() == 1);
-                this.response.appendBoolean(row.getValue().inRoom()); //IN ROOM
-                this.response.appendString(row.getValue().getOnline() == 1 ? row.getValue().getLook() : "");
+            for (MessengerBuddy row : this.friends) {
+                this.response.appendInt(row.getId());
+                this.response.appendString(row.getUsername());
+                this.response.appendInt(row.getGender().equals(HabboGender.M) ? 0 : 1);
+                this.response.appendBoolean(row.getOnline() == 1);
+                this.response.appendBoolean(row.inRoom()); //IN ROOM
+                this.response.appendString(row.getOnline() == 1 ? row.getLook() : "");
                 this.response.appendInt(0);
-                this.response.appendString(row.getValue().getMotto());
+                this.response.appendString(row.getMotto());
                 this.response.appendString("");
                 this.response.appendString("");
                 this.response.appendBoolean(false); //Offline messaging.
                 this.response.appendBoolean(false);
                 this.response.appendBoolean(false);
-                this.response.appendShort(row.getValue().getRelation());
+                this.response.appendShort(row.getRelation());
             }
-
-            /*if(this.habbo.hasPermission("acc_staff_chat"))
-            {
-                this.response.appendInt(-1);
-                this.response.appendString("Staff Chat");
-                this.response.appendInt(this.habbo.getHabboInfo().getGender().equals(HabboGender.M) ? 0 : 1);
-                this.response.appendBoolean(true);
-                this.response.appendBoolean(false); //IN ROOM
-                this.response.appendString("ADM");
-                this.response.appendInt(0);
-                this.response.appendString("");
-                this.response.appendString("");
-                this.response.appendString("");
-                this.response.appendBoolean(true); //Offline messaging.
-                this.response.appendBoolean(false);
-                this.response.appendBoolean(false);
-                this.response.appendShort(0);
-            }*/
-
             return this.response;
         } catch (Exception e) {
             LOGGER.error("Caught exception", e);
         }
         return null;
+    }
+
+    public static ArrayList<ServerMessage> getMessagesForBuddyList(Collection<MessengerBuddy> buddies) {
+        ArrayList<ServerMessage> messages = new ArrayList<ServerMessage>();
+        THashSet<MessengerBuddy> friends = new THashSet<MessengerBuddy>();
+
+        int totalPages = (int)Math.ceil(buddies.size() / 750.0);
+        int page = 0;
+
+        for(MessengerBuddy buddy : buddies) {
+            friends.add(buddy);
+
+            if(friends.size() == 750) {
+                messages.add(new FriendsComposer(totalPages, page, friends).compose());
+                friends.clear();
+                page++;
+            }
+        }
+
+        if(page == 0 || friends.size() > 0) {
+            messages.add(new FriendsComposer(totalPages, page, friends).compose());
+        }
+
+        return messages;
     }
 }

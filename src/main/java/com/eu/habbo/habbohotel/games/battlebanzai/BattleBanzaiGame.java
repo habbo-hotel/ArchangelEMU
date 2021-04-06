@@ -44,6 +44,7 @@ public class BattleBanzaiGame extends Game {
     private final THashMap<Integer, HabboItem> gameTiles;
     private int tileCount;
     private int countDown;
+    private int countDown2;
 
     public BattleBanzaiGame(Room room) {
         super(BattleBanzaiGameTeam.class, BattleBanzaiGamePlayer.class, room, true);
@@ -58,8 +59,12 @@ public class BattleBanzaiGame extends Game {
     public void initialise() {
         if (!this.state.equals(GameState.IDLE))
             return;
-
+        
+        /* The first countdown is activated for the first two seconds emitting only the blue light (second interaction),
+            the second, after another two seconds, completely activates the sphere (third interaction).
+         */
         this.countDown = 3;
+        this.countDown2 = 2;
 
         this.resetMap();
 
@@ -105,8 +110,15 @@ public class BattleBanzaiGame extends Game {
 
                 if (this.countDown == 0) {
                     for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
-                        item.setExtradata("2");
+                        item.setExtradata("1");
                         this.room.updateItemState(item);
+                        if(this.countDown2 > 0) {
+                            this.countDown2--;
+                            if(this.countDown2 == 0) {
+                                item.setExtradata("2");
+                                this.room.updateItemState(item);
+                            }
+                        }
                     }
                 }
 
@@ -166,7 +178,7 @@ public class BattleBanzaiGame extends Game {
         for (GameTeam team : this.teams.values()) {
             if (!singleTeamGame) {
                 for (GamePlayer player : team.getMembers()) {
-                    if (player.getScore() > 0) {
+                    if (player.getScoreAchievementValue() > 0) {
                         AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallPlayer"));
                     }
                 }
@@ -180,7 +192,7 @@ public class BattleBanzaiGame extends Game {
         if (winningTeam != null) {
             if (!singleTeamGame) {
                 for (GamePlayer player : winningTeam.getMembers()) {
-                    if (player.getScore() > 0) {
+                    if (player.getScoreAchievementValue() > 0) {
                         this.room.sendComposer(new RoomUserActionComposer(player.getHabbo().getRoomUnit(), RoomUserAction.WAVE).compose());
                         AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallWinner"));
                     }

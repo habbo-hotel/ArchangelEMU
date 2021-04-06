@@ -14,13 +14,13 @@ import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
-import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredConditionNotFurniHaveHabbo extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.NOT_FURNI_HAVE_HABBO;
@@ -51,75 +51,58 @@ public class WiredConditionNotFurniHaveHabbo extends InteractionWiredCondition {
         if (this.items.isEmpty())
             return true;
 
-        THashMap<HabboItem, THashSet<RoomTile>> tiles = new THashMap<>();
-        for (HabboItem item : this.items) {
-            tiles.put(item, room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
-        }
-
         Collection<Habbo> habbos = room.getHabbos();
         Collection<Bot> bots = room.getCurrentBots().valueCollection();
         Collection<Pet> pets = room.getCurrentPets().valueCollection();
 
-        for (Map.Entry<HabboItem, THashSet<RoomTile>> set : tiles.entrySet()) {
-            if (!habbos.isEmpty()) {
-                for (Habbo habbo : habbos) {
-                    if (set.getValue().contains(habbo.getRoomUnit().getCurrentLocation())) {
-                        return false;
-                    }
-                }
-            }
-
-            if (!bots.isEmpty()) {
-                for (Bot bot : bots) {
-                    if (set.getValue().contains(bot.getRoomUnit().getCurrentLocation())) {
-                        return false;
-                    }
-                }
-            }
-
-            if (!pets.isEmpty()) {
-                for (Pet pet : pets) {
-                    if (set.getValue().contains(pet.getRoomUnit().getCurrentLocation())) {
-                        return false;
-                    }
-                }
-            }
-
-        }
-
-        return true;
+        return this.items.stream().noneMatch(item -> {
+            THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+            return habbos.stream().anyMatch(character -> occupiedTiles.contains(character.getRoomUnit().getCurrentLocation())) ||
+                    bots.stream().anyMatch(character -> occupiedTiles.contains(character.getRoomUnit().getCurrentLocation())) ||
+                    pets.stream().anyMatch(character -> occupiedTiles.contains(character.getRoomUnit().getCurrentLocation()));
+        });
     }
 
     @Override
     public String getWiredData() {
         this.refresh();
-
-        StringBuilder data = new StringBuilder((this.all ? "1" : "0") + ":");
-
-        for (HabboItem item : this.items) {
-            data.append(item.getId()).append(";");
-        }
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.all,
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
+        String wiredData = set.getString("wired_data");
 
-        String[] data = set.getString("wired_data").split(":");
+        if (wiredData.startsWith("{")) {
+            WiredConditionFurniHaveHabbo.JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredConditionFurniHaveHabbo.JsonData.class);
+            this.all = data.all;
 
-        if (data.length >= 1) {
-            this.all = (data[0].equals("1"));
+            for(int id : data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
 
-            if (data.length == 2) {
-                String[] items = data[1].split(";");
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        } else {
+            String[] data = wiredData.split(":");
 
-                for (String s : items) {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(s));
+            if (data.length >= 1) {
+                this.all = (data[0].equals("1"));
 
-                    if (item != null)
-                        this.items.add(item);
+                if (data.length == 2) {
+                    String[] items = data[1].split(";");
+
+                    for (String s : items) {
+                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                        if (item != null)
+                            this.items.add(item);
+                    }
                 }
             }
         }
@@ -154,14 +137,14 @@ public class WiredConditionNotFurniHaveHabbo extends InteractionWiredCondition {
 
     @Override
     public boolean saveData(ClientMessage packet) {
-        this.items.clear();
-
-        int count;
         packet.readInt();
 
         packet.readString();
 
-        count = packet.readInt();
+        int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
@@ -194,6 +177,16 @@ public class WiredConditionNotFurniHaveHabbo extends InteractionWiredCondition {
 
         for (HabboItem item : items) {
             this.items.remove(item);
+        }
+    }
+
+    static class JsonData {
+        boolean all;
+        List<Integer> itemIds;
+
+        public JsonData(boolean all, List<Integer> itemIds) {
+            this.all = all;
+            this.itemIds = itemIds;
         }
     }
 }

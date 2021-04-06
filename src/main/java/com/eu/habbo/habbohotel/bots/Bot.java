@@ -44,6 +44,7 @@ public class Bot implements Runnable {
     private int chatTimeOut;
     private int chatTimestamp;
     private short lastChatIndex;
+    private int bubble;
 
 
     private String type;
@@ -73,6 +74,7 @@ public class Bot implements Runnable {
         this.chatLines = new ArrayList<>();
         this.type = "generic_bot";
         this.room = null;
+        this.bubble = RoomChatMessageBubbles.BOT_RENTABLE.getType();
     }
 
     public Bot(ResultSet set) throws SQLException {
@@ -94,6 +96,7 @@ public class Bot implements Runnable {
         this.roomUnit = null;
         this.chatTimeOut = Emulator.getIntUnixTimestamp() + this.chatDelay;
         this.needsUpdate = false;
+        this.bubble = set.getInt("bubble_id");
     }
 
     public Bot(Bot bot) {
@@ -110,6 +113,7 @@ public class Bot implements Runnable {
         this.chatLines = new ArrayList<>(Arrays.asList("Default Message :D"));
         this.type = bot.getType();
         this.effect = bot.getEffect();
+        this.bubble = bot.getBubbleId();
 
         this.needsUpdate = false;
     }
@@ -133,7 +137,7 @@ public class Bot implements Runnable {
     @Override
     public void run() {
         if (this.needsUpdate) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bots SET name = ?, motto = ?, figure = ?, gender = ?, user_id = ?, room_id = ?, x = ?, y = ?, z = ?, rot = ?, dance = ?, freeroam = ?, chat_lines = ?, chat_auto = ?, chat_random = ?, chat_delay = ?, effect = ? WHERE id = ?")) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bots SET name = ?, motto = ?, figure = ?, gender = ?, user_id = ?, room_id = ?, x = ?, y = ?, z = ?, rot = ?, dance = ?, freeroam = ?, chat_lines = ?, chat_auto = ?, chat_random = ?, chat_delay = ?, effect = ?, bubble_id = ? WHERE id = ?")) {
                 statement.setString(1, this.name);
                 statement.setString(2, this.motto);
                 statement.setString(3, this.figure);
@@ -155,7 +159,8 @@ public class Bot implements Runnable {
                 statement.setString(15, this.chatRandom ? "1" : "0");
                 statement.setInt(16, this.chatDelay);
                 statement.setInt(17, this.effect);
-                statement.setInt(18, this.id);
+                statement.setInt(18, this.bubble);
+                statement.setInt(19, this.id);
                 statement.execute();
                 this.needsUpdate = false;
             } catch (SQLException e) {
@@ -173,11 +178,11 @@ public class Bot implements Runnable {
                         int timeOut = Emulator.getRandom().nextInt(20) * 2;
                         this.roomUnit.setWalkTimeOut((timeOut < 10 ? 5 : timeOut) + Emulator.getIntUnixTimestamp());
                     }
-                } else {
+                }/* else {
                     for (RoomTile t : this.room.getLayout().getTilesAround(this.room.getLayout().getTile(this.getRoomUnit().getX(), this.getRoomUnit().getY()))) {
                         WiredHandler.handle(WiredTriggerType.BOT_REACHED_STF, this.roomUnit, this.room, this.room.getItemsAt(t).toArray());
                     }
-                }
+                }*/
             }
 
             if (!this.chatLines.isEmpty() && this.chatTimeOut <= Emulator.getIntUnixTimestamp() && this.chatAuto) {
@@ -188,12 +193,16 @@ public class Bot implements Runnable {
                         this.lastChatIndex = 0;
                     }
 
-                    this.talk(this.chatLines.get(this.lastChatIndex)
-                            .replace("%owner%", this.room.getOwnerName())
-                            .replace("%item_count%", this.room.itemCount() + "")
-                            .replace("%name%", this.name)
-                            .replace("%roomname%", this.room.getName())
-                            .replace("%user_count%", this.room.getUserCount() + ""));
+                    String message = this.chatLines.get(this.lastChatIndex)
+                            .replace(Emulator.getTexts().getValue("wired.variable.owner", "%owner%"), this.room.getOwnerName())
+                            .replace(Emulator.getTexts().getValue("wired.variable.item_count", "%item_count%"), this.room.itemCount() + "")
+                            .replace(Emulator.getTexts().getValue("wired.variable.name", "%name%"), this.name)
+                            .replace(Emulator.getTexts().getValue("wired.variable.roomname", "%roomname%"), this.room.getName())
+                            .replace(Emulator.getTexts().getValue("wired.variable.user_count", "%user_count%"), this.room.getUserCount() + "");
+
+                    if(!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), room, new Object[]{ message })) {
+                        this.talk(message);
+                    }
 
                     this.chatTimeOut = Emulator.getIntUnixTimestamp() + this.chatDelay;
                 }
@@ -208,7 +217,7 @@ public class Bot implements Runnable {
                 return;
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
-            this.room.botChat(new RoomUserTalkComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.BOT_RENTABLE)).compose());
+            this.room.botChat(new RoomUserTalkComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
 
             if (message.equals("o/") || message.equals("_o/")) {
                 this.room.sendComposer(new RoomUserActionComposer(this.roomUnit, RoomUserAction.WAVE).compose());
@@ -223,7 +232,7 @@ public class Bot implements Runnable {
                 return;
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
-            this.room.botChat(new RoomUserShoutComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.BOT_RENTABLE)).compose());
+            this.room.botChat(new RoomUserShoutComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
 
             if (message.equals("o/") || message.equals("_o/")) {
                 this.room.sendComposer(new RoomUserActionComposer(this.roomUnit, RoomUserAction.WAVE).compose());
@@ -238,7 +247,7 @@ public class Bot implements Runnable {
                 return;
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
-            event.target.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.BOT_RENTABLE)));
+            event.target.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))));
         }
     }
 
@@ -247,7 +256,12 @@ public class Bot implements Runnable {
             room.giveEffect(this.roomUnit, this.effect, -1);
         }
 
-        this.talk(PLACEMENT_MESSAGES[Emulator.getRandom().nextInt(PLACEMENT_MESSAGES.length)]);
+        if(PLACEMENT_MESSAGES.length > 0) {
+            String message = PLACEMENT_MESSAGES[Emulator.getRandom().nextInt(PLACEMENT_MESSAGES.length)];
+            if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), room, new Object[]{message})) {
+                this.talk(message);
+            }
+        }
     }
 
     public void onPickUp(Habbo habbo, Room room) {
@@ -268,6 +282,10 @@ public class Bot implements Runnable {
 
     public String getName() {
         return this.name;
+    }
+
+    public int getBubbleId() {
+        return bubble;
     }
 
     public void setName(String name) {

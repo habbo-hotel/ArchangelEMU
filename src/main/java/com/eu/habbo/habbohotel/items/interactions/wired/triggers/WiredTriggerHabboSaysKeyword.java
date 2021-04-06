@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
@@ -28,14 +29,11 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        Habbo habbo = room.getHabbo(roomUnit);
-
-        if (habbo != null) {
-            if (this.key.length() > 0) {
-                if (stuff[0] instanceof String) {
-                    if (((String) stuff[0]).toLowerCase().contains(this.key.toLowerCase())) {
-                        return !this.ownerOnly || room.getOwnerId() == habbo.getHabboInfo().getId();
-                    }
+        if (this.key.length() > 0) {
+            if (stuff[0] instanceof String) {
+                if (((String) stuff[0]).toLowerCase().contains(this.key.toLowerCase())) {
+                    Habbo habbo = room.getHabbo(roomUnit);
+                    return !this.ownerOnly || (habbo != null && room.getOwnerId() == habbo.getHabboInfo().getId());
                 }
             }
         }
@@ -44,16 +42,27 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
 
     @Override
     public String getWiredData() {
-        return (this.ownerOnly ? "1" : "0") + "\t" + this.key;
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+            this.ownerOnly,
+            this.key
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split("\t");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length == 2) {
-            this.ownerOnly = data[0].equalsIgnoreCase("1");
-            this.key = data[1];
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.ownerOnly = data.ownerOnly;
+            this.key = data.key;
+        } else {
+            String[] data = wiredData.split("\t");
+
+            if (data.length == 2) {
+                this.ownerOnly = data[0].equalsIgnoreCase("1");
+                this.key = data[1];
+            }
         }
     }
 
@@ -95,5 +104,15 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
     @Override
     public boolean isTriggeredByRoomUnit() {
         return true;
+    }
+
+    static class JsonData {
+        boolean ownerOnly;
+        String key;
+
+        public JsonData(boolean ownerOnly, String key) {
+            this.ownerOnly = ownerOnly;
+            this.key = key;
+        }
     }
 }

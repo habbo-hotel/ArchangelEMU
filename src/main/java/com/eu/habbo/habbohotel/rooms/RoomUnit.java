@@ -3,16 +3,13 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.InteractionGuildGate;
-import com.eu.habbo.habbohotel.items.interactions.InteractionHabboClubGate;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
+import com.eu.habbo.habbohotel.items.interactions.*;
+import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.generic.alerts.CustomNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
@@ -37,6 +34,7 @@ public class RoomUnit {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnit.class);
 
     public boolean isWiredTeleporting = false;
+    public boolean isLeavingTeleporter = false;
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
     public boolean canRotate = true;
@@ -75,6 +73,7 @@ public class RoomUnit {
     private int effectId;
     private int effectEndTimestamp;
     private ScheduledFuture moveBlockingTask;
+    private int timeInRoom;
 
     private int idleTimer;
     private Room room;
@@ -95,6 +94,7 @@ public class RoomUnit {
         this.effectId = 0;
         this.isKicked = false;
         this.overridableTiles = new THashSet<>();
+        this.timeInRoom = 0;
     }
 
     public void clearWalking() {
@@ -242,7 +242,8 @@ public class RoomUnit {
 
             //if(!(this.path.size() == 0 && canSitNextTile))
             {
-                if (!room.tileWalkable(next)) {
+                double height = next.getStackHeight() - this.currentLocation.getStackHeight();
+                if (!room.tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.state == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
                     this.room = room;
                     this.path.clear();
                     this.findPath();
@@ -259,10 +260,10 @@ public class RoomUnit {
             boolean canSitNextTile = room.canSitAt(next.x, next.y);
 
             if (canSitNextTile) {
-                HabboItem lowestChair = room.getLowestChair(next);
+                HabboItem tallestChair = room.getTallestChair(next);
 
-                if (lowestChair != null)
-                    item = lowestChair;
+                if (tallestChair != null)
+                    item = tallestChair;
             }
 
             if (next.equals(this.goalLocation) && next.state == RoomTileState.SIT && !overrideChecks) {
@@ -299,17 +300,16 @@ public class RoomUnit {
                 if (item != habboItem || !RoomLayout.pointInSquare(item.getX(), item.getY(), item.getX() + item.getBaseItem().getWidth() - 1, item.getY() + item.getBaseItem().getLength() - 1, this.getX(), this.getY())) {
                     if (item.canWalkOn(this, room, null)) {
                         item.onWalkOn(this, room, new Object[]{this.getCurrentLocation(), next});
-                    } else if (item instanceof InteractionGuildGate || item instanceof InteractionHabboClubGate) {
+                    } else if (item instanceof ConditionalGate) {
                         this.setRotation(oldRotation);
                         this.tilesWalked--;
                         this.setGoalLocation(this.currentLocation);
                         this.status.remove(RoomUnitStatus.MOVE);
                         room.sendComposer(new RoomUserStatusComposer(this).compose());
 
-                        if (item instanceof InteractionHabboClubGate && habbo != null) {
-                            habbo.getClient().sendResponse(new CustomNotificationComposer(CustomNotificationComposer.GATE_NO_HC));
+                        if (habbo != null) {
+                            ((ConditionalGate) item).onRejected(this, this.getRoom(), new Object[]{});
                         }
-
                         return false;
                     }
                 } else {
@@ -511,14 +511,14 @@ public class RoomUnit {
         this.startLocation = this.currentLocation;
 
         if (goalLocation != null && !noReset) {
+            boolean isWalking = this.hasStatus(RoomUnitStatus.MOVE);
             this.goalLocation = goalLocation;
             this.findPath(); ///< Quadral: this is where we start formulating a path
             if (!this.path.isEmpty()) {
-                this.tilesWalked = 0;
+                this.tilesWalked = isWalking ? this.tilesWalked : 0;
                 this.cmdSit = false;
             } else {
                 this.goalLocation = this.currentLocation;
-
             }
         }
     }
@@ -641,6 +641,18 @@ public class RoomUnit {
         this.walkTimeOut = walkTimeOut;
     }
 
+    public void increaseTimeInRoom() {
+        this.timeInRoom++;
+    }
+
+    public int getTimeInRoom() {
+        return this.timeInRoom;
+    }
+
+    public void resetTimeInRoom() {
+        this.timeInRoom = 0;
+    }
+
     public void increaseIdleTimer() {
         this.idleTimer++;
     }
@@ -725,13 +737,12 @@ public class RoomUnit {
         if (room.getItemsAt(tile).stream().anyMatch(i -> i.canOverrideTile(this, room, tile)))
             return true;
 
-        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        int tileIndex = (tile.x & 0xFF) | (tile.y << 12);
         return this.overridableTiles.contains(tileIndex);
     }
 
     public void addOverrideTile(RoomTile tile) {
-        if (!this.canOverrideTile(tile)) { return; } // Test if the Tile is overridable
-        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        int tileIndex = (tile.x & 0xFF) | (tile.y << 12);
         if (!this.overridableTiles.contains(tileIndex)) {
             this.overridableTiles.add(tileIndex);
         }
@@ -740,7 +751,7 @@ public class RoomUnit {
     public void removeOverrideTile(RoomTile tile) {
         if (room == null || room.getLayout() == null) return;
 
-        int tileIndex = (room.getLayout().getMapSizeY() * tile.y) + tile.x + 1;
+        int tileIndex = (tile.x & 0xFF) | (tile.y << 12);
         this.overridableTiles.remove(tileIndex);
     }
 

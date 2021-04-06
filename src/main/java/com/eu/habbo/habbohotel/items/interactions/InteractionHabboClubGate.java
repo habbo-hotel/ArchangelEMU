@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -12,7 +13,7 @@ import com.eu.habbo.threading.runnables.CloseGate;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionHabboClubGate extends InteractionDefault {
+public class InteractionHabboClubGate extends InteractionDefault implements ConditionalGate {
     public InteractionHabboClubGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
@@ -42,14 +43,6 @@ public class InteractionHabboClubGate extends InteractionDefault {
         if (this.canWalkOn(roomUnit, room, objects)) {
             this.setExtradata("1");
             room.updateItemState(this);
-        } else {
-            Habbo habbo = room.getHabbo(roomUnit);
-
-            if (habbo != null) {
-                habbo.getClient().sendResponse(new CustomNotificationComposer(CustomNotificationComposer.GATE_NO_HC));
-            }
-
-            roomUnit.setGoalLocation(roomUnit.getCurrentLocation());
         }
     }
 
@@ -69,5 +62,15 @@ public class InteractionHabboClubGate extends InteractionDefault {
         super.onWalkOff(roomUnit, room, objects);
 
         Emulator.getThreading().run(new CloseGate(this, room), 1000);
+    }
+
+    @Override
+    public void onRejected(RoomUnit roomUnit, Room room, Object[] objects) {
+        if (roomUnit == null || room == null)
+            return;
+
+        room.getHabbo(roomUnit).getClient().sendResponse(
+                new CustomNotificationComposer(CustomNotificationComposer.GATE_NO_HC)
+        );
     }
 }

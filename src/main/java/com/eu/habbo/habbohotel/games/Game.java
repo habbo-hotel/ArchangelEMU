@@ -95,7 +95,9 @@ public abstract class Game implements Runnable {
             if (team != null && team.isMember(habbo)) {
                 if (habbo.getHabboInfo().getGamePlayer() != null) {
                     team.removeMember(habbo.getHabboInfo().getGamePlayer());
-                    habbo.getHabboInfo().getGamePlayer().reset();
+                    if (habbo.getHabboInfo().getGamePlayer() != null) {
+                        habbo.getHabboInfo().getGamePlayer().reset();
+                    }
                 }
 
                 habbo.getHabboInfo().setCurrentGame(null);
@@ -238,7 +240,10 @@ public abstract class Game implements Runnable {
         if (this.room == null)
             return;
 
-        for (Map.Entry<GameTeamColors, GameTeam> teamEntry : this.teams.entrySet()) {
+        THashMap<GameTeamColors, GameTeam> teamsCopy = new THashMap<>();
+        teamsCopy.putAll(this.teams);
+
+        for (Map.Entry<GameTeamColors, GameTeam> teamEntry : teamsCopy.entrySet()) {
             Emulator.getThreading().run(new SaveScoreForTeam(teamEntry.getValue(), this));
         }
     }

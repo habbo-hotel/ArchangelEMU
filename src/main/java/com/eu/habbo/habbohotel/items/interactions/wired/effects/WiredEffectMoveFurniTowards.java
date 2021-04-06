@@ -11,6 +11,7 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import com.eu.habbo.threading.runnables.WiredCollissionRunnable;
 import gnu.trove.map.hash.THashMap;
@@ -19,7 +20,9 @@ import gnu.trove.set.hash.THashSet;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Wired effect: move to closest user
@@ -82,7 +85,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
 
-        THashSet<HabboItem> items = new THashSet<HabboItem>();
+        THashSet<HabboItem> items = new THashSet<>();
 
         for (HabboItem item : this.items) {
             if (Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
@@ -103,7 +106,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
             RoomUserRotation lastDirection = lastDirections.get(item.getId());
 
             // 1. Check if any user is within 3 tiles from the item
-            Habbo target = null; // closest found user
+            RoomUnit target = null; // closest found user
             RoomLayout layout = room.getLayout();
             boolean collided = false;
 
@@ -128,12 +131,12 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                     }
 
                     if (startTile != null && layout.tileExists(startTile.x, startTile.y)) {
-                        THashSet<Habbo> habbosAtTile = room.getHabbosAt(startTile.x, startTile.y);
-                        if (habbosAtTile.size() > 0) {
-                            target = habbosAtTile.iterator().next();
+                        Collection<RoomUnit> roomUnitsAtTile = room.getRoomUnitsAt(startTile);
+                        if (roomUnitsAtTile.size() > 0) {
+                            target = roomUnitsAtTile.iterator().next();
                             if (i == 0) { // i = 0 means right next to it
                                 collided = true;
-                                Emulator.getThreading().run(new WiredCollissionRunnable(target.getRoomUnit(), room, new Object[]{item}));
+                                Emulator.getThreading().run(new WiredCollissionRunnable(target, room, new Object[]{item}));
                             }
                             break;
                         }
@@ -145,23 +148,23 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                 continue;
 
             if (target != null) {
-                if (target.getRoomUnit().getX() == item.getX()) {
-                    if (item.getY() < target.getRoomUnit().getY())
+                if (target.getX() == item.getX()) {
+                    if (item.getY() < target.getY())
                         moveDirection = RoomUserRotation.SOUTH;
                     else
                         moveDirection = RoomUserRotation.NORTH;
-                } else if (target.getRoomUnit().getY() == item.getY()) {
-                    if (item.getX() < target.getRoomUnit().getX())
+                } else if (target.getY() == item.getY()) {
+                    if (item.getX() < target.getX())
                         moveDirection = RoomUserRotation.EAST;
                     else
                         moveDirection = RoomUserRotation.WEST;
-                } else if (target.getRoomUnit().getX() - item.getX() > target.getRoomUnit().getY() - item.getY()) {
-                    if (target.getRoomUnit().getX() - item.getX() > 0)
+                } else if (target.getX() - item.getX() > target.getY() - item.getY()) {
+                    if (target.getX() - item.getX() > 0)
                         moveDirection = RoomUserRotation.EAST;
                     else
                         moveDirection = RoomUserRotation.WEST;
                 } else {
-                    if (target.getRoomUnit().getY() - item.getY() > 0)
+                    if (target.getY() - item.getY() > 0)
                         moveDirection = RoomUserRotation.SOUTH;
                     else
                         moveDirection = RoomUserRotation.NORTH;
@@ -213,13 +216,15 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
 
             RoomTile newTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), moveDirection.getValue());
 
-            if (newTile != null) {
-                lastDirections.put(item.getId(), moveDirection);
+            RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
+            double oldZ = item.getZ();
 
-                FurnitureMovementError error = room.furnitureFitsAt(newTile, item, item.getRotation());
-                if (error == FurnitureMovementError.NONE) {
-                    double offset = room.getStackHeight(newTile.x, newTile.y, false, item) - item.getZ();
-                    room.sendComposer(new FloorItemOnRollerComposer(item, null, newTile, offset, room).compose());
+            if(newTile != null) {
+                lastDirections.put(item.getId(), moveDirection);
+                if(newTile.state != RoomTileState.INVALID && newTile != oldLocation && room.furnitureFitsAt(newTile, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
+                    if (room.moveFurniTo(item, newTile, item.getRotation(), null, false) == FurnitureMovementError.NONE) {
+                        room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newTile, item.getZ(), 0, room).compose());
+                    }
                 }
             }
         }
@@ -229,32 +234,41 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        StringBuilder wiredData = new StringBuilder(this.getDelay() + "\t");
-
-        if (this.items != null && !this.items.isEmpty()) {
-            for (HabboItem item : this.items) {
-                wiredData.append(item.getId()).append(";");
-            }
-        }
-
-        return wiredData.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.getDelay(),
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items = new THashSet<>();
-        String[] wiredData = set.getString("wired_data").split("\t");
+        String wiredData = set.getString("wired_data");
 
-        if (wiredData.length >= 1) {
-            this.setDelay(Integer.valueOf(wiredData[0]));
-        }
-        if (wiredData.length == 2) {
-            if (wiredData[1].contains(";")) {
-                for (String s : wiredData[1].split(";")) {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(s));
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.setDelay(data.delay);
 
-                    if (item != null)
-                        this.items.add(item);
+            for (Integer id: data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        } else {
+            String[] wiredDataOld = wiredData.split("\t");
+
+            if (wiredDataOld.length >= 1) {
+                this.setDelay(Integer.parseInt(wiredDataOld[0]));
+            }
+            if (wiredDataOld.length == 2) {
+                if (wiredDataOld[1].contains(";")) {
+                    for (String s : wiredDataOld[1].split(";")) {
+                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                        if (item != null)
+                            this.items.add(item);
+                    }
                 }
             }
         }
@@ -300,19 +314,36 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
         packet.readString();
 
-        this.items.clear();
+        int itemsCount = packet.readInt();
 
-        int count = packet.readInt();
-
-        for (int i = 0; i < count; i++) {
-            this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(packet.readInt()));
+        if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
+            throw new WiredSaveException("Too many furni selected");
         }
 
-        this.setDelay(packet.readInt());
+        List<HabboItem> newItems = new ArrayList<>();
+
+        for (int i = 0; i < itemsCount; i++) {
+            int itemId = packet.readInt();
+            HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
+
+            if(it == null)
+                throw new WiredSaveException(String.format("Item %s not found", itemId));
+
+            newItems.add(it);
+        }
+
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.items.clear();
+        this.items.addAll(newItems);
+        this.setDelay(delay);
 
         return true;
     }
@@ -320,5 +351,15 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
     @Override
     protected long requiredCooldown() {
         return 495;
+    }
+
+    static class JsonData {
+        int delay;
+        List<Integer> itemIds;
+
+        public JsonData(int delay, List<Integer> itemIds) {
+            this.delay = delay;
+            this.itemIds = itemIds;
+        }
     }
 }

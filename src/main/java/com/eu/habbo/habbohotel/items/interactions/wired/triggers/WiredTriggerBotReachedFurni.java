@@ -21,11 +21,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
     private static final Logger LOGGER = LoggerFactory.getLogger(WiredTriggerBotReachedFurni.class);
 
-    public final static WiredTriggerType type = WiredTriggerType.BOT_REACHED_STF;
+    public final static WiredTriggerType type = WiredTriggerType.WALKS_ON_FURNI;
 
     private THashSet<HabboItem> items;
     private String botName = "";
@@ -73,7 +74,7 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
         message.appendString(this.botName);
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(WiredTriggerType.BOT_REACHED_STF.code);
 
         if (!this.isTriggeredByRoomUnit()) {
             List<Integer> invalidTriggers = new ArrayList<>();
@@ -114,54 +115,55 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        List<Bot> bots = room.getBots(this.botName);
-
-        for (Bot bot : bots) {
-            if (bot.getRoomUnit().equals(roomUnit)) {
-                for (Object o : stuff) {
-                    if (this.items.contains(o))
-                        return true;
-                }
+        if (stuff.length >= 1) {
+            if (stuff[0] instanceof HabboItem) {
+                return this.items.contains(stuff[0]) && room.getBots(this.botName).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
             }
         }
-
         return false;
     }
 
     @Override
     public String getWiredData() {
-        StringBuilder wiredData = new StringBuilder(this.botName + ":");
-
-        if (!this.items.isEmpty()) {
-            for (HabboItem item : this.items) {
-                wiredData.append(item.getId()).append(";");
-            }
-        }
-
-        return wiredData.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+            this.botName,
+            this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
+        String wiredData = set.getString("wired_data");
 
-        String[] data = set.getString("wired_data").split(":");
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.botName = data.botName;
+            for (Integer id: data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        } else {
+            String[] data = wiredData.split(":");
 
-        if (data.length == 1) {
-            this.botName = data[0];
-        } else if (data.length == 2) {
-            this.botName = data[0];
+            if (data.length == 1) {
+                this.botName = data[0];
+            } else if (data.length == 2) {
+                this.botName = data[0];
 
-            String[] items = data[1].split(";");
+                String[] items = data[1].split(";");
 
-            for (int i = 0; i < items.length; i++) {
-                try {
-                    HabboItem item = room.getHabboItem(Integer.valueOf(items[i]));
+                for (String id : items) {
+                    try {
+                        HabboItem item = room.getHabboItem(Integer.parseInt(id));
 
-                    if (item != null)
-                        this.items.add(item);
-                } catch (Exception e) {
-                    LOGGER.error("Caught exception", e);
+                        if (item != null)
+                            this.items.add(item);
+                    } catch (Exception e) {
+                        LOGGER.error("Caught exception", e);
+                    }
                 }
             }
         }
@@ -171,5 +173,15 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
     public void onPickUp() {
         this.items.clear();
         this.botName = "";
+    }
+
+    static class JsonData {
+        String botName;
+        List<Integer> itemIds;
+
+        public JsonData(String botName, List<Integer> itemIds) {
+            this.botName = botName;
+            this.itemIds = itemIds;
+        }
     }
 }

@@ -3,7 +3,10 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.users.HabboManager;
+import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 
@@ -11,9 +14,12 @@ public class AboutCommand extends Command {
     public AboutCommand() {
         super(null, new String[]{"about", "info", "online", "server"});
     }
-
+    public static String credits = "Arcturus Morningstar is an opensource project based on Arcturus By TheGeneral \n" +
+            "The Following people have all contributed to this emulator:\n" +
+            " TheGeneral\n Beny\n Alejandro\n Capheus\n Skeletor\n Harmonic\n Mike\n Remco\n zGrav \n Quadral \n Harmony\n Swirny\n ArpyAge\n Mikkel\n Rodolfo\n Rasmus\n Kitt Mustang\n Snaiker\n nttzx\n necmi\n Dome\n Jose Flores\n Cam\n Oliver\n Narzo\n Tenshie\n MartenM\n Ridge\n SenpaiDipper\n Snaiker\n Thijmen";
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
+
         Emulator.getRuntime().gc();
 
         int seconds = Emulator.getIntUnixTimestamp() - Emulator.getTimeStarted();
@@ -42,9 +48,8 @@ public class AboutCommand extends Command {
 
                 "<b>Thanks for using Arcturus. Report issues on the forums. http://arcturus.wf \r\r" +
                 "    - The General";
-
         gameClient.getHabbo().alert(message);
-
+        gameClient.sendResponse(new MessagesForYouComposer(Collections.singletonList(credits)));
         return true;
     }
 }

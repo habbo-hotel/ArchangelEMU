@@ -72,7 +72,7 @@ public class TextsManager {
     public int getInt(String key, Integer defaultValue) {
         try {
             return Integer.parseInt(this.getValue(key, defaultValue.toString()));
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             LOGGER.error("Caught exception", e);
         }
         return defaultValue;

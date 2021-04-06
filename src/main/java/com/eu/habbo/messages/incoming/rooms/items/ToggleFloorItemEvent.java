@@ -11,6 +11,9 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetPackageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.plugin.Event;
+import com.eu.habbo.plugin.events.furniture.FurniturePickedUpEvent;
+import com.eu.habbo.plugin.events.furniture.FurnitureToggleEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +35,12 @@ public class ToggleFloorItemEvent extends MessageHandler {
             HabboItem item = room.getHabboItem(itemId);
 
             if (item == null || item instanceof InteractionDice)
+                return;
+
+            Event furnitureToggleEvent = new FurnitureToggleEvent(item, this.client.getHabbo(), state);
+            Emulator.getPluginManager().fireEvent(furnitureToggleEvent);
+
+            if (furnitureToggleEvent.isCancelled())
                 return;
 
             /*

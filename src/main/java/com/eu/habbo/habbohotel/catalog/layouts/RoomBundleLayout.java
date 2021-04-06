@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
@@ -133,7 +134,7 @@ public class RoomBundleLayout extends SingleBundle {
 
         if (habbo != null) {
             int count = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(habbo).size();
-            int max = habbo.getHabboStats().hasActiveClub() ? Emulator.getConfig().getInt("hotel.max.rooms.vip") : Emulator.getConfig().getInt("hotel.max.rooms.user");
+            int max = habbo.getHabboStats().hasActiveClub() ? RoomManager.MAXIMUM_ROOMS_HC : RoomManager.MAXIMUM_ROOMS_USER;
 
             if (count >= max) {
                 habbo.getClient().sendResponse(new CanCreateRoomComposer(count, max));

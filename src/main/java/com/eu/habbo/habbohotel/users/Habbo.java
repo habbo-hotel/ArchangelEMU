@@ -14,8 +14,10 @@ import com.eu.habbo.messages.outgoing.rooms.FloodCounterComposer;
 import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.*;
+import com.eu.habbo.plugin.events.furniture.FurnitureBuildheightEvent;
 import com.eu.habbo.plugin.events.users.UserCreditsEvent;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
+import com.eu.habbo.plugin.events.users.UserGetIPAddressEvent;
 import com.eu.habbo.plugin.events.users.UserPointsEvent;
 import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
@@ -114,11 +116,31 @@ public class Habbo implements Runnable {
     }
 
 
-    public void connect() {
+    public boolean connect() {
+        String ip = "";
+
         if (!Emulator.getConfig().getBoolean("networking.tcp.proxy") && this.client.getChannel().remoteAddress() != null) {
             SocketAddress address = this.client.getChannel().remoteAddress();
+            ip = ((InetSocketAddress) address).getAddress().getHostAddress();
+        }
 
-            if (address != null) this.habboInfo.setIpLogin(((InetSocketAddress) address).getAddress().getHostAddress());
+        if (Emulator.getPluginManager().isRegistered(UserGetIPAddressEvent.class, true)) {
+            UserGetIPAddressEvent event = Emulator.getPluginManager().fireEvent(new UserGetIPAddressEvent(this, ip));
+            if (event.hasChangedIP()) {
+                ip = event.getUpdatedIp();
+            }
+        }
+
+        if (!ip.isEmpty()) {
+            this.habboInfo.setIpLogin(ip);
+        }
+
+        if (Emulator.getGameEnvironment().getModToolManager().hasMACBan(this.client)) {
+            return false;
+        }
+
+        if (Emulator.getGameEnvironment().getModToolManager().hasIPBan(this.habboInfo.getIpLogin())) {
+            return false;
         }
 
         this.habboInfo.setMachineID(this.client.getMachineId());
@@ -128,6 +150,7 @@ public class Habbo implements Runnable {
 
         Emulator.getGameEnvironment().getRoomManager().loadRoomsForHabbo(this);
         LOGGER.info("{} logged in from IP {}", this.habboInfo.getUsername(), this.habboInfo.getIpLogin());
+        return true;
     }
 
 
@@ -240,7 +263,8 @@ public class Habbo implements Runnable {
             return;
 
         this.getHabboInfo().addCurrencyAmount(event.type, event.points);
-        if (this.client != null) this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
+        if (this.client != null)
+            this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
     }
 
 
@@ -436,9 +460,7 @@ public class Habbo implements Runnable {
 
 
     public void respect(Habbo target) {
-        if (target != null && target != this.client.getHabbo())
-
-        {
+        if (target != null && target != this.client.getHabbo()) {
             target.getHabboStats().respectPointsReceived++;
             this.client.getHabbo().getHabboStats().respectPointsGiven++;
             this.client.getHabbo().getHabboStats().respectPointsToGive--;
@@ -449,6 +471,7 @@ public class Habbo implements Runnable {
             AchievementManager.progressAchievement(target, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RespectEarned"));
 
             this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(this.client.getHabbo());
+            this.client.getHabbo().getHabboInfo().getCurrentRoom().dance(this.client.getHabbo().getRoomUnit(), DanceType.NONE);
         }
     }
 

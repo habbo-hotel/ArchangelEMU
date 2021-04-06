@@ -8,6 +8,8 @@ import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboManager;
+import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
+import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.NoAuthMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -17,10 +19,10 @@ import com.eu.habbo.messages.outgoing.gamecenter.GameCenterGameListComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.NewUserIdentityComposer;
-import com.eu.habbo.messages.outgoing.handshake.DebugConsoleComposer;
+import com.eu.habbo.messages.outgoing.handshake.EnableNotificationsComposer;
 import com.eu.habbo.messages.outgoing.handshake.SecureLoginOKComposer;
-import com.eu.habbo.messages.outgoing.handshake.SessionRightsComposer;
-import com.eu.habbo.messages.outgoing.handshake.SomeConnectionComposer;
+import com.eu.habbo.messages.outgoing.handshake.AvailabilityStatusMessageComposer;
+import com.eu.habbo.messages.outgoing.handshake.PingComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryAchievementsComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.inventory.UserEffectsListComposer;
@@ -55,8 +57,9 @@ public class SecureLoginEvent extends MessageHandler {
         if (!Emulator.isReady)
             return;
 
-        if (Emulator.getCrypto().isEnabled() && !this.client.isHandshakeFinished()) {
+        if (Emulator.getConfig().getBoolean("encryption.forced", false) && Emulator.getCrypto().isEnabled() && !this.client.isHandshakeFinished()) {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+            LOGGER.warn("Encryption is forced and TLS Handshake isn't finished! Closed connection...");
             return;
         }
 
@@ -64,30 +67,26 @@ public class SecureLoginEvent extends MessageHandler {
 
         if (Emulator.getPluginManager().fireEvent(new SSOAuthenticationEvent(sso)).isCancelled()) {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+            LOGGER.info("SSO Authentication is cancelled by a plugin. Closed connection...");
             return;
         }
 
         if (sso.isEmpty()) {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+            LOGGER.warn("Client is trying to connect without SSO ticket! Closed connection...");
             return;
         }
 
         if (this.client.getHabbo() == null) {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().loadHabbo(sso);
             if (habbo != null) {
-                if (Emulator.getGameEnvironment().getModToolManager().hasMACBan(this.client)) {
-                    Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
-                    return;
-                }
-                if (Emulator.getGameEnvironment().getModToolManager().hasIPBan(this.client.getChannel())) {
-                    Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
-                    return;
-                }
-
                 try {
                     habbo.setClient(this.client);
                     this.client.setHabbo(habbo);
-                    this.client.getHabbo().connect();
+                    if(!this.client.getHabbo().connect()) {
+                        Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+                        return;
+                    }
 
                     if (this.client.getHabbo().getHabboInfo() == null) {
                         Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
@@ -105,6 +104,14 @@ public class SecureLoginEvent extends MessageHandler {
                     Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
                     return;
                 }
+
+                if(ClothingValidationManager.VALIDATE_ON_LOGIN) {
+                    String validated = ClothingValidationManager.validateLook(this.client.getHabbo());
+                    if(!validated.equals(this.client.getHabbo().getHabboInfo().getLook())) {
+                        this.client.getHabbo().getHabboInfo().setLook(validated);
+                    }
+                }
+
                 ArrayList<ServerMessage> messages = new ArrayList<>();
 
                 messages.add(new SecureLoginOKComposer().compose());
@@ -113,9 +120,9 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new UserClothesComposer(this.client.getHabbo()).compose());
                 messages.add(new NewUserIdentityComposer(habbo).compose());
                 messages.add(new UserPermissionsComposer(this.client.getHabbo()).compose());
-                messages.add(new SessionRightsComposer().compose());
-                messages.add(new SomeConnectionComposer().compose());
-                messages.add(new DebugConsoleComposer(Emulator.debugging).compose());
+                messages.add(new AvailabilityStatusMessageComposer(true, false, true).compose());
+                messages.add(new PingComposer().compose());
+                messages.add(new EnableNotificationsComposer(Emulator.getConfig().getBoolean("bubblealerts.enabled", true)).compose());
                 messages.add(new UserAchievementScoreComposer(this.client.getHabbo()).compose());
                 messages.add(new IsFirstLoginOfDayComposer(true).compose());
                 messages.add(new UnknownComposer5().compose());
@@ -128,7 +135,7 @@ public class SecureLoginEvent extends MessageHandler {
 
                 //messages.add(new MessengerInitComposer(this.client.getHabbo()).compose());
                 //messages.add(new FriendsComposer(this.client.getHabbo()).compose());
-                messages.add(new UserClubComposer(this.client.getHabbo()).compose());
+                messages.add(new UserClubComposer(this.client.getHabbo(), SubscriptionHabboClub.HABBO_CLUB, UserClubComposer.RESPONSE_TYPE_LOGIN).compose());
 
                 if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
                     messages.add(new ModToolComposer(this.client.getHabbo()).compose());
@@ -181,7 +188,7 @@ public class SecureLoginEvent extends MessageHandler {
                     }
                 }
 
-                Emulator.getPluginManager().fireEvent(new UserLoginEvent(habbo, this.client.getChannel().localAddress()));
+                Emulator.getPluginManager().fireEvent(new UserLoginEvent(habbo, this.client.getHabbo().getHabboInfo().getIpLogin()));
 
                 if (Emulator.getConfig().getBoolean("hotel.welcome.alert.enabled")) {
                     final Habbo finalHabbo = habbo;
@@ -193,6 +200,12 @@ public class SecureLoginEvent extends MessageHandler {
                         }
                     }, Emulator.getConfig().getInt("hotel.welcome.alert.delay", 5000));
                 }
+
+                if(SubscriptionHabboClub.HC_PAYDAY_ENABLED) {
+                    SubscriptionHabboClub.processUnclaimed(habbo);
+                }
+
+                SubscriptionHabboClub.processClubBadge(habbo);
 
                 Messenger.checkFriendSizeProgress(habbo);
 
@@ -208,6 +221,7 @@ public class SecureLoginEvent extends MessageHandler {
                 }
             } else {
                 Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
+                LOGGER.warn("Someone tried to login with a non-existing SSO token! Closed connection...");
             }
         } else {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);

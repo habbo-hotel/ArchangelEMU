@@ -7,9 +7,14 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.rooms.users.RoomUserWalkEvent;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemIntStateComposer;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InteractionOneWayGate extends HabboItem {
+    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionOneWayGate.class);
+
     private boolean walkable = false;
 
     public InteractionOneWayGate(ResultSet set, Item baseItem) throws SQLException {
@@ -74,7 +81,6 @@ public class InteractionOneWayGate extends HabboItem {
             if (unit == null)
                 return;
 
-
             if (tileInfront.x == unit.getX() && tileInfront.y == unit.getY()) {
                 if (!currentLocation.hasUnits()) {
                     List<Runnable> onSuccess = new ArrayList<Runnable>();
@@ -86,6 +92,8 @@ public class InteractionOneWayGate extends HabboItem {
                         RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation() + 4);
                         unit.setGoalLocation(tile);
                         Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
+
+                        Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, unit, room, new Object[]{this}), 500);
                     });
 
                     onFail.add(() -> {

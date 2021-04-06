@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.InteractionWiredMatchFurniSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -15,8 +16,10 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class WiredConditionMatchStatePosition extends InteractionWiredCondition {
+public class WiredConditionMatchStatePosition extends InteractionWiredCondition implements InteractionWiredMatchFurniSettings {
     public static final WiredConditionType type = WiredConditionType.MATCH_SSHOT;
 
     private THashSet<WiredMatchFurniSetting> settings;
@@ -49,7 +52,7 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
         message.appendInt(this.settings.size());
 
         for (WiredMatchFurniSetting item : this.settings)
-            message.appendInt(item.itemId);
+            message.appendInt(item.item_id);
 
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
@@ -67,8 +70,6 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
 
     @Override
     public boolean saveData(ClientMessage packet) {
-        this.settings.clear();
-
         int count;
         packet.readInt();
 
@@ -84,6 +85,9 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
             return true;
 
         count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.settings.clear();
 
         for (int i = 0; i < count; i++) {
             int itemId = packet.readInt();
@@ -104,7 +108,7 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
         THashSet<WiredMatchFurniSetting> s = new THashSet<>();
 
         for (WiredMatchFurniSetting setting : this.settings) {
-            HabboItem item = room.getHabboItem(setting.itemId);
+            HabboItem item = room.getHabboItem(setting.item_id);
 
             if (item != null) {
                 if (this.state) {
@@ -137,38 +141,42 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
 
     @Override
     public String getWiredData() {
-        StringBuilder data = new StringBuilder(this.settings.size() + ":");
-
-        if (this.settings.isEmpty()) {
-            data.append("\t;");
-        } else {
-            for (WiredMatchFurniSetting item : this.settings)
-                data.append(item.toString()).append(";");
-        }
-
-        data.append(":").append(this.state ? 1 : 0).append(":").append(this.direction ? 1 : 0).append(":").append(this.position ? 1 : 0);
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.state,
+                this.position,
+                this.direction,
+                new ArrayList<>(this.settings)
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(":");
+        String wiredData = set.getString("wired_data");
 
-        int itemCount = Integer.valueOf(data[0]);
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.state = data.state;
+            this.position = data.position;
+            this.direction = data.direction;
+            this.settings.addAll(data.settings);
+        } else {
+            String[] data = wiredData.split(":");
 
-        String[] items = data[1].split(";");
+            int itemCount = Integer.parseInt(data[0]);
 
-        for (int i = 0; i < itemCount; i++) {
-            String[] stuff = items[i].split("-");
+            String[] items = data[1].split(";");
 
-            if (stuff.length >= 5)
-                this.settings.add(new WiredMatchFurniSetting(Integer.valueOf(stuff[0]), stuff[1], Integer.valueOf(stuff[2]), Integer.valueOf(stuff[3]), Integer.valueOf(stuff[4])));
+            for (int i = 0; i < itemCount; i++) {
+                String[] stuff = items[i].split("-");
+
+                if (stuff.length >= 5)
+                    this.settings.add(new WiredMatchFurniSetting(Integer.parseInt(stuff[0]), stuff[1], Integer.parseInt(stuff[2]), Integer.parseInt(stuff[3]), Integer.parseInt(stuff[4])));
+            }
+
+            this.state = data[2].equals("1");
+            this.direction = data[3].equals("1");
+            this.position = data[4].equals("1");
         }
-
-        this.state = data[2].equals("1");
-        this.direction = data[3].equals("1");
-        this.position = data[4].equals("1");
     }
 
     @Override
@@ -186,7 +194,7 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
             THashSet<WiredMatchFurniSetting> remove = new THashSet<>();
 
             for (WiredMatchFurniSetting setting : this.settings) {
-                HabboItem item = room.getHabboItem(setting.itemId);
+                HabboItem item = room.getHabboItem(setting.item_id);
                 if (item == null) {
                     remove.add(setting);
                 }
@@ -195,6 +203,40 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
             for (WiredMatchFurniSetting setting : remove) {
                 this.settings.remove(setting);
             }
+        }
+    }
+
+    @Override
+    public THashSet<WiredMatchFurniSetting> getMatchFurniSettings() {
+        return this.settings;
+    }
+
+    @Override
+    public boolean shouldMatchState() {
+        return this.state;
+    }
+
+    @Override
+    public boolean shouldMatchRotation() {
+        return this.direction;
+    }
+
+    @Override
+    public boolean shouldMatchPosition() {
+        return this.position;
+    }
+
+    static class JsonData {
+        boolean state;
+        boolean position;
+        boolean direction;
+        List<WiredMatchFurniSetting> settings;
+
+        public JsonData(boolean state, boolean position, boolean direction, List<WiredMatchFurniSetting> settings) {
+            this.state = state;
+            this.position = position;
+            this.direction = direction;
+            this.settings = settings;
         }
     }
 }

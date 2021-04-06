@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionOperator;
@@ -16,11 +16,13 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.TRIGGER_ON_FURNI;
 
-    private THashSet<HabboItem> items = new THashSet<>();
+    protected THashSet<HabboItem> items = new THashSet<>();
 
     public WiredConditionTriggerOnFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -32,45 +34,74 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (roomUnit == null) return false;
+        if (roomUnit == null)
+            return false;
 
         this.refresh();
 
         if (this.items.isEmpty())
-            return true;
+            return false;
 
-        for (HabboItem item : this.items) {
-            if (RoomLayout.getRectangle(item.getX(), item.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()).contains(roomUnit.getX(), roomUnit.getY()))
-                return true;
+        return triggerOnFurni(roomUnit, room);
+    }
+
+    protected boolean triggerOnFurni(RoomUnit roomUnit, Room room) {
+        /*
+         * 1. If a Habbo IS NOT walking we only have to check if the Habbo is on one of the selected tiles.
+         * 2. If a Habbo IS walking we have to check if the next tile in the walking path is one of the selected items
+         * */
+        if (!roomUnit.isWalking()) {
+            THashSet<HabboItem> itemsAtUser = room.getItemsAt(roomUnit.getCurrentLocation());
+            return this.items.stream().anyMatch(itemsAtUser::contains);
+        } else {
+            RoomTile firstTileInPath = room.getLayout()
+                    .findPath(roomUnit.getCurrentLocation(), roomUnit.getGoal(), roomUnit.getGoal(), roomUnit)
+                    .peek();
+
+            if (firstTileInPath == null)
+                return false;
+
+            return this.items
+                    .stream()
+                    .anyMatch(conditionItem -> conditionItem
+                            .getOccupyingTiles(room.getLayout())
+                            .contains(firstTileInPath)
+                    );
         }
-
-        return false;
     }
 
     @Override
     public String getWiredData() {
         this.refresh();
-
-        StringBuilder data = new StringBuilder();
-
-        for (HabboItem item : this.items) {
-            data.append(item.getId()).append(";");
-        }
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
+        String wiredData = set.getString("wired_data");
 
-        String[] data = set.getString("wired_data").split(";");
+        if (wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
 
-        for (String s : data) {
-            HabboItem item = room.getHabboItem(Integer.valueOf(s));
+            for(int id : data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
 
-            if (item != null) {
-                this.items.add(item);
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        } else {
+            String[] data = wiredData.split(";");
+
+            for (String s : data) {
+                HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                if (item != null) {
+                    this.items.add(item);
+                }
             }
         }
     }
@@ -108,12 +139,13 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
 
     @Override
     public boolean saveData(ClientMessage packet) {
-        this.items.clear();
-
         packet.readInt();
         packet.readString();
 
         int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
@@ -130,7 +162,7 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
         return true;
     }
 
-    private void refresh() {
+    protected void refresh() {
         THashSet<HabboItem> items = new THashSet<>();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
@@ -148,6 +180,14 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
 
     @Override
     public WiredConditionOperator operator() {
-        return WiredConditionOperator.OR;
+        return WiredConditionOperator.AND;
+    }
+
+    static class JsonData {
+        List<Integer> itemIds;
+
+        public JsonData(List<Integer> itemIds) {
+            this.itemIds = itemIds;
+        }
     }
 }

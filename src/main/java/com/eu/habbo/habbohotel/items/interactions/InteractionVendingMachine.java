@@ -7,6 +7,8 @@ import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
@@ -34,8 +36,12 @@ public class InteractionVendingMachine extends HabboItem {
     }
     
     public THashSet<RoomTile> getActivatorTiles(Room room) {
-        THashSet<RoomTile> tiles = new THashSet<RoomTile>();
-        tiles.add(getSquareInFront(room.getLayout(), this));
+        THashSet<RoomTile> tiles = new THashSet<>();
+        RoomTile tileInFront = getSquareInFront(room.getLayout(), this);
+
+        if (tileInFront != null)
+            tiles.add(tileInFront);
+
         tiles.add(room.getLayout().getTile(this.getX(), this.getY()));
         return tiles;
     }
@@ -71,7 +77,13 @@ public class InteractionVendingMachine extends HabboItem {
         this.setExtradata("1");
         room.updateItem(this);
 
-        if(!unit.isWalking()) {
+        try {
+            super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(!unit.isWalking() && !unit.hasStatus(RoomUnitStatus.SIT) && !unit.hasStatus(RoomUnitStatus.LAY)) {
             this.rotateToMachine(room, unit);
         }
 
@@ -94,8 +106,6 @@ public class InteractionVendingMachine extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        super.onClick(client, room, objects);
-        
         if (client == null) {
             return;
         }
@@ -118,7 +128,7 @@ public class InteractionVendingMachine extends HabboItem {
         if(!inActivatorSpace) {
             RoomTile tileToWalkTo = null;
             for(RoomTile tile : activatorTiles) {
-                if(room.getLayout().tileWalkable(tile.x, tile.y) && (tileToWalkTo == null || tileToWalkTo.distance(unit.getCurrentLocation()) > tile.distance(unit.getCurrentLocation()))) {
+                if((tile.state == RoomTileState.OPEN || tile.state == RoomTileState.SIT) && (tileToWalkTo == null || tileToWalkTo.distance(unit.getCurrentLocation()) > tile.distance(unit.getCurrentLocation()))) {
                     tileToWalkTo = tile;
                 }
             }

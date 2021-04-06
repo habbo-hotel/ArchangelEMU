@@ -36,4 +36,20 @@ public enum RoomRightLevels {
     RoomRightLevels(int level) {
         this.level = level;
     }
+
+    public boolean equals(RoomRightLevels level) {
+        return this.level == level.level;
+    }
+
+    public boolean isEqualOrGreaterThan(RoomRightLevels level) {
+        return this.level >= level.level;
+    }
+
+    public boolean isGreaterThan(RoomRightLevels level) {
+        return this.level > level.level;
+    }
+
+    public boolean isLessThan(RoomRightLevels level) {
+        return this.level < level.level;
+    }
 }

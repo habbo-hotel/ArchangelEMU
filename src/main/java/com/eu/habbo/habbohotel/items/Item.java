@@ -3,12 +3,14 @@ package com.eu.habbo.habbohotel.items;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionMultiHeight;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.messages.ISerialize;
+import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Item {
+public class Item implements ISerialize {
 
     private int id;
     private int spriteId;
@@ -36,6 +38,7 @@ public class Item {
     private String clothingOnWalk;
 
     private ItemInteraction interactionType;
+    private int rotations;
 
     public Item(ResultSet set) throws SQLException {
         this.load(set);
@@ -117,6 +120,13 @@ public class Item {
                 this.multiHeights = new double[0];
             }
         }
+
+        this.rotations = 4;
+
+        try {
+            this.rotations = set.getInt("rotations");
+        }
+        catch (SQLException ignored) { }
     }
 
     public int getId() {
@@ -220,4 +230,34 @@ public class Item {
     }
 
     public String getClothingOnWalk() { return clothingOnWalk; }
+
+    public int getRotations() {
+        return rotations;
+    }
+
+    @Override
+    public void serialize(ServerMessage message) {
+        message.appendString(this.type.code.toLowerCase());
+
+        if (type == FurnitureType.BADGE) {
+            message.appendString(this.customParams);
+        } else {
+            message.appendInt(this.spriteId);
+
+            if (this.getName().contains("wallpaper_single") || this.getName().contains("floor_single") || this.getName().contains("landscape_single")) {
+                message.appendString(this.name.split("_")[2]);
+            } else if (type == FurnitureType.ROBOT) {
+                message.appendString(this.customParams);
+            } else if (name.equalsIgnoreCase("poster")) {
+                message.appendString(this.customParams);
+            } else if (name.startsWith("SONG ")) {
+                message.appendString(this.customParams);
+            } else {
+                message.appendString("");
+            }
+
+            message.appendInt(1); // productCount
+            message.appendBoolean(false);
+        }
+    }
 }

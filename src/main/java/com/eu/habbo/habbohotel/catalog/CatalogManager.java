@@ -615,6 +615,16 @@ public class CatalogManager {
                 .findAny().orElse(null);
     }
 
+    public CatalogPage getCatalogPageByLayout(String layoutName) {
+        return this.catalogPages.valueCollection().stream()
+                .filter(p -> p != null &&
+                        p.isVisible() &&
+                        p.isEnabled() &&
+                        p.getRank() < 2 &&
+                        p.getLayout() != null && p.getLayout().equalsIgnoreCase(layoutName)
+                )
+                .findAny().orElse(null);
+    }
 
     public CatalogItem getCatalogItem(int id) {
         final CatalogItem[] item = {null};
@@ -639,10 +649,19 @@ public class CatalogManager {
         this.catalogPages.get(parentId).childPages.forEachValue(new TObjectProcedure<CatalogPage>() {
             @Override
             public boolean execute(CatalogPage object) {
-                if (object.getRank() <= habbo.getHabboInfo().getRank().getId() && object.visible) {
-                    pages.add(object);
+
+                boolean isVisiblePage = object.visible;
+                boolean hasRightRank = object.getRank() <= habbo.getHabboInfo().getRank().getId();
+
+                boolean clubRightsOkay = true;
+
+                if(object.isClubOnly() && !habbo.getHabboInfo().getHabboStats().hasActiveClub()) {
+                    clubRightsOkay = false;
                 }
 
+                if (isVisiblePage && hasRightRank && clubRightsOkay) {
+                    pages.add(object);
+                }
                 return true;
             }
         });
@@ -1060,9 +1079,6 @@ public class CatalogManager {
                     }
                 }
 
-                UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
-                Emulator.getPluginManager().fireEvent(purchasedEvent);
-
                 if (badgeFound) {
                     habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.ALREADY_HAVE_BADGE));
 
@@ -1070,6 +1086,9 @@ public class CatalogManager {
                         return;
                     }
                 }
+
+                UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
+                Emulator.getPluginManager().fireEvent(purchasedEvent);
 
                 if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                     if (purchasedEvent.totalCredits > 0) {
@@ -1120,6 +1139,26 @@ public class CatalogManager {
 
                 habbo.getClient().sendResponse(new PurchaseOKComposer(purchasedEvent.catalogItem));
                 habbo.getClient().sendResponse(new InventoryRefreshComposer());
+
+                THashSet<String> itemIds = new THashSet<>();
+
+                for(HabboItem ix : purchasedEvent.itemsList) {
+                    itemIds.add(ix.getId() + "");
+                }
+
+                if(!free) {
+                    Emulator.getThreading().run(new CatalogPurchaseLogEntry(
+                            Emulator.getIntUnixTimestamp(),
+                            purchasedEvent.habbo.getHabboInfo().getId(),
+                            purchasedEvent.catalogItem != null ? purchasedEvent.catalogItem.getId() : 0,
+                            String.join(";", itemIds),
+                            purchasedEvent.catalogItem != null ? purchasedEvent.catalogItem.getName() : "",
+                            purchasedEvent.totalCredits,
+                            purchasedEvent.totalPoints,
+                            item != null ? item.getPointsType() : 0,
+                            amount
+                    ));
+                }
 
             } catch (Exception e) {
                 LOGGER.error("Exception caught", e);

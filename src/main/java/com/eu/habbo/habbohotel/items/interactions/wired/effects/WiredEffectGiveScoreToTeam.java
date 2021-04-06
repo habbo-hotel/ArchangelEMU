@@ -1,17 +1,20 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.Game;
+import com.eu.habbo.habbohotel.games.GameState;
 import com.eu.habbo.habbohotel.games.GameTeam;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.map.hash.TIntIntHashMap;
 
 import java.sql.ResultSet;
@@ -36,49 +39,52 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        Habbo habbo = room.getHabbo(roomUnit);
+        for (Game game : room.getGames()) {
+            if (game != null && game.state.equals(GameState.RUNNING)) {
+                int c = this.startTimes.get(game.getStartTime());
 
-        if (habbo != null) {
-            Class<? extends Game> game = habbo.getHabboInfo().getCurrentGame();
+                if (c < this.count) {
+                    GameTeam team = game.getTeam(this.teamColor);
 
-            if (game != null) {
-                Game g = room.getGame(game);
+                    if (team != null) {
+                        team.addTeamScore(this.points);
 
-                if (g != null) {
-                    int c = this.startTimes.get(g.getStartTime());
-
-                    if (c < this.count) {
-                        GameTeam team = g.getTeam(this.teamColor);
-
-                        if (team != null) {
-                            team.addTeamScore(this.points);
-
-                            this.startTimes.put(g.getStartTime(), c++);
-
-                            return true;
-                        }
+                        this.startTimes.put(game.getStartTime(), c + 1);
                     }
                 }
             }
         }
 
-        return false;
+        return true;
     }
 
     @Override
     public String getWiredData() {
-        return this.points + ";" + this.count + ";" + this.teamColor.type + ";" + this.getDelay();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.points, this.count, this.teamColor, this.getDelay()));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String[] data = set.getString("wired_data").split(";");
+        String wiredData = set.getString("wired_data");
 
-        if (data.length == 4) {
-            this.points = Integer.valueOf(data[0]);
-            this.count = Integer.valueOf(data[1]);
-            this.teamColor = GameTeamColors.values()[Integer.valueOf(data[2])];
-            this.setDelay(Integer.valueOf(data[3]));
+        if(wiredData.startsWith("{")) {
+            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
+            this.points = data.score;
+            this.count = data.count;
+            this.teamColor = data.team;
+            this.setDelay(data.delay);
+        }
+        else {
+            String[] data = set.getString("wired_data").split(";");
+
+            if (data.length == 4) {
+                this.points = Integer.valueOf(data[0]);
+                this.count = Integer.valueOf(data[1]);
+                this.teamColor = GameTeamColors.values()[Integer.valueOf(data[2])];
+                this.setDelay(Integer.valueOf(data[3]));
+            }
+
+            this.needsUpdate(true);
         }
     }
 
@@ -115,15 +121,51 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) {
+    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
         packet.readInt();
 
-        this.points = packet.readInt();
-        this.count = packet.readInt();
-        this.teamColor = GameTeamColors.values()[packet.readInt()];
+        int points = packet.readInt();
+
+        if(points < 1 || points > 100)
+            throw new WiredSaveException("Points is invalid");
+
+        int timesPerGame = packet.readInt();
+
+        if(timesPerGame < 1 || timesPerGame > 10)
+            throw new WiredSaveException("Times per game is invalid");
+
+        int team = packet.readInt();
+
+        if(team < 1 || team > 4)
+            throw new WiredSaveException("Team is invalid");
+
         packet.readString();
         packet.readInt();
-        this.setDelay(packet.readInt());
+
+        int delay = packet.readInt();
+
+        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+            throw new WiredSaveException("Delay too long");
+
+        this.points = points;
+        this.count = timesPerGame;
+        this.teamColor = GameTeamColors.values()[team];
+        this.setDelay(delay);
+
         return true;
+    }
+
+    static class JsonData {
+        int score;
+        int count;
+        GameTeamColors team;
+        int delay;
+
+        public JsonData(int score, int count, GameTeamColors team, int delay) {
+            this.score = score;
+            this.count = count;
+            this.team = team;
+            this.delay = delay;
+        }
     }
 }

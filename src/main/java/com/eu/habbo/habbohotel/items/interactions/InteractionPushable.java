@@ -50,7 +50,7 @@ public abstract class InteractionPushable extends InteractionDefault {
             if (this.currentThread != null)
                 this.currentThread.dead = true;
 
-            this.currentThread = new KickBallAction(this, room, roomUnit, direction, velocity);
+            this.currentThread = new KickBallAction(this, room, roomUnit, direction, velocity, false);
             Emulator.getThreading().run(this.currentThread, 0);
         }
     }
@@ -69,7 +69,7 @@ public abstract class InteractionPushable extends InteractionDefault {
                 if (this.currentThread != null)
                     this.currentThread.dead = true;
 
-                this.currentThread = new KickBallAction(this, room, client.getHabbo().getRoomUnit(), direction, velocity);
+                this.currentThread = new KickBallAction(this, room, client.getHabbo().getRoomUnit(), direction, velocity, false);
                 Emulator.getThreading().run(this.currentThread, 0);
             }
         }
@@ -80,6 +80,7 @@ public abstract class InteractionPushable extends InteractionDefault {
         super.onWalkOn(roomUnit, room, objects);
 
         int velocity;
+        boolean isDrag = false;
         RoomUserRotation direction;
 
         if (this.getX() == roomUnit.getGoal().x && this.getY() == roomUnit.getGoal().y) //User clicked on the tile the ball is on, they want to kick it
@@ -92,13 +93,14 @@ public abstract class InteractionPushable extends InteractionDefault {
             velocity = this.getDragVelocity(roomUnit, room);
             direction = this.getDragDirection(roomUnit, room);
             this.onDrag(room, roomUnit, velocity, direction);
+            isDrag = true;
         }
 
         if (velocity > 0) {
             if (this.currentThread != null)
                 this.currentThread.dead = true;
 
-            this.currentThread = new KickBallAction(this, room, roomUnit, direction, velocity);
+            this.currentThread = new KickBallAction(this, room, roomUnit, direction, velocity, isDrag);
             Emulator.getThreading().run(this.currentThread, 0);
         }
     }

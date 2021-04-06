@@ -1,15 +1,13 @@
 package com.eu.habbo.habbohotel.items.interactions.games.football;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.games.football.FootballGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPushable;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTeamItem;
 import com.eu.habbo.habbohotel.items.interactions.games.football.goals.InteractionFootballGoal;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemStateComposer;
 import com.eu.habbo.util.pathfinding.Rotation;
@@ -31,15 +29,21 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public int getWalkOnVelocity(RoomUnit roomUnit, Room room) {
-        if (roomUnit.getPath().isEmpty() && roomUnit.tilesWalked() == 2)
+        if (roomUnit.getPath().isEmpty() && roomUnit.tilesWalked() == 2 && this.getExtradata().equals("1"))
             return 0;
 
-        return 6;
+        if (roomUnit.getPath().size() == 0 && roomUnit.tilesWalked() == 1)
+            return 6;
+
+        return 1;
     }
 
     @Override
     public int getWalkOffVelocity(RoomUnit roomUnit, Room room) {
-        return 6;
+        if (roomUnit.getPath().size() == 0 && roomUnit.tilesWalked() == 0)
+            return 6;
+
+        return 1;
     }
 
     @Override
@@ -79,8 +83,17 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public int getNextRollDelay(int currentStep, int totalSteps) {
-        int t = 2500;
-        return (totalSteps == 1) ? 500 : 100 * ((t = t / t - 1) * t * t * t * t + 1) + (currentStep * 100);
+
+        if(totalSteps > 4) {
+            if(currentStep <= 4) {
+                return 125;
+            }
+        }
+
+        return 500;
+
+        /*int t = 2500;
+        return (totalSteps == 1) ? 500 : 100 * ((t = t / t - 1) * t * t * t * t + 1) + (currentStep * 100);*/
     }
 
     @Override
@@ -136,9 +149,9 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public boolean validMove(Room room, RoomTile from, RoomTile to) {
-        if (to == null) return false;
+        if (to == null || to.state == RoomTileState.INVALID) return false;
         HabboItem topItem = room.getTopItemAt(to.x, to.y, this);
-        return !(!room.getLayout().tileWalkable(to.x, to.y) || (topItem != null && (!topItem.getBaseItem().allowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
+        return (topItem == null || topItem.getBaseItem().allowStack());
     }
 
     //Events
@@ -176,8 +189,11 @@ public class InteractionFootball extends InteractionPushable {
             game.onScore(kicker, color);
         }
 
-        this.setExtradata(nextRoll <= 200 ? "8" : (nextRoll <= 250 ? "7" : (nextRoll <= 300 ? "6" : (nextRoll <= 350 ? "5" : (nextRoll <= 400 ? "4" : (nextRoll <= 450 ? "3" : (nextRoll <= 500 ? "2" : "1")))))));
+        this.setExtradata(Math.abs(currentStep - (totalSteps + 1)) + "");
         room.sendComposer(new ItemStateComposer(this).compose());
+
+        /*this.setExtradata(nextRoll <= 200 ? "8" : (nextRoll <= 250 ? "7" : (nextRoll <= 300 ? "6" : (nextRoll <= 350 ? "5" : (nextRoll <= 400 ? "4" : (nextRoll <= 450 ? "3" : (nextRoll <= 500 ? "2" : "1")))))));
+        room.sendComposer(new ItemStateComposer(this).compose());*/
     }
 
     @Override
@@ -194,7 +210,7 @@ public class InteractionFootball extends InteractionPushable {
     @Override
     public boolean canStillMove(Room room, RoomTile from, RoomTile to, RoomUserRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
         HabboItem topItem = room.getTopItemAt(from.x, from.y, this);
-        return !(room.hasHabbosAt(to.x, to.y) || (topItem != null && topItem.getBaseItem().getName().startsWith("fball_goal_") && currentStep != 1));
+        return !((Emulator.getRandom().nextInt(10) >= 3 && room.hasHabbosAt(to.x, to.y)) || (topItem != null && topItem.getBaseItem().getName().startsWith("fball_goal_") && currentStep != 1));
     }
 
     @Override

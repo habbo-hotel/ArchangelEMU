@@ -13,6 +13,7 @@ public class CreditsScheduler extends Scheduler {
 
     public static boolean IGNORE_HOTEL_VIEW;
     public static boolean IGNORE_IDLED;
+    public static double HC_MODIFIER;
 
     public CreditsScheduler() {
 
@@ -24,6 +25,8 @@ public class CreditsScheduler extends Scheduler {
         if (Emulator.getConfig().getBoolean("hotel.auto.credits.enabled")) {
             IGNORE_HOTEL_VIEW = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.hotelview");
             IGNORE_IDLED = Emulator.getConfig().getBoolean("hotel.auto.credits.ignore.idled");
+            HC_MODIFIER = Emulator.getConfig().getDouble("hotel.auto.credits.hc_modifier", 1.0);
+
             if (this.disposed) {
                 this.disposed = false;
                 this.run();
@@ -49,7 +52,7 @@ public class CreditsScheduler extends Scheduler {
                     if (habbo.getRoomUnit().isIdle() && IGNORE_IDLED)
                         continue;
 
-                    habbo.giveCredits(habbo.getHabboInfo().getRank().getCreditsTimerAmount());
+                    habbo.giveCredits((int)(habbo.getHabboInfo().getRank().getCreditsTimerAmount() * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
                 }
             } catch (Exception e) {
                 LOGGER.error("Caught exception", e);

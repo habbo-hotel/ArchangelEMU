@@ -84,7 +84,7 @@ public class Outgoing {
     public final static int RoomScoreComposer = 482;
     public final static int DoorbellAddUserComposer = 2309;
     public final static int SecureLoginOKComposer = 2491;
-    public final static int SessionRightsComposer = 2033;
+    public final static int AvailabilityStatusMessageComposer = 2033;
     public final static int GuildMemberUpdateComposer = 265;
     public final static int RoomFloorItemsComposer = 1778;
     public final static int InventoryItemsComposer = 994;
@@ -116,7 +116,7 @@ public class Outgoing {
     public final static int CatalogModeComposer = 3828; // PRODUCTION-201611291003-338511768
     public final static int ChangeNameUpdateComposer = 118; // PRODUCTION-201611291003-338511768
     public final static int AddFloorItemComposer = 1534; // PRODUCTION-201611291003-338511768
-    public final static int DebugConsoleComposer = 3284; // PRODUCTION-201611291003-338511768
+    public final static int EnableNotificationsComposer = 3284; // PRODUCTION-201611291003-338511768
     public final static int HallOfFameComposer = 3005; // PRODUCTION-201611291003-338511768
     public final static int WiredSavedComposer = 1155; // PRODUCTION-201611291003-338511768
     public final static int RoomPaintComposer = 2454; // PRODUCTION-201611291003-338511768
@@ -493,7 +493,7 @@ public class Outgoing {
 
     public final static int SimplePollAnswerComposer = 2589;
 
-    public final static int SomeConnectionComposer = 3928;
+    public final static int PingComposer = 3928;
     public final static int TradingWaitingConfirmComposer = 2720;
     public final static int BaseJumpJoinQueueComposer = 2260;
     public final static int ClubCenterDataComposer = 3277;

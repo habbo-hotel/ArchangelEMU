@@ -100,7 +100,7 @@ public class RoomSpecialTypes {
     public InteractionBattleBanzaiTeleporter getRandomTeleporter(Item baseItem, InteractionBattleBanzaiTeleporter exclude) {
         List<InteractionBattleBanzaiTeleporter> teleporterList = new ArrayList<>();
         for (InteractionBattleBanzaiTeleporter teleporter : this.banzaiTeleporters.values()) {
-            if (teleporter.getBaseItem() == baseItem) {
+            if (baseItem == null || teleporter.getBaseItem() == baseItem) {
                 teleporterList.add(teleporter);
             }
         }

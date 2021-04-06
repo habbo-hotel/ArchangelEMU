@@ -14,6 +14,8 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class WiredConditionNotFurniTypeMatch extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.NOT_STUFF_IS;
@@ -32,15 +34,14 @@ public class WiredConditionNotFurniTypeMatch extends InteractionWiredCondition {
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         this.refresh();
 
+        if(items.isEmpty())
+            return true;
+
         if (stuff != null) {
             if (stuff.length >= 1) {
                 if (stuff[0] instanceof HabboItem) {
-                    HabboItem item = (HabboItem) stuff[0];
-
-                    for (HabboItem i : this.items) {
-                        if (i.getBaseItem().getId() == item.getBaseItem().getId())
-                            return false;
-                    }
+                    HabboItem triggeringItem = (HabboItem)stuff[0];
+                    return this.items.stream().noneMatch(item -> item == triggeringItem);
                 }
             }
         }
@@ -51,23 +52,37 @@ public class WiredConditionNotFurniTypeMatch extends InteractionWiredCondition {
     @Override
     public String getWiredData() {
         this.refresh();
-
-        StringBuilder data = new StringBuilder();
-
-        for (HabboItem item : this.items)
-            data.append(item.getId()).append(";");
-
-        return data.toString();
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
+                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+        ));
     }
 
     @Override
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         this.items.clear();
+        String wiredData = set.getString("wired_data");
 
-        String[] data = set.getString("wired_data").split(";");
+        if (wiredData.startsWith("{")) {
+            WiredConditionFurniTypeMatch.JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredConditionFurniTypeMatch.JsonData.class);
 
-        for (String s : data)
-            this.items.add(room.getHabboItem(Integer.valueOf(s)));
+            for(int id : data.itemIds) {
+                HabboItem item = room.getHabboItem(id);
+
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        } else {
+            String[] data = set.getString("wired_data").split(";");
+
+            for (String s : data) {
+                HabboItem item = room.getHabboItem(Integer.parseInt(s));
+
+                if (item != null) {
+                    this.items.add(item);
+                }
+            }
+        }
     }
 
     @Override
@@ -103,12 +118,13 @@ public class WiredConditionNotFurniTypeMatch extends InteractionWiredCondition {
 
     @Override
     public boolean saveData(ClientMessage packet) {
-        this.items.clear();
-
         packet.readInt();
         packet.readString();
 
         int count = packet.readInt();
+        if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
+
+        this.items.clear();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
@@ -136,6 +152,14 @@ public class WiredConditionNotFurniTypeMatch extends InteractionWiredCondition {
 
         for (HabboItem item : items) {
             this.items.remove(item);
+        }
+    }
+
+    static class JsonData {
+        List<Integer> itemIds;
+
+        public JsonData(List<Integer> itemIds) {
+            this.itemIds = itemIds;
         }
     }
 }

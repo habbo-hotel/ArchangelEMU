@@ -6,12 +6,18 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
+import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionGuildFurni extends InteractionDefault {
     private int guildId;
+    private static final THashSet<String> ROTATION_8_ITEMS = new THashSet<String>() {
+        {
+            this.add("gld_wall_tall");
+        }
+    };
 
     public InteractionGuildFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -21,6 +27,14 @@ public class InteractionGuildFurni extends InteractionDefault {
     public InteractionGuildFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
         this.guildId = 0;
+    }
+
+    @Override
+    public int getMaximumRotations() {
+        if(ROTATION_8_ITEMS.stream().anyMatch(x -> x.equalsIgnoreCase(this.getBaseItem().getName()))) {
+            return 8;
+        }
+        return this.getBaseItem().getRotations();
     }
 
     @Override

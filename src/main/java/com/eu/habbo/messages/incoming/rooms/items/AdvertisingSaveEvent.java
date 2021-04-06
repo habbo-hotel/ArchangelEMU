@@ -42,6 +42,7 @@ public class AdvertisingSaveEvent extends MessageHandler {
             item.needsUpdate(true);
             Emulator.getThreading().run(item);
             room.updateItem(item);
+            ((InteractionCustomValues) item).onCustomValuesSaved(room, this.client);
         }
     }
 }

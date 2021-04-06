@@ -21,7 +21,9 @@ public class SaveWardrobeEvent extends MessageHandler {
             wardrobeItem.setNeedsUpdate(true);
         } else {
             wardrobeItem = this.client.getHabbo().getInventory().getWardrobeComponent().createLook(this.client.getHabbo(), slotId, look);
+            wardrobeItem.setGender(HabboGender.valueOf(gender));
             wardrobeItem.setNeedsInsert(true);
+            this.client.getHabbo().getInventory().getWardrobeComponent().getLooks().put(slotId, wardrobeItem);
         }
 
         UserSavedWardrobeEvent wardrobeEvent = new UserSavedWardrobeEvent(this.client.getHabbo(), wardrobeItem);
