@@ -14,7 +14,10 @@ public class SaveWindowSettingsEvent extends MessageHandler {
         windowSettings.width = this.packet.readInt();
         windowSettings.height = this.packet.readInt();
 
-        windowSettings.openSearches = this.packet.readBoolean();
-        int unknown = this.packet.readInt();
+        boolean openSearches = this.packet.readBoolean();
+        windowSettings.openSearches = openSearches;
+
+        int unknownVar = this.packet.readInt();
+        int unknown = unknownVar;
     }
 }
