@@ -122,7 +122,7 @@ public class MarketPlace {
             query += " AND CEIL(price + (price / 100)) <= " + maxPrice;
         }
         if (search.length() > 0) {
-            query += " AND bi.public_name LIKE ? OR ci.catalog_name LIKE ?";
+            query += " AND ( bi.public_name LIKE ? OR ci.catalog_name LIKE ? ) ";
         }
 
         query += " GROUP BY base_item_id, ltd_data";
