@@ -170,7 +170,7 @@ public final class Emulator {
             Emulator.timeStarted = getIntUnixTimestamp();
 
             if (Emulator.getConfig().getInt("runtime.threads") < (Runtime.getRuntime().availableProcessors() * 2)) {
-                LOGGER.warn("Emulator settings runtime.threads ({}) can be increased to {} to possibly increase performance.",
+                LOGGER.warn("Emulator settings runtime.threads ({}) can be increased to ({}) to possibly increase performance.",
                         Emulator.getConfig().getInt("runtime.threads"),
                         Runtime.getRuntime().availableProcessors() * 2);
             }
