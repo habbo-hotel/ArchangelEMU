@@ -160,8 +160,9 @@ public class WiredHandler {
 
     public static boolean handle(InteractionWiredTrigger trigger, final RoomUnit roomUnit, final Room room, final Object[] stuff, final THashSet<InteractionWiredEffect> effectsToExecute) {
         long millis = System.currentTimeMillis();
-        if (Emulator.isReady && trigger.canExecute(millis) && trigger.execute(roomUnit, room, stuff)) {
-            trigger.activateBox(room);
+        int roomUnitId = roomUnit != null ? roomUnit.getId() : -1;
+        if (Emulator.isReady && ((Emulator.getConfig().getBoolean("wired.custom.enabled", false) && (trigger.canExecute(millis) || roomUnitId > -1) && trigger.userCanExecute(roomUnitId, millis)) || (!Emulator.getConfig().getBoolean("wired.custom.enabled", false) && trigger.canExecute(millis))) && trigger.execute(roomUnit, room, stuff)) {
+            trigger.activateBox(room, roomUnit, millis);
 
             THashSet<InteractionWiredCondition> conditions = room.getRoomSpecialTypes().getConditions(trigger.getX(), trigger.getY());
             THashSet<InteractionWiredEffect> effects = room.getRoomSpecialTypes().getEffects(trigger.getX(), trigger.getY());
@@ -193,7 +194,7 @@ public class WiredHandler {
             THashSet<InteractionWiredExtra> extras = room.getRoomSpecialTypes().getExtras(trigger.getX(), trigger.getY());
 
             for (InteractionWiredExtra extra : extras) {
-                extra.activateBox(room);
+                extra.activateBox(room, roomUnit, millis);
             }
 
             List<InteractionWiredEffect> effectList = new ArrayList<>(effects);
@@ -241,7 +242,7 @@ public class WiredHandler {
                             LOGGER.error("Caught exception", e);
                         }
 
-                        effect.activateBox(room);
+                        effect.activateBox(room, roomUnit, millis);
                     }
                 }, effect.getDelay() * 500);
             }
