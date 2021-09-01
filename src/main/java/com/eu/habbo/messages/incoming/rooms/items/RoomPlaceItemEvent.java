@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.interactions.*;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
@@ -78,6 +79,15 @@ public class RoomPlaceItemEvent extends MessageHandler {
             }
 
             RoomTile tile = room.getLayout().getTile(x, y);
+
+            if(tile == null)
+            {
+                String userName  = this.client.getHabbo().getHabboInfo().getUsername();
+                int roomId = room.getId();
+                ScripterManager.scripterDetected(this.client, "User [" + userName + "] tried to place a furni with itemId [" + itemId + "] at a tile which is not existing in room [" + roomId + "], tile: [" + x + "," + y + "]");
+                return;
+            }
+
             FurnitureMovementError error = room.canPlaceFurnitureAt(item, this.client.getHabbo(), tile, rotation);
 
             if (!error.equals(FurnitureMovementError.NONE)) {
