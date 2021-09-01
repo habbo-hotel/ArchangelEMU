@@ -65,6 +65,11 @@ public class Messenger {
         return users;
     }
 
+    /**
+     * @deprecated
+     * This method is no longer used and is only kept to avoid breaking any plugins
+     */
+    @Deprecated
     public static boolean canFriendRequest(Habbo habbo, String friend) {
         Habbo user = Emulator.getGameEnvironment().getHabboManager().getHabbo(friend);
         HabboInfo habboInfo;
