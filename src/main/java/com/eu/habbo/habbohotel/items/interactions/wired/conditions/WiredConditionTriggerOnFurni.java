@@ -46,28 +46,8 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
     }
 
     protected boolean triggerOnFurni(RoomUnit roomUnit, Room room) {
-        /*
-         * 1. If a Habbo IS NOT walking we only have to check if the Habbo is on one of the selected tiles.
-         * 2. If a Habbo IS walking we have to check if the next tile in the walking path is one of the selected items
-         * */
-        if (!roomUnit.isWalking()) {
-            THashSet<HabboItem> itemsAtUser = room.getItemsAt(roomUnit.getCurrentLocation());
-            return this.items.stream().anyMatch(itemsAtUser::contains);
-        } else {
-            RoomTile firstTileInPath = room.getLayout()
-                    .findPath(roomUnit.getCurrentLocation(), roomUnit.getGoal(), roomUnit.getGoal(), roomUnit)
-                    .peek();
-
-            if (firstTileInPath == null)
-                return false;
-
-            return this.items
-                    .stream()
-                    .anyMatch(conditionItem -> conditionItem
-                            .getOccupyingTiles(room.getLayout())
-                            .contains(firstTileInPath)
-                    );
-        }
+        THashSet<HabboItem> itemsAtUser = room.getItemsAt(roomUnit.getCurrentLocation());
+        return this.items.stream().anyMatch(itemsAtUser::contains);
     }
 
     @Override
