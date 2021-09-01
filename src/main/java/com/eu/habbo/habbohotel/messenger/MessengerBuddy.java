@@ -33,7 +33,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             this.id = set.getInt("id");
             this.username = set.getString("username");
             this.gender = HabboGender.valueOf(set.getString("gender"));
-            this.online = Integer.valueOf(set.getString("online"));
+            this.online = set.getInt("online");
             this.motto = set.getString("motto");
             this.look = set.getString("look");
             this.relation = (short) set.getInt("relation");
@@ -58,6 +58,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             this.look = set.getString("look");
             this.relation = 0;
             this.userOne = 0;
+            this.online = set.getInt("online");
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
         }
