@@ -52,15 +52,19 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
             if (game == null)
                 return false;
 
-            TObjectIntIterator<Map.Entry<Integer, Integer>> iterator = this.data.iterator();
+            int gameStartTime = game.getStartTime();
 
-            for (int i = this.data.size(); i-- > 0; ) {
+            TObjectIntMap<Map.Entry<Integer, Integer>> dataClone = new TObjectIntHashMap<>(this.data);
+
+            TObjectIntIterator<Map.Entry<Integer, Integer>> iterator = dataClone.iterator();
+
+            for (int i = dataClone.size(); i-- > 0; ) {
                 iterator.advance();
 
                 Map.Entry<Integer, Integer> map = iterator.key();
 
                 if (map.getValue() == habbo.getHabboInfo().getId()) {
-                    if (map.getKey() == game.getStartTime()) {
+                    if (map.getKey() == gameStartTime) {
                         if (iterator.value() < this.count) {
                             iterator.setValue(iterator.value() + 1);
 
@@ -74,7 +78,13 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
                 }
             }
 
-            this.data.put(new AbstractMap.SimpleEntry<>(game.getStartTime(), habbo.getHabboInfo().getId()), 1);
+            try {
+                this.data.put(new AbstractMap.SimpleEntry<>(gameStartTime, habbo.getHabboInfo().getId()), 1);
+            }
+            catch(IllegalArgumentException e) {
+
+            }
+
 
             if (habbo.getHabboInfo().getGamePlayer() != null) {
                 habbo.getHabboInfo().getGamePlayer().addScore(this.score, true);
