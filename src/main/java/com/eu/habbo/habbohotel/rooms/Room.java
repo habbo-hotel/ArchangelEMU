@@ -1672,7 +1672,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             } else {
                 if (!unit.hasStatus(RoomUnitStatus.LAY)) {
                     unit.setStatus(RoomUnitStatus.LAY, Item.getCurrentHeight(topItem) * 1.0D + "");
-                    unit.setRotation(RoomUserRotation.values()[topItem.getRotation()]);
+                    unit.setRotation(RoomUserRotation.values()[topItem.getRotation() % 4]);
 
                     if (topItem.getRotation() == 0 || topItem.getRotation() == 4) {
                         unit.setLocation(this.layout.getTile(unit.getX(), topItem.getY()));
