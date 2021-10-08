@@ -73,7 +73,9 @@ public class SecureLoginEvent extends MessageHandler {
 
         if (sso.isEmpty()) {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
-            LOGGER.warn("Client is trying to connect without SSO ticket! Closed connection...");
+            if (Emulator.getConfig().getBoolean("debug.mode")) {
+                LOGGER.warn("Client is trying to connect without SSO ticket! Closed connection...");
+            }
             return;
         }
 
