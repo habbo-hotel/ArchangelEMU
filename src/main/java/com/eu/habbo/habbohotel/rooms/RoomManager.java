@@ -42,11 +42,13 @@ import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageCompo
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomCreatedEvent;
+import com.eu.habbo.plugin.events.rooms.RoomFloorItemsLoadEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUncachedEvent;
 import com.eu.habbo.plugin.events.rooms.UserVoteRoomEvent;
 import com.eu.habbo.plugin.events.users.HabboAddedToRoomEvent;
 import com.eu.habbo.plugin.events.users.UserEnterRoomEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
+import com.eu.habbo.plugin.events.users.UsernameTalkEvent;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TIntProcedure;
@@ -788,7 +790,16 @@ public class RoomManager {
         {
             final THashSet<HabboItem> floorItems = new THashSet<>();
 
-            room.getFloorItems().forEach(new TObjectProcedure<HabboItem>() {
+            THashSet<HabboItem> allFloorItems = new THashSet<>(room.getFloorItems());
+
+            if (Emulator.getPluginManager().isRegistered(RoomFloorItemsLoadEvent.class, true)) {
+                RoomFloorItemsLoadEvent roomFloorItemsLoadEvent = Emulator.getPluginManager().fireEvent(new RoomFloorItemsLoadEvent(habbo, allFloorItems));
+                if (roomFloorItemsLoadEvent.hasChangedFloorItems()) {
+                    allFloorItems = roomFloorItemsLoadEvent.getFloorItems();
+                }
+            }
+
+            allFloorItems.forEach(new TObjectProcedure<HabboItem>() {
                 @Override
                 public boolean execute(HabboItem object) {
                     if (room.isHideWired() && object instanceof InteractionWired)
