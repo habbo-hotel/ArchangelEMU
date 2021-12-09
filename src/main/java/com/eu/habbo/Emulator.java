@@ -175,26 +175,30 @@ public final class Emulator {
                         Runtime.getRuntime().availableProcessors() * 2);
             }
 
-
             Emulator.getThreading().run(() -> {
             }, 1500);
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            // Check if console mode is true or false, default is true
+            if (Emulator.getConfig().getBoolean("console.mode", true)) {
 
-            while (!isShuttingDown && isReady) {
-                try {
-                    String line = reader.readLine();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-                    if (line != null) {
-                        ConsoleCommand.handle(line);
-                    }
-                    System.out.println("Waiting for command: ");
-                } catch (Exception e) {
-                    if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
-                        LOGGER.error("Error while reading command", e);
+                while (!isShuttingDown && isReady) {
+                    try {
+                        String line = reader.readLine();
+
+                        if (line != null) {
+                            ConsoleCommand.handle(line);
+                        }
+                        System.out.println("Waiting for command: ");
+                    } catch (Exception e) {
+                        if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
+                            LOGGER.error("Error while reading command", e);
+                        }
                     }
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
