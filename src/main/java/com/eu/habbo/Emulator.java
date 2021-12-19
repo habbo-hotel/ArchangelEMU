@@ -32,8 +32,8 @@ import java.util.regex.Pattern;
 public final class Emulator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Emulator.class);
-    private static final String OS_NAME = System.getProperty("os.name");
-    private static final String CLASS_PATH = System.getProperty("java.class.path");
+    private static final String OS_NAME = (System.getProperty("os.name") != null ? System.getProperty("os.name") : "Unknown");
+    private static final String CLASS_PATH = (System.getProperty("java.class.path") != null ? System.getProperty("java.class.path") : "Unknown");
 
     public final static int MAJOR = 3;
     public final static int MINOR = 0;
