@@ -7,6 +7,3 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('wired.variable.item_count
 
 -- Enable bubble alerts
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('bubblealerts.enabled', '1');
-
--- Enable or Disable TTY in console (Default is enabled)
-INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('console.mode', '0');
