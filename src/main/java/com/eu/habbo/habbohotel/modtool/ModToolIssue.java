@@ -52,7 +52,7 @@ public class ModToolIssue implements ISerialize {
         int photoItemId = set.getInt("photo_item_id");
 
         if (photoItemId != -1) {
-            this.photoItem = Emulator.getGameEnvironment().getItemManager().loadHabboItem(photoItemId);;
+            this.photoItem = Emulator.getGameEnvironment().getItemManager().loadHabboItem(photoItemId);
         }
 
         if (this.modId <= 0) {
