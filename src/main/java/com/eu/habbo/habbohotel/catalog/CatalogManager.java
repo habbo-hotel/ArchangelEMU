@@ -1079,12 +1079,9 @@ public class CatalogManager {
                     }
                 }
 
-                if (badgeFound) {
+                if (badgeFound && item.getBaseItems().size() == 1) {
                     habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.ALREADY_HAVE_BADGE));
-
-                    if (item.getBaseItems().size() == 1) {
                         return;
-                    }
                 }
 
                 UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
