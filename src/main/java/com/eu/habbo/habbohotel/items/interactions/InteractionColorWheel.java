@@ -49,7 +49,7 @@ public class InteractionColorWheel extends HabboItem {
         if (!room.hasRights(client.getHabbo()))
             return;
 
-        if (this.rollTaks == null) {
+        if (this.rollTaks == null && !this.getExtradata().equalsIgnoreCase("-1")) {
             this.setExtradata("-1");
             room.sendComposer(new WallItemUpdateComposer(this).compose());
             Emulator.getThreading().run(this);
