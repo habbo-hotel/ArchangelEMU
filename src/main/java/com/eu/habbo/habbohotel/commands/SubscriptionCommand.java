@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
+import com.eu.habbo.habbohotel.users.HabboStats;
 import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 
 /**
@@ -42,8 +43,7 @@ public class SubscriptionCommand extends Command {
             HabboInfo info = HabboManager.getOfflineHabboInfo(params[1]);
 
             if (info != null) {
-                Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(params[1]);
-
+                HabboStats stats = info.getHabboStats();
                 String subscription = params[2].toUpperCase();
                 String action = params[3];
 
@@ -67,11 +67,11 @@ public class SubscriptionCommand extends Command {
                         return true;
                     }
 
-                    habbo.getHabboStats().createSubscription(subscription, timeToAdd);
+                    stats.createSubscription(subscription, timeToAdd);
                     gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_subscription.success_add_time", "Successfully added %time% seconds to %subscription% on %user%").replace("%time%", timeToAdd + "").replace("%user%", params[1]).replace("%subscription%", subscription), RoomChatMessageBubbles.ALERT);
                 }
                 else if(action.equalsIgnoreCase("remove") || action.equalsIgnoreCase("-") || action.equalsIgnoreCase("r")) {
-                    Subscription s = habbo.getHabboStats().getSubscription(subscription);
+                    Subscription s = stats.getSubscription(subscription);
 
                     if (s == null) {
                         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_subscription.user_not_have", "%user% does not have the %subscription% subscription").replace("%user%", params[1]).replace("%subscription%", subscription), RoomChatMessageBubbles.ALERT);
