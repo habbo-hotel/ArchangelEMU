@@ -78,7 +78,7 @@ public class NavigatorManager {
                         Class clazz = Room.class;
 
                         if (set.getString("field").contains(".")) {
-                            for (String s : (set.getString("field")).split(".")) {
+                            for (String s : (set.getString("field")).split("\\.")) {
                                 try {
                                     field = clazz.getDeclaredMethod(s);
                                     clazz = field.getReturnType();
