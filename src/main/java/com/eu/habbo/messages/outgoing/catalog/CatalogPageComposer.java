@@ -51,7 +51,7 @@ public class CatalogPageComposer extends MessageComposer {
                 item.serialize(this.response);
             }
         }
-        this.response.appendInt(offerId);
+        this.response.appendInt(this.offerId);
         this.response.appendBoolean(false); //acceptSeasonCurrencyAsCredits
 
         if (this.page instanceof FrontPageFeaturedLayout || this.page instanceof FrontpageLayout) {
