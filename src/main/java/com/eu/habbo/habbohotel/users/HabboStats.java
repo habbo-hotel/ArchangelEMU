@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.campaign.calendar.CalendarRewardClaimed;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
@@ -33,7 +34,7 @@ public class HabboStats implements Runnable {
     public final TIntArrayList secretRecipes;
     public final HabboNavigatorWindowSettings navigatorWindowSettings;
     public final THashMap<String, Object> cache;
-    public final TIntArrayList calendarRewardsClaimed;
+    public final ArrayList<CalendarRewardClaimed> calendarRewardsClaimed;
     public final TIntObjectMap<HabboOfferPurchase> offerCache = new TIntObjectHashMap<>();
     private final AtomicInteger lastOnlineTime = new AtomicInteger(Emulator.getIntUnixTimestamp());
     private final THashMap<Achievement, Integer> achievementProgress;
@@ -109,7 +110,7 @@ public class HabboStats implements Runnable {
         this.ignoredUsers = new TIntArrayList(0);
         this.roomsVists = new TIntArrayList(0);
         this.secretRecipes = new TIntArrayList(0);
-        this.calendarRewardsClaimed = new TIntArrayList(0);
+        this.calendarRewardsClaimed = new ArrayList<>();
 
         this.habboInfo = habboInfo;
 
@@ -206,7 +207,7 @@ public class HabboStats implements Runnable {
             calendarRewardsStatement.setInt(1, this.habboInfo.getId());
             try (ResultSet rewardSet = calendarRewardsStatement.executeQuery()) {
                 while (rewardSet.next()) {
-                    this.calendarRewardsClaimed.add(rewardSet.getInt("reward_id"));
+                    this.calendarRewardsClaimed.add(new CalendarRewardClaimed(rewardSet));
                 }
             }
         }

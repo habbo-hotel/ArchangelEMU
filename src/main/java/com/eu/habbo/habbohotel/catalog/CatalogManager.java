@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.catalog;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.campaign.calendar.CalendarRewardObject;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.guilds.Guild;
@@ -190,7 +191,6 @@ public class CatalogManager {
     public final TIntIntHashMap offerDefs;
     public final Item ecotronItem;
     public final THashMap<Integer, CatalogLimitedConfiguration> limitedNumbers;
-    public final THashMap<Integer, CalendarRewardObject> calendarRewards;
     private final List<Voucher> vouchers;
 
     public CatalogManager() {
@@ -207,7 +207,6 @@ public class CatalogManager {
         this.offerDefs = new TIntIntHashMap();
         this.vouchers = new ArrayList<>();
         this.limitedNumbers = new THashMap<>();
-        this.calendarRewards = new THashMap<>();
 
         this.initialize();
 
@@ -230,7 +229,6 @@ public class CatalogManager {
         this.loadClothing();
         this.loadRecycler();
         this.loadGiftWrappers();
-        this.loadCalendarRewards();
     }
 
     private synchronized void loadLimitedNumbers() {
@@ -481,23 +479,6 @@ public class CatalogManager {
             }
         }
     }
-
-    private void loadCalendarRewards() {
-        synchronized (this.calendarRewards) {
-            this.calendarRewards.clear();
-
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM calendar_rewards")) {
-                try (ResultSet set = statement.executeQuery()) {
-                    while (set.next()) {
-                        this.calendarRewards.put(set.getInt("id"), new CalendarRewardObject(set));
-                    }
-                }
-            } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
-            }
-        }
-    }
-
 
     private void loadClothing() {
         synchronized (this.clothing) {
@@ -1176,28 +1157,6 @@ public class CatalogManager {
         }
 
         return offers;
-    }
-
-    public void claimCalendarReward(Habbo habbo, int day, boolean force) {
-        if (!habbo.getHabboStats().calendarRewardsClaimed.contains(day)) {
-            CalendarRewardObject object = this.calendarRewards.get((day+1));
-            int actualDay = (int) Math.floor((Emulator.getIntUnixTimestamp() - Emulator.getConfig().getInt("hotel.calendar.starttimestamp")) / 86400);
-            int diff = (actualDay - day);
-            if (((diff <= 2 && diff >= 0) || force) && object != null) {
-                habbo.getHabboStats().calendarRewardsClaimed.add(day);
-                habbo.getClient().sendResponse(new AdventCalendarProductComposer(true, object));
-                object.give(habbo);
-
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO calendar_rewards_claimed (user_id, reward_id, timestamp) VALUES (?, ?, ?)")) {
-                    statement.setInt(1, habbo.getHabboInfo().getId());
-                    statement.setInt(2, day);
-                    statement.setInt(3, Emulator.getIntUnixTimestamp());
-                    statement.execute();
-                } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
-                }
-            }
-        }
     }
 
     public TargetOffer getTargetOffer(int offerId) {
