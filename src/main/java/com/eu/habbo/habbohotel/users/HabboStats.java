@@ -257,7 +257,7 @@ public class HabboStats implements Runnable {
             try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_settings WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, habboInfo.getId());
                 try (ResultSet set = statement.executeQuery()) {
-                    set.first();
+                    set.next();
                     if (set.getRow() != 0) {
                         stats = new HabboStats(set, habboInfo);
                     } else {
