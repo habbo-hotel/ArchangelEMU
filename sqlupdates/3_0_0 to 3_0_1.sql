@@ -5,3 +5,6 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_stalk.
 
 -- Enable or Disable TTY in console (Default is enabled)
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('console.mode', '1');
+
+-- Youtube Api v3 key to YoutubeManager
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('youtube.apikey', '');
