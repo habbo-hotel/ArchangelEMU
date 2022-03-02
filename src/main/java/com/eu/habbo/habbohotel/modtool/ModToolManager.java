@@ -184,8 +184,6 @@ public class ModToolManager {
 
     public void quickTicket(Habbo reported, String reason, String message) {
         ModToolIssue issue = new ModToolIssue(0, reason, reported.getHabboInfo().getId(), reported.getHabboInfo().getUsername(), 0, message, ModToolTicketType.AUTOMATIC);
-        if (Emulator.getPluginManager().fireEvent(new SupportTicketEvent(null, issue)).isCancelled())
-            return;
 
         Emulator.getGameEnvironment().getModToolManager().addTicket(issue);
         Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);

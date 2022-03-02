@@ -6,6 +6,9 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.error.cmd_stalk.
 -- Enable or Disable TTY in console (Default is enabled)
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('console.mode', '1');
 
+-- Youtube Api v3 key to YoutubeManager
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('youtube.apikey', '');
+
  -- ----------------------------
 -- Table structure for calendar_campaigns
 -- ----------------------------
@@ -46,7 +49,7 @@ CREATE TABLE `calendar_rewards` (
      `subscription_days` int NOT NULL DEFAULT '0',
      PRIMARY KEY (`id`) USING BTREE
 );
-@ -92,11 +92,12 @@
+
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.calendar.default', 'test');
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.calendar.pixels.hc_modifier', '2.0');
 

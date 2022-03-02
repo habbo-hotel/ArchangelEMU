@@ -504,7 +504,6 @@ public class CatalogManager {
         return null;
     }
 
-
     public Voucher getVoucher(String code) {
         synchronized (this.vouchers) {
             for (Voucher voucher : this.vouchers) {
@@ -516,22 +515,20 @@ public class CatalogManager {
         return null;
     }
 
-
     public void redeemVoucher(GameClient client, String voucherCode) {
-        Voucher voucher = Emulator.getGameEnvironment().getCatalogManager().getVoucher(voucherCode);
+        Habbo habbo = client.getHabbo();
+        if (habbo == null)
+            return;
 
+        Voucher voucher = Emulator.getGameEnvironment().getCatalogManager().getVoucher(voucherCode);
         if (voucher == null) {
             client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.INVALID_CODE));
             return;
         }
 
-        Habbo habbo = client.getHabbo();
-        if (habbo == null) return;
-
         if (voucher.isExhausted()) {
-            if (!Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher)) {
-                client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.TECHNICAL_ERROR));
-            }
+            client.sendResponse(new RedeemVoucherErrorComposer(Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher) ? RedeemVoucherErrorComposer.INVALID_CODE : RedeemVoucherErrorComposer.TECHNICAL_ERROR));
+            return;
         }
 
         if (voucher.hasUserExhausted(habbo.getHabboInfo().getId())) {
@@ -540,12 +537,6 @@ public class CatalogManager {
         }
 
         voucher.addHistoryEntry(habbo.getHabboInfo().getId());
-
-        if (voucher.isExhausted()) {
-            if (!Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher)) {
-                client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.TECHNICAL_ERROR));
-            }
-        }
 
         if (voucher.points > 0) {
             client.getHabbo().getHabboInfo().addCurrencyAmount(voucher.pointsType, voucher.points);
@@ -559,7 +550,6 @@ public class CatalogManager {
 
         if (voucher.catalogItemId > 0) {
             CatalogItem item = this.getCatalogItem(voucher.catalogItemId);
-
             if (item != null) {
                 this.purchaseItem(null, item, client.getHabbo(), 1, "", true);
             }
@@ -567,7 +557,6 @@ public class CatalogManager {
 
         client.sendResponse(new RedeemVoucherOKComposer());
     }
-
 
     public boolean deleteVoucher(Voucher voucher) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM vouchers WHERE code = ?")) {
