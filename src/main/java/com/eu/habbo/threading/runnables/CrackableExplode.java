@@ -1,6 +1,7 @@
 package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionCrackable;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -34,7 +35,7 @@ public class CrackableExplode implements Runnable {
         if (this.habboItem.getRoomId() == 0) {
             return;
         }
-//MAKING DINNER BRB
+
         if (!this.habboItem.resetable()) {
             this.room.removeHabboItem(this.habboItem);
             this.room.sendComposer(new RemoveFloorItemComposer(this.habboItem, true).compose());
@@ -43,13 +44,15 @@ public class CrackableExplode implements Runnable {
         } else {
             this.habboItem.reset(this.room);
         }
+
         Item rewardItem = Emulator.getGameEnvironment().getItemManager().getCrackableReward(this.habboItem.getBaseItem().getId());
 
         if (rewardItem != null) {
             HabboItem newItem = Emulator.getGameEnvironment().getItemManager().createItem(this.habboItem.allowAnyone() ? this.habbo.getHabboInfo().getId() : this.habboItem.getUserId(), rewardItem, 0, 0, "");
 
             if (newItem != null) {
-                if (this.toInventory) {
+                //Add to inventory in case if isn't possible place the item or in case is wall item
+                if (this.toInventory || newItem.getBaseItem().getType() == FurnitureType.WALL) {
                     this.habbo.getInventory().getItemsComponent().addItem(newItem);
                     this.habbo.getClient().sendResponse(new AddHabboItemComposer(newItem));
                     this.habbo.getClient().sendResponse(new InventoryRefreshComposer());
@@ -65,7 +68,6 @@ public class CrackableExplode implements Runnable {
                 }
             }
         }
-
 
         this.room.updateTile(this.room.getLayout().getTile(this.x, this.y));
     }
