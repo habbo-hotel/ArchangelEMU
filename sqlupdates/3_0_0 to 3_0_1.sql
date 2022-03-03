@@ -8,3 +8,5 @@ INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('console.mode', '1');
 
 -- Youtube Api v3 key to YoutubeManager
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('youtube.apikey', '');
+
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.trophies.length.max', '300');
