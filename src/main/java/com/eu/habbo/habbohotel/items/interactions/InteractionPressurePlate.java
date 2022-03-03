@@ -37,7 +37,7 @@ public class InteractionPressurePlate extends InteractionDefault {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        super.onClick(client, room, objects);
+
     }
 
     @Override
@@ -64,6 +64,11 @@ public class InteractionPressurePlate extends InteractionDefault {
         super.onMove(room, oldLocation, newLocation);
 
         updateState(room);
+    }
+
+    @Override
+    public void onPickUp(Room room) {
+        this.setExtradata("0");
     }
 
     public void updateState(Room room) {
