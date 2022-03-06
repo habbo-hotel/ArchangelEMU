@@ -3962,6 +3962,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return;
 
         this.sendComposer(new RoomRemoveRightsListComposer(this, userId).compose());
+        
         if (this.rights.remove(userId)) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM room_rights WHERE room_id = ? AND user_id = ?")) {
                 statement.setInt(1, this.id);
