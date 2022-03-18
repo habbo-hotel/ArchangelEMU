@@ -73,9 +73,7 @@ public class SecureLoginEvent extends MessageHandler {
 
         if (sso.isEmpty()) {
             Emulator.getGameServer().getGameClientManager().disposeClient(this.client);
-            if (Emulator.getConfig().getBoolean("debug.mode")) {
-                LOGGER.warn("Client is trying to connect without SSO ticket! Closed connection...");
-            }
+            LOGGER.debug("Client is trying to connect without SSO ticket! Closed connection...");
             return;
         }
 
@@ -146,16 +144,9 @@ public class SecureLoginEvent extends MessageHandler {
                 this.client.sendResponses(messages);
 
                 //Hardcoded
-                this.client.sendResponse(new NewNavigatorSettingsComposer(this.client.getHabbo().getHabboStats().navigatorWindowSettings));
-                this.client.sendResponse(new NewNavigatorMetaDataComposer());
-                this.client.sendResponse(new NewNavigatorLiftedRoomsComposer());
-                this.client.sendResponse(new NewNavigatorCollapsedCategoriesComposer());
-                this.client.sendResponse(new NewNavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
-                this.client.sendResponse(new NewNavigatorEventCategoriesComposer());
-                this.client.sendResponse(new InventoryRefreshComposer());
+                this.client.sendResponse(new InventoryRefreshComposer());// can we remove this too??
                 //this.client.sendResponse(new ForumsTestComposer());
                 this.client.sendResponse(new InventoryAchievementsComposer());
-                this.client.sendResponse(new AchievementListComposer(this.client.getHabbo()));
 
                 ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
 
