@@ -5,7 +5,7 @@ Arcturus Morningstar is as a fork of Arcturus Emulator by TheGeneral. Arcturus M
 
 | Flash | Community Clients |
 | ------------- | ------------- |
-| [PRODUCTION-201611291003-338511768](https://git.krews.org/morningstar/apollyon/uploads/dc669a26613bf2356e48eb653734ab29/patched-habbo.swf) | Nitro (Recommended)* |
+| [PRODUCTION-201611291003-338511768](https://git.krews.org/morningstar/apollyon/uploads/dc669a26613bf2356e48eb653734ab29/patched-habbo.swf) | [Nitro (Recommended)*](https://git.krews.org/nitro) |
  
 ###### *Note to use Nitro you will need to use the following [plugin](https://git.krews.org/nitro/ms-websockets/-/releases) with Arcturus Morningstar #######
 
@@ -101,7 +101,6 @@ If we ever are to make paid features or plugins, we will not prevent or discoura
        - MartenM
        - Ridge
        - SenpaiDipper
-       - Snaiker
        - Thijmen
        - Brenoepic
        - Stankman
