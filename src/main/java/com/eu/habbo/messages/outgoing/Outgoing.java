@@ -212,7 +212,7 @@ public class Outgoing {
 
     //Uknown but work
     public final static int IsFirstLoginOfDayComposer = 793; // PRODUCTION-201611291003-338511768 //Quest Engine
-    public final static int UnknownComposer5 = 2833; // PRODUCTION-201611291003-338511768 //Mysterbox
+    public final static int MysteryBoxKeysComposer = 2833; // PRODUCTION-201611291003-338511768 //Mysterbox
     public final static int IgnoredUsersComposer = 126; // PRODUCTION-201611291003-338511768
     public final static int NewNavigatorMetaDataComposer = 3052; // PRODUCTION-201611291003-338511768
     public final static int NewNavigatorSearchResultsComposer = 2690; // PRODUCTION-201611291003-338511768
