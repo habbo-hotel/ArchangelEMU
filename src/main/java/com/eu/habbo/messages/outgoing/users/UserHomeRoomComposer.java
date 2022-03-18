@@ -6,18 +6,18 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class UserHomeRoomComposer extends MessageComposer {
     private final int homeRoom;
-    private final int newRoom;
+    private final int roomToEnter;
 
-    public UserHomeRoomComposer(int homeRoom, int newRoom) {
+    public UserHomeRoomComposer(int homeRoom, int roomToEnter) {
         this.homeRoom = homeRoom;
-        this.newRoom = newRoom;
+        this.roomToEnter = roomToEnter;
     }
 
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.UserHomeRoomComposer);
         this.response.appendInt(this.homeRoom);
-        this.response.appendInt(this.newRoom);
+        this.response.appendInt(this.roomToEnter);
         return this.response;
     }
 }
