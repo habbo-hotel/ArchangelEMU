@@ -144,7 +144,6 @@ public class SecureLoginEvent extends MessageHandler {
                 this.client.sendResponses(messages);
 
                 //Hardcoded
-                this.client.sendResponse(new InventoryRefreshComposer());// can we remove this too??
                 //this.client.sendResponse(new ForumsTestComposer());
                 this.client.sendResponse(new InventoryAchievementsComposer());
 
