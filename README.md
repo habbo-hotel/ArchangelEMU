@@ -1,84 +1,59 @@
 # Arcturus Morningstar #
 
-## What is Arcturus Morningstar? ##
-Arcturus Morningstar is the community project for the Arcturus Emulator by TheGeneral.
-
-The community project was made because the Arcturus Emulator has been abandoned by TheGeneral with lack of updates, an intent to monetize the project, and make the project private.
-
-TheGeneral's own words were "dont like it then dont use it". We did not like what he was doing, so we made our own version.
-
-## License ##
-Arcturus Morningstar is released under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.txt).
-
-## Versions ##
-[![image](https://img.shields.io/badge/VERSION-3.0.0-success.svg?style=for-the-badge&logo=appveyor)](#)
-[![image](https://img.shields.io/badge/STATUS-STABLE-blue.svg?style=for-the-badge&logo=appveyor)](#)
-[![image](https://img.shields.io/discord/557240155040251905?style=for-the-badge&logo=discord&color=7289DA&label=DISCORD&logoColor=fff)](https://discord.gg/BzfFsTp)
-
-Compiled Download: https://git.krews.org/morningstar/Arcturus-Community/-/releases
-
-Client build: **PRODUCTION-201611291003-338511768**
-
-## Reporting problems ##
-You can report problems via the Issue Tracker at https://git.krews.org/morningstar/Arcturus-Community/issues
-When making an bug report or a feature request use the template we provide so that it can be categorized correctly and we have more information to replicate a bug or implement a feature correctly.
-
-## Credits ##
-- TheGeneral
-- Beny
-- Alejandro
-- Capheus
-- Skeletor
-- Harmonic
-- Mike
-- Remco
-- zGrav
-- Quadral
-- Harmony
-- Swirny
-- ArpyAge
-- Mikkel
-- Rodolfo
-- Rasmus
-- Kitt Mustang
-- Snaiker
-- nttzx
-- necmi
-- Dome
-- Jose Flores
-- Cam
-- Oliver
-- Narzo
-- Tenshie
-- MartenM
-- Ridge
-- SenpaiDipper
-- Snaiker
-- Thijmen
+Arcturus Morningstar is as a fork of Arcturus Emulator by TheGeneral. Arcturus Morningstar is released under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.txt) and is developed for free by talented developers at Krews.org and is compatible with the following client revision/community projects:
 
 
-## Discord ##
-Join us on Discord at https://discord.gg/BzfFsTp
+| Flash | Community Clients |
+| ------------- | ------------- |
+| [PRODUCTION-201611291003-338511768](https://git.krews.org/morningstar/apollyon/uploads/dc669a26613bf2356e48eb653734ab29/patched-habbo.swf) | Nitro (Recommended)* |
+ 
+###### *Note to use Nitro you will need to use the following [plugin](https://git.krews.org/nitro/ms-websockets/-/releases) with Arcturus Morningstar #######
 
-## Contributing ##
-Anyone is allowed to fork the project and make pull requests. We make no guarantee that pull requests will be approved into the project.
 
-## Branches ##
-There will be 2 branches of the Arcturus Morningstar emulator:
 
-`master` - The master branch will be the stable branch. Everything here has been tested on a live hotel and contains no known problems.
 
-`dev` - The dev branch will be the unstable branch. This one is the most up to date, but things may not work as intended.
 
-There is no set timeframe on when new versions will be released or when the stable branch will be updated.
+[![image](https://img.shields.io/discord/557240155040251905?style=for-the-badge&logo=discord&color=7289DA&label=KREWS&logoColor=fff)](https://discord.gg/BzfFsTp)
 
-## Custom features ##
-Do not implement custom features into the source.
-A custom feature will be defined as a feature or ability which is not possible in Habbo.com
-Use plugins for custom features, and if a plugin is not possible, you should adapt the source to enable plugins to do that.
+## Download ##
+[![image](https://img.shields.io/badge/STABLE%20RELEASES-3.0.0-success.svg?style=for-the-badge&logo=appveyor)](https://git.krews.org/morningstar/Arcturus-Community/-/releases)
 
-## Why always make things as plugins? ##
-Why always make things as plugins?
+[![image](https://img.shields.io/badge/DEVELOPER%20BUILDS-3.1.0-red.svg?style=for-the-badge&logo=appveyor)](https://git.krews.org/morningstar/Arcturus-Community/-/jobs) *
+
+[![image](https://img.shields.io/badge/RECOMMENDED%20PLUGINS-blue.svg?style=for-the-badge&logo=)](https://git.krews.org/official-plugins) 
+
+###### * Note to use these builds you will need to run any database updates from [here](https://git.krews.org/morningstar/Arcturus-Community/-/tree/dev/sqlupdates) #######
+
+
+### Branches ###
+There are two main branches in use on the Arcturus Morningstar git. Below the pros an
+
+| master | Tested on a production hotel and is stable for every day use with no known serious exploits. |
+| ------------- | ------------- |
+
+| dev | The most up-to-date, but features may not work as intended. |
+| ------------- | ------------- |
+
+
+
+
+There is no set timeframe on when new versions will be released or when the stable branch will be updated
+
+
+## Can I Help!? ##
+#### Reporting Bugs: ####
+You can report problems via the [Issue Tracker](https://git.krews.org/morningstar/Arcturus-Community/issues)*
+###### * When making an bug report or a feature request use the template we provide so that it can be categorized correctly and we have more information to replicate a bug or implement a feature correctly. ######
+#### Can I contribute code to this project? ####
+Of Course! if you have fixed a bug from the git please feel free to do a [merge request](https://git.krews.org/morningstar/Arcturus-Community/issues)*
+###### * Anyone is allowed to fork the project and make pull requests, we make no guarantee that pull requests will be approved into the project. Please Do NOT push code which does not replicate behaviour on habbo.com, instead make the behaviour configurable or as a plugin. ######
+
+
+
+## Plugin System ##
+The robust Plugin System included in the original Arcturus release is also included in Arcturus Morningstar, if you're interested in making your own plugins, feel free to ask around on our discord and we'll point you in the right direction! 
+
+A lot of the community aren't used to modifying things in this way, so we've written a few pros:
 1. Other people will see that plugins are the normal way of adding custom features
 2. Plugins can be added and removed at the hotel owner's choice, it makes customizing the hotel easier
 3. Developers will be able to read plugin source code to learn how to make their own plugins, without the need to look in complicated source code
@@ -91,8 +66,47 @@ Sale of a special edition of a *source code* will not be permitted. You may use 
 If we ever are to make paid features or plugins, we will not prevent or discourage developers from creating alternative options for users.
 
 
-## Plugins - Official Plugins ##
-You can find official plugins to add custom features to Arcturus Morningstar at the following URL: 
 
-[View the respository here.](https://git.krews.org/official-plugins)
+
+
+
+### Credits ###
+    
+       - TheGeneral (Arcturus Emulator)
+       - Beny 
+       - Alejandro
+       - Capheus
+       - Skeletor
+       - Harmonic
+       - Mike
+       - Remco
+       - zGrav
+       - Quadral
+       - Harmony
+       - Swirny
+       - ArpyAge
+       - Mikkel
+       - Rodolfo
+       - Rasmus
+       - Kitt Mustang
+       - Snaiker
+       - nttzx
+       - necmi
+       - Dome
+       - Jose Flores
+       - Cam
+       - Oliver
+       - Narzo
+       - Tenshie
+       - MartenM
+       - Ridge
+       - SenpaiDipper
+       - Snaiker
+       - Thijmen
+       - Brenoepic
+       - Stankman
+
+    
+
+
 
