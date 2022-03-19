@@ -26,6 +26,8 @@ public class HabboGiveHandItemToHabbo implements Runnable {
         if (itemId > 0) {
             this.from.getRoomUnit().setHandItem(0);
             this.from.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserHandItemComposer(this.from.getRoomUnit()).compose());
+            this.target.getRoomUnit().lookAtPoint(this.from.getRoomUnit().getCurrentLocation());
+            this.target.getRoomUnit().statusUpdate(true);
             this.target.getClient().sendResponse(new RoomUserReceivedHandItemComposer(this.from.getRoomUnit(), itemId));
             this.target.getRoomUnit().setHandItem(itemId);
             this.target.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserHandItemComposer(this.target.getRoomUnit()).compose());

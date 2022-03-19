@@ -10,7 +10,7 @@ public class SetHomeRoomEvent extends MessageHandler {
 
         if (roomId != this.client.getHabbo().getHabboInfo().getHomeRoom()) {
             this.client.getHabbo().getHabboInfo().setHomeRoom(roomId);
-            this.client.sendResponse(new UserHomeRoomComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), this.client.getHabbo().getHabboInfo().getHomeRoom()));
+            this.client.sendResponse(new UserHomeRoomComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), 0));
         }
     }
 }
