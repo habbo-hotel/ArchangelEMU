@@ -101,6 +101,11 @@ public class InteractionCrackable extends HabboItem {
                 if (rewardData.requiredEffect > 0 && habbo.getRoomUnit().getEffectId() != rewardData.requiredEffect)
                     return;
 
+                if(this.ticks < 1)
+                {
+                    // If there are no ticks (for example because the room has been reloaded), check the current extradata of the item and update the ticks.
+                    this.ticks = Integer.parseInt(this.getExtradata());
+                }
                 this.ticks++;
                 this.setExtradata("" + (this.ticks));
                 this.needsUpdate(true);

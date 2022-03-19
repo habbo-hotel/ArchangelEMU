@@ -80,6 +80,10 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                     return;
                 }
 
+                if (message.length() > Emulator.getConfig().getInt("hotel.gifts.length.max", 300)) {
+                    message = message.substring(0, Emulator.getConfig().getInt("hotel.gifts.length.max", 300));
+                }
+
                 Integer iItemId = Emulator.getGameEnvironment().getCatalogManager().giftWrappers.get(spriteId);
 
                 if (iItemId == null)
@@ -172,7 +176,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                     int limitedNumber = 0;
                     if (item.isLimited()) {
                         count = 1;
-                        if (Emulator.getGameEnvironment().getCatalogManager().getLimitedConfig(item).available() == 0) {
+                        if (Emulator.getGameEnvironment().getCatalogManager().getLimitedConfig(item).available() == 0 && habbo != null) {
                             habbo.getClient().sendResponse(new AlertLimitedSoldOutComposer());
                             return;
                         }
@@ -269,7 +273,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                                                     return;
                                                 } else {
                                                     if (baseItem.getInteractionType().getType() == InteractionTrophy.class || baseItem.getInteractionType().getType() == InteractionBadgeDisplay.class) {
-                                                        if (baseItem.getInteractionType().getType() == InteractionBadgeDisplay.class && !habbo.getClient().getHabbo().getInventory().getBadgesComponent().hasBadge(extraData)) {
+                                                        if (baseItem.getInteractionType().getType() == InteractionBadgeDisplay.class && habbo != null && !habbo.getClient().getHabbo().getInventory().getBadgesComponent().hasBadge(extraData)) {
                                                             ScripterManager.scripterDetected(habbo.getClient(), Emulator.getTexts().getValue("scripter.warning.catalog.badge_display").replace("%username%", habbo.getClient().getHabbo().getHabboInfo().getUsername()).replace("%badge%", extraData));
                                                             extraData = "UMAD";
                                                         }

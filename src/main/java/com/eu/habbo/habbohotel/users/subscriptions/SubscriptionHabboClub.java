@@ -15,6 +15,8 @@ import com.eu.habbo.messages.outgoing.generic.PickMonthlyClubGiftNotificationCom
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import gnu.trove.map.hash.THashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,6 +31,7 @@ import java.util.TreeMap;
  * @author Beny
  */
 public class SubscriptionHabboClub extends Subscription {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionHabboClub.class);
 
     public static boolean HC_PAYDAY_ENABLED = false;
     public static int HC_PAYDAY_NEXT_DATE = Integer.MAX_VALUE; // yyyy-MM-dd HH:mm:ss
@@ -393,9 +396,18 @@ public class SubscriptionHabboClub extends Subscription {
                 break;
 
             default:
-                pointCurrency = Integer.parseInt(currency);
-                habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
-                habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
+                pointCurrency = -1;
+                try {
+                    pointCurrency = Integer.parseInt(currency);
+                }
+                catch (NumberFormatException ex) {
+                    LOGGER.error("Couldn't convert the type point currency {} on HC PayDay. The number must be a integer and positive.", pointCurrency);
+                }
+
+                if (pointCurrency >= 0) {
+                    habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
+                    habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
+                }
                 break;
         }
 
