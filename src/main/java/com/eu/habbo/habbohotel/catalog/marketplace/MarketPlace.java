@@ -67,7 +67,7 @@ public class MarketPlace {
         if (offer != null && habbo.getInventory().getMarketplaceItems().contains(offer)) {
             RequestOffersEvent.cachedResults.clear();
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-                try (PreparedStatement ownerCheck = connection.prepareStatement("SELECT user_id FROM marketplace_items WHERE id = ?")) {
+                try (PreparedStatement ownerCheck = connection.prepareStatement("SELECT user_id FROM marketplace_items WHERE id = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
                     ownerCheck.setInt(1, offer.getOfferId());
                     try (ResultSet ownerSet = ownerCheck.executeQuery()) {
                         ownerSet.last();

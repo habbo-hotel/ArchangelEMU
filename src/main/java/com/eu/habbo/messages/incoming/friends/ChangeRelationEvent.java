@@ -16,7 +16,7 @@ public class ChangeRelationEvent extends MessageHandler {
             UserRelationShipEvent event = new UserRelationShipEvent(this.client.getHabbo(), buddy, relationId);
             if (!event.isCancelled()) {
                 buddy.setRelation(event.relationShip);
-                this.client.sendResponse(new UpdateFriendComposer(buddy));
+                this.client.sendResponse(new UpdateFriendComposer(this.client.getHabbo(), buddy, 0));
             }
         }
     }

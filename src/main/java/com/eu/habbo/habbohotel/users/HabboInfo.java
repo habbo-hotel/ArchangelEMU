@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
+import com.eu.habbo.habbohotel.messenger.MessengerCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Rank;
 import com.eu.habbo.habbohotel.pets.PetTasks;
@@ -55,6 +56,7 @@ public class HabboInfo implements Runnable {
     private int webPublishTimestamp;
     private String machineID;
     private List<NavigatorSavedSearch> savedSearches = new ArrayList<>();
+    private List<MessengerCategory> messengerCategories = new ArrayList<>();
 
     public HabboInfo(ResultSet set) {
         try {
@@ -88,6 +90,7 @@ public class HabboInfo implements Runnable {
 
         this.loadCurrencies();
         this.loadSavedSearches();
+        this.loadMessengerCategories();
     }
 
     private void loadCurrencies() {
@@ -173,6 +176,56 @@ public class HabboInfo implements Runnable {
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM users_saved_searches WHERE id = ?")) {
             statement.setInt(1, search.getId());
+            statement.execute();
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+    }
+
+    private void loadMessengerCategories() {
+        this.messengerCategories = new ArrayList<>();
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM messenger_categories WHERE user_id = ?")) {
+            statement.setInt(1, this.id);
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    this.messengerCategories.add(new MessengerCategory(set.getString("name"), set.getInt("user_id"), set.getInt("id")));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+    }
+
+    public void addMessengerCategory(MessengerCategory category) {
+        this.messengerCategories.add(category);
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO messenger_categories (name, user_id) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+            statement.setString(1, category.getName());
+            statement.setInt(2, this.id);
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating messenger category failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    category.setId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating messenger category failed, no ID found.");
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Caught SQL exception", e);
+        }
+    }
+
+    public void deleteMessengerCategory(MessengerCategory category) {
+        this.messengerCategories.remove(category);
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM messenger_categories WHERE id = ?")) {
+            statement.setInt(1, category.getId());
             statement.execute();
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
@@ -477,6 +530,8 @@ public class HabboInfo implements Runnable {
     public List<NavigatorSavedSearch> getSavedSearches() {
         return this.savedSearches;
     }
+
+    public List<MessengerCategory> getMessengerCategories() { return this.messengerCategories; }
 
     @Override
     public void run() {

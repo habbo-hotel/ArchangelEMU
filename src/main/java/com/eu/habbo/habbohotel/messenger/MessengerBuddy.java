@@ -25,6 +25,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
     private String look = "";
     private String motto = "";
     private short relation;
+    private int categoryId = 0;
     private boolean inRoom;
     private int userOne = 0;
 
@@ -37,6 +38,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             this.motto = set.getString("motto");
             this.look = set.getString("look");
             this.relation = (short) set.getInt("relation");
+            this.categoryId = set.getInt("category");
             this.userOne = set.getInt("user_one_id");
             this.inRoom = false;
             if (this.online == 1) {
@@ -136,6 +138,8 @@ public class MessengerBuddy implements Runnable, ISerialize {
         Emulator.getThreading().run(this);
     }
 
+    public int getCategoryId() { return this.categoryId; }
+
     public boolean inRoom() {
         return this.inRoom;
     }
@@ -181,7 +185,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
         message.appendBoolean(this.online == 1);
         message.appendBoolean(this.inRoom); //IN ROOM
         message.appendString(this.look);
-        message.appendInt(0); // Friends category ID
+        message.appendInt(this.categoryId); // Friends category ID
         message.appendString(this.motto);
         message.appendString(""); //Last seen as DATETIMESTRING
         message.appendString(""); // Realname or Facebookame as String

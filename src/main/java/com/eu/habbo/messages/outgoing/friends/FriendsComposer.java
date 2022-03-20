@@ -41,10 +41,10 @@ public class FriendsComposer extends MessageComposer {
                 this.response.appendBoolean(row.getOnline() == 1);
                 this.response.appendBoolean(row.inRoom()); //IN ROOM
                 this.response.appendString(row.getOnline() == 1 ? row.getLook() : "");
-                this.response.appendInt(0);
+                this.response.appendInt(row.getCategoryId()); //Friends category
                 this.response.appendString(row.getMotto());
-                this.response.appendString("");
-                this.response.appendString("");
+                this.response.appendString(""); //Last seen as DATETIMESTRING
+                this.response.appendString(""); //Realname or Facebookame as String
                 this.response.appendBoolean(false); //Offline messaging.
                 this.response.appendBoolean(false);
                 this.response.appendBoolean(false);
