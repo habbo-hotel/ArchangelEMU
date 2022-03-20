@@ -6,6 +6,9 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionRoomAds;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import gnu.trove.map.hash.THashMap;
+
+import java.util.Map;
 
 public class AdvertisingSaveEvent extends MessageHandler {
     @Override
@@ -26,6 +29,7 @@ public class AdvertisingSaveEvent extends MessageHandler {
             return;
         }
         if (item instanceof InteractionCustomValues) {
+            THashMap<String, String> oldValues = new THashMap<>(((InteractionCustomValues) item).values);
             int count = this.packet.readInt();
             for (int i = 0; i < count / 2; i++) {
                 String key = this.packet.readString();
@@ -42,7 +46,7 @@ public class AdvertisingSaveEvent extends MessageHandler {
             item.needsUpdate(true);
             Emulator.getThreading().run(item);
             room.updateItem(item);
-            ((InteractionCustomValues) item).onCustomValuesSaved(room, this.client);
+            ((InteractionCustomValues) item).onCustomValuesSaved(room, this.client, oldValues);
         }
     }
 }
