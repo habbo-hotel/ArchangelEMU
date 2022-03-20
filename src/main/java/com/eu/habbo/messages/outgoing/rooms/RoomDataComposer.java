@@ -39,8 +39,8 @@ public class RoomDataComposer extends MessageComposer {
         this.response.appendInt(this.room.getUsersMax());
         this.response.appendString(this.room.getDescription());
         this.response.appendInt(this.room.getTradeMode());
-        this.response.appendInt(2);
         this.response.appendInt(this.room.getScore());
+        this.response.appendInt(2);//Top rated room rank
         this.response.appendInt(this.room.getCategory());
 
         if (!this.room.getTags().isEmpty()) {
