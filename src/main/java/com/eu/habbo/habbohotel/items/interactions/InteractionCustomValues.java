@@ -80,7 +80,7 @@ public abstract class InteractionCustomValues extends HabboItem {
         super.serializeExtradata(serverMessage);
     }
 
-    public void onCustomValuesSaved(Room room, GameClient client) {
+    public void onCustomValuesSaved(Room room, GameClient client, THashMap<String, String> oldValues) {
 
     }
 }
