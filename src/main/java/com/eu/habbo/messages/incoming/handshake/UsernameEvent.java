@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.handshake;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
+import com.eu.habbo.habbohotel.campaign.calendar.CalendarCampaign;
 import com.eu.habbo.habbohotel.catalog.TargetOffer;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.TargetedOfferComposer;
@@ -11,9 +12,14 @@ import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 public class UsernameEvent extends MessageHandler {
     @Override
@@ -24,7 +30,7 @@ public class UsernameEvent extends MessageHandler {
             calendar = true;
         } else {
 
-            long daysBetween = ChronoUnit.DAYS.between(new Date((long) this.client.getHabbo().getHabboInfo().getLastOnline() * 1000L).toInstant(), new Date().toInstant());
+            long daysBetween = DAYS.between(new Date((long) this.client.getHabbo().getHabboInfo().getLastOnline() * 1000L).toInstant(), new Date().toInstant());
 
 
             Date lastLogin = new Date(this.client.getHabbo().getHabboInfo().getLastOnline());
@@ -84,8 +90,14 @@ public class UsernameEvent extends MessageHandler {
         }
 
         if (Emulator.getConfig().getBoolean("hotel.calendar.enabled")) {
-            this.client.sendResponse(new AdventCalendarDataComposer("xmas15", Emulator.getGameEnvironment().getCatalogManager().calendarRewards.size(), (int) Math.floor((Emulator.getIntUnixTimestamp() - Emulator.getConfig().getInt("hotel.calendar.starttimestamp")) / 86400), this.client.getHabbo().getHabboStats().calendarRewardsClaimed, true));
-            this.client.sendResponse(new NuxAlertComposer("openView/calendar"));
+            CalendarCampaign campaign = Emulator.getGameEnvironment().getCalendarManager().getCalendarCampaign(Emulator.getConfig().getValue("hotel.calendar.default"));
+            if(campaign != null){
+                    long daysBetween = DAYS.between(campaign.getStartTimestamp().toInstant(), new Date().toInstant());
+                    if(daysBetween >= 0) {
+                        this.client.sendResponse(new AdventCalendarDataComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), (int) daysBetween, this.client.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()));
+                        this.client.sendResponse(new NuxAlertComposer("openView/calendar"));
+                    }
+            };
         }
 
         if (TargetOffer.ACTIVE_TARGET_OFFER_ID > 0) {
