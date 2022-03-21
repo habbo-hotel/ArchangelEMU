@@ -68,7 +68,7 @@ public class CalendarManager {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO calendar_campaigns ( name, image, start_timestamp, total_days, lock_expired) VALUES (?, ?, ?, ? , ?)", Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, campaign.getName());
             statement.setString(2, campaign.getImage());
-            statement.setTimestamp(3, campaign.getStartTimestamp());
+            statement.setInt(3, campaign.getStartTimestamp());
             statement.setInt(4, campaign.getTotalDays());
             statement.setBoolean(5, campaign.getLockExpired());
             int affectedRows = statement.executeUpdate();
@@ -124,7 +124,7 @@ public class CalendarManager {
             int random = rewards.get(rand);
             CalendarRewardObject object = campaign.getRewards().get(random);
             if (object == null) return;
-                int daysBetween = (int) DAYS.between(campaign.getStartTimestamp().toInstant(), new Date().toInstant());
+                int daysBetween = (int) DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
             if(daysBetween >= 0 && daysBetween <= campaign.getTotalDays()) {
                 int diff = (daysBetween - day);
                 if ((((diff <= 2 || !campaign.getLockExpired()) && diff >= 0) || (force && habbo.hasPermission("acc_calendar_force")))) {
@@ -141,7 +141,7 @@ public class CalendarManager {
                         statement.setInt(2, campaign.getId());
                         statement.setInt(3, day);
                         statement.setInt(4, object.getId());
-                        statement.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+                        statement.setInt(5, Emulator.getIntUnixTimestamp());
                         statement.execute();
                     } catch (SQLException e) {
                         LOGGER.error("Caught SQL exception", e);

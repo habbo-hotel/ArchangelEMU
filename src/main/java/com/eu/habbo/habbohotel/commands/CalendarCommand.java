@@ -27,7 +27,7 @@ public class CalendarCommand extends Command {
             }
             CalendarCampaign campaign = Emulator.getGameEnvironment().getCalendarManager().getCalendarCampaign(campaignName);
             if(campaign == null) return false;
-                int daysBetween = (int) DAYS.between(campaign.getStartTimestamp().toInstant(), new Date().toInstant());
+                int daysBetween = (int) DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
             if(daysBetween >= 0) {
                 gameClient.sendResponse(new AdventCalendarDataComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), daysBetween, gameClient.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()));
             }

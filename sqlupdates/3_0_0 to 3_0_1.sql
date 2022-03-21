@@ -22,45 +22,52 @@ CREATE TABLE `messenger_categories` (
 -- Set an ID (int) from category list items
 ALTER TABLE messenger_friendships ADD category int NOT NULL DEFAULT '0' AFTER friends_since;
 
+
 -- ----------------------------
 -- Table structure for calendar_campaigns
 -- ----------------------------
 DROP TABLE IF EXISTS `calendar_campaigns`;
 CREATE TABLE `calendar_campaigns` (
-    `id` int NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL DEFAULT '',
-    `image` varchar(255) NOT NULL DEFAULT '',
-    `start_timestamp` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `total_days` int NOT NULL DEFAULT '30',
-    `lock_expired` enum('1','0') NOT NULL DEFAULT '1',
-    `enabled` enum('1','0') NOT NULL DEFAULT '1',
-     UNIQUE KEY `id` (`id`)
+                                      `id` int NOT NULL AUTO_INCREMENT,
+                                      `name` varchar(255) NOT NULL DEFAULT '',
+                                      `image` varchar(255) NOT NULL DEFAULT '',
+                                      `start_timestamp` int NOT NULL DEFAULT '0',
+                                      `total_days` int NOT NULL DEFAULT '30',
+                                      `lock_expired` enum('1','0') NOT NULL DEFAULT '1',
+                                      `enabled` enum('1','0') NOT NULL DEFAULT '1',
+                                      UNIQUE KEY `id` (`id`)
 );
-
--- ----------------------------
--- Records of calendar_campaigns
--- ----------------------------
-INSERT INTO `calendar_campaigns` VALUES ('1', 'test', '', '2022-02-09 16:49:13', '31', '1', '1');
 
 -- ----------------------------
 -- Table structure for calendar_rewards
 -- ----------------------------
 DROP TABLE IF EXISTS `calendar_rewards`;
 CREATE TABLE `calendar_rewards` (
-     `id` int NOT NULL AUTO_INCREMENT,
-     `campaign_id` int NOT NULL DEFAULT '0',
-     `product_name` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
-     `custom_image` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
-     `credits` int NOT NULL DEFAULT '0',
-     `pixels` int NOT NULL DEFAULT '0',
-     `points` int NOT NULL DEFAULT '0',
-     `points_type` int NOT NULL DEFAULT '0',
-     `badge` varchar(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
-     `item_id` int NOT NULL DEFAULT '0',
-     `subscription_type` enum('HABBO_CLUB') CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
-     `subscription_type` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT '',
-     `subscription_days` int NOT NULL DEFAULT '0',
-     PRIMARY KEY (`id`) USING BTREE
+                                    `id` int NOT NULL AUTO_INCREMENT,
+                                    `campaign_id` int NOT NULL DEFAULT '0',
+                                    `product_name` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
+                                    `custom_image` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
+                                    `credits` int NOT NULL DEFAULT '0',
+                                    `pixels` int NOT NULL DEFAULT '0',
+                                    `points` int NOT NULL DEFAULT '0',
+                                    `points_type` int NOT NULL DEFAULT '0',
+                                    `badge` varchar(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT '',
+                                    `item_id` int NOT NULL DEFAULT '0',
+                                    `subscription_type` varchar(128) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT '',
+                                    `subscription_days` int NOT NULL DEFAULT '0',
+                                    PRIMARY KEY (`id`) USING BTREE
+);
+
+-- ----------------------------
+-- Table structure for calendar_rewards_claimed
+-- ----------------------------
+DROP TABLE IF EXISTS `calendar_rewards_claimed`;
+CREATE TABLE `calendar_rewards_claimed` (
+                                            `user_id` int NOT NULL,
+                                            `campaign_id` int NOT NULL DEFAULT '0',
+                                            `day` int NOT NULL,
+                                            `reward_id` int NOT NULL,
+                                            `timestamp` int NOT NULL
 );
 
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.calendar.default', 'test');

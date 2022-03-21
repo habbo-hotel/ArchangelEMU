@@ -88,11 +88,10 @@ public class UsernameEvent extends MessageHandler {
                 deleteStatement.execute();
             }
         }
-
         if (Emulator.getConfig().getBoolean("hotel.calendar.enabled")) {
             CalendarCampaign campaign = Emulator.getGameEnvironment().getCalendarManager().getCalendarCampaign(Emulator.getConfig().getValue("hotel.calendar.default"));
             if(campaign != null){
-                    long daysBetween = DAYS.between(campaign.getStartTimestamp().toInstant(), new Date().toInstant());
+                    long daysBetween = DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
                     if(daysBetween >= 0) {
                         this.client.sendResponse(new AdventCalendarDataComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), (int) daysBetween, this.client.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()));
                         this.client.sendResponse(new NuxAlertComposer("openView/calendar"));
