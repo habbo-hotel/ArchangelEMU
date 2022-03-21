@@ -2407,6 +2407,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionMuteArea) {
                 this.roomSpecialTypes.addUndefined(item);
+            } else if (item instanceof InteractionBuildArea) {
+                this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionTagPole) {
                 this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionTagField) {
@@ -4484,6 +4486,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 } else {
                     return FurnitureMovementError.NONE;
                 }
+            }
+        }
+
+        for (HabboItem area : this.getRoomSpecialTypes().getItemsOfType(InteractionBuildArea.class)) {
+            if (((InteractionBuildArea) area).inSquare(tile) && ((InteractionBuildArea) area).isBuilder(habbo.getHabboInfo().getUsername())) {
+                    return FurnitureMovementError.NONE;
             }
         }
 
