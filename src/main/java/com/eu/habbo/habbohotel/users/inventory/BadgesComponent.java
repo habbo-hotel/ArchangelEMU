@@ -160,7 +160,8 @@ public class BadgesComponent {
 
     public void addBadge(HabboBadge badge) {
         synchronized (this.badges) {
-            this.badges.add(badge);
+            if (!this.hasBadge(badge.getCode()))
+                this.badges.add(badge);
         }
     }
 
