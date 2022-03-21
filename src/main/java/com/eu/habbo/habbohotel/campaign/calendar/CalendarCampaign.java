@@ -12,7 +12,7 @@ public class CalendarCampaign {
     private final String name;
     private final String image;
     private Map<Integer , CalendarRewardObject> rewards = new THashMap<>();
-    private final Timestamp start_timestamp;
+    private final Integer start_timestamp;
     private final int total_days;
     private final boolean lock_expired;
 
@@ -20,12 +20,12 @@ public class CalendarCampaign {
         this.id = set.getInt("id");
         this.name = set.getString("name");
         this.image = set.getString("image");
-        this.start_timestamp = set.getTimestamp("start_timestamp");
+        this.start_timestamp = set.getInt("start_timestamp");
         this.total_days = set.getInt("total_days");
         this.lock_expired = set.getInt("lock_expired") == 1;
     }
 
-    public CalendarCampaign(int id, String name, String image, Timestamp start_timestamp, int total_days, boolean lock_expired) {
+    public CalendarCampaign(int id, String name, String image, Integer start_timestamp, int total_days, boolean lock_expired) {
         this.id = id;
         this.name = name;
         this.image = image;
@@ -46,7 +46,7 @@ public class CalendarCampaign {
         return this.image;
     }
 
-    public Timestamp getStartTimestamp() {
+    public Integer getStartTimestamp() {
         return this.start_timestamp;
     }
 
