@@ -17,20 +17,23 @@ public class RequestInventoryItemsEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         int totalItems = this.client.getHabbo().getInventory().getItemsComponent().getItems().size();
-        int pages = (int) Math.ceil((double) totalItems / 1000.0);
+        int totalFragments = (int) Math.ceil((double) totalItems / 1000.0);
 
-        if (pages == 0) {
-            pages = 1;
+        if (totalFragments == 0) {
+            totalFragments = 1;
         }
 
         synchronized (this.client.getHabbo().getInventory().getItemsComponent().getItems()) {
             TIntObjectMap<HabboItem> items = new TIntObjectHashMap<>();
             TIntObjectIterator<HabboItem> iterator = this.client.getHabbo().getInventory().getItemsComponent().getItems().iterator();
+
             int count = 0;
-            int page = 0;
+            int fragmentNumber = 0;
+
             for (int i = this.client.getHabbo().getInventory().getItemsComponent().getItems().size(); i-- > 0; ) {
+
                 if (count == 0) {
-                    page++;
+                    fragmentNumber++;
                 }
 
                 try {
@@ -43,13 +46,13 @@ public class RequestInventoryItemsEvent extends MessageHandler {
                 }
 
                 if (count == 1000) {
-                    this.client.sendResponse(new InventoryItemsComposer(page, pages, items));
+                    this.client.sendResponse(new InventoryItemsComposer(fragmentNumber, totalFragments, items));
                     count = 0;
                     items.clear();
                 }
             }
 
-            this.client.sendResponse(new InventoryItemsComposer(page, pages, items));
+            if(count > 0 && items.size() > 0) this.client.sendResponse(new InventoryItemsComposer(fragmentNumber, totalFragments, items));
         }
     }
 }
