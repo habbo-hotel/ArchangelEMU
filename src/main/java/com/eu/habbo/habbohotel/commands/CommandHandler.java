@@ -275,6 +275,7 @@ public class CommandHandler {
         addCommand(new UnmuteCommand());
         addCommand(new UpdateAchievements());
         addCommand(new UpdateBotsCommand());
+        addCommand(new UpdateCalendarCommand());
         addCommand(new UpdateCatalogCommand());
         addCommand(new UpdateConfigCommand());
         addCommand(new UpdateGuildPartsCommand());

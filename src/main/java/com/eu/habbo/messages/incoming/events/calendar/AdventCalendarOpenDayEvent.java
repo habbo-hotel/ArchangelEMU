@@ -6,9 +6,9 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 public class AdventCalendarOpenDayEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        String campaign = this.packet.readString();
+        String campaignName = this.packet.readString();
         int day = this.packet.readInt();
 
-        Emulator.getGameEnvironment().getCatalogManager().claimCalendarReward(this.client.getHabbo(), day, false);
+        Emulator.getGameEnvironment().getCalendarManager().claimCalendarReward(this.client.getHabbo(), campaignName, day, false);
     }
 }
