@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemStateComposer;
 import com.eu.habbo.util.pathfinding.Rotation;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -151,7 +152,44 @@ public class InteractionFootball extends InteractionPushable {
     public boolean validMove(Room room, RoomTile from, RoomTile to) {
         if (to == null || to.state == RoomTileState.INVALID) return false;
         HabboItem topItem = room.getTopItemAt(to.x, to.y, this);
-        return (topItem == null || topItem.getBaseItem().allowStack());
+
+        // Move is valid if there isnt any furni yet
+        if (topItem == null) {
+            return true;
+        }
+
+        // If any furni on tile is not stackable, move is invalid (tested on 22-03-2022)
+        if (room.getItemsAt(to).stream().anyMatch(x -> !x.getBaseItem().allowStack())) {
+            return false;
+        }
+
+        // Ball can only go up by 1.65 according to Habbo (tested using stack tile on 22-03-2022)
+        BigDecimal topItemHeight = BigDecimal.valueOf(topItem.getZ() + topItem.getBaseItem().getHeight());
+        BigDecimal ballHeight = BigDecimal.valueOf(this.getZ());
+
+        if (topItemHeight.subtract(ballHeight).compareTo(new BigDecimal(1.65)) > 0) {
+            return false;
+        }
+
+        // If top item is a football goal, the move is only valid if ball is coming from the front side
+        // Ball shouldn't come from the back or from the sides (tested on 22-03-2022)
+        if (topItem instanceof InteractionFootballGoal) {
+            int ballDirection = Rotation.Calculate(from.x, from.y, to.x, to.y);
+            int goalRotation = topItem.getRotation();
+
+            switch (goalRotation) {
+                case 0:
+                    return ballDirection > 2 && ballDirection < 6;
+                case 2:
+                    return ballDirection > 4;
+                case 4:
+                    return ballDirection > 6 || ballDirection < 2;
+                case 6:
+                    return ballDirection > 0 && ballDirection < 4;
+            }
+        }
+
+        return topItem.getBaseItem().allowStack();
     }
 
     //Events
