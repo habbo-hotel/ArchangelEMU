@@ -80,3 +80,6 @@ ALTER TABLE `permissions` ADD COLUMN `acc_calendar_force` enum('0','1') NULL DEF
 ALTER TABLE `permissions` ADD `cmd_update_calendar` ENUM('0', '1') NOT NULL DEFAULT '0';
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.description.cmd_update_calendar', ':update_calendar'), ('commands.keys.cmd_update_calendar', 'update_calendar');
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.success.cmd_update_calendar', 'Calendar updated successfully!');
+
+-- add moodlight configuration
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('moodlight.color_check.enabled', '1');
