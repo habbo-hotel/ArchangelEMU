@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -36,21 +37,20 @@ public class SummonCommand extends Command {
                 return true;
             }
 
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.generic.cmd_summon.summoning").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+            Room room = habbo.getHabboInfo().getCurrentRoom();
+            if (room != null) {
+                Emulator.getGameEnvironment().getRoomManager().logExit(habbo);
 
-            Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, habbo.getHabboInfo().getCurrentRoom());
+                room.removeHabbo(habbo, true);
+
+                habbo.getHabboInfo().setCurrentRoom(null);
+            }
+
+            Emulator.getGameEnvironment().getRoomManager().enterRoom(habbo, gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), "", true);
 
             habbo.getClient().sendResponse(new ForwardToRoomComposer(gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId()));
-            Emulator.getGameEnvironment().getRoomManager().enterRoom(habbo, gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), "", true);
-            habbo.getClient().sendResponse(new HideDoorbellComposer(""));
 
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_summon.summoned").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
-
-            RoomTile t = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(gameClient.getHabbo().getRoomUnit().getCurrentLocation(), gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue());
-
-            if (t != null && gameClient.getHabbo().getHabboInfo().getCurrentRoom().tileWalkable(t)) {
-                habbo.getRoomUnit().setGoalLocation(t);
-            }
 
             habbo.alert(Emulator.getTexts().getValue("commands.generic.cmd_summon.been_summoned").replace("%user%", gameClient.getHabbo().getHabboInfo().getUsername()));
 
