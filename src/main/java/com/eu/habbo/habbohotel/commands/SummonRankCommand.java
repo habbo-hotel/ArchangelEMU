@@ -20,7 +20,7 @@ public class SummonRankCommand extends Command {
 
         if (params.length >= 2) {
             try {
-                minRank = Integer.valueOf(params[1]);
+                minRank = Integer.parseInt(params[1]);
             } catch (Exception e) {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.generic.cmd_summonrank.error"), RoomChatMessageBubbles.ALERT);
                 return true;
