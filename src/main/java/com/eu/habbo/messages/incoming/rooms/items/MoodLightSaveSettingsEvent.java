@@ -30,7 +30,7 @@ public class MoodLightSaveSettingsEvent extends MessageHandler {
         int brightness = this.packet.readInt();
         boolean apply = this.packet.readBoolean();
 
-        if (!MOODLIGHT_AVAILABLE_COLORS.contains(color)) {
+        if (Emulator.getConfig().getBoolean("moodlight.color_check.enabled", true) && !MOODLIGHT_AVAILABLE_COLORS.contains(color)) {
             ScripterManager.scripterDetected(this.client, "User tried to set a moodlight to a non-whitelisted color: " + color);
             return;
         }

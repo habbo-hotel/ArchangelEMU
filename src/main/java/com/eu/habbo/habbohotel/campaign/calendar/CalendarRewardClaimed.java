@@ -16,7 +16,7 @@ public class CalendarRewardClaimed {
         this.campaign = set.getInt("campaign_id");
         this.day = set.getInt("day");
         this.reward_id = set.getInt("reward_id");
-        this.timestamp = set.getTimestamp("timestamp");
+        this.timestamp = new Timestamp(set.getInt("timestamp") * 1000L);
     }
 
     public CalendarRewardClaimed(int user_id, int campaign, int day, int reward_id, Timestamp timestamp) {
