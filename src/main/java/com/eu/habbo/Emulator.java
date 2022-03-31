@@ -119,8 +119,7 @@ public final class Emulator {
             LOGGER.info("This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
             LOGGER.info("Version: {}", version);
             LOGGER.info("Build: {}", build);
-            LOGGER.info("Remember to sign up your hotel to join our toplist beta at https://bit.ly/2NN0rxq");
-            LOGGER.info("Join our discord at https://discord.gg/syuqgN");
+            LOGGER.info("Follow our development at https://git.krews.org/morningstar/Arcturus-Community");
 
             long startTime = System.nanoTime();
 
