@@ -52,6 +52,7 @@ public class PetManager {
             this.put(15, new ActionFollowLeft());
             this.put(16, new ActionFollowRight());
             this.put(17, new ActionPlayFootball());
+            this.put(21, new ActionDance());
             this.put(24, new ActionMoveForward());
             this.put(25, new ActionTurnLeft());
             this.put(26, new ActionTurnRight());
@@ -59,9 +60,11 @@ public class PetManager {
             this.put(28, new ActionCroak());
             this.put(29, new ActionDip());
             this.put(30, new ActionWave());
+            this.put(31, new ActionDance());
             this.put(35, new ActionWings());
             this.put(36, new ActionBreatheFire());
             this.put(38, new ActionTorch());
+            this.put(42, new ActionRingOfFire());
             this.put(43, new ActionEat());
             this.put(46, new ActionBreed());
 
