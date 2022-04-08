@@ -11,6 +11,8 @@ INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('youtube.apikey', '');
 
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.gifts.length.max', '300');
 
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.trophies.length.max', '300');
+
 -- Add friendship categories table
 CREATE TABLE `messenger_categories` (
     `id` int NOT NULL AUTO_INCREMENT,
