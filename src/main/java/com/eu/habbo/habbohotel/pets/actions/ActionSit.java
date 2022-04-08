@@ -15,7 +15,6 @@ public class ActionSit extends PetAction {
         this.statusToRemove.add(RoomUnitStatus.MOVE);
         this.statusToRemove.add(RoomUnitStatus.LAY);
         this.statusToRemove.add(RoomUnitStatus.DEAD);
-        this.statusToRemove.add(RoomUnitStatus.LAY);
     }
 
     @Override
