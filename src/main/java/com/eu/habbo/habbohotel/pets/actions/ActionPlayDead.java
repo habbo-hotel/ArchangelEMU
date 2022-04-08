@@ -12,7 +12,6 @@ public class ActionPlayDead extends PetAction {
         super(PetTasks.PLAY_DEAD, true);
         this.statusToRemove.add(RoomUnitStatus.MOVE);
         this.statusToRemove.add(RoomUnitStatus.LAY);
-        this.statusToRemove.add(RoomUnitStatus.DEAD);
     }
 
     @Override
