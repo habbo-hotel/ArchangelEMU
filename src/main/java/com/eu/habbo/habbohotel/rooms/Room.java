@@ -475,7 +475,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         b.setRoomUnit(new RoomUnit());
                         b.getRoomUnit().setPathFinderRoom(this);
                         b.getRoomUnit().setLocation(this.layout.getTile((short) set.getInt("x"), (short) set.getInt("y")));
-                        if (b.getRoomUnit().getCurrentLocation() == null) {
+                        if (b.getRoomUnit().getCurrentLocation() == null || b.getRoomUnit().getCurrentLocation().state == RoomTileState.INVALID) {
+                            b.getRoomUnit().setZ(this.getLayout().getDoorTile().getStackHeight());
                             b.getRoomUnit().setLocation(this.getLayout().getDoorTile());
                             b.getRoomUnit().setRotation(RoomUserRotation.fromValue(this.getLayout().getDoorDirection()));
                         } else {
@@ -510,7 +511,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         pet.setRoomUnit(new RoomUnit());
                         pet.getRoomUnit().setPathFinderRoom(this);
                         pet.getRoomUnit().setLocation(this.layout.getTile((short) set.getInt("x"), (short) set.getInt("y")));
-                        if (pet.getRoomUnit().getCurrentLocation() == null) {
+                        if (pet.getRoomUnit().getCurrentLocation() == null || pet.getRoomUnit().getCurrentLocation().state == RoomTileState.INVALID) {
+                            pet.getRoomUnit().setZ(this.getLayout().getDoorTile().getStackHeight());
                             pet.getRoomUnit().setLocation(this.getLayout().getDoorTile());
                             pet.getRoomUnit().setRotation(RoomUserRotation.fromValue(this.getLayout().getDoorDirection()));
                         } else {
