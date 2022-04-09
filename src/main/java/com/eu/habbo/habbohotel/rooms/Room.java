@@ -20,10 +20,7 @@ import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.Interaction
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeExitTile;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetBreedingNest;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
+import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.permissions.Permission;
@@ -2393,6 +2390,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.roomSpecialTypes.addPetDrink((InteractionPetDrink) item);
             } else if (item instanceof InteractionPetFood) {
                 this.roomSpecialTypes.addPetFood((InteractionPetFood) item);
+            } else if (item instanceof InteractionPetTree) {
+                this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionMoodLight) {
                 this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionPyramid) {
@@ -2923,6 +2922,27 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return false;
     }
 
+    public THashSet<Pet> getPetsAt(RoomTile tile) {
+        THashSet<Pet> pets = new THashSet<>();
+        synchronized (this.currentPets) {
+            TIntObjectIterator<Pet> petIterator = this.currentPets.iterator();
+
+            for (int i = this.currentPets.size(); i-- > 0; ) {
+                try {
+                    petIterator.advance();
+
+                    if (petIterator.value().getRoomUnit().getCurrentLocation().equals(tile)) {
+                        pets.add(petIterator.value());
+                    }
+                } catch (Exception e) {
+                    break;
+                }
+            }
+        }
+
+        return pets;
+    }
+
     public THashSet<Bot> getBotsAt(RoomTile tile) {
         THashSet<Bot> bots = new THashSet<>();
         synchronized (this.currentBots) {
@@ -2998,6 +3018,17 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         return bots;
+    }
+
+    public THashSet<Pet> getPetsOnItem(HabboItem item) {
+        THashSet<Pet> pets = new THashSet<>();
+        for (short x = item.getX(); x < item.getX() + item.getBaseItem().getLength(); x++) {
+            for (short y = item.getY(); y < item.getY() + item.getBaseItem().getWidth(); y++) {
+                pets.addAll(this.getPetsAt(this.getLayout().getTile(x, y)));
+            }
+        }
+
+        return pets;
     }
 
     public void teleportHabboToItem(Habbo habbo, HabboItem item) {

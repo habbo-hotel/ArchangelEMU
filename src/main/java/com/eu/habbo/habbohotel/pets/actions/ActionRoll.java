@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 
-public class ActionRingOfFire extends PetAction {
-    public ActionRingOfFire() {
+public class ActionRoll extends PetAction {
+    public ActionRoll() {
         super(null, true);
     }
 
@@ -48,7 +48,7 @@ public class ActionRingOfFire extends PetAction {
                 if (goal == null || goal.state == RoomTileState.BLOCKED) {
                     goal = pet.getRoomUnit().getClosestTile(tileList);
                 }
-                pet.setTask(PetTasks.RING_OF_FIRE);
+                pet.setTask(PetTasks.ROLL);
                 if (goal.distance(pet.getRoomUnit().getCurrentLocation()) == 0) {
                     HabboItem tree = pet.getRoom().getItemsAt(goal).stream().filter(habboItem -> habboItem instanceof InteractionPetTree).findAny().orElse(null);
                     if (tree != null) {

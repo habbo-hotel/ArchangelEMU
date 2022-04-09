@@ -69,7 +69,12 @@ public enum RoomUnitStatus {
 
     SLEEP_IN("slp-in"),
     SLEEP("slp", true),
-    SLEEP_OUT("slp-out");
+    SLEEP_OUT("slp-out"),
+
+    RINGOFFIRE("rng"),
+    SWING("swg"),
+    HANG("hg"),
+    ROLL("rll");
 
     public final String key;
     public final boolean removeWhenWalking;
