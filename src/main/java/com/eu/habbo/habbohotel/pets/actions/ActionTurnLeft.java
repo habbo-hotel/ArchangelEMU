@@ -14,6 +14,7 @@ public class ActionTurnLeft extends PetAction {
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         pet.getRoomUnit().setBodyRotation(RoomUserRotation.values()[(pet.getRoomUnit().getBodyRotation().getValue() - 1 < 0 ? 7 : pet.getRoomUnit().getBodyRotation().getValue() - 1)]);
+        pet.getRoomUnit().setHeadRotation(RoomUserRotation.values()[(pet.getRoomUnit().getHeadRotation().getValue() - 1 < 0 ? 7 : pet.getRoomUnit().getHeadRotation().getValue() - 1)]);
         pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
         return true;
     }

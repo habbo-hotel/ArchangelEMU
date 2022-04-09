@@ -42,6 +42,11 @@ public enum RoomUnitStatus {
     RELAX("rlx"),
     WINGS("wng", true),
     FLAME("flm"),
+    RINGOFFIRE("rng"), // ring of fire for dragon, toy undone
+    SWING("swg"), // same as roll but less energic, related to Dragon tree toy.
+    HANG("hg"), // hang, related to Dragon tree toy. just hangs under the branch
+    ROLL("rll"), // roll, related to Dragon tree toy. rolls around the branch
+
     RIP("rip"),
     GROW("grw"),
     GROW_1("grw1"),
@@ -66,10 +71,10 @@ public enum RoomUnitStatus {
     SLEEP("slp", true),
     SLEEP_OUT("slp-out"),
 
-    RINGOFFIRE("rng"), // ring of fire for dragon, toy undone
-    SWING("swg"), // same as roll but less energic, related to Dragon tree toy.
-    HANG("hg"), // hang, related to Dragon tree toy. just hangs under the branch
-    ROLL("rll"); // roll, related to Dragon tree toy. rolls around the branch
+    RINGOFFIRE("rng"),
+    SWING("swg"),
+    HANG("hg"),
+    ROLL("rll");
 
     public final String key;
     public final boolean removeWhenWalking;
