@@ -42,17 +42,11 @@ public class InteractionPetTree extends InteractionDefault {
     }
 
     @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Pet pet = room.getPet(roomUnit);
-        return (roomUnit.getRoomUnitType() == RoomUnitType.PET && pet != null && pet.getPetData().getType() == 12);
-    }
-
-    @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
         Pet pet = room.getPet(roomUnit);
-        if (pet != null && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
+        if (pet != null && pet.getPetData().getType() == 12 && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
             RoomUnitStatus task = RoomUnitStatus.HANG;
             switch(pet.getTask()){
                 case RING_OF_FIRE: task = RoomUnitStatus.RINGOFFIRE; break;
@@ -101,6 +95,13 @@ public class InteractionPetTree extends InteractionDefault {
             pet.packetUpdate = true;
         }
     }
+
+    @Override
+    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
+        Pet pet = room.getPet(roomUnit);
+        return roomUnit.getRoomUnitType() == RoomUnitType.PET && pet != null;
+    }
+
     @Override
     public boolean allowWiredResetState() {
         return false;
