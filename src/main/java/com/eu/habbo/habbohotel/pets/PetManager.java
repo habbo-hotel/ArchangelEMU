@@ -61,7 +61,11 @@ public class PetManager {
             this.put(30, new ActionWave());
             this.put(35, new ActionWings());
             this.put(36, new ActionBreatheFire());
+            this.put(37, new ActionHang());
             this.put(38, new ActionTorch());
+            this.put(40, new ActionSwing());
+            this.put(41, new ActionRoll());
+            this.put(42, new ActionRingOfFire());
             this.put(43, new ActionEat());
             this.put(46, new ActionBreed());
 
