@@ -2542,6 +2542,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     this.roomSpecialTypes.removePetDrink((InteractionPetDrink) item);
                 } else if (item instanceof InteractionPetFood) {
                     this.roomSpecialTypes.removePetFood((InteractionPetFood) item);
+                } else if (item instanceof InteractionPetTree) {
+                    this.roomSpecialTypes.removeUndefined(item);
                 } else if (item instanceof InteractionMoodLight) {
                     this.roomSpecialTypes.removeUndefined(item);
                 } else if (item instanceof InteractionPyramid) {
@@ -2578,6 +2580,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     this.roomSpecialTypes.removeUndefined(item);
                 } else if (item instanceof InteractionSnowboardSlope) {
                     this.roomSpecialTypes.removeUndefined(item);
+                } else if (item instanceof InteractionBuildArea) {
+                        this.roomSpecialTypes.removeUndefined(item);
                 }
             }
         }
