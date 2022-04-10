@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.pets.actions;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetTree;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetAction;
@@ -7,6 +8,7 @@ import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.PetVocalsType;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 
@@ -36,7 +38,7 @@ public class ActionRoll extends PetAction {
             ArrayList<RoomTile> tileList = new ArrayList<>();
 
             for (HabboItem petTree : petTrees) {
-                if (petTree == null || petTree.getRoomId() != pet.getRoom().getId()) continue;
+                if (petTree == null || !pet.getPetData().haveToyItem(petTree.getBaseItem())) continue;
                 tileList.addAll(petTree.getOccupyingTiles(pet.getRoom().getLayout()));
             }
 
@@ -62,6 +64,17 @@ public class ActionRoll extends PetAction {
                 } else pet.getRoomUnit().setGoalLocation(goal);
                 return true;
             } else {
+                if (pet.getPetData().getToyItems().stream().noneMatch(item -> item.getInteractionType().getType() == InteractionPetTree.class)) {
+                    pet.getRoomUnit().setCanWalk(false);
+                    pet.getRoomUnit().setStatus(RoomUnitStatus.ROLL, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+
+                    Emulator.getThreading().run(() -> {
+                        pet.getRoomUnit().setCanWalk(true);
+                        pet.clearPosture();
+                    }, 4000);
+                    return true;
+                }
+                
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
                 return false;
             }
