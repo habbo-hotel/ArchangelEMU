@@ -180,6 +180,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("handitem_tile", InteractionHanditemTile.class));
         this.interactionsList.add(new ItemInteraction("effect_giver", InteractionEffectGiver.class));
         this.interactionsList.add(new ItemInteraction("effect_vendingmachine", InteractionEffectVendingMachine.class));
+        this.interactionsList.add(new ItemInteraction("effect_vendingmachine_no_sides", InteractionEffectVendingMachineNoSides.class));
         this.interactionsList.add(new ItemInteraction("crackable_monster", InteractionMonsterCrackable.class));
         this.interactionsList.add(new ItemInteraction("snowboard_slope", InteractionSnowboardSlope.class));
         this.interactionsList.add(new ItemInteraction("pressureplate_group", InteractionGroupPressurePlate.class));
