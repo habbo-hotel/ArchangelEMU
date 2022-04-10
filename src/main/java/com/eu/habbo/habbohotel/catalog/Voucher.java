@@ -38,7 +38,8 @@ public class Voucher {
     }
 
     private void loadHistory() {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM voucher_history")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM voucher_history WHERE voucher_id = ?")) {
+            statement.setInt(1, this.id);
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     this.history.add(new VoucherHistoryEntry(set));
