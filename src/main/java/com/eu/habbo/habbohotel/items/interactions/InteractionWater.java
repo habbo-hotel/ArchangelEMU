@@ -48,16 +48,19 @@ public class InteractionWater extends InteractionDefault {
         for (Habbo habbo : room.getHabbosOnItem(this)) {
             try {
                 this.onWalkOff(habbo.getRoomUnit(), room, empty);
-            } catch (Exception e) {
-
-            }
+            } catch (Exception ignored) {}
         }
 
         for (Bot bot : room.getBotsOnItem(this)) {
             try {
                 this.onWalkOff(bot.getRoomUnit(), room, empty);
-            } catch (Exception e) {
-            }
+            } catch (Exception ignored) {}
+        }
+
+        for (Pet pet : room.getPetsOnItem(this)) {
+            try {
+                this.onWalkOff(pet.getRoomUnit(), room, empty);
+            } catch (Exception ignored) {}
         }
     }
 
@@ -78,7 +81,9 @@ public class InteractionWater extends InteractionDefault {
             return;
 
         if (!pet.getRoomUnit().hasStatus(RoomUnitStatus.SWIM) && pet.getPetData().canSwim) {
-            pet.getRoomUnit().setStatus(RoomUnitStatus.SWIM, "");
+            pet.getRoomUnit().clearStatus();
+            pet.getRoomUnit().setStatus(RoomUnitStatus.SWIM, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+            pet.packetUpdate = true;
         }
     }
 
@@ -91,7 +96,9 @@ public class InteractionWater extends InteractionDefault {
         if(pet == null)
             return;
 
+        pet.getRoomUnit().clearStatus();
         pet.getRoomUnit().removeStatus(RoomUnitStatus.SWIM);
+        pet.packetUpdate = true;
     }
 
     @Override

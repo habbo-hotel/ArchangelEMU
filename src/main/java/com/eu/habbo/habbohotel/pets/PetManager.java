@@ -3,10 +3,7 @@ package com.eu.habbo.habbohotel.pets;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetToy;
+import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.pets.actions.*;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
@@ -66,7 +63,10 @@ public class PetManager {
             this.put(31, new ActionDance());
             this.put(35, new ActionWings());
             this.put(36, new ActionBreatheFire());
+            this.put(37, new ActionHang());
             this.put(38, new ActionTorch());
+            this.put(40, new ActionSwing());
+            this.put(41, new ActionRoll());
             this.put(42, new ActionRingOfFire());
             this.put(43, new ActionEat());
             this.put(44, new ActionWagTail());
@@ -208,7 +208,7 @@ public class PetManager {
                             PetData.generalFoodItems.add(baseItem);
                         else if (baseItem.getInteractionType().getType() == InteractionPetDrink.class)
                             PetData.generalDrinkItems.add(baseItem);
-                        else if (baseItem.getInteractionType().getType() == InteractionPetToy.class)
+                        else if (baseItem.getInteractionType().getType() == InteractionPetToy.class || baseItem.getInteractionType().getType() == InteractionPetTree.class)
                             PetData.generalToyItems.add(baseItem);
                     } else {
                         PetData data = this.getPetData(set.getInt("pet_id"));
@@ -220,7 +220,7 @@ public class PetManager {
                                 data.addFoodItem(baseItem);
                             else if (baseItem.getInteractionType().getType() == InteractionPetDrink.class)
                                 data.addDrinkItem(baseItem);
-                            else if (baseItem.getInteractionType().getType() == InteractionPetToy.class)
+                            else if (baseItem.getInteractionType().getType() == InteractionPetToy.class || baseItem.getInteractionType().getType() == InteractionPetTree.class)
                                 data.addToyItem(baseItem);
                         }
                     }
