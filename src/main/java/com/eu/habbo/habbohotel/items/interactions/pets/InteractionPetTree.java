@@ -46,14 +46,13 @@ public class InteractionPetTree extends InteractionDefault {
         super.onWalkOn(roomUnit, room, objects);
 
         Pet pet = room.getPet(roomUnit);
-        if (pet != null && pet.getPetData().getType() == 12 && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
+        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
             RoomUnitStatus task = RoomUnitStatus.HANG;
             switch(pet.getTask()){
                 case RING_OF_FIRE: task = RoomUnitStatus.RINGOFFIRE; break;
                 case SWING: task = RoomUnitStatus.SWING; break;
                 case ROLL: task = RoomUnitStatus.ROLL; break;
             }
-
             if (pet.getEnergy() >= 35 && task != RoomUnitStatus.HANG) {
 
                  pet.getRoomUnit().setCanWalk(false);
@@ -99,7 +98,7 @@ public class InteractionPetTree extends InteractionDefault {
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         Pet pet = room.getPet(roomUnit);
-        return roomUnit.getRoomUnitType() == RoomUnitType.PET && pet != null;
+        return roomUnit.getRoomUnitType() == RoomUnitType.PET && pet != null && pet.getPetData().haveToyItem(this.getBaseItem());
     }
 
     @Override
