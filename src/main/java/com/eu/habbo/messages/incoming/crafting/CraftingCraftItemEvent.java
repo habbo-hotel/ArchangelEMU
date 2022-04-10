@@ -54,17 +54,16 @@ public class CraftingCraftItemEvent extends MessageHandler {
 
                 if (!recipe.getAchievement().isEmpty()) {
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement(recipe.getAchievement()));
+
                 }
 
                 this.client.sendResponse(new CraftingResultComposer(recipe));
                 this.client.getHabbo().getInventory().getItemsComponent().addItem(rewardItem);
                 this.client.sendResponse(new AddHabboItemComposer(rewardItem));
-                toRemove.forEachValue(new TObjectProcedure<HabboItem>() {
-                    @Override
-                    public boolean execute(HabboItem object) {
-                        CraftingCraftItemEvent.this.client.sendResponse(new RemoveHabboItemComposer(object.getGiftAdjustedId()));
-                        return true;
-                    }
+                AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Atcg"));
+                toRemove.forEachValue(object -> {
+                    CraftingCraftItemEvent.this.client.sendResponse(new RemoveHabboItemComposer(object.getGiftAdjustedId()));
+                    return true;
                 });
                 this.client.sendResponse(new InventoryRefreshComposer());
 
