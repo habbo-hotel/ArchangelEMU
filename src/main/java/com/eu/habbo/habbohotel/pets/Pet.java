@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetTree;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -18,9 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 public class Pet implements ISerialize, Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(Pet.class);
@@ -481,16 +480,41 @@ public class Pet implements ISerialize, Runnable {
     }
 
 
-    public void findToy() {
+    public boolean findToy() {
         HabboItem item = this.petData.randomToyItem(this.room.getRoomSpecialTypes().getPetToys());
         {
             if (item != null) {
                 this.roomUnit.setCanWalk(true);
+                if (this.getRoomUnit().getCurrentLocation().distance(this.room.getLayout().getTile(item.getX(), item.getY())) == 0) {
+                    try {
+                        item.onWalkOn(this.getRoomUnit(), this.getRoom(), null);
+                    } catch (Exception ignored) {}
+                    return true;
+                }
                 this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
+                return true;
             }
         }
+        return false;
     }
 
+    public boolean findTree(PetTasks task) {
+        HabboItem item = this.petData.randomTreeItem(this.room.getRoomSpecialTypes().getItemsOfType(InteractionPetTree.class));
+
+            if (item != null) {
+                this.roomUnit.setCanWalk(true);
+                this.setTask(task);
+                if (this.getRoomUnit().getCurrentLocation().distance(this.room.getLayout().getTile(item.getX(), item.getY())) == 0) {
+                       try {
+                            item.onWalkOn(this.getRoomUnit(), this.getRoom(), null);
+                        } catch (Exception ignored) {}
+                       return true;
+                }
+                this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
+                return true;
+            }
+        return false;
+    }
 
     public void randomHappyAction() {
         if (this.petData.actionsHappy.length > 0) {

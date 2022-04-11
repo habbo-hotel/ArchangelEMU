@@ -2,10 +2,7 @@ package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetToy;
+import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -233,6 +230,22 @@ public class PetData implements Comparable<PetData> {
         return null;
     }
 
+    public HabboItem randomTreeItem(THashSet<HabboItem> trees) {
+        List<HabboItem> treeList = new ArrayList<>();
+
+        for (HabboItem tree : trees) {
+            if (this.haveToyItem(tree)) {
+                treeList.add(tree);
+            }
+        }
+
+        if (!treeList.isEmpty()) {
+            Collections.shuffle(treeList);
+            return treeList.get(0);
+        }
+
+        return null;
+    }
 
     public PetVocal randomVocal(PetVocalsType type) {
         //TODO: Remove this useless copying.

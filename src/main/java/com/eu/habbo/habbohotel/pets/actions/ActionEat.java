@@ -20,7 +20,7 @@ public class ActionEat extends PetAction {
         //Eat
         if (pet.getLevelHunger() > 40) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.HUNGRY));
-            Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.EAT, null, false), 500);
+            Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.EAT, null, false), this.minimumActionDuration);
             pet.eat();
 
             return true;

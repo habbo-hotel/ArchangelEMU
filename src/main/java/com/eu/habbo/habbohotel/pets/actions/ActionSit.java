@@ -15,6 +15,7 @@ public class ActionSit extends PetAction {
         this.statusToRemove.add(RoomUnitStatus.MOVE);
         this.statusToRemove.add(RoomUnitStatus.LAY);
         this.statusToRemove.add(RoomUnitStatus.DEAD);
+        this.minimumActionDuration = 4000;
     }
 
     @Override
@@ -26,7 +27,7 @@ public class ActionSit extends PetAction {
             Emulator.getThreading().run(() -> {
                 pet.getRoomUnit().cmdSit = false;
                 pet.clearPosture();
-            }, 4000);
+            }, this.minimumActionDuration);
 
             if (pet.getHappyness() > 75)
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));

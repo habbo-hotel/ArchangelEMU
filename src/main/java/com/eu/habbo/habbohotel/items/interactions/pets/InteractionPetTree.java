@@ -28,7 +28,6 @@ public class InteractionPetTree extends InteractionDefault {
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         for (Pet pet : room.getPetsAt(oldLocation)) {
             pet.getRoomUnit().clearStatus();
-            pet.getRoomUnit().setStatus(RoomUnitStatus.RELAX, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
             pet.packetUpdate = true;
         }
     }
@@ -36,7 +35,6 @@ public class InteractionPetTree extends InteractionDefault {
     public void onPickUp(Room room) {
         for (Pet pet : room.getPetsOnItem(this)) {
             pet.getRoomUnit().clearStatus();
-            pet.getRoomUnit().setStatus(RoomUnitStatus.RELAX, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
             pet.packetUpdate = true;
         }
     }
@@ -65,10 +63,10 @@ public class InteractionPetTree extends InteractionDefault {
                      pet.addHappyness(25);
                      pet.getRoomUnit().clearStatus();
                      new PetClearPosture(pet, finalTask, null, true);
-                     if (this.getRoomId() == room.getId() && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getCurrentLocation())) {
+                     if (this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getCurrentLocation())) {
                          pet.getRoomUnit().setStatus(RoomUnitStatus.HANG, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
                      } else {
-                         pet.getRoomUnit().setStatus(RoomUnitStatus.RELAX, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+                        pet.clearPosture();
                      }
                      pet.getRoomUnit().setCanWalk(true);
                      pet.packetUpdate = true;
@@ -90,7 +88,6 @@ public class InteractionPetTree extends InteractionDefault {
 
         if (pet != null) {
             pet.getRoomUnit().clearStatus();
-            pet.getRoomUnit().setStatus(RoomUnitStatus.RELAX, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
             pet.packetUpdate = true;
         }
     }

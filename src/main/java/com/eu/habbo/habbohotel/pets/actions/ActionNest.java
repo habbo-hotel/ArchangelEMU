@@ -14,7 +14,6 @@ public class ActionNest extends PetAction {
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         if (pet.getEnergy() < 65) {
             pet.findNest();
-
             if (pet.getEnergy() < 30)
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.TIRED));
 

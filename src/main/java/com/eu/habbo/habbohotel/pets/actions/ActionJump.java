@@ -20,7 +20,7 @@ public class ActionJump extends PetAction {
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         pet.clearPosture();
 
-        Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.JUMP, null, false), 2000);
+        Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.JUMP, null, false), this.minimumActionDuration);
 
         if (pet.getHappyness() > 60)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
