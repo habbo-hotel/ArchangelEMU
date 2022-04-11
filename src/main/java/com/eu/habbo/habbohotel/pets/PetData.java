@@ -230,18 +230,18 @@ public class PetData implements Comparable<PetData> {
         return null;
     }
 
-    public HabboItem randomTreeItem(THashSet<HabboItem> trees) {
-        List<HabboItem> treeList = new ArrayList<>();
+    public HabboItem randomToyHabboItem(THashSet<HabboItem> items) {
+        List<HabboItem> itemList = new ArrayList<>();
 
-        for (HabboItem tree : trees) {
-            if (this.haveToyItem(tree)) {
-                treeList.add(tree);
+        for (HabboItem item : items) {
+            if (this.haveToyItem(item)) {
+                itemList.add(item);
             }
         }
 
-        if (!treeList.isEmpty()) {
-            Collections.shuffle(treeList);
-            return treeList.get(0);
+        if (!itemList.isEmpty()) {
+            Collections.shuffle(itemList);
+            return itemList.get(0);
         }
 
         return null;

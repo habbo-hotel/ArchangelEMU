@@ -208,7 +208,7 @@ public class PetManager {
                             PetData.generalFoodItems.add(baseItem);
                         else if (baseItem.getInteractionType().getType() == InteractionPetDrink.class)
                             PetData.generalDrinkItems.add(baseItem);
-                        else if (baseItem.getInteractionType().getType() == InteractionPetToy.class || baseItem.getInteractionType().getType() == InteractionPetTree.class)
+                        else if (baseItem.getInteractionType().getType() == InteractionPetToy.class || baseItem.getInteractionType().getType() == InteractionPetTree.class || baseItem.getInteractionType().getType() == InteractionPetTrampoline.class)
                             PetData.generalToyItems.add(baseItem);
                     } else {
                         PetData data = this.getPetData(set.getInt("pet_id"));
@@ -220,7 +220,7 @@ public class PetManager {
                                 data.addFoodItem(baseItem);
                             else if (baseItem.getInteractionType().getType() == InteractionPetDrink.class)
                                 data.addDrinkItem(baseItem);
-                            else if (baseItem.getInteractionType().getType() == InteractionPetToy.class || baseItem.getInteractionType().getType() == InteractionPetTree.class)
+                            else if (baseItem.getInteractionType().getType() == InteractionPetToy.class || baseItem.getInteractionType().getType() == InteractionPetTree.class || baseItem.getInteractionType().getType() == InteractionPetTrampoline.class)
                                 data.addToyItem(baseItem);
                         }
                     }

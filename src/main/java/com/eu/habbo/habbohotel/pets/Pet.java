@@ -389,9 +389,7 @@ public class Pet implements ISerialize, Runnable {
             keys.put(RoomUnitStatus.GESTURE, this.roomUnit.getStatus(RoomUnitStatus.GESTURE));
 
         if (this.task == null) {
-            boolean isDead = false;
-            if (this.roomUnit.hasStatus(RoomUnitStatus.RIP))
-                isDead = true;
+            boolean isDead = this.roomUnit.hasStatus(RoomUnitStatus.RIP);
 
             this.roomUnit.clearStatus();
 
@@ -505,8 +503,8 @@ public class Pet implements ISerialize, Runnable {
         return false;
     }
 
-    public boolean findTree(PetTasks task) {
-        HabboItem item = this.petData.randomTreeItem(this.room.getRoomSpecialTypes().getItemsOfType(InteractionPetTree.class));
+    public boolean findPetItem(PetTasks task, Class<? extends HabboItem> type) {
+        HabboItem item = this.petData.randomToyHabboItem(this.room.getRoomSpecialTypes().getItemsOfType(type));
 
             if (item != null) {
                 this.roomUnit.setCanWalk(true);

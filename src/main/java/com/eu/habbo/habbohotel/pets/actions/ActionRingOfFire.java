@@ -18,7 +18,7 @@ public class ActionRingOfFire extends PetAction {
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
 
-        boolean findTree = pet.findTree(PetTasks.RING_OF_FIRE);
+        boolean findTree = pet.findPetItem(PetTasks.RING_OF_FIRE, InteractionPetTree.class);
         if (!findTree && pet.getPetData().getToyItems().stream().noneMatch(item -> item.getInteractionType().getType() == InteractionPetTree.class)) {
             pet.getRoomUnit().setCanWalk(false);
             pet.getRoomUnit().setStatus(RoomUnitStatus.RINGOFFIRE, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
