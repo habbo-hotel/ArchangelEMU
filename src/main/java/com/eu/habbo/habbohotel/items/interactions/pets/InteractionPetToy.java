@@ -28,6 +28,9 @@ public class InteractionPetToy extends InteractionDefault {
     public void onClick(GameClient client, Room room, Object[] objects) {}
     @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
+        this.setExtradata("0");
+        room.updateItem(this);
+
         for (Pet pet : room.getPetsAt(oldLocation)) {
             pet.getRoomUnit().clearStatus();
             pet.packetUpdate = true;
@@ -35,6 +38,8 @@ public class InteractionPetToy extends InteractionDefault {
     }
     @Override
     public void onPickUp(Room room) {
+        this.setExtradata("0");
+
         for (Pet pet : room.getPetsOnItem(this)) {
             pet.getRoomUnit().clearStatus();
             pet.packetUpdate = true;
@@ -79,6 +84,8 @@ public class InteractionPetToy extends InteractionDefault {
         Pet pet = room.getPet(roomUnit);
 
         if (pet != null) {
+            this.setExtradata("0");
+            room.updateItem(this);
             pet.getRoomUnit().clearStatus();
             pet.packetUpdate = true;
         }
