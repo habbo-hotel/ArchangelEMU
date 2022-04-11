@@ -46,7 +46,7 @@ public class NavigatorManager {
             synchronized (this.publicCategories) {
                 this.publicCategories.clear();
 
-                try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM navigator_publiccats WHERE visible = '1'")) {
+                try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM navigator_publiccats WHERE visible = '1' ORDER BY order_num DESC")) {
                     while (set.next()) {
                         this.publicCategories.put(set.getInt("id"), new NavigatorPublicCategory(set));
                     }
@@ -80,7 +80,7 @@ public class NavigatorManager {
                         Class clazz = Room.class;
 
                         if (set.getString("field").contains(".")) {
-                            for (String s : (set.getString("field")).split(".")) {
+                            for (String s : (set.getString("field")).split("\\.")) {
                                 try {
                                     field = clazz.getDeclaredMethod(s);
                                     clazz = field.getReturnType();

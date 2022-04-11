@@ -3,11 +3,22 @@ package com.eu.habbo.messages.incoming.friends;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.friends.FriendRequestErrorComposer;
-import com.eu.habbo.plugin.PluginManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static com.eu.habbo.habbohotel.users.HabboManager.getOfflineHabboInfo;
 
 public class AcceptFriendRequestEvent extends MessageHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AcceptFriendRequestEvent.class);
+
     @Override
     public void handle() throws Exception {
         int count = this.packet.readInt();
@@ -25,6 +36,28 @@ public class AcceptFriendRequestEvent extends MessageHandler {
             }
 
             Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
+
+            if(target == null) {
+                HabboInfo habboInfo = getOfflineHabboInfo(userId);
+
+                if(habboInfo == null) {
+                    this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_FOUND));
+                    this.client.getHabbo().getMessenger().deleteFriendRequests(userId, this.client.getHabbo().getHabboInfo().getId());
+                    continue;
+                }
+
+                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.*, users_settings.block_friendrequests FROM users INNER JOIN users_settings ON users.id = users_settings.user_id WHERE username = ? LIMIT 1")) {
+                    statement.setString(1, habboInfo.getUsername());
+                    try (ResultSet set = statement.executeQuery()) {
+                        while (set.next()) {
+                            target = new Habbo(set);
+                        }
+                    }
+                } catch (SQLException e) {
+                    LOGGER.error("Caught SQL exception", e);
+                    return;
+                }
+            }
 
             if(target == null) {
                 this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_FOUND));

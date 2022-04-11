@@ -43,6 +43,7 @@ public class EmptyInventoryCommand extends Command {
 
                 habbo.getClient().sendResponse(new InventoryRefreshComposer());
                 habbo.getClient().sendResponse(new InventoryItemsComposer(0, 1, gameClient.getHabbo().getInventory().getItemsComponent().getItems()));
+                
 
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_empty.cleared").replace("%username%", habbo.getHabboInfo().getUsername()), RoomChatMessageBubbles.ALERT);
             } else {

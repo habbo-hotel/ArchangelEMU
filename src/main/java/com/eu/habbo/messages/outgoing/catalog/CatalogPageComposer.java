@@ -20,11 +20,13 @@ import java.util.Map;
 public class CatalogPageComposer extends MessageComposer {
     private final CatalogPage page;
     private final Habbo habbo;
+    private final int offerId;
     private final String mode;
 
-    public CatalogPageComposer(CatalogPage page, Habbo habbo, String mode) {
+    public CatalogPageComposer(CatalogPage page, Habbo habbo, int offerId, String mode) {
         this.page = page;
         this.habbo = habbo;
+        this.offerId = offerId;
         this.mode = mode;
     }
 
@@ -49,7 +51,7 @@ public class CatalogPageComposer extends MessageComposer {
                 item.serialize(this.response);
             }
         }
-        this.response.appendInt(0);
+        this.response.appendInt(this.offerId);
         this.response.appendBoolean(false); //acceptSeasonCurrencyAsCredits
 
         if (this.page instanceof FrontPageFeaturedLayout || this.page instanceof FrontpageLayout) {

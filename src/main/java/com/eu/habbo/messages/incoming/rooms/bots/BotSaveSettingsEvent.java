@@ -152,7 +152,11 @@ public class BotSaveSettingsEvent extends MessageHandler {
                     }
                     break;
                 case 9:
-                    bot.setMotto(this.packet.readString());
+                    String motto = this.packet.readString();
+
+                    if(motto.length() > Emulator.getConfig().getInt("motto.max_length", 38)) break;
+
+                    bot.setMotto(motto);
                     bot.needsUpdate(true);
                     room.sendComposer(new RoomUsersComposer(bot).compose());
                     break;

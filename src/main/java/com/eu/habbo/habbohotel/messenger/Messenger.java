@@ -65,6 +65,11 @@ public class Messenger {
         return users;
     }
 
+    /**
+     * @deprecated
+     * This method is no longer used and is only kept to avoid breaking any plugins
+     */
+    @Deprecated
     public static boolean canFriendRequest(Habbo habbo, String friend) {
         Habbo user = Emulator.getGameEnvironment().getHabboManager().getHabbo(friend);
         HabboInfo habboInfo;
@@ -297,7 +302,7 @@ public class Messenger {
                             buddy.setLook(owner.getHabboInfo().getLook());
                             buddy.setGender(owner.getHabboInfo().getGender());
                             buddy.setUsername(owner.getHabboInfo().getUsername());
-                            habbo.getClient().sendResponse(new UpdateFriendComposer(buddy));
+                            habbo.getClient().sendResponse(new UpdateFriendComposer(habbo, buddy, 0));
                         }
                     }
                 }
@@ -363,12 +368,12 @@ public class Messenger {
                     return;
                 }
 
-                habboTo.getClient().sendResponse(new UpdateFriendComposer(to));
-                habboFrom.getClient().sendResponse(new UpdateFriendComposer(from));
+                habboTo.getClient().sendResponse(new UpdateFriendComposer(habboTo, to, 1));
+                habboFrom.getClient().sendResponse(new UpdateFriendComposer(habboFrom, from, 1));
             } else if (habboTo != null) {
-                habboTo.getClient().sendResponse(new UpdateFriendComposer(this.loadFriend(habboTo, userFrom)));
+                habboTo.getClient().sendResponse(new UpdateFriendComposer(habboTo, this.loadFriend(habboTo, userFrom), 1));
             } else if (habboFrom != null) {
-                habboFrom.getClient().sendResponse(new UpdateFriendComposer(this.loadFriend(habboFrom, userTo)));
+                habboFrom.getClient().sendResponse(new UpdateFriendComposer(habboFrom, this.loadFriend(habboFrom, userTo), 1));
             }
         }
     }

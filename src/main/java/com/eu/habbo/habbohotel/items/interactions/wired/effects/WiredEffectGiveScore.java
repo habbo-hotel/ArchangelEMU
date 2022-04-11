@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
+import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -52,15 +53,19 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
             if (game == null)
                 return false;
 
-            TObjectIntIterator<Map.Entry<Integer, Integer>> iterator = this.data.iterator();
+            int gameStartTime = game.getStartTime();
 
-            for (int i = this.data.size(); i-- > 0; ) {
+            TObjectIntMap<Map.Entry<Integer, Integer>> dataClone = new TObjectIntHashMap<>(this.data);
+
+            TObjectIntIterator<Map.Entry<Integer, Integer>> iterator = dataClone.iterator();
+
+            for (int i = dataClone.size(); i-- > 0; ) {
                 iterator.advance();
 
                 Map.Entry<Integer, Integer> map = iterator.key();
 
                 if (map.getValue() == habbo.getHabboInfo().getId()) {
-                    if (map.getKey() == game.getStartTime()) {
+                    if (map.getKey() == gameStartTime) {
                         if (iterator.value() < this.count) {
                             iterator.setValue(iterator.value() + 1);
 
@@ -74,7 +79,13 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
                 }
             }
 
-            this.data.put(new AbstractMap.SimpleEntry<>(game.getStartTime(), habbo.getHabboInfo().getId()), 1);
+            try {
+                this.data.put(new AbstractMap.SimpleEntry<>(gameStartTime, habbo.getHabboInfo().getId()), 1);
+            }
+            catch(IllegalArgumentException e) {
+
+            }
+
 
             if (habbo.getHabboInfo().getGamePlayer() != null) {
                 habbo.getHabboInfo().getGamePlayer().addScore(this.score, true);
@@ -162,23 +173,20 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(ClientMessage packet, GameClient gameClient) throws WiredSaveException {
-        packet.readInt();
+    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
+        if(settings.getIntParams().length < 2) throw new WiredSaveException("Invalid data");
 
-        int score = packet.readInt();
+        int score = settings.getIntParams()[0];
 
         if(score < 1 || score > 100)
             throw new WiredSaveException("Score is invalid");
 
-        int timesPerGame = packet.readInt();
+        int timesPerGame = settings.getIntParams()[1];
 
         if(timesPerGame < 1 || timesPerGame > 10)
             throw new WiredSaveException("Times per game is invalid");
 
-        packet.readString();
-        packet.readInt();
-
-        int delay = packet.readInt();
+        int delay = settings.getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");

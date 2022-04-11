@@ -17,11 +17,6 @@ public class GuildChangeSettingsEvent extends MessageHandler {
 
         if (guild != null) {
             if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)) {
-                Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
-
-                if (room == null)
-                    return;
-
                 GuildChangedSettingsEvent settingsEvent = new GuildChangedSettingsEvent(guild, this.packet.readInt(), this.packet.readInt() == 0);
                 Emulator.getPluginManager().fireEvent(settingsEvent);
 
@@ -31,7 +26,10 @@ public class GuildChangeSettingsEvent extends MessageHandler {
                 guild.setState(GuildState.valueOf(settingsEvent.state));
                 guild.setRights(settingsEvent.rights);
 
-                room.refreshGuild(guild);
+                Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
+                if(room != null) {
+                    room.refreshGuild(guild);
+                }
 
                 guild.needsUpdate = true;
 

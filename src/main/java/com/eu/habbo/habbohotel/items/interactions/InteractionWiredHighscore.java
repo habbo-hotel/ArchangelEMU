@@ -110,15 +110,23 @@ public class InteractionWiredHighscore extends HabboItem {
         serverMessage.appendInt(this.clearType.type);
 
         if (this.data != null) {
-            serverMessage.appendInt(this.data.size());
+            int size = this.data.size();
+            if(size > 50) {
+                size = 50;
+            }
+            serverMessage.appendInt(size);
 
+            int count = 0;
             for (WiredHighscoreRow row : this.data) {
-                serverMessage.appendInt(row.getValue());
+                if(count < 50) {
+                    serverMessage.appendInt(row.getValue());
 
-                serverMessage.appendInt(row.getUsers().size());
-                for (String username : row.getUsers()) {
-                    serverMessage.appendString(username);
+                    serverMessage.appendInt(row.getUsers().size());
+                    for (String username : row.getUsers()) {
+                        serverMessage.appendString(username);
+                    }
                 }
+                count++;
             }
         } else {
             serverMessage.appendInt(0);

@@ -161,6 +161,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("viking_cotie", InteractionVikingCotie.class));
         this.interactionsList.add(new ItemInteraction("tile_fxprovider_nfs", InteractionTileEffectProvider.class));
         this.interactionsList.add(new ItemInteraction("mutearea", InteractionMuteArea.class));
+        this.interactionsList.add(new ItemInteraction("buildarea", InteractionBuildArea.class));
         this.interactionsList.add(new ItemInteraction("information_terminal", InteractionInformationTerminal.class));
         this.interactionsList.add(new ItemInteraction("external_image", InteractionExternalImage.class));
         this.interactionsList.add(new ItemInteraction("youtube", InteractionYoutubeTV.class));
@@ -179,6 +180,7 @@ public class ItemManager {
         this.interactionsList.add(new ItemInteraction("handitem_tile", InteractionHanditemTile.class));
         this.interactionsList.add(new ItemInteraction("effect_giver", InteractionEffectGiver.class));
         this.interactionsList.add(new ItemInteraction("effect_vendingmachine", InteractionEffectVendingMachine.class));
+        this.interactionsList.add(new ItemInteraction("effect_vendingmachine_no_sides", InteractionEffectVendingMachineNoSides.class));
         this.interactionsList.add(new ItemInteraction("crackable_monster", InteractionMonsterCrackable.class));
         this.interactionsList.add(new ItemInteraction("snowboard_slope", InteractionSnowboardSlope.class));
         this.interactionsList.add(new ItemInteraction("pressureplate_group", InteractionGroupPressurePlate.class));

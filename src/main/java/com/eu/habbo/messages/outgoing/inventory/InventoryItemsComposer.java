@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
 public class InventoryItemsComposer extends MessageComposer implements TIntObjectProcedure<HabboItem> {
     private static final Logger LOGGER = LoggerFactory.getLogger(InventoryItemsComposer.class);
 
-    private final int page;
-    private final int out;
+    private final int fragmentNumber;
+    private final int totalFragments;
     private final TIntObjectMap<HabboItem> items;
 
-    public InventoryItemsComposer(int page, int out, TIntObjectMap<HabboItem> items) {
-        this.page = page;
-        this.out = out;
+    public InventoryItemsComposer(int fragmentNumber, int totalFragments, TIntObjectMap<HabboItem> items) {
+        this.fragmentNumber = fragmentNumber;
+        this.totalFragments = totalFragments;
         this.items = items;
     }
 
@@ -28,8 +28,8 @@ public class InventoryItemsComposer extends MessageComposer implements TIntObjec
     protected ServerMessage composeInternal() {
         try {
             this.response.init(Outgoing.InventoryItemsComposer);
-            this.response.appendInt(this.out);
-            this.response.appendInt(this.page - 1);
+            this.response.appendInt(this.totalFragments);
+            this.response.appendInt(this.fragmentNumber - 1);
             this.response.appendInt(this.items.size());
 
             this.items.forEachEntry(this);

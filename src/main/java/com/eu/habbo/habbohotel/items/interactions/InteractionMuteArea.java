@@ -17,7 +17,6 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.THashSet;
 
-import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -125,8 +124,8 @@ public class InteractionMuteArea extends InteractionCustomValues {
     }
 
     @Override
-    public void onCustomValuesSaved(Room room, GameClient client) {
-        super.onCustomValuesSaved(room, client);
+    public void onCustomValuesSaved(Room room, GameClient client, THashMap<String, String> oldValues) {
+        super.onCustomValuesSaved(room, client, oldValues);
 
         this.regenAffectedTiles(room);
 

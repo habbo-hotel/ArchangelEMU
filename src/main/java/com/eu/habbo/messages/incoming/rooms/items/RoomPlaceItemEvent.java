@@ -2,10 +2,8 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.interactions.*;
-import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.modtool.ScripterManager;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
@@ -19,7 +17,7 @@ public class RoomPlaceItemEvent extends MessageHandler {
 
         int itemId = -1;
 
-        if (values.length != 0) itemId = Integer.valueOf(values[0]);
+        if (values.length != 0) itemId = Integer.parseInt(values[0]);
 
         if (!this.client.getHabbo().getRoomUnit().isInRoom()) {
             this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.NO_RIGHTS.errorCode));
@@ -55,10 +53,28 @@ public class RoomPlaceItemEvent extends MessageHandler {
         }
 
         if (item.getBaseItem().getType() == FurnitureType.FLOOR) {
-            short x = Short.valueOf(values[1]);
-            short y = Short.valueOf(values[2]);
-            int rotation = Integer.valueOf(values[3]);
-            if (rentSpace != null && !room.hasRights(this.client.getHabbo())) {
+            short x = Short.parseShort(values[1]);
+            short y = Short.parseShort(values[2]);
+            int rotation = Integer.parseInt(values[3]);
+
+            RoomTile tile = room.getLayout().getTile(x, y);
+
+            if(tile == null)
+            {
+                String userName  = this.client.getHabbo().getHabboInfo().getUsername();
+                int roomId = room.getId();
+                ScripterManager.scripterDetected(this.client, "User [" + userName + "] tried to place a furni with itemId [" + itemId + "] at a tile which is not existing in room [" + roomId + "], tile: [" + x + "," + y + "]");
+                return;
+            }
+
+            HabboItem buildArea = null;
+            for (HabboItem area : room.getRoomSpecialTypes().getItemsOfType(InteractionBuildArea.class)) {
+                if (((InteractionBuildArea) area).inSquare(tile)) {
+                    buildArea = area;
+                }
+            }
+
+            if ((rentSpace != null || buildArea != null) && !room.hasRights(this.client.getHabbo())) {
                 if (item instanceof InteractionRoller ||
                         item instanceof InteractionStackHelper ||
                         item instanceof InteractionWired ||
@@ -70,14 +86,11 @@ public class RoomPlaceItemEvent extends MessageHandler {
                     this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.NO_RIGHTS.errorCode));
                     return;
                 }
-
-                if (!RoomLayout.squareInSquare(RoomLayout.getRectangle(rentSpace.getX(), rentSpace.getY(), rentSpace.getBaseItem().getWidth(), rentSpace.getBaseItem().getLength(), rentSpace.getRotation()), RoomLayout.getRectangle(x, y, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))) {
+                if (rentSpace != null && !RoomLayout.squareInSquare(RoomLayout.getRectangle(rentSpace.getX(), rentSpace.getY(), rentSpace.getBaseItem().getWidth(), rentSpace.getBaseItem().getLength(), rentSpace.getRotation()), RoomLayout.getRectangle(x, y, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))) {
                     this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.NO_RIGHTS.errorCode));
                     return;
                 }
             }
-
-            RoomTile tile = room.getLayout().getTile(x, y);
             FurnitureMovementError error = room.canPlaceFurnitureAt(item, this.client.getHabbo(), tile, rotation);
 
             if (!error.equals(FurnitureMovementError.NONE)) {

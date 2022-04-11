@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.catalog;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.campaign.calendar.CalendarRewardObject;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.guilds.Guild;
@@ -190,7 +191,6 @@ public class CatalogManager {
     public final TIntIntHashMap offerDefs;
     public final Item ecotronItem;
     public final THashMap<Integer, CatalogLimitedConfiguration> limitedNumbers;
-    public final THashMap<Integer, CalendarRewardObject> calendarRewards;
     private final List<Voucher> vouchers;
 
     public CatalogManager() {
@@ -207,7 +207,6 @@ public class CatalogManager {
         this.offerDefs = new TIntIntHashMap();
         this.vouchers = new ArrayList<>();
         this.limitedNumbers = new THashMap<>();
-        this.calendarRewards = new THashMap<>();
 
         this.initialize();
 
@@ -230,7 +229,6 @@ public class CatalogManager {
         this.loadClothing();
         this.loadRecycler();
         this.loadGiftWrappers();
-        this.loadCalendarRewards();
     }
 
     private synchronized void loadLimitedNumbers() {
@@ -482,23 +480,6 @@ public class CatalogManager {
         }
     }
 
-    private void loadCalendarRewards() {
-        synchronized (this.calendarRewards) {
-            this.calendarRewards.clear();
-
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM calendar_rewards")) {
-                try (ResultSet set = statement.executeQuery()) {
-                    while (set.next()) {
-                        this.calendarRewards.put(set.getInt("id"), new CalendarRewardObject(set));
-                    }
-                }
-            } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
-            }
-        }
-    }
-
-
     private void loadClothing() {
         synchronized (this.clothing) {
             this.clothing.clear();
@@ -523,7 +504,6 @@ public class CatalogManager {
         return null;
     }
 
-
     public Voucher getVoucher(String code) {
         synchronized (this.vouchers) {
             for (Voucher voucher : this.vouchers) {
@@ -535,22 +515,20 @@ public class CatalogManager {
         return null;
     }
 
-
     public void redeemVoucher(GameClient client, String voucherCode) {
-        Voucher voucher = Emulator.getGameEnvironment().getCatalogManager().getVoucher(voucherCode);
+        Habbo habbo = client.getHabbo();
+        if (habbo == null)
+            return;
 
+        Voucher voucher = Emulator.getGameEnvironment().getCatalogManager().getVoucher(voucherCode);
         if (voucher == null) {
             client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.INVALID_CODE));
             return;
         }
 
-        Habbo habbo = client.getHabbo();
-        if (habbo == null) return;
-
         if (voucher.isExhausted()) {
-            if (!Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher)) {
-                client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.TECHNICAL_ERROR));
-            }
+            client.sendResponse(new RedeemVoucherErrorComposer(Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher) ? RedeemVoucherErrorComposer.INVALID_CODE : RedeemVoucherErrorComposer.TECHNICAL_ERROR));
+            return;
         }
 
         if (voucher.hasUserExhausted(habbo.getHabboInfo().getId())) {
@@ -559,12 +537,6 @@ public class CatalogManager {
         }
 
         voucher.addHistoryEntry(habbo.getHabboInfo().getId());
-
-        if (voucher.isExhausted()) {
-            if (!Emulator.getGameEnvironment().getCatalogManager().deleteVoucher(voucher)) {
-                client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.TECHNICAL_ERROR));
-            }
-        }
 
         if (voucher.points > 0) {
             client.getHabbo().getHabboInfo().addCurrencyAmount(voucher.pointsType, voucher.points);
@@ -578,7 +550,6 @@ public class CatalogManager {
 
         if (voucher.catalogItemId > 0) {
             CatalogItem item = this.getCatalogItem(voucher.catalogItemId);
-
             if (item != null) {
                 this.purchaseItem(null, item, client.getHabbo(), 1, "", true);
             }
@@ -586,7 +557,6 @@ public class CatalogManager {
 
         client.sendResponse(new RedeemVoucherOKComposer());
     }
-
 
     public boolean deleteVoucher(Voucher voucher) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM vouchers WHERE code = ?")) {
@@ -1013,6 +983,10 @@ public class CatalogManager {
                                         extradata = "UMAD";
                                     }
 
+                                    if (extradata.length() > Emulator.getConfig().getInt("hotel.trophies.length.max", 300)) {
+                                        extradata = extradata.substring(0, Emulator.getConfig().getInt("hotel.trophies.length.max", 300));
+                                    }
+                                    
                                     extradata = habbo.getClient().getHabbo().getHabboInfo().getUsername() + (char) 9 + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-" + Calendar.getInstance().get(Calendar.YEAR) + (char) 9 + Emulator.getGameEnvironment().getWordFilter().filter(extradata.replace(((char) 9) + "", ""), habbo);
                                 }
 
@@ -1079,12 +1053,9 @@ public class CatalogManager {
                     }
                 }
 
-                if (badgeFound) {
+                if (badgeFound && item.getBaseItems().size() == 1) {
                     habbo.getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.ALREADY_HAVE_BADGE));
-
-                    if (item.getBaseItems().size() == 1) {
                         return;
-                    }
                 }
 
                 UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
@@ -1179,28 +1150,6 @@ public class CatalogManager {
         }
 
         return offers;
-    }
-
-    public void claimCalendarReward(Habbo habbo, int day, boolean force) {
-        if (!habbo.getHabboStats().calendarRewardsClaimed.contains(day)) {
-            CalendarRewardObject object = this.calendarRewards.get((day+1));
-            int actualDay = (int) Math.floor((Emulator.getIntUnixTimestamp() - Emulator.getConfig().getInt("hotel.calendar.starttimestamp")) / 86400);
-            int diff = (actualDay - day);
-            if (((diff <= 2 && diff >= 0) || force) && object != null) {
-                habbo.getHabboStats().calendarRewardsClaimed.add(day);
-                habbo.getClient().sendResponse(new AdventCalendarProductComposer(true, object));
-                object.give(habbo);
-
-                try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO calendar_rewards_claimed (user_id, reward_id, timestamp) VALUES (?, ?, ?)")) {
-                    statement.setInt(1, habbo.getHabboInfo().getId());
-                    statement.setInt(2, day);
-                    statement.setInt(3, Emulator.getIntUnixTimestamp());
-                    statement.execute();
-                } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
-                }
-            }
-        }
     }
 
     public TargetOffer getTargetOffer(int offerId) {

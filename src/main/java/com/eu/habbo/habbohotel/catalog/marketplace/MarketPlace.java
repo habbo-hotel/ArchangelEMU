@@ -67,7 +67,7 @@ public class MarketPlace {
         if (offer != null && habbo.getInventory().getMarketplaceItems().contains(offer)) {
             RequestOffersEvent.cachedResults.clear();
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-                try (PreparedStatement ownerCheck = connection.prepareStatement("SELECT user_id FROM marketplace_items WHERE id = ?")) {
+                try (PreparedStatement ownerCheck = connection.prepareStatement("SELECT user_id FROM marketplace_items WHERE id = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
                     ownerCheck.setInt(1, offer.getOfferId());
                     try (ResultSet ownerSet = ownerCheck.executeQuery()) {
                         ownerSet.last();
@@ -122,7 +122,7 @@ public class MarketPlace {
             query += " AND CEIL(price + (price / 100)) <= " + maxPrice;
         }
         if (search.length() > 0) {
-            query += " AND bi.public_name LIKE ? OR ci.catalog_name LIKE ?";
+            query += " AND ( bi.public_name LIKE ? OR ci.catalog_name LIKE ? ) ";
         }
 
         query += " GROUP BY base_item_id, ltd_data";
@@ -177,7 +177,7 @@ public class MarketPlace {
 
 
     public static void serializeItemInfo(int itemId, ServerMessage message) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT avg(marketplace_items.price) as price, COUNT(*) as sold, (datediff(NOW(), DATE(from_unixtime(marketplace_items.timestamp)))) as day FROM marketplace_items INNER JOIN items ON items.id = marketplace_items.item_id INNER JOIN items_base ON items.item_id = items_base.id WHERE items.limited_data = '0:0' AND marketplace_items.state = 2 AND items_base.sprite_id = ? AND DATE(from_unixtime(marketplace_items.timestamp)) >= NOW() - INTERVAL 30 DAY GROUP BY DATE(from_unixtime(marketplace_items.timestamp))")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT avg(marketplace_items.price) as price, COUNT(*) as sold, (datediff(NOW(), DATE(from_unixtime(marketplace_items.timestamp)))) as day FROM marketplace_items INNER JOIN items ON items.id = marketplace_items.item_id INNER JOIN items_base ON items.item_id = items_base.id WHERE items.limited_data = '0:0' AND marketplace_items.state = 2 AND items_base.sprite_id = ? AND DATE(from_unixtime(marketplace_items.timestamp)) >= NOW() - INTERVAL 30 DAY GROUP BY DATE(from_unixtime(marketplace_items.timestamp))", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             statement.setInt(1, itemId);
 
             message.appendInt(avarageLastXDays(itemId, 7));
@@ -206,7 +206,7 @@ public class MarketPlace {
 
     public static int itemsOnSale(int baseItemId) {
         int number = 0;
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) as number, AVG(price) as avg FROM marketplace_items INNER JOIN items ON marketplace_items.item_id = items.id INNER JOIN items_base ON items.item_id = items_base.id WHERE state = 1 AND timestamp >= ? AND items_base.sprite_id = ?")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) as number, AVG(price) as avg FROM marketplace_items INNER JOIN items ON marketplace_items.item_id = items.id INNER JOIN items_base ON items.item_id = items_base.id WHERE state = 1 AND timestamp >= ? AND items_base.sprite_id = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             statement.setInt(1, Emulator.getIntUnixTimestamp() - 172800);
             statement.setInt(2, baseItemId);
             try (ResultSet set = statement.executeQuery()) {
@@ -223,7 +223,7 @@ public class MarketPlace {
 
     private static int avarageLastXDays(int baseItemId, int days) {
         int avg = 0;
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT AVG(price) as avg FROM marketplace_items INNER JOIN items ON marketplace_items.item_id = items.id INNER JOIN items_base ON items.item_id = items_base.id WHERE state = 2 AND DATE(from_unixtime(timestamp)) >= NOW() - INTERVAL ? DAY AND items_base.sprite_id = ?")) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT AVG(price) as avg FROM marketplace_items INNER JOIN items ON marketplace_items.item_id = items.id INNER JOIN items_base ON items.item_id = items_base.id WHERE state = 2 AND DATE(from_unixtime(timestamp)) >= NOW() - INTERVAL ? DAY AND items_base.sprite_id = ?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             statement.setInt(1, days);
             statement.setInt(2, baseItemId);
 
@@ -246,7 +246,7 @@ public class MarketPlace {
                 statement.setInt(1, offerId);
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
-                        try (PreparedStatement itemStatement = connection.prepareStatement("SELECT * FROM items WHERE id = ? LIMIT 1")) {
+                        try (PreparedStatement itemStatement = connection.prepareStatement("SELECT * FROM items WHERE id = ? LIMIT 1", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
                             itemStatement.setInt(1, set.getInt("item_id"));
                             try (ResultSet itemSet = itemStatement.executeQuery()) {
                                 itemSet.first();
@@ -315,7 +315,7 @@ public class MarketPlace {
                 "FROM items_base\n" +
                 "WHERE items_base.id = ? LIMIT 1)\n" +
                 "ORDER BY price ASC\n" +
-                "LIMIT 1")) {
+                "LIMIT 1", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             statement.setInt(1, baseItemId);
             try (ResultSet countSet = statement.executeQuery()) {
                 countSet.last();

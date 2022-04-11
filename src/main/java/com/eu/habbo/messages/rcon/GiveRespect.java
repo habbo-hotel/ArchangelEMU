@@ -2,6 +2,7 @@ package com.eu.habbo.messages.rcon;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.messages.outgoing.users.UserDataComposer;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class GiveRespect extends RCONMessage<GiveRespect.JSONGiveRespect> {
             habbo.getHabboStats().respectPointsReceived += object.respect_received;
             habbo.getHabboStats().respectPointsGiven += object.respect_given;
             habbo.getHabboStats().respectPointsToGive += object.daily_respects;
+            habbo.getClient().sendResponse(new UserDataComposer(habbo));
         } else {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET respects_given = respects_give + ?, respects_received = respects_received + ?, daily_respect_points = daily_respect_points + ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, object.respect_received);

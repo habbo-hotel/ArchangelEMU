@@ -55,16 +55,18 @@ public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON> {
         } else {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
                 for (String badgeCode : json.badge.split(";")) {
-                    boolean found;
+                    int numberOfRows = 0;
                     try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(slot_id) FROM users_badges INNER JOIN users ON users.id = user_id WHERE users.id = ? AND badge_code = ? LIMIT 1")) {
                         statement.setInt(1, json.user_id);
                         statement.setString(2, badgeCode);
                         try (ResultSet set = statement.executeQuery()) {
-                            found = set.next();
+                            if (set.next()){
+                                numberOfRows = set.getInt(1);
+                            }
                         }
                     }
 
-                    if (found) {
+                    if (numberOfRows != 0) {
                         this.status = RCONMessage.STATUS_ERROR;
                         this.message += Emulator.getTexts().getValue("commands.error.cmd_badge.already_owns").replace("%user%", username).replace("%badge%", badgeCode) + "\r";
                     } else {
