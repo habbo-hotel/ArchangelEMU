@@ -460,12 +460,19 @@ public class Pet implements ISerialize, Runnable {
     }
 
 
-    public void drink() {
+    public boolean drink() {
         HabboItem item = this.petData.randomDrinkItem(this.room.getRoomSpecialTypes().getPetDrinks());
         if (item != null) {
             this.roomUnit.setCanWalk(true);
-            this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
+            if (this.getRoomUnit().getCurrentLocation().distance(this.room.getLayout().getTile(item.getX(), item.getY())) == 0) {
+                try {
+                    item.onWalkOn(this.getRoomUnit(), this.getRoom(), null);
+                } catch (Exception ignored) {}
+            } else {
+                this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
+            }
         }
+        return item != null;
     }
 
 
