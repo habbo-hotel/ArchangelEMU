@@ -8,12 +8,16 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.threading.runnables.PetClearPosture;
+import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InteractionPetDrink extends InteractionDefault {
     private static final Logger LOGGER = LoggerFactory.getLogger(InteractionPetDrink.class);
@@ -28,8 +32,34 @@ public class InteractionPetDrink extends InteractionDefault {
     }
 
     @Override
+    public boolean canToggle(Habbo habbo, Room room) {
+        return RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getX(), this.getY()), habbo.getRoomUnit().getCurrentLocation());
+    }
+
+    @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        this.change(room, 1);
+        if (client == null)
+            return;
+
+        if (!this.canToggle(client.getHabbo(), room)) {
+            RoomTile closestTile = null;
+            for (RoomTile tile : room.getLayout().getTilesAround(room.getLayout().getTile(this.getX(), this.getY()))) {
+                if (tile.isWalkable() && (closestTile == null || closestTile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()) > tile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()))) {
+                    closestTile = tile;
+                }
+            }
+
+            if (closestTile != null && !closestTile.equals(client.getHabbo().getRoomUnit().getCurrentLocation())) {
+                List<Runnable> onSuccess = new ArrayList<>();
+                onSuccess.add(() -> {
+                    this.change(room, this.getBaseItem().getStateCount() - 1);
+                });
+
+                client.getHabbo().getRoomUnit().setGoalLocation(closestTile);
+                Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), closestTile, room, onSuccess, new ArrayList<>()));
+            }
+        }
+
     }
 
     @Override
