@@ -2,9 +2,7 @@ package com.eu.habbo.messages.incoming.floorplaneditor;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.rooms.CustomRoomLayout;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -12,6 +10,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
+import gnu.trove.set.hash.THashSet;
 
 import java.util.*;
 
@@ -85,7 +84,6 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
             if (wallSize < -2 || wallSize > 1) {
                 errors.add("${notification.floorplan_editor.error.message.invalid_wall_thickness}");
             }
-
             int floorSize = this.packet.readInt();
             if (floorSize < -2 || floorSize > 1) {
                 errors.add("${notification.floorplan_editor.error.message.invalid_floor_thickness}");
@@ -99,15 +97,43 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
                 errors.add("${notification.floorplan_editor.error.message.invalid_walls_fixed_height}");
             }
 
+            THashSet<RoomTile> locked_tileList = room.getLockedTiles();
+            THashSet<RoomTile> new_tileList = new THashSet<>();
             blockingRoomItemScan:
             for (int y = 0; y < mapRows.length; y++) {
                 for (int x = 0; x < firstRowSize; x++) {
-                    if (mapRows[y].charAt(x) == "x".charAt(0) && room.getTopItemAt(x, y) != null) {
+
+                    RoomTile tile = room.getLayout().getTile((short) x, (short) y);
+                    new_tileList.add(tile);
+                    String square = String.valueOf(mapRows[y].charAt(x));
+                    short height;
+
+                    if (square.equalsIgnoreCase("x") && room.getTopItemAt(x, y) != null) {
+                        errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
+                        break blockingRoomItemScan;
+                    } else {
+                        if (square.isEmpty()) {
+                            height = 0;
+                        } else if (Emulator.isNumeric(square)) {
+                            height = Short.parseShort(square);
+                        } else {
+                            height = (short) (10 + "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(square.toUpperCase()));
+                        }
+                    }
+
+                    if (tile.state != RoomTileState.INVALID && height != tile.z && room.getTopItemAt(x, y) != null) {
                         errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
                         break blockingRoomItemScan;
                     }
                 }
             }
+
+            locked_tileList.removeAll(new_tileList);
+            if (!locked_tileList.isEmpty()) {
+                errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
+            }
+
+
 
             if (errors.length() > 0) {
                 this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
