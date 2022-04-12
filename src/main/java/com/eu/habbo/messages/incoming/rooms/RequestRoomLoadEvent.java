@@ -12,9 +12,6 @@ public class RequestRoomLoadEvent extends MessageHandler {
         String password = this.packet.readString();
 
         if (this.client.getHabbo().getHabboInfo().getLoadingRoom() == 0 && this.client.getHabbo().getHabboStats().roomEnterTimestamp + 1000 < System.currentTimeMillis()) {
-            if (this.client.getHabbo().getRoomUnit() != null && this.client.getHabbo().getRoomUnit().isTeleporting) {
-                return;
-            }
 
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
             if (room != null) {
@@ -24,6 +21,11 @@ public class RequestRoomLoadEvent extends MessageHandler {
 
                 this.client.getHabbo().getHabboInfo().setCurrentRoom(null);
             }
+
+            if (this.client.getHabbo().getRoomUnit() != null && this.client.getHabbo().getRoomUnit().isTeleporting) {
+                this.client.getHabbo().getRoomUnit().isTeleporting = false;
+            }
+
             Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), roomId, password);
         }
     }
