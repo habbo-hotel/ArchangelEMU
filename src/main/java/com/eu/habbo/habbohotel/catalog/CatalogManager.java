@@ -168,6 +168,15 @@ public class CatalogManager {
                     case builders_club_loyalty:
                         this.put(layout.name().toLowerCase(), BuildersClubLoyaltyLayout.class);
                         break;
+                    case monkey:
+                        this.put(layout.name().toLowerCase(), InfoMonkeyLayout.class);
+                        break;
+                    case niko:
+                        this.put(layout.name().toLowerCase(), InfoNikoLayout.class);
+                        break;
+                    case mad_money:
+                        this.put(layout.name().toLowerCase(), MadMoneyLayout.class);
+                        break;
                     case default_3x3:
                     default:
                         this.put("default_3x3", Default_3x3Layout.class);
