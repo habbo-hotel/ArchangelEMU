@@ -4480,6 +4480,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return FurnitureMovementError.MAX_ITEMS;
         }
 
+        if (tile == null || tile.state == RoomTileState.INVALID) {
+            return FurnitureMovementError.INVALID_MOVE;
+        }
+        
         rotation %= 8;
         if (this.hasRights(habbo) || this.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS) || habbo.hasPermission(Permission.ACC_MOVEROTATE)) {
             return FurnitureMovementError.NONE;

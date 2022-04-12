@@ -51,6 +51,10 @@ class TeleportActionThree implements Runnable {
 
         RoomTile teleportLocation = targetRoom.getLayout().getTile(targetTeleport.getX(), targetTeleport.getY());
 
+        if (teleportLocation == null) {
+            Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
+            return;
+        }
         this.client.getHabbo().getRoomUnit().setLocation(teleportLocation);
         this.client.getHabbo().getRoomUnit().getPath().clear();
         this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
