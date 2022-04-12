@@ -2390,7 +2390,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.roomSpecialTypes.addPetDrink((InteractionPetDrink) item);
             } else if (item instanceof InteractionPetFood) {
                 this.roomSpecialTypes.addPetFood((InteractionPetFood) item);
+            } else if (item instanceof InteractionPetToy) {
+                this.roomSpecialTypes.addPetToy((InteractionPetToy) item);
             } else if (item instanceof InteractionPetTree) {
+                this.roomSpecialTypes.addUndefined(item);
+            } else if (item instanceof InteractionPetTrampoline) {
                 this.roomSpecialTypes.addUndefined(item);
             } else if (item instanceof InteractionMoodLight) {
                 this.roomSpecialTypes.addUndefined(item);
@@ -2542,7 +2546,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     this.roomSpecialTypes.removePetDrink((InteractionPetDrink) item);
                 } else if (item instanceof InteractionPetFood) {
                     this.roomSpecialTypes.removePetFood((InteractionPetFood) item);
+                } else if (item instanceof InteractionPetToy) {
+                    this.roomSpecialTypes.removePetToy((InteractionPetToy) item);
                 } else if (item instanceof InteractionPetTree) {
+                    this.roomSpecialTypes.removeUndefined(item);
+                } else if (item instanceof InteractionPetTrampoline) {
                     this.roomSpecialTypes.removeUndefined(item);
                 } else if (item instanceof InteractionMoodLight) {
                     this.roomSpecialTypes.removeUndefined(item);

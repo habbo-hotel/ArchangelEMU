@@ -12,17 +12,17 @@ public class ActionDrink extends PetAction {
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        if (pet.getLevelThirst() > 40) {
-            pet.drink();
+
+            if (pet.levelThirst < 35 || !pet.drink()) {
+                pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
+                return false;
+            }
 
             if (pet.getLevelThirst() > 65)
-                pet.say(pet.getPetData().randomVocal(PetVocalsType.THIRSTY));
+                 pet.say(pet.getPetData().randomVocal(PetVocalsType.THIRSTY));
+            else pet.say(pet.getPetData().randomVocal(PetVocalsType.DRINKING));
 
             return true;
-        } else {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
-        }
 
-        return false;
     }
 }

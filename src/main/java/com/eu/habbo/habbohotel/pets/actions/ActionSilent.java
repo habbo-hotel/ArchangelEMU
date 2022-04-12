@@ -15,8 +15,8 @@ public class ActionSilent extends PetAction {
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        pet.setMuted(true);
         pet.say(pet.getPetData().randomVocal(PetVocalsType.MUTED));
+        pet.setMuted(true);
 
         return false;
     }

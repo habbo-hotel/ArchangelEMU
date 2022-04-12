@@ -1,70 +1,38 @@
 package com.eu.habbo.habbohotel.pets.actions;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetTree;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetAction;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.PetVocalsType;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
 
 public class ActionSwing extends PetAction {
     public ActionSwing() {
         super(null, true);
+        this.minimumActionDuration = 4000;
     }
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        if (pet.getHappyness() < 50) {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
-            return false;
-        } else {
 
-            Set<HabboItem> petTrees = pet.getRoom().getRoomSpecialTypes().getItemsOfType(InteractionPetTree.class);
+            boolean findTree = pet.findPetItem(PetTasks.SWING, InteractionPetTree.class);
+            if (!findTree && pet.getPetData().getToyItems().stream().noneMatch(item -> item.getInteractionType().getType() == InteractionPetTree.class)) {
+                pet.getRoomUnit().setCanWalk(false);
+                pet.getRoomUnit().setStatus(RoomUnitStatus.SWING, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
 
-            if (petTrees == null || petTrees.isEmpty()) {
+                Emulator.getThreading().run(() -> {
+                    pet.getRoomUnit().setCanWalk(true);
+                    pet.clearPosture();
+                }, minimumActionDuration);
+            } else if (!findTree) {
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
                 return false;
             }
 
-            ArrayList<RoomTile> tileList = new ArrayList<>();
-
-            for (HabboItem petTree : petTrees) {
-                if (petTree == null || petTree.getRoomId() != pet.getRoom().getId()) continue;
-                tileList.addAll(petTree.getOccupyingTiles(pet.getRoom().getLayout()));
-            }
-
-            if (!tileList.isEmpty()) {
-                Collections.shuffle(tileList);
-                RoomTile goal = tileList.get(0);
-                pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
-
-                if (goal == null || goal.state == RoomTileState.BLOCKED) {
-                    goal = pet.getRoomUnit().getClosestTile(tileList);
-                }
-                pet.setTask(PetTasks.SWING);
-                if (goal.distance(pet.getRoomUnit().getCurrentLocation()) == 0) {
-                    HabboItem tree = pet.getRoom().getItemsAt(goal).stream().filter(habboItem -> habboItem instanceof InteractionPetTree).findAny().orElse(null);
-                    if (tree != null) {
-                        try {
-                            tree.onWalkOn(pet.getRoomUnit(), pet.getRoom(), null);
-                        } catch (Exception ignored) {}
-                    } else {
-                        pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
-                        return false;
-                    }
-                } else pet.getRoomUnit().setGoalLocation(goal);
-                return true;
-            } else {
-                pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
-                return false;
-            }
-        }
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
+            return true;
     }
 }
