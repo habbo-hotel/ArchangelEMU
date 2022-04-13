@@ -148,14 +148,14 @@ public class AchievementManager {
 
             String newBadgCode = "ACH_" + achievement.name + newLevel.level;
 
-            if (habbo.getInventory().getBadgesComponent().hasBadge(newBadgCode))
-                return;
-
             if (badge != null) {
                 badge.setCode(newBadgCode);
                 badge.needsInsert(false);
                 badge.needsUpdate(true);
             } else {
+                if (habbo.getInventory().getBadgesComponent().hasBadge(newBadgCode))
+                    return;
+
                 badge = new HabboBadge(0, newBadgCode, 0, habbo);
                 habbo.getClient().sendResponse(new AddUserBadgeComposer(badge));
                 badge.needsInsert(true);
