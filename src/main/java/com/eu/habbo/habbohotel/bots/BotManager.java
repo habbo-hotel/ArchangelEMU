@@ -127,7 +127,7 @@ public class BotManager {
                 roomUnit.setRotation(RoomUserRotation.SOUTH);
                 roomUnit.setLocation(location);
 
-                double stackHeight = room.getStackHeight(location.x, location.y, false);
+                double stackHeight = location.getStackHeight();
                 roomUnit.setPreviousLocationZ(stackHeight);
                 roomUnit.setZ(stackHeight);
 
