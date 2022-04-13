@@ -85,3 +85,6 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('commands.success.cmd_upda
 
 -- add moodlight configuration
 INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('moodlight.color_check.enabled', '1');
+
+-- Mannequin name
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('hotel.mannequin.name.default', 'My look');
