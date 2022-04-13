@@ -146,12 +146,17 @@ public class AchievementManager {
                 }
             }
 
+            String newBadgCode = "ACH_" + achievement.name + newLevel.level;
+
+            if (habbo.getInventory().getBadgesComponent().hasBadge(newBadgCode))
+                return;
+
             if (badge != null) {
-                badge.setCode("ACH_" + achievement.name + newLevel.level);
+                badge.setCode(newBadgCode);
                 badge.needsInsert(false);
                 badge.needsUpdate(true);
             } else {
-                badge = new HabboBadge(0, "ACH_" + achievement.name + newLevel.level, 0, habbo);
+                badge = new HabboBadge(0, newBadgCode, 0, habbo);
                 habbo.getClient().sendResponse(new AddUserBadgeComposer(badge));
                 badge.needsInsert(true);
                 badge.needsUpdate(true);
@@ -359,6 +364,9 @@ public class AchievementManager {
                         if (level.badges != null && level.badges.length > 0) {
                             for (String badge : level.badges) {
                                 if (!badge.isEmpty()) {
+                                    if (habbo.getInventory().getBadgesComponent().hasBadge(badge))
+                                        continue;
+
                                     HabboBadge b = new HabboBadge(0, badge, 0, habbo);
                                     Emulator.getThreading().run(b);
                                     habbo.getInventory().getBadgesComponent().addBadge(b);
