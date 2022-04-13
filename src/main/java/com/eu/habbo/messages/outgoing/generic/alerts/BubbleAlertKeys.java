@@ -20,6 +20,7 @@ public enum BubbleAlertKeys {
     FORUMS_MESSAGE_HIDDEN("forums.message.hidden"),
     FORUMS_MESSAGE_RESTORED("forums.message.restored"),
     FORUMS_THREAD_HIDDEN("forums.thread.hidden"),
+    FORUMS_ACCESS_DENIED("forums.error.access_denied"),
     FORUMS_THREAD_LOCKED("forums.thread.locked"),
     FORUMS_THREAD_PINNED("forums.thread.pinned"),
     FORUMS_THREAD_RESTORED("forums.thread.restored"),

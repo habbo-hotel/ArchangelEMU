@@ -3,8 +3,8 @@ package com.eu.habbo.habbohotel.guilds.forums;
 public enum ForumThreadState {
     OPEN(0),
     CLOSED(1),
-    HIDDEN_BY_ADMIN(10),
-    HIDDEN_BY_STAFF(20);
+    HIDDEN_BY_STAFF_MEMBER(10),
+    HIDDEN_BY_GUILD_ADMIN(20);
 
     private int stateId;
 

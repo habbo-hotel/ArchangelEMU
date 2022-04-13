@@ -21,6 +21,8 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
         int guildId = packet.readInt();
         int threadId = packet.readInt();
         int state = packet.readInt();
+        // STATE 20 - HIDDEN_BY_GUILD_ADMIN = HIDDEN BY GUILD ADMINS/ HOTEL MODERATORS
+        // STATE 1 = VISIBLE THREAD
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
         ForumThread thread = ForumThread.getById(threadId);
@@ -30,29 +32,21 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
             return;
         }
 
-        boolean isStaff = this.client.getHabbo().hasPermission(Permission.ACC_MODTOOL_TICKET_Q);
-
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
+        boolean hasStaffPerms = this.client.getHabbo().hasPermission(Permission.ACC_MODTOOL_TICKET_Q); // check for if they have staff perm
+        boolean isGuildAdmin = (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN));
+
+
         if (member == null) {
             this.client.sendResponse(new ConnectionErrorComposer(401));
             return;
         }
-
-        boolean isAdmin = (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().type < GuildRank.MEMBER.type);
-
-        if (!isAdmin && !isStaff) {
+        if (!isGuildAdmin && !hasStaffPerms) {
             this.client.sendResponse(new ConnectionErrorComposer(403));
             return;
         }
 
-        if (state == ForumThreadState.HIDDEN_BY_STAFF.getStateId() && !isStaff) {
-            this.client.sendResponse(new ConnectionErrorComposer(403));
-            return;
-        }
-
-        thread.setState(ForumThreadState.fromValue(state));
-        thread.setAdminId(this.client.getHabbo().getHabboInfo().getId());
-
+        thread.setState(ForumThreadState.fromValue(state)); // sets state as defined in the packet
         thread.run();
 
         switch (state) {
