@@ -306,6 +306,9 @@ public class WiredHandler {
 
             if (rewardReceived.value.isEmpty())
                 return;
+            
+            if (habbo.getInventory().getBadgesComponent().hasBadge(rewardReceived.value))
+                return;
 
             HabboBadge badge = new HabboBadge(0, rewardReceived.value, 0, habbo);
             Emulator.getThreading().run(badge);

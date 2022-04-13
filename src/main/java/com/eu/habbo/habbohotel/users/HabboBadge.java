@@ -57,9 +57,6 @@ public class HabboBadge implements Runnable {
     public void run() {
         try {
             if (this.needsInsert) {
-                if (this.habbo.getInventory().getBadgesComponent().hasBadge(this.code))
-                    return;
-
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_badges (user_id, slot_id, badge_code) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
                     statement.setInt(1, this.habbo.getHabboInfo().getId());
                     statement.setInt(2, this.slot);

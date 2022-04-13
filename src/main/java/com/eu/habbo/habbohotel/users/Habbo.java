@@ -380,7 +380,7 @@ public class Habbo implements Runnable {
 
 
     public boolean addBadge(String code) {
-        if (this.habboInventory.getBadgesComponent().getBadge(code) == null) {
+        if (!this.habboInventory.getBadgesComponent().hasBadge(code)) {
             HabboBadge badge = BadgesComponent.createBadge(code, this);
             this.habboInventory.getBadgesComponent().addBadge(badge);
             this.client.sendResponse(new AddUserBadgeComposer(badge));
