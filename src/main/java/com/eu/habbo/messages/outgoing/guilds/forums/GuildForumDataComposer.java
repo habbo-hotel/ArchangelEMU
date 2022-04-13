@@ -153,7 +153,12 @@ public class GuildForumDataComposer extends MessageComposer {
             this.response.appendString(errorModerate);
             this.response.appendString(""); //citizen
             this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId()); //Forum Settings
-            this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId() || isStaff); //Can Mod (staff)
+            if (guild.canModForum().state == 3) {
+                this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId() || isStaff);
+            }
+            else {
+                this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId() || isStaff || isAdmin); //Can Mod (staff)
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return new ConnectionErrorComposer(500).compose();
