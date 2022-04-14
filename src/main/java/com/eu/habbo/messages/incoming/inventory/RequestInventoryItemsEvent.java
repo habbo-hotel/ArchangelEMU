@@ -17,6 +17,12 @@ public class RequestInventoryItemsEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         int totalItems = this.client.getHabbo().getInventory().getItemsComponent().getItems().size();
+
+        if (totalItems == 0) {
+                this.client.sendResponse(new InventoryItemsComposer(0, 1, new TIntObjectHashMap<>()));
+                return;
+            }
+            
         int totalFragments = (int) Math.ceil((double) totalItems / 1000.0);
 
         if (totalFragments == 0) {
@@ -25,11 +31,6 @@ public class RequestInventoryItemsEvent extends MessageHandler {
 
         synchronized (this.client.getHabbo().getInventory().getItemsComponent().getItems()) {
             TIntObjectMap<HabboItem> items = new TIntObjectHashMap<>();
-            
-            if (totalItems == 0) {
-                this.client.sendResponse(new InventoryItemsComposer(0, 1, new TIntObjectHashMap<>()));
-                return;
-            }
 
             TIntObjectIterator<HabboItem> iterator = this.client.getHabbo().getInventory().getItemsComponent().getItems().iterator();
 
