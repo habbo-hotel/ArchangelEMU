@@ -364,13 +364,12 @@ public class AchievementManager {
                         if (level.badges != null && level.badges.length > 0) {
                             for (String badge : level.badges) {
                                 if (!badge.isEmpty()) {
-                                    if (habbo.getInventory().getBadgesComponent().hasBadge(badge))
-                                        continue;
-
-                                    HabboBadge b = new HabboBadge(0, badge, 0, habbo);
-                                    Emulator.getThreading().run(b);
-                                    habbo.getInventory().getBadgesComponent().addBadge(b);
-                                    habbo.getClient().sendResponse(new AddUserBadgeComposer(b));
+                                    if (!habbo.getInventory().getBadgesComponent().hasBadge(badge)) {
+                                        HabboBadge b = new HabboBadge(0, badge, 0, habbo);
+                                        Emulator.getThreading().run(b);
+                                        habbo.getInventory().getBadgesComponent().addBadge(b);
+                                        habbo.getClient().sendResponse(new AddUserBadgeComposer(b));
+                                    }
                                 }
                             }
                         }
