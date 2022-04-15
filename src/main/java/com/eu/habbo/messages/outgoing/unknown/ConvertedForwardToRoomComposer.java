@@ -15,7 +15,7 @@ public class ConvertedForwardToRoomComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ConvertedForwardToRoomComposer);
+        this.response.init(Outgoing.ConvertedRoomIdComposer);
         this.response.appendString(this.unknownString1);
         this.response.appendInt(this.unknownInt1);
         return this.response;

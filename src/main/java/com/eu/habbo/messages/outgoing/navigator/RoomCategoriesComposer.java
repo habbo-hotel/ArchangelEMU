@@ -16,7 +16,7 @@ public class RoomCategoriesComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomCategoriesComposer);
+        this.response.init(Outgoing.UserFlatCatsComposer);
 
         this.response.appendInt(this.categories.size());
         for (RoomCategory category : this.categories) {

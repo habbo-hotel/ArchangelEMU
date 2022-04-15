@@ -13,7 +13,7 @@ public class ForwardToRoomComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ForwardToRoomComposer);
+        this.response.init(Outgoing.RoomForwardMessageComposer);
         this.response.appendInt(this.roomId);
         return this.response;
     }

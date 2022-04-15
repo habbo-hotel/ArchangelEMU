@@ -28,7 +28,7 @@ public class PetBreedingResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetBreedingResultComposer);
+        this.response.init(Outgoing.ConfirmBreedingRequestComposer);
         this.response.appendInt(this.boxId);
         this.petOne.serialize(this.response);
         this.petTwo.serialize(this.response);

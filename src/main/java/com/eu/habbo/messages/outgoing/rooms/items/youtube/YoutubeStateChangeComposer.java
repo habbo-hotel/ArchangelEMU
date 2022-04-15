@@ -15,7 +15,7 @@ public class YoutubeStateChangeComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.YoutubeMessageComposer3);
+        this.response.init(Outgoing.YoutubeControlVideoMessageComposer);
         this.response.appendInt(this.furniId);
         this.response.appendInt(this.state);
 

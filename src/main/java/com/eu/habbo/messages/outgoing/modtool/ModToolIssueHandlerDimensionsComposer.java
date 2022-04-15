@@ -19,7 +19,7 @@ public class ModToolIssueHandlerDimensionsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ModToolIssueHandlerDimensionsComposer);
+        this.response.init(Outgoing.ModeratorToolPreferencesComposer);
         this.response.appendInt(this.x);
         this.response.appendInt(this.y);
         this.response.appendInt(this.width);

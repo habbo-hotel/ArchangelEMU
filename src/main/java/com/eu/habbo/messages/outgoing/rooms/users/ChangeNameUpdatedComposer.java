@@ -14,7 +14,7 @@ public class ChangeNameUpdatedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ChangeNameUpdateComposer);
+        this.response.init(Outgoing.ChangeUserNameResultMessageEvent);
         this.response.appendInt(0);
         this.response.appendString(this.habbo.getHabboInfo().getUsername());
         this.response.appendInt(0);

@@ -18,7 +18,7 @@ public class MarketplaceItemPostedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MarketplaceItemPostedComposer);
+        this.response.init(Outgoing.MarketplaceMakeOfferResult);
         this.response.appendInt(this.code);
         return this.response;
     }

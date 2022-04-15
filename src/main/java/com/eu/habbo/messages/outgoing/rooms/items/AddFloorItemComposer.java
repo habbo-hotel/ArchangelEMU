@@ -18,7 +18,7 @@ public class AddFloorItemComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AddFloorItemComposer);
+        this.response.init(Outgoing.ObjectAddMessageComposer);
         this.item.serializeFloorData(this.response);
         this.response.appendInt(this.item instanceof InteractionGift ? ((((InteractionGift) this.item).getColorId() * 1000) + ((InteractionGift) this.item).getRibbonId()) : (this.item instanceof InteractionMusicDisc ? ((InteractionMusicDisc) this.item).getSongId() : 1));
         this.item.serializeExtradata(this.response);

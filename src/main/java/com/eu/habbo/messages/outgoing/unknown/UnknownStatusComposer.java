@@ -16,7 +16,7 @@ public class UnknownStatusComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnknownStatusComposer);
+        this.response.init(Outgoing.AccountSafetyLockStatusChangeMessageComposer);
         this.response.appendInt(this.status);
         return this.response;
     }

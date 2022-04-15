@@ -13,7 +13,7 @@ public class UnknownGuild2Composer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnknownGuild2Composer);
+        this.response.init(Outgoing.GroupDetailsChangedMessageComposer);
         this.response.appendInt(this.guildId);
         return this.response;
     }

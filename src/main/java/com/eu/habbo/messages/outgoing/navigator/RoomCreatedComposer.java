@@ -14,7 +14,7 @@ public class RoomCreatedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomCreatedComposer);
+        this.response.init(Outgoing.FlatCreatedComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendString(this.room.getName());
         return this.response;

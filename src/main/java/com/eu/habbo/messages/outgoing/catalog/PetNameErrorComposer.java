@@ -21,7 +21,7 @@ public class PetNameErrorComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetNameErrorComposer);
+        this.response.init(Outgoing.ApproveNameMessageComposer);
         this.response.appendInt(this.type);
         this.response.appendString(this.value);
         return this.response;

@@ -21,7 +21,7 @@ public class RoomUserEffectComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUserEffectComposer);
+        this.response.init(Outgoing.AvatarEffectMessageComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.effectId == -1 ? this.roomUnit.getEffectId() : this.effectId);
         this.response.appendInt(0);

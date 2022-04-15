@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class OtherTradingDisabledComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.OtherTradingDisabledComposer);
+        this.response.init(Outgoing.TradingOtherNotAllowedComposer);
         return this.response;
     }
 }

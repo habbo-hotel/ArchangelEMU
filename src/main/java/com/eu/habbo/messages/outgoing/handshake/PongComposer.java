@@ -13,7 +13,7 @@ public class PongComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PongComposer);
+        this.response.init(Outgoing.LatencyPingResponseMessageComposer);
         this.response.appendInt(this.id);
         return this.response;
     }

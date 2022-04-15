@@ -5,7 +5,6 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-import java.util.List;
 import java.util.Set;
 
 public class ItemsDataUpdateComposer extends MessageComposer {
@@ -17,7 +16,7 @@ public class ItemsDataUpdateComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ItemsDataUpdateComposer);
+        this.response.init(Outgoing.ObjectsDataUpdateMessageComposer);
         this.response.appendInt(this.items.size());
 
         for (HabboItem item : this.items) {

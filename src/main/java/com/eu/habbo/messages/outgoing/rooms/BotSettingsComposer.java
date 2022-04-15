@@ -16,7 +16,7 @@ public class BotSettingsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.BotSettingsComposer);
+        this.response.init(Outgoing.BotCommandConfigurationComposer);
         this.response.appendInt(-this.bot.getId());
         this.response.appendInt(this.settingId);
 

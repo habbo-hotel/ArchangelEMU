@@ -15,7 +15,7 @@ public class SimplePollAnswersComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.SimplePollAnswersComposer);
+        this.response.init(Outgoing.QuestionFinishedComposer);
         this.response.appendInt(-1);
         this.response.appendInt(2);
         this.response.appendString("0");

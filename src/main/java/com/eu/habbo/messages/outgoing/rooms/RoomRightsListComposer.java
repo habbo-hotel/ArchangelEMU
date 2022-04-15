@@ -17,7 +17,7 @@ public class RoomRightsListComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomRightsListComposer);
+        this.response.init(Outgoing.FlatControllersComposer);
         this.response.appendInt(this.room.getId());
 
         THashMap<Integer, String> rightsMap = this.room.getUsersWithRights();

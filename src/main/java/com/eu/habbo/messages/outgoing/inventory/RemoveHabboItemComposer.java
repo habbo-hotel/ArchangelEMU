@@ -13,7 +13,7 @@ public class RemoveHabboItemComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RemoveHabboItemComposer);
+        this.response.init(Outgoing.FurniListRemoveComposer);
         this.response.appendInt(this.itemId);
         return this.response;
     }

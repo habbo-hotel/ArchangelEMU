@@ -40,7 +40,7 @@ public class GuardianVotingRequestedComposer extends MessageComposer {
             fullMessage.append("unused;").append(mappedUsers.get(chatLog.habboId)).append(";").append(chatLog.message).append("\r");
         }
 
-        this.response.init(Outgoing.GuardianVotingRequestedComposer);
+        this.response.init(Outgoing.ChatReviewSessionStartedMessageComposer);
         this.response.appendInt(this.ticket.getTimeLeft());
         this.response.appendString(fullMessage.toString());
 

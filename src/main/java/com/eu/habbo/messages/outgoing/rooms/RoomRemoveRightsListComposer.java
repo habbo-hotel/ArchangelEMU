@@ -17,7 +17,7 @@ public class RoomRemoveRightsListComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomRemoveRightsListComposer);
+        this.response.init(Outgoing.FlatControllerRemovedComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendInt(this.userId);
         return this.response;

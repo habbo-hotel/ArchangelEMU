@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class RoomUnknown3Composer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUnknown3Composer);
+        this.response.init(Outgoing.YouAreSpectatorMessageEvent);
         //Empty body
         return this.response;
     }

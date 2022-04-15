@@ -16,7 +16,7 @@ public class UnknownFurniModelComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnknownFurniModelComposer);
+        this.response.init(Outgoing.PostItPlacedComposer);
         this.response.appendInt(this.item.getId());
         this.response.appendInt(this.unknownInt);
         return this.response;

@@ -18,7 +18,7 @@ public class TradeClosedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TradeStoppedComposer);
+        this.response.init(Outgoing.TradingCloseComposer);
         this.response.appendInt(this.userId);
         this.response.appendInt(this.errorCode);
         return this.response;

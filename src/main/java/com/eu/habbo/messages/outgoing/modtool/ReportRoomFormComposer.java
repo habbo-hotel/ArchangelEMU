@@ -16,7 +16,7 @@ public class ReportRoomFormComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ReportRoomFormComposer);
+        this.response.init(Outgoing.CallForHelpPendingCallsMessageComposer);
         this.response.appendInt(this.pendingIssues.size()); //Current standing help request(s) amount:
 
         for (ModToolIssue issue : this.pendingIssues) {

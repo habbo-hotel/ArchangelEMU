@@ -35,7 +35,7 @@ public class UserClothesComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserClothesComposer);
+        this.response.init(Outgoing.FigureSetIdsComposer);
         this.response.appendInt(this.idList.size());
         this.idList.forEach(this.response::appendInt);
         this.response.appendInt(this.nameList.size());
