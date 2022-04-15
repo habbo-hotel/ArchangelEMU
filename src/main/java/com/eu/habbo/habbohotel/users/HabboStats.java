@@ -782,6 +782,9 @@ public class HabboStats implements Runnable {
         }
     }
 
+    public TIntArrayList getIgnoredUsers() {
+        return this.ignoredUsers;
+    }
     public boolean userIgnored(int userId) {
         return this.ignoredUsers.contains(userId);
     }

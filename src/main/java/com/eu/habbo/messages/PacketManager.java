@@ -62,7 +62,7 @@ import com.eu.habbo.messages.incoming.rooms.promotions.UpdateRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.rooms.users.*;
 import com.eu.habbo.messages.incoming.trading.*;
 import com.eu.habbo.messages.incoming.unknown.RequestResolutionEvent;
-import com.eu.habbo.messages.incoming.unknown.UnknownEvent1;
+import com.eu.habbo.messages.incoming.inventory.GetBadgePointLimitsEvent;
 import com.eu.habbo.messages.incoming.users.*;
 import com.eu.habbo.messages.incoming.wired.WiredApplySetConditionsEvent;
 import com.eu.habbo.messages.incoming.wired.WiredConditionSaveDataEvent;
@@ -273,7 +273,7 @@ public class PacketManager {
         this.registerHandler(Incoming.CompleteDiffieHandshake, CompleteDiffieHandshakeEvent.class);
         this.registerHandler(Incoming.SecureLoginEvent, SecureLoginEvent.class);
         this.registerHandler(Incoming.MachineIDEvent, MachineIDEvent.class);
-        this.registerHandler(Incoming.UsernameEvent, UsernameEvent.class);
+        this.registerHandler(Incoming.GetIgnoredUsersEvent, GetIgnoredUsersEvent.class);
         this.registerHandler(Incoming.PingEvent, PingEvent.class);
     }
 
@@ -586,7 +586,7 @@ public class PacketManager {
     void registerUnknown() throws Exception {
         this.registerHandler(Incoming.RequestResolutionEvent, RequestResolutionEvent.class);
         this.registerHandler(Incoming.RequestTalenTrackEvent, RequestTalentTrackEvent.class);
-        this.registerHandler(Incoming.UnknownEvent1, UnknownEvent1.class);
+        this.registerHandler(Incoming.BadgePointLimitsEvent, GetBadgePointLimitsEvent.class);
         this.registerHandler(Incoming.MySanctionStatusEvent, MySanctionStatusEvent.class);
     }
 

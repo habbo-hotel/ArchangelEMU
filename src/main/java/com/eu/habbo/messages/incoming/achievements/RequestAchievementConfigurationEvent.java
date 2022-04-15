@@ -1,11 +1,11 @@
 package com.eu.habbo.messages.incoming.achievements;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.inventory.InventoryAchievementsComposer;
+import com.eu.habbo.messages.outgoing.inventory.BadgePointLimitsComposer;
 
 public class RequestAchievementConfigurationEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        this.client.sendResponse(new InventoryAchievementsComposer());
+        this.client.sendResponse(new BadgePointLimitsComposer());
     }
 }

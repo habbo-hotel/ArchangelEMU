@@ -210,7 +210,7 @@ public class Incoming {
     public static final int FloorPlanEditorSaveEvent = 875;
     public static final int FloorPlanEditorRequestDoorSettingsEvent = 3559;
     public static final int FloorPlanEditorRequestBlockedTilesEvent = 1687;
-    public static final int UnknownEvent1 = 1371;
+    public static final int BadgePointLimitsEvent = 1371;
     public static final int RequestTalenTrackEvent = 196;
     public static final int RequestNewNavigatorDataEvent = 2110;
     public static final int RequestNewNavigatorRoomsEvent = 249;
@@ -227,7 +227,7 @@ public class Incoming {
     public static final int MoodLightSaveSettingsEvent = 1648;
     public static final int ModToolRequestIssueChatlogEvent = 211;
     public static final int ModToolRequestRoomUserChatlogEvent = -1;
-    public static final int UsernameEvent = 3878;
+    public static final int GetIgnoredUsersEvent = 3878;
     public static final int RequestClubGiftsEvent = 487;
     public static final int RentSpaceEvent = 2946;
     public static final int RentSpaceCancelEvent = 1667;
