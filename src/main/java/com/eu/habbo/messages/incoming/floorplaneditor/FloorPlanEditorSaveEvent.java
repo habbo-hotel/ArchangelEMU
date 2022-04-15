@@ -121,7 +121,7 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
                         }
                     }
 
-                    if (tile.state != RoomTileState.INVALID && height != tile.z && room.getTopItemAt(x, y) != null) {
+                    if (tile != null && tile.state != RoomTileState.INVALID && height != tile.z && room.getTopItemAt(x, y) != null) {
                         errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
                         break blockingRoomItemScan;
                     }
