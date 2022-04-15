@@ -145,6 +145,8 @@ public class Habbo implements Runnable {
 
         this.habboInfo.setMachineID(this.client.getMachineId());
         this.isOnline(true);
+        this.habboStats.cache.put("previousOnline", this.habboInfo.getLastOnline());
+        this.habboInfo.setLastOnline(Emulator.getIntUnixTimestamp());
 
         this.messenger.connectionChanged(this, true, false);
 
