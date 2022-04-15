@@ -10,7 +10,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class NewsListComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewsWidgetsComposer);
+        this.response.init(Outgoing.PromoArticlesMessageComposer);
         NewsList newsList = Emulator.getGameEnvironment().getHotelViewManager().getNewsList();
 
         this.response.appendInt(newsList.getNewsWidgets().size());

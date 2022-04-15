@@ -24,7 +24,7 @@ public class RoomPetRespectComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomPetRespectComposer);
+        this.response.init(Outgoing.PetRespectNotificationComposer);
         this.response.appendInt(this.type);
         this.response.appendInt(100);
         this.pet.serialize(this.response);

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class MinimailCountComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MinimailCountComposer);
+        this.response.init(Outgoing.MiniMailUnreadCountComposer);
         this.response.appendInt(0);
         return this.response;
     }

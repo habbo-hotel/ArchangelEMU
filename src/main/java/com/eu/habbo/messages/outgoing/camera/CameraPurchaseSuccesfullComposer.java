@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class CameraPurchaseSuccesfullComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CameraPurchaseSuccesfullComposer);
+        this.response.init(Outgoing.CameraPurchaseOKMessageComposer);
         return this.response;
     }
 }

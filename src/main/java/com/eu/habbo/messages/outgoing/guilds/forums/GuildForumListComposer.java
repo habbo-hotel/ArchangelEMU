@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import gnu.trove.set.hash.THashSet;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -25,7 +24,7 @@ public class GuildForumListComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildForumListComposer);
+        this.response.init(Outgoing.ForumsListMessageComposer);
         this.response.appendInt(this.mode);
         this.response.appendInt(this.guilds.size());
 

@@ -20,7 +20,7 @@ public class PetErrorComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetErrorComposer);
+        this.response.init(Outgoing.PetPlacingErrorComposer);
         this.response.appendInt(this.errorCode);
         return this.response;
     }

@@ -15,7 +15,7 @@ public class EffectsListAddComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.EffectsListAddComposer);
+        this.response.init(Outgoing.AvatarEffectAddedMessageComposer);
         this.response.appendInt(this.effect.effect); //Type
         this.response.appendInt(0); //Unknown Costume?
         this.response.appendInt(effect.duration > 0 ? effect.duration : Integer.MAX_VALUE); //Duration

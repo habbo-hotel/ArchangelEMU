@@ -6,9 +6,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
 import gnu.trove.set.hash.THashSet;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 public class FloorItemOnRollerComposer extends MessageComposer {
     private final HabboItem item;
@@ -47,7 +45,7 @@ public class FloorItemOnRollerComposer extends MessageComposer {
         short oldX = this.item.getX();
         short oldY = this.item.getY();
 
-        this.response.init(Outgoing.ObjectOnRollerComposer);
+        this.response.init(Outgoing.SlideObjectBundleMessageComposer);
         this.response.appendInt(this.oldLocation != null ? this.oldLocation.x : this.item.getX());
         this.response.appendInt(this.oldLocation != null ? this.oldLocation.y : this.item.getY());
         this.response.appendInt(this.newLocation.x);

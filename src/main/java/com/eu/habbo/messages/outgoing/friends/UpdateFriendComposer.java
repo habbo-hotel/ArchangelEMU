@@ -33,7 +33,7 @@ public class UpdateFriendComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
 
-        this.response.init(Outgoing.UpdateFriendComposer);
+        this.response.init(Outgoing.FriendListUpdateComposer);
         if (this.habbo != null && !this.habbo.getHabboInfo().getMessengerCategories().isEmpty()) {
 
             List<MessengerCategory> messengerCategories = this.habbo.getHabboInfo().getMessengerCategories();

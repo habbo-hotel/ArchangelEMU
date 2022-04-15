@@ -14,7 +14,7 @@ public class GuildBoughtComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildBoughtComposer);
+        this.response.init(Outgoing.GuildCreatedMessageComposer);
         this.response.appendInt(this.guild.getRoomId());
         this.response.appendInt(this.guild.getId());
         return this.response;

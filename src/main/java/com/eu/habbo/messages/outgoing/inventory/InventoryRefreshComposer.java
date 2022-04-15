@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class InventoryRefreshComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.InventoryRefreshComposer);
+        this.response.init(Outgoing.FurniListInvalidateComposer);
         return this.response;
     }
 }

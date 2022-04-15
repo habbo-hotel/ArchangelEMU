@@ -19,7 +19,7 @@ public class RemoveFriendComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UpdateFriendComposer);
+        this.response.init(Outgoing.FriendListUpdateComposer);
 
         this.response.appendInt(0);
         this.response.appendInt(this.unfriendIds.size());

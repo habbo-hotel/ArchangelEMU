@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class NewNavigatorMetaDataComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewNavigatorMetaDataComposer);
+        this.response.init(Outgoing.NavigatorMetaDataComposer);
         this.response.appendInt(4);
         this.response.appendString("official_view");
         this.response.appendInt(0);

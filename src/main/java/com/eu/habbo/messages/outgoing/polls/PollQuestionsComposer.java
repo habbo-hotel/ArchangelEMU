@@ -15,7 +15,7 @@ public class PollQuestionsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PollQuestionsComposer);
+        this.response.init(Outgoing.PollContentsComposer);
 
         this.response.appendInt(this.poll.id);
         this.response.appendString(this.poll.title);

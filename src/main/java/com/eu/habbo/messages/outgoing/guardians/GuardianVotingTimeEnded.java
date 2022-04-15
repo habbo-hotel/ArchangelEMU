@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class GuardianVotingTimeEnded extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuardianVotingTimeEnded);
+        this.response.init(Outgoing.ChatReviewSessionDetachedMessageComposer);
         return this.response;
     }
 }

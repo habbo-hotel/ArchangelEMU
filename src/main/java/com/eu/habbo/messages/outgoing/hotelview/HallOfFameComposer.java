@@ -19,7 +19,7 @@ public class HallOfFameComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HallOfFameComposer);
+        this.response.init(Outgoing.CommunityGoalHallOfFameMessageComposer);
         this.response.appendString(this.hallOfFame.getCompetitionName());
         this.response.appendInt(this.hallOfFame.getWinners().size());
 

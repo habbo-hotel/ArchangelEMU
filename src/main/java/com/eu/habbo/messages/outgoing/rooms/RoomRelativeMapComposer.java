@@ -16,7 +16,7 @@ public class RoomRelativeMapComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomRelativeMapComposer);
+        this.response.init(Outgoing.HeightMapComposer);
         this.response.appendInt(this.room.getLayout().getMapSize() / this.room.getLayout().getMapSizeY());
         this.response.appendInt(this.room.getLayout().getMapSize());
         for (short y = 0; y < this.room.getLayout().getMapSizeY(); y++) {

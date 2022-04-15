@@ -25,7 +25,7 @@ public class ModToolUserInfoComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ModToolUserInfoComposer);
+        this.response.init(Outgoing.ModeratorUserInfoComposer);
         try {
             int totalBans = 0;
 

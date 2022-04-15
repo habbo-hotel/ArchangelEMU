@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class NewNavigatorLiftedRoomsComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewNavigatorLiftedRoomsComposer);
+        this.response.init(Outgoing.NavigatorLiftedRoomsComposer);
         this.response.appendInt(0);
         return this.response;
     }

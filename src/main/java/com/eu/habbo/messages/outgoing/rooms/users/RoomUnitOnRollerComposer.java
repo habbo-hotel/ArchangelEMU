@@ -5,12 +5,10 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +52,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         if (!this.room.isLoaded())
             return null;
 
-        this.response.init(Outgoing.ObjectOnRollerComposer);
+        this.response.init(Outgoing.SlideObjectBundleMessageComposer);
         this.response.appendInt(this.oldLocation.x);
         this.response.appendInt(this.oldLocation.y);
         this.response.appendInt(this.newLocation.x);

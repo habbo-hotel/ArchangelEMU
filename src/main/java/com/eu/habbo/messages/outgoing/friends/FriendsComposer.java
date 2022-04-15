@@ -28,7 +28,7 @@ public class FriendsComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         try {
-            this.response.init(Outgoing.FriendsComposer);
+            this.response.init(Outgoing.FriendListFragmentMessageComposer);
 
             this.response.appendInt(this.totalPages);
             this.response.appendInt(this.pageIndex);

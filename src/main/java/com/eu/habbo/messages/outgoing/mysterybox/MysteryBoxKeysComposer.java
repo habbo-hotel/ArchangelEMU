@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class MysteryBoxKeysComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MysteryBoxKeysComposer);
+        this.response.init(Outgoing.MysteryBoxKeysMessageComposer);
         this.response.appendString(""); //Box color
         this.response.appendString(""); //Key color
         return this.response;

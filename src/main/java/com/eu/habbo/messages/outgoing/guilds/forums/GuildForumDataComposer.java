@@ -103,7 +103,7 @@ public class GuildForumDataComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
 
         try {
-            this.response.init(Outgoing.GuildForumDataComposer);
+            this.response.init(Outgoing.ForumDataMessageComposer);
             serializeForumData(this.response, guild, habbo);
 
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo);
