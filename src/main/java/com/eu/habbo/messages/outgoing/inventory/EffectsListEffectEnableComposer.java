@@ -14,7 +14,7 @@ public class EffectsListEffectEnableComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.EffectsListEffectEnableComposer);
+        this.response.init(Outgoing.AvatarEffectActivatedMessageComposer);
         this.response.appendInt(this.effect.effect); //Type
         this.response.appendInt(this.effect.duration); //Duration
         this.response.appendBoolean(this.effect.enabled); //activated

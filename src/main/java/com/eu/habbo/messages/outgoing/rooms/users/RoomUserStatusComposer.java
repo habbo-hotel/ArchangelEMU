@@ -36,7 +36,7 @@ public class RoomUserStatusComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUserStatusComposer);
+        this.response.init(Outgoing.UserUpdateComposer);
         if (this.roomUnits != null) {
             this.response.appendInt(this.roomUnits.size());
             for (RoomUnit roomUnit : this.roomUnits) {

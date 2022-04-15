@@ -14,7 +14,7 @@ public class RoomUnitIdleComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUnitIdleComposer);
+        this.response.init(Outgoing.SleepMessageComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendBoolean(this.roomUnit.isIdle());
         return this.response;

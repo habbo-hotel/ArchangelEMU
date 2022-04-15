@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class HelperRequestDisabledComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HelperRequestDisabledComposer);
+        this.response.init(Outgoing.CallForHelpDisabledNotifyMessageComposer);
         this.response.appendString("");
         return this.response;
     }

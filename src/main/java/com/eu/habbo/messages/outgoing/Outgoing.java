@@ -5,10 +5,10 @@ public class Outgoing {
 
     public final static int CfhTopicsMessageComposer = 325;
     public final static int FavouritesComposer = 151;
-    public final static int UserCurrencyComposer = 2018;
+    public final static int ActivityPointsMessageComposer = 2018;
     public final static int RedeemVoucherOKComposer = 3336;
     public final static int ShoutMessageComposer = 1036;
-    public final static int RoomUserStatusComposer = 1640;
+    public final static int UserUpdateComposer = 1640;
     public final static int RoomUserDataComposer = 3920;
     public final static int RoomAddRightsListComposer = 2088;
     public final static int FlatControllerRemovedComposer = 1327;
@@ -29,7 +29,7 @@ public class Outgoing {
     public final static int WiredTriggerDataComposer = 383;
     public final static int TradingCloseComposer = 1373;
     public final static int ModToolUserChatlogComposer = 3377;
-    public final static int GuildInfoComposer = 1702;
+    public final static int HabboGroupDetailsMessageComposer = 1702;
     public final static int UserPermissionsComposer = 411;
     public final static int ApproveNameMessageComposer = 1503;
     public final static int TradeStartFailComposer = 217;
@@ -46,7 +46,7 @@ public class Outgoing {
     public final static int GiftConfigurationComposer = 2234;
     public final static int UserClubComposer = 954;
     public final static int InventoryBadgesComposer = 717;
-    public final static int RoomUserTypingComposer = 1717;
+    public final static int UserTypingMessageComposer = 1717;
     public final static int GuildJoinErrorComposer = 762;
     public final static int UserFlatCatsComposer = 1562;
     public final static int InventoryAchievementsComposer = 2501;
@@ -70,15 +70,15 @@ public class Outgoing {
     public final static int CompleteDiffieHandshakeComposer = 3885;
     public final static int UserDataComposer = 2725;
     public final static int UserSearchResultComposer = 973;
-    public final static int ModToolUserRoomVisitsComposer = 1752;
+    public final static int RoomVisitsComposer = 1752;
     public final static int RoomUserRespectComposer = 2815;
     public final static int RoomChatSettingsMessageComposer = 1191;
     public final static int FurniListRemoveComposer = 159;
     public final static int RoomUserRemoveComposer = 2661;
     public final static int FloorHeightMapComposer = 1301;
-    public final static int RoomPetHorseFigureComposer = 1924;
+    public final static int PetFigureUpdateComposer = 1924;
     public final static int PetErrorComposer = 2913;
-    public final static int TradeUpdateComposer = 2024;
+    public final static int TradingItemListComposer = 2024;
     public final static int PrivateRoomsComposer = 52;
     public final static int RoomModelComposer = 2031;
     public final static int RoomScoreComposer = 482;
@@ -86,7 +86,7 @@ public class Outgoing {
     public final static int SecureLoginOKComposer = 2491;
     public final static int AvailabilityStatusMessageComposer = 2033;
     public final static int GuildMemberUpdateComposer = 265;
-    public final static int RoomFloorItemsComposer = 1778;
+    public final static int ObjectsMessageComposer = 1778;
     public final static int InventoryItemsComposer = 994;
     public final static int ChatMessageComposer = 1446;
     public final static int TradeStartComposer = 2505;
@@ -101,17 +101,17 @@ public class Outgoing {
     public final static int RoomSettingsUpdatedComposer = 3297;
     public final static int PurchaseErrorMessageComposer = 1404;
     public final static int RoomDataComposer = 687;
-    public final static int TagsComposer = 2012;
+    public final static int PopularRoomTagsResultComposer = 2012;
     public final static int InventoryRefreshComposer = 3151; // PRODUCTION-201611291003-338511768
     public final static int RemovePetComposer = 3253; // PRODUCTION-201611291003-338511768
     public final static int RemoveWallItemComposer = 3208; // PRODUCTION-201611291003-338511768
     public final static int TradeCompleteComposer = 2369; // PRODUCTION-201611291003-338511768
     public final static int NewsWidgetsComposer = 286; // PRODUCTION-201611291003-338511768
     public final static int WiredEffectDataComposer = 1434; // PRODUCTION-201611291003-338511768
-    public final static int BubbleAlertComposer = 1992; // PRODUCTION-201611291003-338511768
+    public final static int NotificationDialogMessageComposer = 1992; // PRODUCTION-201611291003-338511768
     public final static int ReloadRecyclerComposer = 3433; // PRODUCTION-201611291003-338511768
     public final static int MoodLightDataComposer = 2710; // PRODUCTION-201611291003-338511768
-    public final static int WiredRewardAlertComposer = 178; // PRODUCTION-201611291003-338511768
+    public final static int WiredRewardResultMessageComposer = 178; // PRODUCTION-201611291003-338511768
     public final static int CatalogPageComposer = 804; // PRODUCTION-201611291003-338511768
     public final static int CatalogModeComposer = 3828; // PRODUCTION-201611291003-338511768
     public final static int ChangeUserNameResultMessageEvent = 118; // PRODUCTION-201611291003-338511768
@@ -120,7 +120,7 @@ public class Outgoing {
     public final static int HallOfFameComposer = 3005; // PRODUCTION-201611291003-338511768
     public final static int WiredSavedComposer = 1155; // PRODUCTION-201611291003-338511768
     public final static int RoomPaintComposer = 2454; // PRODUCTION-201611291003-338511768
-    public final static int MarketplaceConfigComposer = 1823; // PRODUCTION-201611291003-338511768
+    public final static int MarketplaceConfigurationComposer = 1823; // PRODUCTION-201611291003-338511768
     public final static int BotAddedToInventoryComposer = 1352; // PRODUCTION-201611291003-338511768
     public final static int FriendRequestErrorComposer = 892; // PRODUCTION-201611291003-338511768
     public final static int GuildMembersComposer = 1200; // PRODUCTION-201611291003-338511768
@@ -133,13 +133,13 @@ public class Outgoing {
     public final static int TalentTrackComposer = 3406; // PRODUCTION-201611291003-338511768
     public final static int CatalogPagesListComposer = 1032; // PRODUCTION-201611291003-338511768
     public final static int AlertLimitedSoldOutComposer = 377; // PRODUCTION-201611291003-338511768
-    public final static int CatalogUpdatedComposer = 1866; // PRODUCTION-201611291003-338511768
+    public final static int CatalogPublishedMessageComposer = 1866; // PRODUCTION-201611291003-338511768
     public final static int PurchaseOKComposer = 869; // PRODUCTION-201611291003-338511768
-    public final static int WallItemUpdateComposer = 2009; // PRODUCTION-201611291003-338511768
+    public final static int ItemUpdateMessageComposer = 2009; // PRODUCTION-201611291003-338511768
     public final static int TradeAcceptedComposer = 2568; // PRODUCTION-201611291003-338511768
     public final static int AddWallItemComposer = 2187; // PRODUCTION-201611291003-338511768
     public final static int RoomEntryInfoComposer = -1; // PRODUCTION-201611291003-338511768
-    public final static int HotelViewDataComposer = 1745; // PRODUCTION-201611291003-338511768
+    public final static int CurrentTimingCodeMessageComposer = 1745; // PRODUCTION-201611291003-338511768
     public final static int PresentItemOpenedComposer = 56; // PRODUCTION-201611291003-338511768
     public final static int RoomUserRemoveRightsComposer = 84; // PRODUCTION-201611291003-338511768
     public final static int UserBCLimitsComposer = -1; // PRODUCTION-201611291003-338511768
@@ -156,7 +156,7 @@ public class Outgoing {
     public final static int LoadFriendRequestsComposer = 280; // PRODUCTION-201611291003-338511768
     public final static int MarketplaceSellItemComposer = 54; // PRODUCTION-201611291003-338511768
     public final static int ClubDataComposer = 2405; // PRODUCTION-201611291003-338511768
-    public final static int ProfileFriendsComposer = 2016; // PRODUCTION-201611291003-338511768
+    public final static int RelationshipStatusInfoComposer = 2016; // PRODUCTION-201611291003-338511768
     public final static int MarketplaceOwnItemsComposer = 3884; // PRODUCTION-201611291003-338511768
     public final static int RoomOwnerComposer = 339; // PRODUCTION-201611291003-338511768
     public final static int WiredConditionDataComposer = 1108; // PRODUCTION-201611291003-338511768
@@ -180,14 +180,14 @@ public class Outgoing {
     public final static int BotCommandConfigurationComposer = 1618; // PRODUCTION-201611291003-338511768
     public final static int UserProfileComposer = 3898; // PRODUCTION-201611291003-338511768
     public final static int MinimailCountComposer = 2803; // PRODUCTION-201611291003-338511768
-    public final static int UserAchievementScoreComposer = 1968; // PRODUCTION-201611291003-338511768
+    public final static int AchievementsScoreComposer = 1968; // PRODUCTION-201611291003-338511768
     public final static int PetLevelUpComposer = 859; // PRODUCTION-201611291003-338511768
     public final static int UserPointsComposer = 2275; // PRODUCTION-201611291003-338511768
     public final static int CallForHelpPendingCallsMessageComposer = 1121; // PRODUCTION-201611291003-338511768
     public final static int ModToolIssueHandledComposer = 934; // PRODUCTION-201611291003-338511768
     public final static int FloodCounterComposer = 566; // PRODUCTION-201611291003-338511768
     public final static int WiredValidationErrorComposer = 156; // PRODUCTION-201611291003-338511768
-    public final static int FloorPlanEditorDoorSettingsComposer = 1664; // PRODUCTION-201611291003-338511768
+    public final static int RoomEntryTileMessageComposer = 1664; // PRODUCTION-201611291003-338511768
     public final static int FloorPlanEditorBlockedTilesComposer = 3990; // PRODUCTION-201611291003-338511768
     public final static int BuildersClubSubscriptionStatusMessageComposer = 1452; // PRODUCTION-201611291003-338511768
     public final static int RoomSettingsSavedComposer = 948; // PRODUCTION-201611291003-338511768
@@ -221,8 +221,8 @@ public class Outgoing {
     public final static int MysticBoxPrizeComposer = 3712; // PRODUCTION-201611291003-338511768
     public final static int RentableSpaceInfoComposer = 3559; // PRODUCTION-201611291003-338511768
     public final static int RentableSpaceUnknownComposer = 2046; // PRODUCTION-201611291003-338511768
-    public final static int RentableSpaceUnknown2Composer = 1868; // PRODUCTION-201611291003-338511768
-    public final static int GuildConfirmRemoveMemberComposer = 1876; // PRODUCTION-201611291003-338511768
+    public final static int RentableSpaceRentFailedMessageComposer = 1868; // PRODUCTION-201611291003-338511768
+    public final static int GuildMemberFurniCountInHQMessageComposer = 1876; // PRODUCTION-201611291003-338511768
 
     public final static int HotelViewBadgeButtonConfigComposer = 2998; // PRODUCTION-201611291003-338511768
     public final static int EpicPopupFrameComposer = 3945; // PRODUCTION-201611291003-338511768
@@ -238,13 +238,13 @@ public class Outgoing {
     //NotSure Needs Testing
     public final static int QuestionInfoComposer = -1; // PRODUCTION-201611291003-338511768
     public final static int TalentTrackEmailVerifiedComposer = 612; // PRODUCTION-201611291003-338511768
-    public final static int TalentTrackEmailFailedComposer = 1815; // PRODUCTION-201611291003-338511768
+    public final static int ChangeEmailResultComposer = 1815; // PRODUCTION-201611291003-338511768
     public final static int UnknownAvatarEditorComposer = 3473; // PRODUCTION-201611291003-338511768
 
     public final static int GroupMembershipRequestedMessageComposer = 1180; // PRODUCTION-201611291003-338511768
 
     public final static int GuildForumsUnreadMessagesCountComposer = 2379; // PRODUCTION-201611291003-338511768
-    public final static int GuildForumThreadMessagesComposer = 1862; // PRODUCTION-201611291003-338511768
+    public final static int PostThreadMessageComposer = 1862; // PRODUCTION-201611291003-338511768
     public final static int GuildForumAddCommentComposer = 2049; // PRODUCTION-201611291003-338511768
     public final static int GuildForumDataComposer = 3011; // PRODUCTION-201611291003-338511768
     public final static int GuildForumCommentsComposer = 509; // PRODUCTION-201611291003-338511768
@@ -259,14 +259,14 @@ public class Outgoing {
     public final static int GuideSessionEndedMessageComposer = 1456; // PRODUCTION-201611291003-338511768
     public final static int GuideSessionErrorComposer = 673; // PRODUCTION-201611291003-338511768
     public final static int GuideSessionMessageComposer = 841; // PRODUCTION-201611291003-338511768
-    public final static int GuideSessionRequesterRoomComposer = 1847; // PRODUCTION-201611291003-338511768
+    public final static int GuideSessionRequesterRoomMessageComposer = 1847; // PRODUCTION-201611291003-338511768
     public final static int GuideSessionInvitedToGuideRoomComposer = 219; // PRODUCTION-201611291003-338511768
     public final static int GuideSessionPartnerIsTypingComposer = 1016; // PRODUCTION-201611291003-338511768
 
     public final static int GuideOnDutyStatusMessageComposer = 1548; // PRODUCTION-201611291003-338511768
     public final static int GuardianNewReportReceivedComposer = 735; // PRODUCTION-201611291003-338511768
     public final static int ChatReviewSessionStartedMessageComposer = 143; // PRODUCTION-201611291003-338511768
-    public final static int GuardianVotingVotesComposer = 1829; // PRODUCTION-201611291003-338511768
+    public final static int ChatReviewSessionVotingStatusMessageComposer = 1829; // PRODUCTION-201611291003-338511768
     public final static int GuardianVotingResultComposer = 3276; // PRODUCTION-201611291003-338511768
     public final static int GuardianVotingTimeEnded = 30; // PRODUCTION-201611291003-338511768
 
@@ -285,9 +285,9 @@ public class Outgoing {
     public final static int MaintenanceStatusMessageComposer = 1350; // PRODUCTION-201611291003-338511768
     public final static int HotelClosesAndWillOpenAtComposer = 2771; // PRODUCTION-201611291003-338511768
     public final static int HotelClosedAndOpensComposer = 3728; // PRODUCTION-201611291003-338511768
-    public final static int StaffAlertAndOpenHabboWayComposer = 1683; // PRODUCTION-201611291003-338511768
-    public final static int StaffAlertWithLinkComposer = 2030; // PRODUCTION-201611291003-338511768
-    public final static int StaffAlertWIthLinkAndOpenHabboWayComposer = 1890; // PRODUCTION-201611291003-338511768
+    public final static int UserBannedMessageComposer = 1683; // PRODUCTION-201611291003-338511768
+    public final static int ModeratorMessageComposer = 2030; // PRODUCTION-201611291003-338511768
+    public final static int ModeratorCautionComposer = 1890; // PRODUCTION-201611291003-338511768
 
     public final static int RoomMessageNotificationMessageComposer = 1634; // PRODUCTION-201611291003-338511768
     public final static int PetRespectFailedComposer = 1130; // PRODUCTION-201611291003-338511768
@@ -297,14 +297,14 @@ public class Outgoing {
     public final static int CloseWebPageComposer = 426; // PRODUCTION-201611291003-338511768
     public final static int PickMonthlyClubGiftNotificationComposer = 2188; // PRODUCTION-201611291003-338511768
     public final static int RemoveGuildFromRoomComposer = 3129; // PRODUCTION-201611291003-338511768
-    public final static int RoomBannedUsersComposer = 1869; // PRODUCTION-201611291003-338511768
+    public final static int BannedUsersFromRoomComposer = 1869; // PRODUCTION-201611291003-338511768
     public final static int OpenRoomCreationWindowComposer = 2064; // PRODUCTION-201611291003-338511768
     public final static int ObjectsDataUpdateMessageComposer = 1453; // PRODUCTION-201611291003-338511768
     public final static int WelcomeGiftComposer = 2707; // PRODUCTION-201611291003-338511768
     public final static int SimplePollStartComposer = 2665; // PRODUCTION-201611291003-338511768
     public final static int RoomNoRightsComposer = 2392; // PRODUCTION-201611291003-338511768
     public final static int GuildEditFailComposer = 3988; // PRODUCTION-201611291003-338511768
-    public final static int MinimailNewMessageComposer = 1911; // PRODUCTION-201611291003-338511768
+    public final static int MiniMailNewMessageComposer = 1911; // PRODUCTION-201611291003-338511768
     public final static int RoomFilterWordsComposer = 2937; // PRODUCTION-201611291003-338511768
     public final static int VerifyMobileNumberComposer = 3639; // PRODUCTION-201611291003-338511768
     public final static int NewUserGiftComposer = 3575; // PRODUCTION-201611291003-338511768
@@ -325,7 +325,7 @@ public class Outgoing {
     public final static int VerifyMobilePhoneDoneComposer = 91; // PRODUCTION-201611291003-338511768
     public final static int RoomUserReceivedHandItemComposer = 354; // PRODUCTION-201611291003-338511768
     public final static int MutedWhisperComposer = 826; // PRODUCTION-201611291003-338511768
-    public final static int UnknownHintComposer = 1787; // PRODUCTION-201611291003-338511768
+    public final static int ElementPointerMessageComposer = 1787; // PRODUCTION-201611291003-338511768
     public final static int BullyReportClosedComposer = 2674; // PRODUCTION-201611291003-338511768
     public final static int PromoteOwnRoomsListComposer = 2468; // PRODUCTION-201611291003-338511768
     public final static int NotEnoughPointsTypeComposer = 3914; // PRODUCTION-201611291003-338511768
@@ -339,10 +339,10 @@ public class Outgoing {
     public final static int RoomSettingsSaveErrorComposer = 1555; // PRODUCTION-201611291003-338511768
     public final static int GuildAcceptMemberErrorComposer = 818; // PRODUCTION-201611291003-338511768
     public final static int MostUselessErrorAlertComposer = 662; // PRODUCTION-201611291003-338511768
-    public final static int AchievementsConfigurationComposer = 1689; // PRODUCTION-201611291003-338511768
+    public final static int GameAchievementsMessageComposer = 1689; // PRODUCTION-201611291003-338511768
     public final static int ConfirmBreedingRequestComposer = 634; // PRODUCTION-201611291003-338511768
     public final static int RoomUserQuestionAnsweredComposer = -1; // PRODUCTION-201611291003-338511768
-    public final static int PetBreedingStartComposer = 1746; // PRODUCTION-201611291003-338511768
+    public final static int PetBreedingComposer = 1746; // PRODUCTION-201611291003-338511768
     public final static int CustomNotificationComposer = 909; // PRODUCTION-201611291003-338511768
     public final static int UpdateStackHeightTileHeightComposer = 2816; // PRODUCTION-201611291003-338511768
     public final static int HotelViewCustomTimerComposer = -1; // PRODUCTION-201611291003-338511768
@@ -355,16 +355,18 @@ public class Outgoing {
     public final static int RoomInviteComposer = 3870; // PRODUCTION-201611291003-338511768
     public final static int BullyReportRequestComposer = 3463; // PRODUCTION-201611291003-338511768
     public final static int UnknownHelperComposer = 77; // PRODUCTION-201611291003-338511768
-    public final static int HelperRequestDisabledComposer = 1651; // PRODUCTION-201611291003-338511768
-    public final static int RoomUnitIdleComposer = 1797; // PRODUCTION-201611291003-338511768
+    public final static int CallForHelpDisabledNotifyMessageComposer = 1651; // PRODUCTION-201611291003-338511768
+    public final static int SleepMessageComposer = 1797; // PRODUCTION-201611291003-338511768
     public final static int QuestCompletedComposer = 949; // PRODUCTION-201611291003-338511768
-    public final static int UnkownPetPackageComposer = 1723; // PRODUCTION-201611291003-338511768
+    public final static int FurnitureAliasesMessageComposer = 1723; // PRODUCTION-201611291003-338511768
     public final static int RoomForwardMessageComposer = 160; // PRODUCTION-201611291003-338511768
-    public final static int EffectsListEffectEnableComposer = 1959; // PRODUCTION-201611291003-338511768
+    public final static int AvatarEffectActivatedMessageComposer = 1959; // PRODUCTION-201611291003-338511768
     public final static int CompetitionEntrySubmitResultComposer = 1177; // PRODUCTION-201611291003-338511768
     public final static int ExtendClubMessageComposer = 3964; // PRODUCTION-201611291003-338511768
     public final static int HotelViewConcurrentUsersComposer = 2737; // PRODUCTION-201611291003-338511768
     public final static int InventoryAddEffectComposer = -1;//error 404
+    public final static int _Str_16258_Composer = 1660; //todo?
+    public final static int Game2JoiningGameFailedMessageComposer = 1730; // todo?
     public final static int TalentLevelUpdateComposer = 638; // PRODUCTION-201611291003-338511768
     public final static int BullyReportedMessageComposer = 3285; // PRODUCTION-201611291003-338511768
     public final static int SeasonalQuestsMessageComposer = 1122; // PRODUCTION-201611291003-338511768 // todo 14/04/22
@@ -387,19 +389,19 @@ public class Outgoing {
     public final static int FavoriteRoomChangedComposer = 2524; // PRODUCTION-201611291003-338511768
     public final static int AlertPurchaseUnavailableComposer = 3770; // PRODUCTION-201611291003-338511768
     public final static int PetBreedingStartFailedComposer = 2621; // PRODUCTION-201611291003-338511768
-    public final static int DailyQuestComposer = 1878; // PRODUCTION-201611291003-338511768
+    public final static int QuestDailyMessageComposer = 1878; // PRODUCTION-201611291003-338511768 //todo?
     public final static int CommunityGoalVoteMessageComposer = 1435; // PRODUCTION-201611291003-338511768
     public final static int CatalogSearchResultComposer = 3388; // PRODUCTION-201611291003-338511768
     public final static int FindFriendsProcessResultComposer = 1210; // PRODUCTION-201611291003-338511768
     public final static int QuestComposer = 230; // PRODUCTION-201611291003-338511768
     public final static int ModToolSanctionDataComposer = 2782; // PRODUCTION-201611291003-338511768
-    public final static int RoomEventMessageComposer = 1840;
+    public final static int RoomEventComposer = 1840;
 
 
     public final static int JukeBoxMySongsComposer = 2602; // PRODUCTION-201611291003-338511768
     public final static int JukeBoxNowPlayingMessageComposer = 469; // PRODUCTION-201611291003-338511768
     public final static int JukeBoxPlaylistFullMessageComposer = 105; // PRODUCTION-201611291003-338511768
-    public final static int JukeBoxPlayListUpdatedComposer = 1748; // PRODUCTION-201611291003-338511768
+    public final static int PlayListMessageComposer = 1748; // PRODUCTION-201611291003-338511768
     public final static int PlayListSongAddedMessageComposer = 1140; // PRODUCTION-201611291003-338511768
     public final static int JukeBoxPlayListComposer = 34; // PRODUCTION-201611291003-338511768
     public final static int JukeBoxTrackDataComposer = 3365; // PRODUCTION-201611291003-338511768
@@ -422,7 +424,7 @@ public class Outgoing {
     public final static int SubmitCompetitionRoomComposer = 3841; // PRODUCTION-201611291003-338511768
     public final static int GameAchievementsListComposer = 2265; // PRODUCTION-201611291003-338511768
     public final static int TradingOtherNotAllowedComposer = 1254; // PRODUCTION-201611291003-338511768
-    public final static int BaseJumpUnloadGameComposer = 1715; // PRODUCTION-201611291003-338511768
+    public final static int UnloadGameMessageComposer = 1715; // PRODUCTION-201611291003-338511768
     public final static int UnknownComposer_137 = 2897; // PRODUCTION-201611291003-338511768
     public final static int GameCenterAccountInfoComposer = 2893; // PRODUCTION-201611291003-338511768
     public final static int UnknowComposer_1390 = 2270; // PRODUCTION-201611291003-338511768
@@ -442,10 +444,11 @@ public class Outgoing {
     public final static int Game2WeeklySmallLeaderboardComposer = 3512; // PRODUCTION-201611291003-338511768
     public final static int GameCenterGameListComposer = 222; // PRODUCTION-201611291003-338511768
     public final static int RoomUsersGuildBadgesComposer = 2402; // PRODUCTION-201611291003-338511768
-    public final static int UnknownComposer_2563 = 1774; // PRODUCTION-201611291003-338511768
-    public final static int UnknownComposer_2601 = 1663; // PRODUCTION-201611291003-338511768
-    public final static int UnknownComposer_2621 = 1927; // PRODUCTION-201611291003-338511768
+    public final static int UseObjectMessageComposer = 1774; // PRODUCTION-201611291003-338511768 //todo?
+    public final static int HotelMergeNameChangeComposer = 1663; // PRODUCTION-201611291003-338511768
+    public final static int RoomThumbnailUpdateResultComposer = 1927; // PRODUCTION-201611291003-338511768 //todo?
     public final static int UnknownComposer_2698 = 563; // PRODUCTION-201611291003-338511768
+    public final static int DirectSMSClubBuyAvailableMessageComposer = 195; // todo?
     //    2699;
 //    2748;
 //    2773;
@@ -500,10 +503,10 @@ public class Outgoing {
 
     public final static int QuestionFinishedComposer = 1066;
     public final static int PostItPlacedComposer = 1501;
-    public final static int UnknownAdManagerComposer = 1808;
-    public final static int WiredOpenComposer = 1830;
-    public final static int UnknownCatalogPageOfferComposer = 1889;
-    public final static int NuxAlertComposer = 2023;
+    public final static int InterstitialMessageComposer = 1808;
+    public final static int OpenComposer = 1830;
+    public final static int SeasonalCalendarDailyOfferMessageComposer = 1889;
+    public final static int InClientLinkMessageComposer = 2023;
     public final static int HotelViewExpiringCatalogPageCommposer = 2515;
     public final static int UnknownHabboWayQuizComposer = 2772;
     public final static int PetLevelUpdatedComposer = 2824;

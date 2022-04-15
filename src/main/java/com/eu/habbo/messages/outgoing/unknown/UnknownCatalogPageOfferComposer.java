@@ -16,7 +16,7 @@ public class UnknownCatalogPageOfferComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnknownCatalogPageOfferComposer);
+        this.response.init(Outgoing.SeasonalCalendarDailyOfferMessageComposer);
         this.response.appendInt(this.pageId);
         this.catalogItem.serialize(this.response);
         return this.response;

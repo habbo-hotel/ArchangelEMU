@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class BaseJumpUnloadGameComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.BaseJumpUnloadGameComposer);
+        this.response.init(Outgoing.UnloadGameMessageComposer);
         this.response.appendInt(3);
         this.response.appendString("basejump");
         return this.response;

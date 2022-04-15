@@ -15,7 +15,7 @@ public class StaffAlertWIthLinkAndOpenHabboWayComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.StaffAlertWIthLinkAndOpenHabboWayComposer);
+        this.response.init(Outgoing.ModeratorCautionComposer);
         this.response.appendString(this.message);
         this.response.appendString(this.link);
         return this.response;

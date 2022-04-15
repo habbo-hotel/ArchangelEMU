@@ -14,7 +14,7 @@ public class WiredOpenComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.WiredOpenComposer);
+        this.response.init(Outgoing.OpenComposer);
         this.response.appendInt(this.item.getId());
         return this.response;
     }

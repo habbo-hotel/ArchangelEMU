@@ -16,7 +16,7 @@ public class RoomUserTypingComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUserTypingComposer);
+        this.response.init(Outgoing.UserTypingMessageComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.typing ? 1 : 0);
         return this.response;

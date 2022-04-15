@@ -15,7 +15,7 @@ public class UnkownPetPackageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnkownPetPackageComposer);
+        this.response.init(Outgoing.FurnitureAliasesMessageComposer);
         this.response.appendInt(this.unknownMap.size());
         for (Map.Entry<String, String> entry : this.unknownMap.entrySet()) {
             this.response.appendString(entry.getKey());

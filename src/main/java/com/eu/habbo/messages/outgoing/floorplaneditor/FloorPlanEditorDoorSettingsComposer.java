@@ -14,7 +14,7 @@ public class FloorPlanEditorDoorSettingsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FloorPlanEditorDoorSettingsComposer);
+        this.response.init(Outgoing.RoomEntryTileMessageComposer);
         this.response.appendInt(this.room.getLayout().getDoorX());
         this.response.appendInt(this.room.getLayout().getDoorY());
         this.response.appendInt(this.room.getLayout().getDoorDirection());

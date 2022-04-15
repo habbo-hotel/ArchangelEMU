@@ -14,7 +14,7 @@ public class UserAchievementScoreComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserAchievementScoreComposer);
+        this.response.init(Outgoing.AchievementsScoreComposer);
         this.response.appendInt(this.habbo.getHabboStats().getAchievementScore());
         return this.response;
     }

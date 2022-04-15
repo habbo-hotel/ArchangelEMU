@@ -15,7 +15,7 @@ public class GuildConfirmRemoveMemberComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildConfirmRemoveMemberComposer);
+        this.response.init(Outgoing.GuildMemberFurniCountInHQMessageComposer);
         this.response.appendInt(this.userId);
         this.response.appendInt(this.furniCount);
         return this.response;

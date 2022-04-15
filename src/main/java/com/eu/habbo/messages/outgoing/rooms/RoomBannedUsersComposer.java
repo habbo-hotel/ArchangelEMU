@@ -40,7 +40,7 @@ public class RoomBannedUsersComposer extends MessageComposer {
         if (roomBans.isEmpty())
             return null;
 
-        this.response.init(Outgoing.RoomBannedUsersComposer);
+        this.response.init(Outgoing.BannedUsersFromRoomComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendInt(roomBans.size());
 

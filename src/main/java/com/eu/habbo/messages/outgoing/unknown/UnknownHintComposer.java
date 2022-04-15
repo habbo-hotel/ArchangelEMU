@@ -13,7 +13,7 @@ public class UnknownHintComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnknownHintComposer);
+        this.response.init(Outgoing.ElementPointerMessageComposer);
         this.response.appendString(this.key);
         return this.response;
     }

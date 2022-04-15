@@ -21,7 +21,7 @@ public class ModToolUserRoomVisitsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ModToolUserRoomVisitsComposer);
+        this.response.init(Outgoing.RoomVisitsComposer);
         this.response.appendInt(this.habboInfo.getId());
         this.response.appendString(this.habboInfo.getUsername());
         this.response.appendInt(this.roomVisits.size());

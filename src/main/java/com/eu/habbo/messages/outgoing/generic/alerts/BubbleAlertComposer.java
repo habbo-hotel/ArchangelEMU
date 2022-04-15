@@ -29,7 +29,7 @@ public class BubbleAlertComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.BubbleAlertComposer);
+        this.response.init(Outgoing.NotificationDialogMessageComposer);
         this.response.appendString(this.errorKey);
         this.response.appendInt(this.keys.size());
         for (Map.Entry<String, String> set : this.keys.entrySet()) {
