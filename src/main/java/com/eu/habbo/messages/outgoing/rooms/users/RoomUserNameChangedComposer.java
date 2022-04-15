@@ -30,7 +30,7 @@ public class RoomUserNameChangedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUserNameChangedComposer);
+        this.response.init(Outgoing.UserNameChangedMessageComposer);
         this.response.appendInt(this.userId);
         this.response.appendInt(this.roomId);
         this.response.appendString(this.name);

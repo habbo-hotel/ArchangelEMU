@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class VipTutorialsStartComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.VipTutorialsStartComposer);
+        this.response.init(Outgoing.CitizenshipVipOfferPromoEnabledComposer);
         //Empty Body
         return this.response;
     }

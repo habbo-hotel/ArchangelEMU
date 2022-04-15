@@ -14,7 +14,7 @@ public class RoomUserDanceComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUserDanceComposer);
+        this.response.init(Outgoing.DanceMessageComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.roomUnit.getDanceType().getType());
         return this.response;

@@ -14,7 +14,7 @@ public class FreezeLivesComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FreezeLivesComposer);
+        this.response.init(Outgoing.GamePlayerValueMessageComposer);
         this.response.appendInt(this.gamePlayer.getHabbo().getRoomUnit().getId());
         this.response.appendInt(this.gamePlayer.getLives());
         return this.response;

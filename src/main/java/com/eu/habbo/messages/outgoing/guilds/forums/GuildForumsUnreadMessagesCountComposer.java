@@ -13,7 +13,7 @@ public class GuildForumsUnreadMessagesCountComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildForumsUnreadMessagesCountComposer);
+        this.response.init(Outgoing.UnreadForumsCountMessageComposer);
         this.response.appendInt(this.count);
         return this.response;
     }

@@ -14,7 +14,7 @@ public class EffectsListRemoveComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.EffectsListRemoveComposer);
+        this.response.init(Outgoing.AvatarEffectExpiredMessageComposer);
         this.response.appendInt(this.effect.effect);
         return this.response;
     }

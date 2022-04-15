@@ -14,7 +14,7 @@ public class ItemStateComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ItemStateComposer);
+        this.response.init(Outgoing.OneWayDoorStatusMessageComposer);
         this.response.appendInt(this.item.getId());
         try {
             int state = Integer.valueOf(this.item.getExtradata());

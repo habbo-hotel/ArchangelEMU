@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class RoomNoRightsComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomNoRightsComposer);
+        this.response.init(Outgoing.YouAreNotControllerMessageComposer);
         return this.response;
     }
 }

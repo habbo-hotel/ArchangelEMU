@@ -14,7 +14,7 @@ public class RoomUsersAddGuildBadgeComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUsersGuildBadgesComposer);
+        this.response.init(Outgoing.HabboGroupBadgesMessageComposer);
         this.response.appendInt(1);
         this.response.appendInt(this.guild.getId());
         this.response.appendString(this.guild.getBadge());

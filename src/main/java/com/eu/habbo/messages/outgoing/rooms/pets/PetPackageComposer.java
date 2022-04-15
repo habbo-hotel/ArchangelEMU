@@ -14,7 +14,7 @@ public class PetPackageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.LeprechaunStarterBundleComposer);
+        this.response.init(Outgoing.OpenPetPackageRequestedMessageComposer);
         this.response.appendInt(this.item.getId());
         return this.response;
     }

@@ -13,7 +13,7 @@ public class DoorbellAddUserComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.DoorbellAddUserComposer);
+        this.response.init(Outgoing.DoorbellMessageComposer);
         this.response.appendString(this.habbo);
         return this.response;
     }

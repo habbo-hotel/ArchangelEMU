@@ -13,7 +13,7 @@ public class DiscountComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.DiscountComposer);
+        this.response.init(Outgoing.BundleDiscountRulesetMessageComposer);
 
         this.response.appendInt(MAXIMUM_ALLOWED_ITEMS);
         this.response.appendInt(DISCOUNT_BATCH_SIZE);

@@ -14,7 +14,7 @@ public class RemoveBotComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RemoveBotComposer);
+        this.response.init(Outgoing.BotRemovedFromInventoryComposer);
         this.response.appendInt(this.bot.getId());
         return this.response;
     }

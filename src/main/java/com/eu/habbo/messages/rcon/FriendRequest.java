@@ -34,7 +34,7 @@ public class FriendRequest extends RCONMessage<FriendRequest.JSON> {
                         target.getClient().sendResponse(new MessageComposer() {
                             @Override
                             protected ServerMessage composeInternal() {
-                                this.response.init(Outgoing.FriendRequestComposer);
+                                this.response.init(Outgoing.NewFriendRequestComposer);
                                 this.response.appendInt(info.getId());
                                 this.response.appendString(info.getUsername());
                                 this.response.appendString(info.getLook());

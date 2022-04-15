@@ -7,7 +7,6 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-import java.util.Calendar;
 import java.util.List;
 
 public class ClubDataComposer extends MessageComposer {
@@ -21,7 +20,7 @@ public class ClubDataComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ClubDataComposer);
+        this.response.init(Outgoing.HabboClubOffersMessageComposer);
 
         List<ClubOffer> offers = Emulator.getGameEnvironment().getCatalogManager().getClubOffers();
         this.response.appendInt(offers.size());
