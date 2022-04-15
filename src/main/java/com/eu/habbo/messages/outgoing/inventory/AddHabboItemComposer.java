@@ -42,7 +42,7 @@ public class AddHabboItemComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AddHabboItemComposer);
+        this.response.init(Outgoing.UnseenItemsComposer);
 
         if (this.ids != null) {
             this.response.appendInt(1);

@@ -14,7 +14,7 @@ public class AddPetComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AddPetComposer);
+        this.response.init(Outgoing.PetAddedToInventoryComposer);
         this.pet.serialize(this.response);
         this.response.appendBoolean(false);
         return this.response;

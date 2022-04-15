@@ -17,7 +17,7 @@ public class CameraPublishWaitMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CameraPublishWaitMessageComposer);
+        this.response.init(Outgoing.CameraPublishStatusMessageComposer);
 
         this.response.appendBoolean(this.isOk);
         this.response.appendInt(this.cooldownSeconds);

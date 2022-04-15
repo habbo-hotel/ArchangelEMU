@@ -16,7 +16,7 @@ public class RoomPetExperienceComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomPetExperienceComposer);
+        this.response.init(Outgoing.PetExperienceComposer);
         this.response.appendInt(this.pet.getId());
         this.response.appendInt(this.pet.getRoomUnit().getId());
         this.response.appendInt(this.amount);

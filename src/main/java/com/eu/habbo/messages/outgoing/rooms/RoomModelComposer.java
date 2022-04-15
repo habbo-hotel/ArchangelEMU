@@ -14,7 +14,7 @@ public class RoomModelComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomModelComposer);
+        this.response.init(Outgoing.RoomReadyMessageComposer);
         this.response.appendString(this.room.getLayout().getName());
         this.response.appendInt(this.room.getId());
         return this.response;

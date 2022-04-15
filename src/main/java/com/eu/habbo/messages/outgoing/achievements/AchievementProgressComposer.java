@@ -19,7 +19,7 @@ public class AchievementProgressComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AchievementProgressComposer);
+        this.response.init(Outgoing.AchievementComposer);
 
         int achievementProgress;
         AchievementLevel currentLevel;

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class OpenRoomCreationWindowComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.OpenRoomCreationWindowComposer);
+        this.response.init(Outgoing.NoOwnedRoomsAlertMessageComposer);
         return this.response;
     }
 }

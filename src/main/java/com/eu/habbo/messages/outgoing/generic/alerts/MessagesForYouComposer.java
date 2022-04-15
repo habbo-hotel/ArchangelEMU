@@ -23,7 +23,7 @@ public class MessagesForYouComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MessagesForYouComposer);
+        this.response.init(Outgoing.MOTDNotificationComposer);
         this.response.appendInt(this.messages.length + this.newMessages.size());
 
         for (String s : this.messages) {
