@@ -46,9 +46,21 @@ public class TakeBadgeCommand extends Command {
                 }
             }
 
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_take_badge"), RoomChatMessageBubbles.ALERT);
+            int userId = 0;
 
-            BadgesComponent.deleteBadge(habbo != null ? habbo.getHabboInfo().getId() : HabboManager.getOfflineHabboInfo(username).getId(), badge);
+            if (habbo != null)
+                userId = habbo.getHabboInfo().getId();
+            else {
+                HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(username);
+                if (habboInfo != null)
+                    userId = habboInfo.getId();
+            }
+
+            if (userId > 0) {
+                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_take_badge"), RoomChatMessageBubbles.ALERT);
+
+                BadgesComponent.deleteBadge(userId, badge);
+            }
         }
 
         return true;
