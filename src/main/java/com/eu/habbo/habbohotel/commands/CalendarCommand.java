@@ -22,14 +22,19 @@ public class CalendarCommand extends Command {
         if (Emulator.getConfig().getBoolean("hotel.calendar.enabled")) {
             String campaignName = Emulator.getConfig().getValue("hotel.calendar.default");
 
-            if(params.length > 1 && gameClient.getHabbo().hasPermission("cmd_calendar_staff")) {
+            if (params.length > 1 && gameClient.getHabbo().hasPermission("cmd_calendar_staff")) {
                 campaignName = params[1];
             }
+
             CalendarCampaign campaign = Emulator.getGameEnvironment().getCalendarManager().getCalendarCampaign(campaignName);
-            if(campaign == null) return false;
-                int daysBetween = (int) DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
-            if(daysBetween >= 0) {
+
+            if (campaign == null) return false;
+
+            int daysBetween = (int) DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
+
+            if (daysBetween >= 0) {
                 gameClient.sendResponse(new AdventCalendarDataComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), daysBetween, gameClient.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()));
+                gameClient.sendResponse(new NuxAlertComposer("openView/calendar"));
             }
         }
 
