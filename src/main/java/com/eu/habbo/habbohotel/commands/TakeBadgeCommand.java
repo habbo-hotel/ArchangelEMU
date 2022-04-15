@@ -5,6 +5,8 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
+import com.eu.habbo.habbohotel.users.HabboInfo;
+import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
 import com.eu.habbo.messages.outgoing.inventory.InventoryBadgesComposer;
 import com.eu.habbo.messages.outgoing.users.UserBadgesComposer;
@@ -46,7 +48,7 @@ public class TakeBadgeCommand extends Command {
 
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_take_badge"), RoomChatMessageBubbles.ALERT);
 
-            BadgesComponent.deleteBadge(username, badge);
+            BadgesComponent.deleteBadge(habbo != null ? habbo.getHabboInfo().getId() : HabboManager.getOfflineHabboInfo(username).getId(), badge);
         }
 
         return true;
