@@ -29,7 +29,7 @@ public class ThreadUpdatedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ThreadUpdateMessageComposer);
+        this.response.init(Outgoing.UpdateThreadMessageComposer);
         this.response.appendInt(this.thread.getGuildId());
         this.thread.serialize(this.response);
 

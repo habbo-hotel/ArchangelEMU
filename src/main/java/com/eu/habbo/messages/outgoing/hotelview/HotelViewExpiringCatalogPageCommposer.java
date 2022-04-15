@@ -16,7 +16,7 @@ public class HotelViewExpiringCatalogPageCommposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HotelViewExpiringCatalogPageCommposer);
+        this.response.init(Outgoing.CatalogPageWithEarliestExpiryMessageComposer);
         this.response.appendString(this.page.getCaption());
         this.response.appendInt(this.page.getId());
         this.response.appendString(this.image);

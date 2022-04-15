@@ -14,7 +14,7 @@ public class ItemExtraDataComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ItemExtraDataComposer);
+        this.response.init(Outgoing.ObjectDataUpdateMessageComposer);
         this.response.appendString(this.item.getId() + "");
         this.item.serializeExtradata(this.response);
         return this.response;

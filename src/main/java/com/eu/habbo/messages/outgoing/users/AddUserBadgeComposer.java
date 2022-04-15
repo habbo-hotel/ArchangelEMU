@@ -14,7 +14,7 @@ public class AddUserBadgeComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AddUserBadgeComposer);
+        this.response.init(Outgoing.BadgeReceivedComposer);
         this.response.appendInt(this.badge.getId());
         this.response.appendString(this.badge.getCode());
         return this.response;

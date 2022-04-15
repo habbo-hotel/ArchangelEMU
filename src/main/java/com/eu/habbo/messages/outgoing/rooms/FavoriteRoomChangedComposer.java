@@ -15,7 +15,7 @@ public class FavoriteRoomChangedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FavoriteRoomChangedComposer);
+        this.response.init(Outgoing.FavouriteChangedComposer);
         this.response.appendInt(this.roomId);
         this.response.appendBoolean(this.favorite);
         return this.response;

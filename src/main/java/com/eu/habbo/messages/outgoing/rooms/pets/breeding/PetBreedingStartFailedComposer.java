@@ -21,7 +21,7 @@ public class PetBreedingStartFailedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetBreedingStartFailedComposer);
+        this.response.init(Outgoing.GoToBreedingNestFailureComposer);
         this.response.appendInt(this.reason);
         return this.response;
     }

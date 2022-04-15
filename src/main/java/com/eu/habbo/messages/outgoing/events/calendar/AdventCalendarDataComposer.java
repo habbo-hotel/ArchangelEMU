@@ -27,7 +27,7 @@ public class AdventCalendarDataComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AdventCalendarDataComposer);
+        this.response.init(Outgoing.CampaignCalendarDataMessageComposer);
         this.response.appendString(this.eventName);
         this.response.appendString(this.campaignImage);
         this.response.appendInt(this.currentDay);

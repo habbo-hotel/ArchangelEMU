@@ -15,7 +15,7 @@ public class RoomPaintComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomPaintComposer);
+        this.response.init(Outgoing.RoomPropertyMessageComposer);
         this.response.appendString(this.type);
         this.response.appendString(this.value);
         return this.response;

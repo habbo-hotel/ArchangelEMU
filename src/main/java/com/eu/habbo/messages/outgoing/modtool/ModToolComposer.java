@@ -24,7 +24,7 @@ public class ModToolComposer extends MessageComposer implements TObjectProcedure
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ModToolComposer);
+        this.response.init(Outgoing.ModeratorInitMessageComposer);
 
         if (this.habbo.hasPermission(Permission.ACC_MODTOOL_TICKET_Q)) {
             THashSet<ModToolIssue> openTickets = new THashSet<>();

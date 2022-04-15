@@ -17,7 +17,7 @@ public class JukeBoxMySongsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.JukeBoxMySongsComposer);
+        this.response.init(Outgoing.UserSongDisksInventoryMessageComposer);
 
         this.response.appendInt(this.items.size());
 

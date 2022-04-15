@@ -1,6 +1,5 @@
 package com.eu.habbo.messages.outgoing.events.calendar;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.campaign.calendar.CalendarManager;
 import com.eu.habbo.habbohotel.campaign.calendar.CalendarRewardObject;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -21,7 +20,7 @@ public class AdventCalendarProductComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AdventCalendarProductComposer);
+        this.response.init(Outgoing.CampaignCalendarDoorOpenedMessageComposer);
         this.response.appendBoolean(this.visible);
 
         String className = "";

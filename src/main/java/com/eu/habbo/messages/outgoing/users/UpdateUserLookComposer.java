@@ -14,7 +14,7 @@ public class UpdateUserLookComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UpdateUserLookComposer);
+        this.response.init(Outgoing.FigureUpdateComposer);
         this.response.appendString(this.habbo.getHabboInfo().getLook());
         this.response.appendString(this.habbo.getHabboInfo().getGender().name());
         return this.response;
