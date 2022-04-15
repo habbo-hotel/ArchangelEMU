@@ -88,3 +88,6 @@ INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('moodlight.color_check.
 
 -- Mannequin name
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('hotel.mannequin.name.default', 'My look');
+
+-- RCON: Change Username
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('rcon.alert.user.change_username', 'You can change your username. Click on yourself to change it.');
