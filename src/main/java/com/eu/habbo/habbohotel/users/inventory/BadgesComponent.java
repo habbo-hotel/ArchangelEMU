@@ -46,7 +46,7 @@ public class BadgesComponent {
                         }
 
                         if (delete) {
-                            deleteBadge(habbo.getHabboInfo().getUsername(), badge.getCode());
+                            deleteBadge(habbo.getHabboInfo().getId(), badge.getCode());
                             continue;
                         }
                     }
@@ -92,22 +92,6 @@ public class BadgesComponent {
         badge.run();
         habbo.getInventory().getBadgesComponent().addBadge(badge);
         return badge;
-    }
-
-    @Deprecated
-    public static void deleteBadge(String username, HabboBadge badge) {
-        deleteBadge(username, badge.getCode());
-    }
-
-    @Deprecated
-    public static void deleteBadge(String username, String badge) {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE users_badges FROM users_badges INNER JOIN users ON users_badges.user_id = users.id WHERE users.username LIKE ? AND badge_code LIKE ?")) {
-            statement.setString(1, username);
-            statement.setString(2, badge);
-            statement.execute();
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
-        }
     }
 
     public static void deleteBadge(int userId, String badge) {
