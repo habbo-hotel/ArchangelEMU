@@ -114,7 +114,7 @@ public final class Emulator {
 
             // Checks if this is a BETA build before allowing them to continue.
             if (PREVIEW.toLowerCase().contains("beta")) {
-                System.out.println("");
+                System.out.println();
                 promptEnterKey();
             }
             LOGGER.info("eek. Has it really been a year?");
@@ -294,9 +294,6 @@ public final class Emulator {
         }
         Emulator.stopped = true;
 
-        // if (osName.startsWith("Windows") && (!classPath.contains("idea_rt.jar"))) {
-        //     AnsiConsole.systemUninstall();
-        // }
         try {
             if (Emulator.threading != null)
 

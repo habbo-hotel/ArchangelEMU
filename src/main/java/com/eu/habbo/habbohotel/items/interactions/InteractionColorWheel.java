@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.items.WallItemUpdateComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ItemUpdateMessageComposer;
 import com.eu.habbo.threading.runnables.RandomDiceNumber;
 
 import java.sql.ResultSet;
@@ -51,7 +51,7 @@ public class InteractionColorWheel extends HabboItem {
 
         if (this.rollTaks == null && !this.getExtradata().equalsIgnoreCase("-1")) {
             this.setExtradata("-1");
-            room.sendComposer(new WallItemUpdateComposer(this).compose());
+            room.sendComposer(new ItemUpdateMessageComposer(this).compose());
             Emulator.getThreading().run(this);
             Emulator.getThreading().run(new RandomDiceNumber(this, room, this.getBaseItem().getStateCount()), 3000);
         }

@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.crafting.CraftingRecipe;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.catalog.AlertLimitedSoldOutComposer;
+import com.eu.habbo.messages.outgoing.catalog.LimitedEditionSoldOutComposer;
 import com.eu.habbo.messages.outgoing.crafting.CraftingResultComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
@@ -55,7 +55,7 @@ public class CraftingCraftSecretEvent extends MessageHandler {
 
                 if (recipe != null) {
                     if (!recipe.canBeCrafted()) {
-                        this.client.sendResponse(new AlertLimitedSoldOutComposer());
+                        this.client.sendResponse(new LimitedEditionSoldOutComposer());
                         return;
                     }
 

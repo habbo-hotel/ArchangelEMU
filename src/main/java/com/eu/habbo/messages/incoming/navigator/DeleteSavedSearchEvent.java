@@ -2,7 +2,7 @@ package com.eu.habbo.messages.incoming.navigator;
 
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.navigator.NewNavigatorSavedSearchesComposer;
+import com.eu.habbo.messages.outgoing.navigator.NavigatorSavedSearchesComposer;
 
 public class DeleteSavedSearchEvent extends MessageHandler {
     @Override
@@ -21,6 +21,6 @@ public class DeleteSavedSearchEvent extends MessageHandler {
 
         this.client.getHabbo().getHabboInfo().deleteSavedSearch(search);
 
-        this.client.sendResponse(new NewNavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
+        this.client.sendResponse(new NavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
     }
 }

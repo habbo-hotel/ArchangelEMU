@@ -11,7 +11,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.AddWallItemComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ItemAddMessageComposer;
 
 public class PostItPlaceEvent extends MessageHandler {
     @Override
@@ -33,7 +33,7 @@ public class PostItPlaceEvent extends MessageHandler {
                         item.setWallPosition(location);
                         item.setUserId(this.client.getHabbo().getHabboInfo().getId());
                         item.needsUpdate(true);
-                        room.sendComposer(new AddWallItemComposer(item, this.client.getHabbo().getHabboInfo().getUsername()).compose());
+                        room.sendComposer(new ItemAddMessageComposer(item, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
                         this.client.sendResponse(new FurniListRemoveComposer(item.getGiftAdjustedId()));
                         item.setFromGift(false);

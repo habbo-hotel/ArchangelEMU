@@ -22,8 +22,8 @@ import com.eu.habbo.messages.outgoing.events.calendar.CampaignCalendarDataMessag
 import com.eu.habbo.messages.outgoing.gamecenter.Game2AccountGameStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.gamecenter.GameListMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
-import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
-import com.eu.habbo.messages.outgoing.habboway.nux.NewUserIdentityComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.MOTDNotificationComposer;
+import com.eu.habbo.messages.outgoing.habboway.nux.NoobnessLevelMessageComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.InClientLinkMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.EnableNotificationsComposer;
 import com.eu.habbo.messages.outgoing.handshake.AuthenticationOKMessageComposer;
@@ -32,11 +32,11 @@ import com.eu.habbo.messages.outgoing.handshake.PingComposer;
 import com.eu.habbo.messages.outgoing.inventory.BadgePointLimitsComposer;
 import com.eu.habbo.messages.outgoing.inventory.AvatarEffectsMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.CfhTopicsInitComposer;
-import com.eu.habbo.messages.outgoing.modtool.ModToolComposer;
+import com.eu.habbo.messages.outgoing.modtool.ModeratorInitMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolSanctionInfoComposer;
 import com.eu.habbo.messages.outgoing.navigator.*;
 import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMessageComposer;
-import com.eu.habbo.messages.outgoing.mysterybox.MysteryBoxKeysComposer;
+import com.eu.habbo.messages.outgoing.mysterybox.MysteryBoxKeysMessageComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
@@ -200,17 +200,17 @@ public class SecureLoginEvent extends MessageHandler {
                     }
                 }
 
-                messages.add(new UserHomeRoomComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), roomIdToEnter).compose());
+                messages.add(new NavigatorSettingsComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), roomIdToEnter).compose());
                 messages.add(new AvatarEffectsMessageComposer(habbo, this.client.getHabbo().getInventory().getEffectsComponent().effects.values()).compose());
                 messages.add(new FigureSetIdsComposer(this.client.getHabbo()).compose());
-                messages.add(new NewUserIdentityComposer(habbo).compose());
+                messages.add(new NoobnessLevelMessageComposer(habbo).compose());
                 messages.add(new UserPermissionsComposer(this.client.getHabbo()).compose());
                 messages.add(new AvailabilityStatusMessageComposer(true, false, true).compose());
                 messages.add(new PingComposer().compose());
                 messages.add(new EnableNotificationsComposer(Emulator.getConfig().getBoolean("bubblealerts.enabled", true)).compose());
                 messages.add(new AchievementsScoreComposer(this.client.getHabbo()).compose());
                 messages.add(new IsFirstLoginOfDayComposer(true).compose());
-                messages.add(new MysteryBoxKeysComposer().compose());
+                messages.add(new MysteryBoxKeysMessageComposer().compose());
                 messages.add(new BuildersClubSubscriptionStatusMessageComposer().compose());
                 messages.add(new CfhTopicsInitComposer().compose());
                 messages.add(new FavouriteChangedComposer(this.client.getHabbo()).compose());
@@ -221,7 +221,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new UserClubComposer(this.client.getHabbo(), SubscriptionHabboClub.HABBO_CLUB, UserClubComposer.RESPONSE_TYPE_LOGIN).compose());
 
                 if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
-                    messages.add(new ModToolComposer(this.client.getHabbo()).compose());
+                    messages.add(new ModeratorInitMessageComposer(this.client.getHabbo()).compose());
                 }
 
 
@@ -289,7 +289,7 @@ public class SecureLoginEvent extends MessageHandler {
                     final Habbo finalHabbo = habbo;
                     Emulator.getThreading().run(() -> {
                         if (Emulator.getConfig().getBoolean("hotel.welcome.alert.oldstyle")) {
-                            SecureLoginEvent.this.client.sendResponse(new MessagesForYouComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername()).split("<br/>")));
+                            SecureLoginEvent.this.client.sendResponse(new MOTDNotificationComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername()).split("<br/>")));
                         } else {
                             SecureLoginEvent.this.client.sendResponse(new HabboBroadcastMessageComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername())));
                         }
@@ -312,7 +312,7 @@ public class SecureLoginEvent extends MessageHandler {
                     habbo.getHabboInfo().addSavedSearch(new NavigatorSavedSearch("my", ""));
                     habbo.getHabboInfo().addSavedSearch(new NavigatorSavedSearch("favorites", ""));
 
-                    this.client.sendResponse(new NewNavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
+                    this.client.sendResponse(new NavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
                 }
             } else {
                 Emulator.getGameServer().getGameClientManager().disposeClient(this.client);

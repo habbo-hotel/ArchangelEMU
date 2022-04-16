@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.generic.alerts.StaffAlertWithLinkComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.ModeratorMessageComposer;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class HotelAlertCommand extends Command {
                 message.append(params[i]).append(" ");
             }
 
-            ServerMessage msg = new StaffAlertWithLinkComposer(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername(), "").compose();
+            ServerMessage msg = new ModeratorMessageComposer(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername(), "").compose();
 
             for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
                 Habbo habbo = set.getValue();

@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.pets.PetData;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitType;
-import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.MOTDNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class TransformCommand extends Command {
                 petNames.append(line.replace("%id%", p.getType() + "").replace("%name%", p.getName())).append("\r");
             }
 
-            gameClient.sendResponse(new MessagesForYouComposer(new String[]{petNames.toString()}));
+            gameClient.sendResponse(new MOTDNotificationComposer(new String[]{petNames.toString()}));
             return true;
         } else {
             String petName = params[1];

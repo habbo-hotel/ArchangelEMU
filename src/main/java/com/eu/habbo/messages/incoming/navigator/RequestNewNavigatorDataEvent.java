@@ -6,11 +6,11 @@ import com.eu.habbo.messages.outgoing.navigator.*;
 public class RequestNewNavigatorDataEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        this.client.sendResponse(new NewNavigatorSettingsComposer(this.client.getHabbo().getHabboStats().navigatorWindowSettings));
-        this.client.sendResponse(new NewNavigatorMetaDataComposer());
-        this.client.sendResponse(new NewNavigatorLiftedRoomsComposer());
+        this.client.sendResponse(new NewNavigatorPreferencesComposer(this.client.getHabbo().getHabboStats().navigatorWindowSettings));
+        this.client.sendResponse(new NavigatorMetaDataComposer());
+        this.client.sendResponse(new NavigatorLiftedRoomsComposer());
         this.client.sendResponse(new CollapsedCategoriesComposer());
-        this.client.sendResponse(new NewNavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
+        this.client.sendResponse(new NavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
         this.client.sendResponse(new NewNavigatorEventCategoriesComposer());
     }
 }

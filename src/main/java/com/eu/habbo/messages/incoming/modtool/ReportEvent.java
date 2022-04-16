@@ -78,7 +78,7 @@ public class ReportEvent extends MessageHandler {
                                         }
                                     }
 
-                                    ReportEvent.this.client.sendResponse(new ModToolIssueHandledComposer(cfhTopic.reply).compose());
+                                    ReportEvent.this.client.sendResponse(new IssueCloseNotificationMessageComposer(cfhTopic.reply).compose());
                                     Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                                 }
                             }, 30 * 1000);
@@ -108,7 +108,7 @@ public class ReportEvent extends MessageHandler {
                                 }
                             }
 
-                            ReportEvent.this.client.sendResponse(new ModToolIssueHandledComposer(cfhTopic.reply).compose());
+                            ReportEvent.this.client.sendResponse(new IssueCloseNotificationMessageComposer(cfhTopic.reply).compose());
                             Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                         }
                     }, 30 * 1000);

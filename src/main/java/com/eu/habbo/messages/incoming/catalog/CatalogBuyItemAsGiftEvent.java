@@ -162,7 +162,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
 
                     if (item.isLimited()) {
                         if (item.getLimitedStack() == item.getLimitedSells()) {
-                            this.client.sendResponse(new AlertLimitedSoldOutComposer());
+                            this.client.sendResponse(new LimitedEditionSoldOutComposer());
                             return;
                         }
                         item.sellRare();
@@ -182,7 +182,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                     if (item.isLimited()) {
                         count = 1;
                         if (Emulator.getGameEnvironment().getCatalogManager().getLimitedConfig(item).available() == 0 && habbo != null) {
-                            habbo.getClient().sendResponse(new AlertLimitedSoldOutComposer());
+                            habbo.getClient().sendResponse(new LimitedEditionSoldOutComposer());
                             return;
                         }
 

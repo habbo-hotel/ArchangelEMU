@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.crafting;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.crafting.CraftingRecipe;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.catalog.AlertLimitedSoldOutComposer;
+import com.eu.habbo.messages.outgoing.catalog.LimitedEditionSoldOutComposer;
 import com.eu.habbo.messages.outgoing.crafting.CraftingRecipeComposer;
 
 public class CraftingAddRecipeEvent extends MessageHandler {
@@ -14,7 +14,7 @@ public class CraftingAddRecipeEvent extends MessageHandler {
 
         if (recipe != null) {
             if (!recipe.canBeCrafted()) {
-                this.client.sendResponse(new AlertLimitedSoldOutComposer());
+                this.client.sendResponse(new LimitedEditionSoldOutComposer());
                 return;
             }
 

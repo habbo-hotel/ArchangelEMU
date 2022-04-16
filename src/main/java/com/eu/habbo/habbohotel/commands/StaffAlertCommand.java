@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.messenger.Message;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import com.eu.habbo.messages.outgoing.friends.FriendChatMessageComposer;
+import com.eu.habbo.messages.outgoing.friends.NewConsoleMessageComposer;
 
 public class StaffAlertCommand extends Command {
     public StaffAlertCommand() {
@@ -20,7 +20,7 @@ public class StaffAlertCommand extends Command {
             }
 
             Emulator.getGameEnvironment().getHabboManager().staffAlert(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername());
-            Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new FriendChatMessageComposer(new Message(gameClient.getHabbo().getHabboInfo().getId(), -1, message.toString())).compose(), "acc_staff_chat", gameClient);
+            Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new NewConsoleMessageComposer(new Message(gameClient.getHabbo().getHabboInfo().getId(), -1, message.toString())).compose(), "acc_staff_chat", gameClient);
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_staffalert.forgot_message"), RoomChatMessageBubbles.ALERT);
         }

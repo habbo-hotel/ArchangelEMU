@@ -12,7 +12,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetPackageNameValidationComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.breeding.PetBreedingCompleted;
+import com.eu.habbo.messages.outgoing.rooms.pets.breeding.NestBreedingSuccessComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.breeding.ConfirmBreedingRequestComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
@@ -159,7 +159,7 @@ public class InteractionPetBreedingNest extends HabboItem {
             offspring.run();
             InteractionPetBreedingNest.this.freePets();
             habbo.getHabboInfo().getCurrentRoom().removeHabboItem(box);
-            habbo.getClient().sendResponse(new PetBreedingCompleted(offspring.getId(), Emulator.getGameEnvironment().getPetManager().getRarityForOffspring(offspring)));
+            habbo.getClient().sendResponse(new NestBreedingSuccessComposer(offspring.getId(), Emulator.getGameEnvironment().getPetManager().getRarityForOffspring(offspring)));
 
             if (box.getBaseItem().getName().startsWith("pet_breeding_")) {
                 String boxType = box.getBaseItem().getName().replace("pet_breeding_", "");

@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionPostIt;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.items.PostItDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ItemDataUpdateMessageComposer;
 
 public class PostItRequestDataEvent extends MessageHandler {
     @Override
@@ -17,7 +17,7 @@ public class PostItRequestDataEvent extends MessageHandler {
             HabboItem item = room.getHabboItem(itemId);
 
             if (item instanceof InteractionPostIt) {
-                this.client.sendResponse(new PostItDataComposer((InteractionPostIt) item));
+                this.client.sendResponse(new ItemDataUpdateMessageComposer((InteractionPostIt) item));
             }
         }
     }

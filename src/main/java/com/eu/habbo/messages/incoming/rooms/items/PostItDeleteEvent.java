@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.items.RemoveWallItemComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ItemRemoveMessageComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
 public class PostItDeleteEvent extends MessageHandler {
@@ -26,7 +26,7 @@ public class PostItDeleteEvent extends MessageHandler {
             if (item.getUserId() == this.client.getHabbo().getHabboInfo().getId() ||  this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
                 item.setRoomId(0);
                 room.removeHabboItem(item);
-                room.sendComposer(new RemoveWallItemComposer(item).compose());
+                room.sendComposer(new ItemRemoveMessageComposer(item).compose());
                 Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
             }
         }

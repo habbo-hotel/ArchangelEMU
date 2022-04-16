@@ -9,9 +9,9 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.ClientMessage;
-import com.eu.habbo.messages.outgoing.modtool.ModToolIssueHandledComposer;
-import com.eu.habbo.messages.outgoing.modtool.ModToolIssueInfoComposer;
-import com.eu.habbo.messages.outgoing.modtool.ModToolUserInfoComposer;
+import com.eu.habbo.messages.outgoing.modtool.IssueCloseNotificationMessageComposer;
+import com.eu.habbo.messages.outgoing.modtool.IssueInfoMessageComposer;
+import com.eu.habbo.messages.outgoing.modtool.ModeratorUserInfoComposer;
 import com.eu.habbo.plugin.events.support.*;
 import com.eu.habbo.threading.runnables.InsertModToolIssue;
 import gnu.trove.TCollections;
@@ -58,7 +58,7 @@ public class ModToolManager {
             statement.setInt(1, userId);
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    client.sendResponse(new ModToolUserInfoComposer(set));
+                    client.sendResponse(new ModeratorUserInfoComposer(set));
                 }
             }
         } catch (SQLException e) {
@@ -402,7 +402,7 @@ public class ModToolManager {
             return;
 
         if (target != null)
-            alertedEvent.target.getClient().sendResponse(new ModToolIssueHandledComposer(alertedEvent.message));
+            alertedEvent.target.getClient().sendResponse(new IssueCloseNotificationMessageComposer(alertedEvent.message));
     }
 
     public void kick(Habbo moderator, Habbo target, String message) {
@@ -592,7 +592,7 @@ public class ModToolManager {
         SupportTicketStatusChangedEvent event = new SupportTicketStatusChangedEvent(null, issue);
 
         if (!Emulator.getPluginManager().fireEvent(event).isCancelled()) {
-            Emulator.getGameEnvironment().getHabboManager().sendPacketToHabbosWithPermission(new ModToolIssueInfoComposer(issue).compose(), Permission.ACC_SUPPORTTOOL);
+            Emulator.getGameEnvironment().getHabboManager().sendPacketToHabbosWithPermission(new IssueInfoMessageComposer(issue).compose(), Permission.ACC_SUPPORTTOOL);
         }
     }
 
@@ -624,7 +624,7 @@ public class ModToolManager {
         issue.updateInDatabase();
 
         if (sender != null) {
-            sender.getClient().sendResponse(new ModToolIssueHandledComposer(ModToolIssueHandledComposer.USELESS));
+            sender.getClient().sendResponse(new IssueCloseNotificationMessageComposer(IssueCloseNotificationMessageComposer.USELESS));
         }
 
         this.updateTicketToMods(issue);
@@ -636,7 +636,7 @@ public class ModToolManager {
         issue.state = ModToolTicketState.CLOSED;
         issue.updateInDatabase();
         if (sender != null) {
-            sender.getClient().sendResponse(new ModToolIssueHandledComposer(ModToolIssueHandledComposer.ABUSIVE));
+            sender.getClient().sendResponse(new IssueCloseNotificationMessageComposer(IssueCloseNotificationMessageComposer.ABUSIVE));
         }
 
         this.updateTicketToMods(issue);
@@ -649,7 +649,7 @@ public class ModToolManager {
         issue.updateInDatabase();
 
         if (sender != null) {
-            sender.getClient().sendResponse(new ModToolIssueHandledComposer(ModToolIssueHandledComposer.HANDLED));
+            sender.getClient().sendResponse(new IssueCloseNotificationMessageComposer(IssueCloseNotificationMessageComposer.HANDLED));
         }
 
         this.updateTicketToMods(issue);

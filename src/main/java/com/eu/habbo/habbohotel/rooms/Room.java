@@ -700,7 +700,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.updateBotsAt(tile.x, tile.y);
             }
         } else if (item.getBaseItem().getType() == FurnitureType.WALL) {
-            this.sendComposer(new RemoveWallItemComposer(item).compose());
+            this.sendComposer(new ItemRemoveMessageComposer(item).compose());
         }
 
         Habbo habbo = (picker != null && picker.getHabboInfo().getId() == item.getId() ? picker : Emulator.getGameServer().getGameClientManager().getHabbo(item.getUserId()));
@@ -4160,7 +4160,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         this.sendComposer(new FloorItemUpdateComposer(item).compose());
                         this.updateTiles(this.getLayout().getTilesAt(this.layout.getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                     } else if (item.getBaseItem().getType() == FurnitureType.WALL) {
-                        this.sendComposer(new WallItemUpdateComposer(item).compose());
+                        this.sendComposer(new ItemUpdateMessageComposer(item).compose());
                     }
                 }
             }
@@ -4630,7 +4630,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (!this.furniOwnerNames.containsKey(item.getUserId()) && owner != null) {
             this.furniOwnerNames.put(item.getUserId(), owner.getHabboInfo().getUsername());
         }
-        this.sendComposer(new AddWallItemComposer(item, this.getFurniOwnerName(item.getUserId())).compose());
+        this.sendComposer(new ItemAddMessageComposer(item, this.getFurniOwnerName(item.getUserId())).compose());
         item.needsUpdate(true);
         this.addHabboItem(item);
         item.setRoomId(this.id);

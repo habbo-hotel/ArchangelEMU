@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
-import com.eu.habbo.messages.outgoing.users.UserHomeRoomComposer;
+import com.eu.habbo.messages.outgoing.users.NavigatorSettingsComposer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class NewNavigatorActionEvent extends MessageHandler {
         } else if (data.equalsIgnoreCase("predefined_noob_lobby")) {
             this.client.sendResponse(new ForwardToRoomComposer(Emulator.getConfig().getInt("hotel.room.nooblobby")));
         } else {
-            this.client.sendResponse(new UserHomeRoomComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), this.client.getHabbo().getHabboInfo().getHomeRoom()));
+            this.client.sendResponse(new NavigatorSettingsComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), this.client.getHabbo().getHabboInfo().getHomeRoom()));
         }
     }
 }

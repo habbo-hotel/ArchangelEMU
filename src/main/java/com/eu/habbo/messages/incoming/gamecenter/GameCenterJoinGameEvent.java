@@ -2,9 +2,9 @@ package com.eu.habbo.messages.incoming.gamecenter;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.gamecenter.GameCenterAchievementsConfigurationComposer;
-import com.eu.habbo.messages.outgoing.gamecenter.basejump.BaseJumpJoinQueueComposer;
-import com.eu.habbo.messages.outgoing.gamecenter.basejump.BaseJumpLoadGameComposer;
-import com.eu.habbo.messages.outgoing.gamecenter.basejump.BaseJumpLoadGameURLComposer;
+import com.eu.habbo.messages.outgoing.gamecenter.basejump.JoinedQueueMessageComposer;
+import com.eu.habbo.messages.outgoing.gamecenter.basejump.LoadGameMessageComposer;
+import com.eu.habbo.messages.outgoing.gamecenter.basejump.LoadGameUrlMessageComposer;
 
 public class GameCenterJoinGameEvent extends MessageHandler {
     @Override
@@ -14,11 +14,11 @@ public class GameCenterJoinGameEvent extends MessageHandler {
         if (gameId == 3) //BaseJump
         {
             this.client.sendResponse(new GameCenterAchievementsConfigurationComposer());
-            this.client.sendResponse(new BaseJumpLoadGameURLComposer());
-            this.client.sendResponse(new BaseJumpLoadGameComposer(this.client, 3));
+            this.client.sendResponse(new LoadGameUrlMessageComposer());
+            this.client.sendResponse(new LoadGameMessageComposer(this.client, 3));
         } else if (gameId == 4) {
-            this.client.sendResponse(new BaseJumpJoinQueueComposer(4));
-            this.client.sendResponse(new BaseJumpLoadGameURLComposer());
+            this.client.sendResponse(new JoinedQueueMessageComposer(4));
+            this.client.sendResponse(new LoadGameUrlMessageComposer());
         }
     }
 }

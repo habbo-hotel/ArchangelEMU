@@ -2,7 +2,7 @@ package com.eu.habbo.messages.rcon;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.outgoing.catalog.*;
-import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigComposer;
+import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigurationComposer;
 import com.google.gson.Gson;
 
 public class UpdateCatalog extends RCONMessage<UpdateCatalog.JSONUpdateCatalog> {
@@ -17,7 +17,7 @@ public class UpdateCatalog extends RCONMessage<UpdateCatalog.JSONUpdateCatalog> 
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new CatalogPublishedMessageComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new BuildersClubFurniCountMessageComposer(0));
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new BundleDiscountRulesetMessageComposer());
-        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new MarketplaceConfigComposer());
+        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new MarketplaceConfigurationComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new GiftWrappingConfigurationComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new RecyclerLogicComposer());
         Emulator.getGameEnvironment().getCraftingManager().reload();

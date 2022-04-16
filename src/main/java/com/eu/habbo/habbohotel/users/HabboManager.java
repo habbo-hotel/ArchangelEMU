@@ -6,9 +6,9 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.permissions.Rank;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.catalog.*;
-import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigComposer;
+import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigurationComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
-import com.eu.habbo.messages.outgoing.modtool.ModToolComposer;
+import com.eu.habbo.messages.outgoing.modtool.ModeratorInitMessageComposer;
 import com.eu.habbo.messages.outgoing.users.UserPerksComposer;
 import com.eu.habbo.messages.outgoing.users.UserPermissionsComposer;
 import com.eu.habbo.plugin.events.users.UserRankChangedEvent;
@@ -270,14 +270,14 @@ public class HabboManager {
             habbo.getClient().sendResponse(new UserPerksComposer(habbo));
 
             if (habbo.hasPermission(Permission.ACC_SUPPORTTOOL)) {
-                habbo.getClient().sendResponse(new ModToolComposer(habbo));
+                habbo.getClient().sendResponse(new ModeratorInitMessageComposer(habbo));
             }
             habbo.getHabboInfo().run();
 
             habbo.getClient().sendResponse(new CatalogPublishedMessageComposer());
             habbo.getClient().sendResponse(new BuildersClubFurniCountMessageComposer(0));
             habbo.getClient().sendResponse(new BundleDiscountRulesetMessageComposer());
-            habbo.getClient().sendResponse(new MarketplaceConfigComposer());
+            habbo.getClient().sendResponse(new MarketplaceConfigurationComposer());
             habbo.getClient().sendResponse(new GiftWrappingConfigurationComposer());
             habbo.getClient().sendResponse(new RecyclerLogicComposer());
             habbo.alert(Emulator.getTexts().getValue("commands.generic.cmd_give_rank.new_rank").replace("id", newRank.getName()));

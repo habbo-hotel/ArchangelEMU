@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.friends.FriendRequestErrorComposer;
+import com.eu.habbo.messages.outgoing.friends.MessengerErrorComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class AcceptFriendRequestEvent extends MessageHandler {
                 HabboInfo habboInfo = getOfflineHabboInfo(userId);
 
                 if(habboInfo == null) {
-                    this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_FOUND));
+                    this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.TARGET_NOT_FOUND));
                     this.client.getHabbo().getMessenger().deleteFriendRequests(userId, this.client.getHabbo().getHabboInfo().getId());
                     continue;
                 }
@@ -60,18 +60,18 @@ public class AcceptFriendRequestEvent extends MessageHandler {
             }
 
             if(target == null) {
-                this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.TARGET_NOT_FOUND));
+                this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.TARGET_NOT_FOUND));
                 this.client.getHabbo().getMessenger().deleteFriendRequests(userId, this.client.getHabbo().getHabboInfo().getId());
                 continue;
             }
 
             if(this.client.getHabbo().getMessenger().getFriends().size() >= this.client.getHabbo().getHabboStats().maxFriends && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
-                this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.FRIEND_LIST_OWN_FULL));
+                this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_OWN_FULL));
                 break;
             }
 
             if(target.getMessenger().getFriends().size() >= target.getHabboStats().maxFriends && !target.hasPermission("acc_infinite_friends")) {
-                this.client.sendResponse(new FriendRequestErrorComposer(FriendRequestErrorComposer.FRIEND_LIST_TARGET_FULL));
+                this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_TARGET_FULL));
                 continue;
             }
 

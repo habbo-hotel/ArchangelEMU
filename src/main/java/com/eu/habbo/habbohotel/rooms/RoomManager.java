@@ -36,7 +36,7 @@ import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollAnswersComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollStartComposer;
 import com.eu.habbo.messages.outgoing.rooms.*;
 import com.eu.habbo.messages.outgoing.rooms.items.RoomFloorItemsComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.RoomWallItemsComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
@@ -785,7 +785,7 @@ public class RoomManager {
 
         habbo.getClient().sendResponse(new GetGuestRoomResultComposer(room, habbo.getClient().getHabbo(), false, true));
 
-        habbo.getClient().sendResponse(new RoomWallItemsComposer(room));
+        habbo.getClient().sendResponse(new ItemsComposer(room));
         {
             final THashSet<HabboItem> floorItems = new THashSet<>();
 

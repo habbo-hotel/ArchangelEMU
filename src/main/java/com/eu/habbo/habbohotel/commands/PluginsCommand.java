@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.MOTDNotificationComposer;
 import com.eu.habbo.plugin.HabboPlugin;
 
 import java.util.Collections;
@@ -22,7 +22,7 @@ public class PluginsCommand extends Command {
 
 
         if (Emulator.getConfig().getBoolean("commands.plugins.oldstyle")) {
-            gameClient.sendResponse(new MessagesForYouComposer(Collections.singletonList(message.toString())));
+            gameClient.sendResponse(new MOTDNotificationComposer(Collections.singletonList(message.toString())));
         } else {
             gameClient.getHabbo().alert(message.toString());
         }

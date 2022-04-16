@@ -24,7 +24,7 @@ import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import com.eu.habbo.messages.outgoing.modtool.ModToolIssueHandledComposer;
+import com.eu.habbo.messages.outgoing.modtool.IssueCloseNotificationMessageComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.messages.outgoing.users.HabboActivityPointNotificationMessageComposer;
@@ -539,7 +539,7 @@ public class CatalogManager {
         }
 
         if (voucher.hasUserExhausted(habbo.getHabboInfo().getId())) {
-            client.sendResponse(new ModToolIssueHandledComposer("You have exceeded the limit for redeeming this voucher."));
+            client.sendResponse(new IssueCloseNotificationMessageComposer("You have exceeded the limit for redeeming this voucher."));
             return;
         }
 
@@ -833,7 +833,7 @@ public class CatalogManager {
                 if (item.isLimited()) {
                     amount = 1;
                     if (this.getLimitedConfig(item).available() == 0) {
-                        habbo.getClient().sendResponse(new AlertLimitedSoldOutComposer());
+                        habbo.getClient().sendResponse(new LimitedEditionSoldOutComposer());
                         return;
                     }
 

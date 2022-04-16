@@ -16,7 +16,7 @@ import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxMySongsComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxNowPlayingMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxPlayListComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeboxSongDisksMessageComposer;
 import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -268,7 +268,7 @@ public class TraxManager implements Disposable {
                 return;
             }
 
-            this.room.sendComposer(new JukeBoxPlayListComposer(this.songs, this.totalLength).compose());
+            this.room.sendComposer(new JukeboxSongDisksMessageComposer(this.songs, this.totalLength).compose());
 
             musicDisc.setRoomId(-1);
             musicDisc.needsUpdate(true);
@@ -296,7 +296,7 @@ public class TraxManager implements Disposable {
                 this.play(this.playingIndex);
             }
 
-            this.room.sendComposer(new JukeBoxPlayListComposer(this.songs, this.totalLength).compose());
+            this.room.sendComposer(new JukeboxSongDisksMessageComposer(this.songs, this.totalLength).compose());
 
             musicDisc.setRoomId(0);
             musicDisc.needsUpdate(true);

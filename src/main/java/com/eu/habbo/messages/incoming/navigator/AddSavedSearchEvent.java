@@ -2,7 +2,7 @@ package com.eu.habbo.messages.incoming.navigator;
 
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.navigator.NewNavigatorSavedSearchesComposer;
+import com.eu.habbo.messages.outgoing.navigator.NavigatorSavedSearchesComposer;
 
 public class AddSavedSearchEvent extends MessageHandler {
     @Override
@@ -15,6 +15,6 @@ public class AddSavedSearchEvent extends MessageHandler {
 
         this.client.getHabbo().getHabboInfo().addSavedSearch(new NavigatorSavedSearch(searchCode, filter));
 
-        this.client.sendResponse(new NewNavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
+        this.client.sendResponse(new NavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
     }
 }

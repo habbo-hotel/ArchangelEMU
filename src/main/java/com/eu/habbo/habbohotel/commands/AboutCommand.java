@@ -3,8 +3,7 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.users.HabboManager;
-import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.MOTDNotificationComposer;
 
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
@@ -49,7 +48,7 @@ public class AboutCommand extends Command {
                 "<b>Thanks for using Arcturus. Report issues on the forums. http://arcturus.wf \r\r" +
                 "    - The General";
         gameClient.getHabbo().alert(message);
-        gameClient.sendResponse(new MessagesForYouComposer(Collections.singletonList(credits)));
+        gameClient.sendResponse(new MOTDNotificationComposer(Collections.singletonList(credits)));
         return true;
     }
 }

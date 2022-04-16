@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.messages.outgoing.generic.alerts.StaffAlertWithLinkComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.ModeratorMessageComposer;
 
 public class HotelAlertLinkCommand extends Command {
     public HotelAlertLinkCommand() {
@@ -24,7 +24,7 @@ public class HotelAlertLinkCommand extends Command {
 
         message.append("\r\r-<b>").append(gameClient.getHabbo().getHabboInfo().getUsername()).append("</b>");
 
-        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new StaffAlertWithLinkComposer(message.toString(), url).compose());
+        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new ModeratorMessageComposer(message.toString(), url).compose());
         return true;
     }
 }

@@ -307,7 +307,7 @@ public class Habbo implements Runnable {
 
     public void alert(String message) {
         if (Emulator.getConfig().getBoolean("hotel.alert.oldstyle")) {
-            this.client.sendResponse(new MessagesForYouComposer(new String[]{message}));
+            this.client.sendResponse(new MOTDNotificationComposer(new String[]{message}));
         } else {
             this.client.sendResponse(new HabboBroadcastMessageComposer(message));
         }
@@ -315,12 +315,12 @@ public class Habbo implements Runnable {
 
 
     public void alert(String[] messages) {
-        this.client.sendResponse(new MessagesForYouComposer(messages));
+        this.client.sendResponse(new MOTDNotificationComposer(messages));
     }
 
 
     public void alertWithUrl(String message, String url) {
-        this.client.sendResponse(new StaffAlertWithLinkComposer(message, url));
+        this.client.sendResponse(new ModeratorMessageComposer(message, url));
     }
 
 

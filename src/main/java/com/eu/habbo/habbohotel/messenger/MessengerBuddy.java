@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.friends.FriendChatMessageComposer;
+import com.eu.habbo.messages.outgoing.friends.NewConsoleMessageComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,7 +174,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             chatMessage.setMessage(Emulator.getGameEnvironment().getWordFilter().filter(chatMessage.getMessage(), from));
         }
 
-        habbo.getClient().sendResponse(new FriendChatMessageComposer(chatMessage));
+        habbo.getClient().sendResponse(new NewConsoleMessageComposer(chatMessage));
     }
 
     @Override

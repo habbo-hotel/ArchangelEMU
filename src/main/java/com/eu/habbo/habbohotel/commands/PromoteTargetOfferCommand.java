@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.catalog.TargetOffer;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.catalog.TargetedOfferComposer;
-import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.MOTDNotificationComposer;
 import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class PromoteTargetOfferCommand extends Command {
                 }
             }
 
-            gameClient.sendResponse(new MessagesForYouComposer(message));
+            gameClient.sendResponse(new MOTDNotificationComposer(message));
         } else {
             int offerId = 0;
             try {
