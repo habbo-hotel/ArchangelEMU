@@ -3,7 +3,8 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.*;
+import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
+import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
 import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
@@ -35,6 +36,7 @@ public class RoomUnit {
 
     public boolean isWiredTeleporting = false;
     public boolean isLeavingTeleporter = false;
+    public boolean isSwimming = false;
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
     public boolean canRotate = true;
@@ -72,6 +74,8 @@ public class RoomUnit {
     private int walkTimeOut;
     private int effectId;
     private int effectEndTimestamp;
+    private int previousEffectId;
+    private int previousEffectEndTimestamp;
     private ScheduledFuture moveBlockingTask;
     private int timeInRoom;
 
@@ -92,6 +96,8 @@ public class RoomUnit {
         this.handItemTimestamp = 0;
         this.walkTimeOut = Emulator.getIntUnixTimestamp();
         this.effectId = 0;
+        this.previousEffectId = 0;
+        this.previousEffectEndTimestamp = -1;
         this.isKicked = false;
         this.overridableTiles = new THashSet<>();
         this.timeInRoom = 0;
@@ -252,7 +258,7 @@ public class RoomUnit {
                         this.status.remove(RoomUnitStatus.MOVE);
                         return false;
                     }
-                    next = (RoomTile)this.path.pop();
+                    next = (RoomTile) this.path.pop();
 
                 }
             }
@@ -491,15 +497,14 @@ public class RoomUnit {
 
     public void setGoalLocation(RoomTile goalLocation) {
         if (goalLocation != null) {
-      //      if (goalLocation.state != RoomTileState.INVALID) {
-                this.setGoalLocation(goalLocation, false);
-            }
-    //}
+            //      if (goalLocation.state != RoomTileState.INVALID) {
+            this.setGoalLocation(goalLocation, false);
+        }
+        //}
     }
 
     public void setGoalLocation(RoomTile goalLocation, boolean noReset) {
-        if (Emulator.getPluginManager().isRegistered(RoomUnitSetGoalEvent.class, false))
-        {
+        if (Emulator.getPluginManager().isRegistered(RoomUnitSetGoalEvent.class, false)) {
             Event event = new RoomUnitSetGoalEvent(this.room, this, goalLocation);
             Emulator.getPluginManager().fireEvent(event);
 
@@ -553,8 +558,7 @@ public class RoomUnit {
         this.room = room;
     }
 
-    public void findPath()
-    {
+    public void findPath() {
         if (this.room != null && this.room.getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.room.canSitOrLayAt(this.goalLocation.x, this.goalLocation.y) || this.canOverrideTile(this.goalLocation))) {
             Deque<RoomTile> path = this.room.getLayout().findPath(this.currentLocation, this.goalLocation, this.goalLocation, this);
             if (path != null) this.path = path;
@@ -624,6 +628,7 @@ public class RoomUnit {
         return this.effectId;
     }
 
+
     public void setEffectId(int effectId, int endTimestamp) {
         this.effectId = effectId;
         this.effectEndTimestamp = endTimestamp;
@@ -631,6 +636,19 @@ public class RoomUnit {
 
     public int getEffectEndTimestamp() {
         return this.effectEndTimestamp;
+    }
+
+    public int getPreviousEffectId() {
+        return this.previousEffectId;
+    }
+
+    public void setPreviousEffectId(int effectId, int endTimestamp) {
+        this.previousEffectId = effectId;
+        this.previousEffectEndTimestamp = endTimestamp;
+    }
+
+    public int getPreviousEffectEndTimestamp() {
+        return this.previousEffectEndTimestamp;
     }
 
     public int getWalkTimeOut() {
@@ -780,7 +798,7 @@ public class RoomUnit {
     }
 
     public RoomTile getClosestAdjacentTile(short x, short y, boolean diagonal) {
-        if(room == null) return null;
+        if (room == null) return null;
 
         RoomTile baseTile = room.getLayout().getTile(x, y);
 
@@ -801,9 +819,9 @@ public class RoomUnit {
 
         return this.getClosestTile(
                 rotations.stream()
-                    .map(rotation -> room.getLayout().getTileInFront(baseTile, rotation))
-                    .filter(t -> t != null && t.isWalkable() && (this.getCurrentLocation().equals(t) || !room.hasHabbosAt(t.x, t.y)))
-                    .collect(Collectors.toList())
+                        .map(rotation -> room.getLayout().getTileInFront(baseTile, rotation))
+                        .filter(t -> t != null && t.isWalkable() && (this.getCurrentLocation().equals(t) || !room.hasHabbosAt(t.x, t.y)))
+                        .collect(Collectors.toList())
         );
     }
 
