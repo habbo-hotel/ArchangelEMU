@@ -15,7 +15,7 @@ import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
 import gnu.trove.set.hash.THashSet;
@@ -310,7 +310,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
 
         if ((this.getBaseItem().allowSit() || this.getBaseItem().allowLay()) && !roomUnit.getDanceType().equals(DanceType.NONE)) {
             roomUnit.setDanceType(DanceType.NONE);
-            room.sendComposer(new RoomUserDanceComposer(roomUnit).compose());
+            room.sendComposer(new DanceMessageComposer(roomUnit).compose());
         }
 
         if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousLocation() != roomUnit.getGoal() && roomUnit.getGoal() == room.getLayout().getTile(this.x, this.y)) {

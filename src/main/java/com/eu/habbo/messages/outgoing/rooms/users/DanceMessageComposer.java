@@ -5,10 +5,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUserDanceComposer extends MessageComposer {
+public class DanceMessageComposer extends MessageComposer {
     private final RoomUnit roomUnit;
 
-    public RoomUserDanceComposer(RoomUnit roomUnit) {
+    public DanceMessageComposer(RoomUnit roomUnit) {
         this.roomUnit = roomUnit;
     }
 

@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class ErrorLoginComposer extends MessageComposer {
+public class DisconnectReasonComposer extends MessageComposer {
     private final int errorCode;
 
-    public ErrorLoginComposer(int errorCode) {
+    public DisconnectReasonComposer(int errorCode) {
         this.errorCode = errorCode;
     }
 

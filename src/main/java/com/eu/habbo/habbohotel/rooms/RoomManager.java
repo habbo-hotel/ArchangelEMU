@@ -540,7 +540,7 @@ public class RoomManager {
             synchronized (room.roomUnitLock) {
                 for (Habbo current : room.getHabbos()) {
                     if (room.hasRights(current) || current.getHabboInfo().getId() == room.getOwnerId() || (room.hasGuild() && room.getGuildRightLevel(current).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
-                        current.getClient().sendResponse(new DoorbellAddUserComposer(habbo.getHabboInfo().getUsername()));
+                        current.getClient().sendResponse(new DoorbellMessageComposer(habbo.getHabboInfo().getUsername()));
                         rightsFound = true;
                     }
                 }
@@ -554,7 +554,7 @@ public class RoomManager {
             }
 
             habbo.getHabboInfo().setRoomQueueId(roomId);
-            habbo.getClient().sendResponse(new DoorbellAddUserComposer(""));
+            habbo.getClient().sendResponse(new DoorbellMessageComposer(""));
             room.addToQueue(habbo);
         } else if (room.getState() == RoomState.PASSWORD) {
             if (room.getPassword().equalsIgnoreCase(password))
@@ -772,7 +772,7 @@ public class RoomManager {
                 }
                 Bot bot = botIterator.value();
                 if (!bot.getRoomUnit().getDanceType().equals(DanceType.NONE)) {
-                    habbo.getClient().sendResponse(new RoomUserDanceComposer(bot.getRoomUnit()));
+                    habbo.getClient().sendResponse(new DanceMessageComposer(bot.getRoomUnit()));
                 }
 
                 habbo.getClient().sendResponse(new RoomUserStatusComposer(bot.getRoomUnit(), bot.getRoomUnit().getZ()));
@@ -839,7 +839,7 @@ public class RoomManager {
         for (Habbo roomHabbo : habbos) {
             {
                 if (roomHabbo.getRoomUnit().getDanceType().getType() > 0) {
-                    habbo.getClient().sendResponse(new RoomUserDanceComposer(roomHabbo.getRoomUnit()));
+                    habbo.getClient().sendResponse(new DanceMessageComposer(roomHabbo.getRoomUnit()));
                 }
 
                 if (roomHabbo.getRoomUnit().getHandItem() > 0) {
@@ -888,7 +888,7 @@ public class RoomManager {
         if (room.hasRights(habbo) || (room.hasGuild() && room.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
             if (!room.getHabboQueue().isEmpty()) {
                 for (Habbo waiting : room.getHabboQueue().valueCollection()) {
-                    habbo.getClient().sendResponse(new DoorbellAddUserComposer(waiting.getHabboInfo().getUsername()));
+                    habbo.getClient().sendResponse(new DoorbellMessageComposer(waiting.getHabboInfo().getUsername()));
                 }
             }
         }

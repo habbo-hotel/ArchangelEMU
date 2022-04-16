@@ -10,8 +10,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.incoming.rooms.users.RoomUserWalkEvent;
-import com.eu.habbo.messages.outgoing.rooms.items.ItemIntStateComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.DiceValueMessageComposer;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +99,7 @@ public class InteractionOneWayGate extends HabboItem {
                         unit.setCanLeaveRoomByDoor(true);
                         walkable = this.getBaseItem().allowWalk();
                         room.updateTile(currentLocation);
-                        room.sendComposer(new ItemIntStateComposer(this.getId(), 0).compose());
+                        room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
                         unit.removeOverrideTile(currentLocation);
                     });
 
@@ -109,7 +108,7 @@ public class InteractionOneWayGate extends HabboItem {
                     unit.addOverrideTile(currentLocation);
                     unit.setGoalLocation(currentLocation);
                     Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
-                    room.sendComposer(new ItemIntStateComposer(this.getId(), 1).compose());
+                    room.sendComposer(new DiceValueMessageComposer(this.getId(), 1).compose());
 
                     /*
                     room.scheduledTasks.add(new Runnable()
@@ -130,7 +129,7 @@ public class InteractionOneWayGate extends HabboItem {
 
     private void refresh(Room room) {
         this.setExtradata("0");
-        room.sendComposer(new ItemIntStateComposer(this.getId(), 0).compose());
+        room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
         room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
     }
 

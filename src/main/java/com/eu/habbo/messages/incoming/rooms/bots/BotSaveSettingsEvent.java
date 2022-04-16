@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserNameChangedComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.plugin.events.bots.BotSavedChatEvent;
@@ -123,7 +123,7 @@ public class BotSaveSettingsEvent extends MessageHandler {
 
                 case 4:
                     bot.getRoomUnit().setDanceType(DanceType.values()[(bot.getRoomUnit().getDanceType().getType() + 1) % DanceType.values().length]);
-                    room.sendComposer(new RoomUserDanceComposer(bot.getRoomUnit()).compose());
+                    room.sendComposer(new DanceMessageComposer(bot.getRoomUnit()).compose());
                     bot.needsUpdate(true);
                     break;
 

@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class DoorbellAddUserComposer extends MessageComposer {
+public class DoorbellMessageComposer extends MessageComposer {
     private final String habbo;
 
-    public DoorbellAddUserComposer(String habbo) {
+    public DoorbellMessageComposer(String habbo) {
         this.habbo = habbo;
     }
 

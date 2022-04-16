@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDanceComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
 
 public class RoomDanceCommand extends Command {
     public RoomDanceCommand() {
@@ -31,7 +31,7 @@ public class RoomDanceCommand extends Command {
 
             for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
                 habbo.getRoomUnit().setDanceType(DanceType.values()[danceId]);
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDanceComposer(habbo.getRoomUnit()).compose());
+                habbo.getHabboInfo().getCurrentRoom().sendComposer(new DanceMessageComposer(habbo.getRoomUnit()).compose());
             }
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_danceall.no_dance"), RoomChatMessageBubbles.ALERT);
