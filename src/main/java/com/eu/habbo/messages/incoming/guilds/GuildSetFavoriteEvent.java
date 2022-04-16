@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.GuildFavoriteRoomUserUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersAddGuildBadgeComposer;
-import com.eu.habbo.messages.outgoing.users.UserProfileComposer;
+import com.eu.habbo.messages.outgoing.users.ExtendedProfileMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildFavoriteSetEvent;
 
 public class GuildSetFavoriteEvent extends MessageHandler {
@@ -31,7 +31,7 @@ public class GuildSetFavoriteEvent extends MessageHandler {
                 }
             }
 
-            this.client.sendResponse(new UserProfileComposer(this.client.getHabbo(), this.client));
+            this.client.sendResponse(new ExtendedProfileMessageComposer(this.client.getHabbo(), this.client));
         }
     }
 }

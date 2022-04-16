@@ -10,7 +10,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumAddCommentComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadMessagesComposer;
-import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
+import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 
 public class GuildForumPostThreadEvent extends MessageHandler {
@@ -30,12 +30,12 @@ public class GuildForumPostThreadEvent extends MessageHandler {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
         if (guild == null) {
-            this.client.sendResponse(new ConnectionErrorComposer(404));
+            this.client.sendResponse(new ErrorReportComposer(404));
             return;
         }
 
         if (message.length() < 10 || message.length() > 4000 || (threadId == 0 && (subject.length() < 10 || subject.length() > 120))) {
-            this.client.sendResponse(new ConnectionErrorComposer(400));
+            this.client.sendResponse(new ErrorReportComposer(400));
             return;
         }
 
@@ -51,7 +51,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
                     || (guild.canPostThreads().state == 2 && member != null && (member.getRank().type < GuildRank.MEMBER.type))
                     || (guild.canPostThreads().state == 3 && guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId())
                     || isStaff)) {
-                this.client.sendResponse(new ConnectionErrorComposer(403));
+                this.client.sendResponse(new ErrorReportComposer(403));
                 return;
             }
 
@@ -59,7 +59,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
             thread = ForumThread.create(guild, this.client.getHabbo(), subject, message);
 
             if (thread == null) {
-                this.client.sendResponse(new ConnectionErrorComposer(500));
+                this.client.sendResponse(new ErrorReportComposer(500));
                 return;
             }
 
@@ -70,7 +70,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
         }
 
         if (thread == null) {
-            this.client.sendResponse(new ConnectionErrorComposer(404));
+            this.client.sendResponse(new ErrorReportComposer(404));
             return;
         }
 
@@ -80,7 +80,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
                 || (guild.canPostMessages().state == 2 && member != null && (member.getRank().type < GuildRank.MEMBER.type))
                 || (guild.canPostMessages().state == 3 && guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId())
                 || isStaff)) {
-            this.client.sendResponse(new ConnectionErrorComposer(403));
+            this.client.sendResponse(new ErrorReportComposer(403));
             return;
         }
 
@@ -93,7 +93,7 @@ public class GuildForumPostThreadEvent extends MessageHandler {
             thread.setPostsCount(thread.getPostsCount() + 1);
             this.client.sendResponse(new GuildForumAddCommentComposer(comment));
         } else {
-            this.client.sendResponse(new ConnectionErrorComposer(500));
+            this.client.sendResponse(new ErrorReportComposer(500));
         }
     }
 }

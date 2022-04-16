@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
+import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +28,7 @@ public class GuildForumThreadsComposer extends MessageComposer {
         try {
             threads = new ArrayList<>(ForumThread.getByGuildId(guild.getId()));
         } catch (Exception e) {
-            return new ConnectionErrorComposer(500).compose();
+            return new ErrorReportComposer(500).compose();
         }
 
         threads.sort(Comparator.comparingInt(o -> o.isPinned() ? Integer.MAX_VALUE : o.getUpdatedAt()));

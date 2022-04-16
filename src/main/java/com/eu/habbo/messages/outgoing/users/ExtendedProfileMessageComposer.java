@@ -21,19 +21,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class UserProfileComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserProfileComposer.class);
+public class ExtendedProfileMessageComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedProfileMessageComposer.class);
 
     private final HabboInfo habboInfo;
     private Habbo habbo;
     private GameClient viewer;
 
-    public UserProfileComposer(HabboInfo habboInfo, GameClient viewer) {
+    public ExtendedProfileMessageComposer(HabboInfo habboInfo, GameClient viewer) {
         this.habboInfo = habboInfo;
         this.viewer = viewer;
     }
 
-    public UserProfileComposer(Habbo habbo, GameClient viewer) {
+    public ExtendedProfileMessageComposer(Habbo habbo, GameClient viewer) {
         this.habbo = habbo;
         this.habboInfo = habbo.getHabboInfo();
         this.viewer = viewer;

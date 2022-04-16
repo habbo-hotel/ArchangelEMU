@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UnknownGuildComposer3 extends MessageComposer {
+public class ExtendedProfileChangedMessageComposer extends MessageComposer {
     private final int userId;
 
-    public UnknownGuildComposer3(int userId) {
+    public ExtendedProfileChangedMessageComposer(int userId) {
         this.userId = userId;
     }
 

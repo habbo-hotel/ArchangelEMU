@@ -220,7 +220,7 @@ public class Bot implements Runnable {
             this.room.botChat(new ChatMessageComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
 
             if (message.equals("o/") || message.equals("_o/")) {
-                this.room.sendComposer(new RoomUserActionComposer(this.roomUnit, RoomUserAction.WAVE).compose());
+                this.room.sendComposer(new ExpressionMessageComposer(this.roomUnit, RoomUserAction.WAVE).compose());
             }
         }
     }
@@ -235,7 +235,7 @@ public class Bot implements Runnable {
             this.room.botChat(new RoomUserShoutComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
 
             if (message.equals("o/") || message.equals("_o/")) {
-                this.room.sendComposer(new RoomUserActionComposer(this.roomUnit, RoomUserAction.WAVE).compose());
+                this.room.sendComposer(new ExpressionMessageComposer(this.roomUnit, RoomUserAction.WAVE).compose());
             }
         }
     }

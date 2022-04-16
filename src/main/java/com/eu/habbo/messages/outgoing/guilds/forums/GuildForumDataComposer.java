@@ -11,7 +11,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
+import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,7 +161,7 @@ public class GuildForumDataComposer extends MessageComposer {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return new ConnectionErrorComposer(500).compose();
+            return new ErrorReportComposer(500).compose();
         }
 
         return this.response;

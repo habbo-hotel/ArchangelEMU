@@ -12,7 +12,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadMessagesComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadsComposer;
-import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
+import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 
 public class GuildForumModerateThreadEvent extends MessageHandler {
@@ -28,7 +28,7 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
         ForumThread thread = ForumThread.getById(threadId);
 
         if (guild == null || thread == null) {
-            this.client.sendResponse(new ConnectionErrorComposer(404));
+            this.client.sendResponse(new ErrorReportComposer(404));
             return;
         }
 
@@ -38,15 +38,15 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
 
 
         if (member == null) {
-            this.client.sendResponse(new ConnectionErrorComposer(401));
+            this.client.sendResponse(new ErrorReportComposer(401));
             return;
         }
         if (!isGuildAdmin && !hasStaffPerms) {
-            this.client.sendResponse(new ConnectionErrorComposer(403));
             return;
         }
 
         thread.setState(ForumThreadState.fromValue(state)); // sets state as defined in the packet
+        thread.setAdminId(this.client.getHabbo().getHabboInfo().getId());
         thread.run();
 
         switch (state) {

@@ -13,7 +13,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserActionComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.ExpressionMessageComposer;
 import com.eu.habbo.threading.runnables.BattleBanzaiTilesFlicker;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -193,7 +193,7 @@ public class BattleBanzaiGame extends Game {
             if (!singleTeamGame) {
                 for (GamePlayer player : winningTeam.getMembers()) {
                     if (player.getScoreAchievementValue() > 0) {
-                        this.room.sendComposer(new RoomUserActionComposer(player.getHabbo().getRoomUnit(), RoomUserAction.WAVE).compose());
+                        this.room.sendComposer(new ExpressionMessageComposer(player.getHabbo().getRoomUnit(), RoomUserAction.WAVE).compose());
                         AchievementManager.progressAchievement(player.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("BattleBallWinner"));
                     }
                 }

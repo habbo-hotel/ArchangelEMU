@@ -4,11 +4,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class EpicPopupFrameComposer extends MessageComposer {
+public class EpicPopupMessageComposer extends MessageComposer {
     public static final String LIBRARY_URL = "${image.library.url}";
     private final String assetURI;
 
-    public EpicPopupFrameComposer(String assetURI) {
+    public EpicPopupMessageComposer(String assetURI) {
         this.assetURI = assetURI;
     }
 

@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumListComposer;
-import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
+import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class GuildForumListEvent extends MessageHandler {
             }
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
-            this.client.sendResponse(new ConnectionErrorComposer(500));
+            this.client.sendResponse(new ErrorReportComposer(500));
         }
 
         return guilds;
@@ -89,7 +89,7 @@ public class GuildForumListEvent extends MessageHandler {
             }
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
-            this.client.sendResponse(new ConnectionErrorComposer(500));
+            this.client.sendResponse(new ErrorReportComposer(500));
         }
 
         return guilds;

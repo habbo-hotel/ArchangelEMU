@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UnknownHintComposer extends MessageComposer {
+public class ElementPointerMessageComposer extends MessageComposer {
     private final String key;
 
-    public UnknownHintComposer(String key) {
+    public ElementPointerMessageComposer(String key) {
         this.key = key;
     }
 

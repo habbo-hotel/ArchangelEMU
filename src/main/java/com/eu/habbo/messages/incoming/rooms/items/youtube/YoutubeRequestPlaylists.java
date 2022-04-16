@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.items.YoutubeManager;
 import com.eu.habbo.habbohotel.items.interactions.InteractionYoutubeTV;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.handshake.ConnectionErrorComposer;
+import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayListComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class YoutubeRequestPlaylists extends MessageHandler {
 
                 if (playlists == null) {
                     LOGGER.error("No YouTube playlists set for base item #" + item.getBaseItem().getId());
-                    this.client.sendResponse(new ConnectionErrorComposer(1000));
+                    this.client.sendResponse(new ErrorReportComposer(1000));
                     return;
                 }
 

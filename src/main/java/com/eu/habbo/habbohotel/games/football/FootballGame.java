@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserActionComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.ExpressionMessageComposer;
 
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public class FootballGame extends Game {
             }
         }
 
-        this.room.sendComposer(new RoomUserActionComposer(kicker, RoomUserAction.WAVE).compose());
+        this.room.sendComposer(new ExpressionMessageComposer(kicker, RoomUserAction.WAVE).compose());
 
         for (Map.Entry<Integer, InteractionFootballScoreboard> scoreBoard : this.room.getRoomSpecialTypes().getFootballScoreboards(team).entrySet()) {
             scoreBoard.getValue().changeScore(1);
