@@ -10,7 +10,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import gnu.trove.map.hash.THashMap;
 
 public class GiftCommand extends Command {
@@ -74,7 +74,7 @@ public class GiftCommand extends Command {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(habboInfo.getId());
 
             if (habbo != null) {
-                habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                habbo.getClient().sendResponse(new FurniListInvalidateComposer());
 
                 THashMap<String, String> keys = new THashMap<>();
                 keys.put("display", "BUBBLE");

@@ -5,10 +5,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class LoveLockFurniStartComposer extends MessageComposer {
+public class FriendFurniStartConfirmationMessageComposer extends MessageComposer {
     private final InteractionLoveLock loveLock;
 
-    public LoveLockFurniStartComposer(InteractionLoveLock loveLock) {
+    public FriendFurniStartConfirmationMessageComposer(InteractionLoveLock loveLock) {
         this.loveLock = loveLock;
     }
 

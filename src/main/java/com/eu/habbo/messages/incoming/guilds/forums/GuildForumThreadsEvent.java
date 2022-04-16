@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.guilds.forums;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumDataComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.ForumDataMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadsComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
@@ -20,7 +20,7 @@ public class GuildForumThreadsEvent extends MessageHandler {
             return;
         }
 
-        this.client.sendResponse(new GuildForumDataComposer(guild, this.client.getHabbo()));
+        this.client.sendResponse(new ForumDataMessageComposer(guild, this.client.getHabbo()));
         this.client.sendResponse(new GuildForumThreadsComposer(guild, index));
     }
 }

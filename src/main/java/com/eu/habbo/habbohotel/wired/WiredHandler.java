@@ -20,7 +20,7 @@ import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredRewardAlertComposer;
 import com.eu.habbo.plugin.events.furniture.wired.WiredConditionFailedEvent;
@@ -351,7 +351,7 @@ public class WiredHandler {
                             habbo.getClient().sendResponse(new AddHabboItemComposer(item));
                             habbo.getClient().getHabbo().getInventory().getItemsComponent().addItem(item);
                             habbo.getClient().sendResponse(new PurchaseOKComposer(null));
-                            habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                            habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                             habbo.getClient().sendResponse(new WiredRewardAlertComposer(WiredRewardAlertComposer.REWARD_RECEIVED_ITEM));
                         }
                     }

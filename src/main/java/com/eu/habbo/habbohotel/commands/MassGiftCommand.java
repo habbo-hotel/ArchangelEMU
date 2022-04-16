@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import gnu.trove.map.hash.THashMap;
 
 import java.util.Map;
@@ -72,7 +72,7 @@ public class MassGiftCommand extends Command {
 
                     Emulator.getGameEnvironment().getItemManager().createGift(habbo.getHabboInfo().getUsername(), giftItem, extraData, 0, 0);
 
-                    habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                    habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                     habbo.getClient().sendResponse(giftNotificiationMessage);
                 }
             });

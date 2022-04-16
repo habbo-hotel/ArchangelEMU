@@ -10,7 +10,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.items.lovelock.LoveLockFurniStartComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.lovelock.FriendFurniStartConfirmationMessageComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -80,14 +80,14 @@ public class InteractionLoveLock extends HabboItem {
         if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentLocation(), room.getLayout().getTile(this.getX(), this.getY()))) {
             if (this.userOneId == 0) {
                 this.userOneId = client.getHabbo().getHabboInfo().getId();
-                client.sendResponse(new LoveLockFurniStartComposer(this));
+                client.sendResponse(new FriendFurniStartConfirmationMessageComposer(this));
             } else {
                 if (this.userOneId != client.getHabbo().getHabboInfo().getId()) {
                     Habbo habbo = room.getHabbo(this.userOneId);
 
                     if (habbo != null) {
                         this.userTwoId = client.getHabbo().getHabboInfo().getId();
-                        client.sendResponse(new LoveLockFurniStartComposer(this));
+                        client.sendResponse(new FriendFurniStartConfirmationMessageComposer(this));
                     }
                 }
             }

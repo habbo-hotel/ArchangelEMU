@@ -10,11 +10,11 @@ import gnu.trove.procedure.TIntProcedure;
 
 import java.util.ArrayList;
 
-public class UserClothesComposer extends MessageComposer {
+public class FigureSetIdsComposer extends MessageComposer {
     private final ArrayList<Integer> idList = new ArrayList<>();
     private final ArrayList<String> nameList = new ArrayList<>();
 
-    public UserClothesComposer(Habbo habbo) {
+    public FigureSetIdsComposer(Habbo habbo) {
         habbo.getInventory().getWardrobeComponent().getClothing().forEach(new TIntProcedure() {
             @Override
             public boolean execute(int value) {
@@ -22,10 +22,10 @@ public class UserClothesComposer extends MessageComposer {
 
                 if (item != null) {
                     for (Integer j : item.setId) {
-                        UserClothesComposer.this.idList.add(j);
+                        FigureSetIdsComposer.this.idList.add(j);
                     }
 
-                    UserClothesComposer.this.nameList.add(item.name);
+                    FigureSetIdsComposer.this.nameList.add(item.name);
                 }
 
                 return true;

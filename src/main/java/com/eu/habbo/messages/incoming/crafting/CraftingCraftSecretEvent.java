@@ -10,8 +10,8 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertLimitedSoldOutComposer;
 import com.eu.habbo.messages.outgoing.crafting.CraftingResultComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
-import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -79,10 +79,10 @@ public class CraftingCraftSecretEvent extends MessageHandler {
                         this.client.sendResponse(new AddHabboItemComposer(rewardItem));
                         for (HabboItem item : habboItems) {
                             this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
-                            this.client.sendResponse(new RemoveHabboItemComposer(item.getGiftAdjustedId()));
+                            this.client.sendResponse(new FurniListRemoveComposer(item.getGiftAdjustedId()));
                             Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                         }
-                        this.client.sendResponse(new InventoryRefreshComposer());
+                        this.client.sendResponse(new FurniListInvalidateComposer());
 
                         return;
                     }

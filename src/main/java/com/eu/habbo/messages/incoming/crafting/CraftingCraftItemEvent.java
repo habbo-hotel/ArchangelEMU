@@ -10,11 +10,10 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertLimitedSoldOutComposer;
 import com.eu.habbo.messages.outgoing.crafting.CraftingResultComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
-import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItems;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TObjectProcedure;
 
 import java.util.Map;
 
@@ -62,10 +61,10 @@ public class CraftingCraftItemEvent extends MessageHandler {
                 this.client.sendResponse(new AddHabboItemComposer(rewardItem));
                 AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Atcg"));
                 toRemove.forEachValue(object -> {
-                    CraftingCraftItemEvent.this.client.sendResponse(new RemoveHabboItemComposer(object.getGiftAdjustedId()));
+                    CraftingCraftItemEvent.this.client.sendResponse(new FurniListRemoveComposer(object.getGiftAdjustedId()));
                     return true;
                 });
-                this.client.sendResponse(new InventoryRefreshComposer());
+                this.client.sendResponse(new FurniListInvalidateComposer());
 
                 Emulator.getThreading().run(new QueryDeleteHabboItems(toRemove));
                 return;

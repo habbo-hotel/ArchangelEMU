@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
 import org.slf4j.Logger;
@@ -74,7 +74,7 @@ public class CatalogBuyClubDiscountEvent extends MessageHandler {
                             this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
 
                         this.client.sendResponse(new PurchaseOKComposer(null));
-                        this.client.sendResponse(new InventoryRefreshComposer());
+                        this.client.sendResponse(new FurniListInvalidateComposer());
 
                         this.client.getHabbo().getHabboStats().run();
                     }

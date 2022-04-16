@@ -11,14 +11,14 @@ import gnu.trove.procedure.TIntObjectProcedure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InventoryItemsComposer extends MessageComposer implements TIntObjectProcedure<HabboItem> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InventoryItemsComposer.class);
+public class FurniListComposer extends MessageComposer implements TIntObjectProcedure<HabboItem> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FurniListComposer.class);
 
     private final int fragmentNumber;
     private final int totalFragments;
     private final TIntObjectMap<HabboItem> items;
 
-    public InventoryItemsComposer(int fragmentNumber, int totalFragments, TIntObjectMap<HabboItem> items) {
+    public FurniListComposer(int fragmentNumber, int totalFragments, TIntObjectMap<HabboItem> items) {
         this.fragmentNumber = fragmentNumber;
         this.totalFragments = totalFragments;
         this.items = items;

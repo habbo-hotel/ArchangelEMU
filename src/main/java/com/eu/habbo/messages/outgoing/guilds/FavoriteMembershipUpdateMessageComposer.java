@@ -6,11 +6,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuildFavoriteRoomUserUpdateComposer extends MessageComposer {
+public class FavoriteMembershipUpdateMessageComposer extends MessageComposer {
     private RoomUnit roomUnit;
     private Guild guild;
 
-    public GuildFavoriteRoomUserUpdateComposer(RoomUnit roomUnit, Guild guild) {
+    public FavoriteMembershipUpdateMessageComposer(RoomUnit roomUnit, Guild guild) {
         this.roomUnit = roomUnit;
         this.guild = guild;
     }

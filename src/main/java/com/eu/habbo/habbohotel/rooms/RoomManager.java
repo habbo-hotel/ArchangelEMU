@@ -547,7 +547,7 @@ public class RoomManager {
             }
 
             if (!rightsFound) {
-                habbo.getClient().sendResponse(new RoomAccessDeniedComposer(""));
+                habbo.getClient().sendResponse(new FlatAccessDeniedMessageComposer(""));
                 habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
                 return;
@@ -587,7 +587,7 @@ public class RoomManager {
         }
 
         habbo.getHabboInfo().setRoomQueueId(0);
-        habbo.getClient().sendResponse(new HideDoorbellComposer(""));
+        habbo.getClient().sendResponse(new FlatAccessibleMessageComposer(""));
 
         if (habbo.getRoomUnit() != null) {
             RoomUnit existingRoom = habbo.getRoomUnit();
@@ -828,7 +828,7 @@ public class RoomManager {
         if (!habbo.getHabboStats().allowTalk()) {
             habbo.getHabboStats().mutedBubbleTracker = true;
             int remainingMuteTime = habbo.getHabboStats().remainingMuteTime();
-            habbo.getClient().sendResponse(new FloodCounterComposer(remainingMuteTime));
+            habbo.getClient().sendResponse(new FloodControlMessageComposer(remainingMuteTime));
             habbo.getClient().sendResponse(new MutedWhisperComposer(remainingMuteTime));
             room.sendComposer(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.MUTED).compose());
         } else if (habbo.getHabboStats().mutedBubbleTracker) {

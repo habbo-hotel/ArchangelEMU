@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.users.UserClothesComposer;
+import com.eu.habbo.messages.outgoing.users.FigureSetIdsComposer;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class GiveUserClothing extends RCONMessage<GiveUserClothing.JSONGiveUserC
 
             if (client != null) {
                 habbo.getInventory().getWardrobeComponent().getClothing().add(object.clothing_id);
-                client.sendResponse(new UserClothesComposer(habbo));
+                client.sendResponse(new FigureSetIdsComposer(habbo));
                 client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FIGURESET_REDEEMED.key));
             }
         }

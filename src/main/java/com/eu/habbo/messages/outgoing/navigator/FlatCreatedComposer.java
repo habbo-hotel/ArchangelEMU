@@ -5,10 +5,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomCreatedComposer extends MessageComposer {
+public class FlatCreatedComposer extends MessageComposer {
     private final Room room;
 
-    public RoomCreatedComposer(Room room) {
+    public FlatCreatedComposer(Room room) {
         this.room = room;
     }
 

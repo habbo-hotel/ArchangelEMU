@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.friends.StalkErrorComposer;
+import com.eu.habbo.messages.outgoing.friends.FollowFriendFailedComposer;
 import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
 
@@ -18,24 +18,24 @@ public class StalkFriendEvent extends MessageHandler {
         MessengerBuddy buddy = this.client.getHabbo().getMessenger().getFriend(friendId);
 
         if (buddy == null) {
-            this.client.sendResponse(new StalkErrorComposer(StalkErrorComposer.NOT_IN_FRIEND_LIST));
+            this.client.sendResponse(new FollowFriendFailedComposer(FollowFriendFailedComposer.NOT_IN_FRIEND_LIST));
             return;
         }
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(friendId);
 
         if (habbo == null || !habbo.isOnline()) {
-            this.client.sendResponse(new StalkErrorComposer(StalkErrorComposer.FRIEND_OFFLINE));
+            this.client.sendResponse(new FollowFriendFailedComposer(FollowFriendFailedComposer.FRIEND_OFFLINE));
             return;
         }
 
         if (habbo.getHabboStats().blockFollowing && !this.client.getHabbo().hasPermission("acc_can_stalk")) {
-            this.client.sendResponse(new StalkErrorComposer(StalkErrorComposer.FRIEND_BLOCKED_STALKING));
+            this.client.sendResponse(new FollowFriendFailedComposer(FollowFriendFailedComposer.FRIEND_BLOCKED_STALKING));
             return;
         }
 
         if (habbo.getHabboInfo().getCurrentRoom() == null) {
-            this.client.sendResponse(new StalkErrorComposer(StalkErrorComposer.FRIEND_NOT_IN_ROOM));
+            this.client.sendResponse(new FollowFriendFailedComposer(FollowFriendFailedComposer.FRIEND_NOT_IN_ROOM));
             return;
         }
 

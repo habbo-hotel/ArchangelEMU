@@ -7,10 +7,10 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.procedure.TIntProcedure;
 
-public class FavoriteRoomsCountComposer extends MessageComposer {
+public class FavouriteChangedComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public FavoriteRoomsCountComposer(Habbo habbo) {
+    public FavouriteChangedComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 
@@ -22,7 +22,7 @@ public class FavoriteRoomsCountComposer extends MessageComposer {
         this.habbo.getHabboStats().getFavoriteRooms().forEach(new TIntProcedure() {
             @Override
             public boolean execute(int value) {
-                FavoriteRoomsCountComposer.this.response.appendInt(value);
+                FavouriteChangedComposer.this.response.appendInt(value);
                 return true;
             }
         });

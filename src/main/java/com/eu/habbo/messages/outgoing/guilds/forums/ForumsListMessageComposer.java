@@ -9,13 +9,13 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import java.util.Iterator;
 import java.util.Set;
 
-public class GuildForumListComposer extends MessageComposer {
+public class ForumsListMessageComposer extends MessageComposer {
     private final Set<Guild> guilds;
     private final Habbo habbo;
     private final int mode;
     private final int index;
 
-    public GuildForumListComposer(Set<Guild> guilds, Habbo habbo, int mode, int index) {
+    public ForumsListMessageComposer(Set<Guild> guilds, Habbo habbo, int mode, int index) {
         this.guilds = guilds;
         this.habbo = habbo;
         this.mode = mode;
@@ -46,7 +46,7 @@ public class GuildForumListComposer extends MessageComposer {
             if (!it.hasNext())
                 break;
 
-            GuildForumDataComposer.serializeForumData(this.response, it.next(), habbo);
+            ForumDataMessageComposer.serializeForumData(this.response, it.next(), habbo);
         }
 
         return this.response;

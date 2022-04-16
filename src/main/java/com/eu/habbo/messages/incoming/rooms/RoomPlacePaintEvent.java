@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.RoomPaintComposer;
 
 public class RoomPlacePaintEvent extends MessageHandler {
@@ -22,7 +22,7 @@ public class RoomPlacePaintEvent extends MessageHandler {
             HabboItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
 
             if (item == null) {
-                this.client.sendResponse(new RemoveHabboItemComposer(itemId));
+                this.client.sendResponse(new FurniListRemoveComposer(itemId));
                 return;
             }
 
@@ -46,7 +46,7 @@ public class RoomPlacePaintEvent extends MessageHandler {
             room.sendComposer(new RoomPaintComposer(item.getBaseItem().getName(), item.getExtradata()).compose());
             item.needsDelete(true);
             Emulator.getThreading().run(item);
-            this.client.sendResponse(new RemoveHabboItemComposer(itemId));
+            this.client.sendResponse(new FurniListRemoveComposer(itemId));
         }
     }
 }

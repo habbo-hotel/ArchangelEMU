@@ -12,7 +12,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumCommentsComposer;
-import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumDataComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.ForumDataMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 
@@ -41,7 +41,7 @@ public class GuildForumThreadsMessagesEvent extends MessageHandler {
             this.client.sendResponse(new GuildForumDataComposer(guild, this.client.getHabbo()));
         }
         else {
-            this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FORUMS_ACCESS_DENIED.key).compose());
+            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_ACCESS_DENIED.key).compose());
         }
     }
 }

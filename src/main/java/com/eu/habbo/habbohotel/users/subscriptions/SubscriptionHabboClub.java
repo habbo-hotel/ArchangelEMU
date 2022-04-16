@@ -161,7 +161,7 @@ public class SubscriptionHabboClub extends Subscription {
             Emulator.getThreading().run(habbo.getHabboInfo());
 
             if (habbo.getClient() != null) {
-                habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
+                habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
             }
 
             if (habbo.getHabboInfo().getCurrentRoom() != null) {

@@ -4,17 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RemoveHabboItemComposer extends MessageComposer {
-    private final int itemId;
-
-    public RemoveHabboItemComposer(final int itemId) {
-        this.itemId = itemId;
-    }
-
+public class FurniListInvalidateComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FurniListRemoveComposer);
-        this.response.appendInt(this.itemId);
+        this.response.init(Outgoing.FurniListInvalidateComposer);
         return this.response;
     }
 }

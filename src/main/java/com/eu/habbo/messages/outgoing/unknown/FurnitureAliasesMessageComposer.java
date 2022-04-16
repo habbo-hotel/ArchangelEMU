@@ -6,10 +6,10 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.Map;
 
-public class UnkownPetPackageComposer extends MessageComposer {
+public class FurnitureAliasesMessageComposer extends MessageComposer {
     private final Map<String, String> unknownMap;
 
-    public UnkownPetPackageComposer(Map<String, String> unknownMap) {
+    public FurnitureAliasesMessageComposer(Map<String, String> unknownMap) {
         this.unknownMap = unknownMap;
     }
 

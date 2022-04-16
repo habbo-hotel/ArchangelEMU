@@ -202,7 +202,7 @@ public class SecureLoginEvent extends MessageHandler {
 
                 messages.add(new UserHomeRoomComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), roomIdToEnter).compose());
                 messages.add(new AvatarEffectsMessageComposer(habbo, this.client.getHabbo().getInventory().getEffectsComponent().effects.values()).compose());
-                messages.add(new UserClothesComposer(this.client.getHabbo()).compose());
+                messages.add(new FigureSetIdsComposer(this.client.getHabbo()).compose());
                 messages.add(new NewUserIdentityComposer(habbo).compose());
                 messages.add(new UserPermissionsComposer(this.client.getHabbo()).compose());
                 messages.add(new AvailabilityStatusMessageComposer(true, false, true).compose());
@@ -213,7 +213,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new MysteryBoxKeysComposer().compose());
                 messages.add(new BuildersClubSubscriptionStatusMessageComposer().compose());
                 messages.add(new CfhTopicsInitComposer().compose());
-                messages.add(new FavoriteRoomsCountComposer(this.client.getHabbo()).compose());
+                messages.add(new FavouriteChangedComposer(this.client.getHabbo()).compose());
                 messages.add(new GameCenterGameListComposer().compose());
                 messages.add(new GameCenterAccountInfoComposer(3, 100).compose());
                 messages.add(new GameCenterAccountInfoComposer(0, 100).compose());

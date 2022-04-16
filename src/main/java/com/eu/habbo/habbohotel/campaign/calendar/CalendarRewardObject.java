@@ -2,13 +2,11 @@ package com.eu.habbo.habbohotel.campaign.calendar;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +79,7 @@ public class CalendarRewardObject {
                         "");
                 habbo.getInventory().getItemsComponent().addItem(habboItem);
                 habbo.getClient().sendResponse(new AddHabboItemComposer(habboItem));
-                habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                habbo.getClient().sendResponse(new FurniListInvalidateComposer());
             }
         }
     }

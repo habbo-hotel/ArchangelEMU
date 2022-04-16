@@ -42,7 +42,7 @@ import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollAnswerComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollStartComposer;
 import com.eu.habbo.messages.outgoing.rooms.*;
@@ -707,7 +707,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (habbo != null) {
             habbo.getInventory().getItemsComponent().addItem(item);
             habbo.getClient().sendResponse(new AddHabboItemComposer(item));
-            habbo.getClient().sendResponse(new InventoryRefreshComposer());
+            habbo.getClient().sendResponse(new FurniListInvalidateComposer());
         }
         Emulator.getThreading().run(item);
     }
@@ -1600,7 +1600,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     public boolean execute(int a, Habbo b) {
                         if (b.isOnline()) {
                             if (b.getHabboInfo().getRoomQueueId() == Room.this.getId()) {
-                                b.getClient().sendResponse(new RoomAccessDeniedComposer(""));
+                                b.getClient().sendResponse(new FlatAccessDeniedMessageComposer(""));
                             }
                         }
 
@@ -2275,7 +2275,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public boolean removeFromQueue(Habbo habbo) {
         try {
-            this.sendComposer(new HideDoorbellComposer(habbo.getHabboInfo().getUsername()).compose());
+            this.sendComposer(new FlatAccessibleMessageComposer(habbo.getHabboInfo().getUsername()).compose());
 
             synchronized (this.habboQueue) {
                 return this.habboQueue.remove(habbo.getHabboInfo().getId()) != null;
@@ -3942,7 +3942,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (habbo != null) {
             this.refreshRightsForHabbo(habbo);
 
-            this.sendComposer(new RoomAddRightsListComposer(this, habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername()).compose());
+            this.sendComposer(new FlatControllerAddedComposer(this, habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername()).compose());
         } else {
             Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.ownerId);
 
@@ -3950,7 +3950,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 MessengerBuddy buddy = owner.getMessenger().getFriend(userId);
 
                 if (buddy != null) {
-                    this.sendComposer(new RoomAddRightsListComposer(this, userId, buddy.getUsername()).compose());
+                    this.sendComposer(new FlatControllerAddedComposer(this, userId, buddy.getUsername()).compose());
                 }
             }
         }
@@ -3962,7 +3962,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (Emulator.getPluginManager().fireEvent(new UserRightsTakenEvent(this.getHabbo(this.getOwnerId()), userId, habbo)).isCancelled())
             return;
 
-        this.sendComposer(new RoomRemoveRightsListComposer(this, userId).compose());
+        this.sendComposer(new FlatControllerRemovedComposer(this, userId).compose());
 
         if (this.rights.remove(userId)) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM room_rights WHERE room_id = ? AND user_id = ?")) {
@@ -4037,7 +4037,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         habbo.getRoomUnit().statusUpdate(true);
 
         if (flatCtrl.equals(RoomRightLevels.MODERATOR)) {
-            habbo.getClient().sendResponse(new RoomRightsListComposer(this));
+            habbo.getClient().sendResponse(new FlatControllersComposer(this));
         }
     }
 

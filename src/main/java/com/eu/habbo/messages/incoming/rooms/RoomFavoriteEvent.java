@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.FavoriteRoomChangedComposer;
+import com.eu.habbo.messages.outgoing.rooms.FavouriteChangedComposer;
 
 public class RoomFavoriteEvent extends MessageHandler {
     @Override
@@ -23,7 +23,7 @@ public class RoomFavoriteEvent extends MessageHandler {
                 }
             }
 
-            this.client.sendResponse(new FavoriteRoomChangedComposer(roomId, added));
+            this.client.sendResponse(new FavouriteChangedComposer(roomId, added));
         }
     }
 }

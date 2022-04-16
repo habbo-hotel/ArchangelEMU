@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomAccessDeniedComposer extends MessageComposer {
+public class FlatAccessDeniedMessageComposer extends MessageComposer {
     private final String habbo;
 
-    public RoomAccessDeniedComposer(String habbo) {
+    public FlatAccessDeniedMessageComposer(String habbo) {
         this.habbo = habbo;
     }
 

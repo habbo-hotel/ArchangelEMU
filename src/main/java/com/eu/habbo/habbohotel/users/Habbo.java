@@ -10,7 +10,7 @@ import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
 import com.eu.habbo.messages.outgoing.generic.alerts.*;
 import com.eu.habbo.messages.outgoing.inventory.*;
-import com.eu.habbo.messages.outgoing.rooms.FloodCounterComposer;
+import com.eu.habbo.messages.outgoing.rooms.FloodControlMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.*;
@@ -332,20 +332,20 @@ public class Habbo implements Runnable {
     public void addFurniture(HabboItem item) {
         this.habboInventory.getItemsComponent().addItem(item);
         this.client.sendResponse(new AddHabboItemComposer(item));
-        this.client.sendResponse(new InventoryRefreshComposer());
+        this.client.sendResponse(new FurniListInvalidateComposer());
     }
 
 
     public void addFurniture(THashSet<HabboItem> items) {
         this.habboInventory.getItemsComponent().addItems(items);
         this.client.sendResponse(new AddHabboItemComposer(items));
-        this.client.sendResponse(new InventoryRefreshComposer());
+        this.client.sendResponse(new FurniListInvalidateComposer());
     }
 
 
     public void removeFurniture(HabboItem item) {
         this.habboInventory.getItemsComponent().removeHabboItem(item);
-        this.client.sendResponse(new RemoveHabboItemComposer(item.getId()));
+        this.client.sendResponse(new FurniListRemoveComposer(item.getId()));
     }
 
 
@@ -416,7 +416,7 @@ public class Habbo implements Runnable {
 
         if (!this.hasPermission("acc_no_mute")) {
             int remaining = this.habboStats.addMuteTime(seconds);
-            this.client.sendResponse(new FloodCounterComposer(remaining));
+            this.client.sendResponse(new FloodControlMessageComposer(remaining));
             this.client.sendResponse(new MutedWhisperComposer(remaining));
 
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
@@ -428,7 +428,7 @@ public class Habbo implements Runnable {
 
     public void unMute() {
         this.habboStats.unMute();
-        this.client.sendResponse(new FloodCounterComposer(3));
+        this.client.sendResponse(new FloodControlMessageComposer(3));
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
         if (room != null) {
             room.sendComposer(new RoomUserIgnoredComposer(this, RoomUserIgnoredComposer.UNIGNORED).compose());

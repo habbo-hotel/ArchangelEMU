@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class FloodCounterComposer extends MessageComposer {
+public class FloodControlMessageComposer extends MessageComposer {
     private final int time;
 
-    public FloodCounterComposer(int time) {
+    public FloodControlMessageComposer(int time) {
         this.time = time;
     }
 

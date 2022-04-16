@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 
 public class RoomPlaceItemEvent extends MessageHandler {
     @Override
@@ -111,7 +111,7 @@ public class RoomPlaceItemEvent extends MessageHandler {
             }
         }
 
-        this.client.sendResponse(new RemoveHabboItemComposer(item.getGiftAdjustedId()));
+        this.client.sendResponse(new FurniListRemoveComposer(item.getGiftAdjustedId()));
         this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item.getId());
         item.setFromGift(false);
     }

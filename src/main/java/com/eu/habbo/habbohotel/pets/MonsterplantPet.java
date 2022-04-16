@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetStatusUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetRespectComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
@@ -339,7 +339,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                     seed = Emulator.getGameEnvironment().getItemManager().createItem(ownerOne.getHabboInfo().getId(), seedBase, 0, 0, "");
                     ownerOne.getInventory().getItemsComponent().addItem(seed);
                     ownerOne.getClient().sendResponse(new AddHabboItemComposer(seed));
-                    ownerOne.getClient().sendResponse(new InventoryRefreshComposer());
+                    ownerOne.getClient().sendResponse(new FurniListInvalidateComposer());
                 }
 
                 if (ownerTwo != null) {
@@ -347,7 +347,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                     seed = Emulator.getGameEnvironment().getItemManager().createItem(ownerTwo.getHabboInfo().getId(), seedBase, 0, 0, "");
                     ownerTwo.getInventory().getItemsComponent().addItem(seed);
                     ownerTwo.getClient().sendResponse(new AddHabboItemComposer(seed));
-                    ownerTwo.getClient().sendResponse(new InventoryRefreshComposer());
+                    ownerTwo.getClient().sendResponse(new FurniListInvalidateComposer());
                 }
             }
         }

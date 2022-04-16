@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.camera.CameraPurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.NotEnoughPointsTypeComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.plugin.events.users.UserPurchasePictureEvent;
 
 public class CameraPurchaseEvent extends MessageHandler {
@@ -46,7 +46,7 @@ public class CameraPurchaseEvent extends MessageHandler {
 
             this.client.sendResponse(new CameraPurchaseOKMessageComposer());
             this.client.sendResponse(new AddHabboItemComposer(photoItem));
-            this.client.sendResponse(new InventoryRefreshComposer());
+            this.client.sendResponse(new FurniListInvalidateComposer());
 
             this.client.getHabbo().giveCredits(-CameraPurchaseEvent.CAMERA_PURCHASE_CREDITS);
             this.client.getHabbo().givePoints(CameraPurchaseEvent.CAMERA_PURCHASE_POINTS_TYPE, -CameraPurchaseEvent.CAMERA_PURCHASE_POINTS);

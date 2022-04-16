@@ -6,10 +6,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class LoadFriendRequestsComposer extends MessageComposer {
+public class FriendRequestsComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public LoadFriendRequestsComposer(Habbo habbo) {
+    public FriendRequestsComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 

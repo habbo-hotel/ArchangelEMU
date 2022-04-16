@@ -5,10 +5,9 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.trading.*;
-import com.eu.habbo.plugin.events.furniture.FurnitureRedeemedEvent;
 import com.eu.habbo.plugin.events.trading.TradeConfirmEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import gnu.trove.set.hash.THashSet;
@@ -259,8 +258,8 @@ public class RoomTrade {
         userOne.getHabbo().getClient().sendResponse(new AddHabboItemComposer(itemsUserTwo));
         userTwo.getHabbo().getClient().sendResponse(new AddHabboItemComposer(itemsUserOne));
 
-        userOne.getHabbo().getClient().sendResponse(new InventoryRefreshComposer());
-        userTwo.getHabbo().getClient().sendResponse(new InventoryRefreshComposer());
+        userOne.getHabbo().getClient().sendResponse(new FurniListInvalidateComposer());
+        userTwo.getHabbo().getClient().sendResponse(new FurniListInvalidateComposer());
         return true;
     }
 

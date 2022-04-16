@@ -4,7 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RentableItemBuyOutPriceComposer extends MessageComposer {
+public class FurniRentOrBuyoutOfferMessageComposer extends MessageComposer {
     private final boolean unknownBoolean1;
     private final String unknownString1;
     private final boolean unknownBoolean2;
@@ -12,7 +12,7 @@ public class RentableItemBuyOutPriceComposer extends MessageComposer {
     private final int points;
     private final int pointsType;
 
-    public RentableItemBuyOutPriceComposer(boolean unknownBoolean1, String unknownString1, boolean unknownBoolean2, int credits, int points, int pointsType) {
+    public FurniRentOrBuyoutOfferMessageComposer(boolean unknownBoolean1, String unknownString1, boolean unknownBoolean2, int credits, int points, int pointsType) {
         this.unknownBoolean1 = unknownBoolean1;
         this.unknownString1 = unknownString1;
         this.unknownBoolean2 = unknownBoolean2;

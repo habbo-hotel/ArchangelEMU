@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.guilds.SettingsState;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumDataComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.ForumDataMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 public class GuildForumUpdateSettingsEvent extends MessageHandler {
@@ -41,6 +41,6 @@ public class GuildForumUpdateSettingsEvent extends MessageHandler {
 
         this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FORUMS_FORUM_SETTINGS_UPDATED.key).compose());
 
-        this.client.sendResponse(new GuildForumDataComposer(guild, this.client.getHabbo()));
+        this.client.sendResponse(new ForumDataMessageComposer(guild, this.client.getHabbo()));
     }
 }

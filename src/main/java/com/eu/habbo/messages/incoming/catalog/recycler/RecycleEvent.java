@@ -9,8 +9,8 @@ import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.RecyclerCompleteComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
-import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import gnu.trove.set.hash.THashSet;
@@ -43,7 +43,7 @@ public class RecycleEvent extends MessageHandler {
             if (items.size() == count) {
                 for (HabboItem item : items) {
                     this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
-                    this.client.sendResponse(new RemoveHabboItemComposer(item.getGiftAdjustedId()));
+                    this.client.sendResponse(new FurniListRemoveComposer(item.getGiftAdjustedId()));
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                 }
             } else {
@@ -60,7 +60,7 @@ public class RecycleEvent extends MessageHandler {
             this.client.sendResponse(new AddHabboItemComposer(reward));
             this.client.getHabbo().getInventory().getItemsComponent().addItem(reward);
             this.client.sendResponse(new RecyclerCompleteComposer(RecyclerCompleteComposer.RECYCLING_COMPLETE));
-            this.client.sendResponse(new InventoryRefreshComposer());
+            this.client.sendResponse(new FurniListInvalidateComposer());
 
             AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("FurnimaticQuest"));
         } else {

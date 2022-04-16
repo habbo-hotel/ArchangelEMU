@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.guilds.forums;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumListComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.ForumsListMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class GuildForumListEvent extends MessageHandler {
         }
 
         if (guilds != null) {
-            this.client.sendResponse(new GuildForumListComposer(guilds, this.client.getHabbo(), mode, offset));
+            this.client.sendResponse(new ForumsListMessageComposer(guilds, this.client.getHabbo(), mode, offset));
         }
     }
 

@@ -6,8 +6,8 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.inventory.InventoryItemsComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItems;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -41,8 +41,8 @@ public class EmptyInventoryCommand extends Command {
                 habbo.getInventory().getItemsComponent().getItems().clear();
                 Emulator.getThreading().run(new QueryDeleteHabboItems(items));
 
-                habbo.getClient().sendResponse(new InventoryRefreshComposer());
-                habbo.getClient().sendResponse(new InventoryItemsComposer(0, 1, gameClient.getHabbo().getInventory().getItemsComponent().getItems()));
+                habbo.getClient().sendResponse(new FurniListInvalidateComposer());
+                habbo.getClient().sendResponse(new FurniListComposer(0, 1, gameClient.getHabbo().getInventory().getItemsComponent().getItems()));
                 
 
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_empty.cleared").replace("%username%", habbo.getHabboInfo().getUsername()), RoomChatMessageBubbles.ALERT);

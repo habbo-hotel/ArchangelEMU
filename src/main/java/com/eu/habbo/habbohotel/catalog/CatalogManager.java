@@ -23,7 +23,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolIssueHandledComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
@@ -1116,7 +1116,7 @@ public class CatalogManager {
                 habbo.getClient().sendResponse(new AddHabboItemComposer(unseenItems));
 
                 habbo.getClient().sendResponse(new PurchaseOKComposer(purchasedEvent.catalogItem));
-                habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                habbo.getClient().sendResponse(new FurniListInvalidateComposer());
 
                 THashSet<String> itemIds = new THashSet<>();
 

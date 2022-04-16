@@ -10,7 +10,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.AddWallItemComposer;
 
 public class PostItPlaceEvent extends MessageHandler {
@@ -35,7 +35,7 @@ public class PostItPlaceEvent extends MessageHandler {
                         item.needsUpdate(true);
                         room.sendComposer(new AddWallItemComposer(item, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
-                        this.client.sendResponse(new RemoveHabboItemComposer(item.getGiftAdjustedId()));
+                        this.client.sendResponse(new FurniListRemoveComposer(item.getGiftAdjustedId()));
                         item.setFromGift(false);
                         Emulator.getThreading().run(item);
 

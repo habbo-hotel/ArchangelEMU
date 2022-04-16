@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.PresentItemOpenedComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
@@ -44,7 +44,7 @@ public class OpenRecycleBoxEvent extends MessageHandler {
                     if (reward != null) {
                         this.client.getHabbo().getInventory().getItemsComponent().addItem(reward);
                         this.client.sendResponse(new AddHabboItemComposer(reward));
-                        this.client.sendResponse(new InventoryRefreshComposer());
+                        this.client.sendResponse(new FurniListInvalidateComposer());
 
                         this.client.sendResponse(new PresentItemOpenedComposer(reward, item.getExtradata(), true));
                     }

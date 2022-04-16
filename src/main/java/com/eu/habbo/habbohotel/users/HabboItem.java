@@ -17,7 +17,7 @@ import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
-import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
+import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
@@ -320,7 +320,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
                 String[] clothingKeys = Arrays.stream(this.getBaseItem().getClothingOnWalk().split("\\.")).map(k -> k.split("-")[0]).toArray(String[]::new);
                 habbo.getHabboInfo().setLook(String.join(".", Arrays.stream(habbo.getHabboInfo().getLook().split("\\.")).filter(k -> !ArrayUtils.contains(clothingKeys, k.split("-")[0])).toArray(String[]::new)) + "." + this.getBaseItem().getClothingOnWalk());
 
-                habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo));
+                habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
                 if (habbo.getHabboInfo().getCurrentRoom() != null) {
                     habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
                 }

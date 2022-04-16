@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.AddFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 
@@ -55,7 +55,7 @@ public class CrackableExplode implements Runnable {
                 if (this.toInventory || newItem.getBaseItem().getType() == FurnitureType.WALL) {
                     this.habbo.getInventory().getItemsComponent().addItem(newItem);
                     this.habbo.getClient().sendResponse(new AddHabboItemComposer(newItem));
-                    this.habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                    this.habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                 } else {
                     newItem.setX(this.x);
                     newItem.setY(this.y);

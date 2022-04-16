@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.RoomHeightMapComposer;
+import com.eu.habbo.messages.outgoing.rooms.FloorHeightMapComposer;
 import com.eu.habbo.messages.outgoing.rooms.RoomRelativeMapComposer;
 
 public class RequestRoomHeightmapEvent extends MessageHandler {
@@ -15,7 +15,7 @@ public class RequestRoomHeightmapEvent extends MessageHandler {
             if (room != null && room.getLayout() != null) {
                 this.client.sendResponse(new RoomRelativeMapComposer(room));
 
-                this.client.sendResponse(new RoomHeightMapComposer(room));
+                this.client.sendResponse(new FloorHeightMapComposer(room));
 
                 Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), room);
             }

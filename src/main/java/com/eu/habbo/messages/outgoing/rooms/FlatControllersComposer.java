@@ -8,10 +8,10 @@ import gnu.trove.map.hash.THashMap;
 
 import java.util.Map;
 
-public class RoomRightsListComposer extends MessageComposer {
+public class FlatControllersComposer extends MessageComposer {
     private final Room room;
 
-    public RoomRightsListComposer(Room room) {
+    public FlatControllersComposer(Room room) {
         this.room = room;
     }
 

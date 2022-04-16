@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.RoomCategory;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
-import com.eu.habbo.messages.outgoing.navigator.RoomCreatedComposer;
+import com.eu.habbo.messages.outgoing.navigator.FlatCreatedComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class RequestCreateRoomEvent extends MessageHandler {
         final Room room = Emulator.getGameEnvironment().getRoomManager().createRoomForHabbo(this.client.getHabbo(), name, description, modelName, maxUsers, categoryId, tradeType);
 
         if (room != null) {
-            this.client.sendResponse(new RoomCreatedComposer(room));
+            this.client.sendResponse(new FlatCreatedComposer(room));
         }
     }
 }

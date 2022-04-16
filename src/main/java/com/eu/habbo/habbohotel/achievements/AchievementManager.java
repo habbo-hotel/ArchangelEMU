@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.achievements.AchievementComposer;
 import com.eu.habbo.messages.outgoing.achievements.AchievementUnlockedComposer;
 import com.eu.habbo.messages.outgoing.achievements.talenttrack.TalentLevelUpdateComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.users.UserBadgesComposer;
@@ -357,7 +357,7 @@ public class AchievementManager {
                                 HabboItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), item, 0, 0, "");
                                 habbo.getInventory().getItemsComponent().addItem(rewardItem);
                                 habbo.getClient().sendResponse(new AddHabboItemComposer(rewardItem));
-                                habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                                habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                             }
                         }
 

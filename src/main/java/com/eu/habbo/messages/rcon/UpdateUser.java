@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.AccountPreferencesComposer;
-import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
+import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON> {
                 if (!json.look.isEmpty()) {
                     habbo.getHabboInfo().setLook(json.look);
                     if (habbo.getClient() != null) {
-                        habbo.getClient().sendResponse(new UpdateUserLookComposer(habbo).compose());
+                        habbo.getClient().sendResponse(new FigureUpdateComposer(habbo).compose());
                     }
 
                     if (habbo.getHabboInfo().getCurrentRoom() != null) {

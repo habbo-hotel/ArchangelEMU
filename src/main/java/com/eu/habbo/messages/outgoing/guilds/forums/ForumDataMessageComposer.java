@@ -22,13 +22,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class GuildForumDataComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GuildForumDataComposer.class);
+public class ForumDataMessageComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForumDataMessageComposer.class);
 
     public final Guild guild;
     public Habbo habbo;
 
-    public GuildForumDataComposer(Guild guild, Habbo habbo) {
+    public ForumDataMessageComposer(Guild guild, Habbo habbo) {
         this.guild = guild;
         this.habbo = habbo;
     }

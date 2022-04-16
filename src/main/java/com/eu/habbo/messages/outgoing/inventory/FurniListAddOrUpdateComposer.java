@@ -6,10 +6,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class InventoryUpdateItemComposer extends MessageComposer {
+public class FurniListAddOrUpdateComposer extends MessageComposer {
     private final HabboItem habboItem;
 
-    public InventoryUpdateItemComposer(HabboItem item) {
+    public FurniListAddOrUpdateComposer(HabboItem item) {
         this.habboItem = item;
     }
 

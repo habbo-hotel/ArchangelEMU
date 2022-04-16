@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.RoomRightsListComposer;
+import com.eu.habbo.messages.outgoing.rooms.FlatControllersComposer;
 
 public class RequestRoomRightsEvent extends MessageHandler {
     @Override
@@ -14,7 +14,7 @@ public class RequestRoomRightsEvent extends MessageHandler {
             return;
 
         if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
-            this.client.sendResponse(new RoomRightsListComposer(room));
+            this.client.sendResponse(new FlatControllersComposer(room));
         }
     }
 }

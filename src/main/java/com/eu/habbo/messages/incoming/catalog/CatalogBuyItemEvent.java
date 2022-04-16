@@ -18,7 +18,7 @@ import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
@@ -202,7 +202,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                         this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
 
                     this.client.sendResponse(new PurchaseOKComposer(null));
-                    this.client.sendResponse(new InventoryRefreshComposer());
+                    this.client.sendResponse(new FurniListInvalidateComposer());
                     
                     this.client.getHabbo().getHabboStats().run();
                 }

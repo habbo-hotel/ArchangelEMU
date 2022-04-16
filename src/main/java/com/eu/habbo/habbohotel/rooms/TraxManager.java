@@ -12,8 +12,8 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
-import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxMySongsComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxNowPlayingMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxPlayListComposer;
@@ -275,7 +275,7 @@ public class TraxManager implements Disposable {
             Emulator.getThreading().run(musicDisc);
 
             habbo.getInventory().getItemsComponent().removeHabboItem(musicDisc);
-            habbo.getClient().sendResponse(new RemoveHabboItemComposer(musicDisc.getGiftAdjustedId()));
+            habbo.getClient().sendResponse(new FurniListRemoveComposer(musicDisc.getGiftAdjustedId()));
         }
 
         this.sendUpdatedSongList();
@@ -310,7 +310,7 @@ public class TraxManager implements Disposable {
                 GameClient client = owner.getClient();
                 if (client != null) {
                     client.sendResponse(new AddHabboItemComposer(musicDisc));
-                    client.sendResponse(new InventoryRefreshComposer());
+                    client.sendResponse(new FurniListInvalidateComposer());
                 }
             }
         }
@@ -341,7 +341,7 @@ public class TraxManager implements Disposable {
                                 GameClient client = owner.getClient();
                                 if (client != null) {
                                     client.sendResponse(new AddHabboItemComposer(musicDisc));
-                                    client.sendResponse(new InventoryRefreshComposer());
+                                    client.sendResponse(new FurniListInvalidateComposer());
                                 }
                             }
                         }

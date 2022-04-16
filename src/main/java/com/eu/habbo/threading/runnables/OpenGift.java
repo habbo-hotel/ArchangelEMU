@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryUpdateItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListAddOrUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.PresentItemOpenedComposer;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public class OpenGift implements Runnable {
             Emulator.getThreading().run(new QueryDeleteHabboItem(this.item.getId()));
             Emulator.getThreading().run(new RemoveFloorItemTask(this.room, this.item), this.item.getBaseItem().getName().contains("present_wrap") ? 5000 : 0);
 
-            this.habbo.getClient().sendResponse(new InventoryRefreshComposer());
+            this.habbo.getClient().sendResponse(new FurniListInvalidateComposer());
 
             Map<AddHabboItemComposer.AddHabboItemCategory, List<Integer>> unseenItems = new HashMap<>();
 
@@ -100,7 +100,7 @@ public class OpenGift implements Runnable {
             this.habbo.getClient().sendResponse(new AddHabboItemComposer(unseenItems));
 
             if (inside != null) {
-                this.habbo.getClient().sendResponse(new InventoryUpdateItemComposer(inside));
+                this.habbo.getClient().sendResponse(new FurniListAddOrUpdateComposer(inside));
                 this.habbo.getClient().sendResponse(new PresentItemOpenedComposer(inside, "", false));
             }
         } catch (Exception e) {

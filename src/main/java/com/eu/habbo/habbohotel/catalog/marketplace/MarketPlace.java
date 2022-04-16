@@ -9,8 +9,8 @@ import com.eu.habbo.messages.incoming.catalog.marketplace.RequestOffersEvent;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceBuyErrorComposer;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceCancelSaleComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
-import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemCancelledEvent;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemOfferedEvent;
@@ -95,7 +95,7 @@ public class MarketPlace {
                                                 habbo.getInventory().getItemsComponent().addItem(item);
                                                 habbo.getClient().sendResponse(new MarketplaceCancelSaleComposer(offer, true));
                                                 habbo.getClient().sendResponse(new AddHabboItemComposer(item));
-                                                habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                                                habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                                             }
                                         }
                                     }
@@ -286,7 +286,7 @@ public class MarketPlace {
 
                                         client.sendResponse(new CreditBalanceComposer(client.getHabbo()));
                                         client.sendResponse(new AddHabboItemComposer(item));
-                                        client.sendResponse(new InventoryRefreshComposer());
+                                        client.sendResponse(new FurniListInvalidateComposer());
                                         client.sendResponse(new MarketplaceBuyErrorComposer(MarketplaceBuyErrorComposer.REFRESH, 0, offerId, price));
 
                                         if (habbo != null) {
@@ -346,8 +346,8 @@ public class MarketPlace {
 
         RequestOffersEvent.cachedResults.clear();
 
-        client.sendResponse(new RemoveHabboItemComposer(event.item.getGiftAdjustedId()));
-        client.sendResponse(new InventoryRefreshComposer());
+        client.sendResponse(new FurniListRemoveComposer(event.item.getGiftAdjustedId()));
+        client.sendResponse(new FurniListInvalidateComposer());
 
         event.item.setFromGift(false);
 

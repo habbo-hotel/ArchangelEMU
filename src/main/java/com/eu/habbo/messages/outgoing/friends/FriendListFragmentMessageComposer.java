@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class FriendsComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FriendsComposer.class);
+public class FriendListFragmentMessageComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FriendListFragmentMessageComposer.class);
 
     private final int totalPages;
     private final int pageIndex;
     private final Collection<MessengerBuddy> friends;
 
-    public FriendsComposer(int totalPages, int pageIndex, Collection<MessengerBuddy> friends) {
+    public FriendListFragmentMessageComposer(int totalPages, int pageIndex, Collection<MessengerBuddy> friends) {
         this.totalPages = totalPages;
         this.pageIndex = pageIndex;
         this.friends = friends;
@@ -68,14 +68,14 @@ public class FriendsComposer extends MessageComposer {
             friends.add(buddy);
 
             if(friends.size() == 750) {
-                messages.add(new FriendsComposer(totalPages, page, friends).compose());
+                messages.add(new FriendListFragmentMessageComposer(totalPages, page, friends).compose());
                 friends.clear();
                 page++;
             }
         }
 
         if(page == 0 || friends.size() > 0) {
-            messages.add(new FriendsComposer(totalPages, page, friends).compose());
+            messages.add(new FriendListFragmentMessageComposer(totalPages, page, friends).compose());
         }
 
         return messages;

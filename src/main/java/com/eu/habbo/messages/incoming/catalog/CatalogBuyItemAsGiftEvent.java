@@ -21,7 +21,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.users.UserPointsComposer;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import gnu.trove.map.hash.THashMap;
@@ -336,7 +336,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                     if (habbo != null) {
                         habbo.getClient().sendResponse(new AddHabboItemComposer(gift));
                         habbo.getClient().getHabbo().getInventory().getItemsComponent().addItem(gift);
-                        habbo.getClient().sendResponse(new InventoryRefreshComposer());
+                        habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                         THashMap<String, String> keys = new THashMap<>();
                         keys.put("display", "BUBBLE");
                         keys.put("image", "${image.library.url}notifications/gift.gif");
