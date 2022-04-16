@@ -13,7 +13,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetPackageNameValidationComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.breeding.PetBreedingCompleted;
-import com.eu.habbo.messages.outgoing.rooms.pets.breeding.PetBreedingResultComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.breeding.ConfirmBreedingRequestComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
 import java.sql.ResultSet;
@@ -68,7 +68,7 @@ public class InteractionPetBreedingNest extends HabboItem {
                     Habbo ownerPetTwo = room.getHabbo(this.petTwo.getUserId());
 
                     if (ownerPetOne != null && ownerPetTwo != null && this.petOne.getPetData().getType() == this.petTwo.getPetData().getType() && this.petOne.getPetData().getOffspringType() != -1) {
-                        ownerPetTwo.getClient().sendResponse(new PetBreedingResultComposer(this.getId(), this.petOne.getPetData().getOffspringType(), this.petOne, ownerPetOne.getHabboInfo().getUsername(), this.petTwo, ownerPetTwo.getHabboInfo().getUsername()));
+                        ownerPetTwo.getClient().sendResponse(new ConfirmBreedingRequestComposer(this.getId(), this.petOne.getPetData().getOffspringType(), this.petOne, ownerPetOne.getHabboInfo().getUsername(), this.petTwo, ownerPetTwo.getHabboInfo().getUsername()));
                         this.setExtradata("1");
                         room.updateItem(this);
                     }

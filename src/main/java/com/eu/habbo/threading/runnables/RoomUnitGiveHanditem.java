@@ -2,7 +2,7 @@ package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserHandItemComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.CarryObjectMessageComposer;
 
 public class RoomUnitGiveHanditem implements Runnable {
     private final RoomUnit roomUnit;
@@ -19,7 +19,7 @@ public class RoomUnitGiveHanditem implements Runnable {
     public void run() {
         if (this.room != null && this.roomUnit.isInRoom()) {
             this.roomUnit.setHandItem(this.itemId);
-            this.room.sendComposer(new RoomUserHandItemComposer(this.roomUnit).compose());
+            this.room.sendComposer(new CarryObjectMessageComposer(this.roomUnit).compose());
         }
     }
 }

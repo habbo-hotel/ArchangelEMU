@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.hotelview.HotelViewComposer;
+import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.HideDoorbellComposer;
 import com.eu.habbo.messages.outgoing.rooms.RoomAccessDeniedComposer;
 
@@ -24,7 +24,7 @@ public class HandleDoorbellEvent extends MessageHandler {
                     Emulator.getGameEnvironment().getRoomManager().enterRoom(habbo, this.client.getHabbo().getHabboInfo().getCurrentRoom().getId(), "", true);
                 } else {
                     habbo.getClient().sendResponse(new RoomAccessDeniedComposer(""));
-                    habbo.getClient().sendResponse(new HotelViewComposer());
+                    habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
                 }
                 habbo.getHabboInfo().setRoomQueueId(0);
             }

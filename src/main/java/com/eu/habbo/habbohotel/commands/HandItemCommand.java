@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserHandItemComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.CarryObjectMessageComposer;
 
 public class HandItemCommand extends Command {
     public HandItemCommand() {
@@ -16,7 +16,7 @@ public class HandItemCommand extends Command {
                 if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
                     int effectId = Integer.parseInt(params[1]);
                     gameClient.getHabbo().getRoomUnit().setHandItem(effectId);
-                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserHandItemComposer(gameClient.getHabbo().getRoomUnit()).compose());
+                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new CarryObjectMessageComposer(gameClient.getHabbo().getRoomUnit()).compose());
                 }
             } catch (Exception e) {
                 //Don't handle incorrect parse exceptions :P

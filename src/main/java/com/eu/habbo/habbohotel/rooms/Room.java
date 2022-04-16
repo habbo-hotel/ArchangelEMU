@@ -39,7 +39,7 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorMessagesComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
-import com.eu.habbo.messages.outgoing.hotelview.HotelViewComposer;
+import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
@@ -946,7 +946,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this);
                     }
 
-                    this.sendComposer(new HotelViewComposer().compose());
+                    this.sendComposer(new CloseConnectionMessageComposer().compose());
 
                     this.currentHabbos.clear();
 
@@ -3257,7 +3257,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 }
             }
         } else if (chatType == RoomChatType.TALK) {
-            ServerMessage message = new RoomUserTalkComposer(roomChatMessage).compose();
+            ServerMessage message = new ChatMessageComposer(roomChatMessage).compose();
             boolean noChatLimit = habbo.hasPermission(Permission.ACC_CHAT_NO_LIMIT);
 
             for (Habbo h : this.getHabbos()) {
@@ -3330,7 +3330,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                             RoomChatMessage itemMessage = new RoomChatMessage(Emulator.getTexts().getValue(item.getBaseItem().getName() + ".message." + randomValue, item.getBaseItem().getName() + ".message." + randomValue + " not found!"), habbo, RoomChatMessageBubbles.getBubble(Emulator.getConfig().getInt(item.getBaseItem().getName() + ".message.bubble", RoomChatMessageBubbles.PARROT.getType())));
 
-                            this.sendComposer(new RoomUserTalkComposer(itemMessage).compose());
+                            this.sendComposer(new ChatMessageComposer(itemMessage).compose());
 
                             try {
                                 item.onClick(habbo.getClient(), this, new Object[0]);
@@ -4149,7 +4149,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public void giveHandItem(RoomUnit roomUnit, int handItem) {
         roomUnit.setHandItem(handItem);
-        this.sendComposer(new RoomUserHandItemComposer(roomUnit).compose());
+        this.sendComposer(new CarryObjectMessageComposer(roomUnit).compose());
     }
 
     public void updateItem(HabboItem item) {

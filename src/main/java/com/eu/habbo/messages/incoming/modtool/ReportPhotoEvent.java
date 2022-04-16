@@ -9,9 +9,8 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.modtool.ModToolReportReceivedAlertComposer;
+import com.eu.habbo.messages.outgoing.modtool.CallForHelpResultMessageComposer;
 import com.eu.habbo.threading.runnables.InsertModToolIssue;
-import com.google.gson.JsonParser;
 
 public class ReportPhotoEvent extends MessageHandler {
     @Override
@@ -50,7 +49,7 @@ public class ReportPhotoEvent extends MessageHandler {
 
         new InsertModToolIssue(issue).run();
 
-        this.client.sendResponse(new ModToolReportReceivedAlertComposer(ModToolReportReceivedAlertComposer.REPORT_RECEIVED, ""));
+        this.client.sendResponse(new CallForHelpResultMessageComposer(CallForHelpResultMessageComposer.REPORT_RECEIVED, ""));
         Emulator.getGameEnvironment().getModToolManager().addTicket(issue);
         Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
     }

@@ -3,7 +3,7 @@ package com.eu.habbo.networking.camera.messages.incoming;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.camera.CameraURLComposer;
+import com.eu.habbo.messages.outgoing.camera.CameraStorageUrlMessageComposer;
 import com.eu.habbo.networking.camera.CameraIncomingMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -46,7 +46,7 @@ public class CameraResultURLEvent extends CameraIncomingMessage {
             if (habbo != null) {
                 if (timestamp == habbo.getHabboInfo().getPhotoTimestamp()) {
                     AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("CameraPhotoCount"), 1);
-                    habbo.getClient().sendResponse(new CameraURLComposer(URL));
+                    habbo.getClient().sendResponse(new CameraStorageUrlMessageComposer(URL));
                     habbo.getHabboInfo().setPhotoJSON(habbo.getHabboInfo().getPhotoJSON().replace("%room_id%", roomId + "").replace("%url%", URL));
                     habbo.getHabboInfo().setPhotoURL(URL);
                 }

@@ -9,7 +9,7 @@ public class RequestNewNavigatorDataEvent extends MessageHandler {
         this.client.sendResponse(new NewNavigatorSettingsComposer(this.client.getHabbo().getHabboStats().navigatorWindowSettings));
         this.client.sendResponse(new NewNavigatorMetaDataComposer());
         this.client.sendResponse(new NewNavigatorLiftedRoomsComposer());
-        this.client.sendResponse(new NewNavigatorCollapsedCategoriesComposer());
+        this.client.sendResponse(new CollapsedCategoriesComposer());
         this.client.sendResponse(new NewNavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
         this.client.sendResponse(new NewNavigatorEventCategoriesComposer());
     }

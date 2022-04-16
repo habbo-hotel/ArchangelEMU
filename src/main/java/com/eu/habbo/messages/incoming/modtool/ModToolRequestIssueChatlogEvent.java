@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.modtool.*;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.modtool.ModToolIssueChatlogComposer;
+import com.eu.habbo.messages.outgoing.modtool.CfhChatlogComposer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +67,7 @@ public class ModToolRequestIssueChatlogEvent extends MessageHandler {
                 if (room != null) {
                     roomName = room.getName();
                 }
-                this.client.sendResponse(new ModToolIssueChatlogComposer(issue, chatlog, roomName, chatlogType));
+                this.client.sendResponse(new CfhChatlogComposer(issue, chatlog, roomName, chatlogType));
             }
         } else {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.chatlog").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));

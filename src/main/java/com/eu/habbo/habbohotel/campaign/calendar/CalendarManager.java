@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.campaign.calendar;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.events.calendar.AdventCalendarProductComposer;
+import com.eu.habbo.messages.outgoing.events.calendar.CampaignCalendarDoorOpenedMessageComposer;
 import com.eu.habbo.plugin.events.users.calendar.UserClaimRewardEvent;
 import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
@@ -134,7 +134,7 @@ public class CalendarManager {
                     }
 
                     habbo.getHabboStats().calendarRewardsClaimed.add(new CalendarRewardClaimed(habbo.getHabboInfo().getId(), campaign.getId(), day, object.getId(), new Timestamp(System.currentTimeMillis())));
-                    habbo.getClient().sendResponse(new AdventCalendarProductComposer(true, object, habbo));
+                    habbo.getClient().sendResponse(new CampaignCalendarDoorOpenedMessageComposer(true, object, habbo));
                     object.give(habbo);
                     try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO calendar_rewards_claimed (user_id, campaign_id, day, reward_id, timestamp) VALUES (?, ?, ?, ?, ?)")) {
                         statement.setInt(1, habbo.getHabboInfo().getId());

@@ -3,11 +3,10 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.campaign.calendar.CalendarCampaign;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.messages.outgoing.events.calendar.AdventCalendarDataComposer;
+import com.eu.habbo.messages.outgoing.events.calendar.CampaignCalendarDataMessageComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
 
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.util.Date;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -33,7 +32,7 @@ public class CalendarCommand extends Command {
             int daysBetween = (int) DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
 
             if (daysBetween >= 0) {
-                gameClient.sendResponse(new AdventCalendarDataComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), daysBetween, gameClient.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()));
+                gameClient.sendResponse(new CampaignCalendarDataMessageComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), daysBetween, gameClient.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()));
                 gameClient.sendResponse(new NuxAlertComposer("openView/calendar"));
             }
         }

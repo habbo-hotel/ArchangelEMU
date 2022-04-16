@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.catalog.CatalogPageLayouts;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.*;
-import com.eu.habbo.messages.outgoing.users.ClubGiftReceivedComposer;
+import com.eu.habbo.messages.outgoing.users.ClubGiftSelectedComposer;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +71,7 @@ public class CatalogSelectClubGiftEvent extends MessageHandler {
         this.client.getHabbo().getHabboStats().hcGiftsClaimed++;
         Emulator.getThreading().run(this.client.getHabbo().getHabboStats());
 
-        this.client.sendResponse(new ClubGiftReceivedComposer(itemName, itemsGiven));
+        this.client.sendResponse(new ClubGiftSelectedComposer(itemName, itemsGiven));
 
     }
 }

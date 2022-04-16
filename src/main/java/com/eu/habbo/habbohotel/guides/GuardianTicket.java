@@ -41,7 +41,7 @@ public class GuardianTicket {
 
 
     public void requestToVote(Habbo guardian) {
-        guardian.getClient().sendResponse(new GuardianNewReportReceivedComposer());
+        guardian.getClient().sendResponse(new ChatReviewSessionOfferedToGuideMessageComposer());
 
         this.votes.put(guardian, new GuardianVote(this.guardianCount, guardian));
 
@@ -53,7 +53,7 @@ public class GuardianTicket {
         GuardianVote vote = this.votes.get(guardian);
 
         if (vote != null && vote.type == GuardianVoteType.SEARCHING) {
-            guardian.getClient().sendResponse(new GuardianVotingRequestedComposer(this));
+            guardian.getClient().sendResponse(new ChatReviewSessionStartedMessageComposer(this));
             vote.type = GuardianVoteType.WAITING;
             this.updateVotes();
         }
@@ -72,7 +72,7 @@ public class GuardianTicket {
 
         this.getVoteForGuardian(guardian).ignore = true;
 
-        guardian.getClient().sendResponse(new GuardianVotingTimeEnded());
+        guardian.getClient().sendResponse(new ChatReviewSessionDetachedMessageComposer());
 
         this.updateVotes();
     }
@@ -95,7 +95,7 @@ public class GuardianTicket {
                 if (set.getValue().type == GuardianVoteType.WAITING || set.getValue().type == GuardianVoteType.NOT_VOTED || set.getValue().ignore || set.getValue().type == GuardianVoteType.SEARCHING)
                     continue;
 
-                set.getKey().getClient().sendResponse(new GuardianVotingVotesComposer(this, set.getKey()));
+                set.getKey().getClient().sendResponse(new ChatReviewSessionVotingStatusMessageComposer(this, set.getKey()));
             }
         }
     }
@@ -135,7 +135,7 @@ public class GuardianTicket {
                 if (set.getValue().type == GuardianVoteType.ACCEPTABLY ||
                         set.getValue().type == GuardianVoteType.BADLY ||
                         set.getValue().type == GuardianVoteType.AWFULLY) {
-                    set.getKey().getClient().sendResponse(new GuardianVotingResultComposer(this, set.getValue()));
+                    set.getKey().getClient().sendResponse(new ChatReviewSessionResultsMessageComposer(this, set.getValue()));
                 }
             }
 

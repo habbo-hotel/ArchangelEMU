@@ -18,7 +18,7 @@ import com.eu.habbo.messages.NoAuthMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.TargetedOfferComposer;
-import com.eu.habbo.messages.outgoing.events.calendar.AdventCalendarDataComposer;
+import com.eu.habbo.messages.outgoing.events.calendar.CampaignCalendarDataMessageComposer;
 import com.eu.habbo.messages.outgoing.gamecenter.GameCenterAccountInfoComposer;
 import com.eu.habbo.messages.outgoing.gamecenter.GameCenterGameListComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
@@ -31,7 +31,7 @@ import com.eu.habbo.messages.outgoing.handshake.AvailabilityStatusMessageCompose
 import com.eu.habbo.messages.outgoing.handshake.PingComposer;
 import com.eu.habbo.messages.outgoing.inventory.BadgePointLimitsComposer;
 import com.eu.habbo.messages.outgoing.inventory.AvatarEffectsMessageComposer;
-import com.eu.habbo.messages.outgoing.modtool.CfhTopicsMessageComposer;
+import com.eu.habbo.messages.outgoing.modtool.CfhTopicsInitComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolSanctionInfoComposer;
 import com.eu.habbo.messages.outgoing.navigator.*;
@@ -212,7 +212,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new IsFirstLoginOfDayComposer(true).compose());
                 messages.add(new MysteryBoxKeysComposer().compose());
                 messages.add(new BuildersClubSubscriptionStatusMessageComposer().compose());
-                messages.add(new CfhTopicsMessageComposer().compose());
+                messages.add(new CfhTopicsInitComposer().compose());
                 messages.add(new FavoriteRoomsCountComposer(this.client.getHabbo()).compose());
                 messages.add(new GameCenterGameListComposer().compose());
                 messages.add(new GameCenterAccountInfoComposer(3, 100).compose());
@@ -229,7 +229,7 @@ public class SecureLoginEvent extends MessageHandler {
                 if (campaign != null) {
                     long daysBetween = DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
                     if (daysBetween >= 0) {
-                        messages.add(new AdventCalendarDataComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), (int) daysBetween, this.client.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()).compose());
+                        messages.add(new CampaignCalendarDataMessageComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), (int) daysBetween, this.client.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()).compose());
                         if(Emulator.getConfig().getBoolean("hotel.login.show.calendar", false)) {
                             messages.add(new NuxAlertComposer("openView/calendar").compose());
                         }

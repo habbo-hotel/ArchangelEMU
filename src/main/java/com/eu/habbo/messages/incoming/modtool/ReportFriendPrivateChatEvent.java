@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.modtool.HelperRequestDisabledComposer;
+import com.eu.habbo.messages.outgoing.modtool.CallForHelpDisabledNotifyMessageComposer;
 import com.eu.habbo.threading.runnables.InsertModToolIssue;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class ReportFriendPrivateChatEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         if (!this.client.getHabbo().getHabboStats().allowTalk()) {
-            this.client.sendResponse(new HelperRequestDisabledComposer());
+            this.client.sendResponse(new CallForHelpDisabledNotifyMessageComposer());
             return;
         }
 

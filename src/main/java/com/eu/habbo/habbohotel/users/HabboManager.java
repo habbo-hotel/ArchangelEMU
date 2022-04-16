@@ -274,7 +274,7 @@ public class HabboManager {
             }
             habbo.getHabboInfo().run();
 
-            habbo.getClient().sendResponse(new CatalogUpdatedComposer());
+            habbo.getClient().sendResponse(new CatalogPublishedMessageComposer());
             habbo.getClient().sendResponse(new BuildersClubFurniCountMessageComposer(0));
             habbo.getClient().sendResponse(new BundleDiscountRulesetMessageComposer());
             habbo.getClient().sendResponse(new MarketplaceConfigComposer());

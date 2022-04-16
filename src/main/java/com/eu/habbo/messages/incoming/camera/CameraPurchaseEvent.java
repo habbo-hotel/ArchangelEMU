@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.camera.CameraPurchaseSuccesfullComposer;
+import com.eu.habbo.messages.outgoing.camera.CameraPurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.NotEnoughPointsTypeComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
@@ -44,7 +44,7 @@ public class CameraPurchaseEvent extends MessageHandler {
 
             this.client.getHabbo().getInventory().getItemsComponent().addItem(photoItem);
 
-            this.client.sendResponse(new CameraPurchaseSuccesfullComposer());
+            this.client.sendResponse(new CameraPurchaseOKMessageComposer());
             this.client.sendResponse(new AddHabboItemComposer(photoItem));
             this.client.sendResponse(new InventoryRefreshComposer());
 

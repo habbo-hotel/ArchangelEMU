@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceCancelSaleC
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.inventory.RemoveHabboItemComposer;
-import com.eu.habbo.messages.outgoing.users.UserCreditsComposer;
+import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemCancelledEvent;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemOfferedEvent;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemSoldEvent;
@@ -284,7 +284,7 @@ public class MarketPlace {
                                             client.getHabbo().givePoints(MARKETPLACE_CURRENCY, -event.price);
                                         }
 
-                                        client.sendResponse(new UserCreditsComposer(client.getHabbo()));
+                                        client.sendResponse(new CreditBalanceComposer(client.getHabbo()));
                                         client.sendResponse(new AddHabboItemComposer(item));
                                         client.sendResponse(new InventoryRefreshComposer());
                                         client.sendResponse(new MarketplaceBuyErrorComposer(MarketplaceBuyErrorComposer.REFRESH, 0, offerId, price));
@@ -385,7 +385,7 @@ public class MarketPlace {
         } else {
             client.getHabbo().givePoints(MARKETPLACE_CURRENCY, credits);
         }
-        client.sendResponse(new UserCreditsComposer(client.getHabbo()));
+        client.sendResponse(new CreditBalanceComposer(client.getHabbo()));
     }
 
     private static void removeUser(MarketPlaceOffer offer) {

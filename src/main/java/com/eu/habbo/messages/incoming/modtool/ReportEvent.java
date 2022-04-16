@@ -17,7 +17,7 @@ public class ReportEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         if (!this.client.getHabbo().getHabboStats().allowTalk()) {
-            this.client.sendResponse(new HelperRequestDisabledComposer());
+            this.client.sendResponse(new CallForHelpDisabledNotifyMessageComposer());
             return;
         }
 
@@ -31,7 +31,7 @@ public class ReportEvent extends MessageHandler {
         List<ModToolIssue> issues = Emulator.getGameEnvironment().getModToolManager().openTicketsForHabbo(this.client.getHabbo());
         if (!issues.isEmpty()) {
             //this.client.sendResponse(new GenericAlertComposer("You've got still a pending ticket. Wait till the moderators are done reviewing your ticket."));
-            this.client.sendResponse(new ReportRoomFormComposer(issues));
+            this.client.sendResponse(new CallForHelpPendingCallsMessageComposer(issues));
             return;
         }
 
@@ -66,7 +66,7 @@ public class ReportEvent extends MessageHandler {
 
                     Emulator.getGameEnvironment().getModToolManager().addTicket(issue);
                     Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
-                    this.client.sendResponse(new ModToolReportReceivedAlertComposer(ModToolReportReceivedAlertComposer.REPORT_RECEIVED, cfhTopic.reply));
+                    this.client.sendResponse(new CallForHelpResultMessageComposer(CallForHelpResultMessageComposer.REPORT_RECEIVED, cfhTopic.reply));
 
                     if (cfhTopic != null) {
                         if (cfhTopic.action != CfhActionType.MODS) {
@@ -91,7 +91,7 @@ public class ReportEvent extends MessageHandler {
             issue.category = topic;
             new InsertModToolIssue(issue).run();
 
-            this.client.sendResponse(new ModToolReportReceivedAlertComposer(ModToolReportReceivedAlertComposer.REPORT_RECEIVED, message));
+            this.client.sendResponse(new CallForHelpResultMessageComposer(CallForHelpResultMessageComposer.REPORT_RECEIVED, message));
             Emulator.getGameEnvironment().getModToolManager().addTicket(issue);
             Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
 

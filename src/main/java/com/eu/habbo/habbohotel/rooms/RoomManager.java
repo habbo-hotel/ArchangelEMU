@@ -30,7 +30,7 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.incoming.users.UserNuxEvent;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorMessagesComposer;
-import com.eu.habbo.messages.outgoing.hotelview.HotelViewComposer;
+import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.polls.PollStartComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollAnswersComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollStartComposer;
@@ -499,21 +499,21 @@ public class RoomManager {
             return;
 
         if (habbo.getHabboInfo().getLoadingRoom() != 0 && room.getId() != habbo.getHabboInfo().getLoadingRoom()) {
-            habbo.getClient().sendResponse(new HotelViewComposer());
+            habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
             habbo.getHabboInfo().setLoadingRoom(0);
             return;
         }
 
         if (Emulator.getPluginManager().fireEvent(new UserEnterRoomEvent(habbo, room)).isCancelled()) {
             if (habbo.getHabboInfo().getCurrentRoom() == null) {
-                habbo.getClient().sendResponse(new HotelViewComposer());
+                habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
                 return;
             }
         }
 
         if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission(Permission.ACC_ENTERANYROOM)) {
-            habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
+            habbo.getClient().sendResponse(new CantConnectMessageComposer(CantConnectMessageComposer.ROOM_ERROR_BANNED));
             return;
         }
 
@@ -548,7 +548,7 @@ public class RoomManager {
 
             if (!rightsFound) {
                 habbo.getClient().sendResponse(new RoomAccessDeniedComposer(""));
-                habbo.getClient().sendResponse(new HotelViewComposer());
+                habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
                 return;
             }
@@ -561,11 +561,11 @@ public class RoomManager {
                 this.openRoom(habbo, room, doorLocation);
             else {
                 habbo.getClient().sendResponse(new GenericErrorMessagesComposer(GenericErrorMessagesComposer.WRONG_PASSWORD_USED));
-                habbo.getClient().sendResponse(new HotelViewComposer());
+                habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
             }
         } else {
-            habbo.getClient().sendResponse(new HotelViewComposer());
+            habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
             habbo.getHabboInfo().setLoadingRoom(0);
         }
     }
@@ -621,12 +621,12 @@ public class RoomManager {
 
         habbo.getRoomUnit().setRoomUnitType(RoomUnitType.USER);
         if (room.isBanned(habbo)) {
-            habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
+            habbo.getClient().sendResponse(new CantConnectMessageComposer(CantConnectMessageComposer.ROOM_ERROR_BANNED));
             return;
         }
 
         if (room.getUserCount() >= room.getUsersMax() && !habbo.hasPermission(Permission.ACC_FULLROOMS) && !room.hasRights(habbo)) {
-            habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_GUESTROOM_FULL));
+            habbo.getClient().sendResponse(new CantConnectMessageComposer(CantConnectMessageComposer.ROOM_ERROR_GUESTROOM_FULL));
             return;
         }
 
@@ -681,7 +681,7 @@ public class RoomManager {
     public void enterRoom(final Habbo habbo, final Room room) {
         if (habbo.getHabboInfo().getLoadingRoom() != room.getId()) {
             if (habbo.getHabboInfo().getLoadingRoom() != 0) {
-                habbo.getClient().sendResponse(new HotelViewComposer());
+                habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
             }
             return;
         }
@@ -843,7 +843,7 @@ public class RoomManager {
                 }
 
                 if (roomHabbo.getRoomUnit().getHandItem() > 0) {
-                    habbo.getClient().sendResponse(new RoomUserHandItemComposer(roomHabbo.getRoomUnit()));
+                    habbo.getClient().sendResponse(new CarryObjectMessageComposer(roomHabbo.getRoomUnit()));
                 }
 
                 if (roomHabbo.getRoomUnit().getEffectId() > 0) {
@@ -946,7 +946,7 @@ public class RoomManager {
             room.removeHabbo(habbo, true);
 
             if (redirectToHotelView) {
-                habbo.getClient().sendResponse(new HotelViewComposer());
+                habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
             }
             habbo.getHabboInfo().setCurrentRoom(null);
             habbo.getRoomUnit().isKicked = false;
@@ -1539,7 +1539,7 @@ public class RoomManager {
         if (habbo != null) {
             if (habbo.getHabboInfo().getCurrentRoom() == room) {
                 room.removeHabbo(habbo, true);
-                habbo.getClient().sendResponse(new RoomEnterErrorComposer(RoomEnterErrorComposer.ROOM_ERROR_BANNED));
+                habbo.getClient().sendResponse(new CantConnectMessageComposer(CantConnectMessageComposer.ROOM_ERROR_BANNED));
             }
         }
     }

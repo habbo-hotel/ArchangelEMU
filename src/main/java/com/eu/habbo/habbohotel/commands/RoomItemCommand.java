@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserHandItemComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.CarryObjectMessageComposer;
 
 public class RoomItemCommand extends Command {
     public RoomItemCommand() {
@@ -31,7 +31,7 @@ public class RoomItemCommand extends Command {
 
         for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
             habbo.getRoomUnit().setHandItem(itemId);
-            habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserHandItemComposer(habbo.getRoomUnit()).compose());
+            habbo.getHabboInfo().getCurrentRoom().sendComposer(new CarryObjectMessageComposer(habbo.getRoomUnit()).compose());
         }
 
         if (itemId > 0) {

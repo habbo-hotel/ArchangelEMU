@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.messages.outgoing.generic.alerts.CustomNotificationComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.CustomUserNotificationMessageComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,7 +22,7 @@ public class InteractionCostumeHopper extends InteractionHopper {
         if (client.getHabbo().getRoomUnit().getEffectId() > 0) {
             super.onClick(client, room, objects);
         } else {
-            client.sendResponse(new CustomNotificationComposer(CustomNotificationComposer.HOPPER_NO_COSTUME));
+            client.sendResponse(new CustomUserNotificationMessageComposer(CustomUserNotificationMessageComposer.HOPPER_NO_COSTUME));
         }
     }
 }

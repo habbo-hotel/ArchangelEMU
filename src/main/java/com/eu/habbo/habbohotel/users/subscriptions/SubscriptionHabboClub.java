@@ -11,7 +11,7 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboStats;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.outgoing.catalog.ClubCenterDataComposer;
-import com.eu.habbo.messages.outgoing.generic.PickMonthlyClubGiftNotificationComposer;
+import com.eu.habbo.messages.outgoing.generic.ClubGiftNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import gnu.trove.map.hash.THashMap;
@@ -84,7 +84,7 @@ public class SubscriptionHabboClub extends Subscription {
         if (habbo != null && habbo.getClient() != null) {
 
             if (habbo.getHabboStats().getRemainingClubGifts() > 0) {
-                habbo.getClient().sendResponse(new PickMonthlyClubGiftNotificationComposer(habbo.getHabboStats().getRemainingClubGifts()));
+                habbo.getClient().sendResponse(new ClubGiftNotificationComposer(habbo.getHabboStats().getRemainingClubGifts()));
             }
 
             if ((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().hcMessageLastModified) < 60) {
@@ -318,7 +318,7 @@ public class SubscriptionHabboClub extends Subscription {
         progressAchievement(habbo.getHabboInfo());
 
         if (habbo.getHabboStats().getRemainingClubGifts() > 0) {
-            habbo.getClient().sendResponse(new PickMonthlyClubGiftNotificationComposer(habbo.getHabboStats().getRemainingClubGifts()));
+            habbo.getClient().sendResponse(new ClubGiftNotificationComposer(habbo.getHabboStats().getRemainingClubGifts()));
         }
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
@@ -376,7 +376,7 @@ public class SubscriptionHabboClub extends Subscription {
             case "credit":
             case "coin":
                 habbo.getClient().getHabbo().getHabboInfo().addCredits(amount);
-                habbo.getClient().sendResponse(new UserCreditsComposer(habbo.getClient().getHabbo()));
+                habbo.getClient().sendResponse(new CreditBalanceComposer(habbo.getClient().getHabbo()));
                 break;
 
             case "diamonds":

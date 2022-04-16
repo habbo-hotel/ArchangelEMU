@@ -232,7 +232,7 @@ public class Habbo implements Runnable {
 
         this.getHabboInfo().addCredits(event.credits);
 
-        if (this.client != null) this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
+        if (this.client != null) this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo()));
     }
 
 
@@ -288,7 +288,7 @@ public class Habbo implements Runnable {
 
     public void talk(String message, RoomChatMessageBubbles bubble) {
         if (this.getRoomUnit().isInRoom()) {
-            this.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserTalkComposer(new RoomChatMessage(message, this.client.getHabbo().getRoomUnit(), bubble)).compose());
+            this.getHabboInfo().getCurrentRoom().sendComposer(new ChatMessageComposer(new RoomChatMessage(message, this.client.getHabbo().getRoomUnit(), bubble)).compose());
         }
     }
 

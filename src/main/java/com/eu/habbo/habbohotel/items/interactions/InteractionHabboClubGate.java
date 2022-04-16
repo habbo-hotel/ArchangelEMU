@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.generic.alerts.CustomNotificationComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.CustomUserNotificationMessageComposer;
 import com.eu.habbo.threading.runnables.CloseGate;
 
 import java.sql.ResultSet;
@@ -52,7 +52,7 @@ public class InteractionHabboClubGate extends InteractionDefault implements Cond
             if (this.canWalkOn(client.getHabbo().getRoomUnit(), room, null)) {
                 super.onClick(client, room, objects);
             } else {
-                client.sendResponse(new CustomNotificationComposer(CustomNotificationComposer.GATE_NO_HC));
+                client.sendResponse(new CustomUserNotificationMessageComposer(CustomUserNotificationMessageComposer.GATE_NO_HC));
             }
         }
     }
@@ -70,7 +70,7 @@ public class InteractionHabboClubGate extends InteractionDefault implements Cond
             return;
 
         room.getHabbo(roomUnit).getClient().sendResponse(
-                new CustomNotificationComposer(CustomNotificationComposer.GATE_NO_HC)
+                new CustomUserNotificationMessageComposer(CustomUserNotificationMessageComposer.GATE_NO_HC)
         );
     }
 }

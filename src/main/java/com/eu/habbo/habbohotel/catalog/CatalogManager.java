@@ -26,7 +26,7 @@ import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolIssueHandledComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
-import com.eu.habbo.messages.outgoing.users.UserCreditsComposer;
+import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.messages.outgoing.users.UserPointsComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadCatalogManagerEvent;
 import com.eu.habbo.plugin.events.users.catalog.UserCatalogFurnitureBoughtEvent;
@@ -552,7 +552,7 @@ public class CatalogManager {
 
         if (voucher.credits > 0) {
             client.getHabbo().getHabboInfo().addCredits(voucher.credits);
-            client.sendResponse(new UserCreditsComposer(client.getHabbo()));
+            client.sendResponse(new CreditBalanceComposer(client.getHabbo()));
         }
 
         if (voucher.catalogItemId > 0) {
@@ -1071,7 +1071,7 @@ public class CatalogManager {
                 if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
                     if (purchasedEvent.totalCredits > 0) {
                         habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.totalCredits);
-                        habbo.getClient().sendResponse(new UserCreditsComposer(habbo.getClient().getHabbo()));
+                        habbo.getClient().sendResponse(new CreditBalanceComposer(habbo.getClient().getHabbo()));
                     }
                 }
 

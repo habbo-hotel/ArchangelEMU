@@ -9,7 +9,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
-import com.eu.habbo.messages.outgoing.users.UserCreditsComposer;
+import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +68,7 @@ public class CatalogBuyClubDiscountEvent extends MessageHandler {
                         }
 
                         if (totalCredits > 0)
-                            this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
+                            this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo()));
 
                         if (totalDuckets > 0)
                             this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
