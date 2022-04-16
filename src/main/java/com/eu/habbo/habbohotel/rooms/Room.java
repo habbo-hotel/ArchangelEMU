@@ -4138,7 +4138,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
             if (this.allowEffects && !roomUnit.isSwimming) {
                 roomUnit.setEffectId(effectId, duration);
-                this.sendComposer(new RoomUserEffectComposer(roomUnit).compose());
+                this.sendComposer(new AvatarEffectMessageComposer(roomUnit).compose());
             }
         }
     }

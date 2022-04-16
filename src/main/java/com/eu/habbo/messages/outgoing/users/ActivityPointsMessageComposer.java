@@ -8,12 +8,12 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UserCurrencyComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserCurrencyComposer.class);
+public class ActivityPointsMessageComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActivityPointsMessageComposer.class);
 
     private final Habbo habbo;
 
-    public UserCurrencyComposer(Habbo habbo) {
+    public ActivityPointsMessageComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 

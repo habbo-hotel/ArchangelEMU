@@ -4,7 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PetNameErrorComposer extends MessageComposer {
+public class ApproveNameMessageComposer extends MessageComposer {
     public static final int NAME_OK = 0;
     public static final int NAME_TO_LONG = 1;
     public static final int NAME_TO_SHORT = 2;
@@ -14,7 +14,7 @@ public class PetNameErrorComposer extends MessageComposer {
     private final int type;
     private final String value;
 
-    public PetNameErrorComposer(int type, String value) {
+    public ApproveNameMessageComposer(int type, String value) {
         this.type = type;
         this.value = value;
     }

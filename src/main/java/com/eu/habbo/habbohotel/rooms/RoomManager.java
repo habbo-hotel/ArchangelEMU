@@ -48,7 +48,6 @@ import com.eu.habbo.plugin.events.rooms.UserVoteRoomEvent;
 import com.eu.habbo.plugin.events.users.HabboAddedToRoomEvent;
 import com.eu.habbo.plugin.events.users.UserEnterRoomEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
-import com.eu.habbo.plugin.events.users.UsernameTalkEvent;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TIntProcedure;
@@ -848,7 +847,7 @@ public class RoomManager {
                 }
 
                 if (roomHabbo.getRoomUnit().getEffectId() > 0) {
-                    habbo.getClient().sendResponse(new RoomUserEffectComposer(roomHabbo.getRoomUnit()));
+                    habbo.getClient().sendResponse(new AvatarEffectMessageComposer(roomHabbo.getRoomUnit()));
                 }
 
                 if (roomHabbo.getRoomUnit().isIdle()) {

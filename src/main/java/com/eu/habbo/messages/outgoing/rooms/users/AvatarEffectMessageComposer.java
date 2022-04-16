@@ -5,16 +5,16 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RoomUserEffectComposer extends MessageComposer {
+public class AvatarEffectMessageComposer extends MessageComposer {
     private final RoomUnit roomUnit;
     private final int effectId;
 
-    public RoomUserEffectComposer(RoomUnit roomUnit) {
+    public AvatarEffectMessageComposer(RoomUnit roomUnit) {
         this.roomUnit = roomUnit;
         this.effectId = -1;
     }
 
-    public RoomUserEffectComposer(RoomUnit roomUnit, int effectId) {
+    public AvatarEffectMessageComposer(RoomUnit roomUnit, int effectId) {
         this.roomUnit = roomUnit;
         this.effectId = effectId;
     }

@@ -10,11 +10,11 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import java.util.Collection;
 
 
-public class UserEffectsListComposer extends MessageComposer {
+public class AvatarEffectsMessageComposer extends MessageComposer {
     public final Habbo habbo;
     public final Collection<EffectsComponent.HabboEffect> effects;
 
-    public UserEffectsListComposer(Habbo habbo, Collection<EffectsComponent.HabboEffect> effects) {
+    public AvatarEffectsMessageComposer(Habbo habbo, Collection<EffectsComponent.HabboEffect> effects) {
         this.habbo = habbo;
         this.effects = effects;
     }
@@ -31,18 +31,18 @@ public class UserEffectsListComposer extends MessageComposer {
                 this.response.appendInt(this.effects.size());
 
                 for (EffectsComponent.HabboEffect effect : effects) {
-                    UserEffectsListComposer.this.response.appendInt(effect.effect);
-                    UserEffectsListComposer.this.response.appendInt(0);
-                    UserEffectsListComposer.this.response.appendInt(effect.duration > 0 ? effect.duration : Integer.MAX_VALUE);
-                    UserEffectsListComposer.this.response.appendInt((effect.duration > 0 ? (effect.total - (effect.isActivated() ? 1 : 0)) : 0));
+                    AvatarEffectsMessageComposer.this.response.appendInt(effect.effect);
+                    AvatarEffectsMessageComposer.this.response.appendInt(0);
+                    AvatarEffectsMessageComposer.this.response.appendInt(effect.duration > 0 ? effect.duration : Integer.MAX_VALUE);
+                    AvatarEffectsMessageComposer.this.response.appendInt((effect.duration > 0 ? (effect.total - (effect.isActivated() ? 1 : 0)) : 0));
 
                     if(!effect.isActivated() && effect.duration > 0) {
-                        UserEffectsListComposer.this.response.appendInt(0);
+                        AvatarEffectsMessageComposer.this.response.appendInt(0);
                     }
                     else {
-                        UserEffectsListComposer.this.response.appendInt(effect.duration > 0 ? (Emulator.getIntUnixTimestamp() - effect.activationTimestamp) + effect.duration : 0);
+                        AvatarEffectsMessageComposer.this.response.appendInt(effect.duration > 0 ? (Emulator.getIntUnixTimestamp() - effect.activationTimestamp) + effect.duration : 0);
                     }
-                    UserEffectsListComposer.this.response.appendBoolean(effect.duration <= 0); // is perm
+                    AvatarEffectsMessageComposer.this.response.appendBoolean(effect.duration <= 0); // is perm
                 }
             }
         }

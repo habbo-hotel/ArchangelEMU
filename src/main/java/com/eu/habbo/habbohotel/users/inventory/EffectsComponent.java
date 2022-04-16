@@ -2,9 +2,9 @@ package com.eu.habbo.habbohotel.users.inventory;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.inventory.EffectsListAddComposer;
-import com.eu.habbo.messages.outgoing.inventory.EffectsListEffectEnableComposer;
-import com.eu.habbo.messages.outgoing.inventory.EffectsListRemoveComposer;
+import com.eu.habbo.messages.outgoing.inventory.AvatarEffectAddedMessageComposer;
+import com.eu.habbo.messages.outgoing.inventory.AvatarEffectActivatedMessageComposer;
+import com.eu.habbo.messages.outgoing.inventory.AvatarEffectExpiredMessageComposer;
 import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,7 @@ public class EffectsComponent {
     public void addEffect(HabboEffect effect) {
         this.effects.put(effect.effect, effect);
 
-        this.habbo.getClient().sendResponse(new EffectsListAddComposer(effect));
+        this.habbo.getClient().sendResponse(new AvatarEffectAddedMessageComposer(effect));
     }
 
     public void dispose() {
@@ -118,7 +118,7 @@ public class EffectsComponent {
             if (effect.isRemaining()) {
                 effect.activationTimestamp = Emulator.getIntUnixTimestamp();
             } else {
-                this.habbo.getClient().sendResponse(new EffectsListRemoveComposer(effect));
+                this.habbo.getClient().sendResponse(new AvatarEffectExpiredMessageComposer(effect));
             }
         }
     }
@@ -137,7 +137,7 @@ public class EffectsComponent {
                 this.habbo.getHabboInfo().getCurrentRoom().giveEffect(this.habbo, effectId, effect.remainingTime());
             }
 
-            this.habbo.getClient().sendResponse(new EffectsListEffectEnableComposer(effect));
+            this.habbo.getClient().sendResponse(new AvatarEffectActivatedMessageComposer(effect));
         }
     }
 

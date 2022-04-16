@@ -246,7 +246,7 @@ public class Habbo implements Runnable {
             return;
 
         this.getHabboInfo().addPixels(event.points);
-        if (this.client != null) this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
+        if (this.client != null) this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
     }
 
 

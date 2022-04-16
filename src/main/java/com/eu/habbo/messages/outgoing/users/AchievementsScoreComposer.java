@@ -5,10 +5,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UserAchievementScoreComposer extends MessageComposer {
+public class AchievementsScoreComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public UserAchievementScoreComposer(Habbo habbo) {
+    public AchievementsScoreComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 

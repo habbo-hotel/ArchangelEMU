@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.users.inventory.EffectsComponent;
-import com.eu.habbo.messages.outgoing.inventory.UserEffectsListComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;

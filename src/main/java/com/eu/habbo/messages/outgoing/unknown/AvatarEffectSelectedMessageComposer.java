@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UnknownAvatarEditorComposer extends MessageComposer {
+public class AvatarEffectSelectedMessageComposer extends MessageComposer {
     private final int type;
 
-    public UnknownAvatarEditorComposer(int type) {
+    public AvatarEffectSelectedMessageComposer(int type) {
         this.type = type;
     }
 

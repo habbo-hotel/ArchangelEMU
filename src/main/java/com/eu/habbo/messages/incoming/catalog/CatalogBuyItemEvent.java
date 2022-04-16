@@ -111,7 +111,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                         }
                         if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) { //if the player has this perm disabled
                             this.client.getHabbo().getHabboInfo().addCurrencyAmount(roomBundleItem.getPointsType(), -roomBundleItem.getPoints()); // takes their points away
-                            this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo())); // Sends the updated currency composer window
+                            this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo())); // Sends the updated currency composer window
                         }
                         this.client.sendResponse(new PurchaseOKComposer()); // Sends the composer to close the window.
 
@@ -199,7 +199,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                         this.client.sendResponse(new UserCreditsComposer(this.client.getHabbo()));
 
                     if (totalDuckets > 0)
-                        this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
+                        this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
 
                     this.client.sendResponse(new PurchaseOKComposer(null));
                     this.client.sendResponse(new InventoryRefreshComposer());

@@ -8,7 +8,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.users.UserCreditsComposer;
-import com.eu.habbo.messages.outgoing.users.UserCurrencyComposer;
+import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
 import com.eu.habbo.plugin.events.furniture.FurnitureRedeemedEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import org.slf4j.Logger;
@@ -117,7 +117,7 @@ public class RedeemItemEvent extends MessageHandler {
 
                         case FurnitureRedeemedEvent.PIXELS:
                             this.client.getHabbo().getHabboInfo().addPixels(furniRedeemEvent.amount);
-                            this.client.sendResponse(new UserCurrencyComposer(this.client.getHabbo()));
+                            this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
                             break;
 
                         default:

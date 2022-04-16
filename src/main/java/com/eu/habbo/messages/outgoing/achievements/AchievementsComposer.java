@@ -11,12 +11,12 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AchievementListComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AchievementListComposer.class);
+public class AchievementsComposer extends MessageComposer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AchievementsComposer.class);
 
     private final Habbo habbo;
 
-    public AchievementListComposer(Habbo habbo) {
+    public AchievementsComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 

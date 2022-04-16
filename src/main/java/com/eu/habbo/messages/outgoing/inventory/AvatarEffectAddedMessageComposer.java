@@ -5,11 +5,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class EffectsListAddComposer extends MessageComposer {
+public class AvatarEffectAddedMessageComposer extends MessageComposer {
     public final EffectsComponent.HabboEffect effect;
 
-    public
-    EffectsListAddComposer(EffectsComponent.HabboEffect effect) {
+    public AvatarEffectAddedMessageComposer(EffectsComponent.HabboEffect effect) {
         this.effect = effect;
     }
 

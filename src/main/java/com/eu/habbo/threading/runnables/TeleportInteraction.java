@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserEffectComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
@@ -83,7 +83,7 @@ class TeleportInteraction extends Thread {
                 this.targetRoom.sendComposer(new RoomUserRemoveComposer(this.client.getHabbo().getRoomUnit()).compose());
                 this.targetRoom.sendComposer(new RoomUsersComposer(this.client.getHabbo()).compose());
                 this.targetRoom.sendComposer(new RoomUserStatusComposer(this.client.getHabbo().getRoomUnit()).compose());
-                this.targetRoom.sendComposer(new RoomUserEffectComposer(this.client.getHabbo().getRoomUnit()).compose());
+                this.targetRoom.sendComposer(new AvatarEffectMessageComposer(this.client.getHabbo().getRoomUnit()).compose());
                 this.room.updateItem(this.teleportOne);
                 this.targetRoom.updateItem(this.teleportTwo);
 

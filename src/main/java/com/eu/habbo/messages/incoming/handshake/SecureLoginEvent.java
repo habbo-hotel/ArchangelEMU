@@ -26,11 +26,11 @@ import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.NewUserIdentityComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
 import com.eu.habbo.messages.outgoing.handshake.EnableNotificationsComposer;
-import com.eu.habbo.messages.outgoing.handshake.SecureLoginOKComposer;
+import com.eu.habbo.messages.outgoing.handshake.AuthenticationOKMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.AvailabilityStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.PingComposer;
 import com.eu.habbo.messages.outgoing.inventory.BadgePointLimitsComposer;
-import com.eu.habbo.messages.outgoing.inventory.UserEffectsListComposer;
+import com.eu.habbo.messages.outgoing.inventory.AvatarEffectsMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.CfhTopicsMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolSanctionInfoComposer;
@@ -127,7 +127,7 @@ public class SecureLoginEvent extends MessageHandler {
 
                 ArrayList<ServerMessage> messages = new ArrayList<>();
 
-                messages.add(new SecureLoginOKComposer().compose());
+                messages.add(new AuthenticationOKMessageComposer().compose());
 
                 int roomIdToEnter = 0;
 
@@ -201,14 +201,14 @@ public class SecureLoginEvent extends MessageHandler {
                 }
 
                 messages.add(new UserHomeRoomComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), roomIdToEnter).compose());
-                messages.add(new UserEffectsListComposer(habbo, this.client.getHabbo().getInventory().getEffectsComponent().effects.values()).compose());
+                messages.add(new AvatarEffectsMessageComposer(habbo, this.client.getHabbo().getInventory().getEffectsComponent().effects.values()).compose());
                 messages.add(new UserClothesComposer(this.client.getHabbo()).compose());
                 messages.add(new NewUserIdentityComposer(habbo).compose());
                 messages.add(new UserPermissionsComposer(this.client.getHabbo()).compose());
                 messages.add(new AvailabilityStatusMessageComposer(true, false, true).compose());
                 messages.add(new PingComposer().compose());
                 messages.add(new EnableNotificationsComposer(Emulator.getConfig().getBoolean("bubblealerts.enabled", true)).compose());
-                messages.add(new UserAchievementScoreComposer(this.client.getHabbo()).compose());
+                messages.add(new AchievementsScoreComposer(this.client.getHabbo()).compose());
                 messages.add(new IsFirstLoginOfDayComposer(true).compose());
                 messages.add(new MysteryBoxKeysComposer().compose());
                 messages.add(new BuildersClubExpiredComposer().compose());
