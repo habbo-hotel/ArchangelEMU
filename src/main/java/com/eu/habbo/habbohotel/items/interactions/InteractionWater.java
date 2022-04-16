@@ -59,6 +59,7 @@ public class InteractionWater extends InteractionDefault {
             } catch (Exception e) {
             }
         }
+
     }
 
     @Override
@@ -72,26 +73,32 @@ public class InteractionWater extends InteractionDefault {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
+        roomUnit.isSwimming = true;
+
         Pet pet = room.getPet(roomUnit);
 
-        if(pet == null)
+        if (pet == null)
             return;
 
         if (!pet.getRoomUnit().hasStatus(RoomUnitStatus.SWIM) && pet.getPetData().canSwim) {
             pet.getRoomUnit().setStatus(RoomUnitStatus.SWIM, "");
+            pet.packetUpdate = true;
         }
     }
 
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+        roomUnit.isSwimming = false;
+
         super.onWalkOff(roomUnit, room, objects);
 
-        Pet pet = room.getPet(roomUnit);
+        if ( roomUnit.getRoomUnitType() != RoomUnitType.PET) return;
+            Pet pet = room.getPet(roomUnit);
 
-        if(pet == null)
-            return;
+            if (pet == null) return;
 
-        pet.getRoomUnit().removeStatus(RoomUnitStatus.SWIM);
+            roomUnit.removeStatus(RoomUnitStatus.SWIM);
+            pet.packetUpdate = true;
     }
 
     @Override
@@ -108,9 +115,8 @@ public class InteractionWater extends InteractionDefault {
     public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation) {
         for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation) {
             for (HabboItem item : set.getValue()) {
-                if (!(item instanceof InteractionWater)) {
-                    return false;
-                }
+                if(item != this)
+                return false;
             }
         }
 
