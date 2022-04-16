@@ -6,10 +6,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class BonusRareComposer extends MessageComposer {
+public class BonusRareInfoMessageComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public BonusRareComposer(Habbo habbo) {
+    public BonusRareInfoMessageComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 

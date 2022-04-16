@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class CatalogModeComposer extends MessageComposer {
+public class BuildersClubFurniCountMessageComposer extends MessageComposer {
     private final int mode;
 
-    public CatalogModeComposer(int mode) {
+    public BuildersClubFurniCountMessageComposer(int mode) {
         this.mode = mode;
     }
 

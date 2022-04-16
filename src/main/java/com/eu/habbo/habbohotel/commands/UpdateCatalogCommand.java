@@ -16,8 +16,8 @@ public class UpdateCatalogCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getCatalogManager().initialize();
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new CatalogUpdatedComposer());
-        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new CatalogModeComposer(0));
-        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new DiscountComposer());
+        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new BuildersClubFurniCountMessageComposer(0));
+        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new BundleDiscountRulesetMessageComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new MarketplaceConfigComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new GiftConfigurationComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new RecyclerLogicComposer());

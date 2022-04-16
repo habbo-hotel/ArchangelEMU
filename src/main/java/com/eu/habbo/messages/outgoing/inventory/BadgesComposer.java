@@ -7,10 +7,10 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
 
-public class InventoryBadgesComposer extends MessageComposer {
+public class BadgesComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public InventoryBadgesComposer(Habbo habbo) {
+    public BadgesComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 

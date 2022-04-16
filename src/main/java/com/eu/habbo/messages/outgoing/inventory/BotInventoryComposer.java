@@ -7,10 +7,10 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
 
-public class InventoryBotsComposer extends MessageComposer {
+public class BotInventoryComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public InventoryBotsComposer(Habbo habbo) {
+    public BotInventoryComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 

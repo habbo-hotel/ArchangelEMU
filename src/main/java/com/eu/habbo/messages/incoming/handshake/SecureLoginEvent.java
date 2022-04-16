@@ -35,7 +35,7 @@ import com.eu.habbo.messages.outgoing.modtool.CfhTopicsMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolSanctionInfoComposer;
 import com.eu.habbo.messages.outgoing.navigator.*;
-import com.eu.habbo.messages.outgoing.unknown.BuildersClubExpiredComposer;
+import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.mysterybox.MysteryBoxKeysComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
@@ -211,7 +211,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new AchievementsScoreComposer(this.client.getHabbo()).compose());
                 messages.add(new IsFirstLoginOfDayComposer(true).compose());
                 messages.add(new MysteryBoxKeysComposer().compose());
-                messages.add(new BuildersClubExpiredComposer().compose());
+                messages.add(new BuildersClubSubscriptionStatusMessageComposer().compose());
                 messages.add(new CfhTopicsMessageComposer().compose());
                 messages.add(new FavoriteRoomsCountComposer(this.client.getHabbo()).compose());
                 messages.add(new GameCenterGameListComposer().compose());

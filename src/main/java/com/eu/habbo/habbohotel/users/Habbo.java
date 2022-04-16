@@ -351,13 +351,13 @@ public class Habbo implements Runnable {
 
     public void addBot(Bot bot) {
         this.habboInventory.getBotsComponent().addBot(bot);
-        this.client.sendResponse(new AddBotComposer(bot));
+        this.client.sendResponse(new BotAddedToInventoryComposer(bot));
     }
 
 
     public void removeBot(Bot bot) {
         this.habboInventory.getBotsComponent().removeBot(bot);
-        this.client.sendResponse(new RemoveBotComposer(bot));
+        this.client.sendResponse(new BotRemovedFromInventoryComposer(bot));
     }
 
 
@@ -404,7 +404,7 @@ public class Habbo implements Runnable {
         if (badge != null) {
             this.habboInventory.getBadgesComponent().removeBadge(badge);
             BadgesComponent.deleteBadge(this.getHabboInfo().getId(), badge.getCode());
-            this.client.sendResponse(new InventoryBadgesComposer(this));
+            this.client.sendResponse(new BadgesComposer(this));
         }
     }
 

@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.bots;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -10,8 +9,8 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.inventory.AddBotComposer;
-import com.eu.habbo.messages.outgoing.inventory.RemoveBotComposer;
+import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
+import com.eu.habbo.messages.outgoing.inventory.BotRemovedFromInventoryComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.plugin.events.bots.BotPickUpEvent;
@@ -142,7 +141,7 @@ public class BotManager {
                 room.sendComposer(new RoomUsersComposer(bot).compose());
                 room.sendComposer(new RoomUserStatusComposer(bot.getRoomUnit()).compose());
                 habbo.getInventory().getBotsComponent().removeBot(bot);
-                habbo.getClient().sendResponse(new RemoveBotComposer(bot));
+                habbo.getClient().sendResponse(new BotRemovedFromInventoryComposer(bot));
                 bot.onPlace(habbo, room);
 
                 HabboItem topItem = room.getTopItemAt(location.x, location.y);
@@ -195,7 +194,7 @@ public class BotManager {
                 Habbo receiver = habbo == null ? Emulator.getGameEnvironment().getHabboManager().getHabbo(receiverInfo.getId()) : habbo;
                 if (receiver != null) {
                     receiver.getInventory().getBotsComponent().addBot(bot);
-                    receiver.getClient().sendResponse(new AddBotComposer(bot));
+                    receiver.getClient().sendResponse(new BotAddedToInventoryComposer(bot));
                 }
             }
         }

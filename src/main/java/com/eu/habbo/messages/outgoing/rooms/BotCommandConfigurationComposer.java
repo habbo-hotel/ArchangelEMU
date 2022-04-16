@@ -5,11 +5,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class BotSettingsComposer extends MessageComposer {
+public class BotCommandConfigurationComposer extends MessageComposer {
     private final Bot bot;
     private final int settingId;
 
-    public BotSettingsComposer(Bot bot, int settingId) {
+    public BotCommandConfigurationComposer(Bot bot, int settingId) {
         this.bot = bot;
         this.settingId = settingId;
     }

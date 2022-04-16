@@ -5,10 +5,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class AddBotComposer extends MessageComposer {
+public class BotAddedToInventoryComposer extends MessageComposer {
     private final Bot bot;
 
-    public AddBotComposer(Bot bot) {
+    public BotAddedToInventoryComposer(Bot bot) {
         this.bot = bot;
     }
 

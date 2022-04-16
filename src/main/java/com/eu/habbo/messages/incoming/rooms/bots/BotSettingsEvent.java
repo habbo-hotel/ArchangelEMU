@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.BotSettingsComposer;
+import com.eu.habbo.messages.outgoing.rooms.BotCommandConfigurationComposer;
 
 public class BotSettingsEvent extends MessageHandler {
     @Override
@@ -22,7 +22,7 @@ public class BotSettingsEvent extends MessageHandler {
             if (bot == null)
                 return;
 
-            this.client.sendResponse(new BotSettingsComposer(bot, this.packet.readInt()));
+            this.client.sendResponse(new BotCommandConfigurationComposer(bot, this.packet.readInt()));
         }
     }
 }

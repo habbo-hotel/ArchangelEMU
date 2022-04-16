@@ -11,10 +11,10 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.NoSuchElementException;
 
-public class RoomBannedUsersComposer extends MessageComposer {
+public class BannedUsersFromRoomComposer extends MessageComposer {
     private final Room room;
 
-    public RoomBannedUsersComposer(Room room) {
+    public BannedUsersFromRoomComposer(Room room) {
         this.room = room;
     }
 

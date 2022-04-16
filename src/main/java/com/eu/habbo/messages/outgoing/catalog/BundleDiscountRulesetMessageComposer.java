@@ -4,7 +4,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class DiscountComposer extends MessageComposer {
+public class BundleDiscountRulesetMessageComposer extends MessageComposer {
     public static int MAXIMUM_ALLOWED_ITEMS = 100;
     public static int DISCOUNT_BATCH_SIZE = 6;
     public static int DISCOUNT_AMOUNT_PER_BATCH = 1;

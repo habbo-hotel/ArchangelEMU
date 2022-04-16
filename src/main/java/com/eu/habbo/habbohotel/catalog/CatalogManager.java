@@ -20,7 +20,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.inventory.AddBotComposer;
+import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
 import com.eu.habbo.messages.outgoing.inventory.InventoryRefreshComposer;
@@ -923,7 +923,7 @@ public class CatalogManager {
                                     bot.needsUpdate(true);
                                     Emulator.getThreading().run(bot);
                                     habbo.getClient().getHabbo().getInventory().getBotsComponent().addBot(bot);
-                                    habbo.getClient().sendResponse(new AddBotComposer(bot));
+                                    habbo.getClient().sendResponse(new BotAddedToInventoryComposer(bot));
 
                                     if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BOT)) {
                                         unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BOT, new ArrayList<>());
@@ -1166,23 +1166,23 @@ public class CatalogManager {
     private int calculateDiscountedPrice(int originalPrice, int amount, CatalogItem item) {
         if (!CatalogItem.haveOffer(item)) return originalPrice * amount;
 
-        int basicDiscount = amount / DiscountComposer.DISCOUNT_BATCH_SIZE;
+        int basicDiscount = amount / BundleDiscountRulesetMessageComposer.DISCOUNT_BATCH_SIZE;
 
         int bonusDiscount = 0;
-        if (basicDiscount >= DiscountComposer.MINIMUM_DISCOUNTS_FOR_BONUS) {
-            if (amount % DiscountComposer.DISCOUNT_BATCH_SIZE == DiscountComposer.DISCOUNT_BATCH_SIZE - 1) {
+        if (basicDiscount >= BundleDiscountRulesetMessageComposer.MINIMUM_DISCOUNTS_FOR_BONUS) {
+            if (amount % BundleDiscountRulesetMessageComposer.DISCOUNT_BATCH_SIZE == BundleDiscountRulesetMessageComposer.DISCOUNT_BATCH_SIZE - 1) {
                 bonusDiscount = 1;
             }
 
-            bonusDiscount += basicDiscount - DiscountComposer.MINIMUM_DISCOUNTS_FOR_BONUS;
+            bonusDiscount += basicDiscount - BundleDiscountRulesetMessageComposer.MINIMUM_DISCOUNTS_FOR_BONUS;
         }
 
         int additionalDiscounts = 0;
-        for (int threshold : DiscountComposer.ADDITIONAL_DISCOUNT_THRESHOLDS) {
+        for (int threshold : BundleDiscountRulesetMessageComposer.ADDITIONAL_DISCOUNT_THRESHOLDS) {
             if (amount >= threshold) additionalDiscounts++;
         }
 
-        int totalDiscountedItems = (basicDiscount * DiscountComposer.DISCOUNT_AMOUNT_PER_BATCH) + bonusDiscount + additionalDiscounts;
+        int totalDiscountedItems = (basicDiscount * BundleDiscountRulesetMessageComposer.DISCOUNT_AMOUNT_PER_BATCH) + bonusDiscount + additionalDiscounts;
 
         return Math.max(0, originalPrice * (amount - totalDiscountedItems));
     }

@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.RoomBannedUsersComposer;
+import com.eu.habbo.messages.outgoing.rooms.BannedUsersFromRoomComposer;
 
 public class RoomRequestBannedUsersEvent extends MessageHandler {
     @Override
@@ -14,7 +14,7 @@ public class RoomRequestBannedUsersEvent extends MessageHandler {
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
         if (room != null) {
-            this.client.sendResponse(new RoomBannedUsersComposer(room));
+            this.client.sendResponse(new BannedUsersFromRoomComposer(room));
         }
 
         AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModChatFloodFilterSeen"));

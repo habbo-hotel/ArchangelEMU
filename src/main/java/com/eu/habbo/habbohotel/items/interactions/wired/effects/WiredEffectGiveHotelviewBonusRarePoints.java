@@ -11,9 +11,8 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.hotelview.BonusRareComposer;
+import com.eu.habbo.messages.outgoing.hotelview.BonusRareInfoMessageComposer;
 import gnu.trove.procedure.TObjectProcedure;
 
 import java.sql.ResultSet;
@@ -94,7 +93,7 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
 
         if (this.amount > 0) {
             habbo.getHabboInfo().addCurrencyAmount(Emulator.getConfig().getInt("hotelview.promotional.points.type"), this.amount);
-            habbo.getClient().sendResponse(new BonusRareComposer(habbo));
+            habbo.getClient().sendResponse(new BonusRareInfoMessageComposer(habbo));
         }
 
         return true;
