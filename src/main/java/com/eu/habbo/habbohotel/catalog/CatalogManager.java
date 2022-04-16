@@ -27,7 +27,7 @@ import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolIssueHandledComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
-import com.eu.habbo.messages.outgoing.users.UserPointsComposer;
+import com.eu.habbo.messages.outgoing.users.HabboActivityPointNotificationMessageComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadCatalogManagerEvent;
 import com.eu.habbo.plugin.events.users.catalog.UserCatalogFurnitureBoughtEvent;
 import com.eu.habbo.plugin.events.users.catalog.UserCatalogItemPurchasedEvent;
@@ -547,7 +547,7 @@ public class CatalogManager {
 
         if (voucher.points > 0) {
             client.getHabbo().getHabboInfo().addCurrencyAmount(voucher.pointsType, voucher.points);
-            client.sendResponse(new UserPointsComposer(client.getHabbo().getHabboInfo().getCurrencyAmount(voucher.pointsType), voucher.points, voucher.pointsType));
+            client.sendResponse(new HabboActivityPointNotificationMessageComposer(client.getHabbo().getHabboInfo().getCurrencyAmount(voucher.pointsType), voucher.points, voucher.pointsType));
         }
 
         if (voucher.credits > 0) {
@@ -1078,7 +1078,7 @@ public class CatalogManager {
                 if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
                     if (purchasedEvent.totalPoints > 0) {
                         habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.totalPoints);
-                        habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.totalPoints, item.getPointsType()));
+                        habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.totalPoints, item.getPointsType()));
                     }
                 }
 

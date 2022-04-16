@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserIgnoredComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.IgnoreResultMessageComposer;
 
 public class IgnoreRoomUserEvent extends MessageHandler {
     @Override
@@ -22,7 +22,7 @@ public class IgnoreRoomUserEvent extends MessageHandler {
                     return;
 
                 if (this.client.getHabbo().getHabboStats().ignoreUser(this.client, habbo.getHabboInfo().getId())) {
-                    this.client.sendResponse(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.IGNORED));
+                    this.client.sendResponse(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.IGNORED));
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModIgnoreSeen"));
                 }
             }

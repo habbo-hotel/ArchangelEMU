@@ -383,7 +383,7 @@ public class SubscriptionHabboClub extends Subscription {
             case "diamond":
                 pointCurrency = 5;
                 habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
-                habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
+                habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
                 break;
 
             case "duckets":
@@ -392,7 +392,7 @@ public class SubscriptionHabboClub extends Subscription {
             case "pixel":
                 pointCurrency = 0;
                 habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
-                habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
+                habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
                 break;
 
             default:
@@ -406,7 +406,7 @@ public class SubscriptionHabboClub extends Subscription {
 
                 if (pointCurrency >= 0) {
                     habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
-                    habbo.getClient().sendResponse(new UserPointsComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
+                    habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
                 }
                 break;
         }

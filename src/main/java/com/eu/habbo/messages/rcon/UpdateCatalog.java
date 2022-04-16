@@ -18,7 +18,7 @@ public class UpdateCatalog extends RCONMessage<UpdateCatalog.JSONUpdateCatalog> 
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new BuildersClubFurniCountMessageComposer(0));
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new BundleDiscountRulesetMessageComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new MarketplaceConfigComposer());
-        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new GiftConfigurationComposer());
+        Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new GiftWrappingConfigurationComposer());
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new RecyclerLogicComposer());
         Emulator.getGameEnvironment().getCraftingManager().reload();
     }

@@ -18,11 +18,11 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import com.eu.habbo.messages.outgoing.users.UserPointsComposer;
+import com.eu.habbo.messages.outgoing.users.HabboActivityPointNotificationMessageComposer;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -75,7 +75,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                     return;
                 }
 
-                if (!GiftConfigurationComposer.BOX_TYPES.contains(color) || !GiftConfigurationComposer.RIBBON_TYPES.contains(ribbonId)) {
+                if (!GiftWrappingConfigurationComposer.BOX_TYPES.contains(color) || !GiftWrappingConfigurationComposer.RIBBON_TYPES.contains(ribbonId)) {
                     this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
                     return;
                 }
@@ -308,7 +308,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                                 }
                             } else {
                                 this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
-                                this.client.sendResponse(new GenericAlertComposer(Emulator.getTexts().getValue("error.catalog.buy.not_yet")));
+                                this.client.sendResponse(new HabboBroadcastMessageComposer(Emulator.getTexts().getValue("error.catalog.buy.not_yet")));
                                 return;
                             }
                         }
@@ -362,7 +362,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                         } else if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
                             this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalPoints);
                         }
-                        this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -totalPoints, item.getPointsType()));
+                        this.client.sendResponse(new HabboActivityPointNotificationMessageComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -totalPoints, item.getPointsType()));
                     }
 
                     this.client.sendResponse(new PurchaseOKComposer(item));

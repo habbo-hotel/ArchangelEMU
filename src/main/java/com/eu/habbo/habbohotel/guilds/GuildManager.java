@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumView;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGuildFurni;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.guilds.GuildJoinErrorComposer;
+import com.eu.habbo.messages.outgoing.guilds.HabboGroupJoinFailedMessageComposer;
 import gnu.trove.TCollections;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
@@ -199,9 +199,9 @@ public class GuildManager {
                         if (set.getInt(1) >= 100) {
                             //TODO Add non acceptRequest errors. See Outgoing.GroupEditFailComposer
                             if (userId == 0)
-                                client.sendResponse(new GuildJoinErrorComposer(GuildJoinErrorComposer.GROUP_LIMIT_EXCEED));
+                                client.sendResponse(new HabboGroupJoinFailedMessageComposer(HabboGroupJoinFailedMessageComposer.GROUP_LIMIT_EXCEED));
                             else
-                                client.sendResponse(new GuildJoinErrorComposer(GuildJoinErrorComposer.MEMBER_FAIL_JOIN_LIMIT_EXCEED_NON_HC));
+                                client.sendResponse(new HabboGroupJoinFailedMessageComposer(HabboGroupJoinFailedMessageComposer.MEMBER_FAIL_JOIN_LIMIT_EXCEED_NON_HC));
 
                             error = true;
                         }
@@ -215,7 +215,7 @@ public class GuildManager {
                     try (ResultSet set = statement.executeQuery()) {
                         if (set.next()) {
                             if (set.getInt(1) >= 50000) {
-                                client.sendResponse(new GuildJoinErrorComposer(GuildJoinErrorComposer.GROUP_FULL));
+                                client.sendResponse(new HabboGroupJoinFailedMessageComposer(HabboGroupJoinFailedMessageComposer.GROUP_FULL));
                                 error = true;
                             }
                         }
@@ -229,7 +229,7 @@ public class GuildManager {
                             try (ResultSet set = statement.executeQuery()) {
                                 if (set.next()) {
                                     if (set.getInt(1) >= 100) {
-                                        client.sendResponse(new GuildJoinErrorComposer(GuildJoinErrorComposer.GROUP_NOT_ACCEPT_REQUESTS));
+                                        client.sendResponse(new HabboGroupJoinFailedMessageComposer(HabboGroupJoinFailedMessageComposer.GROUP_NOT_ACCEPT_REQUESTS));
                                         error = true;
                                     }
                                 }

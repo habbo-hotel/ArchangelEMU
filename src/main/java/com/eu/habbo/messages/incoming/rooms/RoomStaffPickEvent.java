@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.RoomDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.GetGuestRoomResultComposer;
 
 public class RoomStaffPickEvent extends MessageHandler {
     @Override
@@ -38,7 +38,7 @@ public class RoomStaffPickEvent extends MessageHandler {
                     }
                 }
 
-                this.client.sendResponse(new RoomDataComposer(room, this.client.getHabbo(), true, false));
+                this.client.sendResponse(new GetGuestRoomResultComposer(room, this.client.getHabbo(), true, false));
             }
         }
     }

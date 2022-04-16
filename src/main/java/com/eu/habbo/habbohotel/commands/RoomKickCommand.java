@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 
 public class RoomKickCommand extends Command {
     public RoomKickCommand() {
@@ -21,7 +21,7 @@ public class RoomKickCommand extends Command {
                 for (int i = 1; i < params.length; i++) {
                     message.append(params[i]).append(" ");
                 }
-                room.sendComposer(new GenericAlertComposer(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername()).compose());
+                room.sendComposer(new HabboBroadcastMessageComposer(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername()).compose());
             }
 
             for (Habbo habbo : room.getHabbos()) {

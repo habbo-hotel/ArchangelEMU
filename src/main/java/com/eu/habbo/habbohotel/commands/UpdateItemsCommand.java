@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import com.eu.habbo.messages.outgoing.rooms.RoomRelativeMapComposer;
+import com.eu.habbo.messages.outgoing.rooms.HeightMapComposer;
 
 public class UpdateItemsCommand extends Command {
     public UpdateItemsCommand() {
@@ -20,7 +20,7 @@ public class UpdateItemsCommand extends Command {
         synchronized (Emulator.getGameEnvironment().getRoomManager().getActiveRooms()) {
             for (Room room : Emulator.getGameEnvironment().getRoomManager().getActiveRooms()) {
                 if (room.isLoaded() && room.getUserCount() > 0 && room.getLayout() != null) {
-                    room.sendComposer(new RoomRelativeMapComposer(room).compose());
+                    room.sendComposer(new HeightMapComposer(room).compose());
                 }
             }
         }

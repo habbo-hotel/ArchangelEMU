@@ -29,7 +29,7 @@ import com.eu.habbo.habbohotel.users.*;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.incoming.users.UserNuxEvent;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorMessagesComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorComposer;
 import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.polls.PollStartComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollAnswersComposer;
@@ -560,7 +560,7 @@ public class RoomManager {
             if (room.getPassword().equalsIgnoreCase(password))
                 this.openRoom(habbo, room, doorLocation);
             else {
-                habbo.getClient().sendResponse(new GenericErrorMessagesComposer(GenericErrorMessagesComposer.WRONG_PASSWORD_USED));
+                habbo.getClient().sendResponse(new GenericErrorComposer(GenericErrorComposer.WRONG_PASSWORD_USED));
                 habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
                 habbo.getHabboInfo().setLoadingRoom(0);
             }
@@ -752,7 +752,7 @@ public class RoomManager {
                 Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(habbo.getHabboStats().guild);
 
                 if (guild != null) {
-                    room.sendComposer(new RoomUsersAddGuildBadgeComposer(guild).compose());
+                    room.sendComposer(new HabboAddGroupBadgesMessageComposer(guild).compose());
                 }
             }
 
@@ -783,7 +783,7 @@ public class RoomManager {
 
         habbo.getClient().sendResponse(new RoomThicknessComposer(room));
 
-        habbo.getClient().sendResponse(new RoomDataComposer(room, habbo.getClient().getHabbo(), false, true));
+        habbo.getClient().sendResponse(new GetGuestRoomResultComposer(room, habbo.getClient().getHabbo(), false, true));
 
         habbo.getClient().sendResponse(new RoomWallItemsComposer(room));
         {
@@ -830,7 +830,7 @@ public class RoomManager {
             int remainingMuteTime = habbo.getHabboStats().remainingMuteTime();
             habbo.getClient().sendResponse(new FloodControlMessageComposer(remainingMuteTime));
             habbo.getClient().sendResponse(new MutedWhisperComposer(remainingMuteTime));
-            room.sendComposer(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.MUTED).compose());
+            room.sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.MUTED).compose());
         } else if (habbo.getHabboStats().mutedBubbleTracker) {
             habbo.getHabboStats().mutedBubbleTracker = false;
         }
@@ -855,13 +855,13 @@ public class RoomManager {
                 }
 
                 if (roomHabbo.getHabboStats().userIgnored(habbo.getHabboInfo().getId())) {
-                    roomHabbo.getClient().sendResponse(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.IGNORED));
+                    roomHabbo.getClient().sendResponse(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.IGNORED));
                 }
 
                 if (!roomHabbo.getHabboStats().allowTalk()) {
-                    habbo.getClient().sendResponse(new RoomUserIgnoredComposer(roomHabbo, RoomUserIgnoredComposer.MUTED));
+                    habbo.getClient().sendResponse(new IgnoreResultMessageComposer(roomHabbo, IgnoreResultMessageComposer.MUTED));
                 } else if (habbo.getHabboStats().userIgnored(roomHabbo.getHabboInfo().getId())) {
-                    habbo.getClient().sendResponse(new RoomUserIgnoredComposer(roomHabbo, RoomUserIgnoredComposer.IGNORED));
+                    habbo.getClient().sendResponse(new IgnoreResultMessageComposer(roomHabbo, IgnoreResultMessageComposer.IGNORED));
                 }
 
                 if (roomHabbo.getHabboStats().guild != 0 && !guildBadges.containsKey(roomHabbo.getHabboStats().guild)) {
@@ -883,7 +883,7 @@ public class RoomManager {
             }
         }
 
-        habbo.getClient().sendResponse(new RoomUsersGuildBadgesComposer(guildBadges));
+        habbo.getClient().sendResponse(new HabboGroupBadgesMessageComposer(guildBadges));
 
         if (room.hasRights(habbo) || (room.hasGuild() && room.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
             if (!room.getHabboQueue().isEmpty()) {

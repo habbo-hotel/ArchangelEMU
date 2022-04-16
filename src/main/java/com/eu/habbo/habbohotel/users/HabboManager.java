@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.permissions.Rank;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigComposer;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModToolComposer;
 import com.eu.habbo.messages.outgoing.users.UserPerksComposer;
 import com.eu.habbo.messages.outgoing.users.UserPermissionsComposer;
@@ -278,7 +278,7 @@ public class HabboManager {
             habbo.getClient().sendResponse(new BuildersClubFurniCountMessageComposer(0));
             habbo.getClient().sendResponse(new BundleDiscountRulesetMessageComposer());
             habbo.getClient().sendResponse(new MarketplaceConfigComposer());
-            habbo.getClient().sendResponse(new GiftConfigurationComposer());
+            habbo.getClient().sendResponse(new GiftWrappingConfigurationComposer());
             habbo.getClient().sendResponse(new RecyclerLogicComposer());
             habbo.alert(Emulator.getTexts().getValue("commands.generic.cmd_give_rank.new_rank").replace("id", newRank.getName()));
         } else {
@@ -311,7 +311,7 @@ public class HabboManager {
 
     public void staffAlert(String message) {
         message = Emulator.getTexts().getValue("commands.generic.cmd_staffalert.title") + "\r\n" + message;
-        ServerMessage msg = new GenericAlertComposer(message).compose();
+        ServerMessage msg = new HabboBroadcastMessageComposer(message).compose();
         Emulator.getGameEnvironment().getHabboManager().sendPacketToHabbosWithPermission(msg, "cmd_staffalert");
     }
 }

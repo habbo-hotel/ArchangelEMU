@@ -8,7 +8,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
 import gnu.trove.set.hash.THashSet;
 
@@ -21,7 +21,7 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         if (!this.client.getHabbo().hasPermission(Permission.ACC_FLOORPLAN_EDITOR)) {
-            this.client.sendResponse(new GenericAlertComposer(Emulator.getTexts().getValue("floorplan.permission")));
+            this.client.sendResponse(new HabboBroadcastMessageComposer(Emulator.getTexts().getValue("floorplan.permission")));
             return;
         }
 

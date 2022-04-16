@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.GuildConfirmRemoveMemberComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildMemberFurniCountInHQMessageComposer;
 
 public class GuildConfirmRemoveMemberEvent extends MessageHandler {
     @Override
@@ -25,7 +25,7 @@ public class GuildConfirmRemoveMemberEvent extends MessageHandler {
                 if (room != null) {
                     count = room.getUserFurniCount(userId);
                 }
-                this.client.sendResponse(new GuildConfirmRemoveMemberComposer(userId, count));
+                this.client.sendResponse(new GuildMemberFurniCountInHQMessageComposer(userId, count));
             }
         }
 

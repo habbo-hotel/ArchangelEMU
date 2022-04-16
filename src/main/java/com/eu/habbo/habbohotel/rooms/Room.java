@@ -36,8 +36,8 @@ import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorMessagesComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
@@ -561,7 +561,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             tile.setState(this.calculateTileState(tile));
         }
 
-        this.sendComposer(new UpdateStackHeightComposer(this, tiles).compose());
+        this.sendComposer(new HeightMapUpdateMessageComposer(this, tiles).compose());
     }
 
     private RoomTileState calculateTileState(RoomTile tile) {
@@ -693,7 +693,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     }
                 }
             }
-            this.sendComposer(new UpdateStackHeightComposer(this, updatedTiles).compose());
+            this.sendComposer(new HeightMapUpdateMessageComposer(this, updatedTiles).compose());
             this.updateTiles(updatedTiles);
             for (RoomTile tile : updatedTiles) {
                 this.updateHabbosAt(tile.x, tile.y);
@@ -1245,7 +1245,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                     if (habbo.getHabboStats().mutedBubbleTracker && habbo.getHabboStats().allowTalk()) {
                         habbo.getHabboStats().mutedBubbleTracker = false;
-                        this.sendComposer(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.UNIGNORED).compose());
+                        this.sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.UNIGNORED).compose());
                     }
 
                     // Substract 1 from the chatCounter every odd cycle, which is every (500ms * 2).
@@ -2652,7 +2652,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public void kickHabbo(Habbo habbo, boolean alert) {
         if (alert) {
-            habbo.getClient().sendResponse(new GenericErrorMessagesComposer(GenericErrorMessagesComposer.KICKED_OUT_OF_THE_ROOM));
+            habbo.getClient().sendResponse(new GenericErrorComposer(GenericErrorComposer.KICKED_OUT_OF_THE_ROOM));
         }
 
         habbo.getRoomUnit().isKicked = true;
@@ -4430,7 +4430,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void alert(String message) {
-        this.sendComposer(new GenericAlertComposer(message).compose());
+        this.sendComposer(new HabboBroadcastMessageComposer(message).compose());
     }
 
     public int itemCount() {

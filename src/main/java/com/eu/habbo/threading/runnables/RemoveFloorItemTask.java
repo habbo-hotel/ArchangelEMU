@@ -3,7 +3,7 @@ package com.eu.habbo.threading.runnables;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
+import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 
 class RemoveFloorItemTask implements Runnable {
@@ -24,6 +24,6 @@ class RemoveFloorItemTask implements Runnable {
         this.room.removeHabboItem(this.item);
         this.room.updateTile(tile);
         this.room.sendComposer(new RemoveFloorItemComposer(this.item, true).compose());
-        this.room.sendComposer(new UpdateStackHeightComposer(this.item.getX(), this.item.getY(), tile.z, tile.relativeHeight()).compose());
+        this.room.sendComposer(new HeightMapUpdateMessageComposer(this.item.getX(), this.item.getY(), tile.relativeHeight()).compose());
     }
 }

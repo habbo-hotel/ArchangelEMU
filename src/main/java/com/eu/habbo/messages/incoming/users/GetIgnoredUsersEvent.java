@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.unknown.IgnoredUsersComposer;
+import com.eu.habbo.messages.outgoing.unknown.IgnoredUsersMessageComposer;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
@@ -28,6 +28,6 @@ public class GetIgnoredUsersEvent extends MessageHandler {
             if(user != null) ignoredUsernames.add(user.getUsername());
         }
 
-        this.client.sendResponse(new IgnoredUsersComposer(ignoredUsernames));
+        this.client.sendResponse(new IgnoredUsersMessageComposer(ignoredUsernames));
     }
 }

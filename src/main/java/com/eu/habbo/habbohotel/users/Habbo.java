@@ -265,7 +265,7 @@ public class Habbo implements Runnable {
 
         this.getHabboInfo().addCurrencyAmount(event.type, event.points);
         if (this.client != null)
-            this.client.sendResponse(new UserPointsComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
+            this.client.sendResponse(new HabboActivityPointNotificationMessageComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
     }
 
 
@@ -309,7 +309,7 @@ public class Habbo implements Runnable {
         if (Emulator.getConfig().getBoolean("hotel.alert.oldstyle")) {
             this.client.sendResponse(new MessagesForYouComposer(new String[]{message}));
         } else {
-            this.client.sendResponse(new GenericAlertComposer(message));
+            this.client.sendResponse(new HabboBroadcastMessageComposer(message));
         }
     }
 
@@ -421,7 +421,7 @@ public class Habbo implements Runnable {
 
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
             if (room != null && !isFlood) {
-                room.sendComposer(new RoomUserIgnoredComposer(this, RoomUserIgnoredComposer.MUTED).compose());
+                room.sendComposer(new IgnoreResultMessageComposer(this, IgnoreResultMessageComposer.MUTED).compose());
             }
         }
     }
@@ -431,7 +431,7 @@ public class Habbo implements Runnable {
         this.client.sendResponse(new FloodControlMessageComposer(3));
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
         if (room != null) {
-            room.sendComposer(new RoomUserIgnoredComposer(this, RoomUserIgnoredComposer.UNIGNORED).compose());
+            room.sendComposer(new IgnoreResultMessageComposer(this, IgnoreResultMessageComposer.UNIGNORED).compose());
         }
     }
 

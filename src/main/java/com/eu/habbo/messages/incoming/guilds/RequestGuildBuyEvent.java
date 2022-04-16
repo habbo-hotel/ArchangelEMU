@@ -9,8 +9,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
-import com.eu.habbo.messages.outgoing.guilds.GuildBoughtComposer;
-import com.eu.habbo.messages.outgoing.guilds.GuildEditFailComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildCreatedMessageComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildEditFailedMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.plugin.events.guilds.GuildPurchasedEvent;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
             return;
 
         if (Emulator.getConfig().getBoolean("catalog.guild.hc_required", true) && !this.client.getHabbo().getHabboStats().hasActiveClub()) {
-            this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.HC_REQUIRED));
+            this.client.sendResponse(new GuildEditFailedMessageComposer(GuildEditFailedMessageComposer.HC_REQUIRED));
             return;
         }
 
@@ -48,7 +48,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
 
         if (r != null) {
             if (r.hasGuild()) {
-                this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.ROOM_ALREADY_IN_USE));
+                this.client.sendResponse(new GuildEditFailedMessageComposer(GuildEditFailedMessageComposer.ROOM_ALREADY_IN_USE));
                 return;
             }
 
@@ -80,7 +80,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
                     }
 
                     if(name.length() > 29){
-                        this.client.sendResponse(new GuildEditFailComposer(GuildEditFailComposer.INVALID_GUILD_NAME));
+                        this.client.sendResponse(new GuildEditFailedMessageComposer(GuildEditFailedMessageComposer.INVALID_GUILD_NAME));
                         return;
                     }
                     if(description.length() > 254){
@@ -97,7 +97,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
                     }
 
                     this.client.sendResponse(new PurchaseOKComposer());
-                    this.client.sendResponse(new GuildBoughtComposer(guild));
+                    this.client.sendResponse(new GuildCreatedMessageComposer(guild));
                     for (Habbo habbo : r.getHabbos()) {
                         habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, null));
                     }

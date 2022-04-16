@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
-import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
+import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetPackageNameValidationComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
@@ -62,7 +62,7 @@ public class PetPackageNameEvent extends MessageHandler {
                             room.sendComposer(new RemoveFloorItemComposer(item).compose());
                             RoomTile tile = room.getLayout().getTile(item.getX(), item.getY());
                             room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
-                            room.sendComposer(new UpdateStackHeightComposer(tile.x, tile.y, tile.z, tile.relativeHeight()).compose());
+                            room.sendComposer(new HeightMapUpdateMessageComposer(tile.x, tile.y, tile.z, tile.relativeHeight()).compose());
                             item.setUserId(0);
                         } else {
                             this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));

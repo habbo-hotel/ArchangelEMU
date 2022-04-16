@@ -69,8 +69,8 @@ public class GuideManager {
                     if (!tour.hasDeclined(set.getKey().getHabboInfo().getId())) {
                         tour.checkSum++;
                         tour.setHelper(set.getKey());
-                        set.getKey().getClient().sendResponse(new GuideSessionAttachedComposer(tour, true));
-                        tour.getNoob().getClient().sendResponse(new GuideSessionAttachedComposer(tour, false));
+                        set.getKey().getClient().sendResponse(new GuideSessionAttachedMessageComposer(tour, true));
+                        tour.getNoob().getClient().sendResponse(new GuideSessionAttachedMessageComposer(tour, false));
                         Emulator.getThreading().run(new GuideFindNewHelper(tour, set.getKey()), 60000);
                         this.activeTours.add(tour);
                         return true;
@@ -79,7 +79,7 @@ public class GuideManager {
             }
         }
         this.endSession(tour);
-        tour.getNoob().getClient().sendResponse(new GuideSessionErrorComposer(GuideSessionErrorComposer.NO_HELPERS_AVAILABLE));
+        tour.getNoob().getClient().sendResponse(new GuideSessionErrorMessageComposer(GuideSessionErrorMessageComposer.NO_HELPERS_AVAILABLE));
 
         return false;
     }
@@ -89,11 +89,11 @@ public class GuideManager {
         Habbo helper = tour.getHelper();
         tour.addDeclinedHelper(tour.getHelper().getHabboInfo().getId());
         tour.setHelper(null);
-        helper.getClient().sendResponse(new GuideSessionEndedComposer(GuideSessionEndedComposer.HELP_CASE_CLOSED));
-        helper.getClient().sendResponse(new GuideSessionDetachedComposer());
+        helper.getClient().sendResponse(new GuideSessionEndedMessageComposer(GuideSessionEndedMessageComposer.HELP_CASE_CLOSED));
+        helper.getClient().sendResponse(new GuideSessionDetachedMessageComposer());
         if (!this.findHelper(tour)) {
             this.endSession(tour);
-            tour.getNoob().getClient().sendResponse(new GuideSessionErrorComposer(GuideSessionErrorComposer.NO_HELPERS_AVAILABLE));
+            tour.getNoob().getClient().sendResponse(new GuideSessionErrorMessageComposer(GuideSessionErrorMessageComposer.NO_HELPERS_AVAILABLE));
         }
     }
 
@@ -116,14 +116,14 @@ public class GuideManager {
     public void endSession(GuideTour tour) {
         synchronized (this.activeTours) {
             synchronized (this.activeHelpers) {
-                tour.getNoob().getClient().sendResponse(new GuideSessionEndedComposer(GuideSessionEndedComposer.HELP_CASE_CLOSED));
+                tour.getNoob().getClient().sendResponse(new GuideSessionEndedMessageComposer(GuideSessionEndedMessageComposer.HELP_CASE_CLOSED));
                 tour.end();
 
                 if (tour.getHelper() != null) {
                     this.activeHelpers.put(tour.getHelper(), false);
-                    tour.getHelper().getClient().sendResponse(new GuideSessionEndedComposer(GuideSessionEndedComposer.HELP_CASE_CLOSED));
-                    tour.getHelper().getClient().sendResponse(new GuideSessionDetachedComposer());
-                    tour.getHelper().getClient().sendResponse(new GuideToolsComposer(true));
+                    tour.getHelper().getClient().sendResponse(new GuideSessionEndedMessageComposer(GuideSessionEndedMessageComposer.HELP_CASE_CLOSED));
+                    tour.getHelper().getClient().sendResponse(new GuideSessionDetachedMessageComposer());
+                    tour.getHelper().getClient().sendResponse(new GuideOnDutyStatusMessageComposer(true));
                 }
             }
         }
@@ -133,7 +133,7 @@ public class GuideManager {
     public void recommend(GuideTour tour, boolean recommend) {
         synchronized (this.activeTours) {
             tour.setWouldRecommend(recommend ? GuideRecommendStatus.YES : GuideRecommendStatus.NO);
-            tour.getNoob().getClient().sendResponse(new GuideSessionDetachedComposer());
+            tour.getNoob().getClient().sendResponse(new GuideSessionDetachedMessageComposer());
             AchievementManager.progressAchievement(tour.getNoob(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("GuideFeedbackGiver"));
 
             this.activeTours.remove(tour);

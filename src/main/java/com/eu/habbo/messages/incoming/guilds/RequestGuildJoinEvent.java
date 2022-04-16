@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.guilds.GuildState;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
-import com.eu.habbo.messages.outgoing.guilds.GuildJoinErrorComposer;
+import com.eu.habbo.messages.outgoing.guilds.HabboGroupJoinFailedMessageComposer;
 
 public class RequestGuildJoinEvent extends MessageHandler {
     @Override
@@ -22,7 +22,7 @@ public class RequestGuildJoinEvent extends MessageHandler {
             return;
 
         if (guild.getState() == GuildState.CLOSED || guild.getState() == GuildState.LARGE_CLOSED) {
-            this.client.sendResponse(new GuildJoinErrorComposer(GuildJoinErrorComposer.GROUP_CLOSED));
+            this.client.sendResponse(new HabboGroupJoinFailedMessageComposer(HabboGroupJoinFailedMessageComposer.GROUP_CLOSED));
             return;
         }
 

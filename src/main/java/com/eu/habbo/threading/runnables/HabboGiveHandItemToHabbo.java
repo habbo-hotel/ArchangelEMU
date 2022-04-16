@@ -2,7 +2,7 @@ package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.CarryObjectMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserReceivedHandItemComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.HandItemReceivedMessageComposer;
 
 public class HabboGiveHandItemToHabbo implements Runnable {
     private final Habbo target;
@@ -28,7 +28,7 @@ public class HabboGiveHandItemToHabbo implements Runnable {
             this.from.getHabboInfo().getCurrentRoom().sendComposer(new CarryObjectMessageComposer(this.from.getRoomUnit()).compose());
             this.target.getRoomUnit().lookAtPoint(this.from.getRoomUnit().getCurrentLocation());
             this.target.getRoomUnit().statusUpdate(true);
-            this.target.getClient().sendResponse(new RoomUserReceivedHandItemComposer(this.from.getRoomUnit(), itemId));
+            this.target.getClient().sendResponse(new HandItemReceivedMessageComposer(this.from.getRoomUnit(), itemId));
             this.target.getRoomUnit().setHandItem(itemId);
             this.target.getHabboInfo().getCurrentRoom().sendComposer(new CarryObjectMessageComposer(this.target.getRoomUnit()).compose());
         }

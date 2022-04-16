@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
+import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
@@ -102,7 +102,7 @@ public class RedeemItemEvent extends MessageHandler {
                     RoomTile t = room.getLayout().getTile(item.getX(), item.getY());
                     t.setStackHeight(room.getStackHeight(item.getX(), item.getY(), false));
                     room.updateTile(t);
-                    room.sendComposer(new UpdateStackHeightComposer(item.getX(), item.getY(), t.z, t.relativeHeight()).compose());
+                    room.sendComposer(new HeightMapUpdateMessageComposer(item.getX(), item.getY(), t.z, t.relativeHeight()).compose());
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 
                     switch (furniRedeemEvent.currencyID) {

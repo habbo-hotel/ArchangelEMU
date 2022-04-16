@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.permissions.Rank;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.navigator.PrivateRoomsComposer;
+import com.eu.habbo.messages.outgoing.navigator.GuestRoomSearchResultComposer;
 import com.eu.habbo.plugin.events.navigator.NavigatorSearchResultEvent;
 import gnu.trove.map.hash.THashMap;
 
@@ -46,7 +46,7 @@ public class SearchRoomsEvent extends MessageHandler {
                 rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsWithName(name);
             }
 
-            message = new PrivateRoomsComposer(rooms).compose();
+            message = new GuestRoomSearchResultComposer(rooms).compose();
             THashMap<String, ServerMessage> map = cachedResults.get(this.client.getHabbo().getHabboInfo().getRank());
 
             if (map == null) {

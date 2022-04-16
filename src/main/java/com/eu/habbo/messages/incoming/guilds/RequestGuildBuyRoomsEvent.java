@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.guilds;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.GuildBuyRoomsComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildCreationInfoMessageComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.List;
@@ -20,6 +20,6 @@ public class RequestGuildBuyRoomsEvent extends MessageHandler {
                 roomList.add(room);
         }
 
-        this.client.sendResponse(new GuildBuyRoomsComposer(roomList));
+        this.client.sendResponse(new GuildCreationInfoMessageComposer(roomList));
     }
 }

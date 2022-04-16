@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.guides.GuideChatMessage;
 import com.eu.habbo.habbohotel.guides.GuideTour;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guides.GuideSessionMessageComposer;
+import com.eu.habbo.messages.outgoing.guides.GuideSessionMessageMessageComposer;
 
 public class GuideUserMessageEvent extends MessageHandler {
     @Override
@@ -15,7 +15,7 @@ public class GuideUserMessageEvent extends MessageHandler {
         if (tour != null) {
             GuideChatMessage chatMessage = new GuideChatMessage(this.client.getHabbo().getHabboInfo().getId(), this.packet.readString(), Emulator.getIntUnixTimestamp());
             tour.addMessage(chatMessage);
-            ServerMessage serverMessage = new GuideSessionMessageComposer(chatMessage).compose();
+            ServerMessage serverMessage = new GuideSessionMessageMessageComposer(chatMessage).compose();
             tour.getHelper().getClient().sendResponse(serverMessage);
             tour.getNoob().getClient().sendResponse(serverMessage);
         }

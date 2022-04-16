@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.GuildMemberUpdateComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildMembershipUpdatedMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildGivenAdminEvent;
 
 public class GuildSetAdminEvent extends MessageHandler {
@@ -40,7 +40,7 @@ public class GuildSetAdminEvent extends MessageHandler {
 
                 GuildMember guildMember = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, userId);
 
-                this.client.sendResponse(new GuildMemberUpdateComposer(guild, guildMember));
+                this.client.sendResponse(new GuildMembershipUpdatedMessageComposer(guild, guildMember));
             }
         }
     }

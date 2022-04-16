@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserIgnoredComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.IgnoreResultMessageComposer;
 
 public class MuteCommand extends Command {
     public MuteCommand() {
@@ -46,7 +46,7 @@ public class MuteCommand extends Command {
             habbo.mute(duration, false);
 
             if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.MUTED).compose()); //: RoomUserIgnoredComposer.UNIGNORED
+                habbo.getHabboInfo().getCurrentRoom().sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.MUTED).compose()); //: RoomUserIgnoredComposer.UNIGNORED
             }
 
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_mute.muted").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);

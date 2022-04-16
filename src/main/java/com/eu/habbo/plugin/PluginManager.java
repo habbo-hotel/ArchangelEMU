@@ -36,7 +36,7 @@ import com.eu.habbo.messages.incoming.hotelview.HotelViewRequestLTDAvailabilityE
 import com.eu.habbo.messages.incoming.rooms.promotions.BuyRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.users.ChangeNameCheckUsernameEvent;
 import com.eu.habbo.messages.outgoing.catalog.BundleDiscountRulesetMessageComposer;
-import com.eu.habbo.messages.outgoing.catalog.GiftConfigurationComposer;
+import com.eu.habbo.messages.outgoing.catalog.GiftWrappingConfigurationComposer;
 import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
@@ -222,8 +222,8 @@ public class PluginManager {
         }
 
         if (Emulator.isReady) {
-            GiftConfigurationComposer.BOX_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.box_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
-            GiftConfigurationComposer.RIBBON_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.ribbon_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
+            GiftWrappingConfigurationComposer.BOX_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.box_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
+            GiftWrappingConfigurationComposer.RIBBON_TYPES = Arrays.stream(Emulator.getConfig().getValue("hotel.gifts.ribbon_types").split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
 
             Emulator.getGameEnvironment().getCreditsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPointsScheduler().reloadConfig();

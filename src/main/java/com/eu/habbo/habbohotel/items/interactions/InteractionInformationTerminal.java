@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
+import com.eu.habbo.messages.outgoing.habboway.nux.InClientLinkMessageComposer;
 import gnu.trove.map.hash.THashMap;
 
 import java.sql.ResultSet;
@@ -31,7 +31,7 @@ public class InteractionInformationTerminal extends InteractionCustomValues {
 
         Habbo habbo = room.getHabbo(roomUnit);
         if (habbo != null && this.values.containsKey("internalLink")) {
-            habbo.getClient().sendResponse(new NuxAlertComposer(this.values.get("internalLink")));
+            habbo.getClient().sendResponse(new InClientLinkMessageComposer(this.values.get("internalLink")));
         }
     }
 }

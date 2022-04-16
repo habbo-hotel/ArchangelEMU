@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.guides;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guides.GuideTour;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guides.GuideSessionErrorComposer;
+import com.eu.habbo.messages.outgoing.guides.GuideSessionErrorMessageComposer;
 
 public class RequestGuideAssistanceEvent extends MessageHandler {
     @Override
@@ -14,7 +14,7 @@ public class RequestGuideAssistanceEvent extends MessageHandler {
         GuideTour activeTour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByHabbo(this.client.getHabbo());
 
         if (activeTour != null) {
-            this.client.sendResponse(new GuideSessionErrorComposer(GuideSessionErrorComposer.SOMETHING_WRONG_REQUEST));
+            this.client.sendResponse(new GuideSessionErrorMessageComposer(GuideSessionErrorMessageComposer.SOMETHING_WRONG_REQUEST));
             return;
         }
 

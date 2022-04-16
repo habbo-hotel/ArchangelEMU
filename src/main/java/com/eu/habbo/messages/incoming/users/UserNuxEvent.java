@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.users;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
+import com.eu.habbo.messages.outgoing.habboway.nux.InClientLinkMessageComposer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,12 +30,12 @@ public class UserNuxEvent extends MessageHandler {
         int step = habbo.getHabboStats().nuxStep++;
 
         if (keys.containsKey(step)) {
-            habbo.getClient().sendResponse(new NuxAlertComposer("helpBubble/add/" + keys.get(step) + "/" + Emulator.getTexts().getValue("nux.step." + step)));
+            habbo.getClient().sendResponse(new InClientLinkMessageComposer("helpBubble/add/" + keys.get(step) + "/" + Emulator.getTexts().getValue("nux.step." + step)));
         } else if (!habbo.getHabboStats().nuxReward) {
 
 
         } else {
-            habbo.getClient().sendResponse(new NuxAlertComposer("nux/lobbyoffer/show"));
+            habbo.getClient().sendResponse(new InClientLinkMessageComposer("nux/lobbyoffer/show"));
         }
     }
 

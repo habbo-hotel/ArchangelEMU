@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.users;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserIgnoredComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.IgnoreResultMessageComposer;
 
 public class UnIgnoreRoomUserEvent extends MessageHandler {
     @Override
@@ -18,7 +18,7 @@ public class UnIgnoreRoomUserEvent extends MessageHandler {
             if (habbo != null) {
                 if (habbo.getHabboStats().allowTalk()) {
                     this.client.getHabbo().getHabboStats().unignoreUser(habbo.getHabboInfo().getId());
-                    this.client.sendResponse(new RoomUserIgnoredComposer(habbo, RoomUserIgnoredComposer.UNIGNORED));
+                    this.client.sendResponse(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.UNIGNORED));
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.eu.habbo.networking.camera.messages.incoming;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.networking.camera.CameraIncomingMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -31,7 +31,7 @@ public class CameraUpdateNotification extends CameraIncomingMessage {
         }
 
         if (alert) {
-            Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new GenericAlertComposer(message).compose());
+            Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new HabboBroadcastMessageComposer(message).compose());
         }
     }
 }

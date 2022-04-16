@@ -8,9 +8,9 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.GuildAcceptMemberErrorComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildMemberMgmtFailedMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
-import com.eu.habbo.messages.outgoing.guilds.GuildRefreshMembersListComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildMembershipRejectedMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildAcceptedMembershipEvent;
 
 public class GuildAcceptMembershipEvent extends MessageHandler {
@@ -25,8 +25,8 @@ public class GuildAcceptMembershipEvent extends MessageHandler {
         if (guild != null) {
             GuildMember groupMember = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
             if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || groupMember.getRank().equals(GuildRank.ADMIN) || groupMember.getRank().equals(GuildRank.OWNER) || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)) {
-                if (habbo != null) {
                     if (habbo.getHabboStats().hasGuild(guild.getId())) {
+                if (habbo != null) {
                         this.client.sendResponse(new GuildAcceptMemberErrorComposer(guild.getId(), GuildAcceptMemberErrorComposer.ALREADY_ACCEPTED));
                         return;
                     } else {

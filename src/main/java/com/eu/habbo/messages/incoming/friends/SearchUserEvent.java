@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.friends;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.friends.UserSearchResultComposer;
+import com.eu.habbo.messages.outgoing.friends.HabboSearchResultComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +33,7 @@ public class SearchUserEvent extends MessageHandler {
                 cachedResults.put(username, buddies);
             }
 
-            this.client.sendResponse(new UserSearchResultComposer(buddies, this.client.getHabbo().getMessenger().getFriends(username), this.client.getHabbo()));
+            this.client.sendResponse(new HabboSearchResultComposer(buddies, this.client.getHabbo().getMessenger().getFriends(username), this.client.getHabbo()));
         }
     }
 }

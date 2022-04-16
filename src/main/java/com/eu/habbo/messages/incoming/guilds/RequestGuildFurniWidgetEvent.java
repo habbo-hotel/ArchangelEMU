@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.GuildFurniWidgetComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildFurniContextMenuInfoMessageComposer;
 
 public class RequestGuildFurniWidgetEvent extends MessageHandler {
     @Override
@@ -17,7 +17,7 @@ public class RequestGuildFurniWidgetEvent extends MessageHandler {
             Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
             if (item != null && guild != null)
-                this.client.sendResponse(new GuildFurniWidgetComposer(this.client.getHabbo(), guild, item));
+                this.client.sendResponse(new GuildFurniContextMenuInfoMessageComposer(this.client.getHabbo(), guild, item));
         }
     }
 }

@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomTrade;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 
@@ -34,7 +34,7 @@ public class ShutdownCommand extends Command {
 
         ServerMessage message;
         if (!reason.toString().equals("-")) {
-            message = new GenericAlertComposer("<b>" + Emulator.getTexts().getValue("generic.warning") + "</b> \r\n" +
+            message = new HabboBroadcastMessageComposer("<b>" + Emulator.getTexts().getValue("generic.warning") + "</b> \r\n" +
                     Emulator.getTexts().getValue("generic.shutdown").replace("%minutes%", minutes + "") + "\r\n" +
                     Emulator.getTexts().getValue("generic.reason.specified") + ": <b>" + reason + "</b>\r" +
                     "\r" +

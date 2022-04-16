@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
+import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.users.FigureSetIdsComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
@@ -40,7 +40,7 @@ public class RedeemClothingEvent extends MessageHandler {
                             RoomTile tile = this.client.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(item.getX(), item.getY());
                             this.client.getHabbo().getHabboInfo().getCurrentRoom().removeHabboItem(item);
                             this.client.getHabbo().getHabboInfo().getCurrentRoom().updateTile(tile);
-                            this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UpdateStackHeightComposer(tile.x, tile.y, tile.z, tile.relativeHeight()).compose());
+                            this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new HeightMapUpdateMessageComposer(tile.x, tile.y, tile.z, tile.relativeHeight()).compose());
                             this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RemoveFloorItemComposer(item, true).compose());
                             Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 

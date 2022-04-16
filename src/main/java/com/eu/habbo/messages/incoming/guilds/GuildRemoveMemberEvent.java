@@ -10,7 +10,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.FavoriteMembershipUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
-import com.eu.habbo.messages.outgoing.guilds.GuildRefreshMembersListComposer;
+import com.eu.habbo.messages.outgoing.guilds.GuildMembershipRejectedMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildRemovedMemberEvent;
 
 public class GuildRemoveMemberEvent extends MessageHandler {
@@ -35,7 +35,7 @@ public class GuildRemoveMemberEvent extends MessageHandler {
                 guild.decreaseMemberCount();
 
                 if (userId != this.client.getHabbo().getHabboInfo().getId()) {
-                    this.client.sendResponse(new GuildRefreshMembersListComposer(guild));
+                    this.client.sendResponse(new GuildMembershipRejectedMessageComposer(guild));
                 }
 
                 Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());

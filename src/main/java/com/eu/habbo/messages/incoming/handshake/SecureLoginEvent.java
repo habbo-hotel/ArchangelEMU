@@ -19,12 +19,12 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.TargetedOfferComposer;
 import com.eu.habbo.messages.outgoing.events.calendar.CampaignCalendarDataMessageComposer;
-import com.eu.habbo.messages.outgoing.gamecenter.GameCenterAccountInfoComposer;
-import com.eu.habbo.messages.outgoing.gamecenter.GameCenterGameListComposer;
-import com.eu.habbo.messages.outgoing.generic.alerts.GenericAlertComposer;
+import com.eu.habbo.messages.outgoing.gamecenter.Game2AccountGameStatusMessageComposer;
+import com.eu.habbo.messages.outgoing.gamecenter.GameListMessageComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.MessagesForYouComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.NewUserIdentityComposer;
-import com.eu.habbo.messages.outgoing.habboway.nux.NuxAlertComposer;
+import com.eu.habbo.messages.outgoing.habboway.nux.InClientLinkMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.EnableNotificationsComposer;
 import com.eu.habbo.messages.outgoing.handshake.AuthenticationOKMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.AvailabilityStatusMessageComposer;
@@ -214,9 +214,9 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new BuildersClubSubscriptionStatusMessageComposer().compose());
                 messages.add(new CfhTopicsInitComposer().compose());
                 messages.add(new FavouriteChangedComposer(this.client.getHabbo()).compose());
-                messages.add(new GameCenterGameListComposer().compose());
-                messages.add(new GameCenterAccountInfoComposer(3, 100).compose());
-                messages.add(new GameCenterAccountInfoComposer(0, 100).compose());
+                messages.add(new GameListMessageComposer().compose());
+                messages.add(new Game2AccountGameStatusMessageComposer(3, 100).compose());
+                messages.add(new Game2AccountGameStatusMessageComposer(0, 100).compose());
 
                 messages.add(new UserClubComposer(this.client.getHabbo(), SubscriptionHabboClub.HABBO_CLUB, UserClubComposer.RESPONSE_TYPE_LOGIN).compose());
 
@@ -231,7 +231,7 @@ public class SecureLoginEvent extends MessageHandler {
                     if (daysBetween >= 0) {
                         messages.add(new CampaignCalendarDataMessageComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), (int) daysBetween, this.client.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()).compose());
                         if(Emulator.getConfig().getBoolean("hotel.login.show.calendar", false)) {
-                            messages.add(new NuxAlertComposer("openView/calendar").compose());
+                            messages.add(new InClientLinkMessageComposer("openView/calendar").compose());
                         }
                     }
                 }
@@ -291,7 +291,7 @@ public class SecureLoginEvent extends MessageHandler {
                         if (Emulator.getConfig().getBoolean("hotel.welcome.alert.oldstyle")) {
                             SecureLoginEvent.this.client.sendResponse(new MessagesForYouComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername()).split("<br/>")));
                         } else {
-                            SecureLoginEvent.this.client.sendResponse(new GenericAlertComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername())));
+                            SecureLoginEvent.this.client.sendResponse(new HabboBroadcastMessageComposer(HabboManager.WELCOME_MESSAGE.replace("%username%", finalHabbo.getHabboInfo().getUsername()).replace("%user%", finalHabbo.getHabboInfo().getUsername())));
                         }
                     }, Emulator.getConfig().getInt("hotel.welcome.alert.delay", 5000));
                 }

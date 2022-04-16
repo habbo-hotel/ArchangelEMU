@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.modtool.ModToolIssue;
 import com.eu.habbo.habbohotel.modtool.ModToolTicketType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.guardians.*;
-import com.eu.habbo.messages.outgoing.guides.BullyReportClosedComposer;
+import com.eu.habbo.messages.outgoing.guides.GuideTicketResolutionMessageComposer;
 import com.eu.habbo.threading.runnables.GuardianNotAccepted;
 import com.eu.habbo.threading.runnables.GuardianVotingFinish;
 import gnu.trove.map.hash.THashMap;
@@ -120,7 +120,7 @@ public class GuardianTicket {
                 Emulator.getGameEnvironment().getModToolManager().addTicket(issue);
                 Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
 
-                this.reporter.getClient().sendResponse(new BullyReportClosedComposer(BullyReportClosedComposer.CLOSED));
+                this.reporter.getClient().sendResponse(new GuideTicketResolutionMessageComposer(GuideTicketResolutionMessageComposer.CLOSED));
             } else {
                 this.timeLeft = 30;
                 Emulator.getThreading().run(new GuardianVotingFinish(this), 10000);
@@ -142,9 +142,9 @@ public class GuardianTicket {
             Emulator.getGameEnvironment().getGuideManager().closeTicket(this);
 
             if (this.verdict == GuardianVoteType.ACCEPTABLY)
-                this.reporter.getClient().sendResponse(new BullyReportClosedComposer(BullyReportClosedComposer.MISUSE));
+                this.reporter.getClient().sendResponse(new GuideTicketResolutionMessageComposer(GuideTicketResolutionMessageComposer.MISUSE));
             else
-                this.reporter.getClient().sendResponse(new BullyReportClosedComposer(BullyReportClosedComposer.CLOSED));
+                this.reporter.getClient().sendResponse(new GuideTicketResolutionMessageComposer(GuideTicketResolutionMessageComposer.CLOSED));
         }
     }
 

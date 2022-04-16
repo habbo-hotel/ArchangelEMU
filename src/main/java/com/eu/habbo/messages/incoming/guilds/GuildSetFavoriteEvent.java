@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.FavoriteMembershipUpdateMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersAddGuildBadgeComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.HabboAddGroupBadgesMessageComposer;
 import com.eu.habbo.messages.outgoing.users.ExtendedProfileMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildFavoriteSetEvent;
 
@@ -26,7 +26,7 @@ public class GuildSetFavoriteEvent extends MessageHandler {
 
             if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
                 if (guild != null) {
-                    this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUsersAddGuildBadgeComposer(guild).compose());
+                    this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new HabboAddGroupBadgesMessageComposer(guild).compose());
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(this.client.getHabbo().getRoomUnit(), guild).compose());
                 }
             }

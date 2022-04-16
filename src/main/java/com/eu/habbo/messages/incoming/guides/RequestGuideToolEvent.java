@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.guides;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guides.GuideToolsComposer;
+import com.eu.habbo.messages.outgoing.guides.GuideOnDutyStatusMessageComposer;
 
 public class RequestGuideToolEvent extends MessageHandler {
     @Override
@@ -32,11 +32,11 @@ public class RequestGuideToolEvent extends MessageHandler {
                 Emulator.getGameEnvironment().getGuideManager().setOnGuardian(this.client.getHabbo(), onDuty);
             }
 
-            this.client.sendResponse(new GuideToolsComposer(onDuty));
+            this.client.sendResponse(new GuideOnDutyStatusMessageComposer(onDuty));
         } else {
             Emulator.getGameEnvironment().getGuideManager().setOnGuide(this.client.getHabbo(), onDuty);
             Emulator.getGameEnvironment().getGuideManager().setOnGuardian(this.client.getHabbo(), onDuty);
-            this.client.sendResponse(new GuideToolsComposer(onDuty));
+            this.client.sendResponse(new GuideOnDutyStatusMessageComposer(onDuty));
         }
     }
 }

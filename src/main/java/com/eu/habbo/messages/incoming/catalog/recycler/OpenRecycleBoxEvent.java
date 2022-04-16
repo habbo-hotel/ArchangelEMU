@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import com.eu.habbo.messages.outgoing.rooms.UpdateStackHeightComposer;
+import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.PresentItemOpenedComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
@@ -64,7 +64,7 @@ public class OpenRecycleBoxEvent extends MessageHandler {
                         z = roomTile.z;
                     }
                 }
-                room.sendComposer(new UpdateStackHeightComposer(item.getX(), item.getY(), z, room.getStackHeight(item.getX(), item.getY(), true)).compose());
+                room.sendComposer(new HeightMapUpdateMessageComposer(item.getX(), item.getY(), z, room.getStackHeight(item.getX(), item.getY(), true)).compose());
             }
         }
     }
