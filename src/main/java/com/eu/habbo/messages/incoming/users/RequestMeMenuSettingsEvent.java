@@ -1,11 +1,11 @@
 package com.eu.habbo.messages.incoming.users;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.users.MeMenuSettingsComposer;
+import com.eu.habbo.messages.outgoing.users.AccountPreferencesComposer;
 
 public class RequestMeMenuSettingsEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        this.client.sendResponse(new MeMenuSettingsComposer(this.client.getHabbo()));
+        this.client.sendResponse(new AccountPreferencesComposer(this.client.getHabbo()));
     }
 }

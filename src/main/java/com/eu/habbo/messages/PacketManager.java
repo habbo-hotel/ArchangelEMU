@@ -521,7 +521,7 @@ public class PacketManager {
         this.registerHandler(Incoming.RequestGuildPartsEvent, RequestGuildPartsEvent.class);
         this.registerHandler(Incoming.RequestGuildBuyEvent, RequestGuildBuyEvent.class);
         this.registerHandler(Incoming.RequestGuildInfoEvent, RequestGuildInfoEvent.class);
-        this.registerHandler(Incoming.RequestGuildManageEvent, RequestGuildManageEvent.class);
+        this.registerHandler(Incoming.GetGuildEditInfoEvent, RequestGuildManageEvent.class);
         this.registerHandler(Incoming.RequestGuildMembersEvent, RequestGuildMembersEvent.class);
         this.registerHandler(Incoming.RequestGuildJoinEvent, RequestGuildJoinEvent.class);
         this.registerHandler(Incoming.GuildChangeNameDescEvent, GuildChangeNameDescEvent.class);

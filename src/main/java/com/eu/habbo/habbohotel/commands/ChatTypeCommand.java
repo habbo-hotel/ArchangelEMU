@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import com.eu.habbo.messages.outgoing.users.MeMenuSettingsComposer;
+import com.eu.habbo.messages.outgoing.users.AccountPreferencesComposer;
 
 public class ChatTypeCommand extends Command {
     public ChatTypeCommand() {
@@ -42,7 +42,7 @@ public class ChatTypeCommand extends Command {
             }
 
             gameClient.getHabbo().getHabboStats().chatColor = RoomChatMessageBubbles.getBubble(chatColor);
-            gameClient.sendResponse(new MeMenuSettingsComposer(gameClient.getHabbo()));
+            gameClient.sendResponse(new AccountPreferencesComposer(gameClient.getHabbo()));
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_chatcolor.set").replace("%chat%", RoomChatMessageBubbles.values()[chatColor].name().replace("_", " ").toLowerCase()), RoomChatMessageBubbles.ALERT);
             return true;
         } else {

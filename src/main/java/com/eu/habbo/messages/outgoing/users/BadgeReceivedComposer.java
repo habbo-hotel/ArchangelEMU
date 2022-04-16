@@ -5,10 +5,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class AddUserBadgeComposer extends MessageComposer {
+public class BadgeReceivedComposer extends MessageComposer {
     private final HabboBadge badge;
 
-    public AddUserBadgeComposer(HabboBadge badge) {
+    public BadgeReceivedComposer(HabboBadge badge) {
         this.badge = badge;
     }
 

@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class NewYearResolutionCompletedComposer extends MessageComposer {
+public class AchievementResolutionCompletedMessageComposer extends MessageComposer {
     public final String badge;
 
-    public NewYearResolutionCompletedComposer(String badge) {
+    public AchievementResolutionCompletedMessageComposer(String badge) {
         this.badge = badge;
     }
 

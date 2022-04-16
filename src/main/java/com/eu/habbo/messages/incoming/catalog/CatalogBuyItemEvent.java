@@ -121,7 +121,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                             HabboBadge badge = new HabboBadge(0, i.getName(), 0, this.client.getHabbo());
                             Emulator.getThreading().run(badge);
                             this.client.getHabbo().getInventory().getBadgesComponent().addBadge(badge);
-                            this.client.sendResponse(new AddUserBadgeComposer(badge));
+                            this.client.sendResponse(new BadgeReceivedComposer(badge));
                             THashMap<String, String> keys = new THashMap<>();
                             keys.put("display", "BUBBLE");
                             keys.put("image", "${image.library.url}album1584/" + badge.getCode() + ".gif");

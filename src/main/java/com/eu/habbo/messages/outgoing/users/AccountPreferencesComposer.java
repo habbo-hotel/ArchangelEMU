@@ -5,10 +5,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class MeMenuSettingsComposer extends MessageComposer {
+public class AccountPreferencesComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public MeMenuSettingsComposer(Habbo habbo) {
+    public AccountPreferencesComposer(Habbo habbo) {
         this.habbo = habbo;
     }
 

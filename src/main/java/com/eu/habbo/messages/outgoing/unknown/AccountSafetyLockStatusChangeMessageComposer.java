@@ -4,13 +4,13 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UnknownStatusComposer extends MessageComposer {
+public class AccountSafetyLockStatusChangeMessageComposer extends MessageComposer {
     public final int STATUS_ZERO = 0;
     public final int STATUS_ONE = 1;
 
     private final int status;
 
-    public UnknownStatusComposer(int status) {
+    public AccountSafetyLockStatusChangeMessageComposer(int status) {
         this.status = status;
     }
 

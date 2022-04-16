@@ -3,7 +3,7 @@ package com.eu.habbo.messages.rcon;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
-import com.eu.habbo.messages.outgoing.users.AddUserBadgeComposer;
+import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON> {
                 badge.run();
 
                 habbo.getInventory().getBadgesComponent().addBadge(badge);
-                habbo.getClient().sendResponse(new AddUserBadgeComposer(badge));
+                habbo.getClient().sendResponse(new BadgeReceivedComposer(badge));
 
                 this.message = Emulator.getTexts().getValue("commands.succes.cmd_badge.given").replace("%user%", username).replace("%badge%", badgeCode);
             }

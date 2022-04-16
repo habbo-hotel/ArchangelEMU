@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.users.AddUserBadgeComposer;
+import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 
 public class HotelViewClaimBadgeRewardEvent extends MessageHandler {
     @Override
@@ -17,7 +17,7 @@ public class HotelViewClaimBadgeRewardEvent extends MessageHandler {
             if (!badgeCode.isEmpty()) {
                 if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(badgeCode)) {
                     HabboBadge badge = BadgesComponent.createBadge(badgeCode, this.client.getHabbo());
-                    this.client.sendResponse(new AddUserBadgeComposer(badge));
+                    this.client.sendResponse(new BadgeReceivedComposer(badge));
                 }
             }
         }

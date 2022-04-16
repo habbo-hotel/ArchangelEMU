@@ -1,11 +1,9 @@
 package com.eu.habbo.messages.incoming.users;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
-import com.eu.habbo.messages.outgoing.users.MeMenuSettingsComposer;
+import com.eu.habbo.messages.outgoing.users.AccountPreferencesComposer;
 import com.eu.habbo.messages.outgoing.users.UserDataComposer;
 import com.eu.habbo.messages.outgoing.users.UserPerksComposer;
 import org.slf4j.Logger;
@@ -43,7 +41,7 @@ public class RequestUserDataEvent extends MessageHandler {
             messages.add(new UserDataComposer(this.client.getHabbo()).compose());
             messages.add(new UserPerksComposer(this.client.getHabbo()).compose());
 
-            messages.add(new MeMenuSettingsComposer(this.client.getHabbo()).compose());
+            messages.add(new AccountPreferencesComposer(this.client.getHabbo()).compose());
 
 
 //

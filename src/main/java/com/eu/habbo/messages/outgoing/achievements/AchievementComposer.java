@@ -8,11 +8,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class AchievementProgressComposer extends MessageComposer {
+public class AchievementComposer extends MessageComposer {
     private final Habbo habbo;
     private final Achievement achievement;
 
-    public AchievementProgressComposer(Habbo habbo, Achievement achievement) {
+    public AchievementComposer(Habbo habbo, Achievement achievement) {
         this.habbo = habbo;
         this.achievement = achievement;
     }

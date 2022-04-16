@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.users.AddUserBadgeComposer;
+import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import gnu.trove.map.hash.THashMap;
 
 public class RoomBadgeCommand extends Command {
@@ -39,7 +39,7 @@ public class RoomBadgeCommand extends Command {
                         if (habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && !habbo.getInventory().getBadgesComponent().hasBadge(badge)) {
                             HabboBadge b = BadgesComponent.createBadge(badge, habbo);
 
-                            habbo.getClient().sendResponse(new AddUserBadgeComposer(b));
+                            habbo.getClient().sendResponse(new BadgeReceivedComposer(b));
                             habbo.getClient().sendResponse(message);
                         }
                     }

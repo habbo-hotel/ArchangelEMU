@@ -6,10 +6,10 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.Map;
 
-public class MessengerErrorComposer extends MessageComposer {
+public class AcceptFriendResultComposer extends MessageComposer {
     private final Map<Integer, Integer> errors;
 
-    public MessengerErrorComposer(Map<Integer, Integer> errors) {
+    public AcceptFriendResultComposer(Map<Integer, Integer> errors) {
         this.errors = errors;
     }
 

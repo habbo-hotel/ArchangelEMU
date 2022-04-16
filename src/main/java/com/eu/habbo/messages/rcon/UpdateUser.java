@@ -3,7 +3,7 @@ package com.eu.habbo.messages.rcon;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
-import com.eu.habbo.messages.outgoing.users.MeMenuSettingsComposer;
+import com.eu.habbo.messages.outgoing.users.AccountPreferencesComposer;
 import com.eu.habbo.messages.outgoing.users.UpdateUserLookComposer;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON> {
                 }
 
                 habbo.getHabboStats().run();
-                habbo.getClient().sendResponse(new MeMenuSettingsComposer(habbo));
+                habbo.getClient().sendResponse(new AccountPreferencesComposer(habbo));
             } else {
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
                     try (PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET achievement_score = achievement_score + ? " +

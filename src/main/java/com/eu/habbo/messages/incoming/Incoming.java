@@ -187,7 +187,7 @@ public class Incoming {
     public static final int RequestUserCitizinShipEvent = 2127;
     public static final int RoomUserStopTypingEvent = 1474;
     public static final int RoomUserStartTypingEvent = 1597;
-    public static final int RequestGuildManageEvent = 1004;
+    public static final int GetGuildEditInfoEvent = 1004;
     public static final int RequestUserClubEvent = 3166;
     public static final int PetPickupEvent = 1581;
     public static final int RequestOwnGuildsEvent = 367;
