@@ -14,7 +14,7 @@ public class MeMenuSettingsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MeMenuSettingsComposer);
+        this.response.init(Outgoing.AccountPreferencesComposer);
         this.response.appendInt(this.habbo.getHabboStats().volumeSystem);
         this.response.appendInt(this.habbo.getHabboStats().volumeFurni);
         this.response.appendInt(this.habbo.getHabboStats().volumeTrax);

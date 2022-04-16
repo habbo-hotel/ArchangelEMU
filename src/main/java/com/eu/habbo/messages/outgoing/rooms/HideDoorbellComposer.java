@@ -13,7 +13,7 @@ public class HideDoorbellComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HideDoorbellComposer);
+        this.response.init(Outgoing.FlatAccessibleMessageComposer);
         this.response.appendString(this.username);
         return this.response;
     }

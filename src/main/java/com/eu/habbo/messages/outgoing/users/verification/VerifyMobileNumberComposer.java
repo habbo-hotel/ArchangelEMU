@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class VerifyMobileNumberComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.VerifyMobileNumberComposer);
+        this.response.init(Outgoing.NewUserExperienceNotCompleteComposer);
         return this.response;
     }
 }

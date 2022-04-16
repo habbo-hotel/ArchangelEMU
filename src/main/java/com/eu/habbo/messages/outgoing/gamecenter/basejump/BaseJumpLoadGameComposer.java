@@ -19,7 +19,7 @@ public class BaseJumpLoadGameComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.BaseJumpLoadGameComposer);
+        this.response.init(Outgoing.LoadGameMessageComposer);
 
         if (this.game == 3) {
             this.response.appendInt(3);

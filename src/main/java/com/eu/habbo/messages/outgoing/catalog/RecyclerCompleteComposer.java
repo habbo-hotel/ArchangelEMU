@@ -16,7 +16,7 @@ public class RecyclerCompleteComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RecyclerCompleteComposer);
+        this.response.init(Outgoing.RecyclerFinishedComposer);
         this.response.appendInt(this.code);
         this.response.appendInt(0); //prize ID.
         return this.response;

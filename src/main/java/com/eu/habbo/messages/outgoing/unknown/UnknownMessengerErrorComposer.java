@@ -17,7 +17,7 @@ public class UnknownMessengerErrorComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnknownMessengerErrorComposer);
+        this.response.init(Outgoing.InstantMessageErrorComposer);
         this.response.appendInt(this.errorCode);
         this.response.appendInt(this.userId);
         this.response.appendString(this.message);

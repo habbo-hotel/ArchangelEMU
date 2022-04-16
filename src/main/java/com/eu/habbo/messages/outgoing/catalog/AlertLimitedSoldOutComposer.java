@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class AlertLimitedSoldOutComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AlertLimitedSoldOutComposer);
+        this.response.init(Outgoing.LimitedEditionSoldOutComposer);
         return this.response;
     }
 }

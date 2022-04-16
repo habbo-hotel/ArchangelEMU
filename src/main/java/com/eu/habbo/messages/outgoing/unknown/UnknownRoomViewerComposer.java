@@ -15,7 +15,7 @@ public class UnknownRoomViewerComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnknownRoomViewerComposer);
+        this.response.init(Outgoing.IdentityAccountsComposer);
         this.response.appendInt(this.unknownMap.size());
         for (Map.Entry<Integer, String> entry : this.unknownMap.entrySet()) {
             this.response.appendInt(entry.getKey());

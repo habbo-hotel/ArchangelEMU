@@ -14,7 +14,7 @@ public class CatalogSearchResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CatalogSearchResultComposer);
+        this.response.init(Outgoing.ProductOfferComposer);
         this.item.serialize(this.response);
         return this.response;
     }

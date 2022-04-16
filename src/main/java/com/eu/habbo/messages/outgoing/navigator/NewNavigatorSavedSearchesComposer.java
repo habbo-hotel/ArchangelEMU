@@ -5,7 +5,6 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-import java.util.HashSet;
 import java.util.List;
 
 public class NewNavigatorSavedSearchesComposer extends MessageComposer {
@@ -17,7 +16,7 @@ public class NewNavigatorSavedSearchesComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewNavigatorSavedSearchesComposer);
+        this.response.init(Outgoing.NavigatorSavedSearchesComposer);
         this.response.appendInt(this.searches.size());
 
         for (NavigatorSavedSearch search : this.searches) {

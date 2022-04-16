@@ -18,7 +18,7 @@ public class UserPermissionsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserPermissionsComposer);
+        this.response.init(Outgoing.UserRightsMessageComposer);
         this.response.appendInt(this.clubLevel);
         this.response.appendInt(this.habbo.getHabboInfo().getRank().getLevel());
         this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_AMBASSADOR));

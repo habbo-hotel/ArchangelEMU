@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class RedeemVoucherOKComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RedeemVoucherOKComposer);
+        this.response.init(Outgoing.VoucherRedeemOkMessageComposer);
         this.response.appendString("");
         this.response.appendString("");
         return this.response;

@@ -15,7 +15,7 @@ public class HotelViewSecondsUntilComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HotelViewSecondsUntilComposer);
+        this.response.init(Outgoing.SecondsUntilMessageComposer);
         this.response.appendString(this.dateString);
         this.response.appendInt(this.seconds);
 

@@ -16,7 +16,7 @@ public class MarketplaceCancelSaleComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MarketplaceCancelSaleComposer);
+        this.response.init(Outgoing.MarketplaceCancelOfferResultComposer);
         this.response.appendInt(this.offer.getOfferId());
         this.response.appendBoolean(this.success);
         return this.response;

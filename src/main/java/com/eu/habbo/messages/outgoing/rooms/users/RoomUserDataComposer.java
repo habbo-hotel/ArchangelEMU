@@ -14,7 +14,7 @@ public class RoomUserDataComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUserDataComposer);
+        this.response.init(Outgoing.UserChangeMessageComposer);
         this.response.appendInt(this.habbo.getRoomUnit() == null ? -1 : this.habbo.getRoomUnit().getId());
         this.response.appendString(this.habbo.getHabboInfo().getLook());
         this.response.appendString(this.habbo.getHabboInfo().getGender().name() + "");

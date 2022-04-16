@@ -16,7 +16,7 @@ public class RoomUserUnbannedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUserUnbannedComposer);
+        this.response.init(Outgoing.UserUnbannedFromRoomComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendInt(this.userId);
         return this.response;

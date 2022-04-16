@@ -44,7 +44,7 @@ public class UserProfileComposer extends MessageComposer {
         if (this.habboInfo == null)
             return null;
 
-        this.response.init(Outgoing.UserProfileComposer);
+        this.response.init(Outgoing.ExtendedProfileMessageComposer);
 
         this.response.appendInt(this.habboInfo.getId());
         this.response.appendString(this.habboInfo.getUsername());

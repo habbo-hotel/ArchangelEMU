@@ -20,7 +20,7 @@ public class BullyReportRequestComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.BullyReportRequestComposer);
+        this.response.init(Outgoing.GuideReportingStatusMessageComposer);
         this.response.appendInt(this.errorCode);
 
         if (this.errorCode == ONGOING_HELPER_CASE) {

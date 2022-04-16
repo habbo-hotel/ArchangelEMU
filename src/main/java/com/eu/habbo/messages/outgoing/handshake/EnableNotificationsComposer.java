@@ -13,7 +13,7 @@ public class EnableNotificationsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.EnableNotificationsComposer);
+        this.response.init(Outgoing.InfoFeedEnableMessageComposer);
         this.response.appendBoolean(this.enabled);
         return this.response;
     }

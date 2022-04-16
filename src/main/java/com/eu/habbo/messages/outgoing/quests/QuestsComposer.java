@@ -18,7 +18,7 @@ public class QuestsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.QuestsComposer);
+        this.response.init(Outgoing.QuestsMessageComposer);
         this.response.appendInt(this.quests.size());
         for (Quest quest : this.quests) {
             this.response.append(quest);

@@ -13,7 +13,7 @@ public class RoomCategoryUpdateMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomCategoryUpdateMessageComposer);
+        this.response.init(Outgoing.ShowEnforceRoomCategoryDialogComposer);
         this.response.appendInt(this.unknownInt1);
         return this.response;
     }

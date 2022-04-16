@@ -14,7 +14,7 @@ public class PollStartComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PollStartComposer);
+        this.response.init(Outgoing.PollOfferComposer);
         this.response.appendInt(this.poll.id);
         this.response.appendString(this.poll.title);
         this.response.appendString(this.poll.thanksMessage);

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class RemoveRoomEventComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RemoveRoomEventComposer);
+        this.response.init(Outgoing.RoomEventCancelComposer);
         //Empty Body
         return this.response;
     }

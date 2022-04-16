@@ -16,7 +16,7 @@ public class JukeBoxTrackDataComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.JukeBoxTrackDataComposer);
+        this.response.init(Outgoing.TraxSongInfoMessageComposer);
         this.response.appendInt(this.tracks.size());
 
         for (SoundTrack track : this.tracks) {

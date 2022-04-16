@@ -13,7 +13,7 @@ public class CatalogModeComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CatalogModeComposer);
+        this.response.init(Outgoing.BuildersClubFurniCountMessageComposer);
         this.response.appendInt(this.mode);
         return this.response;
     }

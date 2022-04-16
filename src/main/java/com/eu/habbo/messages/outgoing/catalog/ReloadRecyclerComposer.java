@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class ReloadRecyclerComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ReloadRecyclerComposer);
+        this.response.init(Outgoing.RecyclerStatusComposer);
         this.response.appendInt(1);
         this.response.appendInt(0);
         return this.response;

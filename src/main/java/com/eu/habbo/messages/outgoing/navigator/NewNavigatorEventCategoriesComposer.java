@@ -13,7 +13,7 @@ public class NewNavigatorEventCategoriesComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewNavigatorEventCategoriesComposer);
+        this.response.init(Outgoing.UserEventCatsComposer);
 
         this.response.appendInt(NewNavigatorEventCategoriesComposer.CATEGORIES.size());
 

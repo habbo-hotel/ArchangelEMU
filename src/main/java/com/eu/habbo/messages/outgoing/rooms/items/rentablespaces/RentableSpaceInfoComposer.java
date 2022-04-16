@@ -42,7 +42,7 @@ public class RentableSpaceInfoComposer extends MessageComposer {
         if (!(this.item instanceof InteractionRentableSpace))
             return null;
 
-        this.response.init(Outgoing.RentableSpaceInfoComposer);
+        this.response.init(Outgoing.RentableSpaceStatusMessageComposer);
         this.response.appendBoolean(((InteractionRentableSpace) this.item).isRented()); //In Use
         this.response.appendInt(this.errorCode); //Error code.
         this.response.appendInt(((InteractionRentableSpace) this.item).getRenterId()); //User ID

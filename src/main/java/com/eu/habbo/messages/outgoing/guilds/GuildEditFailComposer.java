@@ -18,7 +18,7 @@ public class GuildEditFailComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildEditFailComposer);
+        this.response.init(Outgoing.GuildEditFailedMessageComposer);
         this.response.appendInt(this.errorCode);
         return this.response;
     }

@@ -14,7 +14,7 @@ public class LoveLockFurniFriendConfirmedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.LoveLockFurniFriendConfirmedComposer);
+        this.response.init(Outgoing.FriendFurniOtherLockConfirmedMessageComposer);
         this.response.appendInt(this.loveLock.getId());
         return this.response;
     }

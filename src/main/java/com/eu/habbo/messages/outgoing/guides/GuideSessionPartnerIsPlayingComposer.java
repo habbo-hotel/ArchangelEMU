@@ -13,7 +13,7 @@ public class GuideSessionPartnerIsPlayingComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuideSessionPartnerIsPlayingComposer);
+        this.response.init(Outgoing.YouArePlayingGameMessageComposer);
         this.response.appendBoolean(this.isPlaying);
         return this.response;
     }

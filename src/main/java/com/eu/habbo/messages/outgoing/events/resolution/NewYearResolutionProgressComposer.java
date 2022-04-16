@@ -23,7 +23,7 @@ public class NewYearResolutionProgressComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewYearResolutionProgressComposer);
+        this.response.init(Outgoing.AchievementResolutionProgressMessageComposer);
         this.response.appendInt(this.stuffId);
         this.response.appendInt(this.achievementId);
         this.response.appendString(this.achievementName);

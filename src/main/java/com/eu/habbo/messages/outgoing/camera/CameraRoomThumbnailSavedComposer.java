@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class CameraRoomThumbnailSavedComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CameraRoomThumbnailSavedComposer);
+        this.response.init(Outgoing.ThumbnailStatusMessageComposer);
         return this.response;
     }
 }

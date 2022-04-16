@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class CloseWebPageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CloseWebPageComposer);
+        this.response.init(Outgoing.RestoreClientMessageComposer);
         //Empty body
         return this.response;
     }

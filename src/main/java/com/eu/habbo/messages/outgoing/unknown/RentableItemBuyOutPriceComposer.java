@@ -23,7 +23,7 @@ public class RentableItemBuyOutPriceComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RentableItemBuyOutPriceComposer);
+        this.response.init(Outgoing.FurniRentOrBuyoutOfferMessageComposer);
         this.response.appendBoolean(this.unknownBoolean1);
         this.response.appendString(this.unknownString1);
         this.response.appendBoolean(this.unknownBoolean2);
