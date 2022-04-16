@@ -14,7 +14,7 @@ public class PetLevelUpComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetLevelUpComposer);
+        this.response.init(Outgoing.PetLevelNotificationComposer);
         this.response.appendInt(this.pet.getId());
         this.response.appendString(this.pet.getName());
         this.response.appendInt(this.pet.getLevel());

@@ -18,7 +18,7 @@ public class ClubGiftReceivedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ClubGiftReceivedComposer);
+        this.response.init(Outgoing.ClubGiftSelectedComposer);
 
         this.response.appendString(this.name);
         this.response.appendInt(this.items.size());

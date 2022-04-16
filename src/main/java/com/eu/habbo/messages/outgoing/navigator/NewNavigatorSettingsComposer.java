@@ -14,7 +14,7 @@ public class NewNavigatorSettingsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewNavigatorSettingsComposer);
+        this.response.init(Outgoing.NewNavigatorPreferencesComposer);
         this.response.appendInt(this.windowSettings.x);
         this.response.appendInt(this.windowSettings.y);
         this.response.appendInt(this.windowSettings.width);

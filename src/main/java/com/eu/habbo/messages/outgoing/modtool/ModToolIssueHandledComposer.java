@@ -24,7 +24,7 @@ public class ModToolIssueHandledComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ModToolIssueHandledComposer);
+        this.response.init(Outgoing.IssueCloseNotificationMessageComposer);
         this.response.appendInt(this.code);
         this.response.appendString(this.message);
         return this.response;

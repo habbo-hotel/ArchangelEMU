@@ -26,7 +26,7 @@ public class UserSearchResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserSearchResultComposer);
+        this.response.init(Outgoing.HabboSearchResultComposer);
         List<MessengerBuddy> u = new ArrayList<>();
 
         for (MessengerBuddy buddy : this.users) {

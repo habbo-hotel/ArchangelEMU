@@ -16,7 +16,7 @@ public class UserClassificationComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserClassificationComposer);
+        this.response.init(Outgoing.UserClassificationMessageComposer);
         this.response.appendInt(this.info.size());
         for (Pair<Integer, Pair<String, String>> set : this.info) {
             this.response.appendInt(set.getKey());

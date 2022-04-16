@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class MysticBoxStartOpenComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MysticBoxStartOpenComposer);
+        this.response.init(Outgoing.MysteryBoxStartComposer);
         return this.response;
     }
 }

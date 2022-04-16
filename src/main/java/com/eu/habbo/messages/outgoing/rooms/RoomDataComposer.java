@@ -23,7 +23,7 @@ public class RoomDataComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomDataComposer);
+        this.response.init(Outgoing.GetGuestRoomResultComposer);
         this.response.appendBoolean(this.enterRoom);
         this.response.appendInt(this.room.getId());
         this.response.appendString(this.room.getName());

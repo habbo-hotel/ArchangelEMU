@@ -8,7 +8,7 @@ public class NewYearResolutionComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         //:test 817 i:230 i:1 i:1 i:1 s:NY2013RES i:3 i:0 i:60000000
-        this.response.init(Outgoing.NewYearResolutionComposer);
+        this.response.init(Outgoing.AchievementResolutionsMessageComposer);
 
         this.response.appendInt(230); //reward ID or item id? (stuffId)
         this.response.appendInt(2); //count

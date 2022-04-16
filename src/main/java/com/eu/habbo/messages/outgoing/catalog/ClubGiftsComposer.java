@@ -7,13 +7,10 @@ import com.eu.habbo.habbohotel.catalog.CatalogPageLayouts;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import gnu.trove.iterator.TIntObjectIterator;
-import gnu.trove.procedure.TObjectProcedure;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class ClubGiftsComposer extends MessageComposer {
 
@@ -29,7 +26,7 @@ public class ClubGiftsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ClubGiftsComposer);
+        this.response.init(Outgoing.ClubGiftInfoComposer);
 
         this.response.appendInt(this.daysTillNextGift); //Days Until Next Gift
         this.response.appendInt(this.availableGifts); //Gift Selectable

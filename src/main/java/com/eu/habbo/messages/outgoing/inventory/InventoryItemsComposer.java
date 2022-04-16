@@ -27,7 +27,7 @@ public class InventoryItemsComposer extends MessageComposer implements TIntObjec
     @Override
     protected ServerMessage composeInternal() {
         try {
-            this.response.init(Outgoing.InventoryItemsComposer);
+            this.response.init(Outgoing.FurniListComposer);
             this.response.appendInt(this.totalFragments);
             this.response.appendInt(this.fragmentNumber - 1);
             this.response.appendInt(this.items.size());

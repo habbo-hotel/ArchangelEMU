@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class MostUselessErrorAlertComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MostUselessErrorAlertComposer);
+        this.response.init(Outgoing.PollErrorComposer);
         //EMpty Body
         return this.response;
     }

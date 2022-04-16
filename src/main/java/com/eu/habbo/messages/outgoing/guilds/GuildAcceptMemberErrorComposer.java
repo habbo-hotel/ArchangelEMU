@@ -19,7 +19,7 @@ public class GuildAcceptMemberErrorComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildAcceptMemberErrorComposer);
+        this.response.init(Outgoing.GuildMemberMgmtFailedMessageComposer);
         this.response.appendInt(this.guildId);
         this.response.appendInt(this.errorCode);
         return this.response;

@@ -21,7 +21,7 @@ public class PrivateRoomsComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         try {
-            this.response.init(Outgoing.PrivateRoomsComposer);
+            this.response.init(Outgoing.GuestRoomSearchResultComposer);
 
             this.response.appendInt(2);
             this.response.appendString("");

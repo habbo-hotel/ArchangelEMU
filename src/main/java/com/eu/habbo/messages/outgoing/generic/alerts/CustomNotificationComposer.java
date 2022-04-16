@@ -19,7 +19,7 @@ public class CustomNotificationComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CustomNotificationComposer);
+        this.response.init(Outgoing.CustomUserNotificationMessageComposer);
         this.response.appendInt(this.type);
         return this.response;
     }

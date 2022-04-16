@@ -21,7 +21,7 @@ public class GuildJoinErrorComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildJoinErrorComposer);
+        this.response.init(Outgoing.HabboGroupJoinFailedMessageComposer);
         this.response.appendInt(this.code);
         return this.response;
     }

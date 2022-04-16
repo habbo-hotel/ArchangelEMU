@@ -15,7 +15,7 @@ public class VerifyMobilePhoneDoneComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.VerifyMobilePhoneDoneComposer);
+        this.response.init(Outgoing.TryVerificationCodeResultMessageComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.unknownInt2);
         return this.response;
