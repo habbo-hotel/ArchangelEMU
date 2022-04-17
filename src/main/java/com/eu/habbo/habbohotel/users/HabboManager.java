@@ -279,7 +279,7 @@ public class HabboManager {
             habbo.getClient().sendResponse(new BundleDiscountRulesetMessageComposer());
             habbo.getClient().sendResponse(new MarketplaceConfigurationComposer());
             habbo.getClient().sendResponse(new GiftWrappingConfigurationComposer());
-            habbo.getClient().sendResponse(new RecyclerLogicComposer());
+            habbo.getClient().sendResponse(new RecyclerPrizesComposer());
             habbo.alert(Emulator.getTexts().getValue("commands.generic.cmd_give_rank.new_rank").replace("id", newRank.getName()));
         } else {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET `rank` = ? WHERE id = ? LIMIT 1")) {

@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class QuestExpiredComposer extends MessageComposer {
+public class QuestCancelledMessageComposer extends MessageComposer {
     private final boolean expired;
 
-    public QuestExpiredComposer(boolean expired) {
+    public QuestCancelledMessageComposer(boolean expired) {
         this.expired = expired;
     }
 

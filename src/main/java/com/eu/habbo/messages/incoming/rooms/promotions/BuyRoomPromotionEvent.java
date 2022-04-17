@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
-import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
 
@@ -57,14 +57,14 @@ public class BuyRoomPromotionEvent extends MessageHandler {
                         this.client.getHabbo().givePoints(item.getPointsType(), -item.getPoints());
                     }
 
-                    this.client.sendResponse(new PurchaseOKComposer());
+                    this.client.sendResponse(new PurchaseOKMessageComposer());
                     room.sendComposer(new RoomPromotionMessageComposer(room, room.getPromotion()).compose());
 
                     if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE)) {
                         this.client.getHabbo().addBadge(BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE);
                     }
                 } else {
-                    this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+                    this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
                 }
             }
         }

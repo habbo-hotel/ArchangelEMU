@@ -9,7 +9,7 @@ import gnu.trove.set.hash.THashSet;
 
 import java.util.Map;
 
-public class RecyclerLogicComposer extends MessageComposer {
+public class RecyclerPrizesComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.RecyclerPrizesComposer);

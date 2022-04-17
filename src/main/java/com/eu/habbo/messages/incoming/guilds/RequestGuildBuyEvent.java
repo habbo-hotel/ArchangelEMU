@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
-import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildCreatedMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildEditFailedMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
@@ -37,7 +37,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
             if (this.client.getHabbo().getHabboInfo().getCredits() >= guildPrice) {
                 this.client.getHabbo().giveCredits(-guildPrice);
             } else {
-                this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+                this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
                 return;
             }
         }
@@ -96,7 +96,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
                         Emulator.getBadgeImager().generate(guild);
                     }
 
-                    this.client.sendResponse(new PurchaseOKComposer());
+                    this.client.sendResponse(new PurchaseOKMessageComposer());
                     this.client.sendResponse(new GuildCreatedMessageComposer(guild));
                     for (Habbo habbo : r.getHabbos()) {
                         habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, null));

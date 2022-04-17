@@ -4,11 +4,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class SimplePollStartComposer extends MessageComposer {
+public class QuestionComposer extends MessageComposer {
     public final int duration;
     public final String question;
 
-    public SimplePollStartComposer(int duration, String question) {
+    public QuestionComposer(int duration, String question) {
         this.duration = duration;
         this.question = question;
     }

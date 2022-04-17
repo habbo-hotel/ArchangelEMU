@@ -5,11 +5,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class UnknownFurniModelComposer extends MessageComposer {
+public class PostItPlacedComposer extends MessageComposer {
     private final HabboItem item;
     private final int unknownInt;
 
-    public UnknownFurniModelComposer(HabboItem item, int unknownInt) {
+    public PostItPlacedComposer(HabboItem item, int unknownInt) {
         this.item = item;
         this.unknownInt = unknownInt;
     }

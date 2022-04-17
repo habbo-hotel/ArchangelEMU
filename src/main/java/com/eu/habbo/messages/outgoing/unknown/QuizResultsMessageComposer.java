@@ -6,11 +6,11 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class UnknownHabboWayQuizComposer extends MessageComposer {
+public class QuizResultsMessageComposer extends MessageComposer {
     private final String unknownString;
     private final List<Integer> unknownIntegerList;
 
-    public UnknownHabboWayQuizComposer(String unknownString, List<Integer> unknownIntegerList) {
+    public QuizResultsMessageComposer(String unknownString, List<Integer> unknownIntegerList) {
         this.unknownString = unknownString;
         this.unknownIntegerList = unknownIntegerList;
     }

@@ -6,8 +6,8 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
-import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
@@ -63,7 +63,7 @@ public class CatalogBuyClubDiscountEvent extends MessageHandler {
 
 
                         if(this.client.getHabbo().getHabboStats().createSubscription(Subscription.HABBO_CLUB, (totalDays * 86400)) == null) {
-                            this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                            this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
                             throw new Exception("Unable to create or extend subscription");
                         }
 
@@ -73,7 +73,7 @@ public class CatalogBuyClubDiscountEvent extends MessageHandler {
                         if (totalDuckets > 0)
                             this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
 
-                        this.client.sendResponse(new PurchaseOKComposer(null));
+                        this.client.sendResponse(new PurchaseOKMessageComposer(null));
                         this.client.sendResponse(new FurniListInvalidateComposer());
 
                         this.client.getHabbo().getHabboStats().run();

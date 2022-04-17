@@ -5,14 +5,14 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class PurchaseOKComposer extends MessageComposer {
+public class PurchaseOKMessageComposer extends MessageComposer {
     private final CatalogItem catalogItem;
 
-    public PurchaseOKComposer(CatalogItem catalogItem) {
+    public PurchaseOKMessageComposer(CatalogItem catalogItem) {
         this.catalogItem = catalogItem;
     }
 
-    public PurchaseOKComposer() {
+    public PurchaseOKMessageComposer() {
         this.catalogItem = null;
     }
 

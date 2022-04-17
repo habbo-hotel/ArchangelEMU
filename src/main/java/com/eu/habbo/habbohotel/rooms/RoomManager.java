@@ -32,8 +32,8 @@ import com.eu.habbo.messages.incoming.users.UserNuxEvent;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorComposer;
 import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.polls.PollOfferComposer;
-import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollAnswersComposer;
-import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollStartComposer;
+import com.eu.habbo.messages.outgoing.polls.infobus.QuestionFinishedComposer;
+import com.eu.habbo.messages.outgoing.polls.infobus.QuestionComposer;
 import com.eu.habbo.messages.outgoing.rooms.*;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemsComposer;
@@ -904,10 +904,10 @@ public class RoomManager {
         }
 
         if (room.hasActiveWordQuiz()) {
-            habbo.getClient().sendResponse(new SimplePollStartComposer((Emulator.getIntUnixTimestamp() - room.wordQuizEnd) * 1000, room.wordQuiz));
+            habbo.getClient().sendResponse(new QuestionComposer((Emulator.getIntUnixTimestamp() - room.wordQuizEnd) * 1000, room.wordQuiz));
 
             if (room.hasVotedInWordQuiz(habbo)) {
-                habbo.getClient().sendResponse(new SimplePollAnswersComposer(room.noVotes, room.yesVotes));
+                habbo.getClient().sendResponse(new QuestionFinishedComposer(room.noVotes, room.yesVotes));
             }
         }
 

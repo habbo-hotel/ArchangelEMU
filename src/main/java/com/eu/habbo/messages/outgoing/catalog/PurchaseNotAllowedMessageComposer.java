@@ -4,21 +4,20 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class RecyclerCompleteComposer extends MessageComposer {
-    public static final int RECYCLING_COMPLETE = 1;
-    public static final int RECYCLING_CLOSED = 2;
+public class PurchaseNotAllowedMessageComposer extends MessageComposer {
+    public final static int ILLEGAL = 0;
+    public final static int REQUIRES_CLUB = 1;
 
     private final int code;
 
-    public RecyclerCompleteComposer(int code) {
+    public PurchaseNotAllowedMessageComposer(int code) {
         this.code = code;
     }
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RecyclerFinishedComposer);
+        this.response.init(Outgoing.PurchaseNotAllowedMessageComposer);
         this.response.appendInt(this.code);
-        this.response.appendInt(0); //prize ID.
         return this.response;
     }
 }

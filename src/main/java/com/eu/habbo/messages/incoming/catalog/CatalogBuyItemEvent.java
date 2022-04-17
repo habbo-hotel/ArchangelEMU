@@ -12,9 +12,9 @@ import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
-import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseUnavailableComposer;
-import com.eu.habbo.messages.outgoing.catalog.PurchaseOKComposer;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseNotAllowedMessageComposer;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
@@ -48,12 +48,12 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
             try {
                 if (this.client.getHabbo().getInventory().getItemsComponent().itemCount() > HabboInventory.MAXIMUM_ITEMS) {
-                    this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                    this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
                     this.client.getHabbo().alert(Emulator.getTexts().getValue("inventory.full"));
                     return;
                 }
             } catch (Exception e) {
-                this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
             }
 
             CatalogPage page = null;
@@ -93,7 +93,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
                     CatalogItem roomBundleItem = item[0];
                     if (roomBundleItem == null || roomBundleItem.getCredits() > this.client.getHabbo().getHabboInfo().getCredits() || roomBundleItem.getPoints() > this.client.getHabbo().getHabboInfo().getCurrencyAmount(roomBundleItem.getPointsType())) {
-                        this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+                        this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
                         return;
                     }
                     int roomCount = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()).size();
@@ -101,7 +101,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
                     if (roomCount >= maxRooms) { // checks if a user has the maximum rooms
                        this.client.sendResponse(new CanCreateRoomComposer(roomCount, maxRooms)); // if so throws the max room error.
-                       this.client.sendResponse(new PurchaseOKComposer(null)); // Send this so the alert disappears, not sure if this is how it should be handled :S
+                       this.client.sendResponse(new PurchaseOKMessageComposer(null)); // Send this so the alert disappears, not sure if this is how it should be handled :S
                        return;
                     }
                         ((RoomBundleLayout) page).buyRoom(this.client.getHabbo());
@@ -113,7 +113,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                             this.client.getHabbo().getHabboInfo().addCurrencyAmount(roomBundleItem.getPointsType(), -roomBundleItem.getPoints()); // takes their points away
                             this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo())); // Sends the updated currency composer window
                         }
-                        this.client.sendResponse(new PurchaseOKComposer()); // Sends the composer to close the window.
+                        this.client.sendResponse(new PurchaseOKMessageComposer()); // Sends the composer to close the window.
 
                     final boolean[] badgeFound = {false};
                     item[0].getBaseItems().stream().filter(i -> i.getType() == FurnitureType.BADGE).forEach(i -> {
@@ -133,7 +133,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                     });
 
                     if (badgeFound[0]) {
-                        this.client.getHabbo().getClient().sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.ALREADY_HAVE_BADGE));
+                        this.client.getHabbo().getClient().sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.ALREADY_HAVE_BADGE));
                     }
 
                     return;
@@ -141,12 +141,12 @@ public class CatalogBuyItemEvent extends MessageHandler {
             }
 
             if (page == null) {
-                this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
                 return;
             }
 
             if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
-                this.client.sendResponse(new AlertPurchaseUnavailableComposer(AlertPurchaseUnavailableComposer.ILLEGAL));
+                this.client.sendResponse(new PurchaseNotAllowedMessageComposer(PurchaseNotAllowedMessageComposer.ILLEGAL));
                 return;
             }
 
@@ -154,7 +154,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                 ClubOffer item = Emulator.getGameEnvironment().getCatalogManager().clubOffers.get(itemId);
 
                 if (item == null) {
-                    this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                    this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
                     return;
                 }
 
@@ -183,7 +183,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
 
 
                     if(this.client.getHabbo().getHabboStats().createSubscription(Subscription.HABBO_CLUB, (totalDays * 86400)) == null) {
-                        this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+                        this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
                         throw new Exception("Unable to create or extend subscription");
                     }
 
@@ -201,7 +201,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
                     if (totalDuckets > 0)
                         this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
 
-                    this.client.sendResponse(new PurchaseOKComposer(null));
+                    this.client.sendResponse(new PurchaseOKMessageComposer(null));
                     this.client.sendResponse(new FurniListInvalidateComposer());
                     
                     this.client.getHabbo().getHabboStats().run();
@@ -236,7 +236,7 @@ public class CatalogBuyItemEvent extends MessageHandler {
             Emulator.getGameEnvironment().getCatalogManager().purchaseItem(page, item, this.client.getHabbo(), count, extraData, false);
 
         } else {
-            this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR).compose());
+            this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
         }
     }
 }

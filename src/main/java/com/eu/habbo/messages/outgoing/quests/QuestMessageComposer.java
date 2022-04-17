@@ -4,10 +4,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class QuestComposer extends MessageComposer {
-    private final QuestsComposer.Quest quest;
+public class QuestMessageComposer extends MessageComposer {
+    private final QuestsMessageComposer.Quest quest;
 
-    public QuestComposer(QuestsComposer.Quest quest) {
+    public QuestMessageComposer(QuestsMessageComposer.Quest quest) {
         this.quest = quest;
     }
 

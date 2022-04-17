@@ -9,7 +9,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.PresentItemOpenedComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.PresentOpenedMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserWhisperComposer;
 import com.eu.habbo.threading.runnables.OpenGift;
@@ -46,7 +46,7 @@ public class OpenRecycleBoxEvent extends MessageHandler {
                         this.client.sendResponse(new AddHabboItemComposer(reward));
                         this.client.sendResponse(new FurniListInvalidateComposer());
 
-                        this.client.sendResponse(new PresentItemOpenedComposer(reward, item.getExtradata(), true));
+                        this.client.sendResponse(new PresentOpenedMessageComposer(reward, item.getExtradata(), true));
                     }
                 }
                 room.sendComposer(new RemoveFloorItemComposer(item).compose());

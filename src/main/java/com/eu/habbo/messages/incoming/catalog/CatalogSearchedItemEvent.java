@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.catalog.CatalogSearchResultComposer;
+import com.eu.habbo.messages.outgoing.catalog.ProductOfferComposer;
 import gnu.trove.iterator.TIntObjectIterator;
 
 public class CatalogSearchedItemEvent extends MessageHandler {
@@ -26,7 +26,7 @@ public class CatalogSearchedItemEvent extends MessageHandler {
                     CatalogItem item = iterator.value();
 
                     if (item.getOfferId() == offerId) {
-                        this.client.sendResponse(new CatalogSearchResultComposer(item));
+                        this.client.sendResponse(new ProductOfferComposer(item));
                         return;
                     }
                 }

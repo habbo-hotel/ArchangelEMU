@@ -5,10 +5,10 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class GuildForumAddCommentComposer extends MessageComposer {
+public class PostMessageMessageComposer extends MessageComposer {
     private final ForumThreadComment comment;
 
-    public GuildForumAddCommentComposer(ForumThreadComment comment) {
+    public PostMessageMessageComposer(ForumThreadComment comment) {
         this.comment = comment;
     }
 

@@ -43,8 +43,8 @@ import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollAnswerComposer;
-import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollStartComposer;
+import com.eu.habbo.messages.outgoing.polls.infobus.QuestionAnsweredComposer;
+import com.eu.habbo.messages.outgoing.polls.infobus.QuestionComposer;
 import com.eu.habbo.messages.outgoing.rooms.*;
 import com.eu.habbo.messages.outgoing.rooms.items.*;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
@@ -4404,7 +4404,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     this.yesVotes++;
                 }
 
-                this.sendComposer(new SimplePollAnswerComposer(habbo.getHabboInfo().getId(), answer, this.noVotes, this.yesVotes).compose());
+                this.sendComposer(new QuestionAnsweredComposer(habbo.getHabboInfo().getId(), answer, this.noVotes, this.yesVotes).compose());
                 this.userVotes.add(habbo.getHabboInfo().getId());
             }
         }
@@ -4417,7 +4417,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             this.yesVotes = 0;
             this.userVotes.clear();
             this.wordQuizEnd = Emulator.getIntUnixTimestamp() + (duration / 1000);
-            this.sendComposer(new SimplePollStartComposer(duration, question).compose());
+            this.sendComposer(new QuestionComposer(duration, question).compose());
         }
     }
 

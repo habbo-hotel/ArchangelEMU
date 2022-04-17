@@ -7,11 +7,11 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 import java.util.List;
 
-public class QuestsComposer extends MessageComposer {
+public class QuestsMessageComposer extends MessageComposer {
     private final List<Quest> quests;
     private final boolean unknownBoolean;
 
-    public QuestsComposer(List<Quest> quests, boolean unknownBoolean) {
+    public QuestsMessageComposer(List<Quest> quests, boolean unknownBoolean) {
         this.quests = quests;
         this.unknownBoolean = unknownBoolean;
     }

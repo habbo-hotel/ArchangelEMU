@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListAddOrUpdateComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.PresentItemOpenedComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.PresentOpenedMessageComposer;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +101,7 @@ public class OpenGift implements Runnable {
 
             if (inside != null) {
                 this.habbo.getClient().sendResponse(new FurniListAddOrUpdateComposer(inside));
-                this.habbo.getClient().sendResponse(new PresentItemOpenedComposer(inside, "", false));
+                this.habbo.getClient().sendResponse(new PresentOpenedMessageComposer(inside, "", false));
             }
         } catch (Exception e) {
             LOGGER.error("Caught exception", e);

@@ -10,7 +10,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadMessagesComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.PostThreadMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadsComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
@@ -59,7 +59,7 @@ public class GuildForumModerateThreadEvent extends MessageHandler {
                 break;
         }
 
-        this.client.sendResponse(new GuildForumThreadMessagesComposer(thread));
+        this.client.sendResponse(new PostThreadMessageComposer(thread));
         this.client.sendResponse(new GuildForumThreadsComposer(guild, 0));
     }
 }

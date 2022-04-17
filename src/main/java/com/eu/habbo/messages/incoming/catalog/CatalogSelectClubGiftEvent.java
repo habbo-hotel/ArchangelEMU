@@ -23,13 +23,13 @@ public class CatalogSelectClubGiftEvent extends MessageHandler {
 
         if(itemName.isEmpty()) {
             LOGGER.error("itemName is empty");
-            this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+            this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
 
         if(this.client.getHabbo().getHabboStats().getRemainingClubGifts() < 1) {
             LOGGER.error("User has no remaining club gifts");
-            this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+            this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
 
@@ -37,7 +37,7 @@ public class CatalogSelectClubGiftEvent extends MessageHandler {
 
         if(page == null) {
             LOGGER.error("Catalog page not found");
-            this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+            this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
 
@@ -45,7 +45,7 @@ public class CatalogSelectClubGiftEvent extends MessageHandler {
 
         if(catalogItem == null) {
             LOGGER.error("Catalog item not found");
-            this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+            this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
 
@@ -57,7 +57,7 @@ public class CatalogSelectClubGiftEvent extends MessageHandler {
 
         if(daysRequired > (int) Math.floor(this.client.getHabbo().getHabboStats().getPastTimeAsClub() / 86400.0)) {
             LOGGER.error("Not been member for long enough");
-            this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
+            this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
 

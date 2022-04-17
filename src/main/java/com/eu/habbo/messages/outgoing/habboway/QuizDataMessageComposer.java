@@ -4,11 +4,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class HabboWayQuizComposer2 extends MessageComposer {
+public class QuizDataMessageComposer extends MessageComposer {
     public final String name;
     public final int[] items;
 
-    public HabboWayQuizComposer2(String name, int[] items) {
+    public QuizDataMessageComposer(String name, int[] items) {
         this.name = name;
         this.items = items;
     }

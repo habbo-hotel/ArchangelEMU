@@ -5,11 +5,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 
-public class QuestCompletedComposer extends MessageComposer {
+public class QuestCompletedMessageComposer extends MessageComposer {
     private final UnknownClass unknownClass;
     private final boolean unknowbOolean;
 
-    public QuestCompletedComposer(UnknownClass unknownClass, boolean unknowbOolean) {
+    public QuestCompletedMessageComposer(UnknownClass unknownClass, boolean unknowbOolean) {
         this.unknownClass = unknownClass;
         this.unknowbOolean = unknowbOolean;
     }
