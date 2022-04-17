@@ -11,7 +11,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.pets.PetPackageNameValidationComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PerkAllowancesComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.breeding.NestBreedingSuccessComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.breeding.ConfirmBreedingRequestComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
@@ -114,12 +114,12 @@ public class InteractionPetBreedingNest extends HabboItem {
         habbo.getHabboInfo().getCurrentRoom().updateItem(this);
 
         if (this.petOne != null) {
-            habbo.getClient().sendResponse(new PetPackageNameValidationComposer(this.getId(), PetPackageNameValidationComposer.CLOSE_WIDGET, ""));
+            habbo.getClient().sendResponse(new PerkAllowancesComposer(this.getId(), PerkAllowancesComposer.CLOSE_WIDGET, ""));
         }
         if (this.petTwo.getUserId() != habbo.getHabboInfo().getId()) {
             Habbo owner = this.petTwo.getRoom().getHabbo(this.petTwo.getUserId());
             if (owner != null) {
-                owner.getClient().sendResponse(new PetPackageNameValidationComposer(this.getId(), PetPackageNameValidationComposer.CLOSE_WIDGET, ""));
+                owner.getClient().sendResponse(new PerkAllowancesComposer(this.getId(), PerkAllowancesComposer.CLOSE_WIDGET, ""));
             }
         }
 

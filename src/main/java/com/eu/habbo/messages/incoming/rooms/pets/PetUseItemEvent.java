@@ -11,7 +11,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetStatusUpdateComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetHorseFigureComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PetFigureUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
@@ -81,7 +81,7 @@ public class PetUseItemEvent extends MessageHandler {
 
             if (((HorsePet) pet).needsUpdate) {
                 Emulator.getThreading().run(pet);
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomPetHorseFigureComposer((HorsePet) pet).compose());
+                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetFigureUpdateComposer((HorsePet) pet).compose());
 
                 room.removeHabboItem(item);
                 room.sendComposer(new RemoveFloorItemComposer(item, true).compose());

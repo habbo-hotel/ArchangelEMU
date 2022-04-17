@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.AddFloorItemComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ObjectAddMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 
 public class CrackableExplode implements Runnable {
@@ -64,7 +64,7 @@ public class CrackableExplode implements Runnable {
                     newItem.needsUpdate(true);
                     this.room.addHabboItem(newItem);
                     this.room.updateItem(newItem);
-                    this.room.sendComposer(new AddFloorItemComposer(newItem, this.room.getFurniOwnerNames().get(newItem.getUserId())).compose());
+                    this.room.sendComposer(new ObjectAddMessageComposer(newItem, this.room.getFurniOwnerNames().get(newItem.getUserId())).compose());
                 }
             }
         }

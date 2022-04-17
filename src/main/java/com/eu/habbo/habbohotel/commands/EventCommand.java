@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import gnu.trove.map.hash.THashMap;
 
 import java.util.Map;
@@ -33,7 +33,7 @@ public class EventCommand extends Command {
                 codes.put("TIME", Emulator.getDate().toString());
                 codes.put("MESSAGE", message.toString());
 
-                ServerMessage msg = new BubbleAlertComposer("hotel.event", codes).compose();
+                ServerMessage msg = new NotificationDialogMessageComposer("hotel.event", codes).compose();
 
                 for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
                     Habbo habbo = set.getValue();

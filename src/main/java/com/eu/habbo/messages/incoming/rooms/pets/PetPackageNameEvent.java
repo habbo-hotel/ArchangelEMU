@@ -9,7 +9,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.AlertPurchaseFailedComposer;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.PetPackageNameValidationComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PerkAllowancesComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
 public class PetPackageNameEvent extends MessageHandler {
@@ -68,7 +68,7 @@ public class PetPackageNameEvent extends MessageHandler {
                             this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));
                         }
                     } else {
-                        this.client.sendResponse(new PetPackageNameValidationComposer(itemId, PetPackageNameValidationComposer.CONTAINS_INVALID_CHARS, name.replaceAll("^[a-zA-Z0-9]*$", "")));
+                        this.client.sendResponse(new PerkAllowancesComposer(itemId, PerkAllowancesComposer.CONTAINS_INVALID_CHARS, name.replaceAll("^[a-zA-Z0-9]*$", "")));
                         return;
                     }
                 }
@@ -76,6 +76,6 @@ public class PetPackageNameEvent extends MessageHandler {
         }
 
 
-        this.client.sendResponse(new PetPackageNameValidationComposer(itemId, PetPackageNameValidationComposer.CLOSE_WIDGET, ""));
+        this.client.sendResponse(new PerkAllowancesComposer(itemId, PerkAllowancesComposer.CLOSE_WIDGET, ""));
     }
 }

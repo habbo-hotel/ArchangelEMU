@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.inventory.InventoryPetsComposer;
+import com.eu.habbo.messages.outgoing.inventory.PetInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -43,7 +43,7 @@ public class EmptyPetsInventoryCommand extends Command {
                 });
 
                 habbo.getClient().sendResponse(new FurniListInvalidateComposer());
-                habbo.getClient().sendResponse(new InventoryPetsComposer(habbo));
+                habbo.getClient().sendResponse(new PetInventoryComposer(habbo));
 
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_empty_pets.cleared").replace("%username%", habbo.getHabboInfo().getUsername()), RoomChatMessageBubbles.ALERT);
             } else {

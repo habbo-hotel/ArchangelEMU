@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 
@@ -28,7 +28,7 @@ public class WiredApplySetConditionsEvent extends MessageHandler {
 
         // Executing Habbo has to be in a Room
         if (!this.client.getHabbo().getRoomUnit().isInRoom()) {
-            this.client.sendResponse(new BubbleAlertComposer(
+            this.client.sendResponse(new NotificationDialogMessageComposer(
                     BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key,
                     FurnitureMovementError.NO_RIGHTS.errorCode
             ));

@@ -31,11 +31,11 @@ import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.incoming.users.UserNuxEvent;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorComposer;
 import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
-import com.eu.habbo.messages.outgoing.polls.PollStartComposer;
+import com.eu.habbo.messages.outgoing.polls.PollOfferComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollAnswersComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.SimplePollStartComposer;
 import com.eu.habbo.messages.outgoing.rooms.*;
-import com.eu.habbo.messages.outgoing.rooms.items.RoomFloorItemsComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
@@ -633,7 +633,7 @@ public class RoomManager {
         habbo.getRoomUnit().clearStatus();
         habbo.getRoomUnit().cmdTeleport = false;
 
-        habbo.getClient().sendResponse(new RoomOpenComposer());
+        habbo.getClient().sendResponse(new OpenConnectionMessageComposer());
 
         habbo.getRoomUnit().setInRoom(true);
         if (habbo.getHabboInfo().getCurrentRoom() != room && habbo.getHabboInfo().getCurrentRoom() != null) {
@@ -806,7 +806,7 @@ public class RoomManager {
 
                     floorItems.add(object);
                     if (floorItems.size() == 250) {
-                        habbo.getClient().sendResponse(new RoomFloorItemsComposer(room.getFurniOwnerNames(), floorItems));
+                        habbo.getClient().sendResponse(new ObjectsMessageComposer(room.getFurniOwnerNames(), floorItems));
                         floorItems.clear();
                     }
 
@@ -814,7 +814,7 @@ public class RoomManager {
                 }
             });
 
-            habbo.getClient().sendResponse(new RoomFloorItemsComposer(room.getFurniOwnerNames(), floorItems));
+            habbo.getClient().sendResponse(new ObjectsMessageComposer(room.getFurniOwnerNames(), floorItems));
             floorItems.clear();
         }
 
@@ -898,7 +898,7 @@ public class RoomManager {
                 Poll poll = Emulator.getGameEnvironment().getPollManager().getPoll(room.getPollId());
 
                 if (poll != null) {
-                    habbo.getClient().sendResponse(new PollStartComposer(poll));
+                    habbo.getClient().sendResponse(new PollOfferComposer(poll));
                 }
             }
         }

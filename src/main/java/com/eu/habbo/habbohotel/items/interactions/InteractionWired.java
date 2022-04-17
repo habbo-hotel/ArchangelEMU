@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.items.ItemStateComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.OneWayDoorStatusMessageComposer;
 import gnu.trove.map.hash.TLongLongHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +77,7 @@ public abstract class InteractionWired extends InteractionDefault {
 
     public void activateBox(Room room, RoomUnit roomUnit, long millis) {
         this.setExtradata(this.getExtradata().equals("1") ? "0" : "1");
-        room.sendComposer(new ItemStateComposer(this).compose());
+        room.sendComposer(new OneWayDoorStatusMessageComposer(this).compose());
         if (roomUnit != null) {
             this.addUserExecutionCache(roomUnit.getId(), millis);
         }

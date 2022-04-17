@@ -2,7 +2,7 @@ package com.eu.habbo.messages.rcon;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.google.gson.Gson;
 import gnu.trove.map.hash.THashMap;
 
@@ -46,7 +46,7 @@ public class ImageAlertUser extends RCONMessage<ImageAlertUser.JSON> {
             keys.put("image", json.image);
         }
 
-        habbo.getClient().sendResponse(new BubbleAlertComposer(json.bubble_key, keys));
+        habbo.getClient().sendResponse(new NotificationDialogMessageComposer(json.bubble_key, keys));
     }
 
     static class JSON {

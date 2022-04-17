@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
+import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomDeletedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class RequestDeleteRoomEvent extends MessageHandler {
                     Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(pet.getUserId());
 
                     if (owner != null) {
-                        owner.getClient().sendResponse(new AddPetComposer(pet));
+                        owner.getClient().sendResponse(new PetAddedToInventoryComposer(pet));
                         owner.getInventory().getPetsComponent().addPet(pet);
                     }
                 }

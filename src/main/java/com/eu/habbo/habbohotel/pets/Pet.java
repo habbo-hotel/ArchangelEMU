@@ -8,8 +8,8 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetLevelUpdatedComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetExperienceComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetRespectComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PetExperienceComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PetRespectNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.ChatMessageComposer;
 import com.eu.habbo.plugin.events.pets.PetTalkEvent;
@@ -517,7 +517,7 @@ public class Pet implements ISerialize, Runnable {
         this.experience += amount;
 
         if (this.room != null) {
-            this.room.sendComposer(new RoomPetExperienceComposer(this, amount).compose());
+            this.room.sendComposer(new PetExperienceComposer(this, amount).compose());
 
             if(this.level < PetManager.experiences.length + 1 && this.experience >= PetManager.experiences[this.level - 1]) {
                 this.levelUp();
@@ -582,7 +582,7 @@ public class Pet implements ISerialize, Runnable {
 
         if (habbo != null) {
             habbo.getHabboStats().petRespectPointsToGive--;
-            habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomPetRespectComposer(this).compose());
+            habbo.getHabboInfo().getCurrentRoom().sendComposer(new PetRespectNotificationComposer(this).compose());
 
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetRespectGiver"));
         }

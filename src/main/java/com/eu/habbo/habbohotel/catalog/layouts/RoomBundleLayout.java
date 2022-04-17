@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
 import gnu.trove.map.TIntObjectMap;
@@ -241,7 +241,7 @@ public class RoomBundleLayout extends SingleBundle {
         keys.put("image", "${image.library.url}/notifications/room_bundle_" + this.getId() + ".png");
 
         if (habbo != null) {
-            habbo.getClient().sendResponse(new BubbleAlertComposer(BubbleAlertKeys.PURCHASING_ROOM.key, keys));
+            habbo.getClient().sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.PURCHASING_ROOM.key, keys));
         }
     }
 }

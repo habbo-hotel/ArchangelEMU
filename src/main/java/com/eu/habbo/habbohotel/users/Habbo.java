@@ -370,13 +370,13 @@ public class Habbo implements Runnable {
 
     public void addPet(Pet pet) {
         this.habboInventory.getPetsComponent().addPet(pet);
-        this.client.sendResponse(new AddPetComposer(pet));
+        this.client.sendResponse(new PetAddedToInventoryComposer(pet));
     }
 
 
     public void removePet(Pet pet) {
         this.habboInventory.getPetsComponent().removePet(pet);
-        this.client.sendResponse(new RemovePetComposer(pet));
+        this.client.sendResponse(new PetRemovedFromInventoryComposer(pet));
     }
 
 
@@ -391,7 +391,7 @@ public class Habbo implements Runnable {
             keys.put("display", "BUBBLE");
             keys.put("image", "${image.library.url}album1584/" + badge.getCode() + ".gif");
             keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
-            this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys));
+            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys));
 
             return true;
         }

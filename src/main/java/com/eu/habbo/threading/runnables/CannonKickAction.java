@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import gnu.trove.map.hash.THashMap;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class CannonKickAction implements Runnable {
         int rotation = this.cannon.getRotation();
         List<RoomTile> tiles = this.room.getLayout().getTilesInFront(this.room.getLayout().getTile(this.cannon.getX(), this.cannon.getY()), rotation + 6, 3);
 
-        ServerMessage message = new BubbleAlertComposer("cannon.png", dater).compose();
+        ServerMessage message = new NotificationDialogMessageComposer("cannon.png", dater).compose();
 
         for (RoomTile t : tiles) {
             for (Habbo habbo : this.room.getHabbosAt(t.x, t.y)) {

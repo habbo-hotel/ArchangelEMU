@@ -10,7 +10,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetStatusUpdateComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetRespectComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PetRespectNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import org.apache.commons.math3.util.Pair;
 import org.slf4j.Logger;
@@ -388,7 +388,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
             this.addHappyness(10);
             this.addExperience(10);
             this.room.sendComposer(new PetStatusUpdateComposer(this).compose());
-            this.room.sendComposer(new RoomPetRespectComposer(this, RoomPetRespectComposer.PET_TREATED).compose());
+            this.room.sendComposer(new PetRespectNotificationComposer(this, PetRespectNotificationComposer.PET_TREATED).compose());
         }
     }
 

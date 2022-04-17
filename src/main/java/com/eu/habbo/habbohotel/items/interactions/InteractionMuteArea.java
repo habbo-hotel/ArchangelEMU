@@ -8,9 +8,9 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
-import com.eu.habbo.messages.outgoing.rooms.items.ItemExtraDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ObjectDataUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.RoomFloorItemsComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
 import gnu.trove.TCollections;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
@@ -61,7 +61,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
 
         if((objects.length >= 2 && objects[1] instanceof WiredEffectType) || (client != null && room.hasRights(client.getHabbo()))) {
             this.values.put("state", this.values.get("state").equals("0") ? "1" : "0");
-            room.sendComposer(new ItemExtraDataComposer(this).compose());
+            room.sendComposer(new ObjectDataUpdateMessageComposer(this).compose());
         }
     }
 
@@ -147,7 +147,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
                 items.add(item);
             }
 
-            client.sendResponse(new RoomFloorItemsComposer(ownerNames, items));
+            client.sendResponse(new ObjectsMessageComposer(ownerNames, items));
             Emulator.getThreading().run(() -> {
                 for(HabboItem item : items) {
                     client.sendResponse(new RemoveFloorItemComposer(item, true));

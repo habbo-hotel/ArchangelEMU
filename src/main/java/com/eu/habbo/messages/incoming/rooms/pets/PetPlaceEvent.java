@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.PetErrorComposer;
-import com.eu.habbo.messages.outgoing.inventory.RemovePetComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.PetPlacingErrorComposer;
+import com.eu.habbo.messages.outgoing.inventory.PetRemovedFromInventoryComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 
 public class PetPlaceEvent extends MessageHandler {
@@ -18,7 +18,7 @@ public class PetPlaceEvent extends MessageHandler {
             return;
 
         if (this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId() && !room.isAllowPets() && !(this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermission(Permission.ACC_PLACEFURNI))) {
-            this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_PETS_FORBIDDEN_IN_FLAT));
+            this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_PETS_FORBIDDEN_IN_FLAT));
             return;
         }
 
@@ -30,7 +30,7 @@ public class PetPlaceEvent extends MessageHandler {
             return;
         }
         if (room.getCurrentPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_PETS)) {
-            this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_MAX_PETS));
+            this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_MAX_PETS));
             return;
         }
 
@@ -45,7 +45,7 @@ public class PetPlaceEvent extends MessageHandler {
             tile = room.getLayout().getTileInFront(this.client.getHabbo().getRoomUnit().getCurrentLocation(), this.client.getHabbo().getRoomUnit().getBodyRotation().getValue());
 
             if (tile == null || !tile.isWalkable()) {
-                this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_PETS_NO_FREE_TILES));
+                this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_PETS_NO_FREE_TILES));
             }
 
             //Check if tile exists and is walkable. Else place it in the current location the Habbo is standing.
@@ -62,7 +62,7 @@ public class PetPlaceEvent extends MessageHandler {
         }
 
         if (tile == null || !tile.isWalkable() || !tile.getAllowStack()) {
-            this.client.sendResponse(new PetErrorComposer(PetErrorComposer.ROOM_ERROR_PETS_SELECTED_TILE_NOT_FREE));
+            this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_PETS_SELECTED_TILE_NOT_FREE));
             return;
         }
 
@@ -88,6 +88,6 @@ public class PetPlaceEvent extends MessageHandler {
         Emulator.getThreading().run(pet);
         room.sendComposer(new RoomPetComposer(pet).compose());
         this.client.getHabbo().getInventory().getPetsComponent().removePet(pet);
-        this.client.sendResponse(new RemovePetComposer(pet));
+        this.client.sendResponse(new PetRemovedFromInventoryComposer(pet));
     }
 }

@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThreadState;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.guilds.forums.PostUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
@@ -66,10 +66,10 @@ public class GuildForumModerateMessageEvent extends MessageHandler {
         switch (state) {
             case 10:
             case 20:
-                this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FORUMS_MESSAGE_HIDDEN.key).compose());
+                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_MESSAGE_HIDDEN.key).compose());
                 break;
             case 1:
-                this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FORUMS_MESSAGE_RESTORED.key).compose());
+                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_MESSAGE_RESTORED.key).compose());
                 break;
         }
 

@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.pets;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.pets.PetInformationComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PetInfoMessageComposer;
 
 public class RequestPetInformationEvent extends MessageHandler {
     @Override
@@ -18,7 +18,7 @@ public class RequestPetInformationEvent extends MessageHandler {
         Pet pet = room.getPet(petId);
 
         if (pet != null) {
-            this.client.sendResponse(new PetInformationComposer(pet, room, this.client.getHabbo()));
+            this.client.sendResponse(new PetInfoMessageComposer(pet, room, this.client.getHabbo()));
         }
     }
 }

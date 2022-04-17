@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
+import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 
 public class PetPickupEvent extends MessageHandler {
     @Override
@@ -40,13 +40,13 @@ public class PetPickupEvent extends MessageHandler {
                 Emulator.getThreading().run(pet);
 
                 if (this.client.getHabbo().getHabboInfo().getId() == pet.getUserId()) {
-                    this.client.sendResponse(new AddPetComposer(pet));
+                    this.client.sendResponse(new PetAddedToInventoryComposer(pet));
                     this.client.getHabbo().getInventory().getPetsComponent().addPet(pet);
                 } else {
                     Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(pet.getUserId());
 
                     if (habbo != null) {
-                        habbo.getClient().sendResponse(new AddPetComposer(pet));
+                        habbo.getClient().sendResponse(new PetAddedToInventoryComposer(pet));
                         habbo.getInventory().getPetsComponent().addPet(pet);
                     }
                 }

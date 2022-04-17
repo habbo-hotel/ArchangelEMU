@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTeamItem;
 import com.eu.habbo.habbohotel.items.interactions.games.football.goals.InteractionFootballGoal;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.rooms.items.ItemStateComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.OneWayDoorStatusMessageComposer;
 import com.eu.habbo.util.pathfinding.Rotation;
 
 import java.math.BigDecimal;
@@ -228,7 +228,7 @@ public class InteractionFootball extends InteractionPushable {
         }
 
         this.setExtradata(Math.abs(currentStep - (totalSteps + 1)) + "");
-        room.sendComposer(new ItemStateComposer(this).compose());
+        room.sendComposer(new OneWayDoorStatusMessageComposer(this).compose());
 
         /*this.setExtradata(nextRoll <= 200 ? "8" : (nextRoll <= 250 ? "7" : (nextRoll <= 300 ? "6" : (nextRoll <= 350 ? "5" : (nextRoll <= 400 ? "4" : (nextRoll <= 450 ? "3" : (nextRoll <= 500 ? "2" : "1")))))));
         room.sendComposer(new ItemStateComposer(this).compose());*/
@@ -242,7 +242,7 @@ public class InteractionFootball extends InteractionPushable {
     @Override
     public void onStop(Room room, RoomUnit kicker, int currentStep, int totalSteps) {
         this.setExtradata("0");
-        room.sendComposer(new ItemStateComposer(this).compose());
+        room.sendComposer(new OneWayDoorStatusMessageComposer(this).compose());
     }
 
     @Override

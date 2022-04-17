@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionClothing;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
@@ -55,10 +55,10 @@ public class RedeemClothingEvent extends MessageHandler {
                             this.client.getHabbo().getInventory().getWardrobeComponent().getClothing().add(clothing.id);
                             this.client.getHabbo().getInventory().getWardrobeComponent().getClothingSets().addAll(clothing.setId);
                             this.client.sendResponse(new FigureSetIdsComposer(this.client.getHabbo()));
-                            this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FIGURESET_REDEEMED.key));
+                            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FIGURESET_REDEEMED.key));
 
                         } else {
-                            this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FIGURESET_OWNED_ALREADY.key));
+                            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FIGURESET_OWNED_ALREADY.key));
                         }
                     } else {
                         LOGGER.error("[Catalog] No definition in catalog_clothing found for clothing name " + item.getBaseItem().getName() + ". Could not redeem clothing!");

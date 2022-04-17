@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
@@ -59,7 +59,7 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
                 else if (Arrays.stream(mapRows).anyMatch(l -> l.length() > 64 || l.length() == 0)) errors.add("${notification.floorplan_editor.error.message.too_large_width}");
 
                 if (errors.length() > 0) {
-                    this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
+                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
                     return;
                 }
             }
@@ -136,7 +136,7 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
 
 
             if (errors.length() > 0) {
-                this.client.sendResponse(new BubbleAlertComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
+                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
                 return;
             }
 

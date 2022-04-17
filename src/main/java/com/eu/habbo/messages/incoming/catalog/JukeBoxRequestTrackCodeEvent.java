@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.catalog;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.SoundTrack;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxTrackCodeComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.jukebox.OfficialSongIdMessageComposer;
 
 public class JukeBoxRequestTrackCodeEvent extends MessageHandler {
     @Override
@@ -13,7 +13,7 @@ public class JukeBoxRequestTrackCodeEvent extends MessageHandler {
         final SoundTrack track = Emulator.getGameEnvironment().getItemManager().getSoundTrack(songName);
 
         if (track != null) {
-            this.client.sendResponse(new JukeBoxTrackCodeComposer(track));
+            this.client.sendResponse(new OfficialSongIdMessageComposer(track));
         }
     }
 }

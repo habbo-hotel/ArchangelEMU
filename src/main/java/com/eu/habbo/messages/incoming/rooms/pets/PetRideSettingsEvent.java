@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.pets.HorsePet;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetHorseFigureComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PetFigureUpdateComposer;
 
 public class PetRideSettingsEvent extends MessageHandler {
     @Override
@@ -29,7 +29,7 @@ public class PetRideSettingsEvent extends MessageHandler {
         }
 
         if (pet instanceof HorsePet) {
-            this.client.sendResponse(new RoomPetHorseFigureComposer((HorsePet) pet));
+            this.client.sendResponse(new PetFigureUpdateComposer((HorsePet) pet));
         }
     }
 }

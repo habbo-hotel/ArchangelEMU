@@ -18,11 +18,11 @@ import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.catalog.*;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
-import com.eu.habbo.messages.outgoing.inventory.AddPetComposer;
+import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.modtool.IssueCloseNotificationMessageComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
@@ -965,8 +965,8 @@ public class CatalogManager {
                                 }
 
                                 habbo.getClient().getHabbo().getInventory().getPetsComponent().addPet(pet);
-                                habbo.getClient().sendResponse(new AddPetComposer(pet));
-                                habbo.getClient().sendResponse(new PetBoughtNotificationComposer(pet, false));
+                                habbo.getClient().sendResponse(new PetAddedToInventoryComposer(pet));
+                                habbo.getClient().sendResponse(new PetReceivedMessageComposer(pet, false));
 
                                 AchievementManager.progressAchievement(habbo.getClient().getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLover"));
 
@@ -1108,7 +1108,7 @@ public class CatalogManager {
                     keys.put("display", "BUBBLE");
                     keys.put("image", "${image.library.url}album1584/" + badge.getCode() + ".gif");
                     keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
-                    habbo.getClient().sendResponse(new BubbleAlertComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys));
+                    habbo.getClient().sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys));
                     unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.BADGE).add(badge.getId());
                 }
                 habbo.getClient().getHabbo().getHabboStats().addPurchase(purchasedEvent.catalogItem);

@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.camera.CameraPublishStatusMessageComposer;
-import com.eu.habbo.messages.outgoing.catalog.NotEnoughPointsTypeComposer;
+import com.eu.habbo.messages.outgoing.catalog.NotEnoughBalanceMessageComposer;
 import com.eu.habbo.plugin.events.users.UserPublishPictureEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class CameraPublishToWebEvent extends MessageHandler {
         if (!habbo.getHabboInfo().getPhotoJSON().contains(habbo.getHabboInfo().getPhotoTimestamp() + "")) return;
 
         if (habbo.getHabboInfo().getCurrencyAmount(CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS_TYPE) < CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS) {
-            this.client.sendResponse(new NotEnoughPointsTypeComposer(false, true, CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS));
+            this.client.sendResponse(new NotEnoughBalanceMessageComposer(false, true, CameraPublishToWebEvent.CAMERA_PUBLISH_POINTS));
             return;
         }
 

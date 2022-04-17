@@ -3,7 +3,7 @@ package com.eu.habbo.messages.rcon;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.google.gson.Gson;
 import gnu.trove.map.hash.THashMap;
 
@@ -42,7 +42,7 @@ public class ImageHotelAlert extends RCONMessage<ImageHotelAlert.JSON> {
             keys.put("image", json.image);
         }
 
-        ServerMessage message = new BubbleAlertComposer(json.bubble_key, keys).compose();
+        ServerMessage message = new NotificationDialogMessageComposer(json.bubble_key, keys).compose();
 
         for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
             Habbo habbo = set.getValue();

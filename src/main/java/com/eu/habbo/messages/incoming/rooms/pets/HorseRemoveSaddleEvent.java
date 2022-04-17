@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetHorseFigureComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PetFigureUpdateComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class HorseRemoveSaddleEvent extends MessageHandler {
         horse.hasSaddle(false);
         horse.needsUpdate = true;
         Emulator.getThreading().run(pet);
-        this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomPetHorseFigureComposer(horse).compose());
+        this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetFigureUpdateComposer(horse).compose());
 
         HabboItem saddle = Emulator.getGameEnvironment().getItemManager().createItem(this.client.getHabbo().getHabboInfo().getId(), saddleItem, 0, 0, "");
 

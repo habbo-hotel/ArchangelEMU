@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.items.AddFloorItemComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ObjectAddMessageComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class CompostMonsterplantEvent extends MessageHandler {
                             compost.setZ(pet.getRoomUnit().getZ());
                             compost.setRotation(pet.getRoomUnit().getBodyRotation().getValue());
                             room.addHabboItem(compost);
-                            room.sendComposer(new AddFloorItemComposer(compost, this.client.getHabbo().getHabboInfo().getUsername()).compose());
+                            room.sendComposer(new ObjectAddMessageComposer(compost, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         }
 
                         pet.removeFromRoom();

@@ -10,12 +10,12 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionMusicDisc;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxMySongsComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxNowPlayingMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.jukebox.NowPlayingMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeboxSongDisksMessageComposer;
 import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
@@ -210,7 +210,7 @@ public class TraxManager implements Disposable {
                 }
             }
 
-            this.room.sendComposer(new JukeBoxNowPlayingMessageComposer(Emulator.getGameEnvironment().getItemManager().getSoundTrack(this.currentlyPlaying.getSongId()), this.playingIndex, 0).compose());
+            this.room.sendComposer(new NowPlayingMessageComposer(Emulator.getGameEnvironment().getItemManager().getSoundTrack(this.currentlyPlaying.getSongId()), this.playingIndex, 0).compose());
         } else {
             this.stop();
         }
@@ -231,7 +231,7 @@ public class TraxManager implements Disposable {
         this.jukeBox.setExtradata("0");
         this.room.updateItem(this.jukeBox);
 
-        this.room.sendComposer(new JukeBoxNowPlayingMessageComposer(null, -1, 0).compose());
+        this.room.sendComposer(new NowPlayingMessageComposer(null, -1, 0).compose());
     }
 
     public SoundTrack currentSong() {
@@ -247,7 +247,7 @@ public class TraxManager implements Disposable {
         if(this.songsLimit < this.songs.size() + 1)
         {
             THashMap<String, String> codes = new THashMap<>();
-            ServerMessage msg = new BubbleAlertComposer("${playlist.editor.alert.playlist.full.title}", "${playlist.editor.alert.playlist.full}").compose();
+            ServerMessage msg = new NotificationDialogMessageComposer("${playlist.editor.alert.playlist.full.title}", "${playlist.editor.alert.playlist.full}").compose();
             habbo.getClient().sendResponse(msg);
             return;
         }
@@ -393,9 +393,9 @@ public class TraxManager implements Disposable {
 
     public void updateCurrentPlayingSong(Habbo habbo) {
         if (this.isPlaying()) {
-            habbo.getClient().sendResponse(new JukeBoxNowPlayingMessageComposer(Emulator.getGameEnvironment().getItemManager().getSoundTrack(this.currentlyPlaying.getSongId()), this.playingIndex, 1000 * (Emulator.getIntUnixTimestamp() - this.startedTimestamp)));
+            habbo.getClient().sendResponse(new NowPlayingMessageComposer(Emulator.getGameEnvironment().getItemManager().getSoundTrack(this.currentlyPlaying.getSongId()), this.playingIndex, 1000 * (Emulator.getIntUnixTimestamp() - this.startedTimestamp)));
         } else {
-            habbo.getClient().sendResponse(new JukeBoxNowPlayingMessageComposer(null, -1, 0));
+            habbo.getClient().sendResponse(new NowPlayingMessageComposer(null, -1, 0));
         }
     }
 

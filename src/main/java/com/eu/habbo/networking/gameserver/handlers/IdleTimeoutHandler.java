@@ -3,7 +3,7 @@ package com.eu.habbo.networking.gameserver.handlers;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.incoming.Incoming;
-import com.eu.habbo.messages.outgoing.handshake.PingComposer;
+import com.eu.habbo.messages.outgoing.handshake.PingMessageComposer;
 import com.eu.habbo.networking.gameserver.GameServerAttributes;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -127,7 +127,7 @@ public class IdleTimeoutHandler extends ChannelDuplexHandler {
 
             GameClient client = ctx.channel().attr(GameServerAttributes.CLIENT).get();
             if (client != null) {
-                client.sendResponse(new PingComposer());
+                client.sendResponse(new PingMessageComposer());
             }
 
             pingScheduleFuture = ctx.executor().schedule(this, pingScheduleNanos, TimeUnit.NANOSECONDS);
