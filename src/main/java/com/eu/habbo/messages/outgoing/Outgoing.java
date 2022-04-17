@@ -96,7 +96,7 @@ public class Outgoing {
     public final static int CreditBalanceComposer = 3475;
     public final static int CurrentTimingCodeMessageComposer = 1745;
     public final static int CustomUserNotificationMessageComposer = 909;
-    public final static int DanceMessageComposer = 2233;
+    public final static int DanceMessageComposer = 2080;
     public final static int DiceValueMessageComposer = 3431;
     public final static int DirectSMSClubBuyAvailableMessageComposer = 195; // todo?
     public final static int DisconnectReasonComposer = 4000;
@@ -148,7 +148,7 @@ public class Outgoing {
     public final static int Game2InArenaQueueMessageComposer = 872;//todo?
     public final static int Game2JoiningGameFailedMessageComposer = 1730; // todo?
     public final static int Game2StopCounterMessageComposer = 2233; //todo?
-    public final static int Game2UserLeftGameMessageComposer = 383;//todo?
+    public final static int Game2UserLeftGameMessageComposer = 2383;//todo?
     public final static int Game2WeeklyFriendsLeaderboardComposer = 2270;//todo?
     public final static int Game2WeeklyLeaderboardComposer = 2196; //todo?
     public final static int GameAchievementsMessageComposer = 1689;//todo?
@@ -396,7 +396,7 @@ public class Outgoing {
     public final static int ShoutMessageComposer = 1036;
     public final static int ShowEnforceRoomCategoryDialogComposer = 3896;
     public final static int SleepMessageComposer = 1797;
-    public final static int SlideObjectBundleMessageComposer = 3207;     // todo: rollers
+    public final static int SlideObjectBundleMessageComposer = 3207;
     public final static int _Str_16258_Composer = 1660; //todo?
     public final static int _Str_16667_Composer = 3099; //todo?
     public final static int _Str_17054_Composer = 416; //todo?
