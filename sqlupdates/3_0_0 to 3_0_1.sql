@@ -91,3 +91,6 @@ INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('hotel.mannequin.name.defa
 
 -- RCON: Change Username
 INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('rcon.alert.user.change_username', 'You can change your username. Click on yourself to change it.');
+
+-- Custom Stacking Setting
+INSERT INTO `emulator_texts` (`key`, `value`) VALUES ('custom.stacking.enabled', '0');

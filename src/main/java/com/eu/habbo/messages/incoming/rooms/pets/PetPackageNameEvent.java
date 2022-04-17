@@ -62,7 +62,7 @@ public class PetPackageNameEvent extends MessageHandler {
                             room.sendComposer(new RemoveFloorItemComposer(item).compose());
                             RoomTile tile = room.getLayout().getTile(item.getX(), item.getY());
                             room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
-                            room.sendComposer(new UpdateStackHeightComposer(tile.x, tile.y, tile.relativeHeight()).compose());
+                            room.sendComposer(new UpdateStackHeightComposer(tile.x, tile.y, tile.z, tile.relativeHeight()).compose());
                             item.setUserId(0);
                         } else {
                             this.client.sendResponse(new AlertPurchaseFailedComposer(AlertPurchaseFailedComposer.SERVER_ERROR));

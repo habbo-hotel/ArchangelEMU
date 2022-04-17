@@ -3,9 +3,7 @@ package com.eu.habbo.messages.incoming.catalog.recycler;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGift;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
@@ -58,7 +56,15 @@ public class OpenRecycleBoxEvent extends MessageHandler {
 
             if (item.getRoomId() == 0) {
                 room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
-                room.sendComposer(new UpdateStackHeightComposer(item.getX(), item.getY(), room.getStackHeight(item.getX(), item.getY(), true)).compose());
+                RoomLayout roomLayout = room.getLayout();
+                short z = (short)room.getStackHeight(item.getX(), item.getY(), true);
+                if(roomLayout != null) {
+                    RoomTile roomTile = roomLayout.getTile(item.getX(), item.getY());
+                    if(roomTile != null) {
+                        z = roomTile.z;
+                    }
+                }
+                room.sendComposer(new UpdateStackHeightComposer(item.getX(), item.getY(), z, room.getStackHeight(item.getX(), item.getY(), true)).compose());
             }
         }
     }

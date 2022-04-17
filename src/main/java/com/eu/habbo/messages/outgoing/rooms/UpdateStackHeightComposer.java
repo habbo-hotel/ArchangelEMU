@@ -1,5 +1,6 @@
 package com.eu.habbo.messages.outgoing.rooms;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.messages.ServerMessage;
@@ -10,14 +11,16 @@ import gnu.trove.set.hash.THashSet;
 public class UpdateStackHeightComposer extends MessageComposer {
     private int x;
     private int y;
+    private short z;
     private double height;
 
     private THashSet<RoomTile> updateTiles;
     private Room room;
 
-    public UpdateStackHeightComposer(int x, int y, double height) {
+    public UpdateStackHeightComposer(int x, int y, short z, double height) {
         this.x = x;
         this.y = y;
+        this.z = z;
         this.height = height;
     }
 
@@ -40,7 +43,12 @@ public class UpdateStackHeightComposer extends MessageComposer {
                     updateTiles.remove(t); // remove it from the set
                     this.response.appendByte((int) t.x);
                     this.response.appendByte((int) t.y);
-                    this.response.appendShort(t.relativeHeight());
+                    if(Emulator.getConfig().getBoolean("custom.stacking.enabled")) {
+                        this.response.appendShort((short) (t.z * 256.0));
+                    }
+                    else {
+                        this.response.appendShort(t.relativeHeight());
+                    }
                 }
                 //send the remaining tiles in a new message
                 this.room.sendComposer(new UpdateStackHeightComposer(this.room, updateTiles).compose());
@@ -51,13 +59,23 @@ public class UpdateStackHeightComposer extends MessageComposer {
             for (RoomTile t : this.updateTiles) {
                 this.response.appendByte((int) t.x);
                 this.response.appendByte((int) t.y);
-                this.response.appendShort(t.relativeHeight());
+                if(Emulator.getConfig().getBoolean("custom.stacking.enabled")) {
+                    this.response.appendShort((short) (t.z * 256.0));
+                }
+                else {
+                    this.response.appendShort(t.relativeHeight());
+                }
             }
         } else {
             this.response.appendByte(1);
             this.response.appendByte(this.x);
             this.response.appendByte(this.y);
-            this.response.appendShort((int) (this.height));
+            if(Emulator.getConfig().getBoolean("custom.stacking.enabled")) {
+                this.response.appendShort((short) (this.z * 256.0));
+            }
+            else {
+                this.response.appendShort((int) (this.height));
+            }
         }
         return this.response;
     }

@@ -1,5 +1,6 @@
 package com.eu.habbo.messages.outgoing.rooms;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.messages.ServerMessage;
@@ -22,10 +23,17 @@ public class RoomRelativeMapComposer extends MessageComposer {
             for (short x = 0; x < this.room.getLayout().getMapSizeX(); x++) {
                 RoomTile t = this.room.getLayout().getTile(x, y);
 
-                if (t != null)
-                    this.response.appendShort(t.relativeHeight());
-                else
+                if (t != null) {
+                    if(Emulator.getConfig().getBoolean("custom.stacking.enabled")) {
+                        this.response.appendShort((short) (t.z * 256.0));
+                    }
+                    else {
+                        this.response.appendShort(t.relativeHeight());
+                    }
+                }
+                else {
                     this.response.appendShort(Short.MAX_VALUE);
+                }
 
             }
         }
