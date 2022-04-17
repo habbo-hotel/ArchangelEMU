@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.incoming.floorplaneditor;
 
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.floorplaneditor.FloorPlanEditorBlockedTilesComposer;
+import com.eu.habbo.messages.outgoing.floorplaneditor.RoomOccupiedTilesMessageComposer;
 
 public class FloorPlanEditorRequestBlockedTilesEvent extends MessageHandler {
     @Override
@@ -9,6 +9,6 @@ public class FloorPlanEditorRequestBlockedTilesEvent extends MessageHandler {
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
             return;
 
-        this.client.sendResponse(new FloorPlanEditorBlockedTilesComposer(this.client.getHabbo().getHabboInfo().getCurrentRoom()));
+        this.client.sendResponse(new RoomOccupiedTilesMessageComposer(this.client.getHabbo().getHabboInfo().getCurrentRoom()));
     }
 }

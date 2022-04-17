@@ -16,7 +16,7 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.lang3.ArrayUtils;
@@ -322,7 +322,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
 
                 habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
                 if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                    habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
+                    habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
                 }
             }
         }

@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionYoutubeTV;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayListComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayPlaylistsComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class YoutubeRequestPlaylists extends MessageHandler {
                     return;
                 }
 
-                this.client.sendResponse(new YoutubeDisplayListComposer(itemId, playlists, tv.currentPlaylist));
+                this.client.sendResponse(new YoutubeDisplayPlaylistsComposer(itemId, playlists, tv.currentPlaylist));
             }
         }
     }

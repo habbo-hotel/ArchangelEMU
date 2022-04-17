@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
+import com.eu.habbo.messages.outgoing.users.RemainingMutePeriodComposer;
 
 public class RoomUserMuteEvent extends MessageHandler {
     @Override
@@ -23,7 +23,7 @@ public class RoomUserMuteEvent extends MessageHandler {
 
                 if (habbo != null) {
                     room.muteHabbo(habbo, minutes);
-                    habbo.getClient().sendResponse(new MutedWhisperComposer(minutes * 60));
+                    habbo.getClient().sendResponse(new RemainingMutePeriodComposer(minutes * 60));
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModMuteSeen"));
                 }
             }

@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.UpdateFailedComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.WiredValidationErrorComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredSavedComposer;
 
 public class WiredTriggerSaveDataEvent extends MessageHandler {
@@ -31,7 +31,7 @@ public class WiredTriggerSaveDataEvent extends MessageHandler {
 
                         Emulator.getThreading().run(trigger);
                     } else {
-                        this.client.sendResponse(new UpdateFailedComposer("There was an error while saving that trigger"));
+                        this.client.sendResponse(new WiredValidationErrorComposer("There was an error while saving that trigger"));
                     }
                 }
             }

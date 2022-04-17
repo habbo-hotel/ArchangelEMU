@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.messages.outgoing.users.UserDataComposer;
+import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 
 public class ChangeNameCommand extends Command {
     public ChangeNameCommand() {
@@ -12,7 +12,7 @@ public class ChangeNameCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         gameClient.getHabbo().getHabboStats().allowNameChange = !gameClient.getHabbo().getHabboStats().allowNameChange;
-        gameClient.sendResponse(new UserDataComposer(gameClient.getHabbo()));
+        gameClient.sendResponse(new UserObjectComposer(gameClient.getHabbo()));
         return true;
     }
 }

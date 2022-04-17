@@ -2,7 +2,7 @@ package com.eu.habbo.messages.rcon;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
+import com.eu.habbo.messages.outgoing.rooms.RoomForwardMessageComposer;
 import com.google.gson.Gson;
 
 public class StalkUser extends RCONMessage<StalkUser.StalkUserJSON> {
@@ -42,7 +42,7 @@ public class StalkUser extends RCONMessage<StalkUser.StalkUserJSON> {
             }
 
             if (this.status == 0) {
-                habbo.getClient().sendResponse(new ForwardToRoomComposer(target.getHabboInfo().getCurrentRoom().getId()));
+                habbo.getClient().sendResponse(new RoomForwardMessageComposer(target.getHabboInfo().getCurrentRoom().getId()));
             }
         }
     }

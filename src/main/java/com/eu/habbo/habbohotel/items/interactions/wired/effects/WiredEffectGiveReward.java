@@ -14,10 +14,9 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredGiveRewardItem;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
-import com.eu.habbo.messages.outgoing.generic.alerts.UpdateFailedComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.WiredValidationErrorComposer;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 
@@ -202,7 +201,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
                     }
                 }
 
-                gameClient.sendResponse(new UpdateFailedComposer(Emulator.getTexts().getValue("alert.superwired.invalid")));
+                gameClient.sendResponse(new WiredValidationErrorComposer(Emulator.getTexts().getValue("alert.superwired.invalid")));
                 return false;
             }
 

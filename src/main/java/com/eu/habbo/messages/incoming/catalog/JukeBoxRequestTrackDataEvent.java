@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.catalog;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.SoundTrack;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxTrackDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.jukebox.TraxSongInfoMessageComposer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,6 @@ public class JukeBoxRequestTrackDataEvent extends MessageHandler {
                 tracks.add(track);
         }
 
-        this.client.sendResponse(new JukeBoxTrackDataComposer(tracks));
+        this.client.sendResponse(new TraxSongInfoMessageComposer(tracks));
     }
 }

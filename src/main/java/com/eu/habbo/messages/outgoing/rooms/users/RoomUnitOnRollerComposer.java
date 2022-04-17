@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RoomUnitOnRollerComposer extends MessageComposer {
+    // THIS IS WRONG SlideObjectBundleMessageComposer
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnitOnRollerComposer.class);
     private final RoomUnit roomUnit;
     private final HabboItem roller;

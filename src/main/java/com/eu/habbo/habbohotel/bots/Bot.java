@@ -232,7 +232,7 @@ public class Bot implements Runnable {
                 return;
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
-            this.room.botChat(new RoomUserShoutComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
+            this.room.botChat(new ShoutMessageComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
 
             if (message.equals("o/") || message.equals("_o/")) {
                 this.room.sendComposer(new ExpressionMessageComposer(this.roomUnit, RoomUserAction.WAVE).compose());
@@ -247,7 +247,7 @@ public class Bot implements Runnable {
                 return;
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
-            event.target.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))));
+            event.target.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(event.message, this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))));
         }
     }
 

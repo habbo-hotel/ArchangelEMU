@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.UpdateFailedComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.WiredValidationErrorComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredSavedComposer;
 
 public class WiredEffectSaveDataEvent extends MessageHandler {
@@ -33,7 +33,7 @@ public class WiredEffectSaveDataEvent extends MessageHandler {
                     }
                 }
                 catch (WiredSaveException e) {
-                    this.client.sendResponse(new UpdateFailedComposer(e.getMessage()));
+                    this.client.sendResponse(new WiredValidationErrorComposer(e.getMessage()));
                 }
             }
         }

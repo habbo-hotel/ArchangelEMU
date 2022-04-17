@@ -9,7 +9,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
+import com.eu.habbo.messages.outgoing.rooms.RoomForwardMessageComposer;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.*;
@@ -173,7 +173,7 @@ public class FloorPlanEditorSaveEvent extends MessageHandler {
                 habbos.addAll(room.getHabbos());
                 Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
                 room = Emulator.getGameEnvironment().getRoomManager().loadRoom(room.getId());
-                ServerMessage message = new ForwardToRoomComposer(room.getId()).compose();
+                ServerMessage message = new RoomForwardMessageComposer(room.getId()).compose();
                 for (Habbo habbo : habbos) {
                     habbo.getClient().sendResponse(message);
                 }

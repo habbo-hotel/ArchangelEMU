@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.friends.SearchUserEvent;
 import com.eu.habbo.messages.incoming.navigator.SearchRoomsEvent;
-import com.eu.habbo.messages.outgoing.users.UserDataComposer;
+import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 import com.eu.habbo.threading.runnables.AchievementUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,7 +147,7 @@ public class CleanerThread implements Runnable {
             for (Habbo habbo : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values()) {
                 habbo.getHabboStats().respectPointsToGive = Emulator.getConfig().getInt("hotel.daily.respect");
                 habbo.getHabboStats().petRespectPointsToGive = Emulator.getConfig().getInt("hotel.daily.respect.pets");
-                habbo.getClient().sendResponse(new UserDataComposer(habbo));
+                habbo.getClient().sendResponse(new UserObjectComposer(habbo));
             }
         }
     }

@@ -396,7 +396,7 @@ public class Outgoing {
     public final static int ShoutMessageComposer = 1036;
     public final static int ShowEnforceRoomCategoryDialogComposer = 3896;
     public final static int SleepMessageComposer = 1797;
-    public final static int SlideObjectBundleMessageComposer = 3207;
+    public final static int SlideObjectBundleMessageComposer = 3207;     // todo: rollers
     public final static int _Str_16258_Composer = 1660; //todo?
     public final static int _Str_16667_Composer = 3099; //todo?
     public final static int _Str_17054_Composer = 416; //todo?

@@ -11,10 +11,10 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeBoxMySongsComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.jukebox.UserSongDisksInventoryMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.NowPlayingMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeboxSongDisksMessageComposer;
 import gnu.trove.map.hash.THashMap;
@@ -309,7 +309,7 @@ public class TraxManager implements Disposable {
 
                 GameClient client = owner.getClient();
                 if (client != null) {
-                    client.sendResponse(new AddHabboItemComposer(musicDisc));
+                    client.sendResponse(new UnseenItemsComposer(musicDisc));
                     client.sendResponse(new FurniListInvalidateComposer());
                 }
             }
@@ -340,7 +340,7 @@ public class TraxManager implements Disposable {
 
                                 GameClient client = owner.getClient();
                                 if (client != null) {
-                                    client.sendResponse(new AddHabboItemComposer(musicDisc));
+                                    client.sendResponse(new UnseenItemsComposer(musicDisc));
                                     client.sendResponse(new FurniListInvalidateComposer());
                                 }
                             }
@@ -404,7 +404,7 @@ public class TraxManager implements Disposable {
             GameClient client = h.getClient();
 
             if (client != null) {
-                client.sendResponse(new JukeBoxMySongsComposer(this.myList(h)));
+                client.sendResponse(new UserSongDisksInventoryMessageComposer(this.myList(h)));
             }
         });
     }

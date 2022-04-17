@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.messages.outgoing.rooms.items.PostItStickyPoleOpenComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.RequestSpamWallPostItMessageComposer;
 
 public class MultiCommand extends Command {
     public MultiCommand() {
@@ -11,7 +11,7 @@ public class MultiCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        gameClient.sendResponse(new PostItStickyPoleOpenComposer(null));
+        gameClient.sendResponse(new RequestSpamWallPostItMessageComposer(null));
         return true;
     }
 }

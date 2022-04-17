@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageCo
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.BotRemovedFromInventoryComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.plugin.events.bots.BotPickUpEvent;
 import com.eu.habbo.plugin.events.bots.BotPlacedEvent;
@@ -139,7 +139,7 @@ public class BotManager {
                 room.addBot(bot);
                 Emulator.getThreading().run(bot);
                 room.sendComposer(new RoomUsersComposer(bot).compose());
-                room.sendComposer(new RoomUserStatusComposer(bot.getRoomUnit()).compose());
+                room.sendComposer(new UserUpdateComposer(bot.getRoomUnit()).compose());
                 habbo.getInventory().getBotsComponent().removeBot(bot);
                 habbo.getClient().sendResponse(new BotRemovedFromInventoryComposer(bot));
                 bot.onPlace(habbo, room);

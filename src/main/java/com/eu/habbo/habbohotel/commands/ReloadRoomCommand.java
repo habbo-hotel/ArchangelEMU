@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.ForwardToRoomComposer;
+import com.eu.habbo.messages.outgoing.rooms.RoomForwardMessageComposer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class ReloadRoomCommand extends Command {
                 Collection<Habbo> habbos = new ArrayList<>(room.getHabbos());
                 Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
                 room = Emulator.getGameEnvironment().getRoomManager().loadRoom(room.getId());
-                ServerMessage message = new ForwardToRoomComposer(room.getId()).compose();
+                ServerMessage message = new RoomForwardMessageComposer(room.getId()).compose();
                 for (Habbo habbo : habbos) {
                     habbo.getClient().sendResponse(message);
                 }

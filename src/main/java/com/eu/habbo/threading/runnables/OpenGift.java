@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListAddOrUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.PresentOpenedMessageComposer;
@@ -61,43 +61,43 @@ public class OpenGift implements Runnable {
 
             this.habbo.getClient().sendResponse(new FurniListInvalidateComposer());
 
-            Map<AddHabboItemComposer.AddHabboItemCategory, List<Integer>> unseenItems = new HashMap<>();
+            Map<UnseenItemsComposer.AddHabboItemCategory, List<Integer>> unseenItems = new HashMap<>();
 
             for (HabboItem item : items) {
                 switch (item.getBaseItem().getType()) {
                     case WALL:
                     case FLOOR:
-                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI))
-                            unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI, new ArrayList<>());
+                        if (!unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.OWNED_FURNI))
+                            unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.OWNED_FURNI, new ArrayList<>());
 
-                        unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.OWNED_FURNI).add(item.getGiftAdjustedId());
+                        unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.OWNED_FURNI).add(item.getGiftAdjustedId());
 
                         break;
 
                     case BADGE:
-                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BADGE))
-                            unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BADGE, new ArrayList<>());
+                        if (!unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.BADGE))
+                            unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.BADGE, new ArrayList<>());
 
-                        unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.BADGE).add(item.getId()); // badges cannot be placed so no need for gift adjusted ID
+                        unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.BADGE).add(item.getId()); // badges cannot be placed so no need for gift adjusted ID
                         break;
 
                     case PET:
-                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.PET))
-                            unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.PET, new ArrayList<>());
+                        if (!unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.PET))
+                            unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.PET, new ArrayList<>());
 
-                        unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.PET).add(item.getGiftAdjustedId());
+                        unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.PET).add(item.getGiftAdjustedId());
                         break;
 
                     case ROBOT:
-                        if (!unseenItems.containsKey(AddHabboItemComposer.AddHabboItemCategory.BOT))
-                            unseenItems.put(AddHabboItemComposer.AddHabboItemCategory.BOT, new ArrayList<>());
+                        if (!unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.BOT))
+                            unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.BOT, new ArrayList<>());
 
-                        unseenItems.get(AddHabboItemComposer.AddHabboItemCategory.BOT).add(item.getGiftAdjustedId());
+                        unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.BOT).add(item.getGiftAdjustedId());
                         break;
                 }
             }
 
-            this.habbo.getClient().sendResponse(new AddHabboItemComposer(unseenItems));
+            this.habbo.getClient().sendResponse(new UnseenItemsComposer(unseenItems));
 
             if (inside != null) {
                 this.habbo.getClient().sendResponse(new FurniListAddOrUpdateComposer(inside));

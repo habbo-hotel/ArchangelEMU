@@ -10,7 +10,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -75,7 +75,7 @@ public class InteractionNest extends HabboItem {
         pet.getRoomUnit().clearStatus();
         pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
         pet.getRoomUnit().setStatus(RoomUnitStatus.LAY, room.getStackHeight(this.getX(), this.getY(), false) + "");
-        room.sendComposer(new RoomUserStatusComposer(roomUnit).compose());
+        room.sendComposer(new UserUpdateComposer(roomUnit).compose());
     }
 
     @Override

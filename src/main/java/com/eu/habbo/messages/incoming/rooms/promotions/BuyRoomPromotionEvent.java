@@ -9,8 +9,8 @@ import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
-import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
-import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
+import com.eu.habbo.messages.outgoing.navigator.UserEventCatsComposer;
+import com.eu.habbo.messages.outgoing.rooms.promotions.RoomEventComposer;
 
 public class BuyRoomPromotionEvent extends MessageHandler {
     public static String ROOM_PROMOTION_BADGE = "RADZZ";
@@ -25,7 +25,7 @@ public class BuyRoomPromotionEvent extends MessageHandler {
         String description = this.packet.readString();
         int categoryId = this.packet.readInt();
 
-        if (NewNavigatorEventCategoriesComposer.CATEGORIES.stream().noneMatch(c -> c.getId() == categoryId))
+        if (UserEventCatsComposer.CATEGORIES.stream().noneMatch(c -> c.getId() == categoryId))
             return;
 
         CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPage(pageId);
@@ -58,7 +58,7 @@ public class BuyRoomPromotionEvent extends MessageHandler {
                     }
 
                     this.client.sendResponse(new PurchaseOKMessageComposer());
-                    room.sendComposer(new RoomPromotionMessageComposer(room, room.getPromotion()).compose());
+                    room.sendComposer(new RoomEventComposer(room, room.getPromotion()).compose());
 
                     if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE)) {
                         this.client.getHabbo().addBadge(BuyRoomPromotionEvent.ROOM_PROMOTION_BADGE);

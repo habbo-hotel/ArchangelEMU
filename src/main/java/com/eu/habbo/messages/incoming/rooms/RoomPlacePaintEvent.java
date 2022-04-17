@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
-import com.eu.habbo.messages.outgoing.rooms.RoomPaintComposer;
+import com.eu.habbo.messages.outgoing.rooms.RoomPropertyMessageComposer;
 
 public class RoomPlacePaintEvent extends MessageHandler {
     @Override
@@ -43,7 +43,7 @@ public class RoomPlacePaintEvent extends MessageHandler {
 
             this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
             room.setNeedsUpdate(true);
-            room.sendComposer(new RoomPaintComposer(item.getBaseItem().getName(), item.getExtradata()).compose());
+            room.sendComposer(new RoomPropertyMessageComposer(item.getBaseItem().getName(), item.getExtradata()).compose());
             item.needsDelete(true);
             Emulator.getThreading().run(item);
             this.client.sendResponse(new FurniListRemoveComposer(itemId));

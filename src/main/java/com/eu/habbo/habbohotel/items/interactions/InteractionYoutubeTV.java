@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeVideoComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayVideoMessageComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -90,7 +90,7 @@ public class InteractionYoutubeTV extends HabboItem {
         if (this.currentVideo != null) {
             int startTime = this.offset;
             if (this.playing) startTime += Emulator.getIntUnixTimestamp() - this.startedWatchingAt;
-            client.sendResponse(new YoutubeVideoComposer(this.getId(), this.currentVideo, this.playing, startTime));
+            client.sendResponse(new YoutubeDisplayVideoMessageComposer(this.getId(), this.currentVideo, this.playing, startTime));
         }
     }
 }

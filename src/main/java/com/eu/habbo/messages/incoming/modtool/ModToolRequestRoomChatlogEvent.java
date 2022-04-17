@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.modtool.ModToolRoomChatlogComposer;
+import com.eu.habbo.messages.outgoing.modtool.RoomChatlogComposer;
 
 public class ModToolRequestRoomChatlogEvent extends MessageHandler {
     @Override
@@ -15,7 +15,7 @@ public class ModToolRequestRoomChatlogEvent extends MessageHandler {
             Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.packet.readInt());
 
             if (room != null)
-                this.client.sendResponse(new ModToolRoomChatlogComposer(room, Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(room.getId())));
+                this.client.sendResponse(new RoomChatlogComposer(room, Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(room.getId())));
         } else {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.chatlog").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
         }

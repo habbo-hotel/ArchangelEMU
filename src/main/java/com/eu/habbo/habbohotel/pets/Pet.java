@@ -10,7 +10,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetLevelUpdatedComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetExperienceComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetRespectNotificationComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.ChatMessageComposer;
 import com.eu.habbo.plugin.events.pets.PetTalkEvent;
 import gnu.trove.map.hash.THashMap;
@@ -738,7 +738,7 @@ public class Pet implements ISerialize, Runnable {
         }
 
         if (!dontSendPackets) {
-            room.sendComposer(new RoomUserRemoveComposer(this.roomUnit).compose());
+            room.sendComposer(new UserRemoveMessageComposer(this.roomUnit).compose());
             room.removePet(this.id);
         }
 

@@ -33,7 +33,7 @@ import com.eu.habbo.messages.outgoing.inventory.BadgePointLimitsComposer;
 import com.eu.habbo.messages.outgoing.inventory.AvatarEffectsMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.CfhTopicsInitComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModeratorInitMessageComposer;
-import com.eu.habbo.messages.outgoing.modtool.ModToolSanctionInfoComposer;
+import com.eu.habbo.messages.outgoing.modtool.SanctionStatusComposer;
 import com.eu.habbo.messages.outgoing.navigator.*;
 import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.mysterybox.MysteryBoxKeysMessageComposer;
@@ -204,7 +204,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new AvatarEffectsMessageComposer(habbo, this.client.getHabbo().getInventory().getEffectsComponent().effects.values()).compose());
                 messages.add(new FigureSetIdsComposer(this.client.getHabbo()).compose());
                 messages.add(new NoobnessLevelMessageComposer(habbo).compose());
-                messages.add(new UserPermissionsComposer(this.client.getHabbo()).compose());
+                messages.add(new UserRightsMessageComposer(this.client.getHabbo()).compose());
                 messages.add(new AvailabilityStatusMessageComposer(true, false, true).compose());
                 messages.add(new PingMessageComposer().compose());
                 messages.add(new EnableNotificationsComposer(Emulator.getConfig().getBoolean("bubblealerts.enabled", true)).compose());
@@ -218,7 +218,7 @@ public class SecureLoginEvent extends MessageHandler {
                 messages.add(new Game2AccountGameStatusMessageComposer(3, 100).compose());
                 messages.add(new Game2AccountGameStatusMessageComposer(0, 100).compose());
 
-                messages.add(new UserClubComposer(this.client.getHabbo(), SubscriptionHabboClub.HABBO_CLUB, UserClubComposer.RESPONSE_TYPE_LOGIN).compose());
+                messages.add(new ScrSendUserInfoComposer(this.client.getHabbo(), SubscriptionHabboClub.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_LOGIN).compose());
 
                 if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
                     messages.add(new ModeratorInitMessageComposer(this.client.getHabbo()).compose());
@@ -260,7 +260,7 @@ public class SecureLoginEvent extends MessageHandler {
                         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
 
                         if (item.sanctionLevel > 0 && item.probationTimestamp != 0 && item.probationTimestamp > Emulator.getIntUnixTimestamp()) {
-                            this.client.sendResponse(new ModToolSanctionInfoComposer(this.client.getHabbo()));
+                            this.client.sendResponse(new SanctionStatusComposer(this.client.getHabbo()));
                         } else if (item.sanctionLevel > 0 && item.probationTimestamp != 0 && item.probationTimestamp <= Emulator.getIntUnixTimestamp()) {
                             modToolSanctions.updateSanction(item.id, 0);
                         }

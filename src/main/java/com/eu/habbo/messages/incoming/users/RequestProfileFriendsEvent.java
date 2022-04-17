@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.users.ProfileFriendsComposer;
+import com.eu.habbo.messages.outgoing.users.RelationshipStatusInfoComposer;
 
 public class RequestProfileFriendsEvent extends MessageHandler {
     @Override
@@ -13,8 +13,8 @@ public class RequestProfileFriendsEvent extends MessageHandler {
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
         if (habbo != null)
-            this.client.sendResponse(new ProfileFriendsComposer(habbo));
+            this.client.sendResponse(new RelationshipStatusInfoComposer(habbo));
         else
-            this.client.sendResponse(new ProfileFriendsComposer(Messenger.getFriends(userId), userId));
+            this.client.sendResponse(new RelationshipStatusInfoComposer(Messenger.getFriends(userId), userId));
     }
 }

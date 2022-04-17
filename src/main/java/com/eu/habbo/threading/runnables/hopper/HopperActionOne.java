@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 
 public class HopperActionOne implements Runnable {
     private final HabboItem teleportOne;
@@ -24,14 +24,14 @@ public class HopperActionOne implements Runnable {
         //this.client.getHabbo().getRoomUnit().setGoalLocation(this.teleportOne.getX(), this.teleportOne.getY());
         this.client.getHabbo().getRoomUnit().setRotation(RoomUserRotation.values()[(this.teleportOne.getRotation() + 4) % 8]);
         this.client.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.MOVE, this.teleportOne.getX() + "," + this.teleportOne.getY() + "," + this.teleportOne.getZ());
-        this.room.scheduledComposers.add(new RoomUserStatusComposer(this.client.getHabbo().getRoomUnit()).compose());
+        this.room.scheduledComposers.add(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
         this.client.getHabbo().getRoomUnit().setLocation(this.room.getLayout().getTile(this.teleportOne.getX(), this.teleportOne.getY()));
         this.client.getHabbo().getRoomUnit().setZ(this.teleportOne.getZ());
         this.client.getHabbo().getRoomUnit().setPreviousLocationZ(this.teleportOne.getZ());
 
         Emulator.getThreading().run(() -> {
             HopperActionOne.this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
-            HopperActionOne.this.room.sendComposer(new RoomUserStatusComposer(HopperActionOne.this.client.getHabbo().getRoomUnit()).compose());
+            HopperActionOne.this.room.sendComposer(new UserUpdateComposer(HopperActionOne.this.client.getHabbo().getRoomUnit()).compose());
         }, 750);
 
         Emulator.getThreading().run(new HopperActionTwo(this.teleportOne, this.room, this.client), 1250);

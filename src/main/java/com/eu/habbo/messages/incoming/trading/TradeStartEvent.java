@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTrade;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.trading.TradeStartFailComposer;
+import com.eu.habbo.messages.outgoing.trading.TradingOpenFailedComposer;
 
 public class TradeStartEvent extends MessageHandler {
     @Override
@@ -24,12 +24,12 @@ public class TradeStartEvent extends MessageHandler {
                     boolean tradeAnywhere = this.client.getHabbo().hasPermission(Permission.ACC_TRADE_ANYWHERE);
 
                     if (!RoomTrade.TRADING_ENABLED && !tradeAnywhere) {
-                        this.client.sendResponse(new TradeStartFailComposer(TradeStartFailComposer.HOTEL_TRADING_NOT_ALLOWED));
+                        this.client.sendResponse(new TradingOpenFailedComposer(TradingOpenFailedComposer.HOTEL_TRADING_NOT_ALLOWED));
                         return;
                     }
 
                     if ((room.getTradeMode() == 0 || (room.getTradeMode() == 1 && this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())) && !tradeAnywhere) {
-                        this.client.sendResponse(new TradeStartFailComposer(TradeStartFailComposer.ROOM_TRADING_NOT_ALLOWED));
+                        this.client.sendResponse(new TradingOpenFailedComposer(TradingOpenFailedComposer.ROOM_TRADING_NOT_ALLOWED));
                         return;
                     }
 
@@ -38,22 +38,22 @@ public class TradeStartEvent extends MessageHandler {
                     if (targetUser.getHabboStats().userIgnored(this.client.getHabbo().getHabboInfo().getId())) return;
 
                     if (this.client.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.TRADING)) {
-                        this.client.sendResponse(new TradeStartFailComposer(TradeStartFailComposer.YOU_ALREADY_TRADING));
+                        this.client.sendResponse(new TradingOpenFailedComposer(TradingOpenFailedComposer.YOU_ALREADY_TRADING));
                         return;
                     }
 
                     if (!this.client.getHabbo().getHabboStats().allowTrade()) {
-                        this.client.sendResponse(new TradeStartFailComposer(TradeStartFailComposer.YOU_TRADING_OFF));
+                        this.client.sendResponse(new TradingOpenFailedComposer(TradingOpenFailedComposer.YOU_TRADING_OFF));
                         return;
                     }
 
                     if (targetUser.getRoomUnit().hasStatus(RoomUnitStatus.TRADING)) {
-                        this.client.sendResponse(new TradeStartFailComposer(TradeStartFailComposer.TARGET_ALREADY_TRADING, targetUser.getHabboInfo().getUsername()));
+                        this.client.sendResponse(new TradingOpenFailedComposer(TradingOpenFailedComposer.TARGET_ALREADY_TRADING, targetUser.getHabboInfo().getUsername()));
                         return;
                     }
 
                     if (!targetUser.getHabboStats().allowTrade()) {
-                        this.client.sendResponse(new TradeStartFailComposer(TradeStartFailComposer.TARGET_TRADING_NOT_ALLOWED, targetUser.getHabboInfo().getUsername()));
+                        this.client.sendResponse(new TradingOpenFailedComposer(TradingOpenFailedComposer.TARGET_TRADING_NOT_ALLOWED, targetUser.getHabboInfo().getUsername()));
                         return;
                     }
 

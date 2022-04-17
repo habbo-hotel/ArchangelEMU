@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import com.eu.habbo.messages.outgoing.wired.WiredRewardAlertComposer;
+import com.eu.habbo.messages.outgoing.wired.WiredRewardResultMessageComposer;
 
 public class RoomGiftCommand extends Command {
     public RoomGiftCommand() {
@@ -60,7 +60,7 @@ public class RoomGiftCommand extends Command {
 
                 habbo.getClient().sendResponse(new FurniListInvalidateComposer());
 
-                habbo.getClient().sendResponse(new WiredRewardAlertComposer(WiredRewardAlertComposer.REWARD_RECEIVED_ITEM));
+                habbo.getClient().sendResponse(new WiredRewardResultMessageComposer(WiredRewardResultMessageComposer.REWARD_RECEIVED_ITEM));
             }
 
             return true;

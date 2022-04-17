@@ -2,7 +2,7 @@ package com.eu.habbo.messages.rcon;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.AccountPreferencesComposer;
 import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
 import com.google.gson.Gson;
@@ -55,7 +55,7 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON> {
                     }
 
                     if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                        habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
+                        habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
                     }
                 }
 

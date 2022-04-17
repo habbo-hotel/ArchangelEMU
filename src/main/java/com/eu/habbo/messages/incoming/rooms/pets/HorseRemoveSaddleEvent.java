@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetFigureUpdateComposer;
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ public class HorseRemoveSaddleEvent extends MessageHandler {
 
         this.client.getHabbo().getInventory().getItemsComponent().addItem(saddle);
 
-        this.client.sendResponse(new AddHabboItemComposer(saddle));
+        this.client.sendResponse(new UnseenItemsComposer(saddle));
         this.client.sendResponse(new FurniListInvalidateComposer());
     }
 }

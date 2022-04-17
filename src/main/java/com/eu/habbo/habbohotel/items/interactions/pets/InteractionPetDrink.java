@@ -10,7 +10,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
 import java.sql.ResultSet;
@@ -41,7 +41,7 @@ public class InteractionPetDrink extends InteractionDefault {
                     pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
                     pet.getRoomUnit().setStatus(RoomUnitStatus.EAT, "0");
                     pet.addThirst(-75);
-                    room.sendComposer(new RoomUserStatusComposer(roomUnit).compose());
+                    room.sendComposer(new UserUpdateComposer(roomUnit).compose());
                     Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.EAT, null, true), 500);
 
                     AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(pet.getUserId()), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetFeeding"), 75);

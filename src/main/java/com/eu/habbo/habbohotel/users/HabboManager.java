@@ -10,7 +10,7 @@ import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigurati
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModeratorInitMessageComposer;
 import com.eu.habbo.messages.outgoing.users.UserPerksComposer;
-import com.eu.habbo.messages.outgoing.users.UserPermissionsComposer;
+import com.eu.habbo.messages.outgoing.users.UserRightsMessageComposer;
 import com.eu.habbo.plugin.events.users.UserRankChangedEvent;
 import com.eu.habbo.plugin.events.users.UserRegisteredEvent;
 import org.slf4j.Logger;
@@ -266,7 +266,7 @@ public class HabboManager {
                 habbo.getInventory().getEffectsComponent().createRankEffect(habbo.getHabboInfo().getRank().getRoomEffect());
             }
 
-            habbo.getClient().sendResponse(new UserPermissionsComposer(habbo));
+            habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
             habbo.getClient().sendResponse(new UserPerksComposer(habbo));
 
             if (habbo.hasPermission(Permission.ACC_SUPPORTTOOL)) {

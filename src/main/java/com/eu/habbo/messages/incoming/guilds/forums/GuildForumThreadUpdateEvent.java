@@ -11,7 +11,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadsComposer;
-import com.eu.habbo.messages.outgoing.guilds.forums.ThreadUpdatedMessageComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.UpdateThreadMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 public class GuildForumThreadUpdateEvent extends MessageHandler {
@@ -60,7 +60,7 @@ public class GuildForumThreadUpdateEvent extends MessageHandler {
         thread.run();
 
 
-        this.client.sendResponse(new ThreadUpdatedMessageComposer(guild, thread, this.client.getHabbo(), isPinned, isLocked));
+        this.client.sendResponse(new UpdateThreadMessageComposer(guild, thread, this.client.getHabbo(), isPinned, isLocked));
 
         if (pinChanged) {
             this.client.sendResponse(new GuildForumThreadsComposer(guild, 0));

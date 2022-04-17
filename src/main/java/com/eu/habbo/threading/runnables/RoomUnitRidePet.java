@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 
 public class RoomUnitRidePet implements Runnable {
     private RideablePet pet;
@@ -35,7 +35,7 @@ public class RoomUnitRidePet implements Runnable {
             habbo.getRoomUnit().setRotation(this.pet.getRoomUnit().getBodyRotation());
             habbo.getRoomUnit().statusUpdate(true);
             pet.setRider(habbo);
-            habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
+            habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserUpdateComposer(habbo.getRoomUnit()).compose());
             habbo.getHabboInfo().getCurrentRoom().sendComposer(new AvatarEffectMessageComposer(habbo.getRoomUnit()).compose());
             pet.setTask(PetTasks.RIDE);
         } else {

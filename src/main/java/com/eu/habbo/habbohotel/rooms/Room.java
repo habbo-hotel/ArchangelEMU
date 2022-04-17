@@ -40,7 +40,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageCompos
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
 import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.QuestionAnsweredComposer;
@@ -49,7 +49,7 @@ import com.eu.habbo.messages.outgoing.rooms.*;
 import com.eu.habbo.messages.outgoing.rooms.items.*;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
-import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
+import com.eu.habbo.messages.outgoing.users.RemainingMutePeriodComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.furniture.*;
 import com.eu.habbo.plugin.events.rooms.RoomLoadedEvent;
@@ -706,7 +706,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         Habbo habbo = (picker != null && picker.getHabboInfo().getId() == item.getId() ? picker : Emulator.getGameServer().getGameClientManager().getHabbo(item.getUserId()));
         if (habbo != null) {
             habbo.getInventory().getItemsComponent().addItem(item);
-            habbo.getClient().sendResponse(new AddHabboItemComposer(item));
+            habbo.getClient().sendResponse(new UnseenItemsComposer(item));
             habbo.getClient().sendResponse(new FurniListInvalidateComposer());
         }
         Emulator.getThreading().run(item);
@@ -750,7 +750,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
 
-        this.sendComposer(new RoomUserStatusComposer(roomUnit).compose());
+        this.sendComposer(new UserUpdateComposer(roomUnit).compose());
     }
 
     public void updateHabbosAt(short x, short y) {
@@ -825,7 +825,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (!roomUnits.isEmpty()) {
-            this.sendComposer(new RoomUserStatusComposer(roomUnits, true).compose());
+            this.sendComposer(new UserUpdateComposer(roomUnits, true).compose());
         }
     }
 
@@ -1212,7 +1212,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                             if (habbo.getRoomUnit().isIdle()) {
                                 boolean danceIsNone = (habbo.getRoomUnit().getDanceType() == DanceType.NONE);
                                 if (danceIsNone)
-                                    this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
+                                    this.sendComposer(new SleepMessageComposer(habbo.getRoomUnit()).compose());
                                 if (danceIsNone && !Emulator.getConfig().getBoolean("hotel.roomuser.idle.not_dancing.ignore.wired_idle"))
                                     WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
                             }
@@ -1580,7 +1580,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 }
 
                 if (!updatedUnit.isEmpty()) {
-                    this.sendComposer(new RoomUserStatusComposer(updatedUnit, true).compose());
+                    this.sendComposer(new UserUpdateComposer(updatedUnit, true).compose());
                 }
 
                 this.traxManager.cycle();
@@ -1625,7 +1625,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private boolean cycleRoomUnit(RoomUnit unit, RoomUnitType type) {
         boolean update = unit.needsStatusUpdate();
         if (unit.hasStatus(RoomUnitStatus.SIGN)) {
-            this.sendComposer(new RoomUserStatusComposer(unit).compose());
+            this.sendComposer(new UserUpdateComposer(unit).compose());
             unit.removeStatus(RoomUnitStatus.SIGN);
         }
 
@@ -2678,7 +2678,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (sendRemovePacket && habbo.getRoomUnit() != null && !habbo.getRoomUnit().isTeleporting) {
-            this.sendComposer(new RoomUserRemoveComposer(habbo.getRoomUnit()).compose());
+            this.sendComposer(new UserRemoveMessageComposer(habbo.getRoomUnit()).compose());
         }
 
         if (habbo.getRoomUnit().getCurrentLocation() != null) {
@@ -2851,7 +2851,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.currentBots.remove(bot.getId());
                 bot.getRoomUnit().setInRoom(false);
                 bot.setRoom(null);
-                this.sendComposer(new RoomUserRemoveComposer(bot.getRoomUnit()).compose());
+                this.sendComposer(new UserRemoveMessageComposer(bot.getRoomUnit()).compose());
                 bot.setRoomUnit(null);
                 return true;
             }
@@ -3135,7 +3135,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
         }
 
-        this.sendComposer(new RoomUserTypingComposer(habbo.getRoomUnit(), false).compose());
+        this.sendComposer(new UserTypingMessageComposer(habbo.getRoomUnit(), false).compose());
 
         if (roomChatMessage == null || roomChatMessage.getMessage() == null || roomChatMessage.getMessage().equals(""))
             return;
@@ -3162,7 +3162,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
 
             if (this.isMuted(habbo)) {
-                habbo.getClient().sendResponse(new MutedWhisperComposer(this.mutedHabbos.get(habbo.getHabboInfo().getId()) - Emulator.getIntUnixTimestamp()));
+                habbo.getClient().sendResponse(new RemainingMutePeriodComposer(this.mutedHabbos.get(habbo.getHabboInfo().getId()) - Emulator.getIntUnixTimestamp()));
                 return;
             }
         }
@@ -3176,7 +3176,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
             if (!ignoreWired) {
                 if (WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, habbo.getRoomUnit(), habbo.getHabboInfo().getCurrentRoom(), new Object[]{roomChatMessage.getMessage()})) {
-                    habbo.getClient().sendResponse(new RoomUserWhisperComposer(new RoomChatMessage(roomChatMessage.getMessage(), habbo, habbo, roomChatMessage.getBubble())));
+                    habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(roomChatMessage.getMessage(), habbo, habbo, roomChatMessage.getBubble())));
                     return;
                 }
             }
@@ -3214,9 +3214,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (prefixMessage == null) {
-            prefixMessage = roomChatMessage.getHabbo().getHabboInfo().getRank().hasPrefix() ? new RoomUserNameChangedComposer(habbo, true).compose() : null;
+            prefixMessage = roomChatMessage.getHabbo().getHabboInfo().getRank().hasPrefix() ? new UserNameChangedMessageComposer(habbo, true).compose() : null;
         }
-        ServerMessage clearPrefixMessage = prefixMessage != null ? new RoomUserNameChangedComposer(habbo).compose() : null;
+        ServerMessage clearPrefixMessage = prefixMessage != null ? new UserNameChangedMessageComposer(habbo).compose() : null;
 
         Rectangle tentRectangle = this.roomSpecialTypes.tentAt(habbo.getRoomUnit().getCurrentLocation());
 
@@ -3234,8 +3234,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             RoomChatMessage staffChatMessage = new RoomChatMessage(roomChatMessage);
             staffChatMessage.setMessage("To " + staffChatMessage.getTargetHabbo().getHabboInfo().getUsername() + ": " + staffChatMessage.getMessage());
 
-            final ServerMessage message = new RoomUserWhisperComposer(roomChatMessage).compose();
-            final ServerMessage staffMessage = new RoomUserWhisperComposer(staffChatMessage).compose();
+            final ServerMessage message = new WhisperMessageComposer(roomChatMessage).compose();
+            final ServerMessage staffMessage = new WhisperMessageComposer(staffChatMessage).compose();
 
             for (Habbo h : this.getHabbos()) {
                 if (h == roomChatMessage.getTargetHabbo() || h == habbo) {
@@ -3280,7 +3280,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 showTentChatMessageOutsideTentIfPermitted(h, roomChatMessage, tentRectangle);
             }
         } else if (chatType == RoomChatType.SHOUT) {
-            ServerMessage message = new RoomUserShoutComposer(roomChatMessage).compose();
+            ServerMessage message = new ShoutMessageComposer(roomChatMessage).compose();
 
             for (Habbo h : this.getHabbos()) {
                 // Show the message
@@ -3364,7 +3364,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (receivingHabbo != null && receivingHabbo.hasPermission(Permission.ACC_SEE_TENTCHAT) && tentRectangle != null && !RoomLayout.tileInSquare(tentRectangle, receivingHabbo.getRoomUnit().getCurrentLocation())) {
             RoomChatMessage staffChatMessage = new RoomChatMessage(roomChatMessage);
             staffChatMessage.setMessage("[" + Emulator.getTexts().getValue("hotel.room.tent.prefix") + "] " + staffChatMessage.getMessage());
-            final ServerMessage staffMessage = new RoomUserWhisperComposer(staffChatMessage).compose();
+            final ServerMessage staffMessage = new WhisperMessageComposer(staffChatMessage).compose();
             receivingHabbo.getClient().sendResponse(staffMessage);
         }
     }
@@ -4020,10 +4020,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (habbo.hasPermission(Permission.ACC_ANYROOMOWNER)) {
-            habbo.getClient().sendResponse(new RoomOwnerComposer());
+            habbo.getClient().sendResponse(new YouAreOwnerMessageComposer());
             flatCtrl = RoomRightLevels.MODERATOR;
         } else if (this.isOwner(habbo)) {
-            habbo.getClient().sendResponse(new RoomOwnerComposer());
+            habbo.getClient().sendResponse(new YouAreOwnerMessageComposer());
             flatCtrl = RoomRightLevels.MODERATOR;
         } else if (this.hasRights(habbo) && !this.hasGuild()) {
             flatCtrl = RoomRightLevels.RIGHTS;
@@ -4031,7 +4031,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             flatCtrl = this.getGuildRightLevel(habbo);
         }
 
-        habbo.getClient().sendResponse(new RoomRightsComposer(flatCtrl));
+        habbo.getClient().sendResponse(new YouAreControllerMessageComposer(flatCtrl));
         habbo.getRoomUnit().setStatus(RoomUnitStatus.FLAT_CONTROL, flatCtrl.level + "");
         habbo.getRoomUnit().setRightsLevel(flatCtrl);
         habbo.getRoomUnit().statusUpdate(true);
@@ -4067,7 +4067,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             ban.delete();
         }
 
-        this.sendComposer(new RoomUserUnbannedComposer(this, userId).compose());
+        this.sendComposer(new UserUnbannedFromRoomComposer(this, userId).compose());
     }
 
     public boolean isBanned(Habbo habbo) {
@@ -4101,7 +4101,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         habbo.getRoomUnit().cmdSit = true;
         habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[habbo.getRoomUnit().getBodyRotation().getValue() - habbo.getRoomUnit().getBodyRotation().getValue() % 2]);
         habbo.getRoomUnit().setStatus(RoomUnitStatus.SIT, 0.5 + "");
-        this.sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
+        this.sendComposer(new UserUpdateComposer(habbo.getRoomUnit()).compose());
     }
 
     public void makeStand(Habbo habbo) {
@@ -4112,7 +4112,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             habbo.getRoomUnit().cmdStand = true;
             habbo.getRoomUnit().setBodyRotation(RoomUserRotation.values()[habbo.getRoomUnit().getBodyRotation().getValue() - habbo.getRoomUnit().getBodyRotation().getValue() % 2]);
             habbo.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
-            this.sendComposer(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
+            this.sendComposer(new UserUpdateComposer(habbo.getRoomUnit()).compose());
         }
     }
 
@@ -4221,7 +4221,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         if (habbo != null) {
             habbo.getInventory().getItemsComponent().addItems(items);
-            habbo.getClient().sendResponse(new AddHabboItemComposer(items));
+            habbo.getClient().sendResponse(new UnseenItemsComposer(items));
         }
 
         for (HabboItem i : items) {
@@ -4271,7 +4271,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
             if (user != null) {
                 user.getInventory().getItemsComponent().addItems(entrySet.getValue());
-                user.getClient().sendResponse(new AddHabboItemComposer(entrySet.getValue()));
+                user.getClient().sendResponse(new UnseenItemsComposer(entrySet.getValue()));
             }
         }
     }
@@ -4331,14 +4331,14 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             this.dance(habbo, DanceType.NONE);
         }
 
-        this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
+        this.sendComposer(new SleepMessageComposer(habbo.getRoomUnit()).compose());
         WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
     }
 
     public void unIdle(Habbo habbo) {
         if (habbo == null || habbo.getRoomUnit() == null) return;
         habbo.getRoomUnit().resetIdleTimer();
-        this.sendComposer(new RoomUnitIdleComposer(habbo.getRoomUnit()).compose());
+        this.sendComposer(new SleepMessageComposer(habbo.getRoomUnit()).compose());
         WiredHandler.handle(WiredTriggerType.UNIDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
     }
 

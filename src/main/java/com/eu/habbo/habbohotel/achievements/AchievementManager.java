@@ -7,10 +7,10 @@ import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.achievements.AchievementComposer;
 import com.eu.habbo.messages.outgoing.achievements.AchievementUnlockedComposer;
-import com.eu.habbo.messages.outgoing.achievements.talenttrack.TalentLevelUpdateComposer;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.achievements.talenttrack.TalentLevelUpComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.users.UserBadgesComposer;
 import com.eu.habbo.plugin.Event;
@@ -171,7 +171,7 @@ public class AchievementManager {
                 }
             }
 
-            habbo.getClient().sendResponse(new AddHabboItemComposer(badge.getId(), AddHabboItemComposer.AddHabboItemCategory.BADGE));
+            habbo.getClient().sendResponse(new UnseenItemsComposer(badge.getId(), UnseenItemsComposer.AddHabboItemCategory.BADGE));
 
             habbo.getHabboStats().addAchievementScore(newLevel.points);
 
@@ -180,7 +180,7 @@ public class AchievementManager {
             }
 
             if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
+                habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
             }
         }
     }
@@ -356,7 +356,7 @@ public class AchievementManager {
                             for (Item item : level.items) {
                                 HabboItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), item, 0, 0, "");
                                 habbo.getInventory().getItemsComponent().addItem(rewardItem);
-                                habbo.getClient().sendResponse(new AddHabboItemComposer(rewardItem));
+                                habbo.getClient().sendResponse(new UnseenItemsComposer(rewardItem));
                                 habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                             }
                         }
@@ -379,7 +379,7 @@ public class AchievementManager {
                                 }
                             }
                         }
-                        habbo.getClient().sendResponse(new TalentLevelUpdateComposer(type, level));
+                        habbo.getClient().sendResponse(new TalentLevelUpComposer(type, level));
                     }
                 }
             }

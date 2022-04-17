@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.modtool.ModToolRoomChatlogComposer;
+import com.eu.habbo.messages.outgoing.modtool.RoomChatlogComposer;
 
 public class ModToolRequestRoomUserChatlogEvent extends MessageHandler {
     @Override
@@ -20,7 +20,7 @@ public class ModToolRequestRoomUserChatlogEvent extends MessageHandler {
                 Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
                 if (room != null) {
-                    this.client.sendResponse(new ModToolRoomChatlogComposer(room, Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(room.getId())));
+                    this.client.sendResponse(new RoomChatlogComposer(room, Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(room.getId())));
                 }
             }
         } else {

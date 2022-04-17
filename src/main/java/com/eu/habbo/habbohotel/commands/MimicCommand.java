@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
-import com.eu.habbo.messages.outgoing.users.UserDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
+import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 import com.eu.habbo.util.figure.FigureUtil;
 
 public class MimicCommand extends Command {
@@ -38,8 +38,8 @@ public class MimicCommand extends Command {
             } else {
                 gameClient.getHabbo().getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_MIMIC ? ClothingValidationManager.validateLook(gameClient.getHabbo(), habbo.getHabboInfo().getLook(), habbo.getHabboInfo().getGender().name()) : habbo.getHabboInfo().getLook());
                 gameClient.getHabbo().getHabboInfo().setGender(habbo.getHabboInfo().getGender());
-                gameClient.sendResponse(new UserDataComposer(gameClient.getHabbo()));
-                gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(gameClient.getHabbo()).compose());
+                gameClient.sendResponse(new UserObjectComposer(gameClient.getHabbo()));
+                gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(gameClient.getHabbo()).compose());
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_mimic.copied").replace("%user%", params[1]).replace("%gender_name%", (habbo.getHabboInfo().getGender().equals(HabboGender.M) ? Emulator.getTexts().getValue("gender.him") : Emulator.getTexts().getValue("gender.her"))), RoomChatMessageBubbles.ALERT);
                 return true;
             }

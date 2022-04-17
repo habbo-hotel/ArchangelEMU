@@ -37,7 +37,7 @@ import com.eu.habbo.messages.incoming.rooms.promotions.BuyRoomPromotionEvent;
 import com.eu.habbo.messages.incoming.users.ChangeNameCheckUsernameEvent;
 import com.eu.habbo.messages.outgoing.catalog.BundleDiscountRulesetMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.GiftWrappingConfigurationComposer;
-import com.eu.habbo.messages.outgoing.navigator.NewNavigatorEventCategoriesComposer;
+import com.eu.habbo.messages.outgoing.navigator.UserEventCatsComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
@@ -212,10 +212,10 @@ public class PluginManager {
         }
 
 
-        NewNavigatorEventCategoriesComposer.CATEGORIES.clear();
+        UserEventCatsComposer.CATEGORIES.clear();
         for (String category : Emulator.getConfig().getValue("navigator.eventcategories", "").split(";")) {
             try {
-                NewNavigatorEventCategoriesComposer.CATEGORIES.add(new EventCategory(category));
+                UserEventCatsComposer.CATEGORIES.add(new EventCategory(category));
             } catch (Exception e) {
                 e.printStackTrace();
             }

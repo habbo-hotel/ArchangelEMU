@@ -9,6 +9,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
 
 public class FloorItemOnRollerComposer extends MessageComposer {
+    // THIS IS WRONG SlideObjectBundleMessageComposer
     private final HabboItem item;
     private final HabboItem roller;
     private final RoomTile oldLocation;

@@ -8,7 +8,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.catalog.marketplace.RequestOffersEvent;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceBuyOfferResultComposer;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceCancelOfferResultComposer;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
@@ -94,7 +94,7 @@ public class MarketPlace {
                                                 HabboItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set);
                                                 habbo.getInventory().getItemsComponent().addItem(item);
                                                 habbo.getClient().sendResponse(new MarketplaceCancelOfferResultComposer(offer, true));
-                                                habbo.getClient().sendResponse(new AddHabboItemComposer(item));
+                                                habbo.getClient().sendResponse(new UnseenItemsComposer(item));
                                                 habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                                             }
                                         }
@@ -285,7 +285,7 @@ public class MarketPlace {
                                         }
 
                                         client.sendResponse(new CreditBalanceComposer(client.getHabbo()));
-                                        client.sendResponse(new AddHabboItemComposer(item));
+                                        client.sendResponse(new UnseenItemsComposer(item));
                                         client.sendResponse(new FurniListInvalidateComposer());
                                         client.sendResponse(new MarketplaceBuyOfferResultComposer(MarketplaceBuyOfferResultComposer.REFRESH, 0, offerId, price));
 

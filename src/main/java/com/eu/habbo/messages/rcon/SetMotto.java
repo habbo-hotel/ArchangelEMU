@@ -2,7 +2,7 @@ package com.eu.habbo.messages.rcon;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class SetMotto extends RCONMessage<SetMotto.SetMottoJSON> {
 
         if (habbo != null) {
             habbo.getHabboInfo().setMotto(json.motto);
-            habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
+            habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
         } else {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("UPDATE users SET motto = ? WHERE id = ? LIMIT 1")) {

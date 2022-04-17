@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomPromotion;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.promotions.RoomEventComposer;
 
 
 public class UpdateRoomPromotionEvent extends MessageHandler {
@@ -33,7 +33,7 @@ public class UpdateRoomPromotionEvent extends MessageHandler {
             roomPromotion.needsUpdate = true;
             roomPromotion.save();
 
-            room.sendComposer(new RoomPromotionMessageComposer(room, roomPromotion).compose());
+            room.sendComposer(new RoomEventComposer(room, roomPromotion).compose());
         }
     }
 }

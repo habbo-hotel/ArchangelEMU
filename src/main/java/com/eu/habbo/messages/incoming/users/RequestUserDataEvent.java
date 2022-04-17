@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.users.AccountPreferencesComposer;
-import com.eu.habbo.messages.outgoing.users.UserDataComposer;
+import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 import com.eu.habbo.messages.outgoing.users.UserPerksComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class RequestUserDataEvent extends MessageHandler {
             ArrayList<ServerMessage> messages = new ArrayList<>();
 
 
-            messages.add(new UserDataComposer(this.client.getHabbo()).compose());
+            messages.add(new UserObjectComposer(this.client.getHabbo()).compose());
             messages.add(new UserPerksComposer(this.client.getHabbo()).compose());
 
             messages.add(new AccountPreferencesComposer(this.client.getHabbo()).compose());

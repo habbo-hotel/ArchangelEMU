@@ -11,7 +11,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.guilds.forums.PostUpdateMessageComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.UpdateMessageMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 
@@ -59,7 +59,7 @@ public class GuildForumModerateMessageEvent extends MessageHandler {
 
         comment.setState(ForumThreadState.fromValue(state));
         comment.setAdminId(this.client.getHabbo().getHabboInfo().getId());
-        this.client.sendResponse(new PostUpdateMessageComposer(guild.getId(), thread.getThreadId(), comment));
+        this.client.sendResponse(new UpdateMessageMessageComposer(guild.getId(), thread.getThreadId(), comment));
 
         Emulator.getThreading().run(comment);
 

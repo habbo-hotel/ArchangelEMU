@@ -11,7 +11,7 @@ import com.eu.habbo.habbohotel.pets.PetVocalsType;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserTypingComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserTypingMessageComposer;
 import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
 import gnu.trove.iterator.TIntObjectIterator;
@@ -83,7 +83,7 @@ public class CommandHandler {
                                         }
 
                                         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null)
-                                            gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserTypingComposer(gameClient.getHabbo().getRoomUnit(), false).compose());
+                                            gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserTypingMessageComposer(gameClient.getHabbo().getRoomUnit(), false).compose());
 
                                         UserCommandEvent event = new UserCommandEvent(gameClient.getHabbo(), parts, command.handle(gameClient, parts));
                                         Emulator.getPluginManager().fireEvent(event);

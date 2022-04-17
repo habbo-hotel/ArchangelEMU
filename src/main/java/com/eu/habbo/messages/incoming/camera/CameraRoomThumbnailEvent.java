@@ -2,7 +2,7 @@ package com.eu.habbo.messages.incoming.camera;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.camera.CameraRoomThumbnailSavedComposer;
+import com.eu.habbo.messages.outgoing.camera.ThumbnailStatusMessageComposer;
 import com.eu.habbo.networking.camera.CameraClient;
 import com.eu.habbo.networking.camera.messages.outgoing.CameraRenderImageComposer;
 import com.eu.habbo.util.crypto.ZIP;
@@ -30,7 +30,7 @@ public class CameraRoomThumbnailEvent extends MessageHandler {
 
             Emulator.getCameraClient().sendMessage(composer);
         } else {
-            this.client.sendResponse(new CameraRoomThumbnailSavedComposer());
+            this.client.sendResponse(new ThumbnailStatusMessageComposer());
             this.client.getHabbo().alert(Emulator.getTexts().getValue("camera.disabled"));
         }
     }

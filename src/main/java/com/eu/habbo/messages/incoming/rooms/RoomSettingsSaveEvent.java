@@ -24,12 +24,12 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 String name = this.packet.readString();
 
                 if (name.trim().isEmpty() || name.length() > 60) {
-                    this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.ROOM_NAME_MISSING, ""));
+                    this.client.sendResponse(new RoomSettingsSaveErrorComposer(room.getId(), RoomSettingsSaveErrorComposer.ROOM_NAME_MISSING, ""));
                     return;
                 }
 
                 if (!Emulator.getGameEnvironment().getWordFilter().filter(name, this.client.getHabbo()).equals(name)) {
-                    this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.ROOM_NAME_BADWORDS, ""));
+                    this.client.sendResponse(new RoomSettingsSaveErrorComposer(room.getId(), RoomSettingsSaveErrorComposer.ROOM_NAME_BADWORDS, ""));
                     return;
                 }
 
@@ -40,7 +40,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 }
 
                 if (!Emulator.getGameEnvironment().getWordFilter().filter(description, this.client.getHabbo()).equals(description)) {
-                    this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.ROOM_DESCRIPTION_BADWORDS, ""));
+                    this.client.sendResponse(new RoomSettingsSaveErrorComposer(room.getId(), RoomSettingsSaveErrorComposer.ROOM_DESCRIPTION_BADWORDS, ""));
                     return;
                 }
 
@@ -48,7 +48,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
 
                 String password = this.packet.readString();
                 if (state == RoomState.PASSWORD && password.isEmpty() && (room.getPassword() == null || room.getPassword().isEmpty())) {
-                    this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.PASSWORD_REQUIRED, ""));
+                    this.client.sendResponse(new RoomSettingsSaveErrorComposer(room.getId(), RoomSettingsSaveErrorComposer.PASSWORD_REQUIRED, ""));
                     return;
                 }
 
@@ -60,14 +60,14 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                     String tag = this.packet.readString();
 
                     if (tag.length() > 15) {
-                        this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.TAGS_TOO_LONG, ""));
+                        this.client.sendResponse(new RoomSettingsSaveErrorComposer(room.getId(), RoomSettingsSaveErrorComposer.TAGS_TOO_LONG, ""));
                         return;
                     }
                     tags.append(tag).append(";");
                 }
 
                 if (!Emulator.getGameEnvironment().getWordFilter().filter(tags.toString(), this.client.getHabbo()).equals(tags.toString())) {
-                    this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.ROOM_TAGS_BADWWORDS, ""));
+                    this.client.sendResponse(new RoomSettingsSaveErrorComposer(room.getId(), RoomSettingsSaveErrorComposer.ROOM_TAGS_BADWWORDS, ""));
                     return;
                 }
 
@@ -75,7 +75,7 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 if (tags.length() > 0) {
                     for (String s : Emulator.getConfig().getValue("hotel.room.tags.staff").split(";")) {
                         if (tags.toString().contains(s)) {
-                            this.client.sendResponse(new RoomEditSettingsErrorComposer(room.getId(), RoomEditSettingsErrorComposer.RESTRICTED_TAGS, "1"));
+                            this.client.sendResponse(new RoomSettingsSaveErrorComposer(room.getId(), RoomSettingsSaveErrorComposer.RESTRICTED_TAGS, "1"));
                             return;
                         }
                     }
@@ -124,9 +124,9 @@ public class RoomSettingsSaveEvent extends MessageHandler {
                 room.setChatProtection(this.packet.readInt());
                 room.setNeedsUpdate(true);
 
-                room.sendComposer(new RoomThicknessComposer(room).compose());
-                room.sendComposer(new RoomChatSettingsComposer(room).compose());
-                room.sendComposer(new RoomSettingsUpdatedComposer(room).compose());
+                room.sendComposer(new RoomVisualizationSettingsComposer(room).compose());
+                room.sendComposer(new RoomChatSettingsMessageComposer(room).compose());
+                room.sendComposer(new RoomInfoUpdatedComposer(room).compose());
                 this.client.sendResponse(new RoomSettingsSavedComposer(room));
                 //TODO Find packet for update room name.
             }

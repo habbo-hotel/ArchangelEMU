@@ -8,7 +8,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.RecyclerFinishedComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
@@ -57,7 +57,7 @@ public class RecycleEvent extends MessageHandler {
                 return;
             }
 
-            this.client.sendResponse(new AddHabboItemComposer(reward));
+            this.client.sendResponse(new UnseenItemsComposer(reward));
             this.client.getHabbo().getInventory().getItemsComponent().addItem(reward);
             this.client.sendResponse(new RecyclerFinishedComposer(RecyclerFinishedComposer.RECYCLING_COMPLETE));
             this.client.sendResponse(new FurniListInvalidateComposer());

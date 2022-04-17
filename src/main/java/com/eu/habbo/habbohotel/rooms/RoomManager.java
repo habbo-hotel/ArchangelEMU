@@ -38,9 +38,9 @@ import com.eu.habbo.messages.outgoing.rooms.*;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
-import com.eu.habbo.messages.outgoing.rooms.promotions.RoomPromotionMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.promotions.RoomEventComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
-import com.eu.habbo.messages.outgoing.users.MutedWhisperComposer;
+import com.eu.habbo.messages.outgoing.users.RemainingMutePeriodComposer;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomCreatedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomFloorItemsLoadEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUncachedEvent;
@@ -447,7 +447,7 @@ public class RoomManager {
             room.setNeedsUpdate(true);
             habbo.getHabboStats().votedRooms.push(room.getId());
             for (Habbo h : room.getHabbos()) {
-                h.getClient().sendResponse(new RoomScoreComposer(room.getScore(), !this.hasVotedForRoom(h, room)));
+                h.getClient().sendResponse(new RoomRatingComposer(room.getScore(), !this.hasVotedForRoom(h, room)));
             }
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_votes VALUES (?, ?)")) {
@@ -594,7 +594,7 @@ public class RoomManager {
             if (existingRoom.getRoom() != null) {
                 if (existingRoom.getCurrentLocation() != null)
                     existingRoom.getCurrentLocation().removeUnit(existingRoom);
-                existingRoom.getRoom().sendComposer(new RoomUserRemoveComposer(existingRoom).compose());
+                existingRoom.getRoom().sendComposer(new UserRemoveMessageComposer(existingRoom).compose());
             }
             habbo.getRoomUnit().setRoom(null);
         }
@@ -651,26 +651,26 @@ public class RoomManager {
 
         habbo.getHabboInfo().setLoadingRoom(room.getId());
 
-        habbo.getClient().sendResponse(new RoomModelComposer(room));
+        habbo.getClient().sendResponse(new RoomReadyMessageComposer(room));
 
         if (!room.getWallPaint().equals("0.0"))
-            habbo.getClient().sendResponse(new RoomPaintComposer("wallpaper", room.getWallPaint()));
+            habbo.getClient().sendResponse(new RoomPropertyMessageComposer("wallpaper", room.getWallPaint()));
 
         if (!room.getFloorPaint().equals("0.0"))
-            habbo.getClient().sendResponse(new RoomPaintComposer("floor", room.getFloorPaint()));
+            habbo.getClient().sendResponse(new RoomPropertyMessageComposer("floor", room.getFloorPaint()));
 
-        habbo.getClient().sendResponse(new RoomPaintComposer("landscape", room.getBackgroundPaint()));
+        habbo.getClient().sendResponse(new RoomPropertyMessageComposer("landscape", room.getBackgroundPaint()));
 
         room.refreshRightsForHabbo(habbo);
 
-        habbo.getClient().sendResponse(new RoomScoreComposer(room.getScore(), !this.hasVotedForRoom(habbo, room)));
+        habbo.getClient().sendResponse(new RoomRatingComposer(room.getScore(), !this.hasVotedForRoom(habbo, room)));
 
         habbo.getRoomUnit().setFastWalk(habbo.getRoomUnit().isFastWalk() && habbo.hasPermission("cmd_fastwalk", room.hasRights(habbo)));
 
         if (room.isPromoted()) {
-            habbo.getClient().sendResponse(new RoomPromotionMessageComposer(room, room.getPromotion()));
+            habbo.getClient().sendResponse(new RoomEventComposer(room, room.getPromotion()));
         } else {
-            habbo.getClient().sendResponse(new RoomPromotionMessageComposer(null, null));
+            habbo.getClient().sendResponse(new RoomEventComposer(null, null));
         }
 
         if (room.getOwnerId() != habbo.getHabboInfo().getId() && !habbo.getHabboStats().visitedRoom(room.getId())) {
@@ -733,7 +733,7 @@ public class RoomManager {
                 GameClient client = habboToSendEnter.getClient();
                 if (client != null) {
                     client.sendResponse(new RoomUsersComposer(habbo).compose());
-                    client.sendResponse(new RoomUserStatusComposer(habbo.getRoomUnit()).compose());
+                    client.sendResponse(new UserUpdateComposer(habbo.getRoomUnit()).compose());
                 }
             }
 
@@ -745,7 +745,7 @@ public class RoomManager {
 
             synchronized (room.roomUnitLock) {
                 habbo.getClient().sendResponse(new RoomUsersComposer(habbos));
-                habbo.getClient().sendResponse(new RoomUserStatusComposer(habbos));
+                habbo.getClient().sendResponse(new UserUpdateComposer(habbos));
             }
 
             if (habbo.getHabboStats().guild != 0) {
@@ -775,13 +775,13 @@ public class RoomManager {
                     habbo.getClient().sendResponse(new DanceMessageComposer(bot.getRoomUnit()));
                 }
 
-                habbo.getClient().sendResponse(new RoomUserStatusComposer(bot.getRoomUnit(), bot.getRoomUnit().getZ()));
+                habbo.getClient().sendResponse(new UserUpdateComposer(bot.getRoomUnit(), bot.getRoomUnit().getZ()));
             }
         }
 
-        habbo.getClient().sendResponse(new RoomPaneComposer(room, room.isOwner(habbo)));
+        habbo.getClient().sendResponse(new RoomEntryInfoMessageComposer(room, room.isOwner(habbo)));
 
-        habbo.getClient().sendResponse(new RoomThicknessComposer(room));
+        habbo.getClient().sendResponse(new RoomVisualizationSettingsComposer(room));
 
         habbo.getClient().sendResponse(new GetGuestRoomResultComposer(room, habbo.getClient().getHabbo(), false, true));
 
@@ -821,7 +821,7 @@ public class RoomManager {
         if (!room.getCurrentPets().isEmpty()) {
             habbo.getClient().sendResponse(new RoomPetComposer(room.getCurrentPets()));
             for (Pet pet : room.getCurrentPets().valueCollection()) {
-                habbo.getClient().sendResponse(new RoomUserStatusComposer(pet.getRoomUnit()));
+                habbo.getClient().sendResponse(new UserUpdateComposer(pet.getRoomUnit()));
             }
         }
 
@@ -829,7 +829,7 @@ public class RoomManager {
             habbo.getHabboStats().mutedBubbleTracker = true;
             int remainingMuteTime = habbo.getHabboStats().remainingMuteTime();
             habbo.getClient().sendResponse(new FloodControlMessageComposer(remainingMuteTime));
-            habbo.getClient().sendResponse(new MutedWhisperComposer(remainingMuteTime));
+            habbo.getClient().sendResponse(new RemainingMutePeriodComposer(remainingMuteTime));
             room.sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.MUTED).compose());
         } else if (habbo.getHabboStats().mutedBubbleTracker) {
             habbo.getHabboStats().mutedBubbleTracker = false;
@@ -851,7 +851,7 @@ public class RoomManager {
                 }
 
                 if (roomHabbo.getRoomUnit().isIdle()) {
-                    habbo.getClient().sendResponse(new RoomUnitIdleComposer(roomHabbo.getRoomUnit()));
+                    habbo.getClient().sendResponse(new SleepMessageComposer(roomHabbo.getRoomUnit()));
                 }
 
                 if (roomHabbo.getHabboStats().userIgnored(habbo.getHabboInfo().getId())) {
@@ -874,7 +874,7 @@ public class RoomManager {
 
                 if (roomHabbo.getRoomUnit().getRoomUnitType().equals(RoomUnitType.PET)) {
                     try {
-                        habbo.getClient().sendResponse(new RoomUserRemoveComposer(roomHabbo.getRoomUnit()));
+                        habbo.getClient().sendResponse(new UserRemoveMessageComposer(roomHabbo.getRoomUnit()));
                         habbo.getClient().sendResponse(new RoomUserPetComposer(((PetData) roomHabbo.getHabboStats().cache.get("pet_type")).getType(), (Integer) roomHabbo.getHabboStats().cache.get("pet_race"), (String) roomHabbo.getHabboStats().cache.get("pet_color"), roomHabbo));
                     } catch (Exception e) {
 

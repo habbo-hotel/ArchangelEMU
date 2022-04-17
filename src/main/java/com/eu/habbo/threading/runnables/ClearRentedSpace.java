@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import gnu.trove.set.hash.THashSet;
 
 public class ClearRentedSpace implements Runnable {
@@ -35,7 +35,7 @@ public class ClearRentedSpace implements Runnable {
         Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.item.getRenterId());
 
         if (owner != null) {
-            owner.getClient().sendResponse(new AddHabboItemComposer(items));
+            owner.getClient().sendResponse(new UnseenItemsComposer(items));
             owner.getHabboStats().rentedItemId = 0;
             owner.getHabboStats().rentedTimeEnd = 0;
         } else {

@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ class TeleportActionTwo implements Runnable {
             return;
 
         this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
-        this.room.sendComposer(new RoomUserStatusComposer(this.client.getHabbo().getRoomUnit()).compose());
+        this.room.sendComposer(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
 
         if (((InteractionTeleport) this.currentTeleport).getTargetRoomId() > 0 && ((InteractionTeleport) this.currentTeleport).getTargetId() > 0) {
             HabboItem item = this.room.getHabboItem(((InteractionTeleport) this.currentTeleport).getTargetId());

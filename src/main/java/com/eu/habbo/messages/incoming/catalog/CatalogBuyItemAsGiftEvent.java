@@ -20,7 +20,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageCo
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.users.HabboActivityPointNotificationMessageComposer;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
@@ -334,7 +334,7 @@ public class CatalogBuyItemAsGiftEvent extends MessageHandler {
                     }
 
                     if (habbo != null) {
-                        habbo.getClient().sendResponse(new AddHabboItemComposer(gift));
+                        habbo.getClient().sendResponse(new UnseenItemsComposer(gift));
                         habbo.getClient().getHabbo().getInventory().getItemsComponent().addItem(gift);
                         habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                         THashMap<String, String> keys = new THashMap<>();

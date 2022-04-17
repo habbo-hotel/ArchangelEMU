@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeVideoComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayVideoMessageComposer;
 import com.eu.habbo.threading.runnables.YoutubeAdvanceVideo;
 
 import java.util.Optional;
@@ -46,7 +46,7 @@ public class YoutubeRequestPlaylistChange extends MessageHandler {
             ((InteractionYoutubeTV) item).cancelAdvancement();
 
             room.updateItem(item);
-            room.sendComposer(new YoutubeVideoComposer(itemId, video, true, 0).compose());
+            room.sendComposer(new YoutubeDisplayVideoMessageComposer(itemId, video, true, 0).compose());
             ((InteractionYoutubeTV) item).autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo((InteractionYoutubeTV) item), video.getDuration() * 1000);
 
             item.needsUpdate(true);

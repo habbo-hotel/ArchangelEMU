@@ -2,7 +2,7 @@ package com.eu.habbo.messages.incoming.catalog;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.catalog.RedeemVoucherErrorComposer;
+import com.eu.habbo.messages.outgoing.catalog.VoucherRedeemErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 
@@ -17,7 +17,7 @@ public class RedeemVoucherEvent extends MessageHandler {
         String voucherCode = this.packet.readString();
 
         if (voucherCode.contains(" ")) {
-            this.client.sendResponse(new RedeemVoucherErrorComposer(RedeemVoucherErrorComposer.TECHNICAL_ERROR));
+            this.client.sendResponse(new VoucherRedeemErrorMessageComposer(VoucherRedeemErrorMessageComposer.TECHNICAL_ERROR));
             return;
         }
 

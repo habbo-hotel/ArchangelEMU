@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.items.rentablespaces.RentableSpaceInfoComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.rentablespaces.RentableSpaceStatusMessageComposer;
 import com.eu.habbo.threading.runnables.ClearRentedSpace;
 import gnu.trove.set.hash.THashSet;
 import org.slf4j.Logger;
@@ -244,25 +244,25 @@ public class InteractionRentableSpace extends HabboItem {
 
     public int getRentErrorCode(Habbo habbo) {
         if (this.isRented() && this.renterId != habbo.getHabboInfo().getId()) {
-            return RentableSpaceInfoComposer.SPACE_ALREADY_RENTED;
+            return RentableSpaceStatusMessageComposer.SPACE_ALREADY_RENTED;
         }
 
         if (habbo.getHabboStats().isRentingSpace() && habbo.getHabboStats().getRentedItemId() != this.getId()) {
-            return RentableSpaceInfoComposer.CAN_RENT_ONLY_ONE_SPACE;
+            return RentableSpaceStatusMessageComposer.CAN_RENT_ONLY_ONE_SPACE;
         }
 
         if (habbo.getHabboStats().getClubExpireTimestamp() < Emulator.getIntUnixTimestamp()) {
-            return RentableSpaceInfoComposer.CANT_RENT_NO_HABBO_CLUB;
+            return RentableSpaceStatusMessageComposer.CANT_RENT_NO_HABBO_CLUB;
         }
 
         if (this.rentCost() > habbo.getHabboInfo().getCredits()) {
-            return RentableSpaceInfoComposer.NOT_ENOUGH_CREDITS;
+            return RentableSpaceStatusMessageComposer.NOT_ENOUGH_CREDITS;
         }
 
         return 0;
     }
 
     public void sendRentWidget(Habbo habbo) {
-        habbo.getClient().sendResponse(new RentableSpaceInfoComposer(habbo, this, this.getRentErrorCode(habbo)));
+        habbo.getClient().sendResponse(new RentableSpaceStatusMessageComposer(habbo, this, this.getRentErrorCode(habbo)));
     }
 }

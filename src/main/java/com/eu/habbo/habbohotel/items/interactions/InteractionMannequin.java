@@ -8,8 +8,8 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
-import com.eu.habbo.messages.outgoing.users.UserDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
+import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -99,8 +99,8 @@ public class InteractionMannequin extends HabboItem {
             return;
 
         client.getHabbo().getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_MANNEQUIN ? ClothingValidationManager.validateLook(client.getHabbo(), newLook, client.getHabbo().getHabboInfo().getGender().name()) : newLook);
-        room.sendComposer(new RoomUserDataComposer(client.getHabbo()).compose());
-        client.sendResponse(new UserDataComposer(client.getHabbo()));
+        room.sendComposer(new UserChangeMessageComposer(client.getHabbo()).compose());
+        client.sendResponse(new UserObjectComposer(client.getHabbo()));
     }
 
     @Override

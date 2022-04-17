@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.modtool.ModToolUserChatlogComposer;
+import com.eu.habbo.messages.outgoing.modtool.UserChatlogComposer;
 
 public class ModToolRequestUserChatlogEvent extends MessageHandler {
     @Override
@@ -14,7 +14,7 @@ public class ModToolRequestUserChatlogEvent extends MessageHandler {
             int userId = this.packet.readInt();
             String username = HabboManager.getOfflineHabboInfo(userId).getUsername();
 
-            this.client.sendResponse(new ModToolUserChatlogComposer(Emulator.getGameEnvironment().getModToolManager().getUserRoomVisitsAndChatlogs(userId), userId, username));
+            this.client.sendResponse(new UserChatlogComposer(Emulator.getGameEnvironment().getModToolManager().getUserRoomVisitsAndChatlogs(userId), userId, username));
         } else {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.chatlog").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
         }

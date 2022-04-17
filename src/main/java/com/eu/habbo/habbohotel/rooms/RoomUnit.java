@@ -11,7 +11,7 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitSetGoalEvent;
@@ -311,7 +311,7 @@ public class RoomUnit {
                         this.tilesWalked--;
                         this.setGoalLocation(this.currentLocation);
                         this.status.remove(RoomUnitStatus.MOVE);
-                        room.sendComposer(new RoomUserStatusComposer(this).compose());
+                        room.sendComposer(new UserUpdateComposer(this).compose());
 
                         if (habbo != null) {
                             ((ConditionalGate) item).onRejected(this, this.getRoom(), new Object[]{});
@@ -346,7 +346,7 @@ public class RoomUnit {
                         ridingUnit.setPreviousLocation(this.getCurrentLocation());
                         ridingUnit.setGoalLocation(this.getGoal());
                         ridingUnit.setStatus(RoomUnitStatus.MOVE, next.x + "," + next.y + "," + (zHeight - 1.0));
-                        room.sendComposer(new RoomUserStatusComposer(ridingUnit).compose());
+                        room.sendComposer(new UserUpdateComposer(ridingUnit).compose());
                         //ridingUnit.setZ(zHeight - 1.0);
                     }
                 }

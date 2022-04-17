@@ -8,8 +8,8 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserRemoveComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,10 +79,10 @@ class TeleportInteraction extends Thread {
                 this.client.getHabbo().getRoomUnit().setLocation(this.room.getLayout().getTile(this.teleportTwo.getX(), this.teleportTwo.getY()));
                 this.client.getHabbo().getRoomUnit().setZ(this.teleportTwo.getZ());
 
-                this.room.sendComposer(new RoomUserRemoveComposer(this.client.getHabbo().getRoomUnit()).compose());
-                this.targetRoom.sendComposer(new RoomUserRemoveComposer(this.client.getHabbo().getRoomUnit()).compose());
+                this.room.sendComposer(new UserRemoveMessageComposer(this.client.getHabbo().getRoomUnit()).compose());
+                this.targetRoom.sendComposer(new UserRemoveMessageComposer(this.client.getHabbo().getRoomUnit()).compose());
                 this.targetRoom.sendComposer(new RoomUsersComposer(this.client.getHabbo()).compose());
-                this.targetRoom.sendComposer(new RoomUserStatusComposer(this.client.getHabbo().getRoomUnit()).compose());
+                this.targetRoom.sendComposer(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
                 this.targetRoom.sendComposer(new AvatarEffectMessageComposer(this.client.getHabbo().getRoomUnit()).compose());
                 this.room.updateItem(this.teleportOne);
                 this.targetRoom.updateItem(this.teleportTwo);

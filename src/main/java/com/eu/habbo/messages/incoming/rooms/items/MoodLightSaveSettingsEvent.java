@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomMoodlightData;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.items.MoodLightDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.RoomDimmerPresetsComposer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -59,6 +59,6 @@ public class MoodLightSaveSettingsEvent extends MessageHandler {
         }
 
         room.setNeedsUpdate(true);
-        this.client.sendResponse(new MoodLightDataComposer(room.getMoodlightData()));
+        this.client.sendResponse(new RoomDimmerPresetsComposer(room.getMoodlightData()));
     }
 }

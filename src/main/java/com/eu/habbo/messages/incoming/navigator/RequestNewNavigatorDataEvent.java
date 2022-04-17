@@ -11,6 +11,6 @@ public class RequestNewNavigatorDataEvent extends MessageHandler {
         this.client.sendResponse(new NavigatorLiftedRoomsComposer());
         this.client.sendResponse(new CollapsedCategoriesComposer());
         this.client.sendResponse(new NavigatorSavedSearchesComposer(this.client.getHabbo().getHabboInfo().getSavedSearches()));
-        this.client.sendResponse(new NewNavigatorEventCategoriesComposer());
+        this.client.sendResponse(new UserEventCatsComposer());
     }
 }

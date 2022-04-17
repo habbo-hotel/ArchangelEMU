@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserDataComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.users.UserDisconnectEvent;
@@ -68,7 +68,7 @@ public class InteractionFootballGate extends HabboItem {
             habbo.getHabboStats().cache.remove(CACHE_KEY);
             habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
             if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new RoomUserDataComposer(habbo).compose());
+                habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
             }
         }
     }
@@ -124,7 +124,7 @@ public class InteractionFootballGate extends HabboItem {
                     habbo.getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_FBALLGATE ? ClothingValidationManager.validateLook(habbo, lookEvent.newLook, lookEvent.gender.name()) : lookEvent.newLook);
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
-                    room.sendComposer(new RoomUserDataComposer(habbo).compose());
+                    room.sendComposer(new UserChangeMessageComposer(habbo).compose());
                 }
 
                 habbo.getHabboStats().cache.remove(CACHE_KEY);
@@ -138,7 +138,7 @@ public class InteractionFootballGate extends HabboItem {
                     habbo.getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_FBALLGATE ? ClothingValidationManager.validateLook(habbo, lookEvent.newLook, lookEvent.gender.name()) : lookEvent.newLook);
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
-                    room.sendComposer(new RoomUserDataComposer(habbo).compose());
+                    room.sendComposer(new UserChangeMessageComposer(habbo).compose());
                 }
             }
         }

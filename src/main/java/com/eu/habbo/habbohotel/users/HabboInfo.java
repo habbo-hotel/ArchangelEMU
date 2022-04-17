@@ -12,7 +12,7 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.procedure.TIntIntProcedure;
 import org.slf4j.Logger;
@@ -451,7 +451,7 @@ public class HabboInfo implements Runnable {
         roomUnit.setZ(riding.getRoomUnit().getZ());
         roomUnit.setPreviousLocationZ(riding.getRoomUnit().getZ());
         roomUnit.stopWalking();
-        room.sendComposer(new RoomUserStatusComposer(roomUnit).compose());
+        room.sendComposer(new UserUpdateComposer(roomUnit).compose());
         List<RoomTile> availableTiles = isRemoving ? new ArrayList<>() : this.getCurrentRoom().getLayout().getWalkableTilesAround(roomUnit.getCurrentLocation());
 
         RoomTile tile = availableTiles.isEmpty() ? roomUnit.getCurrentLocation() : availableTiles.get(0);

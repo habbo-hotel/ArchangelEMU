@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.LimitedEditionSoldOutComposer;
 import com.eu.habbo.messages.outgoing.crafting.CraftingResultComposer;
-import com.eu.habbo.messages.outgoing.inventory.AddHabboItemComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
@@ -76,7 +76,7 @@ public class CraftingCraftSecretEvent extends MessageHandler {
                             AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("AtcgSecret"));
                         }
                         this.client.getHabbo().getInventory().getItemsComponent().addItem(rewardItem);
-                        this.client.sendResponse(new AddHabboItemComposer(rewardItem));
+                        this.client.sendResponse(new UnseenItemsComposer(rewardItem));
                         for (HabboItem item : habboItems) {
                             this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
                             this.client.sendResponse(new FurniListRemoveComposer(item.getGiftAdjustedId()));
