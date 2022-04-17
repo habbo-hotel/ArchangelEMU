@@ -311,14 +311,14 @@ public class PacketManager {
         this.registerHandler(Incoming.SaveBlockCameraFollowEvent, SaveBlockCameraFollowEvent.class);
         this.registerHandler(Incoming.SetIgnoreRoomInvitesEvent, SaveIgnoreRoomInvitesEvent.class);
         this.registerHandler(Incoming.SavePreferOldChatEvent, SavePreferOldChatEvent.class);
-        this.registerHandler(Incoming.AvatarEffectActivatedComposer, ActivateEffectEvent.class);
-        this.registerHandler(Incoming.AvatarEffectSelectedComposer, EnableEffectEvent.class);
+        this.registerHandler(Incoming.AvatarEffectActivatedEvent, ActivateEffectEvent.class);
+        this.registerHandler(Incoming.AvatarEffectSelectedEvent, EnableEffectEvent.class);
         this.registerHandler(Incoming.EventLogEvent, UserActivityEvent.class);
         this.registerHandler(Incoming.UserNuxEvent, UserNuxEvent.class);
         this.registerHandler(Incoming.PickNewUserGiftEvent, PickNewUserGiftEvent.class);
         this.registerHandler(Incoming.CheckUserNameEvent, ChangeNameCheckUsernameEvent.class);
         this.registerHandler(Incoming.ChangeUserNameEvent, ConfirmChangeNameEvent.class);
-        this.registerHandler(Incoming.SetChatStylePreferenceComposer, ChangeChatBubbleEvent.class);
+        this.registerHandler(Incoming.SetChatStylePreferenceEvent, ChangeChatBubbleEvent.class);
         this.registerHandler(Incoming.UpdateUIFlagsEvent, UpdateUIFlagsEvent.class);
     }
 
@@ -447,7 +447,7 @@ public class PacketManager {
         this.registerHandler(Incoming.JukeBoxEventOne, JukeBoxEventOne.class);
         this.registerHandler(Incoming.JukeBoxEventTwo, JukeBoxEventTwo.class);
         this.registerHandler(Incoming.SavePostItStickyPoleEvent, SavePostItStickyPoleEvent.class);
-        this.registerHandler(Incoming.GetRoomAdPurchaseInfoComposer, RequestPromotionRoomsEvent.class);
+        this.registerHandler(Incoming.GetRoomAdPurchaseInfoEvent, RequestPromotionRoomsEvent.class);
         this.registerHandler(Incoming.BuyRoomPromotionEvent, BuyRoomPromotionEvent.class);
         this.registerHandler(Incoming.EditRoomPromotionMessageEvent, UpdateRoomPromotionEvent.class);
         this.registerHandler(Incoming.IgnoreUserEvent, IgnoreRoomUserEvent.class);
@@ -467,7 +467,7 @@ public class PacketManager {
 
     void registerPolls() throws Exception {
         this.registerHandler(Incoming.CancelPollEvent, CancelPollEvent.class);
-        this.registerHandler(Incoming.PollStartComposer, GetPollDataEvent.class);
+        this.registerHandler(Incoming.PollStartEvent, GetPollDataEvent.class);
         this.registerHandler(Incoming.AnswerPollEvent, AnswerPollEvent.class);
     }
 
@@ -639,7 +639,7 @@ public class PacketManager {
         this.registerHandler(Incoming.GameCenterRequestGamesEvent, GameCenterRequestGamesEvent.class);
         this.registerHandler(Incoming.GameCenterRequestAccountStatusEvent, GameCenterRequestAccountStatusEvent.class);
         this.registerHandler(Incoming.GameCenterJoinGameEvent, GameCenterJoinGameEvent.class);
-        this.registerHandler(Incoming.GetWeeklyGameRewardWinnersComposer, GameCenterLoadGameEvent.class);
+        this.registerHandler(Incoming.GetWeeklyGameRewardWinnersEvent, GameCenterLoadGameEvent.class);
         this.registerHandler(Incoming.GameCenterLeaveGameEvent, GameCenterLeaveGameEvent.class);
         this.registerHandler(Incoming.GameCenterEvent, GameCenterEvent.class);
         this.registerHandler(Incoming.Game2GetAccountGameStatusEvent, GameCenterRequestGameStatusEvent.class);

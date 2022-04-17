@@ -4,8 +4,8 @@ public class Incoming {
     public static final int PongEvent = 2596;
     public static final int CheckUserNameEvent = 3950;
     public static final int ChangeUserNameEvent = 2977;
-    public static final int AvatarEffectActivatedComposer = 2959;
-    public static final int AvatarEffectSelectedComposer = 1752;
+    public static final int AvatarEffectActivatedEvent = 2959;
+    public static final int AvatarEffectSelectedEvent = 1752;
     public static final int EventLogEvent = 3457;
     public static final int NavigatorSetSearchCodeViewModeEvent = 1202;
     public static final int NavigatorCollapseCategoryEvent = 1834;
@@ -107,7 +107,7 @@ public class Incoming {
     public static final int RequestProfileFriendsEvent = 2138;
     public static final int TradeCancelOfferItemEvent = 3845;
     public static final int TriggerDiceEvent = 1990;
-    public static final int PollStartComposer = 109;
+    public static final int PollStartEvent = 109;
     public static final int MachineIDEvent = 2490;
     public static final int RequestDiscountEvent = 223;
     public static final int RequestFriendRequestEvent = 2448;
@@ -264,7 +264,7 @@ public class Incoming {
     public static final int RoomUserMuteEvent = 3485;
     //public static final int JukeBoxEventThree = 3846;
     public static final int RequestDeleteRoomEvent = 532;
-    public static final int GetRoomAdPurchaseInfoComposer = 1075;
+    public static final int GetRoomAdPurchaseInfoEvent = 1075;
     public static final int BuyRoomPromotionEvent = 777;
     public static final int EditRoomPromotionMessageEvent = 3991;
     public static final int RequestGuideToolEvent = 1922;
@@ -299,7 +299,7 @@ public class Incoming {
     public static final int RoomUserBanEvent = 1477;
     public static final int RequestNavigatorSettingsEvent = 1782;
     public static final int AddSavedSearchEvent = 2226;
-    public static final int WhisperGroupComposer = 1118;
+    public static final int WhisperGroupEvent = 1118;
     public static final int DeleteSavedSearchEvent = 1954;
     public static final int SaveWindowSettingsEvent = 3159;
     public static final int GetHabboGuildBadgesMessageEvent = 21;
@@ -342,7 +342,7 @@ public class Incoming {
     public static final int InterstitialShownEvent = 1109;
 
     public static final int GameCenterJoinGameEvent = 1458;
-    public static final int GetWeeklyGameRewardWinnersComposer = 1054;
+    public static final int GetWeeklyGameRewardWinnersEvent = 1054;
     public static final int GameCenterEvent = 2914;
     public static final int GameCenterLeaveGameEvent = 3207;
     public static final int ExtendRentOrBuyoutFurniEvent = 1071;
@@ -357,7 +357,7 @@ public class Incoming {
     public static final int ModToolIssueDefaultSanctionEvent = 2717;
 
     public static final int TradeCancelEvent = 2341;
-    public static final int SetChatStylePreferenceComposer = 1030;
+    public static final int SetChatStylePreferenceEvent = 1030;
     public static final int LoveLockStartConfirmEvent = 3775;
 
     public static final int HotelViewRequestLTDAvailabilityEvent = 410;
