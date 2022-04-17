@@ -2,12 +2,12 @@ package com.eu.habbo.messages.incoming;
 
 public class Incoming {
     public static final int PongEvent = 2596;
-    public static final int ChangeNameCheckUsernameEvent = 3950;
-    public static final int ConfirmChangeNameEvent = 2977;
-    public static final int ActivateEffectEvent = 2959;
-    public static final int EnableEffectEvent = 1752;
-    public static final int UserActivityEvent = 3457;
-    public static final int NavigatorCategoryListModeEvent = 1202;
+    public static final int CheckUserNameEvent = 3950;
+    public static final int ChangeUserNameEvent = 2977;
+    public static final int AvatarEffectActivatedComposer = 2959;
+    public static final int AvatarEffectSelectedComposer = 1752;
+    public static final int EventLogEvent = 3457;
+    public static final int NavigatorSetSearchCodeViewModeEvent = 1202;
     public static final int NavigatorCollapseCategoryEvent = 1834;
     public static final int NavigatorUncollapseCategoryEvent = 637;
     public static final int PickNewUserGiftEvent = 1822;
@@ -16,7 +16,7 @@ public class Incoming {
     public static final int RequestCatalogPageEvent = 412;
     public static final int RequestWearingBadgesEvent = 2091;
     public static final int BotPickupEvent = 3323;
-    public static final int HorseRideEvent = 1036;
+    public static final int MountPetEvent = 1036;
     public static final int RequestCreateRoomEvent = 2752;
     public static final int SaveMottoEvent = 2228;
     public static final int ModToolAlertEvent = 1840;
@@ -59,6 +59,8 @@ public class Incoming {
     public static final int RecycleEvent = 2771;
     public static final int RequestRoomCategoriesEvent = 3027; //1371;
     public static final int ToggleWallItemEvent = 210;
+    public static final int ForwardToARandomPromotedRoomEvent = 10;
+    public static final int MyFrequentRoomHistorySearchEvent = 1002;
     public static final int RoomUserTalkEvent = 1314;
     public static final int HotelViewDataEvent = 2912;
     public static final int RoomUserDanceEvent = 2080;
@@ -105,7 +107,7 @@ public class Incoming {
     public static final int RequestProfileFriendsEvent = 2138;
     public static final int TradeCancelOfferItemEvent = 3845;
     public static final int TriggerDiceEvent = 1990;
-    public static final int GetPollDataEvent = 109;
+    public static final int PollStartComposer = 109;
     public static final int MachineIDEvent = 2490;
     public static final int RequestDiscountEvent = 223;
     public static final int RequestFriendRequestEvent = 2448;
@@ -144,11 +146,12 @@ public class Incoming {
     public static final int GuildChangeBadgeEvent = 1991;
     public static final int ModToolBanEvent = -1;
     public static final int SaveWardrobeEvent = 800;
-    public static final int HotelViewEvent = 105;
+    public static final int QuitEvent = 105;
     public static final int ModToolPickTicketEvent = 15;
     public static final int ModToolReleaseTicketEvent = 1572;
     public static final int ModToolCloseTicketEvent = 2067;
     public static final int TriggerColorWheelEvent = 2144;
+    public static final int BuildersClubPlaceRoomItemEvent = 1051;
     public static final int SearchRoomsByTagEvent = -1;//1956
     public static final int RequestPublicRoomsEvent = 1229;
     public static final int RequestResolutionEvent = 359;
@@ -237,14 +240,14 @@ public class Incoming {
     public static final int FindNewFriendsEvent = 516;
     public static final int InviteFriendsEvent = 1276;
     public static final int GuildRemoveFavoriteEvent = 1820;
-    public static final int GuildDeleteEvent = 1134;
+    public static final int DeactivateGuildEvent = 1134;
     public static final int SetHomeRoomEvent = 1740;
     public static final int RoomUserGiveHandItemEvent = 2941;
     public static final int AmbassadorVisitCommandEvent = 2970;
     public static final int AmbassadorAlertCommandEvent = 2996;
     public static final int SaveUserVolumesEvent = 1367;
     public static final int SavePreferOldChatEvent = 1262;
-    public static final int SaveIgnoreRoomInvitesEvent = 1086;
+    public static final int SetIgnoreRoomInvitesEvent = 1086;
     public static final int SaveBlockCameraFollowEvent = 1461;
     public static final int RoomMuteEvent = 3637;
     public static final int RequestRoomWordFilterEvent = 1911;
@@ -261,7 +264,7 @@ public class Incoming {
     public static final int RoomUserMuteEvent = 3485;
     //public static final int JukeBoxEventThree = 3846;
     public static final int RequestDeleteRoomEvent = 532;
-    public static final int RequestPromotionRoomsEvent = 1075;
+    public static final int GetRoomAdPurchaseInfoComposer = 1075;
     public static final int BuyRoomPromotionEvent = 777;
     public static final int EditRoomPromotionMessageEvent = 3991;
     public static final int RequestGuideToolEvent = 1922;
@@ -272,11 +275,12 @@ public class Incoming {
     public static final int GuideUserMessageEvent = 3899;
     public static final int GuideCancelHelpRequestEvent = 291;
     public static final int GuideHandleHelpRequestEvent = 1424;
-    public static final int GuideVisitUserEvent = 1052;
+    public static final int GuideSessionGetRequesterRoomEvent = 1052;
     public static final int GuideInviteUserEvent = 234;
     public static final int GuideCloseHelpRequestEvent = 887;
     public static final int GuardianNoUpdatesWantedEvent = 2501;
     public static final int GuardianVoteEvent = 3961;
+    public static final int VersionCheckEvent = 1053;
     public static final int GuardianAcceptRequestEvent = 3365;
     public static final int RequestAchievementConfigurationEvent = -1;
     public static final int RequestReportUserBullyingEvent = 3786;
@@ -285,15 +289,17 @@ public class Incoming {
     public static final int CameraRoomThumbnailEvent = 1982;
     public static final int SavePostItStickyPoleEvent = 3283;
     public static final int HotelViewClaimBadgeEvent = 3077;
-    public static final int HotelViewRequestCommunityGoalEvent = 1145;
+    public static final int GetCommunityGoalProgressEvent = 1145;
     public static final int HotelViewRequestConcurrentUsersEvent = 1343;
     public static final int HotelViewConcurrentUsersButtonEvent = 3872;
-    public static final int IgnoreRoomUserEvent = 1117;
+    public static final int FriendRequestQuestCompleteEvent = 1148;
+    public static final int IgnoreUserEvent = 1117;
     public static final int UnIgnoreRoomUserEvent = 2061;
     public static final int UnbanRoomUserEvent = 992;
     public static final int RoomUserBanEvent = 1477;
     public static final int RequestNavigatorSettingsEvent = 1782;
     public static final int AddSavedSearchEvent = 2226;
+    public static final int WhisperGroupComposer = 1118;
     public static final int DeleteSavedSearchEvent = 1954;
     public static final int SaveWindowSettingsEvent = 3159;
     public static final int GetHabboGuildBadgesMessageEvent = 21;
@@ -331,14 +337,15 @@ public class Incoming {
 
     public static final int GameCenterRequestGamesEvent = 741;
     public static final int GameCenterRequestAccountStatusEvent = 3171;
-    public static final int GameCenterRequestGameStatusEvent = 11;
+    public static final int Game2GetAccountGameStatusEvent = 11;
     public static final int CameraPublishToWebEvent = 2068;
+    public static final int InterstitialShownEvent = 1109;
 
     public static final int GameCenterJoinGameEvent = 1458;
-    public static final int GameCenterLoadGameEvent = 1054;
+    public static final int GetWeeklyGameRewardWinnersComposer = 1054;
     public static final int GameCenterEvent = 2914;
     public static final int GameCenterLeaveGameEvent = 3207;
-
+    public static final int ExtendRentOrBuyoutFurniEvent = 1071;
     public static final int ModToolSanctionAlertEvent = 229;
     public static final int ModToolSanctionMuteEvent = 1945;
     public static final int ModToolSanctionBanEvent = 2766;
@@ -350,7 +357,7 @@ public class Incoming {
     public static final int ModToolIssueDefaultSanctionEvent = 2717;
 
     public static final int TradeCancelEvent = 2341;
-    public static final int ChangeChatBubbleEvent = 1030;
+    public static final int SetChatStylePreferenceComposer = 1030;
     public static final int LoveLockStartConfirmEvent = 3775;
 
     public static final int HotelViewRequestLTDAvailabilityEvent = 410;
