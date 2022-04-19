@@ -232,13 +232,13 @@ public class PacketManager {
         this.registerHandler(Incoming.RequestDiscountEvent, RequestDiscountEvent.class);
         this.registerHandler(Incoming.RequestGiftConfigurationEvent, RequestGiftConfigurationEvent.class);
         this.registerHandler(Incoming.GetMarketplaceConfigEvent, RequestMarketplaceConfigEvent.class);
-        this.registerHandler(Incoming.RequestCatalogModeEvent, RequestCatalogModeEvent.class);
+        this.registerHandler(Incoming.GetCatalogIndexEvent, RequestCatalogModeEvent.class);
         this.registerHandler(Incoming.RequestCatalogIndexEvent, RequestCatalogIndexEvent.class);
         this.registerHandler(Incoming.RequestCatalogPageEvent, RequestCatalogPageEvent.class);
         this.registerHandler(Incoming.CatalogBuyItemAsGiftEvent, CatalogBuyItemAsGiftEvent.class);
         this.registerHandler(Incoming.CatalogBuyItemEvent, CatalogBuyItemEvent.class);
         this.registerHandler(Incoming.RedeemVoucherEvent, RedeemVoucherEvent.class);
-        this.registerHandler(Incoming.ReloadRecyclerEvent, ReloadRecyclerEvent.class);
+        this.registerHandler(Incoming.GetRecyclerStatusEvent, ReloadRecyclerEvent.class);
         this.registerHandler(Incoming.RecycleEvent, RecycleEvent.class);
         this.registerHandler(Incoming.OpenRecycleBoxEvent, OpenRecycleBoxEvent.class);
         this.registerHandler(Incoming.RequestOwnItemsEvent, RequestOwnItemsEvent.class);
@@ -281,9 +281,9 @@ public class PacketManager {
         this.registerHandler(Incoming.RequestFriendsEvent, RequestFriendsEvent.class);
         this.registerHandler(Incoming.ChangeRelationEvent, ChangeRelationEvent.class);
         this.registerHandler(Incoming.RemoveFriendEvent, RemoveFriendEvent.class);
-        this.registerHandler(Incoming.SearchUserEvent, SearchUserEvent.class);
+        this.registerHandler(Incoming.HabboSearchEvent, SearchUserEvent.class);
         this.registerHandler(Incoming.FriendRequestEvent, FriendRequestEvent.class);
-        this.registerHandler(Incoming.AcceptFriendRequest, AcceptFriendRequestEvent.class);
+        this.registerHandler(Incoming.AcceptFriendEvent, AcceptFriendRequestEvent.class);
         this.registerHandler(Incoming.DeclineFriendRequest, DeclineFriendRequestEvent.class);
         this.registerHandler(Incoming.FriendPrivateMessageEvent, FriendPrivateMessageEvent.class);
         this.registerHandler(Incoming.RequestFriendRequestEvent, RequestFriendRequestsEvent.class);
@@ -307,14 +307,14 @@ public class PacketManager {
         this.registerHandler(Incoming.UserSaveLookEvent, UserSaveLookEvent.class);
         this.registerHandler(Incoming.UserWearBadgeEvent, UserWearBadgeEvent.class);
         this.registerHandler(Incoming.RequestWearingBadgesEvent, RequestWearingBadgesEvent.class);
-        this.registerHandler(Incoming.SaveUserVolumesEvent, SaveUserVolumesEvent.class);
+        this.registerHandler(Incoming.SetSoundSettingsEvent, SaveUserVolumesEvent.class);
         this.registerHandler(Incoming.SaveBlockCameraFollowEvent, SaveBlockCameraFollowEvent.class);
         this.registerHandler(Incoming.SetIgnoreRoomInvitesEvent, SaveIgnoreRoomInvitesEvent.class);
-        this.registerHandler(Incoming.SavePreferOldChatEvent, SavePreferOldChatEvent.class);
+        this.registerHandler(Incoming.SetChatPreferencesEvent, SavePreferOldChatEvent.class);
         this.registerHandler(Incoming.AvatarEffectActivatedEvent, ActivateEffectEvent.class);
         this.registerHandler(Incoming.AvatarEffectSelectedEvent, EnableEffectEvent.class);
         this.registerHandler(Incoming.EventLogEvent, UserActivityEvent.class);
-        this.registerHandler(Incoming.UserNuxEvent, UserNuxEvent.class);
+        this.registerHandler(Incoming.NewUserExperienceScriptProceedEvent, UserNuxEvent.class);
         this.registerHandler(Incoming.PickNewUserGiftEvent, PickNewUserGiftEvent.class);
         this.registerHandler(Incoming.CheckUserNameEvent, ChangeNameCheckUsernameEvent.class);
         this.registerHandler(Incoming.ChangeUserNameEvent, ConfirmChangeNameEvent.class);
@@ -378,7 +378,7 @@ public class PacketManager {
         this.registerHandler(Incoming.RoomVoteEvent, RoomVoteEvent.class);
         this.registerHandler(Incoming.RequestRoomDataEvent, RequestRoomDataEvent.class);
         this.registerHandler(Incoming.RoomSettingsSaveEvent, RoomSettingsSaveEvent.class);
-        this.registerHandler(Incoming.RoomPlaceItemEvent, RoomPlaceItemEvent.class);
+        this.registerHandler(Incoming.PlaceObjectEvent, RoomPlaceItemEvent.class);
         this.registerHandler(Incoming.RotateMoveItemEvent, RotateMoveItemEvent.class);
         this.registerHandler(Incoming.MoveWallItemEvent, MoveWallItemEvent.class);
         this.registerHandler(Incoming.RoomPickupItemEvent, RoomPickupItemEvent.class);
@@ -397,7 +397,7 @@ public class PacketManager {
         this.registerHandler(Incoming.MoodLightTurnOnEvent, MoodLightTurnOnEvent.class);
         this.registerHandler(Incoming.RoomUserDropHandItemEvent, RoomUserDropHandItemEvent.class);
         this.registerHandler(Incoming.RoomUserLookAtPoint, RoomUserLookAtPoint.class);
-        this.registerHandler(Incoming.RoomUserTalkEvent, RoomUserTalkEvent.class);
+        this.registerHandler(Incoming.ChatEvent, RoomUserTalkEvent.class);
         this.registerHandler(Incoming.RoomUserShoutEvent, RoomUserShoutEvent.class);
         this.registerHandler(Incoming.RoomUserWhisperEvent, RoomUserWhisperEvent.class);
         this.registerHandler(Incoming.RoomUserActionEvent, RoomUserActionEvent.class);
@@ -443,7 +443,7 @@ public class PacketManager {
         this.registerHandler(Incoming.JukeBoxRequestTrackDataEvent, JukeBoxRequestTrackDataEvent.class);
         this.registerHandler(Incoming.JukeBoxAddSoundTrackEvent, JukeBoxAddSoundTrackEvent.class);
         this.registerHandler(Incoming.JukeBoxRemoveSoundTrackEvent, JukeBoxRemoveSoundTrackEvent.class);
-        this.registerHandler(Incoming.JukeBoxRequestPlayListEvent, JukeBoxRequestPlayListEvent.class);
+        this.registerHandler(Incoming.GetNowPlayingEvent, JukeBoxRequestPlayListEvent.class);
         this.registerHandler(Incoming.JukeBoxEventOne, JukeBoxEventOne.class);
         this.registerHandler(Incoming.JukeBoxEventTwo, JukeBoxEventTwo.class);
         this.registerHandler(Incoming.SavePostItStickyPoleEvent, SavePostItStickyPoleEvent.class);
@@ -507,7 +507,7 @@ public class PacketManager {
     void registerTrading() throws Exception {
         this.registerHandler(Incoming.TradeStartEvent, TradeStartEvent.class);
         this.registerHandler(Incoming.TradeOfferItemEvent, TradeOfferItemEvent.class);
-        this.registerHandler(Incoming.TradeOfferMultipleItemsEvent, TradeOfferMultipleItemsEvent.class);
+        this.registerHandler(Incoming.AddItemsToTradeEvent, TradeOfferMultipleItemsEvent.class);
         this.registerHandler(Incoming.TradeCancelOfferItemEvent, TradeCancelOfferItemEvent.class);
         this.registerHandler(Incoming.TradeAcceptEvent, TradeAcceptEvent.class);
         this.registerHandler(Incoming.TradeUnAcceptEvent, TradeUnAcceptEvent.class);
@@ -563,7 +563,7 @@ public class PacketManager {
         this.registerHandler(Incoming.PetPickupEvent, PetPickupEvent.class);
         this.registerHandler(Incoming.ScratchPetEvent, ScratchPetEvent.class);
         this.registerHandler(Incoming.RequestPetTrainingPanelEvent, RequestPetTrainingPanelEvent.class);
-        this.registerHandler(Incoming.PetUseItemEvent, PetUseItemEvent.class);
+        this.registerHandler(Incoming.CustomizePetWithFurniEvent, PetUseItemEvent.class);
         this.registerHandler(Incoming.HorseRideSettingsEvent, PetRideSettingsEvent.class);
         this.registerHandler(Incoming.MountPetEvent, PetRideEvent.class);
         this.registerHandler(Incoming.HorseRemoveSaddleEvent, HorseRemoveSaddleEvent.class);
@@ -586,7 +586,7 @@ public class PacketManager {
     void registerUnknown() throws Exception {
         this.registerHandler(Incoming.RequestResolutionEvent, RequestResolutionEvent.class);
         this.registerHandler(Incoming.RequestTalenTrackEvent, RequestTalentTrackEvent.class);
-        this.registerHandler(Incoming.BadgePointLimitsEvent, GetBadgePointLimitsEvent.class);
+        this.registerHandler(Incoming.GetBadgePointLimitsEvent, GetBadgePointLimitsEvent.class);
         this.registerHandler(Incoming.MySanctionStatusEvent, MySanctionStatusEvent.class);
     }
 
@@ -620,10 +620,10 @@ public class PacketManager {
     }
 
     void registerCrafting() throws Exception {
-        this.registerHandler(Incoming.RequestCraftingRecipesEvent, RequestCraftingRecipesEvent.class);
+        this.registerHandler(Incoming.GetCraftingRecipeEvent, RequestCraftingRecipesEvent.class);
         this.registerHandler(Incoming.CraftingAddRecipeEvent, CraftingAddRecipeEvent.class);
         this.registerHandler(Incoming.CraftingCraftItemEvent, CraftingCraftItemEvent.class);
-        this.registerHandler(Incoming.CraftingCraftSecretEvent, CraftingCraftSecretEvent.class);
+        this.registerHandler(Incoming.CraftSecretEvent, CraftingCraftSecretEvent.class);
         this.registerHandler(Incoming.RequestCraftingRecipesAvailableEvent, RequestCraftingRecipesAvailableEvent.class);
     }
 

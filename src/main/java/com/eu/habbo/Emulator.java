@@ -48,8 +48,7 @@ public final class Emulator {
                     "██╔████╔██║██║   ██║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗███████╗   ██║   ███████║██████╔╝\n" +
                     "██║╚██╔╝██║██║   ██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚════██║   ██║   ██╔══██║██╔══██╗\n" +
                     "██║ ╚═╝ ██║╚██████╔╝██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝███████║   ██║   ██║  ██║██║  ██║\n" +
-                    "╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝\n" +
-                    "If u use this build on a live hotel and ask for help ill just send you a picture of wullez ass" ;
+                    "╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝\n";
 
 
 
@@ -86,6 +85,7 @@ public final class Emulator {
 
     public static void promptEnterKey(){
         System.out.println("\n");
+        System.out.println("This is a developer preview build. Your plugins for Arcturus Morningstar 3.x will NOT work on this build.");
         System.out.println("Press \"ENTER\" if you agree to the terms stated above...");
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
@@ -113,7 +113,7 @@ public final class Emulator {
             System.out.println(logo);
 
             // Checks if this is a BETA build before allowing them to continue.
-            if (PREVIEW.toLowerCase().contains("beta")) {
+            if (PREVIEW.toLowerCase().contains("preview") ) {
                 System.out.println();
                 promptEnterKey();
             }
@@ -207,7 +207,7 @@ public final class Emulator {
 
     private static void setBuild() {
         if (Emulator.class.getProtectionDomain().getCodeSource() == null) {
-            build = "UNKNOWN";
+            build = "4.0 Developer Preview Branch";
             return;
         }
 
@@ -224,7 +224,7 @@ public final class Emulator {
             for (int i = 0; i < mdbytes.length; i++)
                 sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
         } catch (Exception e) {
-            build = "UNKNOWN";
+            build = "4.0 Developer Preview Branch";
             return;
         }
 

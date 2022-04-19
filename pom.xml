@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.eu.habbo</groupId>
-    <artifactId>Habbo</artifactId>
-    <version>4.0.0</version>
+    <artifactId>Morningstar</artifactId>
+    <version>4.0-DEVPREVIEW</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
