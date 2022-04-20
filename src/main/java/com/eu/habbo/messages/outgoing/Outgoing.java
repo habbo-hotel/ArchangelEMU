@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.outgoing;
 
 public class Outgoing {
+    //todo REORDER AND DOCUMENT EACH PACKET COMPOSER - Harmonic
     public final static int AcceptFriendResultComposer = 896;
     public final static int AccountPreferencesComposer = 513;
     public final static int AccountSafetyLockStatusChangeMessageComposer = 1243;
