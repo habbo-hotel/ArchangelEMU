@@ -36,7 +36,7 @@ public final class Emulator {
     private static final String CLASS_PATH = (System.getProperty("java.class.path") != null ? System.getProperty("java.class.path") : "Unknown");
 
     public final static int MAJOR = 3;
-    public final static int MINOR = 0;
+    public final static int MINOR = 5;
     public final static int BUILD = 0;
     public final static String PREVIEW = "";
 
@@ -115,7 +115,7 @@ public final class Emulator {
                 System.out.println("Warning, this is a beta build, this means that there may be unintended consequences so make sure you take regular backups while using this build. If you notice any issues you should make an issue on the Krews Git.");
                 promptEnterKey();
             }
-
+            LOGGER.info("eek. Has it really been a year?");
             LOGGER.info("This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
             LOGGER.info("Version: {}", version);
             LOGGER.info("Build: {}", build);
