@@ -72,7 +72,7 @@ public class Incoming {
     public static final int ChatEvent = 1314;
     public static final int GetCurrentTimingCodeEvent = 2912;
     public static final int DanceEvent = 2080;
-    public static final int RequestUserProfileEvent = 3265;
+    public static final int GetExtendedProfileEvent = 3265;
     public static final int RoomsWhereMyFriendsAreSearchEvent = 1786;
     public static final int SetStackHelperHeightEvent = 3839;
     public static final int RedeemVoucherEvent = 339;
@@ -119,9 +119,8 @@ public class Incoming {
     public static final int Game2ExitGameEvent = 1445;
     public static final int HarvestPetEvent = 1521;
     public static final int GetCommunityGoalEarnedPrizesEvent = 2688;
-    public static final int RespectUserEvent = 2694;
     public static final int RequestSellItemEvent = 848;
-    public static final int ModToolChangeRoomSettingsEvent = 3260;
+    public static final int ModerateRoomEvent = 3260;
     public static final int GetUserChatlogEvent = 1391;//203
     public static final int PurchaseBasicMembershipExtensionEvent = 2735;
     public static final int ResetPhoneNumberStateEvent = 2741;
@@ -152,7 +151,7 @@ public class Incoming {
     public static final int SearchRoomsEvent = 3943;
     public static final int RoomsWithHighestScoreSearchEvent = 2939;
     public static final int PurchaseFromCatalogAsGiftEvent = 1411;
-    public static final int RoomUserGiveRespectEvent = 2694;
+    public static final int RespectUserEvent = 2694;
     public static final int RemoveFriendEvent = 1689;
     public static final int MyFriendsRoomsSearchEvent = 2266;
     public static final int GuildSetFavoriteEvent = 3549;
@@ -189,7 +188,7 @@ public class Incoming {
     public static final int ApproveNameEvent = 2109;
     public static final int RoomAdPurchaseInitiatedEvent = 2283;
     public static final int RoomUsersClassificationEvent = 2285;
-    public static final int SecureLoginEvent = 2419;
+    public static final int SSOTicketEvent = 2419;
     public static final int CommandBotEvent = 2624;
     public static final int CreateGuildEvent = 230;
     public static final int HabboSearchEvent = 1210;
@@ -237,7 +236,6 @@ public class Incoming {
     public static final int ConfirmAcceptTradingEvent = 2760;
     public static final int RoomUserGiveRightsEvent = 808;
     public static final int UpdateRoomCategoryAndTradeSettingsEvent = 1265;
-    public static final int SendRoomInviteEvent = 1276;
     public static final int GetQuizQuestionsEvent = 1296;
     public static final int GetHabboGroupDetailsEvent = 2991;
     public static final int GetRecyclerStatusEvent = 1342;
@@ -247,7 +245,7 @@ public class Incoming {
     public static final int GetRoomEntryDataEvent = 2300;
     public static final int GetGuildFurniContextMenuInfoEvent = 2651;
     public static final int GetMarketplaceOwnOffersEvent = 2105;
-    public static final int RequestReportRoomEvent = 3267;
+    public static final int GetPendingCallsForHelpEvent = 3267;
     public static final int CallForHelpEvent = 1691;
     public static final int EnterOneWayDoorEvent = 2765;
     public static final int FloorPlanEditorSaveEvent = 875;
@@ -272,7 +270,6 @@ public class Incoming {
     public static final int UseRandomStateItemEvent = 3617;
     public static final int GetExtendedProfileByNameEvent = 2249;
     public static final int GetCfhStatusEvent = 2746;
-    public static final int OpenCampaignCalendarDoorAsStaffEvent = 2257;
     public static final int OpenQuestTrackerEvent = 2750;
 
     public static final int RoomDimmerSavePresetEvent = 1648;
@@ -287,7 +284,7 @@ public class Incoming {
     public static final int LatencyPingRequestEvent = 295;
     public static final int RoomAdSearchEvent = 2809;
     public static final int FindNewFriendsEvent = 516;
-    public static final int InviteFriendsEvent = 1276;
+    public static final int SendRoomInviteEvent = 1276;
     public static final int DeselectFavouriteHabboGroupEvent = 1820;
     public static final int DeactivateGuildEvent = 1134;
     public static final int UpdateHomeRoomEvent = 1740;
@@ -343,7 +340,7 @@ public class Incoming {
     public static final int RenderRoomEvent = 3226;
     public static final int PerformanceLogEvent = 3230;
     public static final int RenderRoomThumbnailEvent = 1982;
-    public static final int SavePostItStickyPoleEvent = 3283;
+    public static final int AddSpamWallPostItEvent = 3283;
     public static final int RequestABadgeEvent = 3077;
     public static final int GetCommunityGoalProgressEvent = 1145;
     public static final int GetSeasonalCalendarDailyOfferEvent = 3257;
@@ -351,6 +348,7 @@ public class Incoming {
     public static final int HotelViewConcurrentUsersButtonEvent = 3872;
     public static final int FriendRequestQuestCompleteEvent = 1148;
     public static final int PeerUsersClassificationEvent = 1160;
+    public static final int Game2CheckGameDirectoryStatusEvent = 3259;
     public static final int IgnoreUserEvent = 1117;
     public static final int UnignoreUserEvent = 2061;
     public static final int GetIsOfferGiftableEvent = 1347;
@@ -376,13 +374,12 @@ public class Incoming {
     public static final int CraftingCraftItemEvent = 3591;
     public static final int CraftSecretEvent = 1251;
     public static final int GetSeasonalQuestsOnlyEvent = 1190;
-    public static final int AdventCalendarOpenDayEvent = 2257;
+    public static final int OpenCampaignCalendarDoorAsStaffEvent = 2257;
     public static final int AdventCalendarForceOpenEvent = 3889;
     public static final int PurchasePhotoEvent = 2408;
     public static final int RoomFavoriteEvent = 3817;
     public static final int DeleteFavouriteRoomEvent = 309;
     public static final int Game2LoadStageReadyEvent = 2415;
-    public static final int SSOTicketEvent = 2419;
     public static final int DisconnectEvent = 2445;
     public static final int ChangeQueueEvent = 3093;
     public static final int YoutubeRequestPlaylists = 336;
