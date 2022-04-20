@@ -2,7 +2,6 @@ package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
@@ -52,9 +51,10 @@ public class WiredConditionHabboHasHandItem extends InteractionWiredCondition {
     }
 
     @Override
-    public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 1) return false;
-        this.handItem = settings.getIntParams()[0];
+    public boolean saveData(ClientMessage packet) {
+        packet.readInt();
+
+        this.handItem = packet.readInt();
 
         return true;
     }

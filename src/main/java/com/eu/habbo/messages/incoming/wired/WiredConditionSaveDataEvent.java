@@ -1,13 +1,10 @@
 package com.eu.habbo.messages.incoming.wired;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWired;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.UpdateFailedComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredSavedComposer;
 
 public class WiredConditionSaveDataEvent extends MessageHandler {
@@ -22,16 +19,12 @@ public class WiredConditionSaveDataEvent extends MessageHandler {
                 InteractionWiredCondition condition = room.getRoomSpecialTypes().getCondition(itemId);
 
                 if (condition != null) {
-                    WiredSettings settings = InteractionWired.readSettings(this.packet, false);
-
-                    if (condition.saveData(settings)) {
+                    if (condition.saveData(this.packet)) {
                         this.client.sendResponse(new WiredSavedComposer());
 
                         condition.needsUpdate(true);
 
                         Emulator.getThreading().run(condition);
-                    } else {
-                        this.client.sendResponse(new UpdateFailedComposer("There was an error while saving that condition"));
                     }
                 }
             }
