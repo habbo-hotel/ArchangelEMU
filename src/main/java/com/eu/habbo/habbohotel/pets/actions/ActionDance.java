@@ -8,26 +8,25 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
-public class ActionEat extends PetAction {
-    public ActionEat() {
+public class ActionDance extends PetAction {
+    public ActionDance() {
         super(null, true);
 
-        this.statusToSet.add(RoomUnitStatus.EAT);
-    }
+        this.minimumActionDuration = 3000;
+        this.statusToSet.add(RoomUnitStatus.DANCE);
+}
 
+    // mambojambo works better than ur dancing skills
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        //Eat
-        if (pet.getLevelHunger() > 40) {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.HUNGRY));
-            Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.EAT, null, false), this.minimumActionDuration);
-            pet.eat();
-
-            return true;
-        } else {
+        if (pet.getHappyness() < 50) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
             return false;
+        } else {
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
         }
 
+        Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.DANCE, null, false), this.minimumActionDuration);
+        return true;
     }
 }

@@ -1,36 +1,31 @@
 package com.eu.habbo.habbohotel.items.interactions.pets;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionPetToy extends InteractionDefault {
-    public InteractionPetToy(ResultSet set, Item baseItem) throws SQLException {
+public class InteractionPetTree extends InteractionDefault {
+    public InteractionPetTree(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
     }
 
-    public InteractionPetToy(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
+    public InteractionPetTree(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
     }
 
-    @Override
-    public void onClick(GameClient client, Room room, Object[] objects) {}
     @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
-        this.setExtradata("0");
-        room.updateItem(this);
-
         for (Pet pet : room.getPetsAt(oldLocation)) {
             pet.getRoomUnit().clearStatus();
             pet.packetUpdate = true;
@@ -38,8 +33,6 @@ public class InteractionPetToy extends InteractionDefault {
     }
     @Override
     public void onPickUp(Room room) {
-        this.setExtradata("0");
-
         for (Pet pet : room.getPetsOnItem(this)) {
             pet.getRoomUnit().clearStatus();
             pet.packetUpdate = true;
@@ -51,29 +44,39 @@ public class InteractionPetToy extends InteractionDefault {
         super.onWalkOn(roomUnit, room, objects);
 
         Pet pet = room.getPet(roomUnit);
-
         if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
-            if (pet.getEnergy() <= 35) {
-                return;
+            RoomUnitStatus task = RoomUnitStatus.HANG;
+            switch(pet.getTask()){
+                case RING_OF_FIRE: task = RoomUnitStatus.RINGOFFIRE; break;
+                case SWING: task = RoomUnitStatus.SWING; break;
+                case ROLL: task = RoomUnitStatus.ROLL; break;
             }
+            if (pet.getEnergy() >= 35 && task != RoomUnitStatus.HANG) {
 
-            pet.setTask(PetTasks.PLAY);
-            pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getX(), this.getY()));
-            pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
-            pet.getRoomUnit().clearStatus();
-            pet.getRoomUnit().setStatus(RoomUnitStatus.PLAY, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
-            pet.packetUpdate = true;
-            HabboItem item = this;
-            Emulator.getThreading().run(() -> {
-                pet.addHappyness(25);
-                item.setExtradata("0");
-                room.updateItem(item);
+                 pet.getRoomUnit().setCanWalk(false);
+                 pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
+                 pet.getRoomUnit().clearStatus();
+                 pet.getRoomUnit().setStatus(task, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+                 pet.packetUpdate = true;
+                RoomUnitStatus finalTask = task;
+                Emulator.getThreading().run(() -> {
+                     pet.addHappyness(25);
+                     pet.getRoomUnit().clearStatus();
+                     new PetClearPosture(pet, finalTask, null, true);
+                     if (this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getCurrentLocation())) {
+                         pet.getRoomUnit().setStatus(RoomUnitStatus.HANG, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+                     } else {
+                        pet.clearPosture();
+                     }
+                     pet.getRoomUnit().setCanWalk(true);
+                     pet.packetUpdate = true;
+                 }, 2500 + (Emulator.getRandom().nextInt(20) * 500));
+             } else {
+                pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
                 pet.getRoomUnit().clearStatus();
-                new PetClearPosture(pet, RoomUnitStatus.PLAY, null, true).run();
+                pet.getRoomUnit().setStatus(RoomUnitStatus.HANG, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
                 pet.packetUpdate = true;
-            }, 2500 + (Emulator.getRandom().nextInt(20) * 500));
-            this.setExtradata("1");
-            room.updateItemState(this);
+            }
         }
     }
 
@@ -84,8 +87,6 @@ public class InteractionPetToy extends InteractionDefault {
         Pet pet = room.getPet(roomUnit);
 
         if (pet != null) {
-            this.setExtradata("0");
-            room.updateItem(this);
             pet.getRoomUnit().clearStatus();
             pet.packetUpdate = true;
         }

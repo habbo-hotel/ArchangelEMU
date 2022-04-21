@@ -39,7 +39,11 @@ public class PetFollowHabbo implements Runnable {
                                     this.pet.setTask(PetTasks.FOLLOW);
                                 }
                             }
-                            Emulator.getThreading().run(this, 500);
+                            if(target.distance(this.pet.getRoomUnit().getCurrentLocation()) > 1) {
+                                Emulator.getThreading().run(this, 500);
+                            } else {
+                                this.pet.setTask(PetTasks.FREE);
+                            }
                         }
                     }
                 }

@@ -18,10 +18,6 @@ public class ActionTorch extends PetAction {
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        if (pet.getHappyness() < 30) {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
-            return false;
-        }
 
         Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.EAT, null, false), this.minimumActionDuration);
         return true;

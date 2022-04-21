@@ -12,14 +12,13 @@ public class ActionPlayDead extends PetAction {
         super(PetTasks.PLAY_DEAD, true);
         this.statusToRemove.add(RoomUnitStatus.MOVE);
         this.statusToRemove.add(RoomUnitStatus.LAY);
-        this.statusToRemove.add(RoomUnitStatus.DEAD);
     }
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         pet.clearPosture();
 
-        pet.getRoomUnit().setStatus(RoomUnitStatus.DEAD, pet.getRoom().getStackHeight(pet.getRoomUnit().getX(), pet.getRoomUnit().getY(), false) + "");
+        pet.getRoomUnit().setStatus(RoomUnitStatus.DEAD, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
 
         if (pet.getHappyness() > 50)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));

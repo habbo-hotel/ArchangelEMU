@@ -21,7 +21,7 @@ public class ActionRelax extends PetAction {
         else
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
 
-        pet.getRoomUnit().setStatus(RoomUnitStatus.RELAX, "0");
+        pet.getRoomUnit().setStatus(RoomUnitStatus.RELAX, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
 
         return true;
     }

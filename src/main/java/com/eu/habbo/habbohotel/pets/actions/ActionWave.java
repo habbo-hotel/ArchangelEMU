@@ -13,18 +13,14 @@ public class ActionWave extends PetAction {
         super(PetTasks.WAVE, false);
 
         this.statusToSet.add(RoomUnitStatus.WAVE);
+        this.minimumActionDuration = 2000;
     }
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        //WAV
-        if (pet.getHappyness() > 65) {
-            pet.getRoomUnit().setStatus(RoomUnitStatus.WAVE, "0");
+            pet.getRoomUnit().setStatus(RoomUnitStatus.WAVE, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
 
-            Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.WAVE, null, false), 2000);
+            Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.WAVE, null, false), this.minimumActionDuration);
             return true;
-        }
-
-        return false;
     }
 }

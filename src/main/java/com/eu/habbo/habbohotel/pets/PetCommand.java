@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.pets;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUserStatusComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -65,7 +66,7 @@ public class PetCommand implements Comparable<PetCommand> {
                     }
 
                     pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, this.action.gestureToSet);
-
+                    pet.getRoom().sendComposer(new RoomUserStatusComposer(pet.getRoomUnit()).compose());
                     pet.addEnergy(-this.energyCost);
                     pet.addHappyness(-this.happynessCost);
                     pet.addExperience(this.xp);

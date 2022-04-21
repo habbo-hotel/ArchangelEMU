@@ -10,14 +10,13 @@ import com.eu.habbo.threading.runnables.PetFollowHabbo;
 
 public class ActionFollowRight extends PetAction {
     public ActionFollowRight() {
-        super(PetTasks.FOLLOW, true);
+        super(PetTasks.FOLLOW, false);
     }
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        //Follow right.
         pet.clearPosture();
-
+        pet.setTask(PetTasks.FOLLOW);
         Emulator.getThreading().run(new PetFollowHabbo(pet, habbo, +2));
 
         if (pet.getHappyness() > 75)

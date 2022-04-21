@@ -8,26 +8,26 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
-public class ActionEat extends PetAction {
-    public ActionEat() {
+public class ActionFlat extends PetAction {
+    public ActionFlat() {
         super(null, true);
 
-        this.statusToSet.add(RoomUnitStatus.EAT);
+        this.minimumActionDuration = 4000;
+        this.statusToSet.add(RoomUnitStatus.FLAT);
     }
 
+    // flat attack
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        //Eat
-        if (pet.getLevelHunger() > 40) {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.HUNGRY));
-            Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.EAT, null, false), this.minimumActionDuration);
-            pet.eat();
 
+        if (pet.getHappyness() > 30) {
+            Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.FLAT, null, false), this.minimumActionDuration);
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
             return true;
         } else {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
             return false;
         }
-
     }
 }
+
