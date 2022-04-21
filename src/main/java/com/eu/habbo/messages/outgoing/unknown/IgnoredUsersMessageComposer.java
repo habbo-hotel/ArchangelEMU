@@ -16,7 +16,6 @@ public class IgnoredUsersMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        }
         this.response.init(Outgoing.IgnoredUsersMessageComposer);
         this.response.appendInt(0);
         return this.response;

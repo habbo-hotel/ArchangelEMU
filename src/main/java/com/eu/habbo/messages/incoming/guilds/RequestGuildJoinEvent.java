@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.GuildState;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
+import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.HabboGroupJoinFailedMessageComposer;
 
 public class RequestGuildJoinEvent extends MessageHandler {
@@ -27,7 +27,7 @@ public class RequestGuildJoinEvent extends MessageHandler {
         }
 
         Emulator.getGameEnvironment().getGuildManager().joinGuild(guild, this.client, 0, false);
-        this.client.sendResponse(new GuildInfoComposer(guild, this.client, false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo())));
+        this.client.sendResponse(new HabboGroupDetailsMessageComposer(guild, this.client, false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo())));
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 

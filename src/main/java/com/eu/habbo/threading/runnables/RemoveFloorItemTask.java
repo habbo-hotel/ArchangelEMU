@@ -24,6 +24,6 @@ class RemoveFloorItemTask implements Runnable {
         this.room.removeHabboItem(this.item);
         this.room.updateTile(tile);
         this.room.sendComposer(new RemoveFloorItemComposer(this.item, true).compose());
-        this.room.sendComposer(new HeightMapUpdateMessageComposer(this.item.getX(), this.item.getY(), tile.relativeHeight()).compose());
+        this.room.sendComposer(new HeightMapUpdateMessageComposer(this.item.getX(), this.item.getY(), tile.z, tile.relativeHeight()).compose());
     }
 }

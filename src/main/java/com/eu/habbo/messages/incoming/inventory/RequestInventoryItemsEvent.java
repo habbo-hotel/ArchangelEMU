@@ -19,7 +19,7 @@ public class RequestInventoryItemsEvent extends MessageHandler {
         int totalItems = this.client.getHabbo().getInventory().getItemsComponent().getItems().size();
 
         if (totalItems == 0) {
-                this.client.sendResponse(new InventoryItemsComposer(0, 1, new TIntObjectHashMap<>()));
+                this.client.sendResponse(new FurniListComposer(0, 1, new TIntObjectHashMap<>()));
                 return;
             }
             

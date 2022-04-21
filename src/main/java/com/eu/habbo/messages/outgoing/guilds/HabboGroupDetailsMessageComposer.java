@@ -14,13 +14,13 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class GuildInfoComposer extends MessageComposer {
+public class HabboGroupDetailsMessageComposer extends MessageComposer {
     private final Guild guild;
     private final GameClient client;
     private final boolean newWindow;
     private final GuildMember member;
 
-    public GuildInfoComposer(Guild guild, GameClient client, boolean newWindow, GuildMember member) {
+    public HabboGroupDetailsMessageComposer(Guild guild, GameClient client, boolean newWindow, GuildMember member) {
         this.guild = guild;
         this.client = client;
         this.newWindow = newWindow;
@@ -30,7 +30,7 @@ public class GuildInfoComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
             boolean adminPermissions = this.client.getHabbo().getHabboStats().hasGuild(this.guild.getId()) && this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN) || Emulator.getGameEnvironment().getGuildManager().getOnlyAdmins(guild).get(this.client.getHabbo().getHabboInfo().getId()) != null;
-            this.response.init(Outgoing.GuildInfoComposer);
+            this.response.init(Outgoing.HabboGroupDetailsMessageComposer);
             this.response.appendInt(this.guild.getId());
             this.response.appendBoolean(true);
             this.response.appendInt(this.guild.getState().state);

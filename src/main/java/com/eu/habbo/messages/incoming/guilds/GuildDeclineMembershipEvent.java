@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
+import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildMembersComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildMembershipRejectedMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildDeclinedMembershipEvent;
@@ -36,7 +36,7 @@ public class GuildDeclineMembershipEvent extends MessageHandler {
                     Room room = habbo.getHabboInfo().getCurrentRoom();
                     if (room != null) {
                         if (room.getGuildId() == guildId) {
-                            habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, null));
+                            habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
                         }
                     }
                 }

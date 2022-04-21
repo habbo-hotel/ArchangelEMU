@@ -367,7 +367,7 @@ public class AchievementManager {
                                     HabboBadge b = new HabboBadge(0, badge, 0, habbo);
                                     Emulator.getThreading().run(b);
                                     habbo.getInventory().getBadgesComponent().addBadge(b);
-                                    habbo.getClient().sendResponse(new AddUserBadgeComposer(b));
+                                    habbo.getClient().sendResponse(new BadgeReceivedComposer(b));
                                 }
                             }
                         }

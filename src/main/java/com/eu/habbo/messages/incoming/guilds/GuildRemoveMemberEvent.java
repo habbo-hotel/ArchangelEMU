@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.FavoriteMembershipUpdateMessageComposer;
-import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
+import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildMembershipRejectedMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildRemovedMemberEvent;
 
@@ -52,7 +52,7 @@ public class GuildRemoveMemberEvent extends MessageHandler {
                             room.refreshRightsForHabbo(habbo);
                     }
 
-                    habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, null));
+                    habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
                 }
 
                 if (room != null) {

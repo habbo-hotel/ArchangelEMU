@@ -38,7 +38,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorComposer;
-import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
+import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
@@ -4285,7 +4285,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                 if (!member.isPresent()) continue;
 
-                habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, member.get()));
+                habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, member.get()));
             }
         }
 

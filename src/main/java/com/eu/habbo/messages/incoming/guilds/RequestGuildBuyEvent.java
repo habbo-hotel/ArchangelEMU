@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildCreatedMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildEditFailedMessageComposer;
-import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
+import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildPurchasedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +99,7 @@ public class RequestGuildBuyEvent extends MessageHandler {
                     this.client.sendResponse(new PurchaseOKMessageComposer());
                     this.client.sendResponse(new GuildCreatedMessageComposer(guild));
                     for (Habbo habbo : r.getHabbos()) {
-                        habbo.getClient().sendResponse(new GuildInfoComposer(guild, habbo.getClient(), false, null));
+                        habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
                     }
                     r.refreshGuild(guild);
 

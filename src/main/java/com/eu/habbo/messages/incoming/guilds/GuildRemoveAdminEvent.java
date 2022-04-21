@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.guilds.GuildInfoComposer;
+import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildMembershipUpdatedMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildRemovedAdminEvent;
 
@@ -34,7 +34,7 @@ public class GuildRemoveAdminEvent extends MessageHandler {
                 Emulator.getGameEnvironment().getGuildManager().removeAdmin(guild, userId);
 
                 if (habbo != null) {
-                    habbo.getClient().sendResponse(new GuildInfoComposer(guild, this.client, false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild.getId(), userId)));
+                    habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, this.client, false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild.getId(), userId)));
 
                     if (room != null && habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom() == room) room.refreshRightsForHabbo(habbo);
                 }
