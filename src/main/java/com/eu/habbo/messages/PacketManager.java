@@ -559,7 +559,7 @@ public class PacketManager {
     }
 
     void registerPets() throws Exception {
-        this.registerHandler(Incoming.UpdateRoomThumbnailEvent, RequestPetInformationEvent.class);
+        this.registerHandler(Incoming.UpdateRoomThumbnailEvent, GetPetInfoEvent.class);
         this.registerHandler(Incoming.RemovePetFromFlatEvent, PetPickupEvent.class);
         this.registerHandler(Incoming.RespectPetEvent, ScratchPetEvent.class);
         this.registerHandler(Incoming.GetPetCommandsEvent, RequestPetTrainingPanelEvent.class);

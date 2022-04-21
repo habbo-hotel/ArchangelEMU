@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetInfoMessageComposer;
 
-public class RequestPetInformationEvent extends MessageHandler {
+public class GetPetInfoEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         int petId = this.packet.readInt();
