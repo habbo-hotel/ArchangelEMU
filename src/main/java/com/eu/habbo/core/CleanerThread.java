@@ -3,8 +3,8 @@ package com.eu.habbo.core;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.incoming.friends.SearchUserEvent;
-import com.eu.habbo.messages.incoming.navigator.SearchRoomsEvent;
+import com.eu.habbo.messages.incoming.friends.HabboSearchEvent;
+import com.eu.habbo.messages.incoming.navigator.RoomTextSearchEvent;
 import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 import com.eu.habbo.threading.runnables.AchievementUpdater;
 import org.slf4j.Logger;
@@ -101,8 +101,8 @@ public class CleanerThread implements Runnable {
             LAST_HABBO_CACHE_CLEARED = time;
         }
 
-        SearchRoomsEvent.cachedResults.clear();
-        SearchUserEvent.cachedResults.clear();
+        RoomTextSearchEvent.cachedResults.clear();
+        HabboSearchEvent.cachedResults.clear();
     }
 
 
