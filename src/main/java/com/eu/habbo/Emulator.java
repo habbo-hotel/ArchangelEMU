@@ -31,16 +31,20 @@ import java.util.regex.Pattern;
 
 public final class Emulator {
 
+    public static final int MAJOR = 4;
+    public static final int MINOR = 0;
+    public static final int BUILD = 0;
+    public static final String PREVIEW = "Developer Preview";
+    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
+    public static String build = "";
+    public static boolean isReady = false;
+    public static boolean isShuttingDown = false;
+    public static boolean stopped = false;
+    public static boolean debugging = false;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Emulator.class);
     private static final String OS_NAME = (System.getProperty("os.name") != null ? System.getProperty("os.name") : "Unknown");
     private static final String CLASS_PATH = (System.getProperty("java.class.path") != null ? System.getProperty("java.class.path") : "Unknown");
-
-    public final static int MAJOR = 4;
-    public final static int MINOR = 0;
-    public final static int BUILD = 0;
-    public final static String PREVIEW = "Developer Preview";
-
-    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
             "\n" +
                     "███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗ \n" +
@@ -52,11 +56,6 @@ public final class Emulator {
 
 
 
-    public static String build = "";
-    public static boolean isReady = false;
-    public static boolean isShuttingDown = false;
-    public static boolean stopped = false;
-    public static boolean debugging = false;
     private static int timeStarted = 0;
     private static Runtime runtime;
     private static ConfigurationManager config;
