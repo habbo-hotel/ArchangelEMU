@@ -421,12 +421,7 @@ public class HabboStats implements Runnable {
     }
 
     public boolean hasGuild(int guildId) {
-        for (int i : this.guilds) {
-            if (i == guildId)
-                return true;
-        }
-
-        return false;
+        return this.guilds.contains(guildId);
     }
 
     public int getAchievementScore() {
