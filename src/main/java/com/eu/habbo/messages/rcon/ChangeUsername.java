@@ -44,10 +44,12 @@ public class ChangeUsername extends RCONMessage<ChangeUsername.JSON> {
 
                         success = statement.executeUpdate() >= 1;
                     } catch (SQLException sqlException) {
-                        sqlException.printStackTrace();
+                        this.message = "SQL Exception occurred";
+                        LOGGER.error(this.message, sqlException);
                     }
                 } catch (SQLException sqlException) {
-                    sqlException.printStackTrace();
+                    this.message = "SQL Exception occurred";
+                    LOGGER.error(this.message, sqlException);
                 }
             }
 
@@ -57,7 +59,7 @@ public class ChangeUsername extends RCONMessage<ChangeUsername.JSON> {
         catch (Exception e) {
             this.status = RCONMessage.SYSTEM_ERROR;
             this.message = "Exception occurred";
-            LOGGER.error("Exception occurred", e);
+            LOGGER.error(this.message, e);
         }
     }
 
