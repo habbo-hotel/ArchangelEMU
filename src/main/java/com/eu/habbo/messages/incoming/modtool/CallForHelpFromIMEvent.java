@@ -35,14 +35,14 @@ public class CallForHelpFromIMEvent extends MessageHandler {
             info = HabboManager.getOfflineHabboInfo(userId);
         }
 
-        if (info != null) {
-            for (int i = 0; i < count; i++) {
-                int chatUserId = this.packet.readInt();
-                String username = this.packet.readInt() == info.getId() ? info.getUsername() : this.client.getHabbo().getHabboInfo().getUsername();
+        if (info == null) return;
+        for (int i = 0; i < count; i++) {
+            int chatUserId = this.packet.readInt();
+            String username = this.packet.readInt() == info.getId() ? info.getUsername() : this.client.getHabbo().getHabboInfo().getUsername();
 
-                chatLogs.add(new ModToolChatLog(0, chatUserId, username, this.packet.readString()));
-            }
+            chatLogs.add(new ModToolChatLog(0, chatUserId, username, this.packet.readString()));
         }
+
 
         ModToolIssue issue = new ModToolIssue(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getUsername(), userId, info.getUsername(), 0, message, ModToolTicketType.IM);
         issue.category = category;
