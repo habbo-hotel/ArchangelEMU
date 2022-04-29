@@ -46,30 +46,32 @@ public class ModBanEvent extends MessageHandler {
             case BAN_AVATAR_ONLY_100_YEARS:
                 duration = Emulator.getIntUnixTimestamp();
         }
-        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
-            ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
-
-            if (Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
-                THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(userId);
-                ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(userId);
-
-                if (modToolSanctionItems != null && !modToolSanctionItemsHashMap.isEmpty()) {
-                    ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
-
-                    if (item.probationTimestamp > 0 && item.probationTimestamp >= Emulator.getIntUnixTimestamp()) {
-                        modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
-                    } else {
-                        modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
-                    }
-                } else {
-                    modToolSanctions.run(userId, this.client.getHabbo(), 0, cfhTopic, message, 0, false, 0);
-                }
-            } else {
-                Emulator.getGameEnvironment().getModToolManager().ban(userId, this.client.getHabbo(), message, duration, ModToolBanType.ACCOUNT, cfhTopic);
-            }
-
-        } else {
+        if (!this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.ban").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
+            return;
         }
+
+        if (!Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
+            Emulator.getGameEnvironment().getModToolManager().ban(userId, this.client.getHabbo(), message, duration, ModToolBanType.ACCOUNT, cfhTopic);
+            return;
+        }
+        ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
+        THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(userId);
+        ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(userId);
+
+        if (modToolSanctionItemsHashMap.isEmpty()) {
+            modToolSanctions.run(userId, this.client.getHabbo(), 0, cfhTopic, message, 0, false, 0);
+            return;
+        }
+
+        ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
+        if (item == null) return;
+
+        if (item.probationTimestamp >= Emulator.getIntUnixTimestamp()) {
+            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
+        } else {
+            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
+        }
+
     }
 }
