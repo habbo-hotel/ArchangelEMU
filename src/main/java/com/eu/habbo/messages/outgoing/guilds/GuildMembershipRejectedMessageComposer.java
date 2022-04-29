@@ -7,16 +7,18 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 
 public class GuildMembershipRejectedMessageComposer extends MessageComposer {
     private final Guild guild;
+    private final Integer userId;
 
-    public GuildMembershipRejectedMessageComposer(Guild guild) {
+    public GuildMembershipRejectedMessageComposer(Guild guild, int userId) {
         this.guild = guild;
+        this.userId = userId;
     }
 
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.GuildMembershipRejectedMessageComposer);
         this.response.appendInt(this.guild.getId());
-        this.response.appendInt(0);
+        this.response.appendInt(this.userId);
         return this.response;
     }
 }
