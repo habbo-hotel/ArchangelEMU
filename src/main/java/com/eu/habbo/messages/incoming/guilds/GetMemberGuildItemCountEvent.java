@@ -17,17 +17,17 @@ public class GetMemberGuildItemCountEvent extends MessageHandler {
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if (guild != null) {
-            GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
-            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || (member != null && member.getRank().equals(GuildRank.OWNER) || member.getRank().equals(GuildRank.ADMIN)) || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)) {
-                Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());
-                int count = 0;
-                if (room != null) {
-                    count = room.getUserFurniCount(userId);
-                }
-                this.client.sendResponse(new GuildMemberFurniCountInHQMessageComposer(userId, count));
+        if (guild == null) return;
+        GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
+        if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || (member != null && (member.getRank().equals(GuildRank.OWNER) || member.getRank().equals(GuildRank.ADMIN))) || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)) {
+            Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());
+            int count = 0;
+            if (room != null) {
+                count = room.getUserFurniCount(userId);
             }
+            this.client.sendResponse(new GuildMemberFurniCountInHQMessageComposer(userId, count));
         }
+
 
     }
 }
