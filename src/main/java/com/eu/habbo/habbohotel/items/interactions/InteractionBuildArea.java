@@ -10,8 +10,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.users.HabboManager;
-import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import gnu.trove.TCollections;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
@@ -46,7 +46,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
         defaultValues.put("tilesFront", "0");
         defaultValues.put("tilesBack", "0");
         defaultValues.put("builders", "");
-        
+
         tiles = new THashSet<>();
     }
 
@@ -129,7 +129,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : oldTiles) {
                 THashSet<HabboItem> tileItems = room.getItemsAt(tile);
-                if(newTiles.contains(tile)) continue;
+                if (newTiles.contains(tile)) continue;
                 for (HabboItem tileItem : tileItems) {
                     if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
                         room.pickUpItem(tileItem, null);
@@ -215,13 +215,13 @@ public class InteractionBuildArea extends InteractionCustomValues {
         // show the effect
         Item effectItem = Emulator.getGameEnvironment().getItemManager().getItem("mutearea_sign2");
 
-        if(effectItem != null) {
+        if (effectItem != null) {
             TIntObjectMap<String> ownerNames = TCollections.synchronizedMap(new TIntObjectHashMap<>(0));
             ownerNames.put(-1, "System");
             THashSet<HabboItem> items = new THashSet<>();
 
             int id = 0;
-            for(RoomTile tile : this.tiles) {
+            for (RoomTile tile : this.tiles) {
                 id--;
                 HabboItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
                 item.setX(tile.x);
@@ -232,14 +232,14 @@ public class InteractionBuildArea extends InteractionCustomValues {
 
             client.sendResponse(new ObjectsMessageComposer(ownerNames, items));
             Emulator.getThreading().run(() -> {
-                for(HabboItem item : items) {
+                for (HabboItem item : items) {
                     client.sendResponse(new RemoveFloorItemComposer(item, true));
                 }
             }, 3000);
         }
     }
 
-    public boolean isBuilder(String Username){
+    public boolean isBuilder(String Username) {
         return Arrays.asList(this.values.get("builders").split(";")).contains(Username);
     }
 }
