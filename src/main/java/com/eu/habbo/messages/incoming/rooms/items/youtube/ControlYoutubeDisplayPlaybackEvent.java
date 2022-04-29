@@ -18,7 +18,7 @@ public class ControlYoutubeDisplayPlaybackEvent extends MessageHandler {
         PAUSE(2),
         RESUME(3);
 
-        private int state;
+        private final int state;
 
         YoutubeState(int state) {
             this.state = state;
@@ -80,7 +80,7 @@ public class ControlYoutubeDisplayPlaybackEvent extends MessageHandler {
             case RESUME:
                 tv.playing = true;
                 tv.startedWatchingAt = Emulator.getIntUnixTimestamp();
-                tv.autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo(tv), (tv.currentVideo.getDuration() - tv.offset) * 1000);
+                tv.autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo(tv), (tv.currentVideo.getDuration() - tv.offset) * 1000L);
                 room.sendComposer(new YoutubeControlVideoMessageComposer(tv.getId(), 1).compose());
                 break;
             case PREVIOUS:
@@ -99,7 +99,7 @@ public class ControlYoutubeDisplayPlaybackEvent extends MessageHandler {
             room.sendComposer(new YoutubeDisplayVideoMessageComposer(tv.getId(), tv.currentVideo, true, 0).compose());
 
             tv.cancelAdvancement();
-            tv.autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo(tv), tv.currentVideo.getDuration() * 1000);
+            tv.autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo(tv), tv.currentVideo.getDuration() * 1000L);
             tv.startedWatchingAt = Emulator.getIntUnixTimestamp();
             tv.offset = 0;
             tv.playing = true;
