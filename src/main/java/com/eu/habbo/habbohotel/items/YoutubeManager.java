@@ -120,7 +120,7 @@ public class YoutubeManager {
             try {
                 youtubeDataLoaderPool.awaitTermination(60, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.error("Caught Exception", e);
             }
 
             LOGGER.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
@@ -129,8 +129,7 @@ public class YoutubeManager {
 
     public YoutubePlaylist getPlaylistDataById(String playlistId) throws IOException {
         if (this.playlistCache.containsKey(playlistId)) return this.playlistCache.get(playlistId);
-        if(apiKey.isEmpty()) return null;
-
+        if (apiKey.isEmpty()) return null;
         YoutubePlaylist playlist;
         URL playlistInfo = new URL("https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&id=" + playlistId + "&maxResults=1&key=" + apiKey);
         HttpsURLConnection playlistCon = (HttpsURLConnection) playlistInfo.openConnection();

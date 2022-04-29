@@ -24,37 +24,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class InteractionBuildArea extends InteractionCustomValues {
-    public static THashMap<String, String> defaultValues = new THashMap<String, String>() {
-        {
-            this.put("tilesLeft", "0");
-        }
+    protected static final THashMap<String, String> defaultValues = new THashMap<String, String>();
 
-        {
-            this.put("tilesRight", "0");
-        }
-
-        {
-            this.put("tilesFront", "0");
-        }
-
-        {
-            this.put("tilesBack", "0");
-        }
-
-        {
-            this.put("builders", "");
-        }
-    };
-
-    private THashSet<RoomTile> tiles;
+    private final THashSet<RoomTile> tiles;
 
     public InteractionBuildArea(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem, defaultValues);
+        defaultValues.put("tilesLeft", "0");
+        defaultValues.put("tilesRight", "0");
+        defaultValues.put("tilesFront", "0");
+        defaultValues.put("tilesBack", "0");
+        defaultValues.put("builders", "");
+
         tiles = new THashSet<>();
     }
 
     public InteractionBuildArea(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells, defaultValues);
+        defaultValues.put("tilesLeft", "0");
+        defaultValues.put("tilesRight", "0");
+        defaultValues.put("tilesFront", "0");
+        defaultValues.put("tilesBack", "0");
+        defaultValues.put("builders", "");
+        
         tiles = new THashSet<>();
     }
 
