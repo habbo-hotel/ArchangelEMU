@@ -20,7 +20,7 @@ public class ActionJump extends PetAction {
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        if(pet.findPetItem(PetTasks.JUMP, InteractionPetTrampoline.class)) return true;
+        if(pet.findPetItem(PetTasks.JUMP, InteractionPetTrampoline.class)) return false;
 
         pet.clearPosture();
         pet.setTask(PetTasks.JUMP);

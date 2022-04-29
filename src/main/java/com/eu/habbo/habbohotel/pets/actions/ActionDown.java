@@ -36,6 +36,6 @@ public class ActionDown extends PetAction {
             return true;
         }
 
-        return true;
+        return false;
     }
 }
