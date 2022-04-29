@@ -157,8 +157,9 @@ public class MoveAvatarEvent extends MessageHandler {
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 LOGGER.error("Caught exception", e);
+                Thread.currentThread().interrupt();
             }
         }
     }
