@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CfhChatlogComposer extends MessageComposer {
-    public static SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+    private final SimpleDateFormat format = new SimpleDateFormat("HH:mm");
     private final ModToolIssue issue;
     private final List<ModToolChatLog> chatlog;
     private final String roomName;

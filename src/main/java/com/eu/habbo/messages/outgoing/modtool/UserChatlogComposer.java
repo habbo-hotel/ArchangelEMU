@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class UserChatlogComposer extends MessageComposer {
-    public static SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+    private final SimpleDateFormat format = new SimpleDateFormat("HH:mm");
     private final ArrayList<ModToolRoomVisit> set;
     private final int userId;
     private final String username;
