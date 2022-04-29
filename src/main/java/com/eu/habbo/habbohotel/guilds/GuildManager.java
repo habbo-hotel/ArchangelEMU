@@ -185,7 +185,7 @@ public class GuildManager {
     }
 
 
-    public void joinGuild(Guild guild, GameClient client, int userId, boolean acceptRequest) {
+    public boolean joinGuild(Guild guild, GameClient client, int userId, boolean acceptRequest) {
         boolean error = false;
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(id) as total FROM guilds_members WHERE user_id = ?")) {
@@ -282,6 +282,8 @@ public class GuildManager {
         } catch (SQLException e) {
             LOGGER.error("Caught SQL exception", e);
         }
+
+        return !error;
     }
 
 
