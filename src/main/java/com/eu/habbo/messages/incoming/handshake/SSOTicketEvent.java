@@ -2,7 +2,7 @@ package com.eu.habbo.messages.incoming.handshake;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
-import com.eu.habbo.habbohotel.campaign.calendar.CalendarCampaign;
+import com.eu.habbo.habbohotel.campaign.CalendarCampaign;
 import com.eu.habbo.habbohotel.catalog.TargetOffer;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.modtool.ModToolSanctionItem;

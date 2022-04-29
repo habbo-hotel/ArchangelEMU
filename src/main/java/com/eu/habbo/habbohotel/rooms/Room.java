@@ -4168,7 +4168,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void giveEffect(RoomUnit roomUnit, int effectId, int duration) {
-        if (roomUnit == null) return;
+        if (roomUnit == null || roomUnit.getRoom() == null) return;
 
         Habbo habbo = roomUnit.getRoom().getHabbo(roomUnit);
 

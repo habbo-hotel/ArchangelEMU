@@ -1,7 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.campaign.calendar.CalendarRewardClaimed;
+import com.eu.habbo.habbohotel.campaign.CalendarRewardClaimed;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;

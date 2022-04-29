@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.core.*;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.BotManager;
-import com.eu.habbo.habbohotel.campaign.calendar.CalendarManager;
+import com.eu.habbo.habbohotel.campaign.CalendarManager;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.commands.CommandHandler;
 import com.eu.habbo.habbohotel.crafting.CraftingManager;

@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.campaign.calendar;
+package com.eu.habbo.habbohotel.campaign;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;

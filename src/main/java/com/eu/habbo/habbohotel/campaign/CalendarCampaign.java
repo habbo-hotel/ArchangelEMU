@@ -1,10 +1,9 @@
-package com.eu.habbo.habbohotel.campaign.calendar;
+package com.eu.habbo.habbohotel.campaign;
 
 import gnu.trove.map.hash.THashMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Map;
 
 public class CalendarCampaign {
@@ -12,26 +11,26 @@ public class CalendarCampaign {
     private final String name;
     private final String image;
     private Map<Integer , CalendarRewardObject> rewards = new THashMap<>();
-    private final Integer start_timestamp;
-    private final int total_days;
-    private final boolean lock_expired;
+    private final Integer startTimestamp;
+    private final int totalDays;
+    private final boolean lockExpired;
 
     public CalendarCampaign(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
         this.name = set.getString("name");
         this.image = set.getString("image");
-        this.start_timestamp = set.getInt("start_timestamp");
-        this.total_days = set.getInt("total_days");
-        this.lock_expired = set.getInt("lock_expired") == 1;
+        this.startTimestamp = set.getInt("start_timestamp");
+        this.totalDays = set.getInt("total_days");
+        this.lockExpired = set.getInt("lock_expired") == 1;
     }
 
-    public CalendarCampaign(int id, String name, String image, Integer start_timestamp, int total_days, boolean lock_expired) {
+    public CalendarCampaign(int id, String name, String image, Integer startTimestamp, int totalDays, boolean lockExpired) {
         this.id = id;
         this.name = name;
         this.image = image;
-        this.start_timestamp = start_timestamp;
-        this.total_days = total_days;
-        this.lock_expired = lock_expired;
+        this.startTimestamp = startTimestamp;
+        this.totalDays = totalDays;
+        this.lockExpired = lockExpired;
     }
 
     public int getId() {
@@ -47,12 +46,12 @@ public class CalendarCampaign {
     }
 
     public Integer getStartTimestamp() {
-        return this.start_timestamp;
+        return this.startTimestamp;
     }
 
-    public int getTotalDays() { return this.total_days; }
+    public int getTotalDays() { return this.totalDays; }
 
-    public boolean getLockExpired() { return this.lock_expired; }
+    public boolean getLockExpired() { return this.lockExpired; }
 
     public Map<Integer, CalendarRewardObject> getRewards() { return rewards; }
 

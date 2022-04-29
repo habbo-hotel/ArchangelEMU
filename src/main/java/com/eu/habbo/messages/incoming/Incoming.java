@@ -232,8 +232,8 @@ public class Incoming {
     public static final int NewNavigatorSearchEvent = 249;
     public static final int NewUserExperienceGetGiftsEvent = 1822;
     public static final int NewUserExperienceScriptProceedEvent = 1299;
-    public static final int OpenCampaignCalendarDoorAsStaffEvent = 2257;
-    public static final int OpenCampaignCalendarDoorEvent = 3889;
+    public static final int OpenCampaignCalendarDoorEvent = 8809;
+    public static final int OpenCampaignCalendarDoorAsStaffEvent = 2507;
     public static final int OpenFlatConnectionEvent = 2312;
     public static final int OpenPetPackageEvent = 3698;
     public static final int OpenTradingEvent = 1481;
