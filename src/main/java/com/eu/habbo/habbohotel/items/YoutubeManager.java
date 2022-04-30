@@ -121,12 +121,14 @@ public class YoutubeManager {
 
             youtubeDataLoaderPool.shutdown();
             try {
-                youtubeDataLoaderPool.awaitTermination(60, TimeUnit.SECONDS);
+                if(!youtubeDataLoaderPool.awaitTermination(60, TimeUnit.SECONDS))
+                    LOGGER.error("Youtube Manager -> Failed, timeout elapsed before termination!");
             } catch (InterruptedException e) {
                 LOGGER.error("Caught Exception", e);
+                Thread.currentThread().interrupt();
+            } finally {
+                LOGGER.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
             }
-
-            LOGGER.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
         });
     }
 
