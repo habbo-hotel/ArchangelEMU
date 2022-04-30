@@ -1289,7 +1289,7 @@ public class RoomManager {
 
         Collections.sort(rooms);
 
-        return rooms.subList(0, (rooms.size() > limit ? limit : rooms.size()));
+        return rooms.subList(0, (Math.min(rooms.size(), limit)));
     }
 
     public ArrayList<Room> getRoomsWithRights(Habbo habbo) {
