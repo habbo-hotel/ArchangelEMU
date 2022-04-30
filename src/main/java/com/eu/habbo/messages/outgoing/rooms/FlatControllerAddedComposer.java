@@ -18,7 +18,7 @@ public class FlatControllerAddedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FlatControllerAddedComposer);
+        this.response.init(Outgoing.flatControllerAddedComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendInt(this.userId);
         this.response.appendString(this.userName);

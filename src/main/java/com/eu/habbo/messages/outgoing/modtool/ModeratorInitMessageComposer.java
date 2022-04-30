@@ -24,7 +24,7 @@ public class ModeratorInitMessageComposer extends MessageComposer implements TOb
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ModeratorInitMessageComposer);
+        this.response.init(Outgoing.moderatorInitMessageComposer);
 
         if (this.habbo.hasPermission(Permission.ACC_MODTOOL_TICKET_Q)) {
             THashSet<ModToolIssue> openTickets = new THashSet<>();

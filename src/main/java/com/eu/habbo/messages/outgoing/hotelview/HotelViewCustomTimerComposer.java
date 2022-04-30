@@ -15,7 +15,7 @@ public class HotelViewCustomTimerComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HotelViewCustomTimerComposer);
+        this.response.init(Outgoing.hotelViewCustomTimerComposer);
         this.response.appendString(this.name); //Send by the client.
         this.response.appendInt(this.seconds);
         return this.response;

@@ -19,7 +19,7 @@ public class RoomUserQuestionAnsweredComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomUserQuestionAnsweredComposer);
+        this.response.init(Outgoing.roomUserQuestionAnsweredComposer);
         this.response.appendInt(this.userId);
         this.response.appendString(this.value);
         this.response.appendInt(this.unknownMap.size());

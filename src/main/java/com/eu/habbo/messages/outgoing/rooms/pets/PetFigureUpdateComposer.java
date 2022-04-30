@@ -14,7 +14,7 @@ public class PetFigureUpdateComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetFigureUpdateComposer);
+        this.response.init(Outgoing.petFigureUpdateComposer);
         this.response.appendInt(this.pet.getRoomUnit().getId());
         this.response.appendInt(this.pet.getId());
         this.response.appendInt(this.pet.getPetData().getType());

@@ -18,7 +18,7 @@ public class JukeboxSongDisksMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.JukeboxSongDisksMessageComposer);
+        this.response.init(Outgoing.jukeboxSongDisksMessageComposer);
         this.response.appendInt(this.totalLength); //Dunno //TODO Total play length?
         this.response.appendInt(this.songs.size());
         for (InteractionMusicDisc soundTrack : this.songs) {

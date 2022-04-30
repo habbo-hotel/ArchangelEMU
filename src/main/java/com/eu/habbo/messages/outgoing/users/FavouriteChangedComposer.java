@@ -16,7 +16,7 @@ public class FavouriteChangedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FavouritesComposer);
+        this.response.init(Outgoing.favouritesComposer);
         this.response.appendInt(Emulator.getConfig().getInt("hotel.rooms.max.favorite"));
         this.response.appendInt(this.habbo.getHabboStats().getFavoriteRooms().size());
         this.habbo.getHabboStats().getFavoriteRooms().forEach(new TIntProcedure() {

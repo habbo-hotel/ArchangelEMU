@@ -15,7 +15,7 @@ public class CurrentTimingCodeMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CurrentTimingCodeMessageComposer);
+        this.response.init(Outgoing.currentTimingCodeMessageComposer);
 
         this.response.appendString(this.data);
         this.response.appendString(this.key);

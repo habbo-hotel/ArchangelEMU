@@ -14,7 +14,7 @@ public class UserRemoveMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserRemoveMessageComposer);
+        this.response.init(Outgoing.userRemoveMessageComposer);
         this.response.appendString(this.roomUnit.getId() + "");
         return this.response;
     }

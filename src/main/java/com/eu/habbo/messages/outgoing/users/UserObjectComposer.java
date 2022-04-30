@@ -14,7 +14,7 @@ public class UserObjectComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserObjectComposer);
+        this.response.init(Outgoing.userObjectComposer);
 
         this.response.appendInt(this.habbo.getHabboInfo().getId());
         this.response.appendString(this.habbo.getHabboInfo().getUsername());

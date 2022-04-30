@@ -16,7 +16,7 @@ public class BotInventoryComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.BotInventoryComposer);
+        this.response.init(Outgoing.botInventoryComposer);
 
         THashMap<Integer, Bot> userBots = this.habbo.getInventory().getBotsComponent().getBots();
         this.response.appendInt(userBots.size());

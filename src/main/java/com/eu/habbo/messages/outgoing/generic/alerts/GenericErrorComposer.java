@@ -21,7 +21,7 @@ public class GenericErrorComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GenericErrorComposer);
+        this.response.init(Outgoing.genericErrorComposer);
         this.response.appendInt(this.errorCode);
         return this.response;
     }

@@ -23,7 +23,7 @@ public class ErrorReportComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ErrorReportComposer);
+        this.response.init(Outgoing.errorReportComposer);
         this.response.appendInt(this.messageId);
         this.response.appendInt(this.errorCode);
         this.response.appendString(this.timestamp);

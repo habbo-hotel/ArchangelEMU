@@ -14,7 +14,7 @@ public class AccountPreferencesComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AccountPreferencesComposer);
+        this.response.init(Outgoing.accountPreferencesComposer);
         this.response.appendInt(this.habbo.getHabboStats().volumeSystem);
         this.response.appendInt(this.habbo.getHabboStats().volumeFurni);
         this.response.appendInt(this.habbo.getHabboStats().volumeTrax);

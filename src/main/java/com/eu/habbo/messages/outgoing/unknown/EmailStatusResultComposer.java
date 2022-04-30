@@ -17,7 +17,7 @@ public class EmailStatusResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.EmailStatusResultComposer);
+        this.response.init(Outgoing.emailStatusResultComposer);
         this.response.appendString(this.email);
         this.response.appendBoolean(this.unknownB1);
         this.response.appendBoolean(this.unknownB2);

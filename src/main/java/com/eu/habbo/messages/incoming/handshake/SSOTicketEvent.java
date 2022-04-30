@@ -25,10 +25,7 @@ import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageCompos
 import com.eu.habbo.messages.outgoing.generic.alerts.MOTDNotificationComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.NoobnessLevelMessageComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.InClientLinkMessageComposer;
-import com.eu.habbo.messages.outgoing.handshake.EnableNotificationsComposer;
-import com.eu.habbo.messages.outgoing.handshake.AuthenticationOKMessageComposer;
-import com.eu.habbo.messages.outgoing.handshake.AvailabilityStatusMessageComposer;
-import com.eu.habbo.messages.outgoing.handshake.PingMessageComposer;
+import com.eu.habbo.messages.outgoing.handshake.*;
 import com.eu.habbo.messages.outgoing.inventory.BadgePointLimitsComposer;
 import com.eu.habbo.messages.outgoing.inventory.AvatarEffectsMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.CfhTopicsInitComposer;

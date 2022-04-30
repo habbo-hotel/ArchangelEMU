@@ -16,7 +16,7 @@ public class PurchaseNotAllowedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PurchaseNotAllowedMessageComposer);
+        this.response.init(Outgoing.purchaseNotAllowedMessageComposer);
         this.response.appendInt(this.code);
         return this.response;
     }

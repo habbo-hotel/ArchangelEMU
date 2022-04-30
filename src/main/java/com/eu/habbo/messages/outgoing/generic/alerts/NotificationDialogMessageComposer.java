@@ -29,7 +29,7 @@ public class NotificationDialogMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NotificationDialogMessageComposer);
+        this.response.init(Outgoing.notificationDialogMessageComposer);
         this.response.appendString(this.errorKey);
         this.response.appendInt(this.keys.size());
         for (Map.Entry<String, String> set : this.keys.entrySet()) {

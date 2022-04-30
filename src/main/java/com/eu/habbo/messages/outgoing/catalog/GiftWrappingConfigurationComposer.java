@@ -15,7 +15,7 @@ public class GiftWrappingConfigurationComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GiftWrappingConfigurationComposer);
+        this.response.init(Outgoing.giftWrappingConfigurationComposer);
         this.response.appendBoolean(true);
         this.response.appendInt(Emulator.getConfig().getInt("hotel.gifts.special.price", 2));
 

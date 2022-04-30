@@ -18,7 +18,7 @@ public class PetInventoryComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetInventoryComposer);
+        this.response.init(Outgoing.petInventoryComposer);
 
         this.response.appendInt(1);
         this.response.appendInt(1);

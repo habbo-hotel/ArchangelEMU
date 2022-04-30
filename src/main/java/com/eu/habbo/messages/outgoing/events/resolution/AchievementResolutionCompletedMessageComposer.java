@@ -13,7 +13,7 @@ public class AchievementResolutionCompletedMessageComposer extends MessageCompos
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AchievementResolutionCompletedMessageComposer);
+        this.response.init(Outgoing.achievementResolutionCompletedMessageComposer);
         this.response.appendString(this.badge);
         this.response.appendString(this.badge);
         return this.response;

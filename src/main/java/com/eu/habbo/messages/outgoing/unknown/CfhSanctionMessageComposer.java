@@ -18,7 +18,7 @@ public class CfhSanctionMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CfhSanctionMessageComposer);
+        this.response.init(Outgoing.cfhSanctionMessageComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.accountId);
         this.sanction.serialize(this.response);

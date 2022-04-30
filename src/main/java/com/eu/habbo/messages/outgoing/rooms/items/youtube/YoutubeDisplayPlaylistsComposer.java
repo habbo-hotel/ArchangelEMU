@@ -20,7 +20,7 @@ public class YoutubeDisplayPlaylistsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.YoutubeDisplayPlaylistsComposer);
+        this.response.init(Outgoing.youtubeDisplayPlaylistsComposer);
         this.response.appendInt(this.itemId);
         this.response.appendInt(this.playlists.size());
 

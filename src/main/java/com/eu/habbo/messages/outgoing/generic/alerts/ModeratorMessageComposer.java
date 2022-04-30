@@ -15,7 +15,7 @@ public class ModeratorMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ModeratorMessageComposer);
+        this.response.init(Outgoing.moderatorMessageComposer);
         this.response.appendString(this.message);
         this.response.appendString(this.link);
         return this.response;

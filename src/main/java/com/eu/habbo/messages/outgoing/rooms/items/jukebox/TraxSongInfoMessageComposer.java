@@ -16,7 +16,7 @@ public class TraxSongInfoMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TraxSongInfoMessageComposer);
+        this.response.init(Outgoing.traxSongInfoMessageComposer);
         this.response.appendInt(this.tracks.size());
 
         for (SoundTrack track : this.tracks) {

@@ -19,7 +19,7 @@ public class GuideTicketCreationResultMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuideTicketCreationResultMessageComposer);
+        this.response.init(Outgoing.guideTicketCreationResultMessageComposer);
         this.response.appendInt(this.code);
         return this.response;
     }

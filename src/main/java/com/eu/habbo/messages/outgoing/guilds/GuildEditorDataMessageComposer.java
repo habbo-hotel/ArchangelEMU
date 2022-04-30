@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class GuildEditorDataMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildEditorDataMessageComposer);
+        this.response.init(Outgoing.guildEditorDataMessageComposer);
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getBases().size());
         for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBases()) {
             this.response.appendInt(part.id);

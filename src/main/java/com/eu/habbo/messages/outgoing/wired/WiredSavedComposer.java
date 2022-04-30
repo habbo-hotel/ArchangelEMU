@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class WiredSavedComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.WiredSavedComposer);
+        this.response.init(Outgoing.wiredSavedComposer);
         return this.response;
     }
 }

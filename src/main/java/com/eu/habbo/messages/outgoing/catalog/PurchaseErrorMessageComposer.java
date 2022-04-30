@@ -16,7 +16,7 @@ public class PurchaseErrorMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PurchaseErrorMessageComposer);
+        this.response.init(Outgoing.purchaseErrorMessageComposer);
         this.response.appendInt(this.error);
         return this.response;
     }

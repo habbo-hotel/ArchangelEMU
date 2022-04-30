@@ -23,7 +23,7 @@ public class PerkAllowancesComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.OpenPetPackageResultMessageComposer);
+        this.response.init(Outgoing.openPetPackageResultMessageComposer);
         this.response.appendInt(this.itemId);
         this.response.appendInt(this.errorCode);
         this.response.appendString(this.errorString);

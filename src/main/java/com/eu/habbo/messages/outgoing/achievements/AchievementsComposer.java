@@ -22,7 +22,7 @@ public class AchievementsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AchievementsComposer);
+        this.response.init(Outgoing.achievementsComposer);
 
         try {
             this.response.appendInt(Emulator.getGameEnvironment().getAchievementManager().getAchievements().size());

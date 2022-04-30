@@ -26,7 +26,7 @@ public class NewConsoleMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewConsoleMessageComposer);
+        this.response.init(Outgoing.newConsoleMessageComposer);
         this.response.appendInt(this.toId);
         this.response.appendString(this.message.getMessage());
         this.response.appendInt(Emulator.getIntUnixTimestamp() - this.message.getTimestamp());

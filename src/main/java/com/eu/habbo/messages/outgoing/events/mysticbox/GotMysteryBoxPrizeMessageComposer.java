@@ -15,7 +15,7 @@ public class GotMysteryBoxPrizeMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GotMysteryBoxPrizeMessageComposer);
+        this.response.init(Outgoing.gotMysteryBoxPrizeMessageComposer);
         this.response.appendString(this.type);
         this.response.appendInt(this.itemId);
         return this.response;

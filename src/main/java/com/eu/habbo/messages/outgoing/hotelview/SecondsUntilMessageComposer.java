@@ -15,7 +15,7 @@ public class SecondsUntilMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.SecondsUntilMessageComposer);
+        this.response.init(Outgoing.secondsUntilMessageComposer);
         this.response.appendString(this.dateString);
         this.response.appendInt(this.seconds);
 

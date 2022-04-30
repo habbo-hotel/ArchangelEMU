@@ -22,7 +22,7 @@ public class ItemsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ItemsComposer);
+        this.response.init(Outgoing.itemsComposer);
         THashMap<Integer, String> userNames = new THashMap<>();
         TIntObjectMap<String> furniOwnerNames = this.room.getFurniOwnerNames();
         TIntObjectIterator<String> iterator = furniOwnerNames.iterator();

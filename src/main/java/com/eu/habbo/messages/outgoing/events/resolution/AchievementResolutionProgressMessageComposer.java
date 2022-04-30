@@ -23,7 +23,7 @@ public class AchievementResolutionProgressMessageComposer extends MessageCompose
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AchievementResolutionProgressMessageComposer);
+        this.response.init(Outgoing.achievementResolutionProgressMessageComposer);
         this.response.appendInt(this.stuffId);
         this.response.appendInt(this.achievementId);
         this.response.appendString(this.achievementName);

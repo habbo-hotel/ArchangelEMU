@@ -15,7 +15,7 @@ public class NestBreedingSuccessComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NestBreedingSuccessComposer);
+        this.response.init(Outgoing.nestBreedingSuccessComposer);
         this.response.appendInt(this.type);
         this.response.appendInt(this.race);
         return this.response;

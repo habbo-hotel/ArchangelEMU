@@ -21,7 +21,7 @@ public class ApproveNameMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ApproveNameMessageComposer);
+        this.response.init(Outgoing.approveNameMessageComposer);
         this.response.appendInt(this.type);
         this.response.appendString(this.value);
         return this.response;

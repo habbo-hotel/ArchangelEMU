@@ -53,7 +53,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         if (!this.room.isLoaded())
             return null;
 
-        this.response.init(Outgoing.SlideObjectBundleMessageComposer);
+        this.response.init(Outgoing.slideObjectBundleMessageComposer);
         this.response.appendInt(this.oldLocation.x);
         this.response.appendInt(this.oldLocation.y);
         this.response.appendInt(this.newLocation.x);

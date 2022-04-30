@@ -15,7 +15,7 @@ public class HotelViewBadgeButtonConfigComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.IsBadgeRequestFulfilledComposer);
+        this.response.init(Outgoing.isBadgeRequestFulfilledComposer);
         this.response.appendString(this.badge);
         this.response.appendBoolean(this.enabled);
         return this.response;

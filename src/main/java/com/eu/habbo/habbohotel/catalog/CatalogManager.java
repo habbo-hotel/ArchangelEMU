@@ -91,6 +91,7 @@ public class CatalogManager {
                     case recycler_info:
                         if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
                             this.put(layout.name().toLowerCase(), RecyclerInfoLayout.class);
+                        break;
                     case recycler_prizes:
                         if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
                             this.put(layout.name().toLowerCase(), RecyclerPrizesLayout.class);

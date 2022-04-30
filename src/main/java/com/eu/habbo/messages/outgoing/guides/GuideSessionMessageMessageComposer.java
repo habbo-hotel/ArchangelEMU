@@ -14,7 +14,7 @@ public class GuideSessionMessageMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuideSessionMessageMessageComposer);
+        this.response.init(Outgoing.guideSessionMessageMessageComposer);
         this.response.appendString(this.message.message); //Message
         this.response.appendInt(this.message.userId);   //Sender ID
         return this.response;

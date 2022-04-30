@@ -15,7 +15,7 @@ public class PopularRoomTagsResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PopularRoomTagsResultComposer);
+        this.response.init(Outgoing.popularRoomTagsResultComposer);
         this.response.appendInt(this.tags.size());
 
         int i = 1;

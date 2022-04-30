@@ -13,7 +13,7 @@ public class ChangeEmailResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ChangeEmailResultComposer);
+        this.response.init(Outgoing.changeEmailResultComposer);
         this.response.appendInt(this.result);
         return this.response;
     }

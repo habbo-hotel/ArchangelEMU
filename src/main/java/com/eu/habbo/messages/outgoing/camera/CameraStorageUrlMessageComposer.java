@@ -13,7 +13,7 @@ public class CameraStorageUrlMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CameraStorageUrlMessageComposer);
+        this.response.init(Outgoing.cameraStorageUrlMessageComposer);
         this.response.appendString(this.URL);
         return this.response;
     }

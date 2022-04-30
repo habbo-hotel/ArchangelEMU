@@ -23,7 +23,7 @@ public class ObjectsMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ObjectsMessageComposer);
+        this.response.init(Outgoing.objectsMessageComposer);
 
         TIntObjectIterator<String> iterator = this.furniOwnerNames.iterator();
 

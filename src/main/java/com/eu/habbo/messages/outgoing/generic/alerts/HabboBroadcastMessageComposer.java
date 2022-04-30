@@ -18,7 +18,7 @@ public class HabboBroadcastMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HabboBroadcastMessageComposer);
+        this.response.init(Outgoing.habboBroadcastMessageComposer);
 
         this.response.appendString(this.message);
 

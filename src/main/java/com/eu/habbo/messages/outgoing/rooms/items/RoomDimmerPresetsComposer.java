@@ -15,7 +15,7 @@ public class RoomDimmerPresetsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomDimmerPresetsComposer);
+        this.response.init(Outgoing.roomDimmerPresetsComposer);
         this.response.appendInt(3); //PresetCount
 
         int index = 1;

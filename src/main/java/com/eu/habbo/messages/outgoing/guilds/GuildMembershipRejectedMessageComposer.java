@@ -16,7 +16,7 @@ public class GuildMembershipRejectedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildMembershipRejectedMessageComposer);
+        this.response.init(Outgoing.guildMembershipRejectedMessageComposer);
         this.response.appendInt(this.guild.getId());
         this.response.appendInt(this.userId);
         return this.response;

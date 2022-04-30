@@ -18,7 +18,7 @@ public class NowPlayingMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NowPlayingMessageComposer);
+        this.response.init(Outgoing.nowPlayingMessageComposer);
 
         if (this.track != null) {
             this.response.appendInt(this.track.getId());

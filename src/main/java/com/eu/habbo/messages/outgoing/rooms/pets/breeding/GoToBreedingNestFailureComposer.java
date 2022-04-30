@@ -21,7 +21,7 @@ public class GoToBreedingNestFailureComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GoToBreedingNestFailureComposer);
+        this.response.init(Outgoing.goToBreedingNestFailureComposer);
         this.response.appendInt(this.reason);
         return this.response;
     }

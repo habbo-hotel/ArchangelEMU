@@ -18,7 +18,7 @@ public class ItemDataUpdateMessageComposer extends MessageComposer {
             this.postIt.setExtradata("FFFF33");
         }
 
-        this.response.init(Outgoing.ItemDataUpdateMessageComposer);
+        this.response.init(Outgoing.itemDataUpdateMessageComposer);
         this.response.appendString(this.postIt.getId() + "");
         this.response.appendString(this.postIt.getExtradata());
         return this.response;

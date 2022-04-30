@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class GuideSessionDetachedMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuideSessionDetachedMessageComposer);
+        this.response.init(Outgoing.guideSessionDetachedMessageComposer);
         return this.response;
     }
 }

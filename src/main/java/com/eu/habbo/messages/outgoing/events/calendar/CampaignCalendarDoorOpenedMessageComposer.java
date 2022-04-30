@@ -20,7 +20,7 @@ public class CampaignCalendarDoorOpenedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CampaignCalendarDoorOpenedMessageComposer);
+        this.response.init(Outgoing.campaignCalendarDoorOpenedMessageComposer);
         this.response.appendBoolean(this.visible);
 
         String className = "";

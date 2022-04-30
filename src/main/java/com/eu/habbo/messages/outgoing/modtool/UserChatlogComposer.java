@@ -23,7 +23,7 @@ public class UserChatlogComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserChatlogComposer);
+        this.response.init(Outgoing.userChatlogComposer);
         this.response.appendInt(this.userId);
         this.response.appendString(this.username);
         this.response.appendInt(this.set.size());

@@ -17,7 +17,7 @@ public class WiredEffectDataComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.WiredEffectDataComposer);
+        this.response.init(Outgoing.wiredEffectDataComposer);
         this.effect.serializeWiredData(this.response, this.room);
         this.effect.needsUpdate(true);
         return this.response;

@@ -23,7 +23,7 @@ public class FurniRentOrBuyoutOfferMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FurniRentOrBuyoutOfferMessageComposer);
+        this.response.init(Outgoing.furniRentOrBuyoutOfferMessageComposer);
         this.response.appendBoolean(this.unknownBoolean1);
         this.response.appendString(this.unknownString1);
         this.response.appendBoolean(this.unknownBoolean2);

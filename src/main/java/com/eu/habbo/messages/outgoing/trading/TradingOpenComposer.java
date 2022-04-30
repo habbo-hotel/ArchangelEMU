@@ -22,7 +22,7 @@ public class TradingOpenComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TradingOpenComposer);
+        this.response.init(Outgoing.tradingOpenComposer);
         for (RoomTradeUser tradeUser : this.roomTrade.getRoomTradeUsers()) {
             this.response.appendInt(tradeUser.getHabbo().getHabboInfo().getId());
             this.response.appendInt(this.state);

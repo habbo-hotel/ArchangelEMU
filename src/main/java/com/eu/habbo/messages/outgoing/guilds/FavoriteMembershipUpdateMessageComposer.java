@@ -17,7 +17,7 @@ public class FavoriteMembershipUpdateMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FavoriteMembershipUpdateMessageComposer);
+        this.response.init(Outgoing.favoriteMembershipUpdateMessageComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.guild != null ? this.guild.getId() : 0);
         this.response.appendInt(this.guild != null ? this.guild.getState().state : 3);

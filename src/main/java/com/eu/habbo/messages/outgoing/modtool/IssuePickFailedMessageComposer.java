@@ -14,7 +14,7 @@ public class IssuePickFailedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.IssuePickFailedMessageComposer);
+        this.response.init(Outgoing.issuePickFailedMessageComposer);
         this.issue.serialize(this.response);
         return this.response;
     }

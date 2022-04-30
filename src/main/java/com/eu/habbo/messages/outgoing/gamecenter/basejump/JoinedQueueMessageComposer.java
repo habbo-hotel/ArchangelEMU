@@ -13,7 +13,7 @@ public class JoinedQueueMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.JoinedQueueMessageComposer);
+        this.response.init(Outgoing.joinedQueueMessageComposer);
         this.response.appendInt(this.gameId);
         return this.response;
     }

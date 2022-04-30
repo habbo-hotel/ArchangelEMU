@@ -216,12 +216,11 @@ public final class Emulator {
             MessageDigest md = MessageDigest.getInstance("MD5");// MD5
             FileInputStream fis = new FileInputStream(filepath);
             byte[] dataBytes = new byte[1024];
-            int nread = 0;
+            int nread;
             while ((nread = fis.read(dataBytes)) != -1)
                 md.update(dataBytes, 0, nread);
             byte[] mdbytes = md.digest();
-            for (int i = 0; i < mdbytes.length; i++)
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            for (byte mdbyte : mdbytes) sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
         } catch (Exception e) {
             build = "4.0 Developer Preview Branch";
             return;
@@ -240,50 +239,50 @@ public final class Emulator {
         try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStartShutdownEvent());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.cameraClient != null)
                 Emulator.cameraClient.disconnect();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.rconServer != null)
                 Emulator.rconServer.stop();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.gameEnvironment != null)
                 Emulator.gameEnvironment.dispose();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStoppedEvent());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.pluginManager != null)
                 Emulator.pluginManager.dispose();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.config != null) {
                 Emulator.config.saveToDatabase();
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.gameServer != null)
                 Emulator.gameServer.stop();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         LOGGER.info("Stopped Arcturus Morningstar {}", version);
@@ -297,7 +296,7 @@ public final class Emulator {
             if (Emulator.threading != null)
 
                 Emulator.threading.shutDown();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class AuthenticationOKMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AuthenticationOKMessageComposer);
+        this.response.init(Outgoing.authenticationOKMessageComposer);
         return this.response;
     }
 }

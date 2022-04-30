@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class CollapsedCategoriesComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CollapsedCategoriesComposer);
+        this.response.init(Outgoing.collapsedCategoriesComposer);
         this.response.appendInt(46);
         this.response.appendString("new_ads");
         this.response.appendString("friend_finding");

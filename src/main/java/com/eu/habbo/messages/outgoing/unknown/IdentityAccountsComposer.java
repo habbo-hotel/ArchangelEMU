@@ -15,7 +15,7 @@ public class IdentityAccountsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.IdentityAccountsComposer);
+        this.response.init(Outgoing.identityAccountsComposer);
         this.response.appendInt(this.unknownMap.size());
         for (Map.Entry<Integer, String> entry : this.unknownMap.entrySet()) {
             this.response.appendInt(entry.getKey());

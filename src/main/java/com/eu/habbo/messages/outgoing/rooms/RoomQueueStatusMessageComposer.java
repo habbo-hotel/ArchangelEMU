@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class RoomQueueStatusMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomQueueStatusMessageComposer);
+        this.response.init(Outgoing.roomQueueStatusMessageComposer);
         this.response.appendInt(1); //Count
         {
             this.response.appendString("TEST"); //Name

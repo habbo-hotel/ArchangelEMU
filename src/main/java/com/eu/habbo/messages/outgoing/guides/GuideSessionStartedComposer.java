@@ -14,7 +14,7 @@ public class GuideSessionStartedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuideSessionStartedComposer);
+        this.response.init(Outgoing.guideSessionStartedComposer);
         this.response.appendInt(this.tour.getNoob().getHabboInfo().getId());
         this.response.appendString(this.tour.getNoob().getHabboInfo().getUsername());
         this.response.appendString(this.tour.getNoob().getHabboInfo().getLook());

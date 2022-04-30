@@ -21,7 +21,7 @@ public class MarketplaceCanMakeOfferResult extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MarketplaceCanMakeOfferResult);
+        this.response.init(Outgoing.marketplaceCanMakeOfferResult);
         this.response.appendInt(this.errorCode);
         this.response.appendInt(this.valueA);
         this.response.appendInt(this.valueB);

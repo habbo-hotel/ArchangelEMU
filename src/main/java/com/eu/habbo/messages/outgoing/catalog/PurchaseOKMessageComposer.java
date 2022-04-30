@@ -18,7 +18,7 @@ public class PurchaseOKMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PurchaseOKMessageComposer);
+        this.response.init(Outgoing.purchaseOKMessageComposer);
         if (this.catalogItem != null) {
             this.catalogItem.serialize(this.response);
         } else {

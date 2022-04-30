@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class YouAreNotControllerMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.YouAreNotControllerMessageComposer);
+        this.response.init(Outgoing.youAreNotControllerMessageComposer);
         return this.response;
     }
 }

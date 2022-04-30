@@ -14,7 +14,7 @@ public class PlayListSongAddedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PlayListSongAddedMessageComposer);
+        this.response.init(Outgoing.playListSongAddedMessageComposer);
         this.response.appendInt(this.track.getId());
         this.response.appendInt(this.track.getLength() * 1000);
         this.response.appendString(this.track.getCode());

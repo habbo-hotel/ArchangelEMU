@@ -39,7 +39,7 @@ public class ScrSendUserInfoComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ScrSendUserInfoComposer);
+        this.response.init(Outgoing.scrSendUserInfoComposer);
 
         this.response.appendString(this.subscriptionType.toLowerCase());
 

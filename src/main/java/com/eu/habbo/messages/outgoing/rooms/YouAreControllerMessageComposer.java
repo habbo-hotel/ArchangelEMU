@@ -14,7 +14,7 @@ public class YouAreControllerMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.YouAreControllerMessageComposer);
+        this.response.init(Outgoing.youAreControllerMessageComposer);
         this.response.appendInt(this.type.level);
         return this.response;
     }

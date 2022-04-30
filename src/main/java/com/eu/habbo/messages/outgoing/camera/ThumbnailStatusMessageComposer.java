@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class ThumbnailStatusMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ThumbnailStatusMessageComposer);
+        this.response.init(Outgoing.thumbnailStatusMessageComposer);
         return this.response;
     }
 }

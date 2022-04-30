@@ -19,7 +19,7 @@ public class ModeratorToolPreferencesComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ModeratorToolPreferencesComposer);
+        this.response.init(Outgoing.moderatorToolPreferencesComposer);
         this.response.appendInt(this.x);
         this.response.appendInt(this.y);
         this.response.appendInt(this.width);

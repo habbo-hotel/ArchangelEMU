@@ -21,7 +21,7 @@ public class BadgesComposer extends MessageComposer {
 
         THashSet<HabboBadge> equippedBadges = new THashSet<>();
 
-        this.response.init(Outgoing.BadgesComposer);
+        this.response.init(Outgoing.badgesComposer);
 
         this.response.appendInt(this.habbo.getInventory().getBadgesComponent().getBadges().size());
         for (HabboBadge badge : this.habbo.getInventory().getBadgesComponent().getBadges()) {

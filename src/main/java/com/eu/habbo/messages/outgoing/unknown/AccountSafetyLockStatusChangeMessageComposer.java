@@ -16,7 +16,7 @@ public class AccountSafetyLockStatusChangeMessageComposer extends MessageCompose
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AccountSafetyLockStatusChangeMessageComposer);
+        this.response.init(Outgoing.accountSafetyLockStatusChangeMessageComposer);
         this.response.appendInt(this.status);
         return this.response;
     }

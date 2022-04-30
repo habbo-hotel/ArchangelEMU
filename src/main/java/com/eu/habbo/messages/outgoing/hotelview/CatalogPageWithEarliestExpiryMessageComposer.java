@@ -16,7 +16,7 @@ public class CatalogPageWithEarliestExpiryMessageComposer extends MessageCompose
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CatalogPageWithEarliestExpiryMessageComposer);
+        this.response.init(Outgoing.catalogPageWithEarliestExpiryMessageComposer);
         this.response.appendString(this.page.getCaption());
         this.response.appendInt(this.page.getId());
         this.response.appendString(this.image);

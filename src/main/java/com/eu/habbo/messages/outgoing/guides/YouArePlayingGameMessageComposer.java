@@ -13,7 +13,7 @@ public class YouArePlayingGameMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.YouArePlayingGameMessageComposer);
+        this.response.init(Outgoing.youArePlayingGameMessageComposer);
         this.response.appendBoolean(this.isPlaying);
         return this.response;
     }

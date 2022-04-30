@@ -25,7 +25,7 @@ public class RoomSettingsSaveErrorComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomSettingsSaveErrorComposer);
+        this.response.init(Outgoing.roomSettingsSaveErrorComposer);
         this.response.appendInt(this.roomId);
         this.response.appendInt(this.errorCode);
         this.response.appendString(this.info);

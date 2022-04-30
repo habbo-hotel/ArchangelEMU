@@ -16,7 +16,7 @@ public class CategoriesWithVisitorCountComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CategoriesWithVisitorCountComposer);
+        this.response.init(Outgoing.categoriesWithVisitorCountComposer);
         this.response.appendInt(this.roomCategories.size());
 
         for (RoomCategory category : this.roomCategories) {

@@ -13,7 +13,7 @@ public class DisconnectReasonComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.DisconnectReasonComposer);
+        this.response.init(Outgoing.disconnectReasonComposer);
         this.response.appendInt(this.errorCode);
         return this.response;
     }

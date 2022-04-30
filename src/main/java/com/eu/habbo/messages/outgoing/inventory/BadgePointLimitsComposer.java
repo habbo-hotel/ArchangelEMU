@@ -12,7 +12,7 @@ import gnu.trove.procedure.TObjectProcedure;
 public class BadgePointLimitsComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.BadgePointLimitsComposer);
+        this.response.init(Outgoing.badgePointLimitsComposer);
 
         synchronized (Emulator.getGameEnvironment().getAchievementManager().getAchievements()) {
             THashMap<String, Achievement> achievements = Emulator.getGameEnvironment().getAchievementManager().getAchievements();

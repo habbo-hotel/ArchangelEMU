@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class YouAreSpectatorMessageEvent extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.YouAreSpectatorMessageEvent);
+        this.response.init(Outgoing.youAreSpectatorMessageEvent);
         //Empty body
         return this.response;
     }

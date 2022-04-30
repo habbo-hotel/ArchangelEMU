@@ -12,7 +12,7 @@ import java.util.Map;
 public class RecyclerPrizesComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RecyclerPrizesComposer);
+        this.response.init(Outgoing.recyclerPrizesComposer);
         this.response.appendInt(Emulator.getGameEnvironment().getCatalogManager().prizes.size());
         for (Map.Entry<Integer, THashSet<Item>> map : Emulator.getGameEnvironment().getCatalogManager().prizes.entrySet()) {
             this.response.appendInt(map.getKey());

@@ -15,7 +15,7 @@ public class RoomPropertyMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomPropertyMessageComposer);
+        this.response.init(Outgoing.roomPropertyMessageComposer);
         this.response.appendString(this.type);
         this.response.appendString(this.value);
         return this.response;

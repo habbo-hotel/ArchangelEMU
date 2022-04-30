@@ -14,7 +14,7 @@ public class WardrobeMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.WardrobeMessageComposer);
+        this.response.init(Outgoing.wardrobeMessageComposer);
         this.response.appendInt(1);
         this.response.appendInt(this.wardrobeComponent.getLooks().size());
         for (WardrobeComponent.WardrobeItem wardrobeItem : this.wardrobeComponent.getLooks().values()) {

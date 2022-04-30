@@ -33,7 +33,7 @@ public class CfhChatlogComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CfhChatlogComposer);
+        this.response.init(Outgoing.cfhChatlogComposer);
         this.response.appendInt(this.issue.id);
         this.response.appendInt(this.issue.senderId);
         this.response.appendInt(this.issue.reportedId);

@@ -14,7 +14,7 @@ public class OpenPetPackageRequestedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.OpenPetPackageRequestedMessageComposer);
+        this.response.init(Outgoing.openPetPackageRequestedMessageComposer);
         this.response.appendInt(this.item.getId());
         return this.response;
     }

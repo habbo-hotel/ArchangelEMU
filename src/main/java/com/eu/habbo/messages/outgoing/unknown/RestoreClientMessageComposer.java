@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class RestoreClientMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RestoreClientMessageComposer);
+        this.response.init(Outgoing.restoreClientMessageComposer);
         //Empty body
         return this.response;
     }

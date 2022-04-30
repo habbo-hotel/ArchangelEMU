@@ -14,7 +14,7 @@ public class TradingAcceptComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TradingAcceptComposer);
+        this.response.init(Outgoing.tradingAcceptComposer);
         this.response.appendInt(this.tradeUser.getUserId());
         this.response.appendInt(this.tradeUser.getAccepted());
         return this.response;

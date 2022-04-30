@@ -46,7 +46,7 @@ public class FloorItemOnRollerComposer extends MessageComposer {
         short oldX = this.item.getX();
         short oldY = this.item.getY();
 
-        this.response.init(Outgoing.SlideObjectBundleMessageComposer);
+        this.response.init(Outgoing.slideObjectBundleMessageComposer);
         this.response.appendInt(this.oldLocation != null ? this.oldLocation.x : this.item.getX());
         this.response.appendInt(this.oldLocation != null ? this.oldLocation.y : this.item.getY());
         this.response.appendInt(this.newLocation.x);

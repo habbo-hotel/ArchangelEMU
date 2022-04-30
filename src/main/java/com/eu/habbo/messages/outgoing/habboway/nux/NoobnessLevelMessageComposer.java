@@ -14,7 +14,7 @@ public class NoobnessLevelMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NoobnessLevelMessageComposer);
+        this.response.init(Outgoing.noobnessLevelMessageComposer);
         this.response.appendInt(this.habbo.noobStatus());
         return this.response;
     }

@@ -13,7 +13,7 @@ public class FloodControlMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FloodControlMessageComposer);
+        this.response.init(Outgoing.floodControlMessageComposer);
         this.response.appendInt(this.time);
         return this.response;
     }

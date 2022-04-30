@@ -13,7 +13,7 @@ public class UserBannedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserBannedMessageComposer);
+        this.response.init(Outgoing.userBannedMessageComposer);
         this.response.appendString(this.message);
         return this.response;
     }

@@ -13,7 +13,7 @@ public class UnreadForumsCountMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnreadForumsCountMessageComposer);
+        this.response.init(Outgoing.unreadForumsCountMessageComposer);
         this.response.appendInt(this.count);
         return this.response;
     }

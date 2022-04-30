@@ -13,7 +13,7 @@ public class QuestMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.QuestMessageComposer);
+        this.response.init(Outgoing.questMessageComposer);
         this.response.append(this.quest);
         return this.response;
     }

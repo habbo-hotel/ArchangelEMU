@@ -19,7 +19,7 @@ public class CallForHelpResultMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CallForHelpResultMessageComposer);
+        this.response.init(Outgoing.callForHelpResultMessageComposer);
         this.response.appendInt(this.errorCode);
         this.response.appendString(this.message);
         return this.response;

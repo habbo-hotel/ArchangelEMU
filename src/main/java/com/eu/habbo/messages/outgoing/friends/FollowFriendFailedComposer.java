@@ -18,7 +18,7 @@ public class FollowFriendFailedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FollowFriendFailedComposer);
+        this.response.init(Outgoing.followFriendFailedComposer);
         this.response.appendInt(this.errorCode);
         return this.response;
     }

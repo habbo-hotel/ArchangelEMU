@@ -25,7 +25,7 @@ public class FriendNotificationComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FriendNotificationComposer);
+        this.response.init(Outgoing.friendNotificationComposer);
         this.response.appendString(this.userId + "");
         this.response.appendInt(this.type);
         this.response.appendString(this.data);

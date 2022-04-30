@@ -21,7 +21,7 @@ public class GuildFurniContextMenuInfoMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildFurniContextMenuInfoMessageComposer);
+        this.response.init(Outgoing.guildFurniContextMenuInfoMessageComposer);
         this.response.appendInt(item.getId());
         this.response.appendInt(this.guild.getId());
         this.response.appendString(this.guild.getName());

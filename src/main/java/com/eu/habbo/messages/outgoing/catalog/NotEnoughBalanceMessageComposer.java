@@ -17,7 +17,7 @@ public class NotEnoughBalanceMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NotEnoughBalanceMessageComposer);
+        this.response.init(Outgoing.notEnoughBalanceMessageComposer);
         this.response.appendBoolean(this.isCredits);
         this.response.appendBoolean(this.isPixels);
         this.response.appendInt(this.pointsType);

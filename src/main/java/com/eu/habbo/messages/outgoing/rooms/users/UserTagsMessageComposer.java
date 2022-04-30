@@ -14,7 +14,7 @@ public class UserTagsMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserTagsMessageComposer);
+        this.response.init(Outgoing.userTagsMessageComposer);
         this.response.appendInt(this.habbo.getRoomUnit().getId());
         this.response.appendInt(this.habbo.getHabboStats().tags.length);
 

@@ -20,7 +20,7 @@ public class RoomAdPurchaseInfoComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomAdPurchaseInfoComposer);
+        this.response.init(Outgoing.roomAdPurchaseInfoComposer);
         this.response.appendBoolean(true);
         this.response.appendInt(this.rooms.size());
         for (Room room : this.rooms) {

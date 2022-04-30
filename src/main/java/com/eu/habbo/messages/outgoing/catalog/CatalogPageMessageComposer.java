@@ -32,7 +32,7 @@ public class CatalogPageMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CatalogPageMessageComposer);
+        this.response.init(Outgoing.catalogPageMessageComposer);
         this.response.appendInt(this.page.getId());
         this.response.appendString(this.mode);
         this.page.serialize(this.response);

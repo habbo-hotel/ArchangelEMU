@@ -14,7 +14,7 @@ public class CreditBalanceComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CreditBalanceComposer);
+        this.response.init(Outgoing.creditBalanceComposer);
         this.response.appendString(this.habbo.getHabboInfo().getCredits() + ".0");
         return this.response;
     }

@@ -1,4 +1,4 @@
-package com.eu.habbo.messages.incoming.handshake;
+package com.eu.habbo.messages.outgoing.handshake;
 
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -13,7 +13,7 @@ public class IsFirstLoginOfDayComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.IsFirstLoginOfDayComposer);
+        this.response.init(Outgoing.isFirstLoginOfDayComposer);
         this.response.appendBoolean(this.isFirstLoginOfDay);
         return this.response;
     }

@@ -13,7 +13,7 @@ public class ExtendedProfileChangedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ExtendedProfileChangedMessageComposer);
+        this.response.init(Outgoing.extendedProfileChangedMessageComposer);
         this.response.appendInt(this.userId);
         return this.response;
     }
