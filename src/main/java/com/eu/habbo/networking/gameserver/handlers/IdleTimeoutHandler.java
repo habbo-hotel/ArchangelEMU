@@ -94,12 +94,16 @@ public class IdleTimeoutHandler extends ChannelDuplexHandler {
         super.channelInactive(ctx);
     }
 
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        // check if its a pong message
+        /* check if its a pong message
+         * TODO: is it the right place to do it?
+         * how to handle it if you are using multi revision?
+         */
         if(msg instanceof ClientMessage) {
             ClientMessage packet = (ClientMessage) msg;
-            if(packet.getMessageId() == Incoming.PongEvent) {
+            if(packet.getMessageId() == Incoming.pongEvent) {
                 this.lastPongTime = System.nanoTime();
             }
         }
