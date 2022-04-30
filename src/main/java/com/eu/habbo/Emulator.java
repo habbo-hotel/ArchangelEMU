@@ -443,6 +443,8 @@ public final class Emulator {
     private static String dateToUnixTimestamp(Date date) {
         String res = "";
         Date aux = stringToDate("1970-01-01 00:00:00");
+        if(aux == null) return null;
+        
         Timestamp aux1 = dateToTimeStamp(aux);
         Timestamp aux2 = dateToTimeStamp(date);
         long difference = aux2.getTime() - aux1.getTime();
