@@ -360,7 +360,7 @@ public final class Emulator {
         return badgeImager;
     }
 
-    public static CameraClient getCameraClient() {
+    public static synchronized CameraClient getCameraClient() {
         return cameraClient;
     }
 
@@ -384,17 +384,14 @@ public final class Emulator {
         int totalSeconds = 0;
 
         Matcher m = Pattern.compile("(([0-9]*) (second|minute|hour|day|week|month|year))").matcher(timeString);
-        Map<String,Integer> map = new HashMap<String,Integer>() {
-            {
-                put("second", 1);
-                put("minute", 60);
-                put("hour", 3600);
-                put("day", 86400);
-                put("week", 604800);
-                put("month", 2628000);
-                put("year", 31536000);
-            }
-        };
+        Map<String,Integer> map = new HashMap<String,Integer>();
+        map.put("second", 1);
+        map.put("minute", 60);
+        map.put("hour", 3600);
+        map.put("day", 86400);
+        map.put("week", 604800);
+        map.put("month", 2628000);
+        map.put("year", 31536000);
 
         while (m.find()) {
             try {
@@ -415,17 +412,14 @@ public final class Emulator {
         c.setTime(date);
 
         Matcher m = Pattern.compile("(([0-9]*) (second|minute|hour|day|week|month|year))").matcher(timeString);
-        Map<String, Integer> map = new HashMap<String, Integer>() {
-            {
-                put("second", Calendar.SECOND);
-                put("minute", Calendar.MINUTE);
-                put("hour", Calendar.HOUR);
-                put("day", Calendar.DAY_OF_MONTH);
-                put("week", Calendar.WEEK_OF_MONTH);
-                put("month", Calendar.MONTH);
-                put("year", Calendar.YEAR);
-            }
-        };
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        map.put("second", Calendar.SECOND);
+        map.put("minute", Calendar.MINUTE);
+        map.put("hour", Calendar.HOUR);
+        map.put("day", Calendar.DAY_OF_MONTH);
+        map.put("week", Calendar.WEEK_OF_MONTH);
+        map.put("month", Calendar.MONTH);
+        map.put("year", Calendar.YEAR);
 
         while (m.find()) {
             try {
