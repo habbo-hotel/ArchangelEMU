@@ -50,139 +50,7 @@ public class CatalogManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogManager.class);
 
-    public static final THashMap<String, Class<? extends CatalogPage>> pageDefinitions = new THashMap<String, Class<? extends CatalogPage>>(CatalogPageLayouts.values().length) {
-        {
-            for (CatalogPageLayouts layout : CatalogPageLayouts.values()) {
-                switch (layout) {
-                    case frontpage:
-                        this.put(layout.name().toLowerCase(), FrontpageLayout.class);
-                        break;
-                    case badge_display:
-                        this.put(layout.name().toLowerCase(), BadgeDisplayLayout.class);
-                        break;
-                    case spaces_new:
-                        this.put(layout.name().toLowerCase(), SpacesLayout.class);
-                        break;
-                    case trophies:
-                        this.put(layout.name().toLowerCase(), TrophiesLayout.class);
-                        break;
-                    case bots:
-                        this.put(layout.name().toLowerCase(), BotsLayout.class);
-                        break;
-                    case club_buy:
-                        this.put(layout.name().toLowerCase(), ClubBuyLayout.class);
-                        break;
-                    case club_gift:
-                        this.put(layout.name().toLowerCase(), ClubGiftsLayout.class);
-                        break;
-                    case sold_ltd_items:
-                        this.put(layout.name().toLowerCase(), SoldLTDItemsLayout.class);
-                        break;
-                    case single_bundle:
-                        this.put(layout.name().toLowerCase(), SingleBundle.class);
-                        break;
-                    case roomads:
-                        this.put(layout.name().toLowerCase(), RoomAdsLayout.class);
-                        break;
-                    case recycler:
-                        if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
-                            this.put(layout.name().toLowerCase(), RecyclerLayout.class);
-                        break;
-                    case recycler_info:
-                        if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
-                            this.put(layout.name().toLowerCase(), RecyclerInfoLayout.class);
-                    case recycler_prizes:
-                        if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
-                            this.put(layout.name().toLowerCase(), RecyclerPrizesLayout.class);
-                        break;
-                    case marketplace:
-                        if (Emulator.getConfig().getBoolean("hotel.marketplace.enabled"))
-                            this.put(layout.name().toLowerCase(), MarketplaceLayout.class);
-                        break;
-                    case marketplace_own_items:
-                        if (Emulator.getConfig().getBoolean("hotel.marketplace.enabled"))
-                            this.put(layout.name().toLowerCase(), MarketplaceOwnItems.class);
-                        break;
-                    case info_duckets:
-                        this.put(layout.name().toLowerCase(), InfoDucketsLayout.class);
-                        break;
-                    case info_pets:
-                        this.put(layout.name().toLowerCase(), InfoPetsLayout.class);
-                        break;
-                    case info_rentables:
-                        this.put(layout.name().toLowerCase(), InfoRentablesLayout.class);
-                        break;
-                    case info_loyalty:
-                        this.put(layout.name().toLowerCase(), InfoLoyaltyLayout.class);
-                        break;
-                    case loyalty_vip_buy:
-                        this.put(layout.name().toLowerCase(), LoyaltyVipBuyLayout.class);
-                        break;
-                    case guilds:
-                        this.put(layout.name().toLowerCase(), GuildFrontpageLayout.class);
-                        break;
-                    case guild_furni:
-                        this.put(layout.name().toLowerCase(), GuildFurnitureLayout.class);
-                        break;
-                    case guild_forum:
-                        this.put(layout.name().toLowerCase(), GuildForumLayout.class);
-                        break;
-                    case pets:
-                        this.put(layout.name().toLowerCase(), PetsLayout.class);
-                        break;
-                    case pets2:
-                        this.put(layout.name().toLowerCase(), Pets2Layout.class);
-                        break;
-                    case pets3:
-                        this.put(layout.name().toLowerCase(), Pets3Layout.class);
-                        break;
-                    case soundmachine:
-                        this.put(layout.name().toLowerCase(), TraxLayout.class);
-                        break;
-                    case default_3x3_color_grouping:
-                        this.put(layout.name().toLowerCase(), ColorGroupingLayout.class);
-                        break;
-                    case recent_purchases:
-                        this.put(layout.name().toLowerCase(), RecentPurchasesLayout.class);
-                        break;
-                    case room_bundle:
-                        this.put(layout.name().toLowerCase(), RoomBundleLayout.class);
-                        break;
-                    case petcustomization:
-                        this.put(layout.name().toLowerCase(), PetCustomizationLayout.class);
-                        break;
-                    case vip_buy:
-                        this.put(layout.name().toLowerCase(), VipBuyLayout.class);
-                        break;
-                    case frontpage_featured:
-                        this.put(layout.name().toLowerCase(), FrontPageFeaturedLayout.class);
-                        break;
-                    case builders_club_addons:
-                        this.put(layout.name().toLowerCase(), BuildersClubAddonsLayout.class);
-                        break;
-                    case builders_club_frontpage:
-                        this.put(layout.name().toLowerCase(), BuildersClubFrontPageLayout.class);
-                        break;
-                    case builders_club_loyalty:
-                        this.put(layout.name().toLowerCase(), BuildersClubLoyaltyLayout.class);
-                        break;
-                    case monkey:
-                        this.put(layout.name().toLowerCase(), InfoMonkeyLayout.class);
-                        break;
-                    case niko:
-                        this.put(layout.name().toLowerCase(), InfoNikoLayout.class);
-                        break;
-                    case mad_money:
-                        this.put(layout.name().toLowerCase(), MadMoneyLayout.class);
-                        break;
-                    case default_3x3:
-                    default:
-                        this.put("default_3x3", Default_3x3Layout.class);
-                        break;
-                }
-            }
-        }
-    };
+    public static final THashMap<String, Class<? extends CatalogPage>> pageDefinitions = new THashMap<>();
     public static int catalogItemAmount;
     public static int PURCHASE_COOLDOWN = 1;
     public static boolean SORT_USING_ORDERNUM = false;
@@ -214,7 +82,6 @@ public class CatalogManager {
         this.offerDefs = new TIntIntHashMap();
         this.vouchers = new ArrayList<>();
         this.limitedNumbers = new THashMap<>();
-
         this.initialize();
 
         this.ecotronItem = Emulator.getGameEnvironment().getItemManager().getItem("ecotron_box");
@@ -225,7 +92,7 @@ public class CatalogManager {
 
     public synchronized void initialize() {
         Emulator.getPluginManager().fireEvent(new EmulatorLoadCatalogManagerEvent());
-
+        this.loadPageDefinitions();
         this.loadLimitedNumbers();
         this.loadCatalogPages();
         this.loadCatalogFeaturedPages();
@@ -236,6 +103,139 @@ public class CatalogManager {
         this.loadClothing();
         this.loadRecycler();
         this.loadGiftWrappers();
+    }
+
+    private synchronized void loadPageDefinitions() {
+        for (CatalogPageLayouts layout : CatalogPageLayouts.values()) {
+            switch (layout) {
+                case frontpage:
+                    pageDefinitions.put(layout.name().toLowerCase(), FrontpageLayout.class);
+                    break;
+                case badge_display:
+                    pageDefinitions.put(layout.name().toLowerCase(), BadgeDisplayLayout.class);
+                    break;
+                case spaces_new:
+                    pageDefinitions.put(layout.name().toLowerCase(), SpacesLayout.class);
+                    break;
+                case trophies:
+                    pageDefinitions.put(layout.name().toLowerCase(), TrophiesLayout.class);
+                    break;
+                case bots:
+                    pageDefinitions.put(layout.name().toLowerCase(), BotsLayout.class);
+                    break;
+                case club_buy:
+                    pageDefinitions.put(layout.name().toLowerCase(), ClubBuyLayout.class);
+                    break;
+                case club_gift:
+                    pageDefinitions.put(layout.name().toLowerCase(), ClubGiftsLayout.class);
+                    break;
+                case sold_ltd_items:
+                    pageDefinitions.put(layout.name().toLowerCase(), SoldLTDItemsLayout.class);
+                    break;
+                case single_bundle:
+                    pageDefinitions.put(layout.name().toLowerCase(), SingleBundle.class);
+                    break;
+                case roomads:
+                    pageDefinitions.put(layout.name().toLowerCase(), RoomAdsLayout.class);
+                    break;
+                case recycler:
+                    if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
+                        pageDefinitions.put(layout.name().toLowerCase(), RecyclerLayout.class);
+                    break;
+                case recycler_info:
+                    if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
+                        pageDefinitions.put(layout.name().toLowerCase(), RecyclerInfoLayout.class);
+                    break;
+                case recycler_prizes:
+                    if (Emulator.getConfig().getBoolean("hotel.ecotron.enabled"))
+                        pageDefinitions.put(layout.name().toLowerCase(), RecyclerPrizesLayout.class);
+                    break;
+                case marketplace:
+                    if (Emulator.getConfig().getBoolean("hotel.marketplace.enabled"))
+                        pageDefinitions.put(layout.name().toLowerCase(), MarketplaceLayout.class);
+                    break;
+                case marketplace_own_items:
+                    if (Emulator.getConfig().getBoolean("hotel.marketplace.enabled"))
+                        pageDefinitions.put(layout.name().toLowerCase(), MarketplaceOwnItems.class);
+                    break;
+                case info_duckets:
+                    pageDefinitions.put(layout.name().toLowerCase(), InfoDucketsLayout.class);
+                    break;
+                case info_pets:
+                    pageDefinitions.put(layout.name().toLowerCase(), InfoPetsLayout.class);
+                    break;
+                case info_rentables:
+                    pageDefinitions.put(layout.name().toLowerCase(), InfoRentablesLayout.class);
+                    break;
+                case info_loyalty:
+                    pageDefinitions.put(layout.name().toLowerCase(), InfoLoyaltyLayout.class);
+                    break;
+                case loyalty_vip_buy:
+                    pageDefinitions.put(layout.name().toLowerCase(), LoyaltyVipBuyLayout.class);
+                    break;
+                case guilds:
+                    pageDefinitions.put(layout.name().toLowerCase(), GuildFrontpageLayout.class);
+                    break;
+                case guild_furni:
+                    pageDefinitions.put(layout.name().toLowerCase(), GuildFurnitureLayout.class);
+                    break;
+                case guild_forum:
+                    pageDefinitions.put(layout.name().toLowerCase(), GuildForumLayout.class);
+                    break;
+                case pets:
+                    pageDefinitions.put(layout.name().toLowerCase(), PetsLayout.class);
+                    break;
+                case pets2:
+                    pageDefinitions.put(layout.name().toLowerCase(), Pets2Layout.class);
+                    break;
+                case pets3:
+                    pageDefinitions.put(layout.name().toLowerCase(), Pets3Layout.class);
+                    break;
+                case soundmachine:
+                    pageDefinitions.put(layout.name().toLowerCase(), TraxLayout.class);
+                    break;
+                case default_3x3_color_grouping:
+                    pageDefinitions.put(layout.name().toLowerCase(), ColorGroupingLayout.class);
+                    break;
+                case recent_purchases:
+                    pageDefinitions.put(layout.name().toLowerCase(), RecentPurchasesLayout.class);
+                    break;
+                case room_bundle:
+                    pageDefinitions.put(layout.name().toLowerCase(), RoomBundleLayout.class);
+                    break;
+                case petcustomization:
+                    pageDefinitions.put(layout.name().toLowerCase(), PetCustomizationLayout.class);
+                    break;
+                case vip_buy:
+                    pageDefinitions.put(layout.name().toLowerCase(), VipBuyLayout.class);
+                    break;
+                case frontpage_featured:
+                    pageDefinitions.put(layout.name().toLowerCase(), FrontPageFeaturedLayout.class);
+                    break;
+                case builders_club_addons:
+                    pageDefinitions.put(layout.name().toLowerCase(), BuildersClubAddonsLayout.class);
+                    break;
+                case builders_club_frontpage:
+                    pageDefinitions.put(layout.name().toLowerCase(), BuildersClubFrontPageLayout.class);
+                    break;
+                case builders_club_loyalty:
+                    pageDefinitions.put(layout.name().toLowerCase(), BuildersClubLoyaltyLayout.class);
+                    break;
+                case monkey:
+                    pageDefinitions.put(layout.name().toLowerCase(), InfoMonkeyLayout.class);
+                    break;
+                case niko:
+                    pageDefinitions.put(layout.name().toLowerCase(), InfoNikoLayout.class);
+                    break;
+                case mad_money:
+                    pageDefinitions.put(layout.name().toLowerCase(), MadMoneyLayout.class);
+                    break;
+                case default_3x3:
+                default:
+                    pageDefinitions.put("default_3x3", Default_3x3Layout.class);
+                    break;
+            }
+        }
     }
 
     private synchronized void loadLimitedNumbers() {

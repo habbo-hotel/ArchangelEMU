@@ -24,7 +24,7 @@ public class IssueCloseNotificationMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.IssueCloseNotificationMessageComposer);
+        this.response.init(Outgoing.issueCloseNotificationMessageComposer);
         this.response.appendInt(this.code);
         this.response.appendString(this.message);
         return this.response;

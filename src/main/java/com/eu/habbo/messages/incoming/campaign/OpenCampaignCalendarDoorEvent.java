@@ -1,9 +1,9 @@
-package com.eu.habbo.messages.incoming.events.calendar;
+package com.eu.habbo.messages.incoming.campaign;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class OpenCampaignCalendarDoorAsStaffEvent extends MessageHandler {
+public class OpenCampaignCalendarDoorEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         String campaignName = this.packet.readString();

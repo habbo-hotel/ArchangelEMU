@@ -16,7 +16,7 @@ public class FindFriendsProcessResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FindFriendsProcessResultComposer);
+        this.response.init(Outgoing.findFriendsProcessResultComposer);
         this.response.appendInt(this.errorCode);
         return this.response;
     }

@@ -21,7 +21,7 @@ public class HabboGroupJoinFailedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HabboGroupJoinFailedMessageComposer);
+        this.response.init(Outgoing.habboGroupJoinFailedMessageComposer);
         this.response.appendInt(this.code);
         return this.response;
     }

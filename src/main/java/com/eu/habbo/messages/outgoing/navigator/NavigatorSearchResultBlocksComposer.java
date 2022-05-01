@@ -20,7 +20,7 @@ public class NavigatorSearchResultBlocksComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NavigatorSearchResultBlocksComposer);
+        this.response.init(Outgoing.navigatorSearchResultBlocksComposer);
         this.response.appendString(this.searchCode);
         this.response.appendString(this.searchQuery);
 

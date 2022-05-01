@@ -29,6 +29,11 @@ public class GuardianVote implements Comparable<GuardianVote> {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return this.id;
+    }
+
     public void ignore() {
         this.ignore = true;
     }

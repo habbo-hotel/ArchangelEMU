@@ -19,7 +19,7 @@ public class LoadGameMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.LoadGameMessageComposer);
+        this.response.init(Outgoing.loadGameMessageComposer);
 
         if (this.game == 3) {
             this.response.appendInt(3);

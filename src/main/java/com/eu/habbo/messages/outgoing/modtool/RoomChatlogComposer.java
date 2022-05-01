@@ -21,7 +21,7 @@ public class RoomChatlogComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomChatlogComposer);
+        this.response.init(Outgoing.roomChatlogComposer);
         this.response.appendByte(1);
         this.response.appendShort(2);
         this.response.appendString("roomName");

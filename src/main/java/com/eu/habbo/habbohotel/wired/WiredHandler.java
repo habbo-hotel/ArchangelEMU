@@ -72,7 +72,7 @@ public class WiredHandler {
             return false;
 
         long millis = System.currentTimeMillis();
-        THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<InteractionWiredEffect>();
+        THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<>();
 
         List<RoomTile> triggeredTiles = new ArrayList<>();
         for (InteractionWiredTrigger trigger : triggers) {
@@ -81,7 +81,7 @@ public class WiredHandler {
             if (triggeredTiles.contains(tile))
                 continue;
 
-            THashSet<InteractionWiredEffect> tEffectsToExecute = new THashSet<InteractionWiredEffect>();
+            THashSet<InteractionWiredEffect> tEffectsToExecute = new THashSet<>();
 
             if (handle(trigger, roomUnit, room, stuff, tEffectsToExecute)) {
                 effectsToExecute.addAll(tEffectsToExecute);
@@ -244,7 +244,7 @@ public class WiredHandler {
 
                         effect.activateBox(room, roomUnit, millis);
                     }
-                }, effect.getDelay() * 500);
+                }, effect.getDelay() * 500L);
             }
         }
 
@@ -327,23 +327,23 @@ public class WiredHandler {
                     return;
 
                 if (rewardReceived.type.equalsIgnoreCase("credits")) {
-                    int credits = Integer.valueOf(rewardReceived.value);
+                    int credits = Integer.parseInt(rewardReceived.value);
                     habbo.giveCredits(credits);
                 } else if (rewardReceived.type.equalsIgnoreCase("pixels")) {
-                    int pixels = Integer.valueOf(rewardReceived.value);
+                    int pixels = Integer.parseInt(rewardReceived.value);
                     habbo.givePixels(pixels);
                 } else if (rewardReceived.type.startsWith("points")) {
-                    int points = Integer.valueOf(rewardReceived.value);
+                    int points = Integer.parseInt(rewardReceived.value);
                     int type = 5;
 
                     try {
-                        type = Integer.valueOf(rewardReceived.type.replace("points", ""));
-                    } catch (Exception e) {
+                        type = Integer.parseInt(rewardReceived.type.replace("points", ""));
+                    } catch (Exception ignored) {
                     }
 
                     habbo.givePoints(type, points);
                 } else if (rewardReceived.type.equalsIgnoreCase("furni")) {
-                    Item baseItem = Emulator.getGameEnvironment().getItemManager().getItem(Integer.valueOf(rewardReceived.value));
+                    Item baseItem = Emulator.getGameEnvironment().getItemManager().getItem(Integer.parseInt(rewardReceived.value));
                     if (baseItem != null) {
                         HabboItem item = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), baseItem, 0, 0, "");
 
@@ -356,9 +356,9 @@ public class WiredHandler {
                         }
                     }
                 } else if (rewardReceived.type.equalsIgnoreCase("respect")) {
-                    habbo.getHabboStats().respectPointsReceived += Integer.valueOf(rewardReceived.value);
+                    habbo.getHabboStats().respectPointsReceived += Integer.parseInt(rewardReceived.value);
                 } else if (rewardReceived.type.equalsIgnoreCase("cata")) {
-                    CatalogItem item = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(Integer.valueOf(rewardReceived.value));
+                    CatalogItem item = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(Integer.parseInt(rewardReceived.value));
 
                     if (item != null) {
                         Emulator.getGameEnvironment().getCatalogManager().purchaseItem(null, item, habbo, 1, "", true);

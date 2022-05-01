@@ -15,7 +15,7 @@ public class Game2AccountGameStatusMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.Game2AccountGameStatusMessageComposer);
+        this.response.init(Outgoing.game2AccountGameStatusMessageComposer);
         this.response.appendInt(this.gameId);
         this.response.appendInt(this.gamesLeft);
         this.response.appendInt(1);

@@ -15,7 +15,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -118,19 +121,20 @@ public class YoutubeManager {
 
             youtubeDataLoaderPool.shutdown();
             try {
-                youtubeDataLoaderPool.awaitTermination(60, TimeUnit.SECONDS);
+                if(!youtubeDataLoaderPool.awaitTermination(60, TimeUnit.SECONDS))
+                    LOGGER.error("Youtube Manager -> Failed, timeout elapsed before termination!");
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.error("Caught Exception", e);
+                Thread.currentThread().interrupt();
+            } finally {
+                LOGGER.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
             }
-
-            LOGGER.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
         });
     }
 
     public YoutubePlaylist getPlaylistDataById(String playlistId) throws IOException {
         if (this.playlistCache.containsKey(playlistId)) return this.playlistCache.get(playlistId);
-        if(apiKey.isEmpty()) return null;
-
+        if (apiKey.isEmpty()) return null;
         YoutubePlaylist playlist;
         URL playlistInfo = new URL("https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&id=" + playlistId + "&maxResults=1&key=" + apiKey);
         HttpsURLConnection playlistCon = (HttpsURLConnection) playlistInfo.openConnection();

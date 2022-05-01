@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class GiftReceiverNotFoundComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GiftReceiverNotFoundComposer);
+        this.response.init(Outgoing.giftReceiverNotFoundComposer);
         return this.response;
     }
 }

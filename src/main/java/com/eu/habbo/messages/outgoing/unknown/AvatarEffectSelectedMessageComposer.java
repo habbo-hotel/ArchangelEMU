@@ -13,7 +13,7 @@ public class AvatarEffectSelectedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AvatarEffectSelectedMessageComposer);
+        this.response.init(Outgoing.avatarEffectSelectedMessageComposer);
         this.response.appendInt(this.type);
         return this.response;
     }

@@ -40,7 +40,7 @@ public class ChatReviewSessionStartedMessageComposer extends MessageComposer {
             fullMessage.append("unused;").append(mappedUsers.get(chatLog.habboId)).append(";").append(chatLog.message).append("\r");
         }
 
-        this.response.init(Outgoing.ChatReviewSessionStartedMessageComposer);
+        this.response.init(Outgoing.chatReviewSessionStartedMessageComposer);
         this.response.appendInt(this.ticket.getTimeLeft());
         this.response.appendString(fullMessage.toString());
 

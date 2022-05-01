@@ -31,12 +31,8 @@ public class ModTradingLockEvent extends MessageHandler {
 
                     if (modToolSanctionItems != null && !modToolSanctionItems.isEmpty()) {
                         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
+                        modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, duration, false, 0);
 
-                        if (item.probationTimestamp > 0 && item.probationTimestamp >= Emulator.getIntUnixTimestamp()) {
-                            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, duration, false, 0);
-                        } else {
-                            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, duration, false, 0);
-                        }
                     } else {
                         modToolSanctions.run(userId, this.client.getHabbo(), 0, cfhTopic, message, duration, false, 0);
                     }

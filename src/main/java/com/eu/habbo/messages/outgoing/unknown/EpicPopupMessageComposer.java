@@ -14,7 +14,7 @@ public class EpicPopupMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.EpicPopupMessageComposer);
+        this.response.init(Outgoing.epicPopupMessageComposer);
         this.response.appendString(this.assetURI);
         return this.response;
     }

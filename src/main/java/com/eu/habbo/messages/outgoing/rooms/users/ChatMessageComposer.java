@@ -14,7 +14,7 @@ public class ChatMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ChatMessageComposer);
+        this.response.init(Outgoing.chatMessageComposer);
 
         if (this.roomChatMessage.getMessage().isEmpty())
             return null;

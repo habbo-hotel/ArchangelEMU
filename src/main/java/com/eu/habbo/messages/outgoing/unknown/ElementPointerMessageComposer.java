@@ -13,7 +13,7 @@ public class ElementPointerMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ElementPointerMessageComposer);
+        this.response.init(Outgoing.elementPointerMessageComposer);
         this.response.appendString(this.key);
         return this.response;
     }

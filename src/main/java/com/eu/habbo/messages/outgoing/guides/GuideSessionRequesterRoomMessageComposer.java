@@ -14,7 +14,7 @@ public class GuideSessionRequesterRoomMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuideSessionRequesterRoomMessageComposer);
+        this.response.init(Outgoing.guideSessionRequesterRoomMessageComposer);
         this.response.appendInt(this.room != null ? this.room.getId() : 0);
         return this.response;
     }

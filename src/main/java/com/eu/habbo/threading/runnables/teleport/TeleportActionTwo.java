@@ -90,7 +90,7 @@ class TeleportActionTwo implements Runnable {
         }
 
         Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "2"), delayOffset);
-        Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), delayOffset + 1000);
+        Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), delayOffset + 1000L);
         Emulator.getThreading().run(new TeleportActionThree(this.currentTeleport, this.room, this.client), delayOffset);
     }
 }

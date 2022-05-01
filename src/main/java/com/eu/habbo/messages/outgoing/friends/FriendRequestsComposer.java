@@ -15,7 +15,7 @@ public class FriendRequestsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FriendRequestsComposer);
+        this.response.init(Outgoing.friendRequestsComposer);
 
         synchronized (this.habbo.getMessenger().getFriendRequests()) {
             this.response.appendInt(this.habbo.getMessenger().getFriendRequests().size());

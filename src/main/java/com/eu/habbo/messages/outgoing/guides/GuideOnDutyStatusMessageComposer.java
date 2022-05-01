@@ -14,7 +14,7 @@ public class GuideOnDutyStatusMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuideOnDutyStatusMessageComposer);
+        this.response.init(Outgoing.guideOnDutyStatusMessageComposer);
         this.response.appendBoolean(this.onDuty); //OnDuty
         this.response.appendInt(0); //Guides On Duty
         this.response.appendInt(Emulator.getGameEnvironment().getGuideManager().getGuidesCount()); //Helpers On Duty

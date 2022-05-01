@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class GameListMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GameListMessageComposer);
+        this.response.init(Outgoing.gameListMessageComposer);
         this.response.appendInt(2);//Count
 
         this.response.appendInt(0);

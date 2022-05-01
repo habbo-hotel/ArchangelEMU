@@ -16,7 +16,7 @@ public class NewUserExperienceGiftOfferComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewUserExperienceGiftOfferComposer);
+        this.response.init(Outgoing.newUserExperienceGiftOfferComposer);
         this.response.appendInt(this.options.size());
         for (List<NewUserGift> option : this.options) {
             this.response.appendInt(1);

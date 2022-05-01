@@ -15,7 +15,7 @@ public class GuildMemberFurniCountInHQMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildMemberFurniCountInHQMessageComposer);
+        this.response.init(Outgoing.guildMemberFurniCountInHQMessageComposer);
         this.response.appendInt(this.userId);
         this.response.appendInt(this.furniCount);
         return this.response;

@@ -38,7 +38,7 @@ public class FreezeGamePlayer extends GamePlayer {
     }
 
     @Override
-    public void addScore(int amount) {
+    public synchronized void addScore(int amount) {
         super.addScore(amount);
 
         if (amount > 0) {
@@ -122,10 +122,7 @@ public class FreezeGamePlayer extends GamePlayer {
     }
 
     public boolean canGetFrozen() {
-        if (this.isFrozen() || this.isProtected())
-            return false;
-
-        return true;
+        return !this.isFrozen() && !this.isProtected();
     }
 
     public void addProtection() {

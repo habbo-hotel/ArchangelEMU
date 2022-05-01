@@ -7,6 +7,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,6 +37,8 @@ public class Figuredata {
      */
     public void parseXML(String uri) throws Exception, ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         factory.setValidating(false);
         factory.setIgnoringElementContentWhitespace(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -45,7 +48,10 @@ public class Figuredata {
 
         if(!rootElement.getTagName().equalsIgnoreCase("figuredata") || document.getElementsByTagName("colors") == null || document.getElementsByTagName("sets") == null) {
             StringWriter writer = new StringWriter();
-            TransformerFactory.newInstance().newTransformer().transform(new DOMSource(document), new StreamResult(writer));
+            TransformerFactory transformerFactory = javax.xml.transform.TransformerFactory.newInstance();
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            transformerFactory.newTransformer().transform(new DOMSource(document), new StreamResult(writer));
             String documentString = writer.getBuffer().toString();
             throw new Exception("The passed file is not in figuredata format. Received " + documentString.substring(0, Math.min(documentString.length(), 200)));
         }

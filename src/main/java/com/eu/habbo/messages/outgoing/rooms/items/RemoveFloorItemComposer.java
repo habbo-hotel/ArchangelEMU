@@ -21,7 +21,7 @@ public class RemoveFloorItemComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ObjectRemoveMessageComposer);
+        this.response.init(Outgoing.objectRemoveMessageComposer);
 
         this.response.appendString(this.item.getId() + "");
         this.response.appendBoolean(false);

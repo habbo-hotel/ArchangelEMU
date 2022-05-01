@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class QuestionInfoComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.QuestionInfoComposer);
+        this.response.init(Outgoing.questionInfoComposer);
 
         return this.response;
     }

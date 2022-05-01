@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class ChatReviewSessionDetachedMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ChatReviewSessionDetachedMessageComposer);
+        this.response.init(Outgoing.chatReviewSessionDetachedMessageComposer);
         return this.response;
     }
 }

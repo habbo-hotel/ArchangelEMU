@@ -15,7 +15,7 @@ public class NavigatorSettingsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NavigatorSettingsComposer);
+        this.response.init(Outgoing.navigatorSettingsComposer);
         this.response.appendInt(this.homeRoom);
         this.response.appendInt(this.roomToEnter);
         return this.response;

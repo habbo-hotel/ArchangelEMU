@@ -15,7 +15,7 @@ public class FurnitureAliasesMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FurnitureAliasesMessageComposer);
+        this.response.init(Outgoing.furnitureAliasesMessageComposer);
         this.response.appendInt(this.unknownMap.size());
         for (Map.Entry<String, String> entry : this.unknownMap.entrySet()) {
             this.response.appendString(entry.getKey());

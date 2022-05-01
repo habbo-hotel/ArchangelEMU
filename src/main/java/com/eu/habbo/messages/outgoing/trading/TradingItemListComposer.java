@@ -17,7 +17,7 @@ public class TradingItemListComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TradingItemListComposer);
+        this.response.init(Outgoing.tradingItemListComposer);
         for (RoomTradeUser roomTradeUser : this.roomTrade.getRoomTradeUsers()) {
             this.response.appendInt(roomTradeUser.getUserId());
 

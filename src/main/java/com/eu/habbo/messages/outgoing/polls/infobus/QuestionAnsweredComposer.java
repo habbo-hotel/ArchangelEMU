@@ -19,7 +19,7 @@ public class QuestionAnsweredComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.QuestionAnsweredComposer);
+        this.response.init(Outgoing.questionAnsweredComposer);
         this.response.appendInt(this.userId);
         this.response.appendString(this.choice);
         this.response.appendInt(2);

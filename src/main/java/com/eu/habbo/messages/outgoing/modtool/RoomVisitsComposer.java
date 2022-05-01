@@ -21,14 +21,14 @@ public class RoomVisitsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomVisitsComposer);
+        this.response.init(Outgoing.roomVisitsComposer);
         this.response.appendInt(this.habboInfo.getId());
         this.response.appendString(this.habboInfo.getUsername());
         this.response.appendInt(this.roomVisits.size());
 
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
         for (ModToolRoomVisit visit : this.roomVisits) {
-            cal.setTimeInMillis(visit.timestamp * 1000);
+            cal.setTimeInMillis(visit.timestamp * 1000L);
             this.response.appendInt(visit.roomId);
             this.response.appendString(visit.roomName);
             this.response.appendInt(cal.get(Calendar.HOUR));

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class NewUserExperienceNotCompleteComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.NewUserExperienceNotCompleteComposer);
+        this.response.init(Outgoing.newUserExperienceNotCompleteComposer);
         return this.response;
     }
 }

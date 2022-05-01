@@ -103,7 +103,7 @@ public class ForumDataMessageComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
 
         try {
-            this.response.init(Outgoing.ForumDataMessageComposer);
+            this.response.init(Outgoing.forumDataMessageComposer);
             serializeForumData(this.response, guild, habbo);
 
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo);
@@ -160,7 +160,7 @@ public class ForumDataMessageComposer extends MessageComposer {
                 this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId() || isStaff || isAdmin); //Can Mod (staff)
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Caught SQL exception", e);
             return new ErrorReportComposer(500).compose();
         }
 

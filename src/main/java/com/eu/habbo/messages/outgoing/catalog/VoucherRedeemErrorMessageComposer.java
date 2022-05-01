@@ -16,7 +16,7 @@ public class VoucherRedeemErrorMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.VoucherRedeemErrorMessageComposer);
+        this.response.init(Outgoing.voucherRedeemErrorMessageComposer);
         this.response.appendString(this.code + "");
         return this.response;
     }

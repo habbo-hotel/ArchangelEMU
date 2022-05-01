@@ -19,7 +19,7 @@ public class ActivityPointsMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ActivityPointsMessageComposer);
+        this.response.init(Outgoing.activityPointsMessageComposer);
         String[] pointsTypes = Emulator.getConfig().getValue("seasonal.types").split(";");
         this.response.appendInt(pointsTypes.length);
         for (String s : pointsTypes) {

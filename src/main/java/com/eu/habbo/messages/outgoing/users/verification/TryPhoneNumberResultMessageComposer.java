@@ -15,7 +15,7 @@ public class TryPhoneNumberResultMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TryPhoneNumberResultMessageComposer);
+        this.response.init(Outgoing.tryPhoneNumberResultMessageComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.unknownInt2);
         return this.response;

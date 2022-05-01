@@ -14,7 +14,7 @@ public class AvatarEffectExpiredMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AvatarEffectExpiredMessageComposer);
+        this.response.init(Outgoing.avatarEffectExpiredMessageComposer);
         this.response.appendInt(this.effect.effect);
         return this.response;
     }

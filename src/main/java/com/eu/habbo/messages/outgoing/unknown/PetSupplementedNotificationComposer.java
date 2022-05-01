@@ -17,7 +17,7 @@ public class PetSupplementedNotificationComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetSupplementedNotificationComposer);
+        this.response.init(Outgoing.petSupplementedNotificationComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.userId);
         this.response.appendInt(this.unknownInt2);

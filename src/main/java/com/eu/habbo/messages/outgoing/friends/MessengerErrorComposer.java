@@ -18,7 +18,7 @@ public class MessengerErrorComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MessengerErrorComposer);
+        this.response.init(Outgoing.messengerErrorComposer);
         this.response.appendInt(0);
         this.response.appendInt(this.errorCode);
         return this.response;

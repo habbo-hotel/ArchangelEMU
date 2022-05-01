@@ -20,7 +20,7 @@ public class HabboClubOffersMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HabboClubOffersMessageComposer);
+        this.response.init(Outgoing.habboClubOffersMessageComposer);
 
         List<ClubOffer> offers = Emulator.getGameEnvironment().getCatalogManager().getClubOffers();
         this.response.appendInt(offers.size());

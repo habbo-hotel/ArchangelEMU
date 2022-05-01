@@ -14,7 +14,7 @@ public class UniqueMachineIDComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UniqueMachineIDComposer);
+        this.response.init(Outgoing.uniqueMachineIDComposer);
         this.response.appendString(this.machineId);
         return this.response;
     }

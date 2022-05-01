@@ -22,7 +22,8 @@ public class InteractionTrap extends InteractionDefault {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        if (!this.getExtradata().equals("0")) {
+            if (this.getExtradata().equals("0") || roomUnit == null || room.getHabbo(roomUnit) == null) return;
+
             Habbo habbo = room.getHabbo(roomUnit);
             int effect = habbo.getClient().getHabbo().getRoomUnit().getEffectId();
             roomUnit.stopWalking();
@@ -33,11 +34,9 @@ public class InteractionTrap extends InteractionDefault {
                 delay = 3000;
             }
 
-            if (roomUnit != null) {
                 if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
                     if (roomUnit.getRoomUnitType().equals(RoomUnitType.USER)) {
 
-                        if (habbo != null) {
                             if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
                                 room.giveEffect(habbo, this.getBaseItem().getEffectM(), -1);
                                 return;
@@ -55,11 +54,9 @@ public class InteractionTrap extends InteractionDefault {
                                 roomUnit.setCanWalk(true);
                                 room.giveEffect(roomUnit, effect, -1);
                             }, delay);
-                        }
+
                     }
                 }
-            }
-        }
     }
 
     @Override

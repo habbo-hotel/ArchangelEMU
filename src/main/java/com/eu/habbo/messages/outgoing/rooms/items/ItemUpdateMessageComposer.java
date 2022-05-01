@@ -14,7 +14,7 @@ public class ItemUpdateMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ItemUpdateMessageComposer);
+        this.response.init(Outgoing.itemUpdateMessageComposer);
         this.item.serializeWallData(this.response);
         this.response.appendString(this.item.getUserId() + "");
         return this.response;

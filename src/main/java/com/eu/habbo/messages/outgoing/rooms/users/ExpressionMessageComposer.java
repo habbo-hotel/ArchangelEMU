@@ -17,7 +17,7 @@ public class ExpressionMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ExpressionMessageComposer);
+        this.response.init(Outgoing.expressionMessageComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.action.getAction());
         return this.response;

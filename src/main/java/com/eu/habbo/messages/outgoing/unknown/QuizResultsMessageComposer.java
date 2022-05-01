@@ -17,7 +17,7 @@ public class QuizResultsMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.QuizResultsMessageComposer);
+        this.response.init(Outgoing.quizResultsMessageComposer);
         this.response.appendString(this.unknownString);
         this.response.appendInt(this.unknownIntegerList.size());
         for (Integer i : this.unknownIntegerList) {

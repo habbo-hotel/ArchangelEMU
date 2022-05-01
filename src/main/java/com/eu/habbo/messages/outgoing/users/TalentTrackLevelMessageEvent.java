@@ -13,7 +13,7 @@ public class TalentTrackLevelMessageEvent extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TalentTrackLevelMessageEvent);
+        this.response.init(Outgoing.talentTrackLevelMessageEvent);
         this.response.appendString(this.name);
         this.response.appendInt(4);
         this.response.appendInt(4);

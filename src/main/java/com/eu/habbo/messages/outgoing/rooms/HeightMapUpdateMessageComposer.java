@@ -32,7 +32,7 @@ public class HeightMapUpdateMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         //TODO: maybe do this another way? doesn't seem to be very clean but gets the job done
-        this.response.init(Outgoing.HeightMapUpdateMessageComposer);
+        this.response.init(Outgoing.heightMapUpdateMessageComposer);
         if (this.updateTiles != null) {
             // prevent overflow. Byte max value is 127
             if(this.updateTiles.size() > 127) {

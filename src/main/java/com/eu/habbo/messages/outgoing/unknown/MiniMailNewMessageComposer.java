@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class MiniMailNewMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MiniMailNewMessageComposer);
+        this.response.init(Outgoing.miniMailNewMessageComposer);
         return this.response;
     }
 }

@@ -14,7 +14,7 @@ public class AchievementUpdater implements Runnable {
     @Override
     public void run() {
         if (!Emulator.isShuttingDown) {
-            Emulator.getThreading().run(this, INTERVAL * 1000);
+            Emulator.getThreading().run(this, INTERVAL * 1000L);
         }
 
         if (Emulator.isReady) {
@@ -27,7 +27,7 @@ public class AchievementUpdater implements Runnable {
                 if (habbo.getHabboInfo().getLastOnline() > this.lastExecutionTimestamp) {
                     timeOnlineSinceLastInterval = timestamp - habbo.getHabboInfo().getLastOnline();
                 }
-                AchievementManager.progressAchievement(habbo, onlineTime, (int) Math.floor((timeOnlineSinceLastInterval) / 60));
+                AchievementManager.progressAchievement(habbo, onlineTime, (int) Math.floor((timeOnlineSinceLastInterval) / 60.0));
             }
 
             this.lastExecutionTimestamp = timestamp;

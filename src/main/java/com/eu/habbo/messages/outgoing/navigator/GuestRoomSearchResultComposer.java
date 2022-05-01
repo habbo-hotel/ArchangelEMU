@@ -21,7 +21,7 @@ public class GuestRoomSearchResultComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         try {
-            this.response.init(Outgoing.GuestRoomSearchResultComposer);
+            this.response.init(Outgoing.guestRoomSearchResultComposer);
 
             this.response.appendInt(2);
             this.response.appendString("");

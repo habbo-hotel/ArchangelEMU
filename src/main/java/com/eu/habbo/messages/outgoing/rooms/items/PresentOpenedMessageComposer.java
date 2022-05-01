@@ -18,7 +18,7 @@ public class PresentOpenedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PresentOpenedMessageComposer);
+        this.response.init(Outgoing.presentOpenedMessageComposer);
         this.response.appendString(this.item.getBaseItem().getType().code.toLowerCase());
         this.response.appendInt(this.item.getBaseItem().getSpriteId());
         this.response.appendString(this.item.getBaseItem().getName());

@@ -17,7 +17,7 @@ public class AvailabilityStatusMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AvailabilityStatusMessageComposer);
+        this.response.init(Outgoing.availabilityStatusMessageComposer);
 
         this.response.appendBoolean(isOpen);//isOpen
         this.response.appendBoolean(isShuttingDown);//onShutdown

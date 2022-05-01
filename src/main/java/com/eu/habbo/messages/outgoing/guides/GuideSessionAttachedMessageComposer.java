@@ -18,7 +18,7 @@ public class GuideSessionAttachedMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         //:test 3549 b:1 i:1 s:abcd i:100
-        this.response.init(Outgoing.GuideSessionAttachedMessageComposer);
+        this.response.init(Outgoing.guideSessionAttachedMessageComposer);
         this.response.appendBoolean(this.isHelper); //? //isHelper
         this.response.appendInt(1);       //? Tour type
         this.response.appendString(this.tour.getHelpRequest());    //? Instruction (Help message)

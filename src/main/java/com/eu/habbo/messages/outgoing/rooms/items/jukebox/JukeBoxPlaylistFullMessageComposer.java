@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class JukeBoxPlaylistFullMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.JukeBoxPlaylistFullMessageComposer);
+        this.response.init(Outgoing.jukeBoxPlaylistFullMessageComposer);
         return this.response;
     }
 }

@@ -1,9 +1,9 @@
-package com.eu.habbo.messages.incoming.events.calendar;
+package com.eu.habbo.messages.incoming.campaign;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class OpenCampaignCalendarDoorEvent extends MessageHandler {
+public class OpenCampaignCalendarDoorAsStaffEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         String campaignName = this.packet.readString();
@@ -12,3 +12,4 @@ public class OpenCampaignCalendarDoorEvent extends MessageHandler {
         Emulator.getGameEnvironment().getCalendarManager().claimCalendarReward(this.client.getHabbo(), campaignName, day, true);
     }
 }
+

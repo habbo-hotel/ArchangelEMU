@@ -14,7 +14,7 @@ public class ModeratorRoomInfoComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ModeratorRoomInfoComposer);
+        this.response.init(Outgoing.moderatorRoomInfoComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendInt(this.room.getCurrentHabbos().size());
         this.response.appendBoolean(this.room.getHabbo(this.room.getOwnerId()) != null);

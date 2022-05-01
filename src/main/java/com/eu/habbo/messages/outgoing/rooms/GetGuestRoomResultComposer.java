@@ -23,7 +23,7 @@ public class GetGuestRoomResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GetGuestRoomResultComposer);
+        this.response.init(Outgoing.getGuestRoomResultComposer);
         this.response.appendBoolean(this.enterRoom);
         this.response.appendInt(this.room.getId());
         this.response.appendString(this.room.getName());

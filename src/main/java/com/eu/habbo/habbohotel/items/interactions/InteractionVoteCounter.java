@@ -1,6 +1,5 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -18,7 +17,7 @@ public class InteractionVoteCounter extends HabboItem {
 
     private boolean frozen;
     private int votes;
-    private List<Integer> votedUsers;
+    private final List<Integer> votedUsers;
 
     public InteractionVoteCounter(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -69,7 +68,7 @@ public class InteractionVoteCounter extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        if (!((client != null && room != null && room.hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
+        if (room == null || !((client != null && room.hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
             return;
 
         this.frozen = !this.frozen;

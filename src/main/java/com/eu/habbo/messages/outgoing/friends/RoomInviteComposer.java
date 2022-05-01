@@ -15,7 +15,7 @@ public class RoomInviteComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomInviteComposer);
+        this.response.init(Outgoing.roomInviteComposer);
         this.response.appendInt(this.userId);
         this.response.appendString(this.message);
         return this.response;

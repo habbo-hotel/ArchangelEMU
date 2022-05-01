@@ -16,7 +16,7 @@ public class QuestCompletedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.QuestCompletedMessageComposer);
+        this.response.init(Outgoing.questCompletedMessageComposer);
 
         return this.response;
     }

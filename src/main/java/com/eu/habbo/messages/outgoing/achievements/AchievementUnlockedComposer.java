@@ -18,7 +18,7 @@ public class AchievementUnlockedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HabboAchievementNotificationMessageComposer);
+        this.response.init(Outgoing.habboAchievementNotificationMessageComposer);
 
         AchievementLevel level = this.achievement.getLevelForProgress(this.habbo.getHabboStats().getAchievementProgress(this.achievement));
         this.response.appendInt(this.achievement.id);

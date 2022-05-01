@@ -422,7 +422,7 @@ public class RoomUnit {
         }
     }
 
-    public boolean isInRoom() {
+    public synchronized boolean isInRoom() {
         return this.inRoom;
     }
 
@@ -430,7 +430,7 @@ public class RoomUnit {
         this.inRoom = inRoom;
     }
 
-    public RoomUnitType getRoomUnitType() {
+    public synchronized RoomUnitType getRoomUnitType() {
         return this.roomUnitType;
     }
 
@@ -459,7 +459,7 @@ public class RoomUnit {
         this.headRotation = headRotation;
     }
 
-    public DanceType getDanceType() {
+    public synchronized DanceType getDanceType() {
         return this.danceType;
     }
 

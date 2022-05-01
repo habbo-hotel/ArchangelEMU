@@ -13,7 +13,7 @@ public class CommunityGoalVoteMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CommunityGoalVoteMessageComposer);
+        this.response.init(Outgoing.communityGoalVoteMessageComposer);
         this.response.appendBoolean(this.unknownBoolean);
         return this.response;
     }

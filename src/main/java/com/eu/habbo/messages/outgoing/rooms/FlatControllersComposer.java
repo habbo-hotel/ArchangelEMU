@@ -17,7 +17,7 @@ public class FlatControllersComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FlatControllersComposer);
+        this.response.init(Outgoing.flatControllersComposer);
         this.response.appendInt(this.room.getId());
 
         THashMap<Integer, String> rightsMap = this.room.getUsersWithRights();

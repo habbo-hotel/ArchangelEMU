@@ -11,7 +11,7 @@ import gnu.trove.procedure.TObjectProcedure;
 public class CfhTopicsInitComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CfhTopicsInitComposer);
+        this.response.init(Outgoing.cfhTopicsInitComposer);
 
         this.response.appendInt(Emulator.getGameEnvironment().getModToolManager().getCfhCategories().valueCollection().size());
 

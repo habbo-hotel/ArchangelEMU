@@ -16,7 +16,7 @@ public class RoomOccupiedTilesMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomOccupiedTilesMessageComposer);
+        this.response.init(Outgoing.roomOccupiedTilesMessageComposer);
 
         THashSet<RoomTile> tileList = this.room.getLockedTiles();
 

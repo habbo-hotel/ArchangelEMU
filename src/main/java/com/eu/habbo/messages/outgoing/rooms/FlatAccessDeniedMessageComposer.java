@@ -13,7 +13,7 @@ public class FlatAccessDeniedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FlatAccessDeniedMessageComposer);
+        this.response.init(Outgoing.flatAccessDeniedMessageComposer);
         this.response.appendString(this.habbo);
         return this.response;
     }

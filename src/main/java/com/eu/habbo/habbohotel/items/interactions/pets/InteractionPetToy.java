@@ -71,7 +71,7 @@ public class InteractionPetToy extends InteractionDefault {
                 pet.getRoomUnit().clearStatus();
                 new PetClearPosture(pet, RoomUnitStatus.PLAY, null, true).run();
                 pet.packetUpdate = true;
-            }, 2500 + (Emulator.getRandom().nextInt(20) * 500));
+            }, ((long)(Emulator.getRandom().nextInt(20) * 500) + 2500));
             this.setExtradata("1");
             room.updateItemState(this);
         }

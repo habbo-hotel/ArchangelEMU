@@ -31,16 +31,20 @@ import java.util.regex.Pattern;
 
 public final class Emulator {
 
+    public static final int MAJOR = 4;
+    public static final int MINOR = 0;
+    public static final int BUILD = 0;
+    public static final String PREVIEW = "Developer Preview";
+    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
+    public static String build = "";
+    public static boolean isReady = false;
+    public static boolean isShuttingDown = false;
+    public static boolean stopped = false;
+    public static boolean debugging = false;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Emulator.class);
     private static final String OS_NAME = (System.getProperty("os.name") != null ? System.getProperty("os.name") : "Unknown");
     private static final String CLASS_PATH = (System.getProperty("java.class.path") != null ? System.getProperty("java.class.path") : "Unknown");
-
-    public final static int MAJOR = 4;
-    public final static int MINOR = 0;
-    public final static int BUILD = 0;
-    public final static String PREVIEW = "Developer Preview";
-
-    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
     private static final String logo =
             "\n" +
                     "███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗ \n" +
@@ -52,11 +56,6 @@ public final class Emulator {
 
 
 
-    public static String build = "";
-    public static boolean isReady = false;
-    public static boolean isShuttingDown = false;
-    public static boolean stopped = false;
-    public static boolean debugging = false;
     private static int timeStarted = 0;
     private static Runtime runtime;
     private static ConfigurationManager config;
@@ -217,12 +216,11 @@ public final class Emulator {
             MessageDigest md = MessageDigest.getInstance("MD5");// MD5
             FileInputStream fis = new FileInputStream(filepath);
             byte[] dataBytes = new byte[1024];
-            int nread = 0;
+            int nread;
             while ((nread = fis.read(dataBytes)) != -1)
                 md.update(dataBytes, 0, nread);
             byte[] mdbytes = md.digest();
-            for (int i = 0; i < mdbytes.length; i++)
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            for (byte mdbyte : mdbytes) sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
         } catch (Exception e) {
             build = "4.0 Developer Preview Branch";
             return;
@@ -241,50 +239,50 @@ public final class Emulator {
         try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStartShutdownEvent());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.cameraClient != null)
                 Emulator.cameraClient.disconnect();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.rconServer != null)
                 Emulator.rconServer.stop();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.gameEnvironment != null)
                 Emulator.gameEnvironment.dispose();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.getPluginManager() != null)
                 Emulator.getPluginManager().fireEvent(new EmulatorStoppedEvent());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.pluginManager != null)
                 Emulator.pluginManager.dispose();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.config != null) {
                 Emulator.config.saveToDatabase();
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
             if (Emulator.gameServer != null)
                 Emulator.gameServer.stop();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         LOGGER.info("Stopped Arcturus Morningstar {}", version);
@@ -298,7 +296,7 @@ public final class Emulator {
             if (Emulator.threading != null)
 
                 Emulator.threading.shutDown();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -362,7 +360,7 @@ public final class Emulator {
         return badgeImager;
     }
 
-    public static CameraClient getCameraClient() {
+    public static synchronized CameraClient getCameraClient() {
         return cameraClient;
     }
 
@@ -386,17 +384,14 @@ public final class Emulator {
         int totalSeconds = 0;
 
         Matcher m = Pattern.compile("(([0-9]*) (second|minute|hour|day|week|month|year))").matcher(timeString);
-        Map<String,Integer> map = new HashMap<String,Integer>() {
-            {
-                put("second", 1);
-                put("minute", 60);
-                put("hour", 3600);
-                put("day", 86400);
-                put("week", 604800);
-                put("month", 2628000);
-                put("year", 31536000);
-            }
-        };
+        Map<String,Integer> map = new HashMap<String,Integer>();
+        map.put("second", 1);
+        map.put("minute", 60);
+        map.put("hour", 3600);
+        map.put("day", 86400);
+        map.put("week", 604800);
+        map.put("month", 2628000);
+        map.put("year", 31536000);
 
         while (m.find()) {
             try {
@@ -417,17 +412,14 @@ public final class Emulator {
         c.setTime(date);
 
         Matcher m = Pattern.compile("(([0-9]*) (second|minute|hour|day|week|month|year))").matcher(timeString);
-        Map<String, Integer> map = new HashMap<String, Integer>() {
-            {
-                put("second", Calendar.SECOND);
-                put("minute", Calendar.MINUTE);
-                put("hour", Calendar.HOUR);
-                put("day", Calendar.DAY_OF_MONTH);
-                put("week", Calendar.WEEK_OF_MONTH);
-                put("month", Calendar.MONTH);
-                put("year", Calendar.YEAR);
-            }
-        };
+        Map<String, Integer> map = new HashMap<String, Integer>();
+        map.put("second", Calendar.SECOND);
+        map.put("minute", Calendar.MINUTE);
+        map.put("hour", Calendar.HOUR);
+        map.put("day", Calendar.DAY_OF_MONTH);
+        map.put("week", Calendar.WEEK_OF_MONTH);
+        map.put("month", Calendar.MONTH);
+        map.put("year", Calendar.YEAR);
 
         while (m.find()) {
             try {
@@ -444,6 +436,8 @@ public final class Emulator {
     private static String dateToUnixTimestamp(Date date) {
         String res = "";
         Date aux = stringToDate("1970-01-01 00:00:00");
+        if(aux == null) return null;
+        
         Timestamp aux1 = dateToTimeStamp(aux);
         Timestamp aux2 = dateToTimeStamp(date);
         long difference = aux2.getTime() - aux1.getTime();

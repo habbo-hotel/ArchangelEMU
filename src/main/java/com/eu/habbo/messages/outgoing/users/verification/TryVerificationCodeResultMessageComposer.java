@@ -15,7 +15,7 @@ public class TryVerificationCodeResultMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TryVerificationCodeResultMessageComposer);
+        this.response.init(Outgoing.tryVerificationCodeResultMessageComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.unknownInt2);
         return this.response;

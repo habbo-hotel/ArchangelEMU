@@ -14,7 +14,7 @@ public class CarryObjectMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CarryObjectMessageComposer);
+        this.response.init(Outgoing.carryObjectMessageComposer);
         this.response.appendInt(this.roomUnit.getId());
         this.response.appendInt(this.roomUnit.getHandItem());
         return this.response;

@@ -25,7 +25,7 @@ public class HabboClubExtendOfferMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HabboClubExtendOfferMessageComposer);
+        this.response.init(Outgoing.habboClubExtendOfferMessageComposer);
         this.offer.serialize(this.response, this.habbo.getHabboStats().getClubExpireTimestamp());
 
         this.response.appendInt(this.normalCreditCost);

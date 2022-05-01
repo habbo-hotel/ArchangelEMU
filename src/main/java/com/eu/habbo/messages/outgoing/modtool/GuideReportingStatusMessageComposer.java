@@ -20,7 +20,7 @@ public class GuideReportingStatusMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuideReportingStatusMessageComposer);
+        this.response.init(Outgoing.guideReportingStatusMessageComposer);
         this.response.appendInt(this.errorCode);
 
         if (this.errorCode == ONGOING_HELPER_CASE) {

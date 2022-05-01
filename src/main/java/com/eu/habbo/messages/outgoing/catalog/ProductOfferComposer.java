@@ -14,7 +14,7 @@ public class ProductOfferComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ProductOfferComposer);
+        this.response.init(Outgoing.productOfferComposer);
         this.item.serialize(this.response);
         return this.response;
     }

@@ -17,7 +17,7 @@ public class HabboActivityPointNotificationMessageComposer extends MessageCompos
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.HabboActivityPointNotificationMessageComposer);
+        this.response.init(Outgoing.habboActivityPointNotificationMessageComposer);
         this.response.appendInt(this.currentAmount);
         this.response.appendInt(this.amountAdded);
         this.response.appendInt(this.type);

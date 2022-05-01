@@ -29,7 +29,7 @@ public class GiveRespect extends RCONMessage<GiveRespect.JSONGiveRespect> {
             habbo.getHabboStats().respectPointsToGive += object.daily_respects;
             habbo.getClient().sendResponse(new UserObjectComposer(habbo));
         } else {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET respects_given = respects_give + ?, respects_received = respects_received + ?, daily_respect_points = daily_respect_points + ? WHERE user_id = ? LIMIT 1")) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_settings SET respects_given = respects_given + ?, respects_received = respects_received + ?, daily_respect_points = daily_respect_points + ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, object.respect_received);
                 statement.setInt(2, object.respect_given);
                 statement.setInt(3, object.daily_respects);

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class CatalogPublishedMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CatalogPublishedMessageComposer);
+        this.response.init(Outgoing.catalogPublishedMessageComposer);
         this.response.appendBoolean(false);
         return this.response;
     }

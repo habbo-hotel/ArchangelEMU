@@ -13,7 +13,7 @@ public class BuildersClubFurniCountMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.BuildersClubFurniCountMessageComposer);
+        this.response.init(Outgoing.buildersClubFurniCountMessageComposer);
         this.response.appendInt(this.mode);
         return this.response;
     }

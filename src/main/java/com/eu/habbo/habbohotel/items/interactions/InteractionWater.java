@@ -75,6 +75,7 @@ public class InteractionWater extends InteractionDefault {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
+        if(roomUnit == null) return;
         roomUnit.isSwimming = true;
 
         Pet pet = room.getPet(roomUnit);

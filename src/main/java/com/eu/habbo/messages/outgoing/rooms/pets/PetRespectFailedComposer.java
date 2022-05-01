@@ -15,7 +15,7 @@ public class PetRespectFailedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetRespectFailedComposer);
+        this.response.init(Outgoing.petRespectFailedComposer);
         this.response.appendInt(this.currentAge);
         this.response.appendInt(this.requiredAge);
         return this.response;

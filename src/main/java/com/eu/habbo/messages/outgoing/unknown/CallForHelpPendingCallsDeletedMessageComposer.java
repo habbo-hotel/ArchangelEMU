@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class CallForHelpPendingCallsDeletedMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CallForHelpPendingCallsDeletedMessageComposer);
+        this.response.init(Outgoing.callForHelpPendingCallsDeletedMessageComposer);
         //Empty body
         return this.response;
     }

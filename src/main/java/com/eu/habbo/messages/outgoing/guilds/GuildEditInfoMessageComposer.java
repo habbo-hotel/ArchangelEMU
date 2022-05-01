@@ -14,7 +14,7 @@ public class GuildEditInfoMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildEditInfoMessageComposer);
+        this.response.init(Outgoing.guildEditInfoMessageComposer);
         this.response.appendInt(1);
         this.response.appendInt(guild.getRoomId());
         this.response.appendString(guild.getRoomName());

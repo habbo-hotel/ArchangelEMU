@@ -35,7 +35,7 @@ public class FigureSetIdsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FigureSetIdsComposer);
+        this.response.init(Outgoing.figureSetIdsComposer);
         this.response.appendInt(this.idList.size());
         this.idList.forEach(this.response::appendInt);
         this.response.appendInt(this.nameList.size());

@@ -16,7 +16,7 @@ public class PetStatusUpdateComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PetStatusUpdateComposer);
+        this.response.init(Outgoing.petStatusUpdateComposer);
         this.response.appendInt(this.pet.getRoomUnit().getId());
         this.response.appendInt(this.pet instanceof RideablePet && ((RideablePet) this.pet).anyoneCanRide() ? 1 : 0);
         this.response.appendBoolean((this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).canBreed())); //unknown 1

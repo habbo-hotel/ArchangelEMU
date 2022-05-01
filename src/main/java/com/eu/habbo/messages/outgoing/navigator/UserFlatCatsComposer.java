@@ -16,7 +16,7 @@ public class UserFlatCatsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserFlatCatsComposer);
+        this.response.init(Outgoing.userFlatCatsComposer);
 
         this.response.appendInt(this.categories.size());
         for (RoomCategory category : this.categories) {

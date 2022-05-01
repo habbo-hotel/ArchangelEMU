@@ -17,7 +17,7 @@ public class GuildMembershipUpdatedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildMembershipUpdatedMessageComposer);
+        this.response.init(Outgoing.guildMembershipUpdatedMessageComposer);
         this.response.appendInt(this.guild.getId());
         this.response.appendInt(this.guildMember.getRank().type);
         this.response.appendInt(this.guildMember.getUserId());

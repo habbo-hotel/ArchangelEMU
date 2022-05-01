@@ -21,7 +21,7 @@ public class AvatarEffectsMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AvatarEffectsMessageComposer);
+        this.response.init(Outgoing.avatarEffectsMessageComposer);
 
 
         if (this.habbo == null || this.habbo.getInventory() == null || this.habbo.getInventory().getEffectsComponent() == null || this.habbo.getInventory().getEffectsComponent().effects == null) {

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class FurniListInvalidateComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FurniListInvalidateComposer);
+        this.response.init(Outgoing.furniListInvalidateComposer);
         return this.response;
     }
 }

@@ -24,7 +24,7 @@ public class TalentTrackMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TalentTrackMessageComposer);
+        this.response.init(Outgoing.talentTrackMessageComposer);
         this.response.appendString(this.type.name().toLowerCase());
 
         LinkedHashMap<Integer, TalentTrackLevel> talentTrackLevels = Emulator.getGameEnvironment().getAchievementManager().getTalenTrackLevels(this.type);

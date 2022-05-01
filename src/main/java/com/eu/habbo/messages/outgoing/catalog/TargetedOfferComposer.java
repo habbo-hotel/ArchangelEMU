@@ -18,7 +18,7 @@ public class TargetedOfferComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.TargetedOfferComposer);
+        this.response.init(Outgoing.targetedOfferComposer);
         HabboOfferPurchase purchase = HabboOfferPurchase.getOrCreate(this.habbo, this.offer.getId());
         this.offer.serialize(this.response, purchase);
         return this.response;

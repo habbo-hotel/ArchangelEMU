@@ -15,7 +15,7 @@ public class DiceValueMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.DiceValueMessageComposer);
+        this.response.init(Outgoing.diceValueMessageComposer);
         this.response.appendInt(this.id);
         this.response.appendInt(this.value);
         return this.response;

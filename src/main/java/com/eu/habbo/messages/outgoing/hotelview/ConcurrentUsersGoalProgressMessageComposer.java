@@ -21,7 +21,7 @@ public class ConcurrentUsersGoalProgressMessageComposer extends MessageComposer 
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ConcurrentUsersGoalProgressMessageComposer);
+        this.response.init(Outgoing.concurrentUsersGoalProgressMessageComposer);
         this.response.appendInt(this.state);
         this.response.appendInt(this.userCount);
         this.response.appendInt(this.goal);

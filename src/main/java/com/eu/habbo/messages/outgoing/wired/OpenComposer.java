@@ -14,7 +14,7 @@ public class OpenComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.OpenComposer);
+        this.response.init(Outgoing.openComposer);
         this.response.appendInt(this.item.getId());
         return this.response;
     }

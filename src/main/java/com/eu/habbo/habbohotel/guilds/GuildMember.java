@@ -3,9 +3,9 @@ package com.eu.habbo.habbohotel.guilds;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class GuildMember implements Comparable {
-    private int userId;
-    private String username;
+public class GuildMember implements Comparable<GuildMember> {
+    private final int userId;
+    private final String username;
     private String look;
     private int joinDate;
     private GuildRank rank;
@@ -59,8 +59,22 @@ public class GuildMember implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
-        return 0;
+    public int compareTo(GuildMember o) {
+        return this.userId - o.userId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof GuildMember) {
+            return ((GuildMember) o).userId == this.userId && ((GuildMember) o).joinDate == this.joinDate && ((GuildMember) o).rank == this.rank;
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.userId;
     }
 
     public GuildMembershipStatus getMembershipStatus() {

@@ -17,7 +17,7 @@ public class PhoneCollectionStateMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PhoneCollectionStateMessageComposer);
+        this.response.init(Outgoing.phoneCollectionStateMessageComposer);
         this.response.appendInt(this.unknownInt1);
         this.response.appendInt(this.unknownInt2);
         this.response.appendInt(this.unknownInt3);

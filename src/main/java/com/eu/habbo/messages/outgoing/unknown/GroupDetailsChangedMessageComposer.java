@@ -13,7 +13,7 @@ public class GroupDetailsChangedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GroupDetailsChangedMessageComposer);
+        this.response.init(Outgoing.groupDetailsChangedMessageComposer);
         this.response.appendInt(this.guildId);
         return this.response;
     }

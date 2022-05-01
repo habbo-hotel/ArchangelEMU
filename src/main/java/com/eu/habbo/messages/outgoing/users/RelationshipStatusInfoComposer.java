@@ -1,5 +1,6 @@
 package com.eu.habbo.messages.outgoing.users;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
@@ -59,7 +60,7 @@ public class RelationshipStatusInfoComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         try {
-            this.response.init(Outgoing.RelationshipStatusInfoComposer);
+            this.response.init(Outgoing.relationshipStatusInfoComposer);
             this.response.appendInt(this.userId);
 
             int total = 0;
@@ -75,7 +76,7 @@ public class RelationshipStatusInfoComposer extends MessageComposer {
 
             this.response.appendInt(total);
 
-            Random random = new Random();
+            Random random = Emulator.getRandom();
 
             if (!this.lovers.isEmpty()) {
                 int loversIndex = random.nextInt(this.lovers.size());

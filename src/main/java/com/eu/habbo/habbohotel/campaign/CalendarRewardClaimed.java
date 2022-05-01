@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.campaign.calendar;
+package com.eu.habbo.habbohotel.campaign;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

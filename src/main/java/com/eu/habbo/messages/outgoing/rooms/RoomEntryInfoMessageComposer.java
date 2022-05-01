@@ -16,7 +16,7 @@ public class RoomEntryInfoMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomEntryInfoMessageComposer);
+        this.response.init(Outgoing.roomEntryInfoMessageComposer);
         this.response.appendInt(this.room.getId());
         this.response.appendBoolean(this.roomOwner);
         return this.response;

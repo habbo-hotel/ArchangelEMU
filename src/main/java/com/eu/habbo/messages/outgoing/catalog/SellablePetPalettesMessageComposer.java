@@ -19,7 +19,7 @@ public class SellablePetPalettesMessageComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         if (this.petRaces == null)
             return null;
-        this.response.init(Outgoing.SellablePetPalettesMessageComposer);
+        this.response.init(Outgoing.sellablePetPalettesMessageComposer);
         this.response.appendString(this.petName);
         this.response.appendInt(this.petRaces.size());
         for (PetRace race : this.petRaces) {

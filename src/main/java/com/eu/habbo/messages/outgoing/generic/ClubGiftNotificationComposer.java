@@ -13,7 +13,7 @@ public class ClubGiftNotificationComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ClubGiftNotificationComposer);
+        this.response.init(Outgoing.clubGiftNotificationComposer);
         this.response.appendInt(this.count);
         return this.response;
     }

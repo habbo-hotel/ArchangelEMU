@@ -20,7 +20,7 @@ public class IgnoreResultMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.IgnoreResultMessageComposer);
+        this.response.init(Outgoing.ignoreResultMessageComposer);
         this.response.appendInt(this.state);
         this.response.appendString(this.habbo.getHabboInfo().getUsername());
         return this.response;

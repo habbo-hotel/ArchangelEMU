@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class PollErrorComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PollErrorComposer);
+        this.response.init(Outgoing.pollErrorComposer);
         //EMpty Body
         return this.response;
     }

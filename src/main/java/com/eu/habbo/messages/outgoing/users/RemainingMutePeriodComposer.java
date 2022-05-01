@@ -13,7 +13,7 @@ public class RemainingMutePeriodComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RemainingMutePeriodComposer);
+        this.response.init(Outgoing.remainingMutePeriodComposer);
         this.response.appendInt(this.seconds);
         return this.response;
     }

@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class VisitorBot extends Bot {
-    private static SimpleDateFormat DATE_FORMAT;
+    public static SimpleDateFormat DATE_FORMAT;
     private boolean showedLog = false;
     private THashSet<ModToolRoomVisit> visits = new THashSet<>(3);
 

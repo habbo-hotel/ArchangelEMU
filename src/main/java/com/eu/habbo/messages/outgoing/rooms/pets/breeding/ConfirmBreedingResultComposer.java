@@ -15,7 +15,7 @@ public class ConfirmBreedingResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ConfirmBreedingResultComposer);
+        this.response.init(Outgoing.confirmBreedingResultComposer);
         this.response.appendInt(this.anInt1);
         this.response.appendInt(this.anInt2);
         return this.response;

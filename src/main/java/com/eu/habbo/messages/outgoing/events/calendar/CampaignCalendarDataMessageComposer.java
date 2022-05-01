@@ -1,6 +1,6 @@
 package com.eu.habbo.messages.outgoing.events.calendar;
 
-import com.eu.habbo.habbohotel.campaign.calendar.CalendarRewardClaimed;
+import com.eu.habbo.habbohotel.campaign.CalendarRewardClaimed;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -27,7 +27,7 @@ public class CampaignCalendarDataMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CampaignCalendarDataMessageComposer);
+        this.response.init(Outgoing.campaignCalendarDataMessageComposer);
         this.response.appendString(this.eventName);
         this.response.appendString(this.campaignImage);
         this.response.appendInt(this.currentDay);

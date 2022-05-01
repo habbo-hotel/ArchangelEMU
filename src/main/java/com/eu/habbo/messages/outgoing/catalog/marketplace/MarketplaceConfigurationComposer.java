@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class MarketplaceConfigurationComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MarketplaceConfigurationComposer);
+        this.response.init(Outgoing.marketplaceConfigurationComposer);
         this.response.appendBoolean(true);
         this.response.appendInt(1); //Commision Percentage.
         this.response.appendInt(10); //Credits

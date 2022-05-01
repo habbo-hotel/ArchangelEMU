@@ -42,7 +42,7 @@ public class UnseenItemsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UnseenItemsComposer);
+        this.response.init(Outgoing.unseenItemsComposer);
 
         if (this.ids != null) {
             this.response.appendInt(1);

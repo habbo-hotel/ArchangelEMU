@@ -20,7 +20,7 @@ public class ChatReviewSessionVotingStatusMessageComposer extends MessageCompose
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ChatReviewSessionVotingStatusMessageComposer);
+        this.response.init(Outgoing.chatReviewSessionVotingStatusMessageComposer);
 
         ArrayList<GuardianVote> votes = this.ticket.getSortedVotes(this.guardian);
 

@@ -20,7 +20,7 @@ public class YoutubeDisplayVideoMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.YoutubeDisplayVideoMessageComposer);
+        this.response.init(Outgoing.youtubeDisplayVideoMessageComposer);
         this.response.appendInt(this.itemId);
         this.response.appendString(this.video.getId());
         this.response.appendInt(this.startTime);

@@ -35,7 +35,7 @@ public class KickMemberEvent extends MessageHandler {
                 guild.decreaseMemberCount();
 
                 if (userId != this.client.getHabbo().getHabboInfo().getId()) {
-                    this.client.sendResponse(new GuildMembershipRejectedMessageComposer(guild));
+                    this.client.sendResponse(new GuildMembershipRejectedMessageComposer(guild, userId));
                 }
 
                 Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());

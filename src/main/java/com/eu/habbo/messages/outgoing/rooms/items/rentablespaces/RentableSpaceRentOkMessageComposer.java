@@ -13,7 +13,7 @@ public class RentableSpaceRentOkMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RentableSpaceRentOkMessageComposer);
+        this.response.init(Outgoing.rentableSpaceRentOkMessageComposer);
         this.response.appendInt(this.itemId);
         return this.response;
     }

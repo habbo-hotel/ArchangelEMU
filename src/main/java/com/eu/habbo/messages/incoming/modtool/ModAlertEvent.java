@@ -18,33 +18,31 @@ public class ModAlertEvent extends MessageHandler {
         String message = this.packet.readString();
         int cfhTopic = this.packet.readInt();
 
-        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
-            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
+        if (!this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) return;
+        Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
-            if (habbo != null) {
-                ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
-
-                if (Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
-                    THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
-                    ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
-
-                    if (modToolSanctionItems != null && !modToolSanctionItems.isEmpty()) {
-                        ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
-
-                        if (item != null && item.probationTimestamp > 0 && item.probationTimestamp >= Emulator.getIntUnixTimestamp()) {
-                            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
-                        } else {
-                            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
-                        }
-                    } else {
-                        modToolSanctions.run(userId, this.client.getHabbo(), 0, cfhTopic, message, 0, false, 0);
-                    }
-                } else {
-                    habbo.alert(message);
-                }
-            } else {
-                this.client.sendResponse(new IssueCloseNotificationMessageComposer(Emulator.getTexts().getValue("generic.user.not_found").replace("%user%", Emulator.getConfig().getValue("hotel.player.name"))));
-            }
+        if (habbo == null) {
+            this.client.sendResponse(new IssueCloseNotificationMessageComposer(Emulator.getTexts().getValue("generic.user.not_found").replace("%user%", Emulator.getConfig().getValue("hotel.player.name"))));
+            return;
         }
+        ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
+
+        if (!Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
+            habbo.alert(message);
+            return;
+        }
+        THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(habbo.getHabboInfo().getId());
+        ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(habbo.getHabboInfo().getId());
+
+        if (modToolSanctionItems == null || modToolSanctionItems.isEmpty()) {
+            modToolSanctions.run(userId, this.client.getHabbo(), 0, cfhTopic, message, 0, false, 0);
+            return;
+        }
+
+        ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
+        if (item == null) return;
+        modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
+
+
     }
 }

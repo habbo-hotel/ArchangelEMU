@@ -30,7 +30,7 @@ public class CantConnectMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CantConnectMessageComposer);
+        this.response.init(Outgoing.cantConnectMessageComposer);
         this.response.appendInt(this.errorCode);
         this.response.appendString(this.queError);
         return this.response;

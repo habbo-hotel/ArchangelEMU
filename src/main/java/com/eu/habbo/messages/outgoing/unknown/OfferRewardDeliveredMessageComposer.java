@@ -14,7 +14,7 @@ public class OfferRewardDeliveredMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.OfferRewardDeliveredMessageComposer);
+        this.response.init(Outgoing.offerRewardDeliveredMessageComposer);
         this.response.appendString(this.item.getType().code);
         this.response.appendInt(this.item.getId());
         this.response.appendString(this.item.getName());

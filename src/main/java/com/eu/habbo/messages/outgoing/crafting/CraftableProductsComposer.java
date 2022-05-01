@@ -20,7 +20,7 @@ public class CraftableProductsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CraftableProductsComposer);
+        this.response.init(Outgoing.craftableProductsComposer);
 
         this.response.appendInt(this.recipes.size());
         for (CraftingRecipe recipe : this.recipes) {

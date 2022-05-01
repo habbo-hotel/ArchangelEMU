@@ -66,9 +66,9 @@ public class CallForHelpEvent extends MessageHandler {
 
                     Emulator.getGameEnvironment().getModToolManager().addTicket(issue);
                     Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
-                    this.client.sendResponse(new CallForHelpResultMessageComposer(CallForHelpResultMessageComposer.REPORT_RECEIVED, cfhTopic.reply));
 
                     if (cfhTopic != null) {
+                        this.client.sendResponse(new CallForHelpResultMessageComposer(CallForHelpResultMessageComposer.REPORT_RECEIVED, cfhTopic.reply));
                         if (cfhTopic.action != CfhActionType.MODS) {
                             Emulator.getThreading().run(() -> {
                                 if (issue.state == ModToolTicketState.OPEN) {
@@ -81,7 +81,7 @@ public class CallForHelpEvent extends MessageHandler {
                                     CallForHelpEvent.this.client.sendResponse(new IssueCloseNotificationMessageComposer(cfhTopic.reply).compose());
                                     Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                                 }
-                            }, 30 * 1000);
+                            }, (long) 30 * 1000);
                         }
                     }
                 }
@@ -111,7 +111,7 @@ public class CallForHelpEvent extends MessageHandler {
                             CallForHelpEvent.this.client.sendResponse(new IssueCloseNotificationMessageComposer(cfhTopic.reply).compose());
                             Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                         }
-                    }, 30 * 1000);
+                    }, (long) 30 * 1000);
                 }
             }
 

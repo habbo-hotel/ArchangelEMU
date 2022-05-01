@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.outgoing.events.calendar;
 
-import com.eu.habbo.habbohotel.campaign.calendar.CalendarManager;
-import com.eu.habbo.habbohotel.campaign.calendar.CalendarRewardObject;
+import com.eu.habbo.habbohotel.campaign.CalendarManager;
+import com.eu.habbo.habbohotel.campaign.CalendarRewardObject;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -20,7 +20,7 @@ public class CampaignCalendarDoorOpenedMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CampaignCalendarDoorOpenedMessageComposer);
+        this.response.init(Outgoing.campaignCalendarDoorOpenedMessageComposer);
         this.response.appendBoolean(this.visible);
 
         String className = "";

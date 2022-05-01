@@ -16,7 +16,7 @@ public class SeasonalCalendarDailyOfferMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.SeasonalCalendarDailyOfferMessageComposer);
+        this.response.init(Outgoing.seasonalCalendarDailyOfferMessageComposer);
         this.response.appendInt(this.pageId);
         this.catalogItem.serialize(this.response);
         return this.response;

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class OpenConnectionMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.OpenConnectionMessageComposer);
+        this.response.init(Outgoing.openConnectionMessageComposer);
         return this.response;
     }
 }

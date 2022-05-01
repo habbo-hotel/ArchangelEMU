@@ -15,7 +15,7 @@ public class AcceptFriendResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.AcceptFriendResultComposer);
+        this.response.init(Outgoing.acceptFriendResultComposer);
         this.response.appendInt(this.errors.size());
         for (Map.Entry<Integer, Integer> entry : this.errors.entrySet()) {
             this.response.appendInt(entry.getKey());

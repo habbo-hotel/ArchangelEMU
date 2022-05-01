@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class UserChatlogComposer extends MessageComposer {
-    public static SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+    private final SimpleDateFormat format = new SimpleDateFormat("HH:mm");
     private final ArrayList<ModToolRoomVisit> set;
     private final int userId;
     private final String username;
@@ -23,7 +23,7 @@ public class UserChatlogComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UserChatlogComposer);
+        this.response.init(Outgoing.userChatlogComposer);
         this.response.appendInt(this.userId);
         this.response.appendString(this.username);
         this.response.appendInt(this.set.size());

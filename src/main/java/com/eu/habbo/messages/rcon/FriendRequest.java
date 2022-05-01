@@ -26,21 +26,12 @@ public class FriendRequest extends RCONMessage<FriendRequest.JSON> {
                 Habbo from = Emulator.getGameEnvironment().getHabboManager().getHabbo(json.user_id);
 
                 if (from != null) {
-                    target.getClient().sendResponse(new NewFriendRequestComposer(from));
+                    target.getClient().sendResponse(new NewFriendRequestComposer(from.getHabboInfo()));
                 } else {
                     final HabboInfo info = HabboManager.getOfflineHabboInfo(json.user_id);
 
                     if (info != null) {
-                        target.getClient().sendResponse(new MessageComposer() {
-                            @Override
-                            protected ServerMessage composeInternal() {
-                                this.response.init(Outgoing.NewFriendRequestComposer);
-                                this.response.appendInt(info.getId());
-                                this.response.appendString(info.getUsername());
-                                this.response.appendString(info.getLook());
-                                return this.response;
-                            }
-                        });
+                        target.getClient().sendResponse(new NewFriendRequestComposer(info));
                     }
                 }
             }

@@ -15,7 +15,7 @@ public class CompetitionStatusMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CompetitionStatusMessageComposer);
+        this.response.init(Outgoing.competitionStatusMessageComposer);
         this.response.appendBoolean(this.unknownBoolean);
         this.response.appendString(this.unknownString);
         return this.response;

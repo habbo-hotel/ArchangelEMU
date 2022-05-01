@@ -13,7 +13,7 @@ public class FurniListRemoveComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FurniListRemoveComposer);
+        this.response.init(Outgoing.furniListRemoveComposer);
         this.response.appendInt(this.itemId);
         return this.response;
     }

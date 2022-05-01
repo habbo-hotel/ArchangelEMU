@@ -15,7 +15,7 @@ public class PlayListMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PlayListMessageComposer);
+        this.response.init(Outgoing.playListMessageComposer);
 
         int length = 0;
 

@@ -1,7 +1,7 @@
 package com.eu.habbo.plugin.events.users.calendar;
 
-import com.eu.habbo.habbohotel.campaign.calendar.CalendarCampaign;
-import com.eu.habbo.habbohotel.campaign.calendar.CalendarRewardObject;
+import com.eu.habbo.habbohotel.campaign.CalendarCampaign;
+import com.eu.habbo.habbohotel.campaign.CalendarRewardObject;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.plugin.events.users.UserEvent;
 

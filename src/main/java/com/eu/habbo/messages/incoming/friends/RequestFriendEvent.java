@@ -83,7 +83,7 @@ public class RequestFriendEvent extends MessageHandler {
         }
 
         if(targetHabbo.isOnline()) {
-            targetHabbo.getClient().sendResponse(new NewFriendRequestComposer(this.client.getHabbo()));
+            targetHabbo.getClient().sendResponse(new NewFriendRequestComposer(this.client.getHabbo().getHabboInfo()));
         }
 
         Messenger.makeFriendRequest(this.client.getHabbo().getHabboInfo().getId(), targetId);

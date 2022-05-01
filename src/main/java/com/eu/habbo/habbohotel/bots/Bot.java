@@ -47,7 +47,7 @@ public class Bot implements Runnable {
     private int bubble;
 
 
-    private String type;
+    private final String type;
 
 
     private int effect;

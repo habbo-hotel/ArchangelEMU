@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CfhChatlogComposer extends MessageComposer {
-    public static SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+    private final SimpleDateFormat format = new SimpleDateFormat("HH:mm");
     private final ModToolIssue issue;
     private final List<ModToolChatLog> chatlog;
     private final String roomName;
@@ -33,7 +33,7 @@ public class CfhChatlogComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CfhChatlogComposer);
+        this.response.init(Outgoing.cfhChatlogComposer);
         this.response.appendInt(this.issue.id);
         this.response.appendInt(this.issue.senderId);
         this.response.appendInt(this.issue.reportedId);

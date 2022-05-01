@@ -13,7 +13,7 @@ public class InClientLinkMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.InClientLinkMessageComposer);
+        this.response.init(Outgoing.inClientLinkMessageComposer);
         this.response.appendString(this.link);
         return this.response;
     }

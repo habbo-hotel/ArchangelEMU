@@ -22,7 +22,7 @@ public class GuardianTicket {
     private final Habbo reporter;
     private final Habbo reported;
     private final Date date;
-    private ArrayList<ModToolChatLog> chatLogs;
+    private final ArrayList<ModToolChatLog> chatLogs;
     private GuardianVoteType verdict;
     private int timeLeft = 120;
     private int resendCount = 0;
@@ -45,7 +45,7 @@ public class GuardianTicket {
 
         this.votes.put(guardian, new GuardianVote(this.guardianCount, guardian));
 
-        Emulator.getThreading().run(new GuardianNotAccepted(this, guardian), Emulator.getConfig().getInt("guardians.accept.timer") * 1000);
+        Emulator.getThreading().run(new GuardianNotAccepted(this, guardian), Emulator.getConfig().getInt("guardians.accept.timer") * 1000L);
     }
 
 

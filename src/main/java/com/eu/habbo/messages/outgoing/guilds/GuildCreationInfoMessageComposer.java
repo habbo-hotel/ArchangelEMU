@@ -16,7 +16,7 @@ public class GuildCreationInfoMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.GuildCreationInfoMessageComposer);
+        this.response.init(Outgoing.guildCreationInfoMessageComposer);
         this.response.appendInt(Emulator.getConfig().getInt("catalog.guild.price"));
         this.response.appendInt(this.rooms.size());
 

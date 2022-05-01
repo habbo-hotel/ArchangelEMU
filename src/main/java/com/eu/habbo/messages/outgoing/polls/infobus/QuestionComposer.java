@@ -16,7 +16,7 @@ public class QuestionComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.QuestionComposer);
+        this.response.init(Outgoing.questionComposer);
         this.response.appendString(this.question);
         this.response.appendInt(0);
         this.response.appendInt(0);

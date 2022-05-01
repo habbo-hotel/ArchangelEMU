@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 public class BuildersClubSubscriptionStatusMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.BuildersClubSubscriptionStatusMessageComposer);
+        this.response.init(Outgoing.buildersClubSubscriptionStatusMessageComposer);
         this.response.appendInt(Integer.MAX_VALUE);
         this.response.appendInt(0);
         this.response.appendInt(100);

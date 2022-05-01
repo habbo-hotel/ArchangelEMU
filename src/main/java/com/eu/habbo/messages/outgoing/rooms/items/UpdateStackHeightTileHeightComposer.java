@@ -17,7 +17,7 @@ public class UpdateStackHeightTileHeightComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.UpdateStackHeightTileHeightComposer);
+        this.response.init(Outgoing.updateStackHeightTileHeightComposer);
         this.response.appendInt(this.item.getId());
         this.response.appendInt(this.height);
         return this.response;

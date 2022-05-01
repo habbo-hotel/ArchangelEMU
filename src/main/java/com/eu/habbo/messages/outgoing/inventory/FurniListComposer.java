@@ -27,7 +27,7 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
     @Override
     protected ServerMessage composeInternal() {
         try {
-            this.response.init(Outgoing.FurniListComposer);
+            this.response.init(Outgoing.furniListComposer);
             this.response.appendInt(this.totalFragments);
             this.response.appendInt(this.fragmentNumber - 1);
             this.response.appendInt(this.items.size());

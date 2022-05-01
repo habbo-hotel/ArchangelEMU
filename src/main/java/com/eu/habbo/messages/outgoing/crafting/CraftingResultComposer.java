@@ -21,7 +21,7 @@ public class CraftingResultComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.CraftingResultComposer);
+        this.response.init(Outgoing.craftingResultComposer);
 
         this.response.appendBoolean(this.succes); //succes
 

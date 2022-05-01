@@ -26,7 +26,7 @@ public class ClubGiftInfoComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ClubGiftInfoComposer);
+        this.response.init(Outgoing.clubGiftInfoComposer);
 
         this.response.appendInt(this.daysTillNextGift); //Days Until Next Gift
         this.response.appendInt(this.availableGifts); //Gift Selectable

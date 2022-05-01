@@ -14,7 +14,7 @@ public class PostMessageMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PostMessageMessageComposer);
+        this.response.init(Outgoing.postMessageMessageComposer);
         this.response.appendInt(this.comment.getThread().getGuildId()); //guild_id
         this.response.appendInt(this.comment.getThreadId()); //thread_id
         this.comment.serialize(this.response); //Comment

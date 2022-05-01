@@ -13,7 +13,7 @@ public class FlatAccessibleMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.FlatAccessibleMessageComposer);
+        this.response.init(Outgoing.flatAccessibleMessageComposer);
         this.response.appendString(this.username);
         return this.response;
     }

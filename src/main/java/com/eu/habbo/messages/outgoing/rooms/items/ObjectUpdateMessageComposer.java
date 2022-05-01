@@ -16,9 +16,9 @@ public class ObjectUpdateMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ObjectUpdateMessageComposer);
+        this.response.init(Outgoing.objectUpdateMessageComposer);
         this.item.serializeFloorData(this.response);
-        this.response.appendInt(this.item instanceof InteractionGift ? ((((InteractionGift) this.item).getColorId() * 1000) + ((InteractionGift) this.item).getRibbonId()) : (this.item instanceof InteractionMusicDisc ? ((InteractionMusicDisc) this.item).getSongId() : item.isUsable() ? 0 : 0));
+        this.response.appendInt(this.item instanceof InteractionGift ? ((((InteractionGift) this.item).getColorId() * 1000) + ((InteractionGift) this.item).getRibbonId()) : (this.item instanceof InteractionMusicDisc ? ((InteractionMusicDisc) this.item).getSongId() : item.isUsable() ? 1 : 0));
         this.item.serializeExtradata(this.response);
         this.response.appendInt(-1);
         this.response.appendInt(0);

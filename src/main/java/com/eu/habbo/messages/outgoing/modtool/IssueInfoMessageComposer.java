@@ -14,7 +14,7 @@ public class IssueInfoMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.IssueInfoMessageComposer);
+        this.response.init(Outgoing.issueInfoMessageComposer);
         this.issue.serialize(this.response);
         return this.response;
     }

@@ -16,7 +16,7 @@ public class PostItPlacedComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.PostItPlacedComposer);
+        this.response.init(Outgoing.postItPlacedComposer);
         this.response.appendInt(this.item.getId());
         this.response.appendInt(this.unknownInt);
         return this.response;

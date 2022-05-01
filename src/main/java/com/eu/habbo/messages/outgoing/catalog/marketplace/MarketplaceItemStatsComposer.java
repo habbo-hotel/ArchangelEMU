@@ -14,7 +14,7 @@ public class MarketplaceItemStatsComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.MarketplaceItemStatsComposer);
+        this.response.init(Outgoing.marketplaceItemStatsComposer);
         MarketPlace.serializeItemInfo(this.itemId, this.response);
         return this.response;
     }

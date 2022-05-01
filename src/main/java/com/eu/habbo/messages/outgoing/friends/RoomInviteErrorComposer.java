@@ -18,7 +18,7 @@ public class RoomInviteErrorComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.RoomInviteErrorComposer);
+        this.response.init(Outgoing.roomInviteErrorComposer);
         this.response.appendInt(this.errorCode);
         this.response.appendInt(this.buddies.size());
         this.buddies.forEach(new TObjectProcedure<MessengerBuddy>() {

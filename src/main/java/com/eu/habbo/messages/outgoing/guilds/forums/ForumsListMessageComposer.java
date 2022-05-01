@@ -24,7 +24,7 @@ public class ForumsListMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        this.response.init(Outgoing.ForumsListMessageComposer);
+        this.response.init(Outgoing.forumsListMessageComposer);
         this.response.appendInt(this.mode);
         this.response.appendInt(this.guilds.size());
 

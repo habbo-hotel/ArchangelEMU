@@ -24,8 +24,6 @@ public class GetCurrentTimingCodeEvent extends MessageHandler {
                     } else {
                         this.client.sendResponse(new CurrentTimingCodeMessageComposer(data, s));
                     }
-
-                    break;
                 }
 
                 //this.client.sendResponse(new HotelViewDataComposer("2013-05-08 13:0", "gamesmaker"));

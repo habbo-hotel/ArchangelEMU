@@ -1,14 +1,10 @@
 package com.eu.habbo.habbohotel.items.interactions.pets;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
 import java.sql.ResultSet;
@@ -69,7 +65,7 @@ public class InteractionPetTree extends InteractionDefault {
                      }
                      pet.getRoomUnit().setCanWalk(true);
                      pet.packetUpdate = true;
-                 }, 2500 + (Emulator.getRandom().nextInt(20) * 500));
+                 }, (long) 2500 + (Emulator.getRandom().nextInt(20) * 500));
              } else {
                 pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
                 pet.getRoomUnit().clearStatus();

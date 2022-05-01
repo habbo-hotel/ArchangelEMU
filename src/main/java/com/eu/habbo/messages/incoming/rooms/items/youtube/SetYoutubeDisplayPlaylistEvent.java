@@ -32,7 +32,7 @@ public class SetYoutubeDisplayPlaylistEvent extends MessageHandler {
 
         HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
 
-        if (item == null || !(item instanceof  InteractionYoutubeTV)) return;
+        if (!(item instanceof InteractionYoutubeTV)) return;
 
         Optional<YoutubeManager.YoutubePlaylist> playlist = Emulator.getGameEnvironment().getItemManager().getYoutubeManager().getPlaylistsForItemId(item.getBaseItem().getId()).stream().filter(p -> p.getId().equals(playlistId)).findAny();
 
@@ -47,7 +47,7 @@ public class SetYoutubeDisplayPlaylistEvent extends MessageHandler {
 
             room.updateItem(item);
             room.sendComposer(new YoutubeDisplayVideoMessageComposer(itemId, video, true, 0).compose());
-            ((InteractionYoutubeTV) item).autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo((InteractionYoutubeTV) item), video.getDuration() * 1000);
+            ((InteractionYoutubeTV) item).autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo((InteractionYoutubeTV) item), video.getDuration() * 1000L);
 
             item.needsUpdate(true);
         }

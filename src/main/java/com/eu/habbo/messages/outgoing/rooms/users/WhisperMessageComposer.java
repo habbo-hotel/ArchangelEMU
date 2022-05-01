@@ -17,7 +17,7 @@ public class WhisperMessageComposer extends MessageComposer {
         if (this.roomChatMessage.getMessage().isEmpty())
             return null;
 
-        this.response.init(Outgoing.WhisperMessageComposer);
+        this.response.init(Outgoing.whisperMessageComposer);
         this.roomChatMessage.serialize(this.response);
 
         return this.response;
