@@ -66,12 +66,8 @@ public class ModBanEvent extends MessageHandler {
 
         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
         if (item == null) return;
+        modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
 
-        if (item.probationTimestamp >= Emulator.getIntUnixTimestamp()) {
-            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
-        } else {
-            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
-        }
 
     }
 }

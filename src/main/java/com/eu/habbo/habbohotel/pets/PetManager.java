@@ -15,6 +15,7 @@ import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import gnu.trove.set.hash.THashSet;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,7 +143,7 @@ public class PetManager {
     }
 
     public static NormalDistribution getNormalDistributionForBreeding(int levelOne, int levelTwo) {
-        return getNormalDistributionForBreeding((levelOne + levelTwo) / 2);
+        return getNormalDistributionForBreeding( (levelOne + levelTwo) / 2.0);
     }
 
     public static NormalDistribution getNormalDistributionForBreeding(double avgLevel) {
@@ -236,7 +237,7 @@ public class PetManager {
             while (set.next()) {
                 if (set.getInt("pet_id") >= 0) {
                     if (this.petData.containsKey(set.getInt("pet_id"))) {
-                        PetVocalsType petVocalsType = PetVocalsType.valueOf(set.getString("type").toUpperCase());
+                        PetVocalsType petVocalsType = EnumUtils.getEnum(PetVocalsType.class, set.getString("type").toUpperCase());;
 
                         if (petVocalsType != null) {
                             this.petData.get(set.getInt("pet_id")).petVocals.get(petVocalsType).add(new PetVocal(set.getString("message")));
@@ -315,7 +316,7 @@ public class PetManager {
         }
 
         try {
-            int petId = Integer.valueOf(petName.split("t")[1]);
+            int petId = Integer.parseInt(petName.split("t")[1]);
             return this.petRaces.get(petId);
         } catch (Exception e) {
             LOGGER.error("Caught exception", e);
@@ -333,18 +334,15 @@ public class PetManager {
 
         TIntObjectHashMap<ArrayList<PetBreedingReward>> offspringList = this.breedingReward.get(pet.getPetData().getType());
 
-        offspringList.forEachEntry(new TIntObjectProcedure<ArrayList<PetBreedingReward>>() {
-            @Override
-            public boolean execute(int i, ArrayList<PetBreedingReward> petBreedingRewards) {
-                for (PetBreedingReward reward : petBreedingRewards) {
-                    if (reward.breed == pet.getRace()) {
-                        rarityLevel[0] = i;
-                        return false;
-                    }
+        offspringList.forEachEntry((i, petBreedingRewards) -> {
+            for (PetBreedingReward reward : petBreedingRewards) {
+                if (reward.breed == pet.getRace()) {
+                    rarityLevel[0] = i;
+                    return false;
                 }
-
-                return true;
             }
+
+            return true;
         });
 
         return 4 - rarityLevel[0];
@@ -399,17 +397,17 @@ public class PetManager {
     }
 
     public Pet createPet(Item item, String name, String race, String color, GameClient client) {
-        int type = Integer.valueOf(item.getName().toLowerCase().replace("a0 pet", ""));
+        int type = Integer.parseInt(item.getName().toLowerCase().replace("a0 pet", ""));
 
         if (this.petData.containsKey(type)) {
             Pet pet;
             if (type == 15)
-                pet = new HorsePet(type, Integer.valueOf(race), color, name, client.getHabbo().getHabboInfo().getId());
+                pet = new HorsePet(type, Integer.parseInt(race), color, name, client.getHabbo().getHabboInfo().getId());
             else if (type == 16)
                 pet = this.createMonsterplant(null, client.getHabbo(), false, null, 0);
             else
                 pet = new Pet(type,
-                        Integer.valueOf(race),
+                        Integer.parseInt(race),
                         color,
                         name,
                         client.getHabbo().getHabboInfo().getId()

@@ -57,7 +57,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
 
         roomUnit.getRoom().unIdle(roomUnit.getRoom().getHabbo(roomUnit));
         room.sendComposer(new AvatarEffectMessageComposer(roomUnit, 4).compose());
-        Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), WiredHandler.TELEPORT_DELAY + 1000);
+        Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomUnit), (long) WiredHandler.TELEPORT_DELAY + 1000);
 
         if (tile == roomUnit.getCurrentLocation()) {
             return;
@@ -111,14 +111,11 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
         message.appendInt(this.getDelay());
         if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
-                @Override
-                public boolean execute(InteractionWiredTrigger object) {
-                    if (!object.isTriggeredByRoomUnit()) {
-                        invalidTriggers.add(object.getId());
-                    }
-                    return true;
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
+                if (!object.isTriggeredByRoomUnit()) {
+                    invalidTriggers.add(object.getId());
                 }
+                return true;
             });
             message.appendInt(invalidTriggers.size());
             for (Integer i : invalidTriggers) {

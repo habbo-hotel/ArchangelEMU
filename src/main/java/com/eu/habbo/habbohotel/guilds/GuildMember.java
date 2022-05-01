@@ -72,6 +72,10 @@ public class GuildMember implements Comparable<GuildMember> {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return this.userId;
+    }
 
     public GuildMembershipStatus getMembershipStatus() {
         if (this.rank == GuildRank.DELETED) return GuildMembershipStatus.NOT_MEMBER;

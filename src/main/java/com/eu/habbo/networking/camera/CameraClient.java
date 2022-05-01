@@ -31,7 +31,7 @@ public class CameraClient {
         this.bootstrap.option(ChannelOption.SO_KEEPALIVE, false);
         this.bootstrap.handler(new ChannelInitializer<SocketChannel>() {
             @Override
-            public void initChannel(SocketChannel ch) throws Exception {
+            public void initChannel(SocketChannel ch) {
                 ch.pipeline().addLast(new CameraDecoder());
                 ch.pipeline().addLast(new CameraHandler());
             }
@@ -44,10 +44,6 @@ public class CameraClient {
 
     public void connect() {
         CameraClient.channelFuture = this.bootstrap.connect(host, port);
-
-        while (!CameraClient.channelFuture.isDone()) {
-        }
-
         if (CameraClient.channelFuture.isSuccess()) {
             CameraClient.attemptReconnect = false;
             CameraClient.channel = channelFuture.channel();
@@ -68,7 +64,8 @@ public class CameraClient {
                 channelFuture.channel().close().sync();
                 channelFuture = null;
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("Caught Exception: ", e);
+                Thread.currentThread().interrupt();
             }
         }
 

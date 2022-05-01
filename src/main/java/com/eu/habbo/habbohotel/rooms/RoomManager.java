@@ -952,7 +952,7 @@ public class RoomManager {
             habbo.getRoomUnit().isKicked = false;
 
             if (room.getOwnerId() != habbo.getHabboInfo().getId()) {
-                AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int) Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000));
+                AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int) Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000.0));
             }
 
             habbo.getMessenger().connectionChanged(habbo, habbo.isOnline(), false);
@@ -1220,7 +1220,7 @@ public class RoomManager {
     public ArrayList<Room> getRoomsVisited(Habbo habbo, boolean includeSelf, int limit) {
         ArrayList<Room> rooms = new ArrayList<>();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.* FROM room_enter_log INNER JOIN rooms ON room_enter_log.room_id = rooms.id WHERE user_id = ? AND timestamp >= ? AND rooms.owner_id != ? GROUP BY rooms.id ORDER BY timestamp DESC LIMIT " + limit)) {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.* FROM room_enter_log INNER JOIN rooms ON room_enter_log.room_id = rooms.id WHERE user_id = ? AND timestamp >= ? AND rooms.owner_id != ? GROUP BY rooms.id AND timestamp ORDER BY timestamp DESC LIMIT " + limit)) {
             statement.setInt(1, habbo.getHabboInfo().getId());
             statement.setInt(2, Emulator.getIntUnixTimestamp() - 259200);
             statement.setInt(3, (includeSelf ? 0 : habbo.getHabboInfo().getId()));

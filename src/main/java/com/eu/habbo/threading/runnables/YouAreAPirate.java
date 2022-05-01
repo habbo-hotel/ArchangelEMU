@@ -75,7 +75,7 @@ public class YouAreAPirate implements Runnable {
     public final Room room;
 
     private int index = 0;
-    private int oldEffect;
+    private final int oldEffect;
 
     public YouAreAPirate(Habbo habbo, Room room) {
         this.habbo = habbo;
@@ -97,7 +97,7 @@ public class YouAreAPirate implements Runnable {
                 return;
             }
 
-            Emulator.getThreading().run(this, iamapirate[this.index - 1].length() * 100);
+            Emulator.getThreading().run(this, iamapirate[this.index - 1].length() * 100L);
         }
     }
 }

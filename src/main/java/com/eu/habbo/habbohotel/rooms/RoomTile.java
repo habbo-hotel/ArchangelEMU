@@ -115,8 +115,8 @@ public class RoomTile {
     }
 
     public double distance(RoomTile roomTile) {
-        double x = this.x - roomTile.x;
-        double y = this.y - roomTile.y;
+        double x = (double) this.x - roomTile.x;
+        double y = (double) this.y - roomTile.y;
         return Math.sqrt(x * x + y * y);
     }
 
@@ -186,7 +186,7 @@ public class RoomTile {
 
     public List<RoomUnit> getUnits() {
         synchronized (this.units) {
-            return new ArrayList<RoomUnit>(this.units);
+            return new ArrayList<>(this.units);
         }
     }
 

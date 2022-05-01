@@ -38,7 +38,7 @@ public class RoomUnitTeleportWalkToAction implements Runnable {
                         } else {
                             if (tile.isWalkable()) {
                                 this.habbo.getRoomUnit().setGoalLocation(tile);
-                                Emulator.getThreading().run(this, this.habbo.getRoomUnit().getPath().size() + 2 * 510);
+                                Emulator.getThreading().run(this, (long) this.habbo.getRoomUnit().getPath().size() + 2 * 510);
                             }
                         }
                     }
