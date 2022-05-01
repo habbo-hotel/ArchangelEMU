@@ -25,7 +25,7 @@ public class ShutdownCommand extends Command {
         } else {
             if (params.length == 2) {
                 try {
-                    minutes = Integer.valueOf(params[1]);
+                    minutes = Integer.parseInt(params[1]);
                 } catch (Exception e) {
                     reason = new StringBuilder(params[1]);
                 }
@@ -44,7 +44,7 @@ public class ShutdownCommand extends Command {
         }
         RoomTrade.TRADING_ENABLED = false;
         ShutdownEmulator.timestamp = Emulator.getIntUnixTimestamp() + (60 * minutes);
-        Emulator.getThreading().run(new ShutdownEmulator(message), minutes * 60 * 1000);
+        Emulator.getThreading().run(new ShutdownEmulator(message), (long) minutes * 60 * 1000);
         return true;
     }
 }
