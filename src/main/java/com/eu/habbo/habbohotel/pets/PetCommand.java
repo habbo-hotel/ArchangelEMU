@@ -46,12 +46,8 @@ public class PetCommand implements Comparable<PetCommand> {
     }
 
     public void handle(Pet pet, Habbo habbo, String[] data) {
-        if (Emulator.getRandom().nextInt((pet.level - this.level <= 0 ? 2 : pet.level - this.level) + 2) == 0) {
-            pet.say(pet.petData.randomVocal(PetVocalsType.DISOBEY));
-            return;
-        }
-
-        if (this.action != null) {
+        // check if enough energy, happiness, and randomize do or dont || should possibly add if not hungry and thirsty but @brenoepic does those - oliver
+        if (this.action != null && pet.energy > this.energyCost && pet.happyness > this.happynessCost && Emulator.getRandom().nextInt((pet.level - this.level <= 0 ? 2 : pet.level - this.level) + 2) == 0) {
             if (this.action.petTask != pet.getTask()) {
                 if (this.action.stopsPetWalking) {
                     pet.getRoomUnit().setGoalLocation(pet.getRoomUnit().getCurrentLocation());
@@ -72,6 +68,15 @@ public class PetCommand implements Comparable<PetCommand> {
                     pet.addExperience(this.xp);
                 }
             }
+        } else {
+            // this is disobey
+            if (this.action.apply(pet, habbo, data)) {
+                pet.addEnergy(-this.energyCost / 2);
+                pet.addHappyness(-this.happynessCost / 2);
+            }
+
+            pet.say(pet.petData.randomVocal(PetVocalsType.DISOBEY));
+            return;
         }
     }
 }
