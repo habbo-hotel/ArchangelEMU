@@ -19,14 +19,13 @@ public class ActionBounce extends PetAction {
     // bouncy bounce
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-
-        if (pet.getHappyness() > 50) {
-            Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.BOUNCE, null, false), this.minimumActionDuration);
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
-            return true;
+        Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.BOUNCE, null, false), this.minimumActionDuration);
+        if (pet.getHappyness() > 80) {
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         } else {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
-            return false;
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
         }
+
+        return true;
     }
 }
