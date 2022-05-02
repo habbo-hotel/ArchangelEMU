@@ -28,10 +28,11 @@ public class ActionDown extends PetAction {
                 pet.clearPosture();
             }, this.minimumActionDuration);
 
-            if (pet.getHappyness() > 50)
+            if (pet.getHappyness() > 40) {
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
-            else
+            } else {
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
+            }
 
             return true;
         }
