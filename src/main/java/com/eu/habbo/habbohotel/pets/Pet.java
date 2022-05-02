@@ -123,13 +123,15 @@ public class Pet implements ISerialize, Runnable {
     public void addEnergy(int amount) {
         this.energy += amount;
 
+        /* this is regeneration, add back if needed, deleted when other stuff done
         if (this.energy > PetManager.maxEnergy(this.level))
             this.energy = PetManager.maxEnergy(this.level);
+        */
 
+        // never negative energy
         if (this.energy < 0)
             this.energy = 0;
     }
-
 
     public void addHappyness(int amount) {
         this.happyness += amount;
@@ -253,7 +255,7 @@ public class Pet implements ISerialize, Runnable {
                     if (this.levelThirst > 0)
                         this.levelThirst--;
 
-                    this.addEnergy(5);
+                   //this.addEnergy(5);
 
                     this.addHappyness(1);
 
@@ -265,7 +267,8 @@ public class Pet implements ISerialize, Runnable {
                         this.roomUnit.setStatus(RoomUnitStatus.GESTURE, PetGestures.ENERGY.getKey());
                         this.gestureTickTimeout = time;
                     }
-                } else if (this.tickTimeout >= 5) {
+                } /* this is regeneration, add back if needed
+                else if (this.tickTimeout >= 5) {
                     if (this.levelHunger < 100)
                         this.levelHunger++;
 
@@ -277,6 +280,7 @@ public class Pet implements ISerialize, Runnable {
 
                     this.tickTimeout = time;
                 }
+                */
 
                 if (this.task == PetTasks.STAY && Emulator.getIntUnixTimestamp() - this.stayStartedAt >= 120) {
                     this.task = null;
@@ -288,6 +292,7 @@ public class Pet implements ISerialize, Runnable {
 
                 if (this.energy >= 2)
                     this.addEnergy(-1);
+
 
                 if (this.levelHunger < 100)
                     this.levelHunger++;
