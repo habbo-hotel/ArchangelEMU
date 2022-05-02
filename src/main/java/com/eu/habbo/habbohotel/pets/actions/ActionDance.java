@@ -19,9 +19,8 @@ public class ActionDance extends PetAction {
     // mambojambo works better than ur dancing skills
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        if (pet.getHappyness() < 50) {
-            pet.say(pet.getPetData().randomVocal(PetVocalsType.DISOBEY));
-            return false;
+        if (pet.getHappyness() > 55) {
+            pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         } else {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
         }
