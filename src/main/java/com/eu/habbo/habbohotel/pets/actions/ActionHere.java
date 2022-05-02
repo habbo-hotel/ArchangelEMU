@@ -19,10 +19,11 @@ public class ActionHere extends PetAction {
         pet.getRoomUnit().setGoalLocation(pet.getRoom().getLayout().getTileInFront(habbo.getRoomUnit().getCurrentLocation(), habbo.getRoomUnit().getBodyRotation().getValue()));
         pet.getRoomUnit().setCanWalk(true);
 
-        if (pet.getHappyness() > 75)
+        if (pet.getHappyness() > 50) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
-        else
+        } else {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
+        }
 
         return true;
     }
