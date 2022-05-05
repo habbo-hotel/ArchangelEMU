@@ -79,7 +79,7 @@ public class WordFilter {
         return DIACRITICS_AND_FRIENDS.matcher(Normalizer.normalize(StringUtils.stripAccents(message), Normalizer.Form.NFKD)
                 .replaceAll("[,.;:'\"]", " ").replace("I", "l")
                 .replaceAll("[^\\p{ASCII}*$]", "").replaceAll("\\p{M}", " ")
-                .replaceAll("[^\\p{M}*$]", "").replaceAll("[1|]", "i")
+                .replaceAll("^\\p{M}*$]", "").replaceAll("[1|]", "i")
                 .replace("2", "z").replace("3", "e")
                 .replace("4", "a").replace("5", "s")
                 .replace("8", "b").replace("0", "o")
