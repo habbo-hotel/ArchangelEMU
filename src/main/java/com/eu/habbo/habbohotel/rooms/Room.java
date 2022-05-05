@@ -1461,8 +1461,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 if (unit.hasStatus(RoomUnitStatus.MOVE))
                                     continue;
 
-                                RoomTile tile = tileInFront.copy();
-                                tile.setStackHeight(unit.getZ() + zOffset);
+                                double newZ = unit.getZ() + zOffset;
+                                RoomTile tile = tileInFront;
 
                                 if (roomUserRolledEvent != null && unit.getRoomUnitType() == RoomUnitType.USER) {
                                     roomUserRolledEvent = new UserRolledEvent(getHabbo(unit), roller, tile);
@@ -1480,10 +1480,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                         RideablePet riding = rollingHabbo.getHabboInfo().getRiding();
                                         if (riding != null) {
                                             RoomUnit ridingUnit = riding.getRoomUnit();
-                                            tile.setStackHeight(ridingUnit.getZ() + zOffset);
+                                            newZ = ridingUnit.getZ() + zOffset;
                                             rolledUnitIds.add(ridingUnit.getId());
                                             updatedUnit.remove(ridingUnit);
-                                            messages.add(new RoomUnitOnRollerComposer(ridingUnit, roller, ridingUnit.getCurrentLocation(), ridingUnit.getZ(), tile, tile.getStackHeight(), room));
+                                            messages.add(new RoomUnitOnRollerComposer(ridingUnit, roller, ridingUnit.getCurrentLocation(), ridingUnit.getZ(), tile, newZ, room));
                                             isRiding = true;
                                         }
                                     }
@@ -1492,7 +1492,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 usersRolledThisTile.add(unit.getId());
                                 rolledUnitIds.add(unit.getId());
                                 updatedUnit.remove(unit);
-                                messages.add(new RoomUnitOnRollerComposer(unit, roller, unit.getCurrentLocation(), unit.getZ() + (isRiding ? 1 : 0), tile, tile.getStackHeight() + (isRiding ? 1 : 0), room));
+                                messages.add(new RoomUnitOnRollerComposer(unit, roller, unit.getCurrentLocation(), unit.getZ() + (isRiding ? 1 : 0), tile, newZ + (isRiding ? 1 : 0), room));
 
                                 if (itemsOnRoller.isEmpty()) {
                                     HabboItem item = room.getTopItemAt(tileInFront.x, tileInFront.y);
