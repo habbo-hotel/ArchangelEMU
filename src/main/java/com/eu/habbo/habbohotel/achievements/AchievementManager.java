@@ -251,7 +251,7 @@ public class AchievementManager {
             }
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-                try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM achievements")) {
+                try (Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM achievements WHERE visible = 1")) {
                     while (set.next()) {
                         if (!this.achievements.containsKey(set.getString("name"))) {
                             this.achievements.put(set.getString("name"), new Achievement(set));
