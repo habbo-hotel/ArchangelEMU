@@ -11,29 +11,39 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class CatalogLimitedConfiguration implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(CatalogLimitedConfiguration.class);
 
     private final int itemId;
-    private final LinkedList<Integer> limitedNumbers;
+    private LinkedBlockingQueue<Integer> limitedNumbers;
     private int totalSet;
+    private final Object lock = new Object();
 
     public CatalogLimitedConfiguration(int itemId, LinkedList<Integer> availableNumbers, int totalSet) {
         this.itemId = itemId;
         this.totalSet = totalSet;
-        this.limitedNumbers = availableNumbers;
+        LinkedList<Integer> numbers = new LinkedList(availableNumbers);
 
         if (Emulator.getConfig().getBoolean("catalog.ltd.random", true)) {
-            Collections.shuffle(this.limitedNumbers);
+            Collections.shuffle(numbers);
         } else {
-            Collections.reverse(this.limitedNumbers);
+            Collections.reverse(numbers);
         }
+        limitedNumbers = new LinkedBlockingQueue(numbers);
     }
 
     public int getNumber() {
-        synchronized (this.limitedNumbers) {
-            int num = this.limitedNumbers.pop();
+        synchronized (lock) {
+            int num = 0;
+            try
+            {
+                num = limitedNumbers.take();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             if (this.limitedNumbers.isEmpty()) {
                 Emulator.getGameEnvironment().getCatalogManager().moveCatalogItem(Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(this.itemId), Emulator.getConfig().getInt("catalog.ltd.page.soldout"));
             }
@@ -42,7 +52,7 @@ public class CatalogLimitedConfiguration implements Runnable {
     }
 
     public void limitedSold(int catalogItemId, Habbo habbo, HabboItem item) {
-        synchronized (this.limitedNumbers) {
+        synchronized (lock) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE catalog_items_limited SET user_id = ?, timestamp = ?, item_id = ? WHERE catalog_item_id = ? AND number = ? AND user_id = 0 LIMIT 1")) {
                 statement.setInt(1, habbo.getHabboInfo().getId());
                 statement.setInt(2, Emulator.getIntUnixTimestamp());
@@ -57,14 +67,15 @@ public class CatalogLimitedConfiguration implements Runnable {
     }
 
     public void generateNumbers(int starting, int amount) {
-        synchronized (this.limitedNumbers) {
+        synchronized (lock) {
+            LinkedList<Integer> numbers = new LinkedList();
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO catalog_items_limited (catalog_item_id, number) VALUES (?, ?)")) {
                 statement.setInt(1, this.itemId);
 
                 for (int i = starting; i <= amount; i++) {
                     statement.setInt(2, i);
                     statement.addBatch();
-                    this.limitedNumbers.push(i);
+                    numbers.push(i);
                 }
 
                 statement.executeBatch();
@@ -75,11 +86,14 @@ public class CatalogLimitedConfiguration implements Runnable {
             this.totalSet += amount;
 
             if (Emulator.getConfig().getBoolean("catalog.ltd.random", true)) {
-                Collections.shuffle(this.limitedNumbers);
+                Collections.shuffle(numbers);
             } else {
-                Collections.reverse(this.limitedNumbers);
+                Collections.reverse(numbers);
             }
+
+            limitedNumbers = new LinkedBlockingQueue(numbers);
         }
+
     }
 
     public int available() {
