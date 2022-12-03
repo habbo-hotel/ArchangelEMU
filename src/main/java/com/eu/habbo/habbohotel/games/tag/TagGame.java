@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
+import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -129,6 +130,7 @@ public abstract class TagGame extends Game {
     public synchronized boolean addHabbo(Habbo habbo, GameTeamColors teamColor) {
         super.addHabbo(habbo, GameTeamColors.RED);
 
+        RoomUnit roomUnit = habbo.getRoomUnit();
         if (this.getTagPole() != null) {
             THashSet<HabboItem> poles = habbo.getHabboInfo().getCurrentRoom().getRoomSpecialTypes().getItemsOfType(this.getTagPole());
 
@@ -140,22 +142,27 @@ public abstract class TagGame extends Game {
                 TObjectHashIterator<HabboItem> iterator = poles.iterator();
                 if ((iterator.hasNext())) {
                     HabboItem item = iterator.next();
-                    habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1);
-                    this.room.scheduledTasks.add(() -> habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1));
+                    if (roomUnit.getEffectId() > 0)
+                        roomUnit.setPreviousEffectId(roomUnit.getEffectId(), roomUnit.getPreviousEffectEndTimestamp());
+                    habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1, true);
+                    this.room.scheduledTasks.add(() -> habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1, true));
                     this.taggers.put(habbo, (InteractionTagPole) item);
                     return true;
                 }
             }
         } else {
             if (this.taggers.isEmpty()) {
-                habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1);
-                this.room.scheduledTasks.add(() -> habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1));
+                if (roomUnit.getEffectId() > 0)
+                    roomUnit.setPreviousEffectId(roomUnit.getEffectId(), roomUnit.getPreviousEffectEndTimestamp());
+                habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1, true);
+                this.room.scheduledTasks.add(() -> habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1, true));
                 this.taggers.put(habbo, null);
                 return true;
             }
         }
-
-        habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1);
+        if (roomUnit.getEffectId() > 0)
+            roomUnit.setPreviousEffectId(roomUnit.getEffectId(), roomUnit.getPreviousEffectEndTimestamp());
+        habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1, true);
 
         return true;
     }
@@ -164,7 +171,33 @@ public abstract class TagGame extends Game {
     public synchronized void removeHabbo(Habbo habbo) {
         super.removeHabbo(habbo);
         this.taggers.remove(habbo);
-        habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, 0, -1);
+
+        RoomUnit roomUnit = habbo.getRoomUnit();
+        Room room = roomUnit.getRoom();
+        if (room == null) return;
+
+        HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().x, roomUnit.getCurrentLocation().y);
+        int nextEffectM = 0;
+        int nextEffectF = 0;
+        int nextEffectDuration = -1;
+
+        if (topItem != null) {
+            nextEffectM = topItem.getBaseItem().getEffectM();
+            nextEffectF = topItem.getBaseItem().getEffectF();
+        } else if (roomUnit.getPreviousEffectId() > 0) {
+            nextEffectF = roomUnit.getPreviousEffectId();
+            nextEffectM = roomUnit.getPreviousEffectId();
+            nextEffectDuration = roomUnit.getPreviousEffectEndTimestamp();
+        }
+
+        if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
+            room.giveEffect(habbo, nextEffectM, nextEffectDuration, true);
+            return;
+        }
+
+        if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
+            room.giveEffect(habbo, nextEffectF, nextEffectDuration, true);
+        }
     }
 
     @Override
