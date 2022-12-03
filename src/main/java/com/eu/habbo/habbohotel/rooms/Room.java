@@ -4162,12 +4162,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void giveEffect(Habbo habbo, int effectId, int duration, boolean ignoreChecks) {
-        if (this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
+        if (habbo != null && habbo.getRoomUnit() != null && this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
             this.giveEffect(habbo.getRoomUnit(), effectId, duration, ignoreChecks);
         }
     }
     public void giveEffect(Habbo habbo, int effectId, int duration) {
-        if (this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
+        if (habbo != null && habbo.getRoomUnit() != null && this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
             this.giveEffect(habbo.getRoomUnit(), effectId, duration, false);
         }
     }
