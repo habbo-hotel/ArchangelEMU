@@ -4161,27 +4161,34 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
     }
 
-    public void giveEffect(Habbo habbo, int effectId, int duration) {
+    public void giveEffect(Habbo habbo, int effectId, int duration, boolean ignoreChecks) {
         if (this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
-            this.giveEffect(habbo.getRoomUnit(), effectId, duration);
+            this.giveEffect(habbo.getRoomUnit(), effectId, duration, ignoreChecks);
         }
     }
-
+    public void giveEffect(Habbo habbo, int effectId, int duration) {
+        if (this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
+            this.giveEffect(habbo.getRoomUnit(), effectId, duration, false);
+        }
+    }
     public void giveEffect(RoomUnit roomUnit, int effectId, int duration) {
+        this.giveEffect(roomUnit, effectId, duration, false);
+    }
+    public void giveEffect(RoomUnit roomUnit, int effectId, int duration, boolean ignoreChecks) {
         if (roomUnit == null || roomUnit.getRoom() == null) return;
 
         Habbo habbo = roomUnit.getRoom().getHabbo(roomUnit);
 
         if (habbo == null) return;
 
-        if (!habbo.getHabboInfo().isInGame()) {
+        if (!habbo.getHabboInfo().isInGame() || ignoreChecks) {
             if (duration == -1 || duration == Integer.MAX_VALUE) {
                 duration = Integer.MAX_VALUE;
             } else {
                 duration += Emulator.getIntUnixTimestamp();
             }
 
-            if (this.allowEffects && !roomUnit.isSwimming) {
+            if ((this.allowEffects || ignoreChecks) && !roomUnit.isSwimming) {
                 roomUnit.setEffectId(effectId, duration);
                 this.sendComposer(new AvatarEffectMessageComposer(roomUnit).compose());
             }
