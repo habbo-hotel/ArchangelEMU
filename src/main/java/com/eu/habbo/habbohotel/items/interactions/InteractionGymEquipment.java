@@ -7,6 +7,8 @@ import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.HabboItem;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,13 +57,40 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
-        room.giveEffect(roomUnit, 0, -1);
 
-        if (this.forceRotation()) {
-            roomUnit.canRotate = true;
-        }
+        if (room == null) return;
 
         this.reset(room);
+
+        if (roomUnit != null) {
+            Habbo habbo = room.getHabbo(roomUnit);
+            HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().x, roomUnit.getCurrentLocation().y);
+            int nextEffectM = 0;
+            int nextEffectF = 0;
+            int nextEffectDuration = -1;
+
+            if (topItem != null) {
+                nextEffectM = topItem.getBaseItem().getEffectM();
+                nextEffectF = topItem.getBaseItem().getEffectF();
+            } else if (roomUnit.getPreviousEffectId() > 0) {
+                nextEffectF = roomUnit.getPreviousEffectId();
+                nextEffectM = roomUnit.getPreviousEffectId();
+                nextEffectDuration = roomUnit.getPreviousEffectEndTimestamp();
+            }
+
+            if (this.forceRotation()) {
+                roomUnit.canRotate = true;
+            }
+
+            if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
+                room.giveEffect(habbo, nextEffectM, nextEffectDuration, true);
+                return;
+            }
+
+            if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
+                room.giveEffect(habbo, nextEffectF, nextEffectDuration, true);
+            }
+        }
     }
 
     public String achievementName() {
