@@ -5,8 +5,8 @@ COPY . .
 # Package it
 RUN mvn package && mv /target/Habbo*-with-dependencies.jar /target/Habbo.jar
 
-# Use Java 8 for running
-FROM java:8 AS runner
+# Use openjdk 11 for running
+FROM openjdk:11 AS runner
 
 # Copy the generated source
 COPY --from=builder /target/Habbo.jar /
