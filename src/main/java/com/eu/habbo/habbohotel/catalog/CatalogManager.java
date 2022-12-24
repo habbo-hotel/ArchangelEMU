@@ -346,6 +346,9 @@ public class CatalogManager {
                 if (set.getString("item_ids").equals("0"))
                     continue;
 
+                if (set.getInt("amount") < 1)
+                    continue;
+
                 if (set.getString("catalog_name").contains("HABBO_CLUB_")) {
                     this.clubItems.add(new CatalogItem(set));
                     continue;
