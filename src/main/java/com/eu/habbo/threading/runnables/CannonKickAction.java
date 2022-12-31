@@ -26,6 +26,8 @@ public class CannonKickAction implements Runnable {
 
     @Override
     public void run() {
+        if(this.cannon == null || this.room == null || this.room.getLayout() == null) return;
+
         if (this.client != null) {
             this.client.getHabbo().getRoomUnit().setCanWalk(true);
         }
