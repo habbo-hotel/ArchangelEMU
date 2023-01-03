@@ -10,6 +10,8 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.procedure.TIntObjectProcedure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Arrays;
+import java.util.List;
 
 public class FurniListComposer extends MessageComposer implements TIntObjectProcedure<HabboItem> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FurniListComposer.class);
@@ -48,7 +50,7 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
         this.response.appendInt(habboItem.getId());
         this.response.appendInt(habboItem.getBaseItem().getSpriteId());
 
-        if (habboItem.getBaseItem().getName().equals("floor") || habboItem.getBaseItem().getName().equals("landscape") || habboItem.getBaseItem().getName().equals("wallpaper") || habboItem.getBaseItem().getName().equals("poster")) {
+        if (habboItem.getBaseItem().getName().equals("floor") || habboItem.getBaseItem().getName().equals("song_disk") || habboItem.getBaseItem().getName().equals("landscape") || habboItem.getBaseItem().getName().equals("wallpaper") || habboItem.getBaseItem().getName().equals("poster")) {
             switch (habboItem.getBaseItem().getName()) {
                 case "landscape":
                     this.response.appendInt(4);
@@ -61,6 +63,9 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
                     break;
                 case "poster":
                     this.response.appendInt(6);
+                    break;
+                case "song_disk":
+                    this.response.appendInt(8);
                     break;
             }
 
@@ -84,10 +89,20 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
 
         if (habboItem.getBaseItem().getType() == FurnitureType.FLOOR) {
             this.response.appendString("");
+            if(habboItem.getBaseItem().getName().equals("song_disk")) {
+                List<String> extraDataAsList = Arrays.asList(habboItem.getExtradata().split("\n"));
+                this.response.appendInt(Integer.valueOf(extraDataAsList.get(extraDataAsList.size() - 1)));
+                return true;
+            }
             this.response.appendInt(habboItem instanceof InteractionGift ? ((((InteractionGift) habboItem).getColorId() * 1000) + ((InteractionGift) habboItem).getRibbonId()) : 1);
         }
 
         return true;
+    }
+
+    public void addExtraDataToResponse(HabboItem habboItem) {
+        this.response.appendInt(0);
+        this.response.appendString(habboItem.getExtradata());
     }
 
 }
