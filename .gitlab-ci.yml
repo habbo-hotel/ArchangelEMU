@@ -14,5 +14,5 @@ build:
   artifacts:
     expire_in: 2 weeks
     paths:
-      - target/Habbo-*.jar
+      - target/Morningstar-*.jar
   
