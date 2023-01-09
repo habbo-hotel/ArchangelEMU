@@ -6,31 +6,26 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
-import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListAddOrUpdateComposer;
+import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.PresentOpenedMessageComposer;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
+@AllArgsConstructor
 public class OpenGift implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenGift.class);
 
     private final HabboItem item;
     private final Habbo habbo;
     private final Room room;
-
-    public OpenGift(HabboItem item, Habbo habbo, Room room) {
-        this.item = item;
-        this.habbo = habbo;
-        this.room = room;
-    }
 
     @Override
     public void run() {
@@ -65,35 +60,26 @@ public class OpenGift implements Runnable {
 
             for (HabboItem item : items) {
                 switch (item.getBaseItem().getType()) {
-                    case WALL:
-                    case FLOOR:
+                    case WALL, FLOOR -> {
                         if (!unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.OWNED_FURNI))
                             unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.OWNED_FURNI, new ArrayList<>());
-
                         unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.OWNED_FURNI).add(item.getGiftAdjustedId());
-
-                        break;
-
-                    case BADGE:
+                    }
+                    case BADGE -> {
                         if (!unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.BADGE))
                             unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.BADGE, new ArrayList<>());
-
                         unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.BADGE).add(item.getId()); // badges cannot be placed so no need for gift adjusted ID
-                        break;
-
-                    case PET:
+                    }
+                    case PET -> {
                         if (!unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.PET))
                             unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.PET, new ArrayList<>());
-
                         unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.PET).add(item.getGiftAdjustedId());
-                        break;
-
-                    case ROBOT:
+                    }
+                    case ROBOT -> {
                         if (!unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.BOT))
                             unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.BOT, new ArrayList<>());
-
                         unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.BOT).add(item.getGiftAdjustedId());
-                        break;
+                    }
                 }
             }
 
@@ -104,7 +90,7 @@ public class OpenGift implements Runnable {
                 this.habbo.getClient().sendResponse(new PresentOpenedMessageComposer(inside, "", false));
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 }

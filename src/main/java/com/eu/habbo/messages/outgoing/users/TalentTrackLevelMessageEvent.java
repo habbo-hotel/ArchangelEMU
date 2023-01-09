@@ -3,13 +3,12 @@ package com.eu.habbo.messages.outgoing.users;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class TalentTrackLevelMessageEvent extends MessageComposer {
     private final String name;
 
-    public TalentTrackLevelMessageEvent(String name) {
-        this.name = name;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -3,15 +3,13 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
+@AllArgsConstructor
 public class FurnitureAliasesMessageComposer extends MessageComposer {
     private final Map<String, String> unknownMap;
-
-    public FurnitureAliasesMessageComposer(Map<String, String> unknownMap) {
-        this.unknownMap = unknownMap;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

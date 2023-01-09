@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.wired;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum WiredTriggerType {
     SAY_SOMETHING(0),
     WALKS_ON_FURNI(1),
@@ -22,9 +27,5 @@ public enum WiredTriggerType {
     STARTS_DANCING(11),
     STOPS_DANCING(11);
 
-    public final int code;
-
-    WiredTriggerType(int code) {
-        this.code = code;
-    }
+    private final int code;
 }

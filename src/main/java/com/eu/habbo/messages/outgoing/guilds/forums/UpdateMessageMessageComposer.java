@@ -4,17 +4,15 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class UpdateMessageMessageComposer extends MessageComposer {
-    public final int guildId;
-    public final int threadId;
-    public final ForumThreadComment comment;
-
-    public UpdateMessageMessageComposer(int guildId, int threadId, ForumThreadComment comment) {
-        this.guildId = guildId;
-        this.threadId = threadId;
-        this.comment = comment;
-    }
+    private final int guildId;
+    private final int threadId;
+    private final ForumThreadComment comment;
 
     @Override
     protected ServerMessage composeInternal() {

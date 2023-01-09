@@ -18,7 +18,7 @@ public abstract class CameraIncomingMessage extends CameraMessage {
     public Integer readInt() {
         try {
             return this.buffer.readInt();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return 0;
@@ -27,7 +27,7 @@ public abstract class CameraIncomingMessage extends CameraMessage {
     public boolean readBoolean() {
         try {
             return this.buffer.readByte() == 1;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return false;

@@ -17,18 +17,16 @@ public class TalkUser extends RCONMessage<TalkUser.JSON> {
         if (habbo != null) {
             json.type = json.type.toLowerCase();
             switch (json.type) {
-                case "talk":
-                    habbo.talk(json.message, json.bubble_id != -1 ? RoomChatMessageBubbles.getBubble(json.bubble_id) : habbo.getHabboStats().chatColor);
-                    break;
-                case "whisper":
-                    habbo.whisper(json.message, json.bubble_id != -1 ? RoomChatMessageBubbles.getBubble(json.bubble_id) : habbo.getHabboStats().chatColor);
-                    break;
-                case "shout":
-                    habbo.shout(json.message, json.bubble_id != -1 ? RoomChatMessageBubbles.getBubble(json.bubble_id) : habbo.getHabboStats().chatColor);
-                    break;
-                default:
+                case "talk" ->
+                        habbo.talk(json.message, json.bubble_id != -1 ? RoomChatMessageBubbles.getBubble(json.bubble_id) : habbo.getHabboStats().getChatColor());
+                case "whisper" ->
+                        habbo.whisper(json.message, json.bubble_id != -1 ? RoomChatMessageBubbles.getBubble(json.bubble_id) : habbo.getHabboStats().getChatColor());
+                case "shout" ->
+                        habbo.shout(json.message, json.bubble_id != -1 ? RoomChatMessageBubbles.getBubble(json.bubble_id) : habbo.getHabboStats().getChatColor());
+                default -> {
                     this.status = STATUS_ERROR;
                     this.message = "Talk type: " + json.type + " not found! Use talk, whisper or shout!";
+                }
             }
         } else {
             this.status = HABBO_NOT_FOUND;

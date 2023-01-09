@@ -1,15 +1,21 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 
+@Slf4j
 public class HabboBadge implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HabboBadge.class);
+    @Getter
     private int id;
+    @Setter
+    @Getter
     private String code;
+    @Setter
+    @Getter
     private int slot;
     private Habbo habbo;
     private boolean needsUpdate;
@@ -31,26 +37,6 @@ public class HabboBadge implements Runnable {
         this.habbo = habbo;
         this.needsUpdate = false;
         this.needsInsert = true;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public String getCode() {
-        return this.code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public int getSlot() {
-        return this.slot;
-    }
-
-    public void setSlot(int slot) {
-        this.slot = slot;
     }
 
     @Override
@@ -80,7 +66,7 @@ public class HabboBadge implements Runnable {
                 this.needsUpdate = false;
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 

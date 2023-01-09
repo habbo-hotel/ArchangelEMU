@@ -4,13 +4,12 @@ import com.eu.habbo.habbohotel.pets.HorsePet;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class PetFigureUpdateComposer extends MessageComposer {
     private final HorsePet pet;
 
-    public PetFigureUpdateComposer(HorsePet pet) {
-        this.pet = pet;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -6,13 +6,16 @@ import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.RoomForwardMessageComposer;
 import gnu.trove.set.hash.THashSet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.StringJoiner;
 
 public class UpdateFloorPropertiesEvent extends MessageHandler {
     public static int MAXIMUM_FLOORPLAN_WIDTH_LENGTH = 64;
@@ -51,15 +54,15 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                     errors.add("${notification.floorplan_editor.error.message.effective_height_is_0}");
                 }
 
-                if (map.length() > 64 * 64) {
+                if (map.length() > MAXIMUM_FLOORPLAN_SIZE) {
                     errors.add("${notification.floorplan_editor.error.message.too_large_area}");
                 }
 
-                if (mapRows.length > 64) errors.add("${notification.floorplan_editor.error.message.too_large_height}");
-                else if (Arrays.stream(mapRows).anyMatch(l -> l.length() > 64 || l.length() == 0)) errors.add("${notification.floorplan_editor.error.message.too_large_width}");
+                if (mapRows.length > MAXIMUM_FLOORPLAN_WIDTH_LENGTH) errors.add("${notification.floorplan_editor.error.message.too_large_height}");
+                else if (Arrays.stream(mapRows).anyMatch(l -> l.length() > MAXIMUM_FLOORPLAN_WIDTH_LENGTH || l.length() == 0)) errors.add("${notification.floorplan_editor.error.message.too_large_width}");
 
                 if (errors.length() > 0) {
-                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
+                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.getKey(), errors.toString()));
                     return;
                 }
             }
@@ -121,7 +124,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                         }
                     }
 
-                    if (tile != null && tile.state != RoomTileState.INVALID && height != tile.z && room.getTopItemAt(x, y) != null) {
+                    if (tile != null && tile.getState() != RoomTileState.INVALID && height != tile.getZ() && room.getTopItemAt(x, y) != null) {
                         errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
                         break blockingRoomItemScan;
                     }
@@ -136,7 +139,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
 
 
             if (errors.length() > 0) {
-                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.key, errors.toString()));
+                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FLOORPLAN_EDITOR_ERROR.getKey(), errors.toString()));
                 return;
             }
 

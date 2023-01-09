@@ -8,18 +8,19 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class InteractionGift extends HabboItem {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionGift.class);
-
     public boolean explode = false;
     private int[] itemId;
+    @Getter
     private int colorId = 0;
+    @Getter
     private int ribbonId = 0;
     private boolean showSender = false;
     private String message = "";
@@ -32,7 +33,7 @@ public class InteractionGift extends HabboItem {
         try {
             this.loadData();
         } catch (Exception e) {
-            LOGGER.warn("Incorrect extradata for gift with ID " + this.getId());
+            log.warn("Incorrect extradata for gift with ID " + this.getId());
         }
     }
 
@@ -42,7 +43,7 @@ public class InteractionGift extends HabboItem {
         try {
             this.loadData();
         } catch (Exception e) {
-            LOGGER.warn("Incorrect extradata for gift with ID " + this.getId());
+            log.warn("Incorrect extradata for gift with ID " + this.getId());
         }
     }
 
@@ -94,16 +95,16 @@ public class InteractionGift extends HabboItem {
             data = this.getExtradata().split("\t");
 
         if (data != null && data.length >= 5) {
-            int count = Integer.valueOf(data[0]);
+            int count = Integer.parseInt(data[0]);
 
             this.itemId = new int[count];
 
             for (int i = 0; i < count; i++) {
-                this.itemId[i] = Integer.valueOf(data[i + 1]);
+                this.itemId[i] = Integer.parseInt(data[i + 1]);
             }
 
-            this.colorId = Integer.valueOf(data[count + 1]);
-            this.ribbonId = Integer.valueOf(data[count + 2]);
+            this.colorId = Integer.parseInt(data[count + 1]);
+            this.ribbonId = Integer.parseInt(data[count + 2]);
             this.showSender = data[count + 3].equalsIgnoreCase("1");
             this.message = data[count + 4];
 
@@ -118,14 +119,6 @@ public class InteractionGift extends HabboItem {
             this.showSender = false;
             this.message = "Please delete this present. Thanks!";
         }
-    }
-
-    public int getColorId() {
-        return this.colorId;
-    }
-
-    public int getRibbonId() {
-        return this.ribbonId;
     }
 
     public THashSet<HabboItem> loadItems() {

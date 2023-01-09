@@ -3,17 +3,15 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
+@AllArgsConstructor
 public class UnknownPollQuestionComposer extends MessageComposer {
     private final int unknownInt;
     private final Map<String, Integer> unknownMap;
 
-    public UnknownPollQuestionComposer(int unknownInt, Map<String, Integer> unknownMap) {
-        this.unknownInt = unknownInt;
-        this.unknownMap = unknownMap;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -23,7 +23,7 @@ public class ActionWagTail extends PetAction {
         pet.clearPosture();
         Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.WAG_TAIL, null, false), this.minimumActionDuration);
 
-        if (pet.getHappyness() > 50) {
+        if (pet.getHappiness() > 50) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         } else {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

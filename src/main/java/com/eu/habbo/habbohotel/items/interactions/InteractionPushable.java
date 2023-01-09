@@ -83,7 +83,7 @@ public abstract class InteractionPushable extends InteractionDefault {
         boolean isDrag = false;
         RoomUserRotation direction;
 
-        if (this.getX() == roomUnit.getGoal().x && this.getY() == roomUnit.getGoal().y) //User clicked on the tile the ball is on, they want to kick it
+        if (this.getX() == roomUnit.getGoal().getX() && this.getY() == roomUnit.getGoal().getY()) //User clicked on the tile the ball is on, they want to kick it
         {
             velocity = this.getWalkOnVelocity(roomUnit, room);
             direction = this.getWalkOnDirection(roomUnit, room);

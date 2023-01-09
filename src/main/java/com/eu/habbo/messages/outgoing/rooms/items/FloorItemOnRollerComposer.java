@@ -7,16 +7,18 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class FloorItemOnRollerComposer extends MessageComposer {
     // THIS IS WRONG SlideObjectBundleMessageComposer
     private final HabboItem item;
     private final HabboItem roller;
     private final RoomTile oldLocation;
-    private final RoomTile newLocation;
-    private final double heightOffset;
     private final double oldZ;
+    private final RoomTile newLocation;
     private final double newZ;
+    private final double heightOffset;
     private final Room room;
 
     public FloorItemOnRollerComposer(HabboItem item, HabboItem roller, RoomTile newLocation, double heightOffset, Room room) {
@@ -30,16 +32,6 @@ public class FloorItemOnRollerComposer extends MessageComposer {
         this.newZ = -1;
     }
 
-    public FloorItemOnRollerComposer(HabboItem item, HabboItem roller, RoomTile oldLocation, double oldZ, RoomTile newLocation, double newZ, double heightOffset, Room room) {
-        this.item = item;
-        this.roller = roller;
-        this.oldLocation = oldLocation;
-        this.oldZ = oldZ;
-        this.newLocation = newLocation;
-        this.newZ = newZ;
-        this.heightOffset = heightOffset;
-        this.room = room;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -47,10 +39,10 @@ public class FloorItemOnRollerComposer extends MessageComposer {
         short oldY = this.item.getY();
 
         this.response.init(Outgoing.slideObjectBundleMessageComposer);
-        this.response.appendInt(this.oldLocation != null ? this.oldLocation.x : this.item.getX());
-        this.response.appendInt(this.oldLocation != null ? this.oldLocation.y : this.item.getY());
-        this.response.appendInt(this.newLocation.x);
-        this.response.appendInt(this.newLocation.y);
+        this.response.appendInt(this.oldLocation != null ? this.oldLocation.getX() : this.item.getX());
+        this.response.appendInt(this.oldLocation != null ? this.oldLocation.getY() : this.item.getY());
+        this.response.appendInt(this.newLocation.getX());
+        this.response.appendInt(this.newLocation.getY());
         this.response.appendInt(1);
         this.response.appendInt(this.item.getId());
         this.response.appendString(Double.toString(this.oldLocation != null ? this.oldZ : this.item.getZ()));
@@ -59,8 +51,8 @@ public class FloorItemOnRollerComposer extends MessageComposer {
 
         if(this.oldLocation == null) {
             this.item.onMove(this.room, this.room.getLayout().getTile(this.item.getX(), this.item.getY()), this.newLocation);
-            this.item.setX(this.newLocation.x);
-            this.item.setY(this.newLocation.y);
+            this.item.setX(this.newLocation.getX());
+            this.item.setY(this.newLocation.getY());
             this.item.setZ(this.item.getZ() + this.heightOffset);
             this.item.needsUpdate(true);
 

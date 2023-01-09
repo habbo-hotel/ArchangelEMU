@@ -4,7 +4,9 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class PetRespectNotificationComposer extends MessageComposer {
     public final static int PET_RESPECTED = 1;
     public final static int PET_TREATED = 2;
@@ -15,11 +17,6 @@ public class PetRespectNotificationComposer extends MessageComposer {
     public PetRespectNotificationComposer(Pet pet) {
         this.pet = pet;
         this.type = 1;
-    }
-
-    public PetRespectNotificationComposer(Pet pet, int type) {
-        this.pet = pet;
-        this.type = type;
     }
 
     @Override

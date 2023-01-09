@@ -6,9 +6,9 @@ import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.threading.runnables.RoomUnitTeleport;
 
 public class InvisibleCommand extends Command {
@@ -23,7 +23,7 @@ public class InvisibleCommand extends Command {
         if (roomUnit.isInvisible()) {
             RoomLayout roomLayout = roomUnit.getRoom().getLayout();
 
-            new RoomUnitTeleport(roomUnit, roomUnit.getRoom(), roomLayout.getDoorTile().x, roomLayout.getDoorTile().y, roomLayout.getDoorTile().z, 0).run();
+            new RoomUnitTeleport(roomUnit, roomUnit.getRoom(), roomLayout.getDoorTile().getX(), roomLayout.getDoorTile().getY(), roomLayout.getDoorTile().getZ(), 0).run();
 
             roomUnit.setInvisible(false);
             roomUnit.setInRoom(true);

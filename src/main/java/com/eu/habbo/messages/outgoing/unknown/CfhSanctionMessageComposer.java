@@ -4,17 +4,15 @@ import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CfhSanctionMessageComposer extends MessageComposer {
     private final int unknownInt1;
     private final int accountId;
     private final CFHSanction sanction;
 
-    public CfhSanctionMessageComposer(int unknownInt1, int accountId, CFHSanction sanction) {
-        this.unknownInt1 = unknownInt1;
-        this.accountId = accountId;
-        this.sanction = sanction;
-    }
+
 
     @Override
     protected ServerMessage composeInternal() {
@@ -25,6 +23,7 @@ public class CfhSanctionMessageComposer extends MessageComposer {
         return this.response;
     }
 
+    @AllArgsConstructor
     public static class CFHSanction implements ISerialize {
         private final String name;
         private final int length;
@@ -32,15 +31,6 @@ public class CfhSanctionMessageComposer extends MessageComposer {
         private final boolean avatarOnly;
         private final String tradelockInfo;
         private final String machineBanInfo;
-
-        public CFHSanction(String name, int length, int unknownInt1, boolean avatarOnly, String tradelockInfo, String machineBanInfo) {
-            this.name = name;
-            this.length = length;
-            this.unknownInt1 = unknownInt1;
-            this.avatarOnly = avatarOnly;
-            this.tradelockInfo = tradelockInfo;
-            this.machineBanInfo = machineBanInfo;
-        }
 
         @Override
         public void serialize(ServerMessage message) {

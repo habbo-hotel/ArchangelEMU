@@ -13,7 +13,7 @@ public class RemoveItemFromTradeEvent extends MessageHandler {
         if (trade != null) {
             HabboItem item = trade.getRoomTradeUserForHabbo(this.client.getHabbo()).getItem(itemId);
 
-            if (!trade.getRoomTradeUserForHabbo(this.client.getHabbo()).getAccepted() && item != null) {
+            if (!trade.getRoomTradeUserForHabbo(this.client.getHabbo()).isAccepted() && item != null) {
                 trade.removeItem(this.client.getHabbo(), item);
             }
         }

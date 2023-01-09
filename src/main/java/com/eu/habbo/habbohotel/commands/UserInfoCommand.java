@@ -46,7 +46,7 @@ public class UserInfoCommand extends Command {
                 ((habbo.getRank().hasPermission(Permission.ACC_HIDE_MAIL, true)) ? "" : Emulator.getTexts().getValue("command.cmd_userinfo.email") + ": " + habbo.getMail() + "\r") +
                 ((habbo.getRank().hasPermission(Permission.ACC_HIDE_IP, true)) ? "" : Emulator.getTexts().getValue("command.cmd_userinfo.ip_register") + ": " + habbo.getIpRegister() + "\r") +
                 ((habbo.getRank().hasPermission(Permission.ACC_HIDE_IP, true)) || onlineHabbo == null ? "" : Emulator.getTexts().getValue("command.cmd_userinfo.ip_current") + ": " + onlineHabbo.getHabboInfo().getIpLogin() + "\r") +
-                (onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.achievement_score") + ": " + onlineHabbo.getHabboStats().achievementScore + "\r" : ""));
+                (onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.achievement_score") + ": " + onlineHabbo.getHabboStats().getAchievementScore() + "\r" : ""));
 
         ModToolBan ban = Emulator.getGameEnvironment().getModToolManager().checkForBan(habbo.getId());
 
@@ -70,7 +70,7 @@ public class UserInfoCommand extends Command {
 
             message.append(Emulator.getTexts().getValue("seasonal.name." + iterator.key())).append(": ").append(iterator.value()).append("\r");
         }
-        message.append("\r").append(onlineHabbo != null ? "<b>" + Emulator.getTexts().getValue("command.cmd_userinfo.current_activity") + "</b>\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.room") + ": " + (onlineHabbo.getHabboInfo().getCurrentRoom() != null ? onlineHabbo.getHabboInfo().getCurrentRoom().getName() + "(" + onlineHabbo.getHabboInfo().getCurrentRoom().getId() + ")\r" : "-") : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.respect_left") + ": " + onlineHabbo.getHabboStats().respectPointsToGive + "\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.pet_respect_left") + ": " + onlineHabbo.getHabboStats().petRespectPointsToGive + "\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.allow_trade") + ": " + ((onlineHabbo.getHabboStats().allowTrade()) ? Emulator.getTexts().getValue("generic.yes") : Emulator.getTexts().getValue("generic.no")) + "\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.allow_follow") + ": " + ((onlineHabbo.getHabboStats().blockFollowing) ? Emulator.getTexts().getValue("generic.no") : Emulator.getTexts().getValue("generic.yes")) + "\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.allow_friend_request") + ": " + ((onlineHabbo.getHabboStats().blockFriendRequests) ? Emulator.getTexts().getValue("generic.no") : Emulator.getTexts().getValue("generic.yes")) + "\r" : "");
+        message.append("\r").append(onlineHabbo != null ? "<b>" + Emulator.getTexts().getValue("command.cmd_userinfo.current_activity") + "</b>\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.room") + ": " + (onlineHabbo.getHabboInfo().getCurrentRoom() != null ? onlineHabbo.getHabboInfo().getCurrentRoom().getName() + "(" + onlineHabbo.getHabboInfo().getCurrentRoom().getId() + ")\r" : "-") : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.respect_left") + ": " + onlineHabbo.getHabboStats().getRespectPointsToGive() + "\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.pet_respect_left") + ": " + onlineHabbo.getHabboStats().getPetRespectPointsToGive() + "\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.allow_trade") + ": " + ((onlineHabbo.getHabboStats().allowTrade()) ? Emulator.getTexts().getValue("generic.yes") : Emulator.getTexts().getValue("generic.no")) + "\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.allow_follow") + ": " + ((onlineHabbo.getHabboStats().isBlockFollowing()) ? Emulator.getTexts().getValue("generic.no") : Emulator.getTexts().getValue("generic.yes")) + "\r" : "").append(onlineHabbo != null ? Emulator.getTexts().getValue("command.cmd_userinfo.allow_friend_request") + ": " + ((onlineHabbo.getHabboStats().isBlockFriendRequests()) ? Emulator.getTexts().getValue("generic.no") : Emulator.getTexts().getValue("generic.yes")) + "\r" : "");
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<Map.Entry<Integer, String>> nameChanges = Emulator.getGameEnvironment().getHabboManager().getNameChanges(habbo.getId(), 3);
@@ -85,12 +85,7 @@ public class UserInfoCommand extends Command {
             message.append("\r" + "<b>Other accounts (");
 
             ArrayList<HabboInfo> users = Emulator.getGameEnvironment().getHabboManager().getCloneAccounts(onlineHabbo, 10);
-            users.sort(new Comparator<HabboInfo>() {
-                @Override
-                public int compare(HabboInfo o1, HabboInfo o2) {
-                    return o1.getId() - o2.getId();
-                }
-            });
+            users.sort(Comparator.comparingInt(HabboInfo::getId));
 
             message.append(users.size()).append("):</b>\r");
 

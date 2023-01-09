@@ -63,9 +63,9 @@ public class InteractionFootballGate extends HabboItem {
     }
 
     private static void removeLook(Habbo habbo) {
-        if (habbo.getHabboStats().cache.containsKey(CACHE_KEY)) {
-            habbo.getHabboInfo().setLook((String) habbo.getHabboStats().cache.get(CACHE_KEY));
-            habbo.getHabboStats().cache.remove(CACHE_KEY);
+        if (habbo.getHabboStats().getCache().containsKey(CACHE_KEY)) {
+            habbo.getHabboInfo().setLook((String) habbo.getHabboStats().getCache().get(CACHE_KEY));
+            habbo.getHabboStats().getCache().remove(CACHE_KEY);
             habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
             if (habbo.getHabboInfo().getCurrentRoom() != null) {
                 habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
@@ -115,8 +115,8 @@ public class InteractionFootballGate extends HabboItem {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         Habbo habbo = room.getHabbo(roomUnit);
         if (habbo != null) {
-            if (habbo.getHabboStats().cache.containsKey(CACHE_KEY)) {
-                String oldlook = (String) habbo.getHabboStats().cache.get(CACHE_KEY);
+            if (habbo.getHabboStats().getCache().containsKey(CACHE_KEY)) {
+                String oldlook = (String) habbo.getHabboStats().getCache().get(CACHE_KEY);
 
                 UserSavedLookEvent lookEvent = new UserSavedLookEvent(habbo, habbo.getHabboInfo().getGender(), oldlook);
                 Emulator.getPluginManager().fireEvent(lookEvent);
@@ -127,14 +127,14 @@ public class InteractionFootballGate extends HabboItem {
                     room.sendComposer(new UserChangeMessageComposer(habbo).compose());
                 }
 
-                habbo.getHabboStats().cache.remove(CACHE_KEY);
+                habbo.getHabboStats().getCache().remove(CACHE_KEY);
             } else {
                 String finalLook = FigureUtil.mergeFigures(habbo.getHabboInfo().getLook(), habbo.getHabboInfo().getGender() == HabboGender.F ? this.figureF : this.figureM, new String[]{"hd", "hr", "ha", "he", "ea", "fa"}, new String[]{"ch", "ca", "cc", "cp", "lg", "wa", "sh"});
 
                 UserSavedLookEvent lookEvent = new UserSavedLookEvent(habbo, habbo.getHabboInfo().getGender(), finalLook);
                 Emulator.getPluginManager().fireEvent(lookEvent);
                 if (!lookEvent.isCancelled()) {
-                    habbo.getHabboStats().cache.put(CACHE_KEY, habbo.getHabboInfo().getLook());
+                    habbo.getHabboStats().getCache().put(CACHE_KEY, habbo.getHabboInfo().getLook());
                     habbo.getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_FBALLGATE ? ClothingValidationManager.validateLook(habbo, lookEvent.newLook, lookEvent.gender.name()) : lookEvent.newLook);
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));

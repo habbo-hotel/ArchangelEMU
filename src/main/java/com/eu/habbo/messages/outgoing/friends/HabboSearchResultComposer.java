@@ -6,23 +6,20 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@AllArgsConstructor
 public class HabboSearchResultComposer extends MessageComposer {
     private final THashSet<MessengerBuddy> users;
     private final THashSet<MessengerBuddy> friends;
     private final Habbo habbo;
 
-    private static Comparator COMPARATOR = Comparator.comparing((MessengerBuddy b) -> b.getUsername().length()).thenComparing((MessengerBuddy b, MessengerBuddy b2) -> b.getUsername().compareToIgnoreCase(b2.getUsername()));
+    private static final Comparator<MessengerBuddy> COMPARATOR = Comparator.comparing((MessengerBuddy b) -> b.getUsername().length()).thenComparing((MessengerBuddy b, MessengerBuddy b2) -> b.getUsername().compareToIgnoreCase(b2.getUsername()));
 
-    public HabboSearchResultComposer(THashSet<MessengerBuddy> users, THashSet<MessengerBuddy> friends, Habbo habbo) {
-        this.users = users;
-        this.friends = friends;
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

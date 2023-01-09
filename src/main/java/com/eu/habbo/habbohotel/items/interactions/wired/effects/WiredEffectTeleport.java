@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
@@ -18,7 +17,6 @@ import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
 import com.eu.habbo.threading.runnables.RoomUnitTeleport;
 import com.eu.habbo.threading.runnables.SendRoomUnitEffectComposer;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -63,13 +61,13 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
             return;
         }
 
-        if (tile.state == RoomTileState.INVALID || tile.state == RoomTileState.BLOCKED) {
+        if (tile.getState() == RoomTileState.INVALID || tile.getState() == RoomTileState.BLOCKED) {
             RoomTile alternativeTile = null;
             List<RoomTile> optionalTiles = room.getLayout().getTilesAround(tile);
 
             Collections.reverse(optionalTiles);
             for (RoomTile optionalTile : optionalTiles) {
-                if (optionalTile.state != RoomTileState.INVALID && optionalTile.state != RoomTileState.BLOCKED) {
+                if (optionalTile.getState() != RoomTileState.INVALID && optionalTile.getState() != RoomTileState.BLOCKED) {
                     alternativeTile = optionalTile;
                     break;
                 }
@@ -81,7 +79,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
         }
 
         Emulator.getThreading().run(() -> { roomUnit.isWiredTeleporting = true; }, Math.max(0, WiredHandler.TELEPORT_DELAY - 500));
-        Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, tile.x, tile.y, tile.getStackHeight() + (tile.state == RoomTileState.SIT ? -0.5 : 0), roomUnit.getEffectId()), WiredHandler.TELEPORT_DELAY);
+        Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, tile.getX(), tile.getY(), tile.getStackHeight() + (tile.getState() == RoomTileState.SIT ? -0.5 : 0), roomUnit.getEffectId()), WiredHandler.TELEPORT_DELAY);
     }
 
     @Override
@@ -107,7 +105,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
         message.appendString("");
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();

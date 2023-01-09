@@ -1,25 +1,18 @@
 package com.eu.habbo.habbohotel.items;
 
 import com.eu.habbo.Emulator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public enum PostItColor {
-
     BLUE("9CCEFF"),
-
-
     GREEN("9CFF9C"),
-
-
     PINK("FF9CFF"),
-
-
     YELLOW("FFFF33");
 
     public final String hexColor;
-
-    PostItColor(String hexColor) {
-        this.hexColor = hexColor;
-    }
 
 
     public static boolean isCustomColor(String color) {

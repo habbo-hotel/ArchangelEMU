@@ -4,13 +4,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.list.array.TIntArrayList;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RemoveFriendComposer extends MessageComposer {
     private final TIntArrayList unfriendIds;
-
-    public RemoveFriendComposer(TIntArrayList unfriendIds) {
-        this.unfriendIds = unfriendIds;
-    }
 
     public RemoveFriendComposer(int i) {
         this.unfriendIds = new TIntArrayList();

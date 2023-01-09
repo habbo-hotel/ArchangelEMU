@@ -3,11 +3,8 @@ package com.eu.habbo.database;
 import com.eu.habbo.core.ConfigurationManager;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class DatabasePool {
-    private final Logger log = LoggerFactory.getLogger(DatabasePool.class);
     private HikariDataSource database;
 
     public boolean getStoragePooling(ConfigurationManager config) {

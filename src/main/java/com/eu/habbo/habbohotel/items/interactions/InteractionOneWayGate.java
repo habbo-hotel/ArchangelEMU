@@ -12,8 +12,6 @@ import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.DiceValueMessageComposer;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InteractionOneWayGate extends HabboItem {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionOneWayGate.class);
-
     private boolean walkable = false;
 
     public InteractionOneWayGate(ResultSet set, Item baseItem) throws SQLException {
@@ -80,10 +76,10 @@ public class InteractionOneWayGate extends HabboItem {
             if (unit == null)
                 return;
 
-            if (tileInfront.x == unit.getX() && tileInfront.y == unit.getY()) {
+            if (tileInfront.getX() == unit.getX() && tileInfront.getY() == unit.getY()) {
                 if (!currentLocation.hasUnits()) {
-                    List<Runnable> onSuccess = new ArrayList<Runnable>();
-                    List<Runnable> onFail = new ArrayList<Runnable>();
+                    List<Runnable> onSuccess = new ArrayList<>();
+                    List<Runnable> onFail = new ArrayList<>();
 
                     onSuccess.add(() -> {
                         unit.setCanLeaveRoomByDoor(false);

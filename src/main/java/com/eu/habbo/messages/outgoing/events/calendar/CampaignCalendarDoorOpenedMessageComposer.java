@@ -6,17 +6,15 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class CampaignCalendarDoorOpenedMessageComposer extends MessageComposer {
-    public final boolean visible;
-    public final CalendarRewardObject rewardObject;
-    public final Habbo habbo;
-
-    public CampaignCalendarDoorOpenedMessageComposer(boolean visible, CalendarRewardObject rewardObject, Habbo habbo) {
-        this.visible = visible;
-        this.rewardObject = rewardObject;
-        this.habbo = habbo;
-    }
+    private final boolean visible;
+    private final CalendarRewardObject rewardObject;
+    private final Habbo habbo;
 
     @Override
     protected ServerMessage composeInternal() {

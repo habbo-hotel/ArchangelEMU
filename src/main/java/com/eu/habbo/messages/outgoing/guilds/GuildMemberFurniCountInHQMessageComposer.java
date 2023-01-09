@@ -3,15 +3,12 @@ package com.eu.habbo.messages.outgoing.guilds;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GuildMemberFurniCountInHQMessageComposer extends MessageComposer {
-    private int userId;
-    private int furniCount;
-
-    public GuildMemberFurniCountInHQMessageComposer(int userId, int furniCount) {
-        this.userId = userId;
-        this.furniCount = furniCount;
-    }
+    private final int userId;
+    private final int furniCount;
 
     @Override
     protected ServerMessage composeInternal() {

@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum FurnitureMovementError {
     NONE(""),
     NO_RIGHTS("${room.error.cant_set_not_owner}"),
@@ -17,9 +22,6 @@ public enum FurnitureMovementError {
     MAX_STICKIES("${room.error.max_stickies}");
 
 
-    public final String errorCode;
+    private final String errorCode;
 
-    FurnitureMovementError(String errorCode) {
-        this.errorCode = errorCode;
-    }
 }

@@ -21,16 +21,14 @@ public class SetClothingChangeDataEvent extends MessageHandler {
         String look = this.packet.readString();
 
         switch (gender.toLowerCase()) {
-            default:
-            case "m":
+            case "m" -> {
                 ((InteractionFootballGate) item).setFigureM(look);
                 room.updateItem(item);
-                break;
-
-            case "f":
+            }
+            case "f" -> {
                 ((InteractionFootballGate) item).setFigureF(look);
                 room.updateItem(item);
-                break;
+            }
         }
     }
 }

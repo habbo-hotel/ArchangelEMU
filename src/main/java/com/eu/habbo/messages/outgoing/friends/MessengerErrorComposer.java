@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.friends;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class MessengerErrorComposer extends MessageComposer {
     public static final int FRIEND_LIST_OWN_FULL = 1;
     public static final int FRIEND_LIST_TARGET_FULL = 2;
@@ -12,9 +14,6 @@ public class MessengerErrorComposer extends MessageComposer {
 
     private final int errorCode;
 
-    public MessengerErrorComposer(int errorCode) {
-        this.errorCode = errorCode;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

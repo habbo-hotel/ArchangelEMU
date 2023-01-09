@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.users;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum SignType {
     ZERO(0),
     ONE(1),
@@ -23,11 +28,4 @@ public enum SignType {
 
     private final int id;
 
-    SignType(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return this.id;
-    }
 }

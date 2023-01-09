@@ -6,17 +6,14 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
+@AllArgsConstructor
 public class ChatReviewSessionResultsMessageComposer extends MessageComposer {
     private final GuardianTicket ticket;
     private final GuardianVote vote;
-
-    public ChatReviewSessionResultsMessageComposer(GuardianTicket ticket, GuardianVote vote) {
-        this.ticket = ticket;
-        this.vote = vote;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

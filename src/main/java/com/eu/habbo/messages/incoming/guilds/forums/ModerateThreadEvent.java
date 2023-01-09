@@ -8,10 +8,10 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumThread;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThreadState;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.guilds.forums.PostThreadMessageComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.GuildForumThreadsComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.PostThreadMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 
@@ -50,13 +50,10 @@ public class ModerateThreadEvent extends MessageHandler {
         thread.run();
 
         switch (state) {
-            case 10:
-            case 20:
-                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_THREAD_HIDDEN.key).compose());
-                break;
-            case 1:
-                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_THREAD_RESTORED.key).compose());
-                break;
+            case 10, 20 ->
+                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_THREAD_HIDDEN.getKey()).compose());
+            case 1 ->
+                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_THREAD_RESTORED.getKey()).compose());
         }
 
         this.client.sendResponse(new PostThreadMessageComposer(thread));

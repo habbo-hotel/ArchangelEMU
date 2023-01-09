@@ -29,7 +29,7 @@ public class ActionSit extends PetAction {
                 pet.clearPosture();
             }, this.minimumActionDuration);
 
-            if (pet.getHappyness() > 75)
+            if (pet.getHappiness() > 75)
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
             else
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

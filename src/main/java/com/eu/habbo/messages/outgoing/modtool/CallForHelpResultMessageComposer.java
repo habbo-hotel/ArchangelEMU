@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.modtool;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CallForHelpResultMessageComposer extends MessageComposer {
     public static final int REPORT_RECEIVED = 0;
     public static final int REPORT_WINDOW = 1;
@@ -12,10 +14,6 @@ public class CallForHelpResultMessageComposer extends MessageComposer {
     private final int errorCode;
     private final String message;
 
-    public CallForHelpResultMessageComposer(int errorCode, String message) {
-        this.errorCode = errorCode;
-        this.message = message;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

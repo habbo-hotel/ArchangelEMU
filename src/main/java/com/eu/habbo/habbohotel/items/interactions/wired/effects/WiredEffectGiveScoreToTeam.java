@@ -13,7 +13,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.map.hash.TIntIntHashMap;
@@ -79,10 +78,10 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
             String[] data = set.getString("wired_data").split(";");
 
             if (data.length == 4) {
-                this.points = Integer.valueOf(data[0]);
-                this.count = Integer.valueOf(data[1]);
-                this.teamColor = GameTeamColors.values()[Integer.valueOf(data[2])];
-                this.setDelay(Integer.valueOf(data[3]));
+                this.points = Integer.parseInt(data[0]);
+                this.count = Integer.parseInt(data[1]);
+                this.teamColor = GameTeamColors.values()[Integer.parseInt(data[2])];
+                this.setDelay(Integer.parseInt(data[3]));
             }
 
             this.needsUpdate(true);
@@ -116,7 +115,7 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
         message.appendInt(this.count);
         message.appendInt(this.teamColor.type);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         message.appendInt(0);
     }

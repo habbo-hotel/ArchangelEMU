@@ -4,17 +4,28 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
 
 public class GuideTour {
+    @Getter
     private final Habbo noob;
+    @Getter
     private final String helpRequest;
     private final THashSet<GuideChatMessage> sendMessages = new THashSet<>();
     private final THashSet<Integer> declinedHelpers = new THashSet<>();
     public int checkSum = 0;
+    @Setter
+    @Getter
     private Habbo helper;
+    @Setter
+    @Getter
     private int startTime;
+    @Getter
     private int endTime;
+    @Getter
     private boolean ended;
+    @Getter
     private GuideRecommendStatus wouldRecommend = GuideRecommendStatus.UNKNOWN;
 
     public GuideTour(Habbo noob, String helpRequest) {
@@ -29,28 +40,8 @@ public class GuideTour {
         //TODO Query messages.
     }
 
-    public Habbo getNoob() {
-        return this.noob;
-    }
-
-    public String getHelpRequest() {
-        return this.helpRequest;
-    }
-
-    public Habbo getHelper() {
-        return this.helper;
-    }
-
-    public void setHelper(Habbo helper) {
-        this.helper = helper;
-    }
-
     public void addMessage(GuideChatMessage message) {
         this.sendMessages.add(message);
-    }
-
-    public GuideRecommendStatus getWouldRecommend() {
-        return this.wouldRecommend;
     }
 
     public void setWouldRecommend(GuideRecommendStatus wouldRecommend) {
@@ -78,19 +69,4 @@ public class GuideTour {
         AchievementManager.progressAchievement(this.noob, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GuideRequester"));
     }
 
-    public boolean isEnded() {
-        return this.ended;
-    }
-
-    public int getStartTime() {
-        return this.startTime;
-    }
-
-    public void setStartTime(int startTime) {
-        this.startTime = startTime;
-    }
-
-    public int getEndTime() {
-        return this.endTime;
-    }
 }

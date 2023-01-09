@@ -1,21 +1,18 @@
 package com.eu.habbo.messages.outgoing.friends;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.messenger.MessengerCategory;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class MessengerInitComposer extends MessageComposer {
     private final Habbo habbo;
-
-    public MessengerInitComposer(Habbo habbo) {
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -6,17 +6,14 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class OneWayGateActionOne implements Runnable {
-    private HabboItem oneWayGate;
-    private Room room;
-    private GameClient client;
+    private final GameClient client;
+    private final Room room;
+    private final HabboItem oneWayGate;
 
-    public OneWayGateActionOne(GameClient client, Room room, HabboItem item) {
-        this.oneWayGate = item;
-        this.room = room;
-        this.client = client;
-    }
 
     @Override
     public void run() {

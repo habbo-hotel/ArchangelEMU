@@ -23,17 +23,17 @@ import com.eu.habbo.messages.outgoing.gamecenter.Game2AccountGameStatusMessageCo
 import com.eu.habbo.messages.outgoing.gamecenter.GameListMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.MOTDNotificationComposer;
-import com.eu.habbo.messages.outgoing.habboway.nux.NoobnessLevelMessageComposer;
 import com.eu.habbo.messages.outgoing.habboway.nux.InClientLinkMessageComposer;
+import com.eu.habbo.messages.outgoing.habboway.nux.NoobnessLevelMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.*;
-import com.eu.habbo.messages.outgoing.inventory.BadgePointLimitsComposer;
 import com.eu.habbo.messages.outgoing.inventory.AvatarEffectsMessageComposer;
+import com.eu.habbo.messages.outgoing.inventory.BadgePointLimitsComposer;
 import com.eu.habbo.messages.outgoing.modtool.CfhTopicsInitComposer;
 import com.eu.habbo.messages.outgoing.modtool.ModeratorInitMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.SanctionStatusComposer;
-import com.eu.habbo.messages.outgoing.navigator.*;
-import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.mysterybox.MysteryBoxKeysMessageComposer;
+import com.eu.habbo.messages.outgoing.navigator.NavigatorSavedSearchesComposer;
+import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
@@ -128,9 +128,9 @@ public class SSOTicketEvent extends MessageHandler {
 
                 int roomIdToEnter = 0;
 
-                if (!this.client.getHabbo().getHabboStats().nux || Emulator.getConfig().getBoolean("retro.style.homeroom") && this.client.getHabbo().getHabboInfo().getHomeRoom() != 0)
+                if (!this.client.getHabbo().getHabboStats().isNux() || Emulator.getConfig().getBoolean("retro.style.homeroom") && this.client.getHabbo().getHabboInfo().getHomeRoom() != 0)
                     roomIdToEnter = this.client.getHabbo().getHabboInfo().getHomeRoom();
-                else if (!this.client.getHabbo().getHabboStats().nux || Emulator.getConfig().getBoolean("retro.style.homeroom") && RoomManager.HOME_ROOM_ID > 0)
+                else if (!this.client.getHabbo().getHabboStats().isNux() || Emulator.getConfig().getBoolean("retro.style.homeroom") && RoomManager.HOME_ROOM_ID > 0)
                     roomIdToEnter = RoomManager.HOME_ROOM_ID;
 
                 boolean calendar = false;
@@ -138,7 +138,7 @@ public class SSOTicketEvent extends MessageHandler {
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login"));
                     calendar = true;
                 } else {
-                    int previousOnline = (int)this.client.getHabbo().getHabboStats().cache.get("previousOnline");
+                    int previousOnline = (int) this.client.getHabbo().getHabboStats().getCache().get("previousOnline");
                     long daysBetween = ChronoUnit.DAYS.between(new Date((long) previousOnline * 1000L).toInstant(), new Date().toInstant());
 
                     Date lastLogin = new Date(previousOnline);
@@ -149,16 +149,16 @@ public class SSOTicketEvent extends MessageHandler {
                     c2.setTime(lastLogin);
 
                     if (daysBetween == 1) {
-                        if (this.client.getHabbo().getHabboStats().getAchievementProgress().get(Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login")) == this.client.getHabbo().getHabboStats().loginStreak) {
+                        if (this.client.getHabbo().getHabboStats().getAchievementProgress().get(Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login")) == this.client.getHabbo().getHabboStats().getLoginStreak()) {
                             AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Login"));
                         }
-                        this.client.getHabbo().getHabboStats().loginStreak++;
+                        this.client.getHabbo().getHabboStats().setLoginStreak(client.getHabbo().getHabboStats().getLoginStreak()+1);
                         calendar = true;
                     } else if (daysBetween >= 1) {
                         calendar = true;
                     } else {
                         if (((lastLogin.getTime() / 1000) - Emulator.getIntUnixTimestamp()) > 86400) {
-                            this.client.getHabbo().getHabboStats().loginStreak = 0;
+                            this.client.getHabbo().getHabboStats().setLoginStreak(0);
                         }
                     }
                 }
@@ -198,7 +198,7 @@ public class SSOTicketEvent extends MessageHandler {
                 }
 
                 messages.add(new NavigatorSettingsComposer(this.client.getHabbo().getHabboInfo().getHomeRoom(), roomIdToEnter).compose());
-                messages.add(new AvatarEffectsMessageComposer(habbo, this.client.getHabbo().getInventory().getEffectsComponent().effects.values()).compose());
+                messages.add(new AvatarEffectsMessageComposer(habbo, this.client.getHabbo().getInventory().getEffectsComponent().getEffects().values()).compose());
                 messages.add(new FigureSetIdsComposer(this.client.getHabbo()).compose());
                 messages.add(new NoobnessLevelMessageComposer(habbo).compose());
                 messages.add(new UserRightsMessageComposer(this.client.getHabbo()).compose());
@@ -226,7 +226,7 @@ public class SSOTicketEvent extends MessageHandler {
                 if (campaign != null) {
                     long daysBetween = DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
                     if (daysBetween >= 0) {
-                        messages.add(new CampaignCalendarDataMessageComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), (int) daysBetween, this.client.getHabbo().getHabboStats().calendarRewardsClaimed, campaign.getLockExpired()).compose());
+                        messages.add(new CampaignCalendarDataMessageComposer(campaign.getName(), campaign.getImage(), campaign.getTotalDays(), (int) daysBetween, this.client.getHabbo().getHabboStats().getCalendarRewardsClaimed(), campaign.getLockExpired()).compose());
                         if(Emulator.getConfig().getBoolean("hotel.login.show.calendar", false)) {
                             messages.add(new InClientLinkMessageComposer("openView/calendar").compose());
                         }
@@ -256,24 +256,24 @@ public class SSOTicketEvent extends MessageHandler {
                     if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) {
                         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
 
-                        if (item.sanctionLevel > 0 && item.probationTimestamp != 0 && item.probationTimestamp > Emulator.getIntUnixTimestamp()) {
+                        if (item.getSanctionLevel() > 0 && item.getProbationTimestamp() != 0 && item.getProbationTimestamp() > Emulator.getIntUnixTimestamp()) {
                             this.client.sendResponse(new SanctionStatusComposer(this.client.getHabbo()));
-                        } else if (item.sanctionLevel > 0 && item.probationTimestamp != 0 && item.probationTimestamp <= Emulator.getIntUnixTimestamp()) {
-                            modToolSanctions.updateSanction(item.id, 0);
+                        } else if (item.getSanctionLevel() > 0 && item.getProbationTimestamp() != 0 && item.getProbationTimestamp() <= Emulator.getIntUnixTimestamp()) {
+                            modToolSanctions.updateSanction(item.getId(), 0);
                         }
 
-                        if (item.tradeLockedUntil > 0 && item.tradeLockedUntil <= Emulator.getIntUnixTimestamp()) {
-                            modToolSanctions.updateTradeLockedUntil(item.id, 0);
+                        if (item.getTradeLockedUntil() > 0 && item.getTradeLockedUntil() <= Emulator.getIntUnixTimestamp()) {
+                            modToolSanctions.updateTradeLockedUntil(item.getId(), 0);
                             habbo.getHabboStats().setAllowTrade(true);
-                        } else if (item.tradeLockedUntil > 0 && item.tradeLockedUntil > Emulator.getIntUnixTimestamp()) {
+                        } else if (item.getTradeLockedUntil() > 0 && item.getTradeLockedUntil() > Emulator.getIntUnixTimestamp()) {
                             habbo.getHabboStats().setAllowTrade(false);
                         }
 
-                        if (item.isMuted && item.muteDuration <= Emulator.getIntUnixTimestamp()) {
-                            modToolSanctions.updateMuteDuration(item.id, 0);
+                        if (item.isMuted() && item.getMuteDuration() <= Emulator.getIntUnixTimestamp()) {
+                            modToolSanctions.updateMuteDuration(item.getId(), 0);
                             habbo.unMute();
-                        } else if (item.isMuted && item.muteDuration > Emulator.getIntUnixTimestamp()) {
-                            Date muteDuration = new Date((long) item.muteDuration * 1000);
+                        } else if (item.isMuted() && item.getMuteDuration() > Emulator.getIntUnixTimestamp()) {
+                            Date muteDuration = new Date((long) item.getMuteDuration() * 1000);
                             long diff = muteDuration.getTime() - Emulator.getDate().getTime();
                             habbo.mute(Math.toIntExact(diff), false);
                         }
@@ -301,8 +301,8 @@ public class SSOTicketEvent extends MessageHandler {
 
                 Messenger.checkFriendSizeProgress(habbo);
 
-                if (!habbo.getHabboStats().hasGottenDefaultSavedSearches) {
-                    habbo.getHabboStats().hasGottenDefaultSavedSearches = true;
+                if (!habbo.getHabboStats().isHasGottenDefaultSavedSearches()) {
+                    habbo.getHabboStats().setHasGottenDefaultSavedSearches(true);
                     Emulator.getThreading().run(habbo.getHabboStats());
 
                     habbo.getHabboInfo().addSavedSearch(new NavigatorSavedSearch("official-root", ""));

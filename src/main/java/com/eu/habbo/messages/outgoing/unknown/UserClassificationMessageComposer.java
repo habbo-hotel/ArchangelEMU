@@ -3,16 +3,15 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 import org.apache.commons.math3.util.Pair;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class UserClassificationMessageComposer extends MessageComposer {
     private final List<Pair<Integer, Pair<String, String>>> info;
 
-    public UserClassificationMessageComposer(List<Pair<Integer, Pair<String, String>>> info) {
-        this.info = info;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

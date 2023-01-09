@@ -22,7 +22,7 @@ public class ActionFlat extends PetAction {
         Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.FLAT, null, false), this.minimumActionDuration);
         pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
 
-        if (pet.getHappyness() > 80) {
+        if (pet.getHappiness() > 80) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         } else {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

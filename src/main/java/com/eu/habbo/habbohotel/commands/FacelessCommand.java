@@ -36,7 +36,7 @@ public class FacelessCommand extends Command {
                     }
                 }
 
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             }
         }

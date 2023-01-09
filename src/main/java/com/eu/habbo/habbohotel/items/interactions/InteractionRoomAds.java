@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionRoomAds extends InteractionCustomValues {
-    public final static THashMap<String, String> defaultValues = new THashMap<String, String>() {
+    public final static THashMap<String, String> defaultValues = new THashMap<>() {
         {
             this.put("imageUrl", "");
         }

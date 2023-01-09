@@ -3,29 +3,22 @@ package com.eu.habbo.messages.outgoing.catalog;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class ScrSendKickbackInfoMessageComposer extends MessageComposer {
-    public final int currentHcStreak;
-    public final String firstSubDate;
-    public final double kickbackPercentage;
-    public final int totalCreditsMissed;
-    public final int totalCreditsRewarded;
-    public final int totalCreditsSpent;
-    public final int creditRewardForStreakBonus;
-    public final int creditRewardForMonthlySpent;
-    public final int timeUntilPayday;
+    private final int currentHcStreak;
+    private final String firstSubDate;
+    private final double kickbackPercentage;
+    private final int totalCreditsMissed;
+    private final int totalCreditsRewarded;
+    private final int totalCreditsSpent;
+    private final int creditRewardForStreakBonus;
+    private final int creditRewardForMonthlySpent;
+    private final int timeUntilPayday;
 
-    public ScrSendKickbackInfoMessageComposer(int currentHcStreak, String firstSubDate, double kickbackPercentage, int totalCreditsMissed, int totalCreditsRewarded, int totalCreditsSpent, int creditRewardForStreakBonus, int creditRewardForMonthlySpent, int timeUntilPayday) {
-        this.currentHcStreak = currentHcStreak;
-        this.firstSubDate = firstSubDate;
-        this.kickbackPercentage = kickbackPercentage;
-        this.totalCreditsMissed = totalCreditsMissed;
-        this.totalCreditsRewarded = totalCreditsRewarded;
-        this.totalCreditsSpent = totalCreditsSpent;
-        this.creditRewardForStreakBonus = creditRewardForStreakBonus;
-        this.creditRewardForMonthlySpent = creditRewardForMonthlySpent;
-        this.timeUntilPayday = timeUntilPayday;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -41,6 +34,4 @@ public class ScrSendKickbackInfoMessageComposer extends MessageComposer {
         this.response.appendInt(this.timeUntilPayday); // timeUntilPayday (minutes)
         return this.response;
     }
-
-
 }

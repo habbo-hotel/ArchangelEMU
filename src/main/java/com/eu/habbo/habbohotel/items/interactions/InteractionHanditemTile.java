@@ -21,7 +21,7 @@ public class InteractionHanditemTile extends InteractionHanditem {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         InteractionHanditemTile instance = this;
         Emulator.getThreading().run(() -> {
-            if (roomUnit.getCurrentLocation().x == instance.getX() && roomUnit.getCurrentLocation().y == instance.getY()) {
+            if (roomUnit.getCurrentLocation().getX() == instance.getX() && roomUnit.getCurrentLocation().getY() == instance.getY()) {
                 instance.handle(room, roomUnit);
             }
         }, 3000);

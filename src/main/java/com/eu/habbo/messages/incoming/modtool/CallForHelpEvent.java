@@ -41,7 +41,7 @@ public class CallForHelpEvent extends MessageHandler {
             Habbo reported = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
             if (reported != null) {
-                if (cfhTopic != null && cfhTopic.action == CfhActionType.GUARDIANS && Emulator.getGameEnvironment().getGuideManager().activeGuardians()) {
+                if (cfhTopic != null && cfhTopic.getAction() == CfhActionType.GUARDIANS && Emulator.getGameEnvironment().getGuideManager().activeGuardians()) {
                     GuardianTicket ticket = Emulator.getGameEnvironment().getGuideManager().getOpenReportedHabboTicket(reported);
 
                     if (ticket != null) {
@@ -68,17 +68,17 @@ public class CallForHelpEvent extends MessageHandler {
                     Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
 
                     if (cfhTopic != null) {
-                        this.client.sendResponse(new CallForHelpResultMessageComposer(CallForHelpResultMessageComposer.REPORT_RECEIVED, cfhTopic.reply));
-                        if (cfhTopic.action != CfhActionType.MODS) {
+                        this.client.sendResponse(new CallForHelpResultMessageComposer(CallForHelpResultMessageComposer.REPORT_RECEIVED, cfhTopic.getReply()));
+                        if (cfhTopic.getAction() != CfhActionType.MODS) {
                             Emulator.getThreading().run(() -> {
                                 if (issue.state == ModToolTicketState.OPEN) {
-                                    if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
+                                    if (cfhTopic.getAction() == CfhActionType.AUTO_IGNORE) {
                                         if (CallForHelpEvent.this.client.getHabbo().getHabboStats().ignoreUser(CallForHelpEvent.this.client, reported.getHabboInfo().getId())) {
                                             CallForHelpEvent.this.client.sendResponse(new IgnoreResultMessageComposer(reported, IgnoreResultMessageComposer.IGNORED));
                                         }
                                     }
 
-                                    CallForHelpEvent.this.client.sendResponse(new IssueCloseNotificationMessageComposer(cfhTopic.reply).compose());
+                                    CallForHelpEvent.this.client.sendResponse(new IssueCloseNotificationMessageComposer(cfhTopic.getReply()).compose());
                                     Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                                 }
                             }, (long) 30 * 1000);
@@ -96,10 +96,10 @@ public class CallForHelpEvent extends MessageHandler {
             Emulator.getGameEnvironment().getModToolManager().updateTicketToMods(issue);
 
             if (cfhTopic != null) {
-                if (cfhTopic.action != CfhActionType.MODS) {
+                if (cfhTopic.getAction() != CfhActionType.MODS) {
                     Emulator.getThreading().run(() -> {
                         if (issue.state == ModToolTicketState.OPEN) {
-                            if (cfhTopic.action == CfhActionType.AUTO_IGNORE) {
+                            if (cfhTopic.getAction() == CfhActionType.AUTO_IGNORE) {
                                 if (CallForHelpEvent.this.client.getHabbo().getHabboStats().ignoreUser(CallForHelpEvent.this.client, issue.reportedId)) {
                                     Habbo reported = Emulator.getGameEnvironment().getHabboManager().getHabbo(issue.reportedId);
                                     if (reported != null) {
@@ -108,7 +108,7 @@ public class CallForHelpEvent extends MessageHandler {
                                 }
                             }
 
-                            CallForHelpEvent.this.client.sendResponse(new IssueCloseNotificationMessageComposer(cfhTopic.reply).compose());
+                            CallForHelpEvent.this.client.sendResponse(new IssueCloseNotificationMessageComposer(cfhTopic.getReply()).compose());
                             Emulator.getGameEnvironment().getModToolManager().closeTicketAsHandled(issue, null);
                         }
                     }, (long) 30 * 1000);

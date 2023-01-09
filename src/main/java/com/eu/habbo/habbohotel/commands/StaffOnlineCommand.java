@@ -20,7 +20,7 @@ public class StaffOnlineCommand extends Command {
 
         if (params.length >= 2) {
             try {
-                int i = Integer.valueOf(params[1]);
+                int i = Integer.parseInt(params[1]);
 
                 if (i < 1) {
                     gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_staffonline.positive_only"), RoomChatMessageBubbles.ALERT);
@@ -43,12 +43,7 @@ public class StaffOnlineCommand extends Command {
                 }
             }
 
-            staffs.sort(new Comparator<Habbo>() {
-                @Override
-                public int compare(Habbo o1, Habbo o2) {
-                    return o1.getHabboInfo().getId() - o2.getHabboInfo().getId();
-                }
-            });
+            staffs.sort(Comparator.comparingInt(o -> o.getHabboInfo().getId()));
 
             StringBuilder message = new StringBuilder(Emulator.getTexts().getValue("commands.generic.cmd_staffonline.staffs"));
             message.append("\r\n");

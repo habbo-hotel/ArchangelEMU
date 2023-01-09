@@ -15,7 +15,7 @@ public class ChangeNameCommand extends Command {
 
         // check if there are no params
         if (params.length < 2) {
-            gameClient.getHabbo().getHabboStats().allowNameChange = !gameClient.getHabbo().getHabboStats().allowNameChange;
+            gameClient.getHabbo().getHabboStats().setAllowNameChange(!gameClient.getHabbo().getHabboStats().isAllowNameChange());
             gameClient.sendResponse(new UserObjectComposer(gameClient.getHabbo()));
             return true;
         }
@@ -31,7 +31,7 @@ public class ChangeNameCommand extends Command {
         // this runs if params[1] is a valid habbo
         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_changename.done").replace("%user%", params[1]));
         habbo.alert(Emulator.getTexts().getValue("commands.succes.cmd_changename.received"));
-        habbo.getHabboStats().allowNameChange = !habbo.getHabboStats().allowNameChange;
+        habbo.getHabboStats().setAllowNameChange(!habbo.getHabboStats().isAllowNameChange());
         habbo.getClient().sendResponse(new UserObjectComposer(habbo));
         return true;
     }

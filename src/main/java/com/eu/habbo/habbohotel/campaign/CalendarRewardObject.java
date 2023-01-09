@@ -5,17 +5,17 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
+@Getter
 public class CalendarRewardObject {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CalendarRewardObject.class);
-
     private final int id;
     private final String productName;
     private final String customImage;
@@ -25,8 +25,8 @@ public class CalendarRewardObject {
     private final int pointsType;
     private final String badge;
     private final int itemId;
-    private final String subscription_type;
-    private final int subscription_days;
+    private final String subscriptionType;
+    private final int subscriptionDays;
 
     public CalendarRewardObject(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
@@ -38,8 +38,8 @@ public class CalendarRewardObject {
         this.pointsType = set.getInt("points_type");
         this.badge = set.getString("badge");
         this.itemId = set.getInt("item_id");
-        this.subscription_type = set.getString("subscription_type");
-        this.subscription_days = set.getInt("subscription_days");
+        this.subscriptionType = set.getString("subscription_type");
+        this.subscriptionDays = set.getInt("subscription_days");
     }
 
     public void give(Habbo habbo) {
@@ -48,7 +48,7 @@ public class CalendarRewardObject {
         }
 
         if (this.pixels > 0) {
-            habbo.givePixels((int)(this.pixels * (habbo.getHabboStats().hasActiveClub() ? CalendarManager.HC_MODIFIER : 1.0)));
+            habbo.givePixels((int) (this.pixels * (habbo.getHabboStats().hasActiveClub() ? CalendarManager.HC_MODIFIER : 1.0)));
         }
 
         if (this.points > 0) {
@@ -59,11 +59,11 @@ public class CalendarRewardObject {
             habbo.addBadge(this.badge);
         }
 
-        if(this.subscription_type != null && !this.subscription_type.isEmpty()) {
-            if ("HABBO_CLUB".equals(this.subscription_type)) {
-                habbo.getHabboStats().createSubscription(SubscriptionHabboClub.HABBO_CLUB, this.subscription_days * 86400);
+        if (this.subscriptionType != null && !this.subscriptionType.isEmpty()) {
+            if ("HABBO_CLUB".equals(this.subscriptionType)) {
+                habbo.getHabboStats().createSubscription(SubscriptionHabboClub.HABBO_CLUB, this.subscriptionDays * 86400);
             } else {
-                habbo.getHabboStats().createSubscription(this.subscription_type, this.subscription_days * 86400);
+                habbo.getHabboStats().createSubscription(this.subscriptionType, this.subscriptionDays * 86400);
             }
         }
 
@@ -84,44 +84,6 @@ public class CalendarRewardObject {
         }
     }
 
-    public int getId() {
-        return this.id;
-    }
-
-    public String getCustomImage() {
-        return this.customImage;
-    }
-
-    public int getCredits() {
-        return this.credits;
-    }
-
-    public int getPixels() {
-        return this.pixels;
-    }
-    public int getPoints() {
-        return this.points;
-    }
-
-    public int getPointsType() {
-        return this.pointsType;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public String getSubscriptionType() {
-        return subscription_type;
-    }
-
-    public int getSubscriptionDays() {
-        return subscription_days;
-    }
-
-    public String getBadge() {
-        return this.badge;
-    }
 
     public Item getItem() {
         return Emulator.getGameEnvironment().getItemManager().getItem(this.itemId);

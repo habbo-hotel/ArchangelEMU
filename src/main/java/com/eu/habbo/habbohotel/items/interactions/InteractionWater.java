@@ -83,7 +83,7 @@ public class InteractionWater extends InteractionDefault {
         if (pet == null)
             return;
 
-        if (!pet.getRoomUnit().hasStatus(RoomUnitStatus.SWIM) && pet.getPetData().canSwim) {
+        if (!pet.getRoomUnit().hasStatus(RoomUnitStatus.SWIM) && pet.getPetData().isCanSwim()) {
             pet.getRoomUnit().setStatus(RoomUnitStatus.SWIM, "");
         }
     }
@@ -130,7 +130,7 @@ public class InteractionWater extends InteractionDefault {
 
         Pet pet = room.getPet(roomUnit);
 
-        return pet == null || pet.getPetData().canSwim;
+        return pet == null || pet.getPetData().isCanSwim();
     }
 
     private void updateWaters(Room room, RoomTile oldLocation) {
@@ -143,8 +143,8 @@ public class InteractionWater extends InteractionDefault {
 
         if (oldLocation != null) {
             targetOld = RoomLayout.getRectangle(
-                    oldLocation.x - 1,
-                    oldLocation.y - 1,
+                    oldLocation.getX() - 1,
+                    oldLocation.getY() - 1,
                     this.getBaseItem().getWidth() + 2,
                     this.getBaseItem().getLength() + 2,
                     this.getRotation());
@@ -281,8 +281,7 @@ public class InteractionWater extends InteractionDefault {
 
     private boolean isValidForMask(Room room, int x, int y, double z, boolean corner) {
         for (HabboItem item : room.getItemsAt(x, y, z)) {
-            if (item instanceof InteractionWater) {
-                InteractionWater water = (InteractionWater) item;
+            if (item instanceof InteractionWater water) {
 
                 // Take out picked up water from the recalculation.
                 if (!water.isInRoom) {

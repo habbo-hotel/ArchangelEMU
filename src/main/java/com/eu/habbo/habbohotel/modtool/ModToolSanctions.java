@@ -4,8 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.plugin.events.sanctions.SanctionEvent;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,9 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-
+@Slf4j
 public class ModToolSanctions {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModToolSanctions.class);
 
     private final THashMap<Integer, ArrayList<ModToolSanctionItem>> sanctionHashmap;
     private final THashMap<Integer, ModToolSanctionLevelItem> sanctionLevelsHashmap;
@@ -26,7 +24,7 @@ public class ModToolSanctions {
         this.sanctionLevelsHashmap = new THashMap<>();
         this.loadModSanctions();
 
-        LOGGER.info("Sanctions Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Sanctions Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public synchronized void loadModSanctions() {
@@ -44,7 +42,7 @@ public class ModToolSanctions {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -59,9 +57,7 @@ public class ModToolSanctions {
                 statement.setInt(1, habboId);
                 try (ResultSet set = statement.executeQuery()) {
                     while (set.next()) {
-                        if (this.sanctionHashmap.get(set.getInt("habbo_id")) == null) {
-                            this.sanctionHashmap.put(set.getInt("habbo_id"), new ArrayList<>());
-                        }
+                        this.sanctionHashmap.computeIfAbsent(set.getInt("habbo_id"), k -> new ArrayList<>());
 
                         ModToolSanctionItem item = new ModToolSanctionItem(set.getInt("id"), set.getInt("habbo_id"), set.getInt("sanction_level"), set.getInt("probation_timestamp"), set.getBoolean("is_muted"), set.getInt("mute_duration"), set.getInt("trade_locked_until"), set.getString("reason"));
 
@@ -71,7 +67,7 @@ public class ModToolSanctions {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
             return this.sanctionHashmap;
@@ -90,7 +86,7 @@ public class ModToolSanctions {
 
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -101,7 +97,7 @@ public class ModToolSanctions {
 
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -112,7 +108,7 @@ public class ModToolSanctions {
 
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -123,7 +119,7 @@ public class ModToolSanctions {
 
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -140,11 +136,11 @@ public class ModToolSanctions {
     }
 
     private int buildProbationTimestamp(ModToolSanctionLevelItem sanctionLevelItem) {
-        return Emulator.getIntUnixTimestamp() + (sanctionLevelItem.sanctionProbationDays * 24 * 60 * 60);
+        return Emulator.getIntUnixTimestamp() + (sanctionLevelItem.getSanctionProbationDays() * 24 * 60 * 60);
     }
 
     public int getProbationDays(ModToolSanctionLevelItem sanctionLevelItem) {
-        return sanctionLevelItem.sanctionProbationDays;
+        return sanctionLevelItem.getSanctionProbationDays();
     }
 
     private void runSanctionBasedOnLevel(ModToolSanctionLevelItem sanctionLevelItem, int habboId, String reason, int cfhTopic, Habbo self, int muteDuration) {
@@ -158,19 +154,21 @@ public class ModToolSanctions {
             muteDurationSeconds = Math.toIntExact(diff / 1000);
         }
 
-        switch (sanctionLevelItem.sanctionType) {
-            case "ALERT": habbo.alert(reason); break;
-            case "BAN": Emulator.getGameEnvironment().getModToolManager().ban(habboId, self, reason, sanctionLevelItem.sanctionHourLength, ModToolBanType.ACCOUNT, cfhTopic); break;
-            case "MUTE": habbo.mute(muteDurationSeconds == 0 ? 3600 : muteDurationSeconds, false); break;
-            default: break;
+        switch (sanctionLevelItem.getSanctionType()) {
+            case "ALERT" -> habbo.alert(reason);
+            case "BAN" ->
+                    Emulator.getGameEnvironment().getModToolManager().ban(habboId, self, reason, sanctionLevelItem.getSanctionHourLength(), ModToolBanType.ACCOUNT, cfhTopic);
+            case "MUTE" -> habbo.mute(muteDurationSeconds == 0 ? 3600 : muteDurationSeconds, false);
+            default -> {
+            }
         }
     }
 
     public String getSanctionType(ModToolSanctionLevelItem sanctionLevelItem) {
-        return sanctionLevelItem.sanctionType;
+        return sanctionLevelItem.getSanctionType();
     }
 
     public int getTimeOfSanction(ModToolSanctionLevelItem sanctionLevelItem) {
-        return sanctionLevelItem.sanctionHourLength;
+        return sanctionLevelItem.getSanctionHourLength();
     }
 }

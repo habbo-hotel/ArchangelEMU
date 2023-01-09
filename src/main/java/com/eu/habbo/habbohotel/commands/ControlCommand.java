@@ -35,7 +35,6 @@ public class ControlCommand extends Command {
                 gameClient.getHabbo().getRoomUnit().getCacheable().put("control", target);
                 target.getRoomUnit().getCacheable().put("controller", gameClient.getHabbo());
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_control.controlling").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
-                return true;
             } else {
                 Object habbo = gameClient.getHabbo().getRoomUnit().getCacheable().get("control");
 
@@ -44,8 +43,8 @@ public class ControlCommand extends Command {
 
                     gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_control.stopped").replace("%user%", ((Habbo) habbo).getHabboInfo().getUsername()), RoomChatMessageBubbles.ALERT);
                 }
-                return true;
             }
+            return true;
         }
 
         return true;

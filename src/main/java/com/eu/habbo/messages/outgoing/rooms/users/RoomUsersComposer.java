@@ -48,12 +48,12 @@ public class RoomUsersComposer extends MessageComposer {
             this.response.appendInt(this.habbo.getRoomUnit().getBodyRotation().getValue());
             this.response.appendInt(1);
             this.response.appendString(this.habbo.getHabboInfo().getGender().name().toUpperCase());
-            this.response.appendInt(this.habbo.getHabboStats().guild != 0 ? this.habbo.getHabboStats().guild : -1);
-            this.response.appendInt(this.habbo.getHabboStats().guild != 0 ? 1 : -1);
+            this.response.appendInt(this.habbo.getHabboStats().getGuild() != 0 ? this.habbo.getHabboStats().getGuild() : -1);
+            this.response.appendInt(this.habbo.getHabboStats().getGuild() != 0 ? 1 : -1);
 
             String name = "";
-            if (this.habbo.getHabboStats().guild != 0) {
-                Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(this.habbo.getHabboStats().guild);
+            if (this.habbo.getHabboStats().getGuild() != 0) {
+                Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(this.habbo.getHabboStats().getGuild());
 
                 if (g != null)
                     name = g.getName();
@@ -78,11 +78,11 @@ public class RoomUsersComposer extends MessageComposer {
                     this.response.appendInt(habbo.getRoomUnit().getBodyRotation().getValue());
                     this.response.appendInt(1);
                     this.response.appendString(habbo.getHabboInfo().getGender().name().toUpperCase());
-                    this.response.appendInt(habbo.getHabboStats().guild != 0 ? habbo.getHabboStats().guild : -1);
-                    this.response.appendInt(habbo.getHabboStats().guild != 0 ? habbo.getHabboStats().guild : -1);
+                    this.response.appendInt(habbo.getHabboStats().getGuild() != 0 ? habbo.getHabboStats().getGuild() : -1);
+                    this.response.appendInt(habbo.getHabboStats().getGuild() != 0 ? habbo.getHabboStats().getGuild() : -1);
                     String name = "";
-                    if (habbo.getHabboStats().guild != 0) {
-                        Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(habbo.getHabboStats().guild);
+                    if (habbo.getHabboStats().getGuild() != 0) {
+                        Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(habbo.getHabboStats().getGuild());
 
                         if (g != null)
                             name = g.getName();
@@ -95,7 +95,7 @@ public class RoomUsersComposer extends MessageComposer {
             }
         } else if (this.bot != null) {
             this.response.appendInt(1);
-            this.response.appendInt(0 - this.bot.getId());
+            this.response.appendInt(-this.bot.getId());
             this.response.appendString(this.bot.getName());
             this.response.appendString(this.bot.getMotto());
             this.response.appendString(this.bot.getFigure());
@@ -122,7 +122,7 @@ public class RoomUsersComposer extends MessageComposer {
         } else if (this.bots != null) {
             this.response.appendInt(this.bots.size());
             for (Bot bot : this.bots) {
-                this.response.appendInt(0 - bot.getId());
+                this.response.appendInt(-bot.getId());
                 this.response.appendString(bot.getName());
                 this.response.appendString(bot.getMotto());
                 this.response.appendString(bot.getFigure());

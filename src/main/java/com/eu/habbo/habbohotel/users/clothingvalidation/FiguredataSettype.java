@@ -1,16 +1,19 @@
 package com.eu.habbo.habbohotel.users.clothingvalidation;
 
-import java.util.Map;
+import lombok.Getter;
+
 import java.util.TreeMap;
 
+@Getter
+
 public class FiguredataSettype {
-    public String type;
-    public int paletteId;
-    public boolean mandatoryMale0;
-    public boolean mandatoryFemale0;
-    public boolean mandatoryMale1;
-    public boolean mandatoryFemale1;
-    public TreeMap<Integer, FiguredataSettypeSet> sets;
+    private final String type;
+    private final int paletteId;
+    private final boolean mandatoryMale0;
+    private final boolean mandatoryFemale0;
+    private final boolean mandatoryMale1;
+    private final boolean mandatoryFemale1;
+    private final TreeMap<Integer, FiguredataSettypeSet> sets;
 
     public FiguredataSettype(String type, int paletteId, boolean mandatoryMale0, boolean mandatoryFemale0, boolean mandatoryMale1, boolean mandatoryFemale1) {
         this.type = type;
@@ -23,7 +26,7 @@ public class FiguredataSettype {
     }
 
     public void addSet(FiguredataSettypeSet set) {
-        this.sets.put(set.id, set);
+        this.sets.put(set.getId(), set);
     }
 
     public FiguredataSettypeSet getSet(int id) {
@@ -36,7 +39,7 @@ public class FiguredataSettype {
      */
     public FiguredataSettypeSet getFirstSetForGender(String gender) {
         for(FiguredataSettypeSet set : this.sets.descendingMap().values()) {
-            if((set.gender.equalsIgnoreCase(gender) || set.gender.equalsIgnoreCase("u")) && !set.sellable && set.selectable) {
+            if((set.getGender().equalsIgnoreCase(gender) || set.getGender().equalsIgnoreCase("u")) && !set.isSellable() && set.isSelectable()) {
                 return set;
             }
         }
@@ -50,7 +53,7 @@ public class FiguredataSettype {
      */
     public FiguredataSettypeSet getFirstNonHCSetForGender(String gender) {
         for(FiguredataSettypeSet set : this.sets.descendingMap().values()) {
-            if((set.gender.equalsIgnoreCase(gender) || set.gender.equalsIgnoreCase("u")) && !set.club && !set.sellable && set.selectable) {
+            if((set.getGender().equalsIgnoreCase(gender) || set.getGender().equalsIgnoreCase("u")) && !set.isClub() && !set.isSellable() && set.isSelectable()) {
                 return set;
             }
         }

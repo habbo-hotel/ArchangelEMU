@@ -1,40 +1,34 @@
 package com.eu.habbo.habbohotel.rooms;
 
-public class RoomMoodlightData {
-    private int id;
-    private boolean enabled;
-    private boolean backgroundOnly;
-    private String color;
-    private int intensity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-    public RoomMoodlightData(int id, boolean enabled, boolean backgroundOnly, String color, int intensity) {
-        this.id = id;
-        this.enabled = enabled;
-        this.backgroundOnly = backgroundOnly;
-        this.color = color;
-        this.intensity = intensity;
-    }
+@AllArgsConstructor
+public class RoomMoodlightData {
+    @Getter
+    @Setter
+    private int id;
+    @Getter
+    private boolean enabled;
+    @Getter
+    @Setter
+    private boolean backgroundOnly;
+    @Setter
+    @Getter
+    private String color;
+    @Setter
+    @Getter
+    private int intensity;
 
     public static RoomMoodlightData fromString(String s) {
         String[] data = s.split(",");
 
         if (data.length == 5) {
-            return new RoomMoodlightData(Integer.valueOf(data[1]), data[0].equalsIgnoreCase("2"), data[2].equalsIgnoreCase("2"), data[3], Integer.valueOf(data[4]));
+            return new RoomMoodlightData(Integer.parseInt(data[1]), data[0].equalsIgnoreCase("2"), data[2].equalsIgnoreCase("2"), data[3], Integer.parseInt(data[4]));
         } else {
             return new RoomMoodlightData(1, true, true, "#000000", 255);
         }
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public boolean isEnabled() {
-        return this.enabled;
     }
 
     public void enable() {
@@ -43,30 +37,6 @@ public class RoomMoodlightData {
 
     public void disable() {
         this.enabled = false;
-    }
-
-    public boolean isBackgroundOnly() {
-        return this.backgroundOnly;
-    }
-
-    public void setBackgroundOnly(boolean backgroundOnly) {
-        this.backgroundOnly = backgroundOnly;
-    }
-
-    public String getColor() {
-        return this.color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public int getIntensity() {
-        return this.intensity;
-    }
-
-    public void setIntensity(int intensity) {
-        this.intensity = intensity;
     }
 
     public String toString() {

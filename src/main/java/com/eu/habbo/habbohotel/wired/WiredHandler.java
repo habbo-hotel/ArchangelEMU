@@ -19,8 +19,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredRewardResultMessageComposer;
 import com.eu.habbo.plugin.events.furniture.wired.WiredConditionFailedEvent;
@@ -29,8 +29,7 @@ import com.eu.habbo.plugin.events.furniture.wired.WiredStackTriggeredEvent;
 import com.eu.habbo.plugin.events.users.UserWiredRewardReceived;
 import com.google.gson.GsonBuilder;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,8 +39,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 public class WiredHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WiredHandler.class);
 
     //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_FURNI_SELECTION = 5;
@@ -119,7 +118,7 @@ public class WiredHandler {
             return false;
 
         long millis = System.currentTimeMillis();
-        THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<InteractionWiredEffect>();
+        THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<>();
 
         List<RoomTile> triggeredTiles = new ArrayList<>();
         for (InteractionWiredTrigger trigger : triggers) {
@@ -130,7 +129,7 @@ public class WiredHandler {
             if (triggeredTiles.contains(tile))
                 continue;
 
-            THashSet<InteractionWiredEffect> tEffectsToExecute = new THashSet<InteractionWiredEffect>();
+            THashSet<InteractionWiredEffect> tEffectsToExecute = new THashSet<>();
 
             if (handle(trigger, roomUnit, room, stuff, tEffectsToExecute)) {
                 effectsToExecute.addAll(tEffectsToExecute);
@@ -147,7 +146,7 @@ public class WiredHandler {
 
     public static boolean handle(InteractionWiredTrigger trigger, final RoomUnit roomUnit, final Room room, final Object[] stuff) {
         long millis = System.currentTimeMillis();
-        THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<InteractionWiredEffect>();
+        THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<>();
 
         if(handle(trigger, roomUnit, room, stuff, effectsToExecute)) {
             for (InteractionWiredEffect effect : effectsToExecute) {
@@ -239,7 +238,7 @@ public class WiredHandler {
                             if (!effect.execute(roomUnit, room, stuff)) return;
                             effect.setCooldown(millis);
                         } catch (Exception e) {
-                            LOGGER.error("Caught exception", e);
+                            log.error("Caught exception", e);
                         }
 
                         effect.activateBox(room, roomUnit, millis);
@@ -281,7 +280,7 @@ public class WiredHandler {
             statement.setInt(1, wiredId);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -292,15 +291,15 @@ public class WiredHandler {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO wired_rewards_given (wired_item, user_id, reward_id, timestamp) VALUES ( ?, ?, ?, ?)")) {
             statement.setInt(1, wiredBox.getId());
             statement.setInt(2, habbo.getHabboInfo().getId());
-            statement.setInt(3, reward.id);
+            statement.setInt(3, reward.getId());
             statement.setInt(4, Emulator.getIntUnixTimestamp());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
-        if (reward.badge) {
-            UserWiredRewardReceived rewardReceived = new UserWiredRewardReceived(habbo, wiredBox, "badge", reward.data);
+        if (reward.isBadge()) {
+            UserWiredRewardReceived rewardReceived = new UserWiredRewardReceived(habbo, wiredBox, "badge", reward.getData());
             if (Emulator.getPluginManager().fireEvent(rewardReceived).isCancelled())
                 return;
 
@@ -316,7 +315,7 @@ public class WiredHandler {
             habbo.getClient().sendResponse(new BadgeReceivedComposer(badge));
             habbo.getClient().sendResponse(new WiredRewardResultMessageComposer(WiredRewardResultMessageComposer.REWARD_RECEIVED_BADGE));
         } else {
-            String[] data = reward.data.split("#");
+            String[] data = reward.getData().split("#");
 
             if (data.length == 2) {
                 UserWiredRewardReceived rewardReceived = new UserWiredRewardReceived(habbo, wiredBox, data[0], data[1]);
@@ -356,7 +355,7 @@ public class WiredHandler {
                         }
                     }
                 } else if (rewardReceived.type.equalsIgnoreCase("respect")) {
-                    habbo.getHabboStats().respectPointsReceived += Integer.parseInt(rewardReceived.value);
+                    habbo.getHabboStats().increaseRespectPointsReceived(Integer.parseInt(rewardReceived.value));
                 } else if (rewardReceived.type.equalsIgnoreCase("cata")) {
                     CatalogItem item = Emulator.getGameEnvironment().getCatalogManager().getCatalogItem(Integer.parseInt(rewardReceived.value));
 
@@ -428,7 +427,7 @@ public class WiredHandler {
                             boolean found = false;
 
                             while (set.next()) {
-                                if (set.getInt("reward_id") == item.id)
+                                if (set.getInt("reward_id") == item.getId())
                                     found = true;
                             }
 
@@ -442,18 +441,18 @@ public class WiredHandler {
 
                         int count = 0;
                         for (WiredGiveRewardItem item : wiredBox.rewardItems) {
-                            if (randomNumber >= count && randomNumber <= (count + item.probability)) {
+                            if (randomNumber >= count && randomNumber <= (count + item.getProbability())) {
                                 giveReward(habbo, wiredBox, item);
                                 return true;
                             }
 
-                            count += item.probability;
+                            count += item.getProbability();
                         }
                     }
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return false;

@@ -1,19 +1,17 @@
 package com.eu.habbo.messages.outgoing.rooms.items.jukebox;
 
 import com.eu.habbo.habbohotel.items.interactions.InteractionMusicDisc;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class UserSongDisksInventoryMessageComposer extends MessageComposer {
     private final List<InteractionMusicDisc> items;
 
-    public UserSongDisksInventoryMessageComposer(List<InteractionMusicDisc> items) {
-        this.items = items;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -21,9 +19,9 @@ public class UserSongDisksInventoryMessageComposer extends MessageComposer {
 
         this.response.appendInt(this.items.size());
 
-        for (HabboItem item : this.items) {
+        for (InteractionMusicDisc item : this.items) {
             this.response.appendInt(item.getId());
-            this.response.appendInt(((InteractionMusicDisc) item).getSongId());
+            this.response.appendInt(item.getSongId());
         }
 
         return this.response;

@@ -11,7 +11,6 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 
@@ -23,7 +22,7 @@ import java.util.List;
 public class WiredConditionMatchStatePosition extends InteractionWiredCondition implements InteractionWiredMatchFurniSettings {
     public static final WiredConditionType type = WiredConditionType.MATCH_SSHOT;
 
-    private THashSet<WiredMatchFurniSetting> settings;
+    private final THashSet<WiredMatchFurniSetting> settings;
 
     private boolean state;
     private boolean position;
@@ -53,7 +52,7 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
         message.appendInt(this.settings.size());
 
         for (WiredMatchFurniSetting item : this.settings)
-            message.appendInt(item.item_id);
+            message.appendInt(item.getItem_id());
 
         message.appendInt(this.getBaseItem().getSpriteId());
         message.appendInt(this.getId());
@@ -64,7 +63,7 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
         message.appendInt(this.position ? 1 : 0);
         message.appendInt(10);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(0);
         message.appendInt(0);
     }
@@ -105,21 +104,21 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
         THashSet<WiredMatchFurniSetting> s = new THashSet<>();
 
         for (WiredMatchFurniSetting setting : this.settings) {
-            HabboItem item = room.getHabboItem(setting.item_id);
+            HabboItem item = room.getHabboItem(setting.getItem_id());
 
             if (item != null) {
                 if (this.state) {
-                    if (!item.getExtradata().equals(setting.state))
+                    if (!item.getExtradata().equals(setting.getState()))
                         return false;
                 }
 
                 if (this.position) {
-                    if (!(setting.x == item.getX() && setting.y == item.getY()))
+                    if (!(setting.getX() == item.getX() && setting.getY() == item.getY()))
                         return false;
                 }
 
                 if (this.direction) {
-                    if (setting.rotation != item.getRotation())
+                    if (setting.getRotation() != item.getRotation())
                         return false;
                 }
             } else {
@@ -191,7 +190,7 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
             THashSet<WiredMatchFurniSetting> remove = new THashSet<>();
 
             for (WiredMatchFurniSetting setting : this.settings) {
-                HabboItem item = room.getHabboItem(setting.item_id);
+                HabboItem item = room.getHabboItem(setting.getItem_id());
                 if (item == null) {
                     remove.add(setting);
                 }

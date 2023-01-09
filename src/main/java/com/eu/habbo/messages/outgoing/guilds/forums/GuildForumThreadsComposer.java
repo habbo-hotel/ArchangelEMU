@@ -6,20 +6,20 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
+@Getter
+@AllArgsConstructor
 public class GuildForumThreadsComposer extends MessageComposer {
-    public final Guild guild;
-    public final int index;
+    private final Guild guild;
+    private final int index;
 
-    public GuildForumThreadsComposer(Guild guild, int index) {
-        this.guild = guild;
-        this.index = index;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -35,7 +35,7 @@ public class GuildForumThreadsComposer extends MessageComposer {
         Collections.reverse(threads);
 
         Iterator<ForumThread> it = threads.iterator();
-        int count = threads.size() > 20 ? 20 : threads.size();
+        int count = Math.min(threads.size(), 20);
 
         this.response.init(Outgoing.guildForumThreadsComposer);
         this.response.appendInt(this.guild.getId());

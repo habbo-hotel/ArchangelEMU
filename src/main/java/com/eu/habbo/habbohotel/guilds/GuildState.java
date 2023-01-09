@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.guilds;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum GuildState {
     OPEN(0),
     EXCLUSIVE(1),
@@ -7,11 +12,8 @@ public enum GuildState {
     LARGE(3),
     LARGE_CLOSED(4);
 
-    public final int state;
+    private final int state;
 
-    GuildState(int state) {
-        this.state = state;
-    }
 
     public static GuildState valueOf(int state) {
         try {

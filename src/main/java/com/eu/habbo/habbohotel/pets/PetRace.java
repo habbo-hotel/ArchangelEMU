@@ -1,23 +1,19 @@
 package com.eu.habbo.habbohotel.pets;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
+@Getter
 public class PetRace {
-
-    public final int race;
-
-
-    public final int colorOne;
-
-
-    public final int colorTwo;
-
-
-    public final boolean hasColorOne;
-
-
-    public final boolean hasColorTwo;
+    private final int race;
+    private final int colorOne;
+    private final int colorTwo;
+    private final boolean hasColorOne;
+    private final boolean hasColorTwo;
 
     public PetRace(ResultSet set) throws SQLException {
         this.race = set.getInt("race");

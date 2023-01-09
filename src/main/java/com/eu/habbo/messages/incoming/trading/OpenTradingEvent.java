@@ -12,8 +12,8 @@ import com.eu.habbo.messages.outgoing.trading.TradingOpenFailedComposer;
 public class OpenTradingEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().lastTradeTimestamp > 10) {
-            this.client.getHabbo().getHabboStats().lastTradeTimestamp = Emulator.getIntUnixTimestamp();
+        if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().getLastTradeTimestamp() > 10) {
+            this.client.getHabbo().getHabboStats().setLastTradeTimestamp(Emulator.getIntUnixTimestamp());
             int userId = this.packet.readInt();
 
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();

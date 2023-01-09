@@ -12,34 +12,34 @@ public class GuildEditorDataMessageComposer extends MessageComposer {
         this.response.init(Outgoing.guildEditorDataMessageComposer);
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getBases().size());
         for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBases()) {
-            this.response.appendInt(part.id);
-            this.response.appendString(part.valueA);
-            this.response.appendString(part.valueB);
+            this.response.appendInt(part.getId());
+            this.response.appendString(part.getValueA());
+            this.response.appendString(part.getValueB());
         }
 
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getSymbols().size());
         for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getSymbols()) {
-            this.response.appendInt(part.id);
-            this.response.appendString(part.valueA);
-            this.response.appendString(part.valueB);
+            this.response.appendInt(part.getId());
+            this.response.appendString(part.getValueA());
+            this.response.appendString(part.getValueB());
         }
 
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getBaseColors().size());
         for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBaseColors()) {
-            this.response.appendInt(part.id);
-            this.response.appendString(part.valueA);
+            this.response.appendInt(part.getId());
+            this.response.appendString(part.getValueA());
         }
 
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getSymbolColors().size());
         for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getSymbolColors()) {
-            this.response.appendInt(part.id);
-            this.response.appendString(part.valueA);
+            this.response.appendInt(part.getId());
+            this.response.appendString(part.getValueA());
         }
 
         this.response.appendInt(Emulator.getGameEnvironment().getGuildManager().getBackgroundColors().size());
         for (GuildPart part : Emulator.getGameEnvironment().getGuildManager().getBackgroundColors()) {
-            this.response.appendInt(part.id);
-            this.response.appendString(part.valueA);
+            this.response.appendInt(part.getId());
+            this.response.appendString(part.getValueA());
         }
 
         return this.response;

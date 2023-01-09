@@ -32,7 +32,7 @@ public class Achievement {
 
     public void addLevel(AchievementLevel level) {
         synchronized (this.levels) {
-            this.levels.put(level.level, level);
+            this.levels.put(level.getLevel(), level);
         }
     }
 
@@ -41,9 +41,9 @@ public class Achievement {
         AchievementLevel l = null;
         if (progress > 0) {
             for (AchievementLevel level : this.levels.values()) {
-                if (progress >= level.progress) {
+                if (progress >= level.getProgress()) {
                     if (l != null) {
-                        if (l.level > level.level) {
+                        if (l.getLevel() > level.getLevel()) {
                             continue;
                         }
                     }
@@ -60,7 +60,7 @@ public class Achievement {
         AchievementLevel l = null;
 
         for (AchievementLevel level : this.levels.values()) {
-            if (level.level == (currentLevel + 1))
+            if (level.getLevel() == (currentLevel + 1))
                 return level;
         }
 

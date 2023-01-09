@@ -4,17 +4,14 @@ import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class QuestsMessageComposer extends MessageComposer {
     private final List<Quest> quests;
     private final boolean unknownBoolean;
-
-    public QuestsMessageComposer(List<Quest> quests, boolean unknownBoolean) {
-        this.quests = quests;
-        this.unknownBoolean = unknownBoolean;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -27,6 +24,7 @@ public class QuestsMessageComposer extends MessageComposer {
         return this.response;
     }
 
+    @AllArgsConstructor
     public static class Quest implements ISerialize {
         private final String campaignCode;
         private final int completedQuestsInCampaign;
@@ -45,24 +43,6 @@ public class QuestsMessageComposer extends MessageComposer {
         private final String chainCode;
         private final boolean easy;
 
-        public Quest(String campaignCode, int completedQuestsInCampaign, int questCountInCampaign, int activityPointType, int id, boolean accepted, String type, String imageVersion, int rewardCurrencyAmount, String localizationCode, int completedSteps, int totalSteps, int sortOrder, String catalogPageName, String chainCode, boolean easy) {
-            this.campaignCode = campaignCode;
-            this.completedQuestsInCampaign = completedQuestsInCampaign;
-            this.questCountInCampaign = questCountInCampaign;
-            this.activityPointType = activityPointType;
-            this.id = id;
-            this.accepted = accepted;
-            this.type = type;
-            this.imageVersion = imageVersion;
-            this.rewardCurrencyAmount = rewardCurrencyAmount;
-            this.localizationCode = localizationCode;
-            this.completedSteps = completedSteps;
-            this.totalSteps = totalSteps;
-            this.sortOrder = sortOrder;
-            this.catalogPageName = catalogPageName;
-            this.chainCode = chainCode;
-            this.easy = easy;
-        }
 
         @Override
         public void serialize(ServerMessage message) {

@@ -8,7 +8,6 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.YouAreControllerMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.NoSuchFlatComposer;
-import gnu.trove.procedure.TIntProcedure;
 
 public class RemoveAllRightsEvent extends MessageHandler {
     @Override
@@ -19,10 +18,8 @@ public class RemoveAllRightsEvent extends MessageHandler {
             return;
 
         if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
-            room.getRights().forEach(new TIntProcedure() {
-                @Override
-                public boolean execute(int value) {
-                    Habbo habbo = room.getHabbo(value);
+            room.getRights().forEach(value -> {
+                Habbo habbo = room.getHabbo(value);
 
                     if (habbo != null) {
                         room.sendComposer(new NoSuchFlatComposer(room, value).compose());
@@ -30,8 +27,7 @@ public class RemoveAllRightsEvent extends MessageHandler {
                         habbo.getClient().sendResponse(new YouAreControllerMessageComposer(RoomRightLevels.NONE));
                     }
 
-                    return true;
-                }
+                return true;
             });
 
             room.removeAllRights();

@@ -11,7 +11,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.procedure.TObjectProcedure;
 
@@ -55,7 +54,7 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
             this.repeatTime = data.repeatTime;
         } else {
             if (wiredData.length() >= 1) {
-                this.repeatTime = (Integer.valueOf(wiredData));
+                this.repeatTime = (Integer.parseInt(wiredData));
             }
         }
 
@@ -85,7 +84,7 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
         message.appendInt(1);
         message.appendInt(this.repeatTime / 5000);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
 
         if (!this.isTriggeredByRoomUnit()) {
             List<Integer> invalidTriggers = new ArrayList<>();

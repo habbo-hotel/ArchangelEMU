@@ -64,7 +64,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
 
         if (roomUnit != null) {
             Habbo habbo = room.getHabbo(roomUnit);
-            HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().x, roomUnit.getCurrentLocation().y);
+            HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().getX(), roomUnit.getCurrentLocation().getY());
             int nextEffectM = 0;
             int nextEffectF = 0;
             int nextEffectDuration = -1;

@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class NoSuchFlatComposer extends MessageComposer {
     private final Room room;
     private final int habboId;
 
-    public NoSuchFlatComposer(Room room, int habboId) {
-        this.room = room;
-        this.habboId = habboId;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

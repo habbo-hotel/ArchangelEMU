@@ -8,7 +8,6 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
@@ -60,7 +59,7 @@ public class WiredTriggerCollision extends InteractionWiredTrigger {
         message.appendString("");
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(type.code);
+        message.appendInt(type.getCode());
         message.appendInt(0);
         message.appendInt(0);
     }

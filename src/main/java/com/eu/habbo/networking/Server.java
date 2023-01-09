@@ -9,23 +9,26 @@ import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public abstract class Server {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
-
+    @Getter
     protected final ServerBootstrap serverBootstrap;
+    @Getter
     protected final EventLoopGroup bossGroup;
+    @Getter
     protected final EventLoopGroup workerGroup;
     private final String name;
+    @Getter
     private final String host;
+    @Getter
     private final int port;
 
-    public Server(String name, String host, int port, int bossGroupThreads, int workerGroupThreads) throws Exception {
+    public Server(String name, String host, int port, int bossGroupThreads, int workerGroupThreads) {
         this.name = name;
         this.host = host;
         this.port = port;
@@ -55,42 +58,23 @@ public abstract class Server {
         }
 
         if (!channelFuture.isSuccess()) {
-            LOGGER.info("Failed to connect to the host (" + this.host + ":" + this.port + ")@" + this.name);
+            log.info("Failed to connect to the host (" + this.host + ":" + this.port + ")@" + this.name);
             System.exit(0);
         } else {
-            LOGGER.info("Started GameServer on " + this.host + ":" + this.port + "@" + this.name);
+            log.info("Started GameServer on " + this.host + ":" + this.port + "@" + this.name);
         }
     }
 
     public void stop() {
-        LOGGER.info("Stopping " + this.name);
+        log.info("Stopping " + this.name);
         try {
             this.workerGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
             this.bossGroup.shutdownGracefully(0, 0, TimeUnit.MILLISECONDS).sync();
         } catch(InterruptedException e) {
-            LOGGER.error("Exception during {} shutdown... HARD STOP", this.name, e);
+            log.error("Exception during {} shutdown... HARD STOP", this.name, e);
             Thread.currentThread().interrupt();
         }
-        LOGGER.info("GameServer Stopped!");
+        log.info("GameServer Stopped!");
     }
 
-    public ServerBootstrap getServerBootstrap() {
-        return this.serverBootstrap;
-    }
-
-    public EventLoopGroup getBossGroup() {
-        return this.bossGroup;
-    }
-
-    public EventLoopGroup getWorkerGroup() {
-        return this.workerGroup;
-    }
-
-    public String getHost() {
-        return this.host;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
 }

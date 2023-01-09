@@ -1,23 +1,20 @@
 package com.eu.habbo.habbohotel.achievements;
 
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Getter
 public class AchievementLevel {
 
-    public final int level;
+    private final int level;
+    private final int rewardAmount;
+    private final int rewardType;
 
+    private final int points;
 
-    public final int rewardAmount;
-
-
-    public final int rewardType;
-
-
-    public final int points;
-
-
-    public final int progress;
+    private final int progress;
 
     public AchievementLevel(ResultSet set) throws SQLException {
         this.level = set.getInt("level");

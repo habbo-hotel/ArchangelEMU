@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NewUserExperienceScriptProceedEvent extends MessageHandler {
-    public static Map<Integer, String> keys = new HashMap<Integer, String>() {
+    public static Map<Integer, String> keys = new HashMap<>() {
         {
             this.put(1, "BOTTOM_BAR_RECEPTION");
             this.put(2, "BOTTOM_BAR_NAVIGATOR");
@@ -26,12 +26,12 @@ public class NewUserExperienceScriptProceedEvent extends MessageHandler {
     };
 
     public static void handle(Habbo habbo) {
-        habbo.getHabboStats().nux = true;
-        int step = habbo.getHabboStats().nuxStep++;
+        habbo.getHabboStats().setNux(true);
+        int step = habbo.getHabboStats().increaseNuxStep();
 
         if (keys.containsKey(step)) {
             habbo.getClient().sendResponse(new InClientLinkMessageComposer("helpBubble/add/" + keys.get(step) + "/" + Emulator.getTexts().getValue("nux.step." + step)));
-        } else if (!habbo.getHabboStats().nuxReward) {
+        } else if (!habbo.getHabboStats().isNuxReward()) {
 
 
         } else {

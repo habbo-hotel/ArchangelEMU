@@ -13,7 +13,7 @@ public class CheckUserNameEvent extends MessageHandler {
 
     @Override
     public void handle() throws Exception {
-        if (!this.client.getHabbo().getHabboStats().allowNameChange)
+        if (!this.client.getHabbo().getHabboStats().isAllowNameChange())
             return;
 
         String name = this.packet.readString();
@@ -42,7 +42,7 @@ public class CheckUserNameEvent extends MessageHandler {
             if (!checkName.isEmpty()) {
                 errorCode = CheckUserNameResultMessageComposer.NOT_VALID;
             } else {
-                this.client.getHabbo().getHabboStats().changeNameChecked = name;
+                this.client.getHabbo().getHabboStats().setChangeNameChecked(name);
             }
         }
 

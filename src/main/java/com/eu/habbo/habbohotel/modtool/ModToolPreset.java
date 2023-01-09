@@ -1,15 +1,17 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+@Getter
 public class ModToolPreset {
-    public final int id;
-    public final String name;
-    public final String message;
-    public final String reminder;
-    public final int banLength;
-    public final int muteLength;
+    private  final int id;
+    private  final String name;
+    private  final String message;
+    private  final String reminder;
+    private  final int banLength;
+    private  final int muteLength;
 
     public ModToolPreset(ResultSet set) throws SQLException {
         this.id = set.getInt("id");

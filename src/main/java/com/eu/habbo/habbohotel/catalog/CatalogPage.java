@@ -7,38 +7,63 @@ import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+@Slf4j
 public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogPage.class);
 
+    @Getter
     protected final TIntArrayList offerIds = new TIntArrayList();
+    @Getter
     protected final THashMap<Integer, CatalogPage> childPages = new THashMap<>();
+    @Getter
     private final TIntObjectMap<CatalogItem> catalogItems = TCollections.synchronizedMap(new TIntObjectHashMap<>());
+    @Getter
     private final ArrayList<Integer> included = new ArrayList<>();
+    @Getter
     protected int id;
+    @Getter
     protected int parentId;
+    @Getter
+    @Setter
     protected int rank;
+    @Getter
     protected String caption;
+    @Getter
     protected String pageName;
+    @Getter
     protected int iconColor;
+    @Getter
     protected int iconImage;
+    @Getter
     protected int orderNum;
+    @Getter
     protected boolean visible;
+    @Getter
     protected boolean enabled;
+    @Getter
     protected boolean clubOnly;
+    @Getter
     protected String layout;
+    @Getter
     protected String headerImage;
+    @Getter
     protected String teaserImage;
+    @Getter
     protected String specialImage;
+    @Getter
     protected String textOne;
+    @Getter
     protected String textTwo;
+    @Getter
     protected String textDetails;
+    @Getter
     protected String textTeaser;
 
     public CatalogPage() {
@@ -71,97 +96,13 @@ public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize
         if (!set.getString("includes").isEmpty()) {
             for (String id : set.getString("includes").split(";")) {
                 try {
-                    this.included.add(Integer.valueOf(id));
+                    this.included.add(Integer.parseInt(id));
                 } catch (Exception e) {
-                    LOGGER.error("Caught exception", e);
-                    LOGGER.error("Failed to parse includes column value of (" + id + ") for catalog page (" + this.id + ")");
+                    log.error("Caught exception", e);
+                    log.error("Failed to parse includes column value of (" + id + ") for catalog page (" + this.id + ")");
                 }
             }
         }
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public int getParentId() {
-        return this.parentId;
-    }
-
-    public int getRank() {
-        return this.rank;
-    }
-
-    public void setRank(int rank) {
-        this.rank = rank;
-    }
-
-    public String getCaption() {
-        return this.caption;
-    }
-
-    public String getPageName() {
-        return this.pageName;
-    }
-
-    public int getIconColor() {
-        return this.iconColor;
-    }
-
-    public int getIconImage() {
-        return this.iconImage;
-    }
-
-    public int getOrderNum() {
-        return this.orderNum;
-    }
-
-    public boolean isVisible() {
-        return this.visible;
-    }
-
-    public boolean isEnabled() {
-        return this.enabled;
-    }
-
-    public boolean isClubOnly() {
-        return this.clubOnly;
-    }
-
-    public String getLayout() {
-        return this.layout;
-    }
-
-    public String getHeaderImage() {
-        return this.headerImage;
-    }
-
-    public String getTeaserImage() {
-        return this.teaserImage;
-    }
-
-    public String getSpecialImage() {
-        return this.specialImage;
-    }
-
-    public String getTextOne() {
-        return this.textOne;
-    }
-
-    public String getTextTwo() {
-        return this.textTwo;
-    }
-
-    public String getTextDetails() {
-        return this.textDetails;
-    }
-
-    public String getTextTeaser() {
-        return this.textTeaser;
-    }
-
-    public TIntArrayList getOfferIds() {
-        return this.offerIds;
     }
 
     public void addOfferId(int offerId) {
@@ -172,20 +113,8 @@ public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize
         this.catalogItems.put(item.getId(), item);
     }
 
-    public TIntObjectMap<CatalogItem> getCatalogItems() {
-        return this.catalogItems;
-    }
-
     public CatalogItem getCatalogItem(int id) {
         return this.catalogItems.get(id);
-    }
-
-    public ArrayList<Integer> getIncluded() {
-        return this.included;
-    }
-
-    public THashMap<Integer, CatalogPage> getChildPages() {
-        return this.childPages;
     }
 
     public void addChildPage(CatalogPage page) {
@@ -196,7 +125,6 @@ public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize
         }
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public int compareTo(CatalogPage page) {
         return this.getOrderNum() - page.getOrderNum();

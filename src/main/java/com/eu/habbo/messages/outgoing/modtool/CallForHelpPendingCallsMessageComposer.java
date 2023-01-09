@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.modtool.ModToolIssue;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class CallForHelpPendingCallsMessageComposer extends MessageComposer {
     private final List<ModToolIssue> pendingIssues;
-
-    public CallForHelpPendingCallsMessageComposer(List<ModToolIssue> issues) {
-        this.pendingIssues = issues;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

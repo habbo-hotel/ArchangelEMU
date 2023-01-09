@@ -8,14 +8,14 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.TooLongFrameException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
 @ChannelHandler.Sharable
+@Slf4j
 public class GameMessageHandler extends ChannelInboundHandlerAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameMessageHandler.class);
+    
 
 
     @Override
@@ -31,7 +31,7 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         ClientMessage message = (ClientMessage) msg;
 
         try {
@@ -44,12 +44,12 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
 
             handler.run();
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         ctx.channel().close();
     }
 
@@ -61,9 +61,9 @@ public class GameMessageHandler extends ChannelInboundHandlerAdapter {
         }
         if (Emulator.getConfig().getBoolean("debug.mode")) {
             if (cause instanceof TooLongFrameException) {
-                LOGGER.error("Disconnecting client, reason: \"" + cause.getMessage() + "\".");
+                log.error("Disconnecting client, reason: \"" + cause.getMessage() + "\".");
             } else {
-                LOGGER.error("Disconnecting client, exception in GameMessageHander.", cause);
+                log.error("Disconnecting client, exception in GameMessageHander.", cause);
             }
         }
         ctx.channel().close();

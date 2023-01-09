@@ -9,7 +9,6 @@ import com.eu.habbo.threading.runnables.QueryDeleteHabboItems;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TIntIntProcedure;
 
 import java.util.ArrayList;
 
@@ -35,21 +34,21 @@ public class RedeemCommand extends Command {
                     items.add(item);
                     if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_")) {
                         try {
-                            credits += Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
-                        } catch (Exception e) {
+                            credits += Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
+                        } catch (Exception ignored) {
                         }
 
                     } else if (item.getBaseItem().getName().startsWith("PF_")) {
                         try {
-                            pixels += Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
-                        } catch (Exception e) {
+                            pixels += Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
+                        } catch (Exception ignored) {
                         }
                     } else if (item.getBaseItem().getName().startsWith("DF_")) {
                         int pointsType;
                         int pointsAmount;
 
-                        pointsType = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
-                        pointsAmount = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
+                        pointsType = Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
+                        pointsAmount = Integer.parseInt(item.getBaseItem().getName().split("_")[2]);
 
                         points.adjustOrPutValue(pointsType, pointsAmount, pointsAmount);
                     }
@@ -58,7 +57,7 @@ public class RedeemCommand extends Command {
                         int pointsAmount;
 
                         pointsType = 5;
-                        pointsAmount = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
+                        pointsAmount = Integer.parseInt(item.getBaseItem().getName().split("_")[2]);
 
                         points.adjustOrPutValue(pointsType, pointsAmount, pointsAmount);
                     }
@@ -89,13 +88,10 @@ public class RedeemCommand extends Command {
         }
 
         if (!points.isEmpty()) {
-            points.forEachEntry(new TIntIntProcedure() {
-                @Override
-                public boolean execute(int a, int b) {
-                    gameClient.getHabbo().givePoints(a, b);
-                    message[0] += " ," + Emulator.getTexts().getValue("seasonal.name." + a) + ": " + b;
-                    return true;
-                }
+            points.forEachEntry((a, b) -> {
+                gameClient.getHabbo().givePoints(a, b);
+                message[0] += " ," + Emulator.getTexts().getValue("seasonal.name." + a) + ": " + b;
+                return true;
             });
         }
 

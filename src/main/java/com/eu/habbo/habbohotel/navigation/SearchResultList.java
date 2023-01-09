@@ -4,37 +4,27 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomState;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@AllArgsConstructor
 public class SearchResultList implements ISerialize, Comparable<SearchResultList> {
-    public final int order;
-    public final String code;
-    public final String query;
-    public final SearchAction action;
-    public final ListMode mode;
-    public final DisplayMode hidden;
-    public final List<Room> rooms;
-    public final boolean filter;
-    public final boolean showInvisible;
-    public final DisplayOrder displayOrder;
-    public final int categoryOrder;
-
-    public SearchResultList(int order, String code, String query, SearchAction action, ListMode mode, DisplayMode hidden, List<Room> rooms, boolean filter, boolean showInvisible, DisplayOrder displayOrder, int categoryOrder) {
-        this.order = order;
-        this.code = code;
-        this.query = query;
-        this.action = action;
-        this.mode = mode;
-        this.rooms = rooms;
-        this.hidden = hidden;
-        this.filter = filter;
-        this.showInvisible = showInvisible;
-        this.displayOrder = displayOrder;
-        this.categoryOrder = categoryOrder;
-    }
+    private  final int order;
+    private  final String code;
+    private  final String query;
+    private  final SearchAction action;
+    private  final ListMode mode;
+    private  final DisplayMode hidden;
+    private  final List<Room> rooms;
+    private  final boolean filter;
+    private  final boolean showInvisible;
+    private  final DisplayOrder displayOrder;
+    private  final int categoryOrder;
 
     @Override
     public void serialize(ServerMessage message) {
@@ -42,7 +32,7 @@ public class SearchResultList implements ISerialize, Comparable<SearchResultList
         message.appendString(this.query); //Text
         message.appendInt(this.action.type); //Action Allowed (0 (Nothing), 1 (More Results), 2 (Go Back))
         message.appendBoolean(this.hidden.equals(DisplayMode.COLLAPSED)); //Closed
-        message.appendInt(this.mode.type); //Display Mode (0 (List), 1 (Thumbnails), 2 (Thumbnail no choice))
+        message.appendInt(this.mode.getType()); //Display Mode (0 (List), 1 (Thumbnails), 2 (Thumbnail no choice))
 
         synchronized (this.rooms) {
             if (!this.showInvisible) {

@@ -6,13 +6,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RoomOccupiedTilesMessageComposer extends MessageComposer {
     private final Room room;
-
-    public RoomOccupiedTilesMessageComposer(Room room) {
-        this.room = room;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -22,8 +20,8 @@ public class RoomOccupiedTilesMessageComposer extends MessageComposer {
 
         this.response.appendInt(tileList.size());
         for (RoomTile node : tileList) {
-            this.response.appendInt((int) node.x);
-            this.response.appendInt((int) node.y);
+            this.response.appendInt((int) node.getX());
+            this.response.appendInt((int) node.getY());
         }
 
         return this.response;

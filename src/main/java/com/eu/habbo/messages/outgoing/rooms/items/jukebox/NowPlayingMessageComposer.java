@@ -4,17 +4,13 @@ import com.eu.habbo.habbohotel.items.SoundTrack;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class NowPlayingMessageComposer extends MessageComposer {
     private final SoundTrack track;
     private final int playListId;
     private final int msPlayed;
-
-    public NowPlayingMessageComposer(SoundTrack track, int playListId, int msPlayed) {
-        this.track = track;
-        this.playListId = playListId;
-        this.msPlayed = msPlayed;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

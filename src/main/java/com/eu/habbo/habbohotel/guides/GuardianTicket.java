@@ -11,6 +11,7 @@ import com.eu.habbo.messages.outgoing.guides.GuideTicketResolutionMessageCompose
 import com.eu.habbo.threading.runnables.GuardianNotAccepted;
 import com.eu.habbo.threading.runnables.GuardianVotingFinish;
 import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,16 +19,26 @@ import java.util.Date;
 import java.util.Map;
 
 public class GuardianTicket {
+    @Getter
     private final THashMap<Habbo, GuardianVote> votes = new THashMap<>();
+    @Getter
     private final Habbo reporter;
+    @Getter
     private final Habbo reported;
+    @Getter
     private final Date date;
+    @Getter
     private final ArrayList<ModToolChatLog> chatLogs;
+    @Getter
     private GuardianVoteType verdict;
+    @Getter
     private int timeLeft = 120;
+    @Getter
     private int resendCount = 0;
-    private int checkSum = 0;
-    private int guardianCount = 0; //TODO: Figure out what this was supposed to do.
+    @Getter
+    private final int checkSum = 0;
+    @Getter
+    private final int guardianCount = 0; //TODO: Figure out what this was supposed to do.
 
     public GuardianTicket(Habbo reporter, Habbo reported, ArrayList<ModToolChatLog> chatLogs) {
         this.chatLogs = chatLogs;
@@ -183,46 +194,6 @@ public class GuardianTicket {
 
     public GuardianVote getVoteForGuardian(Habbo guardian) {
         return this.votes.get(guardian);
-    }
-
-    public THashMap<Habbo, GuardianVote> getVotes() {
-        return this.votes;
-    }
-
-    public int getTimeLeft() {
-        return this.timeLeft;
-    }
-
-    public GuardianVoteType getVerdict() {
-        return this.verdict;
-    }
-
-    public ArrayList<ModToolChatLog> getChatLogs() {
-        return this.chatLogs;
-    }
-
-    public int getResendCount() {
-        return this.resendCount;
-    }
-
-    public int getCheckSum() {
-        return this.checkSum;
-    }
-
-    public Habbo getReporter() {
-        return this.reporter;
-    }
-
-    public Habbo getReported() {
-        return this.reported;
-    }
-
-    public Date getDate() {
-        return this.date;
-    }
-
-    public int getGuardianCount() {
-        return this.guardianCount;
     }
 
 

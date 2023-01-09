@@ -5,13 +5,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.TIntObjectMap;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RoomDimmerPresetsComposer extends MessageComposer {
     private final TIntObjectMap<RoomMoodlightData> moodLightData;
-
-    public RoomDimmerPresetsComposer(TIntObjectMap<RoomMoodlightData> moodLightData) {
-        this.moodLightData = moodLightData;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

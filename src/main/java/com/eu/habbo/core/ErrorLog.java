@@ -1,8 +1,7 @@
 package com.eu.habbo.core;
 
 import com.eu.habbo.Emulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,9 +9,9 @@ import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Slf4j
 public class ErrorLog implements DatabaseLoggable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ErrorLog.class);
     private static final String QUERY = "INSERT INTO emulator_errors (timestamp, version, build_hash, type, stacktrace) VALUES (?, ?, ?, ?, ?)";
 
     public final String version;
@@ -38,7 +37,7 @@ public class ErrorLog implements DatabaseLoggable {
             pw.close();
             sw.close();
         } catch (IOException e1) {
-            LOGGER.error("Exception caught", e1);
+            log.error("Exception caught", e1);
         }
     }
 

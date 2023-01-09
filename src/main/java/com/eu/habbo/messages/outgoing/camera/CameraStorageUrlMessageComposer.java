@@ -3,13 +3,12 @@ package com.eu.habbo.messages.outgoing.camera;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CameraStorageUrlMessageComposer extends MessageComposer {
     private final String URL;
 
-    public CameraStorageUrlMessageComposer(String url) {
-        this.URL = url;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

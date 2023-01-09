@@ -4,17 +4,14 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionMusicDisc;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class JukeboxSongDisksMessageComposer extends MessageComposer {
     private final List<InteractionMusicDisc> songs;
     private final int totalLength;
-
-    public JukeboxSongDisksMessageComposer(List<InteractionMusicDisc> songs, int totalLength) {
-        this.songs = songs;
-        this.totalLength = totalLength;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

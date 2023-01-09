@@ -7,22 +7,18 @@ import com.eu.habbo.habbohotel.catalog.CatalogPageLayouts;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@AllArgsConstructor
 public class ClubGiftInfoComposer extends MessageComposer {
 
     private final int daysTillNextGift;
     private final int availableGifts;
     private final int daysAsHc;
-
-    public ClubGiftInfoComposer(int daysTillNextGift, int availableGifts, int daysAsHc) {
-        this.daysTillNextGift = daysTillNextGift;
-        this.availableGifts = availableGifts;
-        this.daysAsHc = daysAsHc;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

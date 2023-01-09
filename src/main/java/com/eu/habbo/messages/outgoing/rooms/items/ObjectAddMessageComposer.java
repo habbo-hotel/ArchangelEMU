@@ -6,15 +6,13 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ObjectAddMessageComposer extends MessageComposer {
     private final HabboItem item;
     private final String itemOwnerName;
 
-    public ObjectAddMessageComposer(HabboItem item, String itemOwnerName) {
-        this.item = item;
-        this.itemOwnerName = itemOwnerName == null ? "" : itemOwnerName;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -1,13 +1,12 @@
 package com.eu.habbo.habbohotel.guides;
 
-public class GuideChatMessage {
-    public final int userId;
-    public final String message;
-    public final int timestamp;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    public GuideChatMessage(int userId, String message, int timestamp) {
-        this.userId = userId;
-        this.message = message;
-        this.timestamp = timestamp;
-    }
+@Getter
+@AllArgsConstructor
+public class GuideChatMessage {
+    private final int userId;
+    private final String message;
+    private final int timestamp;
 }

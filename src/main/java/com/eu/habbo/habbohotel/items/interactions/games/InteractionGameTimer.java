@@ -15,29 +15,36 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.games.GameTimer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+@Slf4j
 public class InteractionGameTimer extends HabboItem implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionGameTimer.class);
 
     private int[] TIMER_INTERVAL_STEPS = new int[] { 30, 60, 120, 180, 300, 600 };
 
     private int baseTime = 0;
+    @Getter
+    @Setter
     private int timeNow = 0;
+    @Getter
+    @Setter
     private boolean isRunning = false;
+    @Getter
     private boolean isPaused = false;
+    @Setter
     private boolean threadActive = false;
 
     public enum InteractionGameTimerAction {
         START_STOP(1),
         INCREASE_TIME(2);
 
-        private int action;
+        private final int action;
 
         InteractionGameTimerAction(int action) {
             this.action = action;
@@ -95,7 +102,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
                         }
                     }).toArray();
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
@@ -127,7 +134,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
                     room.addGame(game);
                     game.initialise();
                 } catch (Exception e) {
-                    LOGGER.error("Caught exception", e);
+                    log.error("Caught exception", e);
                 }
             }
         }
@@ -323,31 +330,8 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
         return true;
     }
 
-    public boolean isRunning() {
-        return this.isRunning;
-    }
-
-    public void setRunning(boolean running) {
-        this.isRunning = running;
-    }
-
-    public void setThreadActive(boolean threadActive) {
-        this.threadActive = threadActive;
-    }
-
-    public boolean isPaused() {
-        return this.isPaused;
-    }
-
     public void reduceTime() {
         this.timeNow--;
     }
 
-    public int getTimeNow() {
-        return this.timeNow;
-    }
-
-    public void setTimeNow(int timeNow) {
-        this.timeNow = timeNow;
-    }
 }

@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum RoomUnitStatus {
     MOVE("mv", true),
 
@@ -81,18 +86,14 @@ public enum RoomUnitStatus {
     GROW_6("grw6"),
     GROW_7("grw7");
 
-    public final String key;
-    public final boolean removeWhenWalking;
+    private final String key;
+    private final boolean removeWhenWalking;
 
     RoomUnitStatus(String key) {
         this.key = key;
         this.removeWhenWalking = false;
     }
 
-    RoomUnitStatus(String key, boolean removeWhenWalking) {
-        this.key = key;
-        this.removeWhenWalking = removeWhenWalking;
-    }
 
     public static RoomUnitStatus fromString(String key) {
         for (RoomUnitStatus status : values()) {

@@ -9,8 +9,7 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,12 +20,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Slf4j
 public class ExtendedProfileMessageComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExtendedProfileMessageComposer.class);
 
     private final HabboInfo habboInfo;
     private Habbo habbo;
-    private GameClient viewer;
+    private final GameClient viewer;
 
     public ExtendedProfileMessageComposer(HabboInfo habboInfo, GameClient viewer) {
         this.habboInfo = habboInfo;
@@ -64,7 +63,7 @@ public class ExtendedProfileMessageComposer extends MessageComposer {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
         this.response.appendInt(achievementScore);
@@ -76,8 +75,8 @@ public class ExtendedProfileMessageComposer extends MessageComposer {
         List<Guild> guilds = new ArrayList<>();
         if (this.habbo != null) {
             List<Integer> toRemove = new ArrayList<>();
-            for (int index = this.habbo.getHabboStats().guilds.size(); index > 0; index--) {
-                int i = this.habbo.getHabboStats().guilds.get(index - 1);
+            for (int index = this.habbo.getHabboStats().getGuilds().size(); index > 0; index--) {
+                int i = this.habbo.getHabboStats().getGuilds().get(index - 1);
                 if (i == 0)
                     continue;
 
@@ -102,9 +101,9 @@ public class ExtendedProfileMessageComposer extends MessageComposer {
             this.response.appendInt(guild.getId());
             this.response.appendString(guild.getName());
             this.response.appendString(guild.getBadge());
-            this.response.appendString(Emulator.getGameEnvironment().getGuildManager().getSymbolColor(guild.getColorOne()).valueA);
-            this.response.appendString(Emulator.getGameEnvironment().getGuildManager().getSymbolColor(guild.getColorTwo()).valueA);
-            this.response.appendBoolean(this.habbo != null && guild.getId() == this.habbo.getHabboStats().guild);
+            this.response.appendString(Emulator.getGameEnvironment().getGuildManager().getSymbolColor(guild.getColorOne()).getValueA());
+            this.response.appendString(Emulator.getGameEnvironment().getGuildManager().getSymbolColor(guild.getColorTwo()).getValueA());
+            this.response.appendBoolean(this.habbo != null && guild.getId() == this.habbo.getHabboStats().getGuild());
             this.response.appendInt(guild.getOwnerId());
             this.response.appendBoolean(guild.getOwnerId() == this.habboInfo.getId());
         }

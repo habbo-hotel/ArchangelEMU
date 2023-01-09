@@ -16,30 +16,25 @@ import com.eu.habbo.plugin.events.users.UserCommandEvent;
 import com.eu.habbo.plugin.events.users.UserExecuteCommandEvent;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Slf4j
 public class CommandHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommandHandler.class);
-
     private final static THashMap<String, Command> commands = new THashMap<>(5);
-    private static final Comparator<Command> ALPHABETICAL_ORDER = new Comparator<Command>() {
-        public int compare(Command c1, Command c2) {
-            int res = String.CASE_INSENSITIVE_ORDER.compare(c1.permission, c2.permission);
-            return (res != 0) ? res : c1.permission.compareTo(c2.permission);
-        }
+    private static final Comparator<Command> ALPHABETICAL_ORDER = (c1, c2) -> {
+        int res = String.CASE_INSENSITIVE_ORDER.compare(c1.permission, c2.permission);
+        return (res != 0) ? res : c1.permission.compareTo(c2.permission);
     };
 
     public CommandHandler() {
         long millis = System.currentTimeMillis();
         this.reloadCommands();
-        LOGGER.info("Command Handler -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Command Handler -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public static void addCommand(Command command) {
@@ -54,9 +49,9 @@ public class CommandHandler {
         try {
             //command.getConstructor().setAccessible(true);
             addCommand(command.newInstance());
-            LOGGER.debug("Added command: {}", command.getName());
+            log.debug("Added command: {}", command.getName());
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
@@ -71,7 +66,7 @@ public class CommandHandler {
                 if (parts.length >= 1) {
                     for (Command command : commands.values()) {
                         for (String s : command.keys) {
-                            if (s.toLowerCase().equals(parts[0].toLowerCase())) {
+                            if (s.equalsIgnoreCase(parts[0])) {
                                 boolean succes = false;
                                 if (command.permission == null || gameClient.getHabbo().hasPermission(command.permission, gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && (gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) || gameClient.getHabbo().hasPermission(Permission.ACC_PLACEFURNI) || (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboInfo().getCurrentRoom().getGuildId() > 0 && gameClient.getHabbo().getHabboInfo().getCurrentRoom().getGuildRightLevel(gameClient.getHabbo()).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS)))) {
                                     try {
@@ -90,7 +85,7 @@ public class CommandHandler {
 
                                         succes = event.succes;
                                     } catch (Exception e) {
-                                        LOGGER.error("Caught exception", e);
+                                        log.error("Caught exception", e);
                                     }
 
                                     if (gameClient.getHabbo().getHabboInfo().getRank().isLogCommands()) {
@@ -137,7 +132,7 @@ public class CommandHandler {
                                 s = new StringBuilder(s.substring(0, s.length() - 1));
 
                                 for (PetCommand command : pet.getPetData().getPetCommands()) {
-                                    if (command.key.equalsIgnoreCase(s.toString())) {
+                                    if (command.getKey().equalsIgnoreCase(s.toString())) {
                                         if (pet instanceof RideablePet && ((RideablePet) pet).getRider() != null) {
                                             if (((RideablePet) pet).getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
                                                 ((RideablePet) pet).getRider().getHabboInfo().dismountPet();
@@ -145,7 +140,7 @@ public class CommandHandler {
                                             break;
                                         }
 
-                                        if (command.level <= pet.getLevel())
+                                        if (command.getLevel() <= pet.getLevel())
                                             pet.handleCommand(command, gameClient.getHabbo(), args);
                                         else
                                             pet.say(pet.getPetData().randomVocal(PetVocalsType.UNKNOWN_COMMAND));
@@ -307,7 +302,7 @@ public class CommandHandler {
                 if (allowedCommands.contains(command))
                     continue;
 
-                if (permissions.contains(command.permission) && permissions.get(command.permission).setting != PermissionSetting.DISALLOWED) {
+                if (permissions.contains(command.permission) && permissions.get(command.permission).getSetting() != PermissionSetting.DISALLOWED) {
                     allowedCommands.add(command);
                 }
             }
@@ -320,6 +315,6 @@ public class CommandHandler {
 
     public void dispose() {
         commands.clear();
-        LOGGER.info("Command Handler -> Disposed!");
+        log.info("Command Handler -> Disposed!");
     }
 }

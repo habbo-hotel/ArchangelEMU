@@ -4,13 +4,12 @@ import com.eu.habbo.habbohotel.items.SoundTrack;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class OfficialSongIdMessageComposer extends MessageComposer {
     private final SoundTrack track;
 
-    public OfficialSongIdMessageComposer(SoundTrack track) {
-        this.track = track;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

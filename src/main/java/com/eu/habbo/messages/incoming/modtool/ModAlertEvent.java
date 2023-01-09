@@ -41,7 +41,7 @@ public class ModAlertEvent extends MessageHandler {
 
         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
         if (item == null) return;
-        modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
+        modToolSanctions.run(userId, this.client.getHabbo(), item.getSanctionLevel(), cfhTopic, message, 0, false, 0);
 
 
     }

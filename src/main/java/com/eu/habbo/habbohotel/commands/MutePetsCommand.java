@@ -11,8 +11,8 @@ public class MutePetsCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
-        gameClient.getHabbo().getHabboStats().ignorePets = !gameClient.getHabbo().getHabboStats().ignorePets;
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_mute_pets." + (gameClient.getHabbo().getHabboStats().ignorePets ? "ignored" : "unignored")), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().getHabboStats().setIgnorePets(!gameClient.getHabbo().getHabboStats().isIgnorePets());
+        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_mute_pets." + (gameClient.getHabbo().getHabboStats().isIgnorePets() ? "ignored" : "unignored")), RoomChatMessageBubbles.ALERT);
         return true;
     }
 }

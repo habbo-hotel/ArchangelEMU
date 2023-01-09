@@ -9,8 +9,8 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
 import com.eu.habbo.habbohotel.guilds.forums.ForumThreadState;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.UpdateMessageMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
@@ -64,13 +64,10 @@ public class ModerateMessageEvent extends MessageHandler {
         Emulator.getThreading().run(comment);
 
         switch (state) {
-            case 10:
-            case 20:
-                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_MESSAGE_HIDDEN.key).compose());
-                break;
-            case 1:
-                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_MESSAGE_RESTORED.key).compose());
-                break;
+            case 10, 20 ->
+                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_MESSAGE_HIDDEN.getKey()).compose());
+            case 1 ->
+                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_MESSAGE_RESTORED.getKey()).compose());
         }
 
     }

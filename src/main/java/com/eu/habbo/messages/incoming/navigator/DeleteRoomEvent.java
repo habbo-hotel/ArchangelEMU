@@ -11,8 +11,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.plugin.events.navigator.NavigatorRoomDeletedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,8 +19,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class DeleteRoomEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteRoomEvent.class);
+
 
     @Override
     public void handle() throws Exception {
@@ -49,8 +49,7 @@ public class DeleteRoomEvent extends MessageHandler {
 
                 List<Pet> pets = new ArrayList<>(room.getCurrentPets().valueCollection());
                 for (Pet pet : pets) {
-                    if (pet instanceof RideablePet) {
-                        RideablePet rideablePet = (RideablePet) pet;
+                    if (pet instanceof RideablePet rideablePet) {
                         if (rideablePet.getRider() != null) {
                             rideablePet.getRider().getHabboInfo().dismountPet(true);
                         }
@@ -109,12 +108,12 @@ public class DeleteRoomEvent extends MessageHandler {
                         filter.execute();
                     }
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 }
             } else {
                 String message = Emulator.getTexts().getValue("scripter.warning.room.delete").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", room.getName()).replace("%roomowner%", room.getOwnerName());
                 ScripterManager.scripterDetected(this.client, message);
-                LOGGER.info(message);
+                log.info(message);
             }
         }
     }

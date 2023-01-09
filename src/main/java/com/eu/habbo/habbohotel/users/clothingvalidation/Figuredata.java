@@ -1,6 +1,5 @@
 package com.eu.habbo.habbohotel.users.clothingvalidation;
 
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -84,7 +83,7 @@ public class Figuredata {
                     }
                 }
 
-                palettes.put(palette.id, palette);
+                palettes.put(palette.getId(), palette);
             }
         }
 
@@ -120,7 +119,7 @@ public class Figuredata {
                     }
                 }
 
-                settypes.put(settype.type, settype);
+                settypes.put(settype.getType(), settype);
             }
         }
 

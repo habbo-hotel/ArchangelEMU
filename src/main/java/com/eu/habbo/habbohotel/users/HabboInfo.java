@@ -14,46 +14,71 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
-import gnu.trove.procedure.TIntIntProcedure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
+@Getter
 public class HabboInfo implements Runnable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HabboInfo.class);
-
+    
     public boolean firstVisit = false;
+    @Setter
     private String username;
+    @Setter
     private String motto;
+    @Setter
     private String look;
+    @Setter
     private HabboGender gender;
+    @Setter
     private String mail;
+    @Setter
     private String sso;
+    @Setter
     private String ipRegister;
+    @Setter
     private String ipLogin;
     private int id;
+    @Setter
     private int accountCreated;
+    @Setter
     private Rank rank;
     private int credits;
+    @Setter
     private int lastOnline;
+    @Setter
     private int homeRoom;
+    @Setter
     private boolean online;
+    @Setter
     private int loadingRoom;
+    @Setter
     private Room currentRoom;
+    @Setter
     private int roomQueueId;
+    @Setter
     private RideablePet riding;
+    @Setter
     private Class<? extends Game> currentGame;
     private TIntIntHashMap currencies;
+    @Setter
     private GamePlayer gamePlayer;
+    @Setter
     private int photoRoomId;
+    @Setter
     private int photoTimestamp;
+    @Setter
     private String photoURL;
+    @Setter
     private String photoJSON;
+    @Setter
     private int webPublishTimestamp;
+    @Setter
     private String machineID;
     private List<NavigatorSavedSearch> savedSearches = new ArrayList<>();
     private List<MessengerCategory> messengerCategories = new ArrayList<>();
@@ -72,8 +97,8 @@ public class HabboInfo implements Runnable {
             this.rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(set.getInt("rank"));
 
             if (this.rank == null) {
-                LOGGER.error("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
-                LOGGER.warn(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+                log.error("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+                log.warn(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
                 this.rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(1);
             }
 
@@ -85,7 +110,7 @@ public class HabboInfo implements Runnable {
             this.online = false;
             this.currentRoom = null;
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         this.loadCurrencies();
@@ -104,30 +129,27 @@ public class HabboInfo implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
     private void saveCurrencies() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_currency (user_id, type, amount) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE amount = ?")) {
-            this.currencies.forEachEntry(new TIntIntProcedure() {
-                @Override
-                public boolean execute(int a, int b) {
-                    try {
-                        statement.setInt(1, HabboInfo.this.getId());
-                        statement.setInt(2, a);
-                        statement.setInt(3, b);
-                        statement.setInt(4, b);
-                        statement.addBatch();
-                    } catch (SQLException e) {
-                        LOGGER.error("Caught SQL exception", e);
-                    }
-                    return true;
+            this.currencies.forEachEntry((a, b) -> {
+                try {
+                    statement.setInt(1, HabboInfo.this.getId());
+                    statement.setInt(2, a);
+                    statement.setInt(3, b);
+                    statement.setInt(4, b);
+                    statement.addBatch();
+                } catch (SQLException e) {
+                    log.error("Caught SQL exception", e);
                 }
+                return true;
             });
             statement.executeBatch();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -142,7 +164,7 @@ public class HabboInfo implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -167,7 +189,7 @@ public class HabboInfo implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -178,7 +200,7 @@ public class HabboInfo implements Runnable {
             statement.setInt(1, search.getId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -193,7 +215,7 @@ public class HabboInfo implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -217,7 +239,7 @@ public class HabboInfo implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -228,7 +250,7 @@ public class HabboInfo implements Runnable {
             statement.setInt(1, category.getId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -250,96 +272,8 @@ public class HabboInfo implements Runnable {
         this.run();
     }
 
-    public int getId() {
-        return this.id;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getMotto() {
-        return this.motto;
-    }
-
-    public void setMotto(String motto) {
-        this.motto = motto;
-    }
-
-    public Rank getRank() {
-        return this.rank;
-    }
-
-    public void setRank(Rank rank) {
-        this.rank = rank;
-    }
-
-    public String getLook() {
-        return this.look;
-    }
-
-    public void setLook(String look) {
-        this.look = look;
-    }
-
-    public HabboGender getGender() {
-        return this.gender;
-    }
-
-    public void setGender(HabboGender gender) {
-        this.gender = gender;
-    }
-
-    public String getMail() {
-        return this.mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public String getSso() {
-        return this.sso;
-    }
-
-    public void setSso(String sso) {
-        this.sso = sso;
-    }
-
-    public String getIpRegister() {
-        return this.ipRegister;
-    }
-
-    public void setIpRegister(String ipRegister) {
-        this.ipRegister = ipRegister;
-    }
-
-    public String getIpLogin() {
-        return this.ipLogin;
-    }
-
-    public void setIpLogin(String ipLogin) {
-        this.ipLogin = ipLogin;
-    }
-
-    public int getAccountCreated() {
-        return this.accountCreated;
-    }
-
-    public void setAccountCreated(int accountCreated) {
-        this.accountCreated = accountCreated;
-    }
-
     public boolean canBuy(CatalogItem item) {
         return this.credits >= item.getCredits() && this.getCurrencies().get(item.getPointsType()) >= item.getPoints();
-    }
-
-    public int getCredits() {
-        return this.credits;
     }
 
     public void setCredits(int credits) {
@@ -364,62 +298,6 @@ public class HabboInfo implements Runnable {
     public void addPixels(int pixels) {
         this.addCurrencyAmount(0, pixels);
         this.run();
-    }
-
-    public int getLastOnline() {
-        return this.lastOnline;
-    }
-
-    public void setLastOnline(int lastOnline) {
-        this.lastOnline = lastOnline;
-    }
-
-    public int getHomeRoom() {
-        return this.homeRoom;
-    }
-
-    public void setHomeRoom(int homeRoom) {
-        this.homeRoom = homeRoom;
-    }
-
-    public boolean isOnline() {
-        return this.online;
-    }
-
-    public void setOnline(boolean value) {
-        this.online = value;
-    }
-
-    public int getLoadingRoom() {
-        return this.loadingRoom;
-    }
-
-    public void setLoadingRoom(int loadingRoom) {
-        this.loadingRoom = loadingRoom;
-    }
-
-    public Room getCurrentRoom() {
-        return this.currentRoom;
-    }
-
-    public void setCurrentRoom(Room room) {
-        this.currentRoom = room;
-    }
-
-    public int getRoomQueueId() {
-        return this.roomQueueId;
-    }
-
-    public void setRoomQueueId(int roomQueueId) {
-        this.roomQueueId = roomQueueId;
-    }
-
-    public RideablePet getRiding() {
-        return this.riding;
-    }
-
-    public void setRiding(RideablePet riding) {
-        this.riding = riding;
     }
 
     public void dismountPet() {
@@ -460,79 +338,9 @@ public class HabboInfo implements Runnable {
         roomUnit.statusUpdate(true);
     }
 
-    public Class<? extends Game> getCurrentGame() {
-        return this.currentGame;
-    }
-
-    public void setCurrentGame(Class<? extends Game> currentGame) {
-        this.currentGame = currentGame;
-    }
-
     public boolean isInGame() {
         return this.currentGame != null;
     }
-
-    public synchronized GamePlayer getGamePlayer() {
-        return this.gamePlayer;
-    }
-
-    public synchronized void setGamePlayer(GamePlayer gamePlayer) {
-        this.gamePlayer = gamePlayer;
-    }
-
-    public int getPhotoRoomId() {
-        return this.photoRoomId;
-    }
-
-    public void setPhotoRoomId(int roomId) {
-        this.photoRoomId = roomId;
-    }
-
-    public int getPhotoTimestamp() {
-        return this.photoTimestamp;
-    }
-
-    public void setPhotoTimestamp(int photoTimestamp) {
-        this.photoTimestamp = photoTimestamp;
-    }
-
-    public String getPhotoURL() {
-        return this.photoURL;
-    }
-
-    public void setPhotoURL(String photoURL) {
-        this.photoURL = photoURL;
-    }
-
-    public String getPhotoJSON() {
-        return this.photoJSON;
-    }
-
-    public void setPhotoJSON(String photoJSON) {
-        this.photoJSON = photoJSON;
-    }
-
-    public int getWebPublishTimestamp() {
-        return this.webPublishTimestamp;
-    }
-
-    public void setWebPublishTimestamp(int webPublishTimestamp) {
-        this.webPublishTimestamp = webPublishTimestamp;
-    }
-
-    public String getMachineID() {
-        return this.machineID;
-    }
-
-    public void setMachineID(String machineID) {
-        this.machineID = machineID;
-    }
-
-    public List<NavigatorSavedSearch> getSavedSearches() {
-        return this.savedSearches;
-    }
-
-    public List<MessengerCategory> getMessengerCategories() { return this.messengerCategories; }
 
     @Override
     public void run() {
@@ -554,7 +362,7 @@ public class HabboInfo implements Runnable {
             statement.setInt(13, this.id);
             statement.executeUpdate();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 

@@ -3,23 +3,17 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class CompetitionEntrySubmitResultComposer extends MessageComposer {
     private final int unknownInt1;
     private final String unknownString1;
     private final int result;
     private final List<String> unknownStringList1;
     private final List<String> unknownStringList2;
-
-    public CompetitionEntrySubmitResultComposer(int unknownInt1, String unknownString1, int result, List<String> unknownStringList1, List<String> unknownStringList2) {
-        this.unknownInt1 = unknownInt1;
-        this.unknownString1 = unknownString1;
-        this.result = result;
-        this.unknownStringList1 = unknownStringList1;
-        this.unknownStringList2 = unknownStringList2;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

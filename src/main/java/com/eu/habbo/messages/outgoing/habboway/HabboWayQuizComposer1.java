@@ -3,15 +3,12 @@ package com.eu.habbo.messages.outgoing.habboway;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class HabboWayQuizComposer1 extends MessageComposer {
     public final String name;
     public final int[] items;
-
-    public HabboWayQuizComposer1(String name, int[] items) {
-        this.name = name;
-        this.items = items;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

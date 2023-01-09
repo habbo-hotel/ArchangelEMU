@@ -38,8 +38,8 @@ public class InteractionCrackable extends HabboItem {
 
         serverMessage.appendInt(7 + (this.isLimited() ? 256 : 0));
 
-        serverMessage.appendString(Emulator.getGameEnvironment().getItemManager().calculateCrackState(Integer.valueOf(this.getExtradata()), Emulator.getGameEnvironment().getItemManager().getCrackableCount(this.getBaseItem().getId()), this.getBaseItem()) + "");
-        serverMessage.appendInt(Integer.valueOf(this.getExtradata()));
+        serverMessage.appendString(Emulator.getGameEnvironment().getItemManager().calculateCrackState(Integer.parseInt(this.getExtradata()), Emulator.getGameEnvironment().getItemManager().getCrackableCount(this.getBaseItem().getId()), this.getBaseItem()) + "");
+        serverMessage.appendInt(Integer.parseInt(this.getExtradata()));
         serverMessage.appendInt(Emulator.getGameEnvironment().getItemManager().getCrackableCount(this.getBaseItem().getId()));
 
         super.serializeExtradata(serverMessage);
@@ -96,7 +96,7 @@ public class InteractionCrackable extends HabboItem {
             CrackableReward rewardData = Emulator.getGameEnvironment().getItemManager().getCrackableData(this.getBaseItem().getId());
 
             if (rewardData != null) {
-                if (rewardData.requiredEffect > 0 && habbo.getRoomUnit().getEffectId() != rewardData.requiredEffect)
+                if (rewardData.getRequiredEffect() > 0 && habbo.getRoomUnit().getEffectId() != rewardData.getRequiredEffect())
                     return;
 
                 if(this.ticks < 1)
@@ -109,26 +109,24 @@ public class InteractionCrackable extends HabboItem {
                 this.needsUpdate(true);
                 room.updateItem(this);
 
-                if (!rewardData.achievementTick.isEmpty()) {
-                    AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement(rewardData.achievementTick));
+                if (!rewardData.getAchievementTick().isEmpty()) {
+                    AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement(rewardData.getAchievementTick()));
                 }
                 if (!this.cracked && this.ticks == Emulator.getGameEnvironment().getItemManager().getCrackableCount(this.getBaseItem().getId())) {
                     this.cracked = true;
                     Emulator.getThreading().run(new CrackableExplode(room, this, habbo, !this.placeInRoom(), this.getX(), this.getY()), 1500);
 
-                    if (!rewardData.achievementCracked.isEmpty()) {
-                        AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement(rewardData.achievementCracked));
+                    if (!rewardData.getAchievementCracked().isEmpty()) {
+                        AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement(rewardData.getAchievementCracked()));
                     }
 
-                    if (rewardData.subscriptionType != null && rewardData.subscriptionDuration > 0) {
+                    if (rewardData.getSubscriptionType() != null && rewardData.getSubscriptionDuration() > 0) {
                         // subscriptions are given immediately upon cracking
-                        switch (rewardData.subscriptionType) {
-                            case HABBO_CLUB:
-                                habbo.getHabboStats().createSubscription(SubscriptionHabboClub.HABBO_CLUB, rewardData.subscriptionDuration * 86400);
-                                break;
-                            case BUILDERS_CLUB:
-                                habbo.getHabboStats().createSubscription("BUILDERS_CLUB", rewardData.subscriptionDuration * 86400);
-                                break;
+                        switch (rewardData.getSubscriptionType()) {
+                            case HABBO_CLUB ->
+                                    habbo.getHabboStats().createSubscription(SubscriptionHabboClub.HABBO_CLUB, rewardData.getSubscriptionDuration() * 86400);
+                            case BUILDERS_CLUB ->
+                                    habbo.getHabboStats().createSubscription("BUILDERS_CLUB", rewardData.getSubscriptionDuration() * 86400);
                         }
                     }
                 }

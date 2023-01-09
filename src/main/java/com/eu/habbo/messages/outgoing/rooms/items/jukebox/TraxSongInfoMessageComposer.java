@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.items.SoundTrack;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class TraxSongInfoMessageComposer extends MessageComposer {
     private final List<SoundTrack> tracks;
-
-    public TraxSongInfoMessageComposer(List<SoundTrack> tracks) {
-        this.tracks = tracks;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

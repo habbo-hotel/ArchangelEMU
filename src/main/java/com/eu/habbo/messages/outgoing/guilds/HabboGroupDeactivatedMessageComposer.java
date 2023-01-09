@@ -3,13 +3,11 @@ package com.eu.habbo.messages.outgoing.guilds;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class HabboGroupDeactivatedMessageComposer extends MessageComposer {
-    private int guildId;
-
-    public HabboGroupDeactivatedMessageComposer(int guildId) {
-        this.guildId = guildId;
-    }
+    private final int guildId;
 
     @Override
     protected ServerMessage composeInternal() {

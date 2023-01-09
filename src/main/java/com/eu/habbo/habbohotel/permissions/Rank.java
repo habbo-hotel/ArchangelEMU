@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.permissions;
 
 import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -8,30 +9,44 @@ import java.sql.SQLException;
 
 public class Rank {
 
+    @Getter
     private final int id;
 
 
+    @Getter
     private final int level;
+    @Getter
     private final THashMap<String, Permission> permissions;
+    @Getter
     private final THashMap<String, String> variables;
+    @Getter
     private String name;
+    @Getter
     private String badge;
+    @Getter
     private int roomEffect;
 
 
+    @Getter
     private boolean logCommands;
 
 
+    @Getter
     private String prefix;
 
 
+    @Getter
     private String prefixColor;
 
 
     private boolean hasPrefix;
+    @Getter
     private int diamondsTimerAmount;
+    @Getter
     private int creditsTimerAmount;
+    @Getter
     private int pixelsTimerAmount;
+    @Getter
     private int gotwTimerAmount;
 
     public Rank(ResultSet set) throws SQLException {
@@ -74,66 +89,16 @@ public class Rank {
         if (this.permissions.containsKey(key)) {
             Permission permission = this.permissions.get(key);
 
-            return permission.setting == PermissionSetting.ALLOWED || permission.setting == PermissionSetting.ROOM_OWNER && isRoomOwner;
+            return permission.getSetting() == PermissionSetting.ALLOWED || permission.getSetting() == PermissionSetting.ROOM_OWNER && isRoomOwner;
 
         }
 
         return false;
     }
 
-
-    public int getId() {
-        return this.id;
-    }
-
-
-    public int getLevel() {
-        return this.level;
-    }
-
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getBadge() {
-        return this.badge;
-    }
-
-    public THashMap<String, Permission> getPermissions() {
-        return this.permissions;
-    }
-
-    public THashMap<String, String> getVariables() {
-        return this.variables;
-    }
-
-    public int getRoomEffect() {
-        return this.roomEffect;
-    }
-
-    public boolean isLogCommands() {
-        return this.logCommands;
-    }
-
-    public String getPrefix() {
-        return this.prefix;
-    }
-
-    public String getPrefixColor() {
-        return this.prefixColor;
-    }
-
     public boolean hasPrefix() {
         return this.hasPrefix;
     }
 
-    public int getDiamondsTimerAmount() { return this.diamondsTimerAmount; }
-
-    public int getCreditsTimerAmount() { return this.creditsTimerAmount; }
-
-    public int getPixelsTimerAmount() { return this.pixelsTimerAmount; }
-
-    public int getGotwTimerAmount() { return this.gotwTimerAmount; }
 }
 

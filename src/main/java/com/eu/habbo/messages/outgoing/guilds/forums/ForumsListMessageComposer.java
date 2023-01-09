@@ -5,22 +5,18 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Iterator;
 import java.util.Set;
 
+@AllArgsConstructor
 public class ForumsListMessageComposer extends MessageComposer {
     private final Set<Guild> guilds;
     private final Habbo habbo;
     private final int mode;
     private final int index;
 
-    public ForumsListMessageComposer(Set<Guild> guilds, Habbo habbo, int mode, int index) {
-        this.guilds = guilds;
-        this.habbo = habbo;
-        this.mode = mode;
-        this.index = index;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -31,7 +27,7 @@ public class ForumsListMessageComposer extends MessageComposer {
         this.response.appendInt(this.index);
 
         Iterator<Guild> it = guilds.iterator();
-        int count = guilds.size() > 20 ? 20 : guilds.size();
+        int count = Math.min(guilds.size(), 20);
 
         this.response.appendInt(count);
 

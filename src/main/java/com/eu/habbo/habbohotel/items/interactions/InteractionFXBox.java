@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.habbohotel.users.inventory.EffectsComponent;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
@@ -50,7 +49,7 @@ public class InteractionFXBox extends InteractionDefault {
             if(client.getHabbo().getInventory().getEffectsComponent().ownsEffect(effectId))
                 return;
 
-            EffectsComponent.HabboEffect effect = client.getHabbo().getInventory().getEffectsComponent().createEffect(effectId, 0);
+            client.getHabbo().getInventory().getEffectsComponent().createEffect(effectId, 0);
             client.getHabbo().getInventory().getEffectsComponent().enableEffect(effectId);
 
             this.setExtradata("1");

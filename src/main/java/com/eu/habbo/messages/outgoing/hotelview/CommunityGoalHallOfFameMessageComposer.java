@@ -5,17 +5,15 @@ import com.eu.habbo.habbohotel.hotelview.HallOfFameWinner;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@AllArgsConstructor
 public class CommunityGoalHallOfFameMessageComposer extends MessageComposer {
     private final HallOfFame hallOfFame;
-
-    public CommunityGoalHallOfFameMessageComposer(HallOfFame hallOfFame) {
-        this.hallOfFame = hallOfFame;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

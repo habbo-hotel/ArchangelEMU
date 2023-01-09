@@ -9,8 +9,8 @@ import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectDataUpdateMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import gnu.trove.TCollections;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionMuteArea extends InteractionCustomValues {
-    public static THashMap<String, String> defaultValues = new THashMap<String, String>() {
+    public static THashMap<String, String> defaultValues = new THashMap<>() {
         {
             this.put("tilesLeft", "0");
         }
@@ -43,7 +43,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
         }
     };
 
-    private THashSet<RoomTile> tiles;
+    private final THashSet<RoomTile> tiles;
 
     public InteractionMuteArea(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem, defaultValues);
@@ -98,9 +98,9 @@ public class InteractionMuteArea extends InteractionCustomValues {
         /*try {
             return new Rectangle(
                     this.getX() - Integer.parseInt(this.values.get("tilesBack")),
-                    this.getY() + Integer.valueOf(this.values.get("tilesLeft")) - (Integer.valueOf(this.values.get("tilesLeft")) + Integer.valueOf(this.values.get("tilesRight"))),
-                    Integer.valueOf(this.values.get("tilesLeft")) + Integer.valueOf(this.values.get("tilesRight")) + 1,
-                    Integer.valueOf(this.values.get("tilesFront")) + Integer.valueOf(this.values.get("tilesBack")) + 1).contains(location.x, location.y);
+                    this.getY() + Integer.parseInt(this.values.get("tilesLeft")) - (Integer.parseInt(this.values.get("tilesLeft")) + Integer.parseInt(this.values.get("tilesRight"))),
+                    Integer.parseInt(this.values.get("tilesLeft")) + Integer.parseInt(this.values.get("tilesRight")) + 1,
+                    Integer.parseInt(this.values.get("tilesFront")) + Integer.parseInt(this.values.get("tilesBack")) + 1).contains(location.x, location.y);
         } catch (Exception e) {
             return false;
         }*/
@@ -117,7 +117,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
         for(int x = minX; x <= maxX; x++) {
             for(int y = minY; y <= maxY; y++) {
                 RoomTile tile = room.getLayout().getTile((short)x, (short)y);
-                if(tile != null && tile.state != RoomTileState.INVALID)
+                if(tile != null && tile.getState() != RoomTileState.INVALID)
                     this.tiles.add(tile);
             }
         }
@@ -141,8 +141,8 @@ public class InteractionMuteArea extends InteractionCustomValues {
             for(RoomTile tile : this.tiles) {
                 id--;
                 HabboItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
-                item.setX(tile.x);
-                item.setY(tile.y);
+                item.setX(tile.getX());
+                item.setY(tile.getY());
                 item.setZ(tile.relativeHeight());
                 items.add(item);
             }

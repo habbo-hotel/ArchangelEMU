@@ -7,17 +7,13 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GuildFurniContextMenuInfoMessageComposer extends MessageComposer {
-    private final HabboItem item;
-    private final Guild guild;
     private final Habbo habbo;
-
-    public GuildFurniContextMenuInfoMessageComposer(Habbo habbo, Guild guild, HabboItem item) {
-        this.habbo = habbo;
-        this.item = item;
-        this.guild = guild;
-    }
+    private final Guild guild;
+    private final HabboItem item;
 
     @Override
     protected ServerMessage composeInternal() {

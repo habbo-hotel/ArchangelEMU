@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.permissions.Rank;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Set;
 
+@Slf4j
 public class BadgesComponent {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BadgesComponent.class);
 
+    @Getter
     private final THashSet<HabboBadge> badges = new THashSet<>();
 
     public BadgesComponent(Habbo habbo) {
@@ -55,7 +56,7 @@ public class BadgesComponent {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return badgesList;
@@ -82,7 +83,7 @@ public class BadgesComponent {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
         return badgesList;
     }
@@ -100,7 +101,7 @@ public class BadgesComponent {
             statement.setString(2, badge);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -114,18 +115,9 @@ public class BadgesComponent {
                 badgesList.add(badge);
             }
 
-            badgesList.sort(new Comparator<HabboBadge>() {
-                @Override
-                public int compare(HabboBadge o1, HabboBadge o2) {
-                    return o1.getSlot() - o2.getSlot();
-                }
-            });
+            badgesList.sort(Comparator.comparingInt(HabboBadge::getSlot));
             return badgesList;
         }
-    }
-
-    public THashSet<HabboBadge> getBadges() {
-        return this.badges;
     }
 
     public boolean hasBadge(String badge) {

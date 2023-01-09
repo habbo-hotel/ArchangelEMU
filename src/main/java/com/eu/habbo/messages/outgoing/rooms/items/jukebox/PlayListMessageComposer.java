@@ -5,13 +5,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class PlayListMessageComposer extends MessageComposer {
     private final THashSet<SoundTrack> tracks;
-
-    public PlayListMessageComposer(THashSet<SoundTrack> tracks) {
-        this.tracks = tracks;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

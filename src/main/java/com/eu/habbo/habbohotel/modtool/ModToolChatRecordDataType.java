@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ModToolChatRecordDataType {
     UNKNOWN(0),
     ROOM_TOOL(1),
@@ -9,9 +14,6 @@ public enum ModToolChatRecordDataType {
     SELFIE(5),
     PHOTO_REPORT(6);
 
-    public final int type;
+    private  final int type;
 
-    ModToolChatRecordDataType(int type) {
-        this.type = type;
-    }
 }

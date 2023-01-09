@@ -16,10 +16,10 @@ public class SendMsgEvent extends MessageHandler {
         }
 
         long millis = System.currentTimeMillis();
-        if (millis - this.client.getHabbo().getHabboStats().lastChat < 750) {
+        if (millis - this.client.getHabbo().getHabboStats().getLastChat() < 750) {
             return;
         }
-        this.client.getHabbo().getHabboStats().lastChat = millis;
+        this.client.getHabbo().getHabboStats().setLastChat(millis);
 
         MessengerBuddy buddy = this.client.getHabbo().getMessenger().getFriend(userId);
         if (buddy == null)

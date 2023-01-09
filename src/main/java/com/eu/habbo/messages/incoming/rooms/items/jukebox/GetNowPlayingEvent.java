@@ -2,8 +2,8 @@ package com.eu.habbo.messages.incoming.rooms.items.jukebox;
 
 import com.eu.habbo.habbohotel.rooms.TraxManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.rooms.items.jukebox.UserSongDisksInventoryMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeboxSongDisksMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.jukebox.UserSongDisksInventoryMessageComposer;
 
 public class GetNowPlayingEvent extends MessageHandler {
     @Override

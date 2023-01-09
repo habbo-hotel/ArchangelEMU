@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
 
 public class BuildersClubPlaceWallItemEvent extends MessageHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BuildersClubPlaceWallItemEvent.class);
-
     @Override
     public void handle() throws Exception {
 

@@ -4,16 +4,13 @@ import com.eu.habbo.habbohotel.rooms.RoomCategory;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class UserFlatCatsComposer extends MessageComposer {
     private final List<RoomCategory> categories;
-
-    public UserFlatCatsComposer(List<RoomCategory> categories) {
-        this.categories = categories;
-    }
-
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.userFlatCatsComposer);

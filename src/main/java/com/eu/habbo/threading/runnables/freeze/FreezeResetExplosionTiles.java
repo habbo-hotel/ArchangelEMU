@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreeze
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 class FreezeResetExplosionTiles implements Runnable {
     private final THashSet<InteractionFreezeTile> tiles;
     private final Room room;
 
-    public FreezeResetExplosionTiles(THashSet<InteractionFreezeTile> tiles, Room room) {
-        this.tiles = tiles;
-        this.room = room;
-    }
 
     @Override
     public void run() {

@@ -5,15 +5,12 @@ import com.eu.habbo.habbohotel.guides.GuardianTicket;
 import com.eu.habbo.habbohotel.guides.GuardianVote;
 import com.eu.habbo.habbohotel.guides.GuardianVoteType;
 import com.eu.habbo.habbohotel.users.Habbo;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GuardianNotAccepted implements Runnable {
     private final GuardianTicket ticket;
     private final Habbo habbo;
-
-    public GuardianNotAccepted(GuardianTicket ticket, Habbo habbo) {
-        this.ticket = ticket;
-        this.habbo = habbo;
-    }
 
     @Override
     public void run() {

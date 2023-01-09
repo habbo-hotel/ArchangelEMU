@@ -28,7 +28,7 @@ public class ActionDown extends PetAction {
                 pet.clearPosture();
             }, this.minimumActionDuration);
 
-            if (pet.getHappyness() > 40) {
+            if (pet.getHappiness() > 40) {
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
             } else {
                 pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

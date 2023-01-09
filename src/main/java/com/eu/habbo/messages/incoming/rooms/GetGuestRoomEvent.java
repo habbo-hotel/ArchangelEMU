@@ -13,11 +13,7 @@ public class GetGuestRoomEvent extends MessageHandler {
         int something = this.packet.readInt();
         int something2 = this.packet.readInt();
         if (room != null) {
-            boolean unknown = true;
-
-            if (something == 0 && something2 == 1) {
-                unknown = false;
-            }
+            boolean unknown = something != 0 || something2 != 1;
 
             //this.client.getHabbo().getHabboInfo().getCurrentRoom() != room
             this.client.sendResponse(new GetGuestRoomResultComposer(room, this.client.getHabbo(), true, unknown));

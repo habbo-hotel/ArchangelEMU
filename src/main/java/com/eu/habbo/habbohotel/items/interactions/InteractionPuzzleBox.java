@@ -49,18 +49,18 @@ public class InteractionPuzzleBox extends HabboItem {
 
         RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), rotation.getValue());
 
-        if (tile == null || tile.getState() == RoomTileState.INVALID || room.hasHabbosAt(tile.x, tile.y)) {
+        if (tile == null || tile.getState() == RoomTileState.INVALID || room.hasHabbosAt(tile.getX(), tile.getY())) {
             return;
         }
 
         if (!boxLocation.equals(room.getLayout().getTileInFront(client.getHabbo().getRoomUnit().getCurrentLocation(), rotation.getValue())))
             return;
 
-        HabboItem item = room.getTopItemAt(tile.x, tile.y);
+        HabboItem item = room.getTopItemAt(tile.getX(), tile.getY());
 
-        if (item != null && !room.getTopItemAt(tile.x, tile.y).getBaseItem().allowStack()) return;
+        if (item != null && !room.getTopItemAt(tile.getX(), tile.getY()).getBaseItem().allowStack()) return;
 
-        this.setZ(room.getStackHeight(tile.x, tile.y, false));
+        this.setZ(room.getStackHeight(tile.getX(), tile.getY(), false));
         this.needsUpdate(true);
         room.updateItem(this);
 

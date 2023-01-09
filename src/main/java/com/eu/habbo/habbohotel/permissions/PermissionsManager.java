@@ -6,17 +6,18 @@ import com.eu.habbo.plugin.HabboPlugin;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 public class PermissionsManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PermissionsManager.class);
-
     private final TIntObjectHashMap<Rank> ranks;
     private final TIntIntHashMap enables;
     private final THashMap<String, List<Rank>> badges;
@@ -25,11 +26,11 @@ public class PermissionsManager {
         long millis = System.currentTimeMillis();
         this.ranks = new TIntObjectHashMap<>();
         this.enables = new TIntIntHashMap();
-        this.badges = new THashMap<String, List<Rank>>();
+        this.badges = new THashMap<>();
 
         this.reload();
 
-        LOGGER.info("Permissions Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Permissions Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public void reload() {
@@ -40,29 +41,27 @@ public class PermissionsManager {
     private void loadPermissions() {
         this.badges.clear();
 
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM permissions ORDER BY id ASC")) {
-            try (ResultSet set = statement.executeQuery()) {
-                while (set.next()) {
-                    Rank rank = null;
-                    if (!this.ranks.containsKey(set.getInt("id"))) {
-                        rank = new Rank(set);
-                        this.ranks.put(set.getInt("id"), rank);
-                    } else {
-                        rank = this.ranks.get(set.getInt("id"));
-                        rank.load(set);
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permissions ORDER BY id ASC")) {
+            while (set.next()) {
+                Rank rank;
+                if (!this.ranks.containsKey(set.getInt("id"))) {
+                    rank = new Rank(set);
+                    this.ranks.put(set.getInt("id"), rank);
+                } else {
+                    rank = this.ranks.get(set.getInt("id"));
+                    rank.load(set);
+                }
+
+                if (!rank.getBadge().isEmpty()) {
+                    if (!this.badges.containsKey(rank.getBadge())) {
+                        this.badges.put(rank.getBadge(), new ArrayList<>());
                     }
 
-                    if (rank != null && !rank.getBadge().isEmpty()) {
-                        if (!this.badges.containsKey(rank.getBadge())) {
-                            this.badges.put(rank.getBadge(), new ArrayList<Rank>());
-                        }
-
-                        this.badges.get(rank.getBadge()).add(rank);
-                    }
+                    this.badges.get(rank.getBadge()).add(rank);
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -75,7 +74,7 @@ public class PermissionsManager {
                     this.enables.put(set.getInt("effect_id"), set.getInt("min_rank"));
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }

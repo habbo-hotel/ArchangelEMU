@@ -41,10 +41,9 @@ public class StalkCommand extends Command {
 
             gameClient.sendResponse(new GetGuestRoomResultComposer(habbo.getHabboInfo().getCurrentRoom(), gameClient.getHabbo(), true, false));
             //gameClient.sendResponse(new ForwardToRoomComposer(habbo.getHabboInfo().getCurrentRoom().getId()));
-            return true;
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_stalk.forgot_username"), RoomChatMessageBubbles.ALERT);
-            return true;
         }
+        return true;
     }
 }

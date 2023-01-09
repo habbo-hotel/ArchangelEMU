@@ -3,15 +3,12 @@ package com.eu.habbo.messages.outgoing.generic.alerts;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class MaintenanceStatusMessageComposer extends MessageComposer {
     private final int closeInMinutes;
     private final int reopenInMinutes;
-
-    public MaintenanceStatusMessageComposer(int closeInMinutes, int reopenInMinutes) {
-        this.closeInMinutes = closeInMinutes;
-        this.reopenInMinutes = reopenInMinutes;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

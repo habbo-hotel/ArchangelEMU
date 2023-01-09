@@ -2,13 +2,12 @@ package com.eu.habbo.threading.runnables.freeze;
 
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class FreezeClearEffects implements Runnable {
     private final Habbo habbo;
 
-    public FreezeClearEffects(Habbo habbo) {
-        this.habbo = habbo;
-    }
 
     @Override
     public void run() {

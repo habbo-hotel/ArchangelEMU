@@ -29,7 +29,13 @@ public class ModBanEvent extends MessageHandler {
         int banType = this.packet.readInt();
         boolean unknown = this.packet.readBoolean();
 
-        int duration = 0;
+        int duration = switch (banType) {
+            case BAN_18_HOURS -> 18 * 60 * 60;
+            case BAN_7_DAYS -> 7 * this.DAY_IN_SECONDS;
+            case BAN_30_DAYS_STEP_1, BAN_30_DAYS_STEP_2 -> 30 * this.DAY_IN_SECONDS;
+            case BAN_100_YEARS, BAN_AVATAR_ONLY_100_YEARS -> Emulator.getIntUnixTimestamp();
+            default -> 0;
+        };
 
         switch (banType) {
             case BAN_18_HOURS:
@@ -66,7 +72,7 @@ public class ModBanEvent extends MessageHandler {
 
         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
         if (item == null) return;
-        modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, false, 0);
+        modToolSanctions.run(userId, this.client.getHabbo(), item.getSanctionLevel(), cfhTopic, message, 0, false, 0);
 
 
     }

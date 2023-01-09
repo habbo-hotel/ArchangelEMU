@@ -4,11 +4,10 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ModifyUserSubscription extends RCONMessage<ModifyUserSubscription.JSON> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModifyUserSubscription.class);
 
     public ModifyUserSubscription() {
         super(ModifyUserSubscription.JSON.class);
@@ -24,7 +23,7 @@ public class ModifyUserSubscription extends RCONMessage<ModifyUserSubscription.J
                 return;
             }
 
-            if (!Emulator.getGameEnvironment().getSubscriptionManager().types.containsKey(json.type)) {
+            if (!Emulator.getGameEnvironment().getSubscriptionManager().getTypes().containsKey(json.type)) {
                 this.status = RCONMessage.STATUS_ERROR;
                 this.message = "%subscription% is not a valid subscription type".replace("%subscription%", json.type);
                 return;
@@ -81,7 +80,7 @@ public class ModifyUserSubscription extends RCONMessage<ModifyUserSubscription.J
         catch (Exception e) {
             this.status = RCONMessage.SYSTEM_ERROR;
             this.message = "Exception occurred";
-            LOGGER.error("Exception occurred", e);
+            log.error("Exception occurred", e);
         }
     }
 

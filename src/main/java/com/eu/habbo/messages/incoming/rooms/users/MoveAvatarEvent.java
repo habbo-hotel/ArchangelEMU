@@ -12,11 +12,11 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
 import com.eu.habbo.plugin.events.users.UserIdleEvent;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class MoveAvatarEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MoveAvatarEvent.class);
+
 
     @Override
     public int getRatelimit() {
@@ -102,23 +102,18 @@ public class MoveAvatarEvent extends MessageHandler {
                             if (room.getLayout().getTilesInFront(habbo.getRoomUnit().getCurrentLocation(), habbo.getRoomUnit().getBodyRotation().getValue(), 2).contains(tile))
                                 return;
                         }
-                        if (room.canLayAt(tile.x, tile.y)) {
-                            HabboItem bed = room.getTopItemAt(tile.x, tile.y);
+                        if (room.canLayAt(tile.getX(), tile.getY())) {
+                            HabboItem bed = room.getTopItemAt(tile.getX(), tile.getY());
 
                             if (bed != null && bed.getBaseItem().allowLay()) {
-                                RoomTile pillow = room.getLayout().getTile(bed.getX(), bed.getY());
-                                switch (bed.getRotation()) {
-                                    case 0:
-                                    case 4:
-                                        pillow = room.getLayout().getTile((short) x, bed.getY());
-                                        break;
-                                    case 2:
-                                    case 8:
-                                        pillow = room.getLayout().getTile(bed.getX(), (short) y);
-                                        break;
-                                }
+                                room.getLayout().getTile(bed.getX(), bed.getY());
+                                RoomTile pillow = switch (bed.getRotation()) {
+                                    case 0, 4 -> room.getLayout().getTile((short) x, bed.getY());
+                                    case 2, 8 -> room.getLayout().getTile(bed.getX(), (short) y);
+                                    default -> room.getLayout().getTile(bed.getX(), bed.getY());
+                                };
 
-                                if (pillow != null && room.canLayAt(pillow.x, pillow.y)) {
+                                if (pillow != null && room.canLayAt(pillow.getX(), pillow.getY())) {
                                     roomUnit.setGoalLocation(pillow);
                                     return;
                                 }
@@ -143,7 +138,7 @@ public class MoveAvatarEvent extends MessageHandler {
                         }
 
                         // This is where we set the end location and begin finding a path
-                        if (tile.isWalkable() || room.canSitOrLayAt(tile.x, tile.y)) {
+                        if (tile.isWalkable() || room.canSitOrLayAt(tile.getX(), tile.getY())) {
                             if (roomUnit.getMoveBlockingTask() != null) roomUnit.getMoveBlockingTask().get();
 
                             roomUnit.setGoalLocation(tile);
@@ -158,7 +153,7 @@ public class MoveAvatarEvent extends MessageHandler {
                     }
                 }
             } catch (InterruptedException e) {
-                LOGGER.error("Caught exception", e);
+                log.error("Caught exception", e);
                 Thread.currentThread().interrupt();
             }
         }

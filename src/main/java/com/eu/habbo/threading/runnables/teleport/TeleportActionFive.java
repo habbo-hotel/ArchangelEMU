@@ -3,24 +3,24 @@ package com.eu.habbo.threading.runnables.teleport;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 class TeleportActionFive implements Runnable {
     private final HabboItem currentTeleport;
     private final Room room;
     private final GameClient client;
 
-    public TeleportActionFive(HabboItem currentTeleport, Room room, GameClient client) {
-        this.currentTeleport = currentTeleport;
-        this.client = client;
-        this.room = room;
-    }
+
 
     @Override
     public void run() {
@@ -41,13 +41,11 @@ class TeleportActionFive implements Runnable {
         RoomTile tile = this.room.getLayout().getTileInFront(currentLocation, this.currentTeleport.getRotation());
 
         if (tile != null) {
-            List<Runnable> onSuccess = new ArrayList<Runnable>();
+            List<Runnable> onSuccess = new ArrayList<>();
             onSuccess.add(() -> {
                 unit.setCanLeaveRoomByDoor(true);
 
-                Emulator.getThreading().run(() -> {
-                    unit.isLeavingTeleporter = false;
-                }, 300);
+                Emulator.getThreading().run(() -> unit.isLeavingTeleporter = false, 300);
             });
 
             unit.setCanLeaveRoomByDoor(false);
@@ -64,7 +62,7 @@ class TeleportActionFive implements Runnable {
 
         HabboItem teleportTile = this.room.getTopItemAt(unit.getX(), unit.getY());
 
-        if (teleportTile != null && teleportTile instanceof InteractionTeleportTile && teleportTile != this.currentTeleport) {
+        if (teleportTile instanceof InteractionTeleportTile && teleportTile != this.currentTeleport) {
             try {
                 teleportTile.onWalkOn(unit, this.room, new Object[]{});
             } catch (Exception e) {

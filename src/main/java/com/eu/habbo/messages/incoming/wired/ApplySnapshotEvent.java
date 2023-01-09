@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 
 import java.util.ArrayList;
@@ -29,8 +29,8 @@ public class ApplySnapshotEvent extends MessageHandler {
         // Executing Habbo has to be in a Room
         if (!this.client.getHabbo().getRoomUnit().isInRoom()) {
             this.client.sendResponse(new NotificationDialogMessageComposer(
-                    BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key,
-                    FurnitureMovementError.NO_RIGHTS.errorCode
+                    BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(),
+                    FurnitureMovementError.NO_RIGHTS.getErrorCode()
             ));
             return;
         }
@@ -56,18 +56,16 @@ public class ApplySnapshotEvent extends MessageHandler {
                     HabboItem wiredItem = item.get();
 
                     // The item should have settings to match furni state, position and rotation
-                    if (wiredItem instanceof InteractionWiredMatchFurniSettings) {
-
-                        InteractionWiredMatchFurniSettings wired = (InteractionWiredMatchFurniSettings) wiredItem;
+                    if (wiredItem instanceof InteractionWiredMatchFurniSettings wired) {
 
                         // Try to apply the set settings to each item
                         wired.getMatchFurniSettings().forEach(setting -> {
-                            HabboItem matchItem = room.getHabboItem(setting.item_id);
+                            HabboItem matchItem = room.getHabboItem(setting.getItem_id());
 
                             // Match state
                             if (wired.shouldMatchState() && matchItem.allowWiredResetState()) {
-                                if (!setting.state.equals(" ") && !matchItem.getExtradata().equals(setting.state)) {
-                                    matchItem.setExtradata(setting.state);
+                                if (!setting.getState().equals(" ") && !matchItem.getExtradata().equals(setting.getState())) {
+                                    matchItem.setExtradata(setting.getState());
                                     room.updateItemState(matchItem);
                                 }
                             }
@@ -77,16 +75,16 @@ public class ApplySnapshotEvent extends MessageHandler {
 
                             // Match Position & Rotation
                             if(wired.shouldMatchRotation() && !wired.shouldMatchPosition()) {
-                                if(matchItem.getRotation() != setting.rotation && room.furnitureFitsAt(oldLocation, matchItem, setting.rotation, false) == FurnitureMovementError.NONE) {
-                                    room.moveFurniTo(matchItem, oldLocation, setting.rotation, null, true);
+                                if(matchItem.getRotation() != setting.getRotation() && room.furnitureFitsAt(oldLocation, matchItem, setting.getRotation(), false) == FurnitureMovementError.NONE) {
+                                    room.moveFurniTo(matchItem, oldLocation, setting.getRotation(), null, true);
                                 }
                             }
                             else if(wired.shouldMatchPosition()) {
-                                boolean slideAnimation = !wired.shouldMatchRotation() || matchItem.getRotation() == setting.rotation;
-                                RoomTile newLocation = room.getLayout().getTile((short) setting.x, (short) setting.y);
-                                int newRotation = wired.shouldMatchRotation() ? setting.rotation : matchItem.getRotation();
+                                boolean slideAnimation = !wired.shouldMatchRotation() || matchItem.getRotation() == setting.getRotation();
+                                RoomTile newLocation = room.getLayout().getTile((short) setting.getX(), (short) setting.getY());
+                                int newRotation = wired.shouldMatchRotation() ? setting.getRotation() : matchItem.getRotation();
 
-                                if(newLocation != null && newLocation.state != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != matchItem.getRotation()) && room.furnitureFitsAt(newLocation, matchItem, newRotation, true) == FurnitureMovementError.NONE) {
+                                if(newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != matchItem.getRotation()) && room.furnitureFitsAt(newLocation, matchItem, newRotation, true) == FurnitureMovementError.NONE) {
                                     if(room.moveFurniTo(matchItem, newLocation, newRotation, null, !slideAnimation) == FurnitureMovementError.NONE) {
                                         if(slideAnimation) {
                                             room.sendComposer(new FloorItemOnRollerComposer(matchItem, null, oldLocation, oldZ, newLocation, matchItem.getZ(), 0, room).compose());

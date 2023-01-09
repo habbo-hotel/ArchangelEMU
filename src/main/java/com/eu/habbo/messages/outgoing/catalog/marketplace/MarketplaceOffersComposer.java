@@ -5,15 +5,13 @@ import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceOffer;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class MarketplaceOffersComposer extends MessageComposer {
     private final List<MarketPlaceOffer> offers;
-
-    public MarketplaceOffersComposer(List<MarketPlaceOffer> offers) {
-        this.offers = offers;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -37,7 +35,7 @@ public class MarketplaceOffersComposer extends MessageComposer {
             }
             this.response.appendInt(MarketPlace.calculateCommision(offer.getPrice()));
             this.response.appendInt(0);
-            this.response.appendInt(MarketPlace.calculateCommision(offer.avarage));
+            this.response.appendInt(MarketPlace.calculateCommision(offer.average));
             this.response.appendInt(offer.count);
 
             total += offer.count;

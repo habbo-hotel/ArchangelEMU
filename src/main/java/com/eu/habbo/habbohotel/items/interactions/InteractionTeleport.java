@@ -96,8 +96,8 @@ public class InteractionTeleport extends HabboItem {
             room.updateItemState(this);
             unit.setGoalLocation(infrontTile);
 
-            List<Runnable> onSuccess = new ArrayList<Runnable>();
-            List<Runnable> onFail = new ArrayList<Runnable>();
+            List<Runnable> onSuccess = new ArrayList<>();
+            List<Runnable> onFail = new ArrayList<>();
 
             onSuccess.add(() -> {
                 room.updateTile(currentLocation);
@@ -125,8 +125,8 @@ public class InteractionTeleport extends HabboItem {
             Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
         } else {
             // walk to teleport and interact
-            List<Runnable> onSuccess = new ArrayList<Runnable>();
-            List<Runnable> onFail = new ArrayList<Runnable>();
+            List<Runnable> onSuccess = new ArrayList<>();
+            List<Runnable> onFail = new ArrayList<>();
 
             onSuccess.add(() -> {
                 tryTeleport(client, room);

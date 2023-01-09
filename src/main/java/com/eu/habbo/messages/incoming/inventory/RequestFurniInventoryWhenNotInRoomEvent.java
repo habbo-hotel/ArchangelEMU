@@ -6,13 +6,12 @@ import com.eu.habbo.messages.outgoing.inventory.FurniListComposer;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.NoSuchElementException;
 
+@Slf4j
 public class RequestFurniInventoryWhenNotInRoomEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestFurniInventoryWhenNotInRoomEvent.class);
 
     @Override
     public void handle() throws Exception {
@@ -48,7 +47,7 @@ public class RequestFurniInventoryWhenNotInRoomEvent extends MessageHandler {
                     items.put(iterator.key(), iterator.value());
                     count++;
                 } catch (NoSuchElementException e) {
-                    LOGGER.error("Caught exception", e);
+                    log.error("Caught exception", e);
                     break;
                 }
 

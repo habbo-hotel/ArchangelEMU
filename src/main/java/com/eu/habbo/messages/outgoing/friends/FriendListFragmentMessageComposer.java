@@ -6,14 +6,14 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Slf4j
 public class FriendListFragmentMessageComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FriendListFragmentMessageComposer.class);
+
 
     private final int totalPages;
     private final int pageIndex;
@@ -52,14 +52,14 @@ public class FriendListFragmentMessageComposer extends MessageComposer {
             }
             return this.response;
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
         return null;
     }
 
     public static ArrayList<ServerMessage> getMessagesForBuddyList(Collection<MessengerBuddy> buddies) {
-        ArrayList<ServerMessage> messages = new ArrayList<ServerMessage>();
-        THashSet<MessengerBuddy> friends = new THashSet<MessengerBuddy>();
+        ArrayList<ServerMessage> messages = new ArrayList<>();
+        THashSet<MessengerBuddy> friends = new THashSet<>();
 
         int totalPages = (int)Math.ceil(buddies.size() / 750.0);
         int page = 0;

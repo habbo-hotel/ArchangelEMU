@@ -3,19 +3,14 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CompetitionVotingInfoMessageComposer extends MessageComposer {
     private final int unknownInt1;
     private final String unknownString1;
     private final int unknownInt2;
     private final int unknownInt3;
-
-    public CompetitionVotingInfoMessageComposer(int unknownInt1, String unknownString1, int unknownInt2, int unknownInt3) {
-        this.unknownInt1 = unknownInt1;
-        this.unknownString1 = unknownString1;
-        this.unknownInt2 = unknownInt2;
-        this.unknownInt3 = unknownInt3;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

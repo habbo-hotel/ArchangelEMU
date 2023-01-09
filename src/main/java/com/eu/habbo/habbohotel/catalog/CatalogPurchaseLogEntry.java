@@ -2,15 +2,16 @@ package com.eu.habbo.habbohotel.catalog;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.DatabaseLoggable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Slf4j
+@AllArgsConstructor
 public class CatalogPurchaseLogEntry implements Runnable, DatabaseLoggable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogPurchaseLogEntry.class);
     private static final String QUERY = "INSERT INTO `logs_shop_purchases` (timestamp, user_id, catalog_item_id, item_ids, catalog_name, cost_credits, cost_points, points_type, amount) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private final int timestamp;
@@ -22,18 +23,6 @@ public class CatalogPurchaseLogEntry implements Runnable, DatabaseLoggable {
     private final int costPoints;
     private final int pointsType;
     private final int amount;
-
-    public CatalogPurchaseLogEntry(int timestamp, int userId, int catalogItemId, String itemIds, String catalogName, int costCredits, int costPoints, int pointsType, int amount) {
-        this.timestamp = timestamp;
-        this.userId = userId;
-        this.catalogItemId = catalogItemId;
-        this.itemIds = itemIds;
-        this.catalogName = catalogName;
-        this.costCredits = costCredits;
-        this.costPoints = costPoints;
-        this.pointsType = pointsType;
-        this.amount = amount;
-    }
 
     @Override
     public String getQuery() {

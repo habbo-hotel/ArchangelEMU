@@ -8,16 +8,15 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+@Slf4j
 public class RelationshipStatusInfoComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RelationshipStatusInfoComposer.class);
 
     private final List<MessengerBuddy> lovers = new ArrayList<>();
     private final List<MessengerBuddy> friends = new ArrayList<>();
@@ -39,19 +38,13 @@ public class RelationshipStatusInfoComposer extends MessageComposer {
                     continue;
 
                 switch (map.getValue().getRelation()) {
-                    case 1:
-                        this.lovers.add(map.getValue());
-                        break;
-                    case 2:
-                        this.friends.add(map.getValue());
-                        break;
-                    case 3:
-                        this.haters.add(map.getValue());
-                        break;
+                    case 1 -> this.lovers.add(map.getValue());
+                    case 2 -> this.friends.add(map.getValue());
+                    case 3 -> this.haters.add(map.getValue());
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
 
         this.userId = habbo.getHabboInfo().getId();
@@ -105,7 +98,7 @@ public class RelationshipStatusInfoComposer extends MessageComposer {
                 this.response.appendString(this.haters.get(hatersIndex).getLook());
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
         return this.response;
     }

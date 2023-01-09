@@ -8,17 +8,17 @@ import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.Incoming;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomChatMessage.class);
     private static final String QUERY = "INSERT INTO chatlogs_room (user_from_id, user_to_id, message, timestamp, room_id) VALUES (?, ?, ?, ?, ?)";
 
     private static final List<String> chatColors = Arrays.asList("@red@", "@cyan@", "@blue@", "@green@", "@purple@");
@@ -26,16 +26,23 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
     //Configuration. Loaded from database & updated accordingly.
     public static boolean SAVE_ROOM_CHATS = false;
     public static int[] BANNED_BUBBLES = {};
+    @Getter
     private final Habbo habbo;
     public int roomId;
     public boolean isCommand = false;
     public boolean filtered = false;
-    private int roomUnitId;
+    private final int roomUnitId;
+    @Setter
+    @Getter
     private String message;
-    private String unfilteredMessage;
+    @Getter
+    private final String unfilteredMessage;
     private int timestamp = 0;
+    @Getter
     private RoomChatMessageBubbles bubble;
+    @Getter
     private Habbo targetHabbo;
+    @Getter
     private byte emotion;
 
     public RoomChatMessage(MessageHandler message) {
@@ -98,8 +105,8 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         this.roomUnitId = habbo.getRoomUnit().getId();
         this.message = this.message.replace("\r", "").replace("\n", "");
 
-        if (this.bubble.isOverridable() && this.getHabbo().getHabboStats().chatColor != RoomChatMessageBubbles.NORMAL)
-            this.bubble = this.getHabbo().getHabboStats().chatColor;
+        if (this.bubble.isOverridable() && this.getHabbo().getHabboStats().getChatColor() != RoomChatMessageBubbles.NORMAL)
+            this.bubble = this.getHabbo().getHabboStats().getChatColor();
     }
 
     public RoomChatMessage(String message, Habbo habbo, Habbo targetHabbo, RoomChatMessageBubbles bubble) {
@@ -112,8 +119,8 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         this.roomUnitId = this.habbo.getRoomUnit().getId();
         this.message = this.message.replace("\r", "").replace("\n", "");
 
-        if (this.bubble.isOverridable() && this.getHabbo().getHabboStats().chatColor != RoomChatMessageBubbles.NORMAL)
-            this.bubble = this.getHabbo().getHabboStats().chatColor;
+        if (this.bubble.isOverridable() && this.getHabbo().getHabboStats().getChatColor() != RoomChatMessageBubbles.NORMAL)
+            this.bubble = this.getHabbo().getHabboStats().getChatColor();
     }
 
     private void checkEmotion() {
@@ -137,39 +144,11 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
             try {
                 this.message = this.message.substring(0, RoomChatMessage.MAXIMUM_LENGTH - 1);
             } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
+                log.error("Caught exception", e);
             }
         }
 
         Emulator.getDatabaseLogger().store(this);
-    }
-
-    public String getMessage() {
-        return this.message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getUnfilteredMessage() {
-        return this.unfilteredMessage;
-    }
-
-    public RoomChatMessageBubbles getBubble() {
-        return this.bubble;
-    }
-
-    public Habbo getHabbo() {
-        return this.habbo;
-    }
-
-    public Habbo getTargetHabbo() {
-        return this.targetHabbo;
-    }
-
-    public int getEmotion() {
-        return this.emotion;
     }
 
     @Override
@@ -199,7 +178,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
             message.appendInt(0);
             message.appendInt(this.getMessage().length());
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
@@ -222,7 +201,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
                     if (muteTime > 0) {
                         this.habbo.mute(muteTime, false);
                     } else {
-                        LOGGER.error("Invalid hotel.wordfilter.automute defined in emulator_settings ({}).", muteTime);
+                        log.error("Invalid hotel.wordfilter.automute defined in emulator_settings ({}).", muteTime);
                     }
                 }
 

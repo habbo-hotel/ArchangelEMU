@@ -6,26 +6,22 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class UpdateThreadMessageComposer extends MessageComposer {
 
-    public final Guild guild;
+    private final Guild guild;
 
-    public final ForumThread thread;
+    private final ForumThread thread;
 
     private final Habbo habbo;
 
     private final boolean isPinned;
 
     private final boolean isLocked;
-
-    public UpdateThreadMessageComposer(Guild guild, ForumThread thread, Habbo habbo, boolean isPinned, boolean isLocked) {
-        this.guild = guild;
-        this.habbo = habbo;
-        this.thread = thread;
-        this.isPinned = isPinned;
-        this.isLocked = isLocked;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

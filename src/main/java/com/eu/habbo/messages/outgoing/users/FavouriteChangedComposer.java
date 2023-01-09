@@ -6,13 +6,12 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.procedure.TIntProcedure;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class FavouriteChangedComposer extends MessageComposer {
     private final Habbo habbo;
 
-    public FavouriteChangedComposer(Habbo habbo) {
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

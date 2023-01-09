@@ -46,10 +46,10 @@ public class PostMessageEvent extends MessageHandler {
         ForumThread thread = ForumThread.getById(threadId);
 
         if (threadId == 0) {
-            if (!((guild.canPostThreads().state == 0)
-                    || (guild.canPostThreads().state == 1 && member != null)
-                    || (guild.canPostThreads().state == 2 && member != null && (member.getRank().type < GuildRank.MEMBER.type))
-                    || (guild.canPostThreads().state == 3 && guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId())
+            if (!((guild.canPostThreads().getState() == 0)
+                    || (guild.canPostThreads().getState() == 1 && member != null)
+                    || (guild.canPostThreads().getState() == 2 && member != null && (member.getRank().getType() < GuildRank.MEMBER.getType()))
+                    || (guild.canPostThreads().getState() == 3 && guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId())
                     || isStaff)) {
                 this.client.sendResponse(new ErrorReportComposer(403));
                 return;
@@ -63,7 +63,7 @@ public class PostMessageEvent extends MessageHandler {
                 return;
             }
 
-            this.client.getHabbo().getHabboStats().forumPostsCount += 1;
+            this.client.getHabbo().getHabboStats().setForumPostsCount(this.client.getHabbo().getHabboStats().getForumPostsCount()+1);
             thread.setPostsCount(thread.getPostsCount() + 1);
             this.client.sendResponse(new PostThreadMessageComposer(thread));
             return;
@@ -75,10 +75,10 @@ public class PostMessageEvent extends MessageHandler {
         }
 
 
-        if (!((guild.canPostMessages().state == 0)
-                || (guild.canPostMessages().state == 1 && member != null)
-                || (guild.canPostMessages().state == 2 && member != null && (member.getRank().type < GuildRank.MEMBER.type))
-                || (guild.canPostMessages().state == 3 && guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId())
+        if (!((guild.canPostMessages().getState() == 0)
+                || (guild.canPostMessages().getState() == 1 && member != null)
+                || (guild.canPostMessages().getState() == 2 && member != null && (member.getRank().getType() < GuildRank.MEMBER.getType()))
+                || (guild.canPostMessages().getState() == 3 && guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId())
                 || isStaff)) {
             this.client.sendResponse(new ErrorReportComposer(403));
             return;
@@ -89,7 +89,7 @@ public class PostMessageEvent extends MessageHandler {
         if (comment != null) {
             thread.addComment(comment);
             thread.setUpdatedAt(Emulator.getIntUnixTimestamp());
-            this.client.getHabbo().getHabboStats().forumPostsCount += 1;
+            this.client.getHabbo().getHabboStats().setForumPostsCount(this.client.getHabbo().getHabboStats().getForumPostsCount()+1);
             thread.setPostsCount(thread.getPostsCount() + 1);
             this.client.sendResponse(new PostMessageMessageComposer(comment));
         } else {

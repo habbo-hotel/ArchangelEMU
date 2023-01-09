@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import gnu.trove.procedure.TIntProcedure;
 
 import java.util.ArrayList;
 
@@ -15,21 +14,18 @@ public class FigureSetIdsComposer extends MessageComposer {
     private final ArrayList<String> nameList = new ArrayList<>();
 
     public FigureSetIdsComposer(Habbo habbo) {
-        habbo.getInventory().getWardrobeComponent().getClothing().forEach(new TIntProcedure() {
-            @Override
-            public boolean execute(int value) {
-                ClothItem item = Emulator.getGameEnvironment().getCatalogManager().clothing.get(value);
+        habbo.getInventory().getWardrobeComponent().getClothing().forEach(value -> {
+            ClothItem item = Emulator.getGameEnvironment().getCatalogManager().clothing.get(value);
 
-                if (item != null) {
-                    for (Integer j : item.setId) {
-                        FigureSetIdsComposer.this.idList.add(j);
-                    }
-
-                    FigureSetIdsComposer.this.nameList.add(item.name);
+            if (item != null) {
+                for (Integer j : item.getSetId()) {
+                    FigureSetIdsComposer.this.idList.add(j);
                 }
 
-                return true;
+                FigureSetIdsComposer.this.nameList.add(item.getName());
             }
+
+            return true;
         });
     }
 

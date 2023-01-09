@@ -6,13 +6,11 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class PetStatusUpdateComposer extends MessageComposer {
     private final Pet pet;
-
-    public PetStatusUpdateComposer(Pet pet) {
-        this.pet = pet;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

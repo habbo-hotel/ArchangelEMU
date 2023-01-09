@@ -3,8 +3,8 @@ package com.eu.habbo.habbohotel.users.subscriptions;
 import com.eu.habbo.Emulator;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -16,11 +16,11 @@ import java.sql.SQLException;
 /**
  * @author Beny
  */
+@Slf4j
+@Getter
 public class SubscriptionManager {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionManager.class);
-
-    public THashMap<String, Class<? extends Subscription>> types;
+    private THashMap<String, Class<? extends Subscription>> types;
 
     public SubscriptionManager() {
         this.types = new THashMap<>();
@@ -44,7 +44,7 @@ public class SubscriptionManager {
 
     public Class<? extends Subscription> getSubscriptionClass(String type) {
         if(!this.types.containsKey(type)) {
-            LOGGER.debug("Can't find subscription class: {}", type);
+            log.debug("Can't find subscription class: {}", type);
             return Subscription.class;
         }
 
@@ -71,17 +71,17 @@ public class SubscriptionManager {
                     subscriptions.add(subscription);
                 }
             } catch (IllegalAccessException e) {
-                LOGGER.error("IllegalAccessException", e);
+                log.error("IllegalAccessException", e);
             } catch (InstantiationException e) {
-                LOGGER.error("InstantiationException", e);
+                log.error("InstantiationException", e);
             } catch (InvocationTargetException e) {
-                LOGGER.error("InvocationTargetException", e);
+                log.error("InvocationTargetException", e);
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
         catch (NoSuchMethodException e) {
-            LOGGER.error("Caught NoSuchMethodException", e);
+            log.error("Caught NoSuchMethodException", e);
         }
 
         return subscriptions;

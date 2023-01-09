@@ -6,17 +6,15 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class HabboClubOffersMessageComposer extends MessageComposer {
-    private final int windowId;
     private final Habbo habbo;
+    private final int windowId;
 
-    public HabboClubOffersMessageComposer(Habbo habbo, int windowId) {
-        this.habbo = habbo;
-        this.windowId = windowId;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

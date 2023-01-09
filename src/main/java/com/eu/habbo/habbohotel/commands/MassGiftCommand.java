@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import gnu.trove.map.hash.THashMap;
 
@@ -25,7 +25,7 @@ public class MassGiftCommand extends Command {
             int itemId;
 
             try {
-                itemId = Integer.valueOf(params[1]);
+                itemId = Integer.parseInt(params[1]);
             } catch (Exception e) {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_gift.not_a_number"), RoomChatMessageBubbles.ALERT);
                 return true;
@@ -57,7 +57,7 @@ public class MassGiftCommand extends Command {
             keys.put("display", "BUBBLE");
             keys.put("image", "${image.library.url}notifications/gift.gif");
             keys.put("message", Emulator.getTexts().getValue("generic.gift.received.anonymous"));
-            ServerMessage giftNotificiationMessage = new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys).compose();
+            ServerMessage giftNotificiationMessage = new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.getKey(), keys).compose();
 
             Emulator.getThreading().run(() -> {
                 for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {

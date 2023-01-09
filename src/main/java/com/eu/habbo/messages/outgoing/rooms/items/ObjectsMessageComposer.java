@@ -9,17 +9,15 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
 import java.util.NoSuchElementException;
 
+@AllArgsConstructor
 public class ObjectsMessageComposer extends MessageComposer {
     private final TIntObjectMap<String> furniOwnerNames;
     private final THashSet<? extends HabboItem> items;
 
-    public ObjectsMessageComposer(TIntObjectMap<String> furniOwnerNames, THashSet<? extends HabboItem> items) {
-        this.furniOwnerNames = furniOwnerNames;
-        this.items = items;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

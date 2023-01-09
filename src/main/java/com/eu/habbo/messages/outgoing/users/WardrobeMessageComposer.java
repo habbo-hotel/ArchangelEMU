@@ -4,13 +4,11 @@ import com.eu.habbo.habbohotel.users.inventory.WardrobeComponent;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class WardrobeMessageComposer extends MessageComposer {
     private final WardrobeComponent wardrobeComponent;
-
-    public WardrobeMessageComposer(WardrobeComponent wardrobeComponent) {
-        this.wardrobeComponent = wardrobeComponent;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

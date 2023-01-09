@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.rcon;
 
 import com.google.gson.*;
+import lombok.Getter;
 
 import java.lang.reflect.Type;
 
@@ -21,9 +22,9 @@ public abstract class RCONMessage<T> {
     public final static int SYSTEM_ERROR = 4;
 
 
-    public final Class<T> type;
-    public int status = STATUS_OK;
-    public String message = "";
+    @Getter protected final Class<T> type;
+    @Getter protected int status = STATUS_OK;
+    @Getter protected String message = "";
 
     public RCONMessage(Class<T> type) {
         this.type = type;

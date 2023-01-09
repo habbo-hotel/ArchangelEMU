@@ -5,32 +5,23 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 
+@Slf4j
+@AllArgsConstructor
 public class RoomUnitTeleport implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnitTeleport.class);
 
-    private RoomUnit roomUnit;
-    private Room room;
-    private int x;
-    private int y;
-    private double z;
+    
+    private final RoomUnit roomUnit;
+    private final Room room;
+    private final int x;
+    private final int y;
+    private final double z;
 
-    private int newEffect;
-
-    public RoomUnitTeleport(RoomUnit roomUnit, Room room, int x, int y, double z, int newEffect) {
-        this.roomUnit = roomUnit;
-        this.room = room;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.newEffect = newEffect;
-    }
+    private final int newEffect;
 
     @Override
     public void run() {
@@ -45,12 +36,12 @@ public class RoomUnitTeleport implements Runnable {
         RoomTile lastLocation = this.roomUnit.getCurrentLocation();
         RoomTile newLocation = this.room.getLayout().getTile((short) this.x, (short) this.y);
 
-        HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().x, this.roomUnit.getCurrentLocation().y);
+        HabboItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentLocation().getX(), this.roomUnit.getCurrentLocation().getY());
         if (topItem != null) {
             try {
                 topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
             } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
+                log.error("Caught exception", e);
             }
         }
         this.roomUnit.setPath(new LinkedList<>());
@@ -65,14 +56,14 @@ public class RoomUnitTeleport implements Runnable {
         this.roomUnit.statusUpdate(true);
         roomUnit.isWiredTeleporting = false;
 
-        this.room.updateHabbosAt(newLocation.x, newLocation.y);
-        this.room.updateBotsAt(newLocation.x, newLocation.y);
+        this.room.updateHabbosAt(newLocation.getX(), newLocation.getY());
+        this.room.updateBotsAt(newLocation.getX(), newLocation.getY());
 
         topItem = room.getTopItemAt(x, y);
         if (topItem != null && roomUnit.getCurrentLocation().equals(room.getLayout().getTile((short) x, (short) y))) {
             try {
                 topItem.onWalkOn(roomUnit, room, new Object[]{ lastLocation, newLocation, this });
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

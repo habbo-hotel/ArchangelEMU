@@ -10,17 +10,15 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@AllArgsConstructor
 class FreezeHandleSnowballExplosion implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FreezeHandleSnowballExplosion.class);
 
     private final FreezeThrowSnowball thrownData;
 
-    public FreezeHandleSnowballExplosion(FreezeThrowSnowball thrownData) {
-        this.thrownData = thrownData;
-    }
 
     @Override
     public void run() {
@@ -75,8 +73,7 @@ class FreezeHandleSnowballExplosion implements Runnable {
                             habbos.addAll(this.thrownData.room.getHabbosAt(freezeTile.getX(), freezeTile.getY()));
 
                             for (Habbo habbo : habbos) {
-                                if (habbo.getHabboInfo().getGamePlayer() != null && habbo.getHabboInfo().getGamePlayer() instanceof FreezeGamePlayer) {
-                                    FreezeGamePlayer hPlayer = (FreezeGamePlayer) habbo.getHabboInfo().getGamePlayer();
+                                if (habbo.getHabboInfo().getGamePlayer() != null && habbo.getHabboInfo().getGamePlayer() instanceof FreezeGamePlayer hPlayer) {
                                     if (!hPlayer.canGetFrozen())
                                         continue;
 
@@ -92,7 +89,7 @@ class FreezeHandleSnowballExplosion implements Runnable {
                                     }
                                 }
                             }
-                        } else if (freezeTile instanceof InteractionFreezeBlock) {
+                        } else {
                             if (freezeTile.getExtradata().equalsIgnoreCase("0")) {
                                 game.explodeBox((InteractionFreezeBlock) freezeTile, distance * 100);
                                 player.addScore(FreezeGame.DESTROY_BLOCK_POINTS);
@@ -104,7 +101,7 @@ class FreezeHandleSnowballExplosion implements Runnable {
 
             Emulator.getThreading().run(new FreezeResetExplosionTiles(freezeTiles, this.thrownData.room), 1000);
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 }

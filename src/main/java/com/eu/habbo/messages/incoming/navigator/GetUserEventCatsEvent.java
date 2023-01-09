@@ -8,7 +8,7 @@ public class GetUserEventCatsEvent extends MessageHandler {
     public void handle() throws Exception {
 
 
-        this.client.sendResponse(new NewNavigatorPreferencesComposer(this.client.getHabbo().getHabboStats().navigatorWindowSettings));
+        this.client.sendResponse(new NewNavigatorPreferencesComposer(this.client.getHabbo().getHabboStats().getNavigatorWindowSettings()));
 
     }
 }

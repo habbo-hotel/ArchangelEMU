@@ -37,7 +37,7 @@ public class InteractionTotemLegs extends InteractionDefault {
         } catch(NumberFormatException ex) {
             extraData = 0;
         }
-        return TotemColor.fromInt(extraData - (4 * (getTotemType().type - 1)));
+        return TotemColor.fromInt(extraData - (4 * (getTotemType().getType() - 1)));
     }
 
     private void updateHead(Room room, RoomTile tile) {

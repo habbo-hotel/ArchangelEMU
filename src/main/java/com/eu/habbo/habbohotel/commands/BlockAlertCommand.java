@@ -12,8 +12,8 @@ public class BlockAlertCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            gameClient.getHabbo().getHabboStats().blockStaffAlerts = !gameClient.getHabbo().getHabboStats().blockStaffAlerts;
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_blockalert").replace("%state%", (gameClient.getHabbo().getHabboStats().blockStaffAlerts ? Emulator.getTexts().getValue("generic.on") : Emulator.getTexts().getValue("generic.off"))), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().getHabboStats().setBlockStaffAlerts(!gameClient.getHabbo().getHabboStats().isBlockStaffAlerts());
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_blockalert").replace("%state%", (gameClient.getHabbo().getHabboStats().isBlockStaffAlerts() ? Emulator.getTexts().getValue("generic.on") : Emulator.getTexts().getValue("generic.off"))), RoomChatMessageBubbles.ALERT);
 
             return true;
         }

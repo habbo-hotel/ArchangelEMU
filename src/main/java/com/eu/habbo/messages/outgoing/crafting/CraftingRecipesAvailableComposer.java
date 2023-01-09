@@ -3,15 +3,12 @@ package com.eu.habbo.messages.outgoing.crafting;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CraftingRecipesAvailableComposer extends MessageComposer {
     private final int count;
     private final boolean found;
-
-    public CraftingRecipesAvailableComposer(int count, boolean found) {
-        this.count = count;
-        this.found = found;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

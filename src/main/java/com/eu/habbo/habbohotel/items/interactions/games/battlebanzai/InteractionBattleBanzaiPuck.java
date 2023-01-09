@@ -124,8 +124,8 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
     @Override
     public boolean validMove(Room room, RoomTile from, RoomTile to) {
        if (to == null) return false;
-       HabboItem topItem = room.getTopItemAt(to.x, to.y, this);
-       return !(!room.getLayout().tileWalkable(to.x, to.y) || (topItem != null && (!topItem.getBaseItem().allowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
+       HabboItem topItem = room.getTopItemAt(to.getX(), to.getY(), this);
+       return !(!room.getLayout().tileWalkable(to.getX(), to.getY()) || (topItem != null && (!topItem.getBaseItem().allowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
        
         //return !(!room.getLayout().tileWalkable(to.x, to.y) || (topItem != null && (!topItem.getBaseItem().setAllowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
     }
@@ -154,7 +154,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
             if (game != null) {
                 GameTeam team = game.getTeamForHabbo(habbo);
                 if (team != null) {
-                    HabboItem item = room.getTopItemAt(to.x, to.y);
+                    HabboItem item = room.getTopItemAt(to.getX(), to.getY());
                         try {
                             item.onWalkOn(kicker, room, null);
                         } catch (Exception e) {
@@ -180,6 +180,6 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
 
     @Override
     public boolean canStillMove(Room room, RoomTile from, RoomTile to, RoomUserRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
-        return to.state == RoomTileState.OPEN && to.isWalkable();
+        return to.getState() == RoomTileState.OPEN && to.isWalkable();
     }
 }

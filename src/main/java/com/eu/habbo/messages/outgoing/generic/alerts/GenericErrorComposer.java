@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.generic.alerts;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GenericErrorComposer extends MessageComposer {
     public static final int AUTHENTICATION_FAILED = -3;
     public static final int CONNECTING_TO_THE_SERVER_FAILED = -400;
@@ -14,10 +16,6 @@ public class GenericErrorComposer extends MessageComposer {
     public static final int WRONG_PASSWORD_USED = -100002;
 
     private final int errorCode;
-
-    public GenericErrorComposer(int errorCode) {
-        this.errorCode = errorCode;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

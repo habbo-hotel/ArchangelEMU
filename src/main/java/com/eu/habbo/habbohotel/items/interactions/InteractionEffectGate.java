@@ -50,7 +50,7 @@ public class InteractionEffectGate extends InteractionDefault implements Conditi
 
         if (!customparams.isEmpty()) {
             return Arrays.asList(customparams.split(";"))
-                    .contains(Integer.valueOf(roomUnit.getEffectId()).toString());
+                    .contains(String.valueOf(roomUnit.getEffectId()));
         }
 
         return defaultAllowedEnables.contains(roomUnit.getEffectId());

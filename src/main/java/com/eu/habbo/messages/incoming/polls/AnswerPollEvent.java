@@ -6,16 +6,14 @@ import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredRewardResultMessageComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Slf4j
 public class AnswerPollEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnswerPollEvent.class);
-
     @Override
     public void handle() throws Exception {
         int pollId = this.packet.readInt();
@@ -47,13 +45,13 @@ public class AnswerPollEvent extends MessageHandler {
                 statement.setString(4, answer.toString());
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
-            if (poll.lastQuestionId == questionId) {
-                if (poll.badgeReward.length() > 0) {
-                    if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(poll.badgeReward)) {
-                        HabboBadge badge = new HabboBadge(0, poll.badgeReward, 0, this.client.getHabbo());
+            if (poll.getLastQuestionId() == questionId) {
+                if (poll.getBadgeReward().length() > 0) {
+                    if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(poll.getBadgeReward())) {
+                        HabboBadge badge = new HabboBadge(0, poll.getBadgeReward(), 0, this.client.getHabbo());
                         Emulator.getThreading().run(badge);
                         this.client.getHabbo().getInventory().getBadgesComponent().addBadge(badge);
                         this.client.sendResponse(new BadgeReceivedComposer(badge));

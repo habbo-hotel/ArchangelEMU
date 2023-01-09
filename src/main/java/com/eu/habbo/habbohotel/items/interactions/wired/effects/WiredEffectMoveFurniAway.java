@@ -6,12 +6,10 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
@@ -88,7 +86,7 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
                 RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
                 double oldZ = item.getZ();
 
-                if(newLocation != null && newLocation.state != RoomTileState.INVALID && newLocation != oldLocation && room.furnitureFitsAt(newLocation, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
+                if(newLocation != null && newLocation.getState() != RoomTileState.INVALID && newLocation != oldLocation && room.furnitureFitsAt(newLocation, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
                     if(room.moveFurniTo(item, newLocation, item.getRotation(), null, false) == FurnitureMovementError.NONE) {
                         room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                     }
@@ -173,7 +171,7 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
         message.appendString("");
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         message.appendInt(0);
     }

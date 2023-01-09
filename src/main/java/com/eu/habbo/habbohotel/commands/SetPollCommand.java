@@ -15,8 +15,8 @@ public class SetPollCommand extends Command {
             if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
                 int pollId = -1;
                 try {
-                    pollId = Integer.valueOf(params[1]);
-                } catch (Exception e) {
+                    pollId = Integer.parseInt(params[1]);
+                } catch (Exception ignored) {
 
                 }
 

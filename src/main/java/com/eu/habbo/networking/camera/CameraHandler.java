@@ -19,18 +19,18 @@ public class CameraHandler extends ChannelInboundHandlerAdapter {
 
             try {
                 CameraPacketHandler.instance().handle(ctx.channel(), header, b);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
 
             } finally {
                 try {
 
                     b.release();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 try {
 
                     ((ByteBuf) msg).release();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         } catch (Exception e) {
@@ -39,7 +39,7 @@ public class CameraHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx)  {
         CameraClient.attemptReconnect = true;
     }
 

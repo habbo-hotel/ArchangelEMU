@@ -4,13 +4,11 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumThreadComment;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class PostMessageMessageComposer extends MessageComposer {
     private final ForumThreadComment comment;
-
-    public PostMessageMessageComposer(ForumThreadComment comment) {
-        this.comment = comment;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

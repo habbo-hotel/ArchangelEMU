@@ -9,17 +9,15 @@ import gnu.trove.map.hash.THashMap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 public class RCONServer extends Server {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RCONServer.class);
-
+    
     private final THashMap<String, Class<? extends RCONMessage>> messages;
     private final GsonBuilder gsonBuilder;
     List<String> allowedAdresses = new ArrayList<>();
@@ -92,20 +90,20 @@ public class RCONServer extends Server {
             try {
                 RCONMessage rcon = message.getDeclaredConstructor().newInstance();
                 Gson gson = this.gsonBuilder.create();
-                rcon.handle(gson, gson.fromJson(body, rcon.type));
-                LOGGER.info("Handled RCON Message: {}", message.getSimpleName());
+                rcon.handle(gson, gson.fromJson(body, rcon.getType()));
+                log.info("Handled RCON Message: {}", message.getSimpleName());
                 result = gson.toJson(rcon, RCONMessage.class);
 
                 if (Emulator.debugging) {
-                    LOGGER.debug("RCON Data {} RCON Result {}", body, result);
+                    log.debug("RCON Data {} RCON Result {}", body, result);
                 }
 
                 return result;
             } catch (Exception ex) {
-                LOGGER.error("Failed to handle RCONMessage", ex);
+                log.error("Failed to handle RCONMessage", ex);
             }
         } else {
-            LOGGER.error("Couldn't find: {}", key);
+            log.error("Couldn't find: {}", key);
         }
 
         throw new ArrayIndexOutOfBoundsException("Unhandled RCON Message");

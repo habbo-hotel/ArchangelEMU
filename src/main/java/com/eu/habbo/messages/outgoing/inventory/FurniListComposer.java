@@ -8,23 +8,20 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.procedure.TIntObjectProcedure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
+@AllArgsConstructor
 public class FurniListComposer extends MessageComposer implements TIntObjectProcedure<HabboItem> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FurniListComposer.class);
 
     private final int fragmentNumber;
     private final int totalFragments;
     private final TIntObjectMap<HabboItem> items;
 
-    public FurniListComposer(int fragmentNumber, int totalFragments, TIntObjectMap<HabboItem> items) {
-        this.fragmentNumber = fragmentNumber;
-        this.totalFragments = totalFragments;
-        this.items = items;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -37,7 +34,7 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
             this.items.forEachEntry(this);
             return this.response;
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
 
         return null;
@@ -52,21 +49,11 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
 
         if (habboItem.getBaseItem().getName().equals("floor") || habboItem.getBaseItem().getName().equals("song_disk") || habboItem.getBaseItem().getName().equals("landscape") || habboItem.getBaseItem().getName().equals("wallpaper") || habboItem.getBaseItem().getName().equals("poster")) {
             switch (habboItem.getBaseItem().getName()) {
-                case "landscape":
-                    this.response.appendInt(4);
-                    break;
-                case "floor":
-                    this.response.appendInt(3);
-                    break;
-                case "wallpaper":
-                    this.response.appendInt(2);
-                    break;
-                case "poster":
-                    this.response.appendInt(6);
-                    break;
-                case "song_disk":
-                    this.response.appendInt(8);
-                    break;
+                case "landscape" -> this.response.appendInt(4);
+                case "floor" -> this.response.appendInt(3);
+                case "wallpaper" -> this.response.appendInt(2);
+                case "poster" -> this.response.appendInt(6);
+                case "song_disk" -> this.response.appendInt(8);
             }
 
             this.response.appendInt(0);

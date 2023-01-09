@@ -2,21 +2,19 @@ package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Slf4j
+@AllArgsConstructor
 public class QueryDeleteHabboItem implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(QueryDeleteHabboItem.class);
 
     private final int itemId;
 
-    public QueryDeleteHabboItem(int itemId) {
-        this.itemId = itemId;
-    }
 
     public QueryDeleteHabboItem(HabboItem item) {
         this.itemId = item.getId();
@@ -28,7 +26,7 @@ public class QueryDeleteHabboItem implements Runnable {
             statement.setInt(1, this.itemId);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 }

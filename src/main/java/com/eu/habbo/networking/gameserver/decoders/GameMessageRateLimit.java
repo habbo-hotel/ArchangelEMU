@@ -15,7 +15,7 @@ public class GameMessageRateLimit extends MessageToMessageDecoder<ClientMessage>
     private static final int MAX_COUNTER = 10;
 
     @Override
-    protected void decode(ChannelHandlerContext ctx, ClientMessage message, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, ClientMessage message, List<Object> out) {
         GameClient client = ctx.channel().attr(GameServerAttributes.CLIENT).get();
 
         if (client == null) {

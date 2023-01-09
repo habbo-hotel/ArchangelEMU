@@ -6,15 +6,14 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.camera.CameraPublishStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.NotEnoughBalanceMessageComposer;
 import com.eu.habbo.plugin.events.users.UserPublishPictureEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Slf4j
 public class PublishPhotoEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PublishPhotoEvent.class);
 
     public static int CAMERA_PUBLISH_POINTS = 5;
     public static int CAMERA_PUBLISH_POINTS_TYPE = 0;
@@ -54,7 +53,7 @@ public class PublishPhotoEvent extends MessageHandler {
 
                     isOk = true;
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 }
             }
         }

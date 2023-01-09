@@ -1,13 +1,14 @@
 package com.eu.habbo.habbohotel.wired.highscores;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum WiredHighscoreScoreType {
     PERTEAM(0),
     MOSTWIN(1),
     CLASSIC(2);
 
-    public final int type;
-
-    WiredHighscoreScoreType(int type) {
-        this.type = type;
-    }
+    private final int type;
 }

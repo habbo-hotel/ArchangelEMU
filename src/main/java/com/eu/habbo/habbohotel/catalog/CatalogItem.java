@@ -3,12 +3,12 @@ package com.eu.habbo.habbohotel.catalog;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,40 +16,53 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+@Slf4j
 public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogItem.class);
+
+    @Getter
     int id;
+    @Getter
     int limitedStack;
+    @Getter
+    @Setter
     private int pageId;
+    @Getter
+    @Setter
     private String itemId;
+    @Getter
     private String name;
+    @Getter
     private int credits;
+    @Getter
     private int points;
+    @Getter
     private short pointsType;
+    @Getter
     private int amount;
     private boolean allowGift = false;
     private int limitedSells;
 
-
+    @Getter
     private String extradata;
 
-
+    @Getter
     private boolean clubOnly;
 
 
     private boolean haveOffer;
 
-
+    @Getter
     private int offerId;
 
 
     private boolean needsUpdate;
 
-
+    @Getter
     private int orderNumber;
 
-
+    @Getter
     private HashMap<Integer, Integer> bundle;
+
 
     public CatalogItem(ResultSet set) throws SQLException {
         this.load(set);
@@ -105,49 +118,6 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
         this.loadBundle();
     }
 
-    public int getId() {
-        return this.id;
-    }
-
-    public int getPageId() {
-        return this.pageId;
-    }
-
-    public void setPageId(int pageId) {
-        this.pageId = pageId;
-    }
-
-    public String getItemId() {
-        return this.itemId;
-    }
-
-    public void setItemId(String itemId) {
-        this.itemId = itemId;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public int getCredits() {
-        return this.credits;
-    }
-
-    public int getPoints() {
-        return this.points;
-    }
-
-    public int getPointsType() {
-        return this.pointsType;
-    }
-
-    public int getAmount() {
-        return this.amount;
-    }
-
-    public int getLimitedStack() {
-        return this.limitedStack;
-    }
 
     public int getLimitedSells() {
         CatalogLimitedConfiguration ltdConfig = Emulator.getGameEnvironment().getCatalogManager().getLimitedConfig(this);
@@ -159,29 +129,6 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
         return this.limitedStack;
     }
 
-    public String getExtradata() {
-        return this.extradata;
-    }
-
-    public boolean isClubOnly() {
-        return this.clubOnly;
-    }
-
-    public boolean isHaveOffer() {
-        return this.haveOffer;
-    }
-
-    public int getOfferId() {
-        return this.offerId;
-    }
-
-    public boolean isLimited() {
-        return this.limitedStack > 0;
-    }
-
-    private int getOrderNumber() {
-        return this.orderNumber;
-    }
 
     public synchronized void sellRare() {
         this.limitedSells++;
@@ -214,7 +161,7 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
 
                     identifier = Integer.parseInt(itemId);
                 } catch (Exception e) {
-                    LOGGER.info("Invalid value (" + itemId + ") for items_base column for catalog_item id (" + this.id + "). Value must be integer or of the format of integer:amount;integer:amount");
+                    log.info("Invalid value (" + itemId + ") for items_base column for catalog_item id (" + this.id + "). Value must be integer or of the format of integer:amount;integer:amount");
                     continue;
                 }
                 if (identifier > 0) {
@@ -236,9 +183,6 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
             return this.amount;
     }
 
-    public HashMap<Integer, Integer> getBundle() {
-        return this.bundle;
-    }
 
     public void loadBundle() {
         int intItemId;
@@ -261,17 +205,17 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
                     }
                 }
             } catch (Exception e) {
-                LOGGER.debug("Failed to load " + this.itemId);
-                LOGGER.error("Caught exception", e);
+                log.debug("Failed to load " + this.itemId);
+                log.error("Caught exception", e);
             }
         } else {
             try {
-                Item item = Emulator.getGameEnvironment().getItemManager().getItem(Integer.valueOf(this.itemId));
+                Item item = Emulator.getGameEnvironment().getItemManager().getItem(Integer.parseInt(this.itemId));
 
                 if (item != null) {
                     this.allowGift = item.allowGift();
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -346,14 +290,13 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
                 statement.setInt(3, this.getId());
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
             this.needsUpdate = false;
         }
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public int compareTo(CatalogItem catalogItem) {
         if (CatalogManager.SORT_USING_ORDERNUM) {
@@ -362,4 +305,14 @@ public class CatalogItem implements ISerialize, Runnable, Comparable<CatalogItem
             return this.getId() - catalogItem.getId();
         }
     }
+
+
+    public boolean isHaveOffer() {
+        return this.haveOffer;
+    }
+
+    public boolean isLimited() {
+        return this.limitedStack > 0;
+    }
+
 }

@@ -7,24 +7,36 @@ import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.friends.NewConsoleMessageComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class MessengerBuddy implements Runnable, ISerialize {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessengerBuddy.class);
 
+    @Getter
     private int id;
+    @Getter
+    @Setter
     private String username;
+    @Getter
+    @Setter
     private HabboGender gender = HabboGender.M;
+    @Getter
     private int online = 0;
+    @Setter
+    @Getter
     private String look = "";
+    @Getter
     private String motto = "";
+    @Getter
     private short relation;
+    @Getter
     private int categoryId = 0;
     private boolean inRoom;
     private int userOne = 0;
@@ -49,7 +61,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -62,7 +74,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             this.userOne = 0;
             this.online = set.getInt("online");
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -89,56 +101,14 @@ public class MessengerBuddy implements Runnable, ISerialize {
         this.inRoom = habbo.getHabboInfo().getCurrentRoom() != null;
     }
 
-    public int getId() {
-        return this.id;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public HabboGender getGender() {
-        return this.gender;
-    }
-
-    public void setGender(HabboGender gender) {
-        this.gender = gender;
-    }
-
-    public int getOnline() {
-        return this.online;
-    }
-
     public void setOnline(boolean value) {
         this.online = (value ? 1 : 0);
-    }
-
-    public String getLook() {
-        return this.look;
-    }
-
-    public void setLook(String look) {
-        this.look = look;
-    }
-
-    public String getMotto() {
-        return this.motto;
-    }
-
-    public short getRelation() {
-        return this.relation;
     }
 
     public void setRelation(int relation) {
         this.relation = (short) relation;
         Emulator.getThreading().run(this);
     }
-
-    public int getCategoryId() { return this.categoryId; }
 
     public boolean inRoom() {
         return this.inRoom;
@@ -157,7 +127,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
             statement.setInt(3, this.id);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 

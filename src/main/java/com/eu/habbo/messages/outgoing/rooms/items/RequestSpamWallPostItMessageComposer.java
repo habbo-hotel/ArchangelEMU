@@ -4,13 +4,11 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RequestSpamWallPostItMessageComposer extends MessageComposer {
     private final HabboItem item;
-
-    public RequestSpamWallPostItMessageComposer(HabboItem item) {
-        this.item = item;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

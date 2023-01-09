@@ -38,7 +38,7 @@ public class BattleBanzaiGameTeam extends GameTeam {
         RoomUnit roomUnit = habbo.getRoomUnit();
         Room room = roomUnit.getRoom();
         if(room == null) return;
-        HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().x, roomUnit.getCurrentLocation().y);
+        HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().getX(), roomUnit.getCurrentLocation().getY());
         int nextEffectM = 0;
         int nextEffectF = 0;
         int nextEffectDuration = -1;

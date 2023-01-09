@@ -43,7 +43,7 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
         message.appendString(this.amount + "");
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(type.code);
+        message.appendInt(type.getCode());
         message.appendInt(this.getDelay());
 
         if (this.requiresTriggeringUser()) {
@@ -92,7 +92,7 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends InteractionWiredEff
             return false;
 
         if (this.amount > 0) {
-            habbo.getHabboInfo().addCurrencyAmount(Emulator.getConfig().getInt("hotelview.promotional.points.type"), this.amount);
+            habbo.givePoints(Emulator.getConfig().getInt("hotelview.promotional.points.type"), this.amount);
             habbo.getClient().sendResponse(new BonusRareInfoMessageComposer(habbo));
         }
 

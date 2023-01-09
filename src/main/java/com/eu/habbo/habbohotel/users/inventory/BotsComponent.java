@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,9 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
+@Slf4j
 public class BotsComponent {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BotsComponent.class);
 
+    @Getter
     private final THashMap<Integer, Bot> bots = new THashMap<>();
 
     public BotsComponent(Habbo habbo) {
@@ -35,7 +36,7 @@ public class BotsComponent {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -54,10 +55,6 @@ public class BotsComponent {
         synchronized (this.bots) {
             this.bots.remove(bot.getId());
         }
-    }
-
-    public THashMap<Integer, Bot> getBots() {
-        return this.bots;
     }
 
     public void dispose() {

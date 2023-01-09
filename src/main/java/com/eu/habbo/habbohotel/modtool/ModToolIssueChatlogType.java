@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ModToolIssueChatlogType {
     NORMAL(0),
     CHAT(1),
@@ -9,13 +14,6 @@ public enum ModToolIssueChatlogType {
     SELFIE(5),
     PHOTO(6);
 
-    private int type;
+    private final int type;
 
-    ModToolIssueChatlogType(int type) {
-        this.type = type;
-    }
-
-    public int getType() {
-        return type;
-    }
 }

@@ -7,7 +7,7 @@ public class UpdateUIFlagsEvent extends MessageHandler {
     public void handle() throws Exception {
         int flags = this.packet.readInt();
 
-        this.client.getHabbo().getHabboStats().uiFlags = flags;
+        this.client.getHabbo().getHabboStats().setUiFlags(flags);
         this.client.getHabbo().getHabboStats().run();
     }
 }

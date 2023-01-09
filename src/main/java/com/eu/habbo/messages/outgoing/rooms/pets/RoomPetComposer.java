@@ -7,7 +7,9 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntObjectProcedure;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RoomPetComposer extends MessageComposer implements TIntObjectProcedure<Pet> {
     private final TIntObjectMap<Pet> pets;
 
@@ -16,9 +18,6 @@ public class RoomPetComposer extends MessageComposer implements TIntObjectProced
         this.pets.put(pet.getId(), pet);
     }
 
-    public RoomPetComposer(TIntObjectMap<Pet> pets) {
-        this.pets = pets;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -36,6 +35,7 @@ public class RoomPetComposer extends MessageComposer implements TIntObjectProced
         if (pet instanceof IPetLook) {
             this.response.appendString(((IPetLook) pet).getLook());
         } else {
+            // TODO: It will never be a type of MonsterplantPet in this scenario?
             this.response.appendString(pet.getPetData().getType() + " " + pet.getRace() + " " + pet.getColor() + " " + ((pet instanceof HorsePet ? (((HorsePet) pet).hasSaddle() ? "3" : "2") + " 2 " + ((HorsePet) pet).getHairStyle() + " " + ((HorsePet) pet).getHairColor() + " 3 " + ((HorsePet) pet).getHairStyle() + " " + ((HorsePet) pet).getHairColor() + (((HorsePet) pet).hasSaddle() ? " 4 9 0" : "") : pet instanceof MonsterplantPet ? (((MonsterplantPet) pet).look.isEmpty() ? "2 1 8 6 0 -1 -1" : ((MonsterplantPet) pet).look) : "2 2 -1 0 3 -1 0")));
         }
         this.response.appendInt(pet.getRoomUnit().getId());

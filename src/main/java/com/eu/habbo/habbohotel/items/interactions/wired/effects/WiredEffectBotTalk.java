@@ -46,7 +46,7 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
         message.appendInt(1);
         message.appendInt(this.mode);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         message.appendInt(0);
     }
@@ -143,7 +143,7 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
             String[] data = wiredData.split(((char) 9) + "");
 
             if (data.length == 4) {
-                this.setDelay(Integer.valueOf(data[0]));
+                this.setDelay(Integer.parseInt(data[0]));
                 this.mode = data[1].equalsIgnoreCase("1") ? 1 : 0;
                 this.botName = data[2];
                 this.message = data[3];

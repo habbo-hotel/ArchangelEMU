@@ -8,20 +8,20 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
+@Slf4j
+@AllArgsConstructor
 public class ModeratorUserInfoComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModeratorUserInfoComposer.class);
 
     private final ResultSet set;
-
-    public ModeratorUserInfoComposer(ResultSet set) {
-        this.set = set;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -37,10 +37,10 @@ public class ModeratorUserInfoComposer extends MessageComposer {
                        totalBans = set.getInt("amount");
                     }
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
             this.response.appendInt(this.set.getInt("user_id"));
@@ -70,7 +70,7 @@ public class ModeratorUserInfoComposer extends MessageComposer {
                 if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) //has sanction
                 {
                     ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
-                    ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel);
+                    ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.getSanctionLevel());
 
                     this.response.appendString(modToolSanctions.getSanctionType(modToolSanctionLevelItem));
                     this.response.appendInt(31);
@@ -80,7 +80,7 @@ public class ModeratorUserInfoComposer extends MessageComposer {
 
             return this.response;
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
         return null;
     }

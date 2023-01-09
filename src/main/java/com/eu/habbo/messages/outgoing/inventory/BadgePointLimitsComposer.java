@@ -7,7 +7,6 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectProcedure;
 
 public class BadgePointLimitsComposer extends MessageComposer {
     @Override
@@ -18,19 +17,16 @@ public class BadgePointLimitsComposer extends MessageComposer {
             THashMap<String, Achievement> achievements = Emulator.getGameEnvironment().getAchievementManager().getAchievements();
 
             this.response.appendInt(achievements.size());
-            achievements.forEachValue(new TObjectProcedure<Achievement>() {
-                @Override
-                public boolean execute(Achievement achievement) {
-                    BadgePointLimitsComposer.this.response.appendString((achievement.name.startsWith("ACH_") ? achievement.name.replace("ACH_", "") : achievement.name));
-                    BadgePointLimitsComposer.this.response.appendInt(achievement.levels.size());
+            achievements.forEachValue(achievement -> {
+                BadgePointLimitsComposer.this.response.appendString((achievement.name.startsWith("ACH_") ? achievement.name.replace("ACH_", "") : achievement.name));
+                BadgePointLimitsComposer.this.response.appendInt(achievement.levels.size());
 
-                    for (AchievementLevel level : achievement.levels.values()) {
-                        BadgePointLimitsComposer.this.response.appendInt(level.level);
-                        BadgePointLimitsComposer.this.response.appendInt(level.progress);
-                    }
-
-                    return true;
+                for (AchievementLevel level : achievement.levels.values()) {
+                    BadgePointLimitsComposer.this.response.appendInt(level.getLevel());
+                    BadgePointLimitsComposer.this.response.appendInt(level.getProgress());
                 }
+
+                return true;
             });
         }
         return this.response;

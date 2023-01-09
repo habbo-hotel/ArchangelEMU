@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.catalog.marketplace;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class MarketplaceBuyOfferResultComposer extends MessageComposer {
     public static final int REFRESH = 1;
     public static final int SOLD_OUT = 2;
@@ -14,13 +16,6 @@ public class MarketplaceBuyOfferResultComposer extends MessageComposer {
     private final int unknown;
     private final int offerId;
     private final int price;
-
-    public MarketplaceBuyOfferResultComposer(int errorCode, int unknown, int offerId, int price) {
-        this.errorCode = errorCode;
-        this.unknown = unknown;
-        this.offerId = offerId;
-        this.price = price;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

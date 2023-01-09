@@ -3,15 +3,12 @@ package com.eu.habbo.threading.runnables;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.CarryObjectMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.HandItemReceivedMessageComposer;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class HabboGiveHandItemToHabbo implements Runnable {
     private final Habbo target;
     private final Habbo from;
-
-    public HabboGiveHandItemToHabbo(Habbo from, Habbo target) {
-        this.target = target;
-        this.from = from;
-    }
 
     @Override
     public void run() {

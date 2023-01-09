@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.guilds;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class HabboGroupJoinFailedMessageComposer extends MessageComposer {
     public static final int GROUP_FULL = 0;
     public static final int GROUP_LIMIT_EXCEED = 1;
@@ -14,10 +16,6 @@ public class HabboGroupJoinFailedMessageComposer extends MessageComposer {
     public static final int MEMBER_FAIL_JOIN_LIMIT_EXCEED_HC = 6;
 
     private final int code;
-
-    public HabboGroupJoinFailedMessageComposer(int code) {
-        this.code = code;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

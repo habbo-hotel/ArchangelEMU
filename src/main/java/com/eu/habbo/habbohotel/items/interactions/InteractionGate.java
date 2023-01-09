@@ -46,7 +46,7 @@ public class InteractionGate extends HabboItem {
 
         // If a Habbo is standing on a tile occupied by the gate, the gate shouldn't open/close
         for (RoomTile tile : room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))
-            if (room.hasHabbosAt(tile.x, tile.y))
+            if (room.hasHabbosAt(tile.getX(), tile.getY()))
                 return;
 
         // Gate closed = 0, open = 1

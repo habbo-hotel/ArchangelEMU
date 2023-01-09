@@ -27,7 +27,7 @@ public class HotelAlertCommand extends Command {
 
             for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
                 Habbo habbo = set.getValue();
-                if (habbo.getHabboStats().blockStaffAlerts)
+                if (habbo.getHabboStats().isBlockStaffAlerts())
                     continue;
 
                 habbo.getClient().sendResponse(msg);

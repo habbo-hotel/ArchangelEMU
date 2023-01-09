@@ -13,16 +13,14 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class GuildManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GuildManager.class);
 
     private final THashMap<GuildPartType, THashMap<Integer, GuildPart>> guildParts;
 
@@ -32,13 +30,13 @@ public class GuildManager {
 
     public GuildManager() {
         long millis = System.currentTimeMillis();
-        this.guildParts = new THashMap<GuildPartType, THashMap<Integer, GuildPart>>();
-        this.guilds = TCollections.synchronizedMap(new TIntObjectHashMap<Guild>());
+        this.guildParts = new THashMap<>();
+        this.guilds = TCollections.synchronizedMap(new TIntObjectHashMap<>());
 
         this.loadGuildParts();
         this.loadGuildViews();
 
-        LOGGER.info("Guild Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Guild Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
 
@@ -56,7 +54,7 @@ public class GuildManager {
                 this.guildParts.get(GuildPartType.valueOf(set.getString("type").toUpperCase())).put(set.getInt("id"), new GuildPart(set));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -70,7 +68,7 @@ public class GuildManager {
                 this.views.add(new ForumView(set));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -111,7 +109,7 @@ public class GuildManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         habbo.getHabboStats().addGuild(guild.getId());
@@ -129,8 +127,8 @@ public class GuildManager {
             if (habbo != null) {
                 habbo.getHabboStats().removeGuild(guild.getId());
 
-                if (habbo.getHabboStats().guild == guild.getId()) {
-                    habbo.getHabboStats().guild = 0;
+                if (habbo.getHabboStats().getGuild() == guild.getId()) {
+                    habbo.getHabboStats().setGuild(0);
                 }
             }
         }
@@ -156,16 +154,16 @@ public class GuildManager {
             Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
 
             if (room != null) {
-                room.setGuild(0);
+                room.setGuildId(0);
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
 
     public void clearInactiveGuilds() {
-        List<Integer> toRemove = new ArrayList<Integer>();
+        List<Integer> toRemove = new ArrayList<>();
         TIntObjectIterator<Guild> guilds = this.guilds.iterator();
         for (int i = this.guilds.size(); i-- > 0; ) {
             try {
@@ -256,13 +254,13 @@ public class GuildManager {
                             statement.setInt(1, guild.getId());
                             statement.setInt(2, client.getHabbo().getHabboInfo().getId());
                             statement.setInt(3, Emulator.getIntUnixTimestamp());
-                            statement.setInt(4, guild.getState() == GuildState.EXCLUSIVE ? GuildRank.REQUESTED.type : GuildRank.MEMBER.type);
+                            statement.setInt(4, guild.getState() == GuildState.EXCLUSIVE ? GuildRank.REQUESTED.getType() : GuildRank.MEMBER.getType());
                             statement.execute();
                         }
                     }
                 } else if (!error) {
                     try (PreparedStatement statement = connection.prepareStatement("UPDATE guilds_members SET level_id = ?, member_since = ? WHERE user_id = ? AND guild_id = ?")) {
-                        statement.setInt(1, GuildRank.MEMBER.type);
+                        statement.setInt(1, GuildRank.MEMBER.getType());
                         statement.setInt(2, Emulator.getIntUnixTimestamp());
                         statement.setInt(3, userId);
                         statement.setInt(4, guild.getId());
@@ -280,7 +278,7 @@ public class GuildManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return !error;
@@ -294,7 +292,7 @@ public class GuildManager {
             statement.setInt(3, guild.getId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -309,7 +307,7 @@ public class GuildManager {
             statement.setInt(3, guild.getId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -320,9 +318,9 @@ public class GuildManager {
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
-        if (habbo != null && habbo.getHabboStats().guild == guild.getId()) {
+        if (habbo != null && habbo.getHabboStats().getGuild() == guild.getId()) {
             habbo.getHabboStats().removeGuild(guild.getId());
-            habbo.getHabboStats().guild = 0;
+            habbo.getHabboStats().setGuild(0);
             habbo.getHabboStats().run();
         }
 
@@ -331,7 +329,7 @@ public class GuildManager {
             statement.setInt(2, guild.getId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -358,7 +356,7 @@ public class GuildManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return member;
@@ -371,7 +369,7 @@ public class GuildManager {
 
 
     THashSet<GuildMember> getGuildMembers(Guild guild) {
-        THashSet<GuildMember> guildMembers = new THashSet<GuildMember>();
+        THashSet<GuildMember> guildMembers = new THashSet<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username, users.look, guilds_members.* FROM guilds_members INNER JOIN users ON guilds_members.user_id = users.id WHERE guilds_members.guild_id = ?")) {
             statement.setInt(1, guild.getId());
@@ -381,7 +379,7 @@ public class GuildManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return guildMembers;
@@ -389,7 +387,7 @@ public class GuildManager {
 
 
     public ArrayList<GuildMember> getGuildMembers(Guild guild, int page, int levelId, String query) {
-        ArrayList<GuildMember> guildMembers = new ArrayList<GuildMember>();
+        ArrayList<GuildMember> guildMembers = new ArrayList<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username, users.look, guilds_members.* FROM guilds_members INNER JOIN users ON guilds_members.user_id = users.id WHERE guilds_members.guild_id = ?  " + (rankQuery(levelId)) + " AND users.username LIKE ? ORDER BY level_id, member_since ASC LIMIT ?, ?")) {
             statement.setInt(1, guild.getId());
@@ -403,14 +401,13 @@ public class GuildManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return guildMembers;
     }
 
-    public int getGuildMembersCount(Guild guild, int page, int levelId, String query) {
-        ArrayList<GuildMember> guildMembers = new ArrayList<GuildMember>();
+    public int getGuildMembersCount(Guild guild, int levelId, String query) {
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM guilds_members INNER JOIN users ON guilds_members.user_id = users.id WHERE guilds_members.guild_id = ?  " + (rankQuery(levelId)) + " AND users.username LIKE ? ORDER BY level_id, member_since ASC")) {
             statement.setInt(1, guild.getId());
@@ -422,7 +419,7 @@ public class GuildManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return 0;
@@ -430,7 +427,7 @@ public class GuildManager {
 
 
     public THashMap<Integer, GuildMember> getOnlyAdmins(Guild guild) {
-        THashMap<Integer, GuildMember> guildAdmins = new THashMap<Integer, GuildMember>();
+        THashMap<Integer, GuildMember> guildAdmins = new THashMap<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username, users.look, guilds_members.* FROM guilds_members INNER JOIN users ON guilds_members.user_id = users.id WHERE guilds_members.guild_id = ?  " + (rankQuery(1)))) {
             statement.setInt(1, guild.getId());
@@ -440,21 +437,18 @@ public class GuildManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return guildAdmins;
     }
 
     private String rankQuery(int level) {
-        switch (level) {
-            case 2:
-                return "AND guilds_members.level_id = 3";
-            case 1:
-                return "AND (guilds_members.level_id = 0 OR guilds_members.level_id = 1)";
-            default:
-                return "AND guilds_members.level_id >= 0 AND guilds_members.level_id <= 2";
-        }
+        return switch (level) {
+            case 2 -> "AND guilds_members.level_id = 3";
+            case 1 -> "AND (guilds_members.level_id = 0 OR guilds_members.level_id = 1)";
+            default -> "AND guilds_members.level_id >= 0 AND guilds_members.level_id <= 2";
+        };
     }
 
 
@@ -472,7 +466,7 @@ public class GuildManager {
                 if (g != null)
                     g.loadMemberCount();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
 
@@ -486,7 +480,7 @@ public class GuildManager {
     }
 
     public List<Guild> getGuilds(int userId) {
-        List<Guild> guilds = new ArrayList<Guild>();
+        List<Guild> guilds = new ArrayList<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT guild_id FROM guilds_members WHERE user_id = ? AND level_id <= 2 ORDER BY member_since ASC")) {
             statement.setInt(1, userId);
@@ -500,14 +494,14 @@ public class GuildManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return guilds;
     }
 
     public List<Guild> getAllGuilds() {
-        List<Guild> guilds = new ArrayList<Guild>();
+        List<Guild> guilds = new ArrayList<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT id FROM guilds ORDER BY id DESC LIMIT 20")) {
             try (ResultSet set = statement.executeQuery()) {
@@ -520,7 +514,7 @@ public class GuildManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return guilds;
@@ -528,7 +522,7 @@ public class GuildManager {
 
     public boolean symbolColor(int colorId) {
         for (GuildPart part : this.getSymbolColors()) {
-            if (part.id == colorId)
+            if (part.getId() == colorId)
                 return true;
         }
 
@@ -537,7 +531,7 @@ public class GuildManager {
 
     public boolean backgroundColor(int colorId) {
         for (GuildPart part : this.getBackgroundColors()) {
-            if (part.id == colorId)
+            if (part.getId() == colorId)
                 return true;
         }
         return false;
@@ -599,7 +593,7 @@ public class GuildManager {
             statement.setInt(2, furni.getId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -614,7 +608,7 @@ public class GuildManager {
 
             guildIterator.remove();
         }
-        LOGGER.info("Guild Manager -> Disposed!");
+        log.info("Guild Manager -> Disposed!");
     }
 
     public boolean hasViewedForum(int userId, int guildId) {
@@ -634,7 +628,7 @@ public class GuildManager {
 
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 

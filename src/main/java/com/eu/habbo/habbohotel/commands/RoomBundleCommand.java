@@ -7,13 +7,12 @@ import com.eu.habbo.habbohotel.catalog.CatalogPageLayouts;
 import com.eu.habbo.habbohotel.catalog.layouts.RoomBundleLayout;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 
+@Slf4j
 public class RoomBundleCommand extends Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomBundleCommand.class);
 
     public RoomBundleCommand() {
         super("cmd_bundle", Emulator.getTexts().getValue("commands.keys.cmd_bundle").split(";"));
@@ -36,10 +35,10 @@ public class RoomBundleCommand extends Command {
             return true;
         }
 
-        parentId = Integer.valueOf(params[1]);
-        credits = Integer.valueOf(params[2]);
-        points = Integer.valueOf(params[3]);
-        pointsType = Integer.valueOf(params[4]);
+        parentId = Integer.parseInt(params[1]);
+        credits = Integer.parseInt(params[2]);
+        points = Integer.parseInt(params[3]);
+        pointsType = Integer.parseInt(params[4]);
 
         CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().createCatalogPage("Room Bundle: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getName(), "room_bundle_" + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), 0, CatalogPageLayouts.room_bundle, gameClient.getHabbo().getHabboInfo().getRank().getId(), parentId);
 
@@ -66,7 +65,7 @@ public class RoomBundleCommand extends Command {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
             ((RoomBundleLayout) page).loadItems(gameClient.getHabbo().getHabboInfo().getCurrentRoom());
 

@@ -3,9 +3,11 @@ package com.eu.habbo.messages.outgoing.users;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class CheckUserNameResultMessageComposer extends MessageComposer {
     public static final int AVAILABLE = 0;
     public static final int TOO_SHORT = 2;
@@ -17,12 +19,6 @@ public class CheckUserNameResultMessageComposer extends MessageComposer {
     private final int status;
     private final String name;
     private final List<String> suggestions;
-
-    public CheckUserNameResultMessageComposer(int status, String name, List<String> suggestions) {
-        this.status = status;
-        this.name = name;
-        this.suggestions = suggestions;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

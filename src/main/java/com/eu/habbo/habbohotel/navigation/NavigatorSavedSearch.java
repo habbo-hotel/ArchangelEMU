@@ -1,34 +1,19 @@
 package com.eu.habbo.habbohotel.navigation;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@AllArgsConstructor
 public class NavigatorSavedSearch {
-    private String searchCode;
-    private String filter;
+    private final String searchCode;
+    private final String filter;
+    @Setter
     private int id;
 
     public NavigatorSavedSearch(String searchCode, String filter) {
         this.searchCode = searchCode;
         this.filter = filter;
-    }
-
-    public NavigatorSavedSearch(String searchCode, String filter, int id) {
-        this.searchCode = searchCode;
-        this.filter = filter;
-        this.id = id;
-    }
-
-    public String getSearchCode() {
-        return searchCode;
-    }
-
-    public String getFilter() {
-        return filter;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

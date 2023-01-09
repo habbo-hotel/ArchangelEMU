@@ -96,9 +96,9 @@ public class ModToolIssue implements ISerialize {
         if (this.chatLogs != null) {
             message.appendInt(this.chatLogs.size());
             for (ModToolChatLog chatLog : this.chatLogs) {
-                message.appendString(chatLog.message);
+                message.appendString(chatLog.getMessage());
                 message.appendInt(0);
-                message.appendInt(chatLog.message.length());
+                message.appendInt(chatLog.getMessage().length());
             }
         } else {
             message.appendInt(0);

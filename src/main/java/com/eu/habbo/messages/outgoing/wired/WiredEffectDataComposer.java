@@ -5,15 +5,12 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class WiredEffectDataComposer extends MessageComposer {
     private final InteractionWiredEffect effect;
     private final Room room;
-
-    public WiredEffectDataComposer(InteractionWiredEffect effect, Room room) {
-        this.effect = effect;
-        this.room = room;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

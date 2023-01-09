@@ -3,13 +3,12 @@ package com.eu.habbo.habbohotel.polls;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 
+@Slf4j 
 public class PollManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PollManager.class);
 
     private final THashMap<Integer, Poll> activePolls = new THashMap<>();
 
@@ -27,7 +26,7 @@ public class PollManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
         return false;
     }
@@ -61,13 +60,13 @@ public class PollManager {
                                     }
                                 }
 
-                                poll.lastQuestionId = question.id;
+                                poll.setLastQuestionId(question.getId());
                             }
                         }
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }

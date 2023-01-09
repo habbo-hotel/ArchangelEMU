@@ -9,14 +9,13 @@ import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ServerMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class InteractionDefault extends HabboItem {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionDefault.class);
 
     public InteractionDefault(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -77,9 +76,9 @@ public class InteractionDefault extends HabboItem {
                         int currentState = 0;
 
                         try {
-                            currentState = Integer.valueOf(this.getExtradata());
+                            currentState = Integer.parseInt(this.getExtradata());
                         } catch (NumberFormatException e) {
-                            LOGGER.error("Incorrect extradata (" + this.getExtradata() + ") for item ID (" + this.getId() + ") of type (" + this.getBaseItem().getName() + ")");
+                            log.error("Incorrect extradata (" + this.getExtradata() + ") for item ID (" + this.getId() + ") of type (" + this.getBaseItem().getName() + ")");
                         }
 
                         this.setExtradata("" + (currentState + 1) % this.getBaseItem().getStateCount());
@@ -150,9 +149,8 @@ public class InteractionDefault extends HabboItem {
                 int nextEffectDuration = -1;
 
                 if (objects != null && objects.length == 2) {
-                    if (objects[0] instanceof RoomTile && objects[1] instanceof RoomTile) {
-                        RoomTile goalTile = (RoomTile) objects[0];
-                        HabboItem topItem = room.getTopItemAt(goalTile.x, goalTile.y, (objects[0] != objects[1]) ? this : null);
+                    if (objects[0] instanceof RoomTile goalTile && objects[1] instanceof RoomTile) {
+                        HabboItem topItem = room.getTopItemAt(goalTile.getX(), goalTile.getY(), (objects[0] != objects[1]) ? this : null);
 
                         if (topItem != null && (topItem.getBaseItem().getEffectM() == this.getBaseItem().getEffectM() || topItem.getBaseItem().getEffectF() == this.getBaseItem().getEffectF())) {
                             return;
@@ -206,7 +204,7 @@ public class InteractionDefault extends HabboItem {
 
         if (!habbo.getHabboStats().isRentingSpace()) return false;
 
-        HabboItem rentSpace = room.getHabboItem(habbo.getHabboStats().rentedItemId);
+        HabboItem rentSpace = room.getHabboItem(habbo.getHabboStats().getRentedItemId());
 
         return rentSpace != null && RoomLayout.squareInSquare(RoomLayout.getRectangle(rentSpace.getX(), rentSpace.getY(), rentSpace.getBaseItem().getWidth(), rentSpace.getBaseItem().getLength(), rentSpace.getRotation()), RoomLayout.getRectangle(this.getX(), this.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()));
 

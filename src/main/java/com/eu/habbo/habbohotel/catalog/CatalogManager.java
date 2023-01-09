@@ -18,12 +18,12 @@ import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.catalog.*;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
-import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.modtool.IssueCloseNotificationMessageComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
@@ -37,18 +37,15 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class CatalogManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogManager.class);
 
     public static final THashMap<String, Class<? extends CatalogPage>> pageDefinitions = new THashMap<>();
     public static int catalogItemAmount;
@@ -86,7 +83,7 @@ public class CatalogManager {
 
         this.ecotronItem = Emulator.getGameEnvironment().getItemManager().getItem("ecotron_box");
 
-        LOGGER.info("Catalog Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Catalog Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
 
@@ -258,7 +255,7 @@ public class CatalogManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         for (Map.Entry<Integer, LinkedList<Integer>> set : limiteds.entrySet()) {
@@ -278,7 +275,7 @@ public class CatalogManager {
                     Class<? extends CatalogPage> pageClazz = pageDefinitions.get(set.getString("page_layout"));
 
                     if (pageClazz == null) {
-                        LOGGER.info("Unknown Page Layout: " + set.getString("page_layout"));
+                        log.info("Unknown Page Layout: " + set.getString("page_layout"));
                         continue;
                     }
 
@@ -286,12 +283,12 @@ public class CatalogManager {
                         CatalogPage page = pageClazz.getConstructor(ResultSet.class).newInstance(set);
                         pages.put(page.getId(), page);
                     } catch (Exception e) {
-                        LOGGER.error("Failed to load layout: {}", set.getString("page_layout"));
+                        log.error("Failed to load layout: {}", set.getString("page_layout"));
                     }
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         pages.forEachValue((object) -> {
@@ -303,7 +300,7 @@ public class CatalogManager {
                 }
             } else {
                 if (object.parentId != -2) {
-                    LOGGER.info("Parent Page not found for " + object.getPageName() + " (ID: " + object.id + ", parent_id: " + object.parentId + ")");
+                    log.info("Parent Page not found for " + object.getPageName() + " (ID: " + object.id + ", parent_id: " + object.parentId + ")");
                 }
             }
             return true;
@@ -311,7 +308,7 @@ public class CatalogManager {
 
         this.catalogPages.putAll(pages);
 
-        LOGGER.info("Loaded " + this.catalogPages.size() + " Catalog Pages!");
+        log.info("Loaded " + this.catalogPages.size() + " Catalog Pages!");
     }
 
 
@@ -332,7 +329,7 @@ public class CatalogManager {
                 ));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -379,7 +376,7 @@ public class CatalogManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         for (CatalogPage page : this.catalogPages.valueCollection()) {
@@ -404,7 +401,7 @@ public class CatalogManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -420,7 +417,7 @@ public class CatalogManager {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -435,7 +432,7 @@ public class CatalogManager {
                     this.vouchers.add(new Voucher(set));
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -455,11 +452,11 @@ public class CatalogManager {
 
                         this.prizes.get(set.getInt("rarity")).add(item);
                     } else {
-                        LOGGER.error("Cannot load item with ID: {} as recycler reward!", set.getInt("item_id"));
+                        log.error("Cannot load item with ID: {} as recycler reward!", set.getInt("item_id"));
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -474,17 +471,12 @@ public class CatalogManager {
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM gift_wrappers ORDER BY sprite_id DESC")) {
                     while (set.next()) {
                         switch (set.getString("type")) {
-                            case "wrapper":
-                                this.giftWrappers.put(set.getInt("sprite_id"), set.getInt("item_id"));
-                                break;
-
-                            case "gift":
-                                this.giftFurnis.put(set.getInt("sprite_id"), set.getInt("item_id"));
-                                break;
+                            case "wrapper" -> this.giftWrappers.put(set.getInt("sprite_id"), set.getInt("item_id"));
+                            case "gift" -> this.giftFurnis.put(set.getInt("sprite_id"), set.getInt("item_id"));
                         }
                     }
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 }
             }
         }
@@ -499,14 +491,14 @@ public class CatalogManager {
                     this.clothing.put(set.getInt("id"), new ClothItem(set));
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
 
     public ClothItem getClothing(String name) {
         for (ClothItem item : this.clothing.values()) {
-            if (item.name.equalsIgnoreCase(name)) {
+            if (item.getName().equalsIgnoreCase(name)) {
                 return item;
             }
         }
@@ -517,7 +509,7 @@ public class CatalogManager {
     public Voucher getVoucher(String code) {
         synchronized (this.vouchers) {
             for (Voucher voucher : this.vouchers) {
-                if (voucher.code.equals(code)) {
+                if (voucher.getCode().equals(code)) {
                     return voucher;
                 }
             }
@@ -548,18 +540,18 @@ public class CatalogManager {
 
         voucher.addHistoryEntry(habbo.getHabboInfo().getId());
 
-        if (voucher.points > 0) {
-            client.getHabbo().getHabboInfo().addCurrencyAmount(voucher.pointsType, voucher.points);
-            client.sendResponse(new HabboActivityPointNotificationMessageComposer(client.getHabbo().getHabboInfo().getCurrencyAmount(voucher.pointsType), voucher.points, voucher.pointsType));
+        if (voucher.getPoints() > 0) {
+            client.getHabbo().getHabboInfo().addCurrencyAmount(voucher.getPointsType(), voucher.getPoints());
+            client.sendResponse(new HabboActivityPointNotificationMessageComposer(client.getHabbo().getHabboInfo().getCurrencyAmount(voucher.getPointsType()), voucher.getPoints(), voucher.getPointsType()));
         }
 
-        if (voucher.credits > 0) {
-            client.getHabbo().getHabboInfo().addCredits(voucher.credits);
+        if (voucher.getCredits() > 0) {
+            client.getHabbo().getHabboInfo().addCredits(voucher.getCredits());
             client.sendResponse(new CreditBalanceComposer(client.getHabbo()));
         }
 
-        if (voucher.catalogItemId > 0) {
-            CatalogItem item = this.getCatalogItem(voucher.catalogItemId);
+        if (voucher.getCatalogItemId() > 0) {
+            CatalogItem item = this.getCatalogItem(voucher.getCatalogItemId());
             if (item != null) {
                 this.purchaseItem(null, item, client.getHabbo(), 1, "", true);
             }
@@ -570,7 +562,7 @@ public class CatalogManager {
 
     public boolean deleteVoucher(Voucher voucher) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM vouchers WHERE code = ?")) {
-            statement.setString(1, voucher.code);
+            statement.setString(1, voucher.getCode());
 
             synchronized (this.vouchers) {
                 this.vouchers.remove(voucher);
@@ -578,7 +570,7 @@ public class CatalogManager {
 
             return statement.executeUpdate() >= 1;
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return false;
@@ -609,13 +601,10 @@ public class CatalogManager {
     public CatalogItem getCatalogItem(int id) {
         final CatalogItem[] item = {null};
         synchronized (this.catalogPages) {
-            this.catalogPages.forEachValue(new TObjectProcedure<CatalogPage>() {
-                @Override
-                public boolean execute(CatalogPage object) {
-                    item[0] = object.getCatalogItem(id);
+            this.catalogPages.forEachValue(object -> {
+                item[0] = object.getCatalogItem(id);
 
-                    return item[0] == null;
-                }
+                return item[0] == null;
             });
         }
 
@@ -626,24 +615,17 @@ public class CatalogManager {
     public List<CatalogPage> getCatalogPages(int parentId, final Habbo habbo) {
         final List<CatalogPage> pages = new ArrayList<>();
 
-        this.catalogPages.get(parentId).childPages.forEachValue(new TObjectProcedure<CatalogPage>() {
-            @Override
-            public boolean execute(CatalogPage object) {
+        this.catalogPages.get(parentId).childPages.forEachValue(object -> {
 
-                boolean isVisiblePage = object.visible;
-                boolean hasRightRank = object.getRank() <= habbo.getHabboInfo().getRank().getId();
+            boolean isVisiblePage = object.visible;
+            boolean hasRightRank = object.getRank() <= habbo.getHabboInfo().getRank().getId();
 
-                boolean clubRightsOkay = true;
+            boolean clubRightsOkay = !object.isClubOnly() || habbo.getHabboInfo().getHabboStats().hasActiveClub();
 
-                if(object.isClubOnly() && !habbo.getHabboInfo().getHabboStats().hasActiveClub()) {
-                    clubRightsOkay = false;
-                }
-
-                if (isVisiblePage && hasRightRank && clubRightsOkay) {
-                    pages.add(object);
-                }
-                return true;
+            if (isVisiblePage && hasRightRank && clubRightsOkay) {
+                pages.add(object);
             }
+            return true;
         });
         Collections.sort(pages);
 
@@ -702,7 +684,7 @@ public class CatalogManager {
         if (this.prizes.containsKey(level) && !this.prizes.get(level).isEmpty()) {
             return (Item) this.prizes.get(level).toArray()[Emulator.getRandom().nextInt(this.prizes.get(level).size())];
         } else {
-            LOGGER.error("No rewards specified for rarity level {}", level);
+            log.error("No rewards specified for rarity level {}", level);
         }
 
         return null;
@@ -734,10 +716,10 @@ public class CatalogManager {
                                     try {
                                         catalogPage = pageClazz.getConstructor(ResultSet.class).newInstance(page);
                                     } catch (Exception e) {
-                                        LOGGER.error("Caught exception", e);
+                                        log.error("Caught exception", e);
                                     }
                                 } else {
-                                    LOGGER.error("Unknown page layout: {}", page.getString("page_layout"));
+                                    log.error("Unknown page layout: {}", page.getString("page_layout"));
                                 }
                             }
                         }
@@ -745,7 +727,7 @@ public class CatalogManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         if (catalogPage != null) {
@@ -804,19 +786,19 @@ public class CatalogManager {
             }
         }
 
-        LOGGER.info("Catalog Manager -> Disposed!");
+        log.info("Catalog Manager -> Disposed!");
     }
 
 
     public void purchaseItem(CatalogPage page, CatalogItem item, Habbo habbo, int amount, String extradata, boolean free) {
-        Item cBaseItem = null;
+          Item cBaseItem = null;
 
-        if (item == null || habbo.getHabboStats().isPurchasingFurniture) {
+        if (item == null || habbo.getHabboStats().isPurchasingFurniture()) {
             habbo.getClient().sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
             return;
         }
 
-        habbo.getHabboStats().isPurchasingFurniture = true;
+        habbo.getHabboStats().setPurchasingFurniture(true);
 
         try {
             if (item.isClubOnly() && !habbo.getClient().getHabbo().getHabboStats().hasActiveClub()) {
@@ -873,7 +855,7 @@ public class CatalogManager {
                 if (amount > 1 && !CatalogItem.haveOffer(item)) {
                     String message = Emulator.getTexts().getValue("scripter.warning.catalog.amount").replace("%username%", habbo.getHabboInfo().getUsername()).replace("%itemname%", item.getName()).replace("%pagename%", page.getCaption());
                     ScripterManager.scripterDetected(habbo.getClient(), message);
-                    LOGGER.info(message);
+                    log.info(message);
                     habbo.getClient().sendResponse(new PurchaseNotAllowedMessageComposer(PurchaseNotAllowedMessageComposer.ILLEGAL));
                     return;
                 }
@@ -958,7 +940,7 @@ public class CatalogManager {
                                 try {
                                     pet = Emulator.getGameEnvironment().getPetManager().createPet(baseItem, data[0], data[1], data[2], habbo.getClient());
                                 } catch (Exception e) {
-                                    LOGGER.error("Caught exception", e);
+                                    log.error("Caught exception", e);
                                     habbo.getClient().sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
                                 }
 
@@ -996,7 +978,7 @@ public class CatalogManager {
                                     if (extradata.length() > Emulator.getConfig().getInt("hotel.trophies.length.max", 300)) {
                                         extradata = extradata.substring(0, Emulator.getConfig().getInt("hotel.trophies.length.max", 300));
                                     }
-                                    
+
                                     extradata = habbo.getClient().getHabbo().getHabboInfo().getUsername() + (char) 9 + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-" + Calendar.getInstance().get(Calendar.YEAR) + (char) 9 + Emulator.getGameEnvironment().getWordFilter().filter(extradata.replace(((char) 9) + "", ""), habbo);
                                 }
 
@@ -1017,7 +999,7 @@ public class CatalogManager {
                                     try {
                                         guildId = Integer.parseInt(extradata);
                                     } catch (Exception e) {
-                                        LOGGER.error("Caught exception", e);
+                                        log.error("Caught exception", e);
                                         habbo.getClient().sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
                                         return;
                                     }
@@ -1034,7 +1016,7 @@ public class CatalogManager {
                                         itemsList.add(habboItem);
 
                                         if (baseItem.getName().equals("guild_forum")) {
-                                            guild.setForum(true);
+                                            guild.setHasForum(true);
                                             guild.needsUpdate = true;
                                             guild.run();
                                         }
@@ -1111,7 +1093,7 @@ public class CatalogManager {
                     keys.put("display", "BUBBLE");
                     keys.put("image", "${image.library.url}album1584/" + badge.getCode() + ".gif");
                     keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
-                    habbo.getClient().sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys));
+                    habbo.getClient().sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.getKey(), keys));
                     unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.BADGE).add(badge.getId());
                 }
                 habbo.getClient().getHabbo().getHabboStats().addPurchase(purchasedEvent.catalogItem);
@@ -1123,11 +1105,11 @@ public class CatalogManager {
 
                 THashSet<String> itemIds = new THashSet<>();
 
-                for(HabboItem ix : purchasedEvent.itemsList) {
+                for (HabboItem ix : purchasedEvent.itemsList) {
                     itemIds.add(ix.getId() + "");
                 }
 
-                if(!free) {
+                if (!free) {
                     Emulator.getThreading().run(new CatalogPurchaseLogEntry(
                             Emulator.getIntUnixTimestamp(),
                             purchasedEvent.habbo.getHabboInfo().getId(),
@@ -1136,17 +1118,17 @@ public class CatalogManager {
                             purchasedEvent.catalogItem != null ? purchasedEvent.catalogItem.getName() : "",
                             purchasedEvent.totalCredits,
                             purchasedEvent.totalPoints,
-                            item != null ? item.getPointsType() : 0,
+                            item.getPointsType(),
                             amount
                     ));
                 }
 
             } catch (Exception e) {
-                LOGGER.error("Exception caught", e);
+                log.error("Exception caught", e);
                 habbo.getClient().sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             }
         } finally {
-            habbo.getHabboStats().isPurchasingFurniture = false;
+            habbo.getHabboStats().setPurchasingFurniture(false);
         }
     }
 

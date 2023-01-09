@@ -13,7 +13,6 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class WiredConditionNotFurniHaveHabbo extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.NOT_FURNI_HAVE_HABBO;
-    
+
     protected THashSet<HabboItem> items;
 
     public WiredConditionNotFurniHaveHabbo(ResultSet set, Item baseItem) throws SQLException {
@@ -122,7 +121,8 @@ public class WiredConditionNotFurniHaveHabbo extends InteractionWiredCondition {
         message.appendString("");
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(0);
+        message.appendInt(this.getType().getCode());
         message.appendInt(0);
         message.appendInt(0);
     }

@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum RoomUserAction {
     NONE(0),
     WAVE(1),
@@ -12,9 +17,6 @@ public enum RoomUserAction {
 
     private final int action;
 
-    RoomUserAction(int action) {
-        this.action = action;
-    }
 
     public static RoomUserAction fromValue(int value) {
         for (RoomUserAction action : RoomUserAction.values()) {
@@ -24,9 +26,5 @@ public enum RoomUserAction {
         }
 
         return NONE;
-    }
-
-    public int getAction() {
-        return this.action;
     }
 }

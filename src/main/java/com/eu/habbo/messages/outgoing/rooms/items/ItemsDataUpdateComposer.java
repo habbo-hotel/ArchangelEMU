@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Set;
 
+@AllArgsConstructor
 public class ItemsDataUpdateComposer extends MessageComposer {
     private final Set<HabboItem> items;
-
-    public ItemsDataUpdateComposer(Set<HabboItem> items) {
-        this.items = items;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

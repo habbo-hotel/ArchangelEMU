@@ -1,29 +1,31 @@
 package com.eu.habbo.habbohotel.hotelview;
 
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class NewsWidget {
+    @Getter
+    private final int id;
 
-    private int id;
+    @Getter
+    private final String title;
 
+    @Getter
+    private final String message;
 
-    private String title;
+    @Getter
+    private final String buttonMessage;
 
+    @Getter
+    private final int type;
 
-    private String message;
+    @Getter
+    private final String link;
 
-
-    private String buttonMessage;
-
-
-    private int type;
-
-
-    private String link;
-
-
-    private String image;
+    @Getter
+    private final String image;
 
     public NewsWidget(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
@@ -33,40 +35,5 @@ public class NewsWidget {
         this.type = set.getString("button_type").equals("client") ? 1 : 0;
         this.link = set.getString("button_link");
         this.image = set.getString("image");
-    }
-
-
-    public int getId() {
-        return this.id;
-    }
-
-
-    public String getTitle() {
-        return this.title;
-    }
-
-
-    public String getMessage() {
-        return this.message;
-    }
-
-
-    public String getButtonMessage() {
-        return this.buttonMessage;
-    }
-
-
-    public int getType() {
-        return this.type;
-    }
-
-
-    public String getLink() {
-        return this.link;
-    }
-
-
-    public String getImage() {
-        return this.image;
     }
 }

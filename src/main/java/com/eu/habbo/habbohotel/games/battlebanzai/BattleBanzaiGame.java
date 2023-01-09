@@ -17,26 +17,21 @@ import com.eu.habbo.messages.outgoing.rooms.users.ExpressionMessageComposer;
 import com.eu.habbo.threading.runnables.BattleBanzaiTilesFlicker;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+@Slf4j
 public class BattleBanzaiGame extends Game {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BattleBanzaiGame.class);
-
-
+    
     public static final int effectId = 32;
-
-
+    
     public static final int POINTS_HIJACK_TILE = Emulator.getConfig().getInt("hotel.banzai.points.tile.steal", 0);
-
-
+    
     public static final int POINTS_FILL_TILE = Emulator.getConfig().getInt("hotel.banzai.points.tile.fill", 0);
-
-
+    
     public static final int POINTS_LOCK_TILE = Emulator.getConfig().getInt("hotel.banzai.points.tile.lock", 1);
 
     private static final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(Emulator.getConfig().getInt("hotel.banzai.fill.threads", 2));
@@ -165,7 +160,7 @@ public class BattleBanzaiGame extends Game {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
@@ -283,7 +278,7 @@ public class BattleBanzaiGame extends Game {
 
                 if (largestAreaOfAll.isPresent()) {
                     for (RoomTile tile : largestAreaOfAll.get()) {
-                        Optional<HabboItem> tileItem = this.gameTiles.values().stream().filter(i -> i.getX() == tile.x && i.getY() == tile.y && i instanceof InteractionBattleBanzaiTile).findAny();
+                        Optional<HabboItem> tileItem = this.gameTiles.values().stream().filter(i -> i.getX() == tile.getX() && i.getY() == tile.getY() && i instanceof InteractionBattleBanzaiTile).findAny();
 
                         tileItem.ifPresent(habboItem -> {
                             this.tileLocked(teamColor, habboItem, habbo, true);
@@ -375,7 +370,7 @@ public class BattleBanzaiGame extends Game {
                 scoreboard.setExtradata("0");
             }
 
-            int oldScore = Integer.valueOf(scoreboard.getExtradata());
+            int oldScore = Integer.parseInt(scoreboard.getExtradata());
 
             if (oldScore == totalScore)
                 continue;

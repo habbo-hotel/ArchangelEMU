@@ -7,19 +7,14 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GetGuestRoomResultComposer extends MessageComposer {
     private final Room room;
     private final Habbo habbo;
     private final boolean roomForward;
     private final boolean enterRoom;
-
-    public GetGuestRoomResultComposer(Room room, Habbo habbo, boolean roomForward, boolean enterRoom) {
-        this.room = room;
-        this.habbo = habbo;
-        this.roomForward = roomForward;
-        this.enterRoom = enterRoom;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

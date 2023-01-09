@@ -27,7 +27,7 @@ public class InteractionEffectGiver extends InteractionDefault {
         super.onClick(client, room, objects);
 
         if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentLocation(), room.getLayout().getTile(this.getX(), this.getY())) ||
-                (client.getHabbo().getRoomUnit().getCurrentLocation().x == this.getX() && client.getHabbo().getRoomUnit().getCurrentLocation().y == this.getY())) {
+                (client.getHabbo().getRoomUnit().getCurrentLocation().getX() == this.getX() && client.getHabbo().getRoomUnit().getCurrentLocation().getY() == this.getY())) {
             this.handle(room, client.getHabbo().getRoomUnit());
         }
     }

@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.rooms.pets.breeding;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GoToBreedingNestFailureComposer extends MessageComposer {
     public final static int NO_NESTS = 0;
     public final static int NO_SUITABLE_NESTS = 1;
@@ -14,10 +16,6 @@ public class GoToBreedingNestFailureComposer extends MessageComposer {
     public final static int TOO_TIRED = 6;
 
     private final int reason;
-
-    public GoToBreedingNestFailureComposer(int reason) {
-        this.reason = reason;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

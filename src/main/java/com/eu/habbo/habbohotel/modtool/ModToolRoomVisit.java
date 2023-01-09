@@ -1,16 +1,20 @@
 package com.eu.habbo.habbohotel.modtool;
 
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
+@Getter
 public class ModToolRoomVisit implements Comparable<ModToolRoomVisit> {
-    public int roomId;
-    public String roomName;
-    public int timestamp;
-    public int exitTimestamp;
-    public THashSet<ModToolChatLog> chat;
+    private final int roomId;
+    private final String roomName;
+    private final int timestamp;
+    private int exitTimestamp;
+    private THashSet<ModToolChatLog> chat = new THashSet<>();
+    ;
 
     public ModToolRoomVisit(ResultSet set) throws SQLException {
         this.roomId = set.getInt("room_id");
@@ -23,7 +27,7 @@ public class ModToolRoomVisit implements Comparable<ModToolRoomVisit> {
         this.roomName = roomName;
         this.timestamp = timestamp;
         this.exitTimestamp = exitTimestamp;
-        this.chat = new THashSet<>();
+
     }
 
     @Override

@@ -24,7 +24,7 @@ public class MovePetEvent extends MessageHandler {
                     if (tile != null) {
                         pet.getRoomUnit().setLocation(tile);
                         pet.getRoomUnit().setPreviousLocation(tile);
-                        pet.getRoomUnit().setZ(tile.z);
+                        pet.getRoomUnit().setZ(tile.getZ());
                         pet.getRoomUnit().setRotation(RoomUserRotation.fromValue(this.packet.readInt()));
                         pet.getRoomUnit().setPreviousLocationZ(pet.getRoomUnit().getZ());
                         room.sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());

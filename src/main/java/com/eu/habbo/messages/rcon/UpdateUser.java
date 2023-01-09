@@ -6,15 +6,14 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.AccountPreferencesComposer;
 import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Slf4j
 public class UpdateUser extends RCONMessage<UpdateUser.JSON> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateUser.class);
 
     public UpdateUser() {
         super(UpdateUser.JSON.class);
@@ -29,23 +28,23 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON> {
                 habbo.getHabboStats().addAchievementScore(json.achievement_score);
 
                 if (json.block_following != -1) {
-                    habbo.getHabboStats().blockFollowing = json.block_following == 1;
+                    habbo.getHabboStats().setBlockFollowing(json.block_following == 1);
                 }
 
                 if (json.block_friendrequests != -1) {
-                    habbo.getHabboStats().blockFriendRequests = json.block_friendrequests == 1;
+                    habbo.getHabboStats().setBlockFriendRequests(json.block_friendrequests == 1);
                 }
 
                 if (json.block_roominvites != -1) {
-                    habbo.getHabboStats().blockRoomInvites = json.block_roominvites == 1;
+                    habbo.getHabboStats().setBlockRoomInvites(json.block_roominvites == 1);
                 }
 
                 if (json.old_chat != -1) {
-                    habbo.getHabboStats().preferOldChat = json.old_chat == 1;
+                    habbo.getHabboStats().setPreferOldChat(json.old_chat == 1);
                 }
 
                 if (json.block_camera_follow != -1) {
-                    habbo.getHabboStats().blockCameraFollow = json.block_camera_follow == 1;
+                    habbo.getHabboStats().setBlockCameraFollow(json.block_camera_follow == 1);
                 }
 
                 if (!json.look.isEmpty()) {
@@ -108,7 +107,7 @@ public class UpdateUser extends RCONMessage<UpdateUser.JSON> {
                         }
                     }
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 }
             }
         }

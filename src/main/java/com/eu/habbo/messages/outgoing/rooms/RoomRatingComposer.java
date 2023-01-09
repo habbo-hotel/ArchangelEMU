@@ -3,15 +3,12 @@ package com.eu.habbo.messages.outgoing.rooms;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RoomRatingComposer extends MessageComposer {
     private final int score;
     private final boolean canVote;
-
-    public RoomRatingComposer(int score, boolean canVote) {
-        this.score = score;
-        this.canVote = canVote;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

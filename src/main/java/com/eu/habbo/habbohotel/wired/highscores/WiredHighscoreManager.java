@@ -3,24 +3,28 @@ package com.eu.habbo.habbohotel.wired.highscores;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.*;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ScheduledFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class WiredHighscoreManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WiredHighscoreManager.class);
-
     private final HashMap<Integer, List<WiredHighscoreDataEntry>> data = new HashMap<>();
     
     private final static String locale = (System.getProperty("user.language") != null ? System.getProperty("user.language") : "en");
@@ -38,7 +42,7 @@ public class WiredHighscoreManager {
         this.data.clear();
         this.loadHighscoreData();
 
-        LOGGER.info("Highscore Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS, " + this.data.size() + " items)");
+        log.info("Highscore Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS, " + this.data.size() + " items)");
     }
 
     @EventHandler
@@ -72,7 +76,7 @@ public class WiredHighscoreManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -85,14 +89,14 @@ public class WiredHighscoreManager {
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO `items_highscore_data` (`item_id`, `user_ids`, `score`, `is_win`, `timestamp`) VALUES (?, ?, ?, ?, ?)")) {
             statement.setInt(1, entry.getItemId());
-            statement.setString(2, String.join(",", entry.getUserIds().stream().map(Object::toString).collect(Collectors.toList())));
+            statement.setString(2, entry.getUserIds().stream().map(Object::toString).collect(Collectors.joining(",")));
             statement.setInt(3, entry.getScore());
             statement.setInt(4, entry.isWin() ? 1 : 0);
             statement.setInt(5, entry.getTimestamp());
 
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -115,11 +119,10 @@ public class WiredHighscoreManager {
         if (scoreType == WiredHighscoreScoreType.PERTEAM) {
             return highscores
                     .collect(Collectors.groupingBy(h -> h.getUsers().hashCode()))
-                    .entrySet()
+                    .values()
                     .stream()
-                    .map(e -> e.getValue().stream()
-                            .sorted(WiredHighscoreRow::compareTo)
-                            .collect(Collectors.toList())
+                    .map(wiredHighscoreRows -> wiredHighscoreRows.stream()
+                            .sorted(WiredHighscoreRow::compareTo).toList()
                             .get(0)
                     )
                     .sorted(WiredHighscoreRow::compareTo)
@@ -129,9 +132,9 @@ public class WiredHighscoreManager {
         if (scoreType == WiredHighscoreScoreType.MOSTWIN) {
             return highscores
                     .collect(Collectors.groupingBy(h -> h.getUsers().hashCode()))
-                    .entrySet()
+                    .values()
                     .stream()
-                    .map(e -> new WiredHighscoreRow(e.getValue().get(0).getUsers(), e.getValue().size()))
+                    .map(wiredHighscoreRows -> new WiredHighscoreRow(wiredHighscoreRows.get(0).getUsers(), wiredHighscoreRows.size()))
                     .sorted(WiredHighscoreRow::compareTo)
                     .collect(Collectors.toList());
         }
@@ -140,18 +143,16 @@ public class WiredHighscoreManager {
     }
 
     private boolean timeMatchesEntry(WiredHighscoreDataEntry entry, WiredHighscoreClearType timeType) {
-        switch (timeType) {
-            case DAILY:
-                return entry.getTimestamp() > this.getTodayStartTimestamp() && entry.getTimestamp() < this.getTodayEndTimestamp();
-            case WEEKLY:
-                return entry.getTimestamp() > this.getWeekStartTimestamp() && entry.getTimestamp() < this.getWeekEndTimestamp();
-            case MONTHLY:
-                return entry.getTimestamp() > this.getMonthStartTimestamp() && entry.getTimestamp() < this.getMonthEndTimestamp();
-            case ALLTIME:
-                return true;
-        }
+        return switch (timeType) {
+            case DAILY ->
+                    entry.getTimestamp() > this.getTodayStartTimestamp() && entry.getTimestamp() < this.getTodayEndTimestamp();
+            case WEEKLY ->
+                    entry.getTimestamp() > this.getWeekStartTimestamp() && entry.getTimestamp() < this.getWeekEndTimestamp();
+            case MONTHLY ->
+                    entry.getTimestamp() > this.getMonthStartTimestamp() && entry.getTimestamp() < this.getMonthEndTimestamp();
+            case ALLTIME -> true;
+        };
 
-        return false;
     }
 
     private long getTodayStartTimestamp() {

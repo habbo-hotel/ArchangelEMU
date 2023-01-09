@@ -1,10 +1,13 @@
 package com.eu.habbo.habbohotel.users.clothingvalidation;
 
+import lombok.Getter;
+
 import java.util.TreeMap;
 
 public class FiguredataPalette {
-    public int id;
-    public TreeMap<Integer, FiguredataPaletteColor> colors;
+    @Getter
+    private final int id;
+    private final TreeMap<Integer, FiguredataPaletteColor> colors;
 
     public FiguredataPalette(int id) {
         this.id = id;
@@ -12,7 +15,7 @@ public class FiguredataPalette {
     }
 
     public void addColor(FiguredataPaletteColor color) {
-        this.colors.put(color.id, color);
+        this.colors.put(color.getId(), color);
     }
 
     public FiguredataPaletteColor getColor(int colorId) {
@@ -21,7 +24,7 @@ public class FiguredataPalette {
 
     public FiguredataPaletteColor getFirstNonHCColor() {
         for(FiguredataPaletteColor color : this.colors.values()) {
-            if(!color.club && color.selectable)
+            if(!color.isClub() && color.isSelectable())
                 return color;
         }
 

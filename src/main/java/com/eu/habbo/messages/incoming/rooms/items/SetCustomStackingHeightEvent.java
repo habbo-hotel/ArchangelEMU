@@ -28,13 +28,13 @@ public class SetCustomStackingHeightEvent extends MessageHandler {
                 THashSet<RoomTile> tiles = room.getLayout().getTilesAt(itemTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
                 if (stackerHeight == -100) {
                     for (RoomTile tile : tiles) {
-                        double stackheight = room.getStackHeight(tile.x, tile.y, false, item) * 100;
+                        double stackheight = room.getStackHeight(tile.getX(), tile.getY(), false, item) * 100;
                         if (stackheight > stackerHeight) {
                             stackerHeight = stackheight;
                         }
                     }
                 } else {
-                    stackerHeight = Math.min(Math.max(stackerHeight, itemTile.z * 100.0), Room.MAXIMUM_FURNI_HEIGHT * 100);
+                    stackerHeight = Math.min(Math.max(stackerHeight, itemTile.getZ() * 100.0), Room.MAXIMUM_FURNI_HEIGHT * 100);
                 }
 
                 double height = 0;

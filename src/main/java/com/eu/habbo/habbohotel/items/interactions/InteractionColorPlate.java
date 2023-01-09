@@ -3,14 +3,13 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class InteractionColorPlate extends InteractionDefault {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionColorPlate.class);
 
     public InteractionColorPlate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -42,9 +41,9 @@ public class InteractionColorPlate extends InteractionDefault {
         }
 
         try {
-            state = Integer.valueOf(this.getExtradata());
+            state = Integer.parseInt(this.getExtradata());
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
 
         state += amount;

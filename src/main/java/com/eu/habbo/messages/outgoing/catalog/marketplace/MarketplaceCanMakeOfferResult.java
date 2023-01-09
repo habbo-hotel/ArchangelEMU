@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.catalog.marketplace;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class MarketplaceCanMakeOfferResult extends MessageComposer {
     public static final int NOT_ALLOWED = 2;
     public static final int NO_TRADE_PASS = 3;
@@ -12,12 +14,6 @@ public class MarketplaceCanMakeOfferResult extends MessageComposer {
     private final int errorCode;
     private final int valueA;
     private final int valueB;
-
-    public MarketplaceCanMakeOfferResult(int errorCode, int valueA, int valueB) {
-        this.errorCode = errorCode;
-        this.valueA = valueA;
-        this.valueB = valueB;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

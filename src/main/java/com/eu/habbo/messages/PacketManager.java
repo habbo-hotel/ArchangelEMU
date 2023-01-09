@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.messages.incoming.Incoming;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.incoming.achievements.RequestAchievementConfigurationEvent;
 import com.eu.habbo.messages.incoming.achievements.GetAchievementsEvent;
+import com.eu.habbo.messages.incoming.achievements.RequestAchievementConfigurationEvent;
 import com.eu.habbo.messages.incoming.ambassadors.AmbassadorAlertEvent;
 import com.eu.habbo.messages.incoming.ambassadors.FollowFriendEvent;
 import com.eu.habbo.messages.incoming.camera.*;
@@ -13,10 +13,10 @@ import com.eu.habbo.messages.incoming.campaign.OpenCampaignCalendarDoorAsStaffEv
 import com.eu.habbo.messages.incoming.campaign.OpenCampaignCalendarDoorEvent;
 import com.eu.habbo.messages.incoming.catalog.*;
 import com.eu.habbo.messages.incoming.catalog.marketplace.*;
+import com.eu.habbo.messages.incoming.catalog.recycler.GetRecyclerPrizesEvent;
+import com.eu.habbo.messages.incoming.catalog.recycler.GetRecyclerStatusEvent;
 import com.eu.habbo.messages.incoming.catalog.recycler.PresentOpenEvent;
 import com.eu.habbo.messages.incoming.catalog.recycler.RecycleItemsEvent;
-import com.eu.habbo.messages.incoming.catalog.recycler.GetRecyclerStatusEvent;
-import com.eu.habbo.messages.incoming.catalog.recycler.GetRecyclerPrizesEvent;
 import com.eu.habbo.messages.incoming.crafting.*;
 import com.eu.habbo.messages.incoming.floorplaneditor.GetOccupiedTilesEvent;
 import com.eu.habbo.messages.incoming.floorplaneditor.GetRoomEntryTileEvent;
@@ -33,53 +33,47 @@ import com.eu.habbo.messages.incoming.handshake.*;
 import com.eu.habbo.messages.incoming.helper.GetCfhStatusEvent;
 import com.eu.habbo.messages.incoming.helper.GetTalentTrackEvent;
 import com.eu.habbo.messages.incoming.hotelview.*;
-import com.eu.habbo.messages.incoming.inventory.GetBadgesEvent;
-import com.eu.habbo.messages.incoming.inventory.GetBotInventoryEvent;
-import com.eu.habbo.messages.incoming.inventory.RequestFurniInventoryWhenNotInRoomEvent;
-import com.eu.habbo.messages.incoming.inventory.GetPetInventoryEvent;
+import com.eu.habbo.messages.incoming.inventory.*;
 import com.eu.habbo.messages.incoming.modtool.*;
 import com.eu.habbo.messages.incoming.navigator.*;
 import com.eu.habbo.messages.incoming.polls.AnswerPollEvent;
 import com.eu.habbo.messages.incoming.polls.PollRejectEvent;
 import com.eu.habbo.messages.incoming.polls.PollStartEvent;
 import com.eu.habbo.messages.incoming.rooms.*;
-import com.eu.habbo.messages.incoming.rooms.bots.RemoveBotFromFlatEvent;
-import com.eu.habbo.messages.incoming.rooms.bots.PlaceBotEvent;
 import com.eu.habbo.messages.incoming.rooms.bots.CommandBotEvent;
 import com.eu.habbo.messages.incoming.rooms.bots.GetBotCommandConfigurationDataEvent;
+import com.eu.habbo.messages.incoming.rooms.bots.PlaceBotEvent;
+import com.eu.habbo.messages.incoming.rooms.bots.RemoveBotFromFlatEvent;
 import com.eu.habbo.messages.incoming.rooms.items.*;
 import com.eu.habbo.messages.incoming.rooms.items.jukebox.*;
 import com.eu.habbo.messages.incoming.rooms.items.lovelock.FriendFurniConfirmLockEvent;
 import com.eu.habbo.messages.incoming.rooms.items.rentablespace.RentableSpaceCancelRentEvent;
 import com.eu.habbo.messages.incoming.rooms.items.rentablespace.RentableSpaceRentEvent;
-import com.eu.habbo.messages.incoming.rooms.items.youtube.SetYoutubeDisplayPlaylistEvent;
-import com.eu.habbo.messages.incoming.rooms.items.youtube.GetYoutubeDisplayStatusEvent;
 import com.eu.habbo.messages.incoming.rooms.items.youtube.ControlYoutubeDisplayPlaybackEvent;
+import com.eu.habbo.messages.incoming.rooms.items.youtube.GetYoutubeDisplayStatusEvent;
+import com.eu.habbo.messages.incoming.rooms.items.youtube.SetYoutubeDisplayPlaylistEvent;
 import com.eu.habbo.messages.incoming.rooms.pets.*;
-import com.eu.habbo.messages.incoming.rooms.promotions.PurchaseRoomAdEvent;
-import com.eu.habbo.messages.incoming.rooms.promotions.GetRoomAdPurchaseInfoEvent;
 import com.eu.habbo.messages.incoming.rooms.promotions.EditEventEvent;
+import com.eu.habbo.messages.incoming.rooms.promotions.GetRoomAdPurchaseInfoEvent;
+import com.eu.habbo.messages.incoming.rooms.promotions.PurchaseRoomAdEvent;
 import com.eu.habbo.messages.incoming.rooms.users.*;
 import com.eu.habbo.messages.incoming.trading.*;
 import com.eu.habbo.messages.incoming.unknown.GetResolutionAchievementsEvent;
-import com.eu.habbo.messages.incoming.inventory.GetBadgePointLimitsEvent;
 import com.eu.habbo.messages.incoming.users.*;
 import com.eu.habbo.messages.incoming.wired.ApplySnapshotEvent;
-import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateActionEvent;
+import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class PacketManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PacketManager.class);
 
     private static final List<Integer> logList = new ArrayList<>();
     public static boolean DEBUG_SHOW_PACKETS = false;
@@ -129,7 +123,7 @@ public class PacketManager {
 
         for (String s : Emulator.getConfig().getValue("debug.show.headers").split(";")) {
             try {
-                logList.add(Integer.valueOf(s));
+                logList.add(Integer.parseInt(s));
             } catch (NumberFormatException ignored) {
 
             }
@@ -176,7 +170,7 @@ public class PacketManager {
 
                 if (client.getHabbo() == null && !handlerClass.isAnnotationPresent(NoAuthMessage.class)) {
                     if (DEBUG_SHOW_PACKETS) {
-                        LOGGER.warn("Client packet {} requires an authenticated session.", packet.getMessageId());
+                        log.warn("Client packet {} requires an authenticated session.", packet.getMessageId());
                     }
 
                     return;
@@ -187,7 +181,7 @@ public class PacketManager {
                 if (handler.getRatelimit() > 0) {
                     if (client.messageTimestamps.containsKey(handlerClass) && System.currentTimeMillis() - client.messageTimestamps.get(handlerClass) < handler.getRatelimit()) {
                         if (PacketManager.DEBUG_SHOW_PACKETS) {
-                            LOGGER.warn("Client packet {} was ratelimited.", packet.getMessageId());
+                            log.warn("Client packet {} was ratelimited.", packet.getMessageId());
                         }
 
                         return;
@@ -197,7 +191,7 @@ public class PacketManager {
                 }
 
                 if (logList.contains(packet.getMessageId()) && client.getHabbo() != null) {
-                    LOGGER.info("User {} sent packet {} with body {}", client.getHabbo().getHabboInfo().getUsername(), packet.getMessageId(), packet.getMessageBody());
+                    log.info("User {} sent packet {} with body {}", client.getHabbo().getHabboInfo().getUsername(), packet.getMessageId(), packet.getMessageBody());
                 }
 
                 handler.client = client;
@@ -214,7 +208,7 @@ public class PacketManager {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 

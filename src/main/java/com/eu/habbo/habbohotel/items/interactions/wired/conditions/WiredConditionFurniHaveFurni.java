@@ -10,7 +10,6 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 
@@ -23,7 +22,7 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.FURNI_HAS_FURNI;
 
     private boolean all;
-    private THashSet<HabboItem> items;
+    private final THashSet<HabboItem> items;
 
     public WiredConditionFurniHaveFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -131,7 +130,7 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
         message.appendInt(1);
         message.appendInt(this.all ? 1 : 0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(0);
         message.appendInt(0);
     }

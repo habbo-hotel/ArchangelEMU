@@ -1,13 +1,14 @@
 package com.eu.habbo.habbohotel.hotelview;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class HotelViewManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HotelViewManager.class);
-
+    @Getter
     private final HallOfFame hallOfFame;
+    @Getter
     private final NewsList newsList;
 
     public HotelViewManager() {
@@ -15,19 +16,11 @@ public class HotelViewManager {
         this.hallOfFame = new HallOfFame();
         this.newsList = new NewsList();
 
-        LOGGER.info("Hotelview Manager -> Loaded! ({} MS)", System.currentTimeMillis() - millis);
-    }
-
-    public HallOfFame getHallOfFame() {
-        return this.hallOfFame;
-    }
-
-    public NewsList getNewsList() {
-        return this.newsList;
+        log.info("Hotelview Manager -> Loaded! ({} MS)", System.currentTimeMillis() - millis);
     }
 
     public void dispose() {
-        LOGGER.info("HotelView Manager -> Disposed!");
+        log.info("HotelView Manager -> Disposed!");
     }
 
 }

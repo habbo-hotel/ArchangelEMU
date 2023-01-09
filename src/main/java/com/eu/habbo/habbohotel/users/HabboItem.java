@@ -19,10 +19,11 @@ import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.Connection;
@@ -33,28 +34,45 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 public abstract class HabboItem implements Runnable, IEventTriggers {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HabboItem.class);
-
-    private static Class[] TOGGLING_INTERACTIONS = new Class[]{
+    
+    private static final Class[] TOGGLING_INTERACTIONS = new Class[]{
             InteractionGameTimer.class,
             InteractionWired.class,
             InteractionWiredHighscore.class,
             InteractionMultiHeight.class
     };
 
-    private int id;
+    @Getter
+    private final int id;
+    @Getter
+    @Setter
     private int userId;
+    @Getter
+    @Setter
     private int roomId;
-    private Item baseItem;
+    @Getter
+    private final Item baseItem;
+    @Getter
+    @Setter
     private String wallPosition;
+    @Setter
+    @Getter
     private short x;
+    @Setter
+    @Getter
     private short y;
+    @Getter
     private double z;
+    @Getter
     private int rotation;
+    @Setter
+    @Getter
     private String extradata;
+    @Getter
     private int limitedStack;
+    @Getter
     private int limitedSells;
     private boolean needsUpdate = false;
     private boolean needsDelete = false;
@@ -107,11 +125,11 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
             serverMessage.appendInt(this.getRotation());
             serverMessage.appendString(Double.toString(this.z));
 
-            serverMessage.appendString((this.getBaseItem().getInteractionType().getType() == InteractionTrophy.class || this.getBaseItem().getInteractionType().getType() == InteractionCrackable.class || this.getBaseItem().getName().toLowerCase().equals("gnome_box")) ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? Item.getCurrentHeight(this) + "" : ""));
+            serverMessage.appendString((this.getBaseItem().getInteractionType().getType() == InteractionTrophy.class || this.getBaseItem().getInteractionType().getType() == InteractionCrackable.class || this.getBaseItem().getName().equalsIgnoreCase("gnome_box")) ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? Item.getCurrentHeight(this) + "" : ""));
             //serverMessage.appendString( ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? Item.getCurrentHeight(this) : ""));
 
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
@@ -136,62 +154,10 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
         serverMessage.appendInt(this.getUserId());
     }
 
-    public int getId() {
-        return this.id;
-    }
-
     public int getGiftAdjustedId() {
         if (this.isFromGift) return -this.id;
 
         return this.id;
-    }
-
-    public int getUserId() {
-        return this.userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public int getRoomId() {
-        return this.roomId;
-    }
-
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
-    }
-
-    public Item getBaseItem() {
-        return this.baseItem;
-    }
-
-    public String getWallPosition() {
-        return this.wallPosition;
-    }
-
-    public void setWallPosition(String wallPosition) {
-        this.wallPosition = wallPosition;
-    }
-
-    public short getX() {
-        return this.x;
-    }
-
-    public void setX(short x) {
-        this.x = x;
-    }
-
-    public short getY() {
-        return this.y;
-    }
-
-    public void setY(short y) {
-        this.y = y;
-    }
-
-    public double getZ() {
-        return this.z;
     }
 
     public void setZ(double z) {
@@ -199,20 +165,8 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
         this.z = z;
     }
 
-    public int getRotation() {
-        return this.rotation;
-    }
-
     public void setRotation(int rotation) {
         this.rotation = (byte) (rotation % 8);
-    }
-
-    public String getExtradata() {
-        return this.extradata;
-    }
-
-    public void setExtradata(String extradata) {
-        this.extradata = extradata;
     }
 
     public boolean needsUpdate() {
@@ -233,14 +187,6 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
 
     public boolean isLimited() {
         return this.limitedStack > 0;
-    }
-
-    public int getLimitedStack() {
-        return this.limitedStack;
-    }
-
-    public int getLimitedSells() {
-        return this.limitedSells;
     }
 
     public int getMaximumRotations() { return this.baseItem.getRotations(); }
@@ -270,15 +216,15 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
                     statement.setInt(10, this.id);
                     statement.execute();
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
-                    LOGGER.error("SQLException trying to save HabboItem: " + this.toString());
+                    log.error("Caught SQL exception", e);
+                    log.error("SQLException trying to save HabboItem: " + this);
                 }
 
                 this.needsUpdate = false;
             }
 
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -413,7 +359,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
 
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
-            HabboItem topItem2 = room.getTopItemAt(oldLocation.x, oldLocation.y, this);
+            HabboItem topItem2 = room.getTopItemAt(oldLocation.getX(), oldLocation.getY(), this);
             int nextEffectM = 0;
             int nextEffectF = 0;
 

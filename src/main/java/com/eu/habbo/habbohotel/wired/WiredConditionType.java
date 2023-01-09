@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.wired;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum WiredConditionType {
     MATCH_SSHOT(0),
     FURNI_HAVE_HABBO(1),
@@ -26,9 +31,5 @@ public enum WiredConditionType {
     DATE_RANGE(24),
     ACTOR_HAS_HANDITEM(25);
 
-    public final int code;
-
-    WiredConditionType(int code) {
-        this.code = code;
-    }
+    private final int code;
 }

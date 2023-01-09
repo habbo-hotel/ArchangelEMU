@@ -20,7 +20,7 @@ public class ActionFollow extends PetAction {
         pet.setTask(PetTasks.FOLLOW);
         Emulator.getThreading().run(new PetFollowHabbo(pet, habbo, 0));
 
-        if (pet.getHappyness() > 65) {
+        if (pet.getHappiness() > 65) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         } else {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

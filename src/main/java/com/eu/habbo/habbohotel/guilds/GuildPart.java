@@ -1,17 +1,17 @@
 package com.eu.habbo.habbohotel.guilds;
 
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Getter
 public class GuildPart {
+    private final int id;
 
-    public final int id;
+    private final String valueA;
 
-
-    public final String valueA;
-
-
-    public final String valueB;
+    private final String valueB;
 
     public GuildPart(ResultSet set) throws SQLException {
         this.id = set.getInt("id");

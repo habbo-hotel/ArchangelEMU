@@ -3,21 +3,18 @@ package com.eu.habbo.core;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.sql.*;
 import java.util.Map;
 import java.util.Properties;
 
+@Slf4j
 public class ConfigurationManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationManager.class);
-
     private final Properties properties;
     private final String configurationPath;
     public boolean loaded = false;
@@ -47,11 +44,11 @@ public class ConfigurationManager {
         if (!useEnvVarsForDbConnection) {
             try {
                 File f = new File(this.configurationPath);
-                input = new FileInputStream(f);
+                input = Files.newInputStream(f.toPath());
                 this.properties.load(input);
 
             } catch (IOException ex) {
-                LOGGER.error("Failed to load config file.", ex);
+                log.error("Failed to load config file.", ex);
                 ex.printStackTrace();
             } finally {
                 if (input != null) {
@@ -92,7 +89,7 @@ public class ConfigurationManager {
                 String envValue = System.getenv(entry.getValue());
 
                 if (envValue == null || envValue.length() == 0) {
-                    LOGGER.info("Cannot find environment-value for variable `" + entry.getValue() + "`");
+                    log.info("Cannot find environment-value for variable `" + entry.getValue() + "`");
                 } else {
                     this.properties.setProperty(entry.getKey(), envValue);
                 }
@@ -104,7 +101,7 @@ public class ConfigurationManager {
         }
 
         this.isLoading = false;
-        LOGGER.info("Configuration Manager -> Loaded!");
+        log.info("Configuration Manager -> Loaded!");
 
         if (Emulator.getPluginManager() != null) {
             Emulator.getPluginManager().fireEvent(new EmulatorConfigUpdatedEvent());
@@ -112,7 +109,7 @@ public class ConfigurationManager {
     }
 
     public void loadFromDatabase() {
-        LOGGER.info("Loading configuration from database...");
+        log.info("Loading configuration from database...");
 
         long millis = System.currentTimeMillis();
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement()) {
@@ -124,10 +121,10 @@ public class ConfigurationManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
-        LOGGER.info("Configuration -> loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Configuration -> loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public void saveToDatabase() {
@@ -138,7 +135,7 @@ public class ConfigurationManager {
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -153,7 +150,7 @@ public class ConfigurationManager {
             return defaultValue;
 
         if (!this.properties.containsKey(key)) {
-            LOGGER.error("Config key not found {}", key);
+            log.error("Config key not found {}", key);
         }
         return this.properties.getProperty(key, defaultValue);
     }
@@ -169,7 +166,7 @@ public class ConfigurationManager {
         try {
             return (this.getValue(key, "0").equals("1")) || (this.getValue(key, "false").equals("true"));
         } catch (Exception e) {
-            LOGGER.error("Failed to parse key {} with value '{}' to type boolean.", key, this.getValue(key));
+            log.error("Failed to parse key {} with value '{}' to type boolean.", key, this.getValue(key));
         }
         return defaultValue;
     }
@@ -185,13 +182,9 @@ public class ConfigurationManager {
         try {
             return Integer.parseInt(this.getValue(key, defaultValue.toString()));
         } catch (Exception e) {
-            LOGGER.error("Failed to parse key {} with value '{}' to type integer.", key, this.getValue(key));
+            log.error("Failed to parse key {} with value '{}' to type integer.", key, this.getValue(key));
         }
         return defaultValue;
-    }
-
-    public double getDouble(String key) {
-        return this.getDouble(key, 0.0);
     }
 
     public double getDouble(String key, Double defaultValue) {
@@ -201,7 +194,7 @@ public class ConfigurationManager {
         try {
             return Double.parseDouble(this.getValue(key, defaultValue.toString()));
         } catch (Exception e) {
-            LOGGER.error("Failed to parse key {} with value '{}' to type double.", key, this.getValue(key));
+            log.error("Failed to parse key {} with value '{}' to type double.", key, this.getValue(key));
         }
 
         return defaultValue;
@@ -220,7 +213,7 @@ public class ConfigurationManager {
             statement.setString(2, value);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         this.update(key, value);

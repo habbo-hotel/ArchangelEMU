@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.generic.alerts;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CustomUserNotificationMessageComposer extends MessageComposer {
     public static final int HOPPER_NO_COSTUME = 1;
     public static final int HOPPER_NO_HC = 2;
@@ -13,9 +15,6 @@ public class CustomUserNotificationMessageComposer extends MessageComposer {
 
     private final int type;
 
-    public CustomUserNotificationMessageComposer(int type) {
-        this.type = type;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

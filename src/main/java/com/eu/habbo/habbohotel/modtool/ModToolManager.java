@@ -18,11 +18,9 @@ import gnu.trove.TCollections;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import io.netty.channel.Channel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.sql.*;
@@ -30,8 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class ModToolManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModToolManager.class);
 
     private final TIntObjectMap<ModToolCategory> category;
     private final THashMap<String, THashSet<String>> presets;
@@ -45,7 +43,7 @@ public class ModToolManager {
         this.tickets = new THashMap<>();
         this.cfhCategories = new TIntObjectHashMap<>();
         this.loadModTool();
-        LOGGER.info("ModTool Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("ModTool Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public static void requestUserInfo(GameClient client, ClientMessage packet) {
@@ -62,9 +60,9 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
@@ -82,7 +80,7 @@ public class ModToolManager {
             this.loadTickets(connection);
             this.loadCfhCategories(connection);
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -101,7 +99,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -112,7 +110,7 @@ public class ModToolManager {
                     this.presets.get(set.getString("type")).add(set.getString("preset"));
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -124,7 +122,7 @@ public class ModToolManager {
                     this.tickets.put(set.getInt("id"), new ModToolIssue(set));
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -150,14 +148,14 @@ public class ModToolManager {
                 this.cfhCategories.get(set.getInt("support_cfh_category_id")).addTopic(new CfhTopic(set, this.getIssuePreset(set.getInt("default_sanction"))));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
     public CfhTopic getCfhTopic(int topicId) {
         for (CfhCategory category : this.getCfhCategories().valueCollection()) {
             for (CfhTopic topic : category.getTopics().valueCollection()) {
-                if (topic.id == topicId) {
+                if (topic.getId() == topicId) {
                     return topic;
                 }
             }
@@ -171,12 +169,9 @@ public class ModToolManager {
             return null;
 
         final ModToolPreset[] preset = {null};
-        this.category.forEachValue(new TObjectProcedure<ModToolCategory>() {
-            @Override
-            public boolean execute(ModToolCategory object) {
-                preset[0] = object.getPresets().get(id);
-                return preset[0] == null;
-            }
+        this.category.forEachValue(object -> {
+            preset[0] = object.getPresets().get(id);
+            return preset[0] == null;
         });
 
         return preset[0];
@@ -200,7 +195,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return chatlogs;
@@ -217,7 +212,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return chatlogs;
@@ -237,7 +232,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return chatLogs;
@@ -255,7 +250,7 @@ public class ModToolManager {
                     ModToolRoomVisit visit = null;
 
                     for (ModToolRoomVisit v : chatlogs) {
-                        if (v.timestamp == set.getInt("enter_timestamp") && v.exitTimestamp == set.getInt("exit_timestamp")) {
+                        if (v.getTimestamp() == set.getInt("enter_timestamp") && v.getExitTimestamp() == set.getInt("exit_timestamp")) {
                             visit = v;
                         }
                     }
@@ -264,7 +259,7 @@ public class ModToolManager {
                         visit = new ModToolRoomVisit(set.getInt("room_id"), set.getString("name"), set.getInt("enter_timestamp"), set.getInt("exit_timestamp"));
                         chatlogs.add(visit);
                     }
-                    visit.chat.add(new ModToolChatLog(set.getInt("timestamp"), set.getInt("user_from_id"), set.getString("username"), set.getString("message")));
+                    visit.getChat().add(new ModToolChatLog(set.getInt("timestamp"), set.getInt("user_from_id"), set.getString("username"), set.getString("message")));
 
                     if (userid == 0)
                         userid = set.getInt("user_from_id");
@@ -274,7 +269,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return chatlogs;
@@ -292,7 +287,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return roomVisits;
@@ -350,7 +345,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return roomVisits;
@@ -380,7 +375,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return null;
@@ -427,16 +422,16 @@ public class ModToolManager {
         }
 
         //if machine id is empty, downgrade ban type to IP ban
-        if( (type == ModToolBanType.MACHINE || type == ModToolBanType.SUPER) && (offlineInfo == null || offlineInfo.getMachineID().isEmpty())) {
+        if((type == ModToolBanType.MACHINE || type == ModToolBanType.SUPER) && offlineInfo.getMachineID().isEmpty()) {
             type = ModToolBanType.IP;
         }
 
         //if ip address is empty, downgrade ban type to account ban
-        if( (type == ModToolBanType.IP || type == ModToolBanType.SUPER) && (offlineInfo == null || offlineInfo.getIpLogin().isEmpty())) {
+        if((type == ModToolBanType.IP || type == ModToolBanType.SUPER) && offlineInfo.getIpLogin().isEmpty()) {
             type = ModToolBanType.ACCOUNT;
         }
 
-        ModToolBan ban = new ModToolBan(targetUserId, offlineInfo != null ? offlineInfo.getIpLogin() : "offline", offlineInfo != null ? offlineInfo.getMachineID() : "offline", moderator.getHabboInfo().getId(), Emulator.getIntUnixTimestamp() + duration, reason, type, cfhTopic);
+        ModToolBan ban = new ModToolBan(targetUserId, offlineInfo.getIpLogin(), offlineInfo.getMachineID(), moderator.getHabboInfo().getId(), Emulator.getIntUnixTimestamp() + duration, reason, type, cfhTopic);
         Emulator.getPluginManager().fireEvent(new SupportUserBannedEvent(moderator, target, ban));
         Emulator.getThreading().run(ban);
         bans.add(ban);
@@ -445,11 +440,11 @@ public class ModToolManager {
             Emulator.getGameServer().getGameClientManager().disposeClient(target.getClient());
         }
 
-        if ((type == ModToolBanType.IP || type == ModToolBanType.SUPER) && target != null && !ban.ip.equals("offline")) {
-            for (Habbo h : Emulator.getGameServer().getGameClientManager().getHabbosWithIP(ban.ip)) {
+        if ((type == ModToolBanType.IP || type == ModToolBanType.SUPER) && target != null && !ban.getIp().equals("offline")) {
+            for (Habbo h : Emulator.getGameServer().getGameClientManager().getHabbosWithIP(ban.getIp())) {
                 if (h.getHabboInfo().getRank().getId() >= moderator.getHabboInfo().getRank().getId()) continue;
 
-                ban = new ModToolBan(h.getHabboInfo().getId(), h != null ? h.getHabboInfo().getIpLogin() : "offline", h != null ? h.getClient().getMachineId() : "offline", moderator.getHabboInfo().getId(), Emulator.getIntUnixTimestamp() + duration, reason, type, cfhTopic);
+                ban = new ModToolBan(h.getHabboInfo().getId(), h.getHabboInfo().getIpLogin(), h.getClient().getMachineId(), moderator.getHabboInfo().getId(), Emulator.getIntUnixTimestamp() + duration, reason, type, cfhTopic);
                 Emulator.getPluginManager().fireEvent(new SupportUserBannedEvent(moderator, h, ban));
                 Emulator.getThreading().run(ban);
                 bans.add(ban);
@@ -457,11 +452,11 @@ public class ModToolManager {
             }
         }
 
-        if ((type == ModToolBanType.MACHINE || type == ModToolBanType.SUPER) && target != null && !ban.machineId.equals("offline")) {
-            for (Habbo h : Emulator.getGameServer().getGameClientManager().getHabbosWithMachineId(ban.machineId)) {
+        if ((type == ModToolBanType.MACHINE || type == ModToolBanType.SUPER) && target != null && !ban.getMachineId().equals("offline")) {
+            for (Habbo h : Emulator.getGameServer().getGameClientManager().getHabbosWithMachineId(ban.getMachineId())) {
                 if (h.getHabboInfo().getRank().getId() >= moderator.getHabboInfo().getRank().getId()) continue;
 
-                ban = new ModToolBan(h.getHabboInfo().getId(), h != null ? h.getHabboInfo().getIpLogin() : "offline", h != null ? h.getClient().getMachineId() : "offline", moderator.getHabboInfo().getId(), Emulator.getIntUnixTimestamp() + duration, reason, type, cfhTopic);
+                ban = new ModToolBan(h.getHabboInfo().getId(), h.getHabboInfo().getIpLogin(), h.getClient().getMachineId(), moderator.getHabboInfo().getId(), Emulator.getIntUnixTimestamp() + duration, reason, type, cfhTopic);
                 Emulator.getPluginManager().fireEvent(new SupportUserBannedEvent(moderator, h, ban));
                 Emulator.getThreading().run(ban);
                 bans.add(ban);
@@ -507,7 +502,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return ban;
@@ -536,7 +531,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
         return banned;
     }
@@ -559,7 +554,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return false;
@@ -573,7 +568,7 @@ public class ModToolManager {
             statement.execute();
             return statement.getUpdateCount() > 0;
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return false;
@@ -678,7 +673,7 @@ public class ModToolManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return total;
@@ -711,15 +706,12 @@ public class ModToolManager {
     public List<ModToolIssue> openTicketsForHabbo(Habbo habbo) {
         List<ModToolIssue> issues = new ArrayList<>();
         synchronized (this.tickets) {
-            this.tickets.forEachValue(new TObjectProcedure<ModToolIssue>() {
-                @Override
-                public boolean execute(ModToolIssue object) {
-                    if (object.senderId == habbo.getHabboInfo().getId() && object.state == ModToolTicketState.OPEN) {
-                        issues.add(object);
-                    }
-
-                    return true;
+            this.tickets.forEachValue(object -> {
+                if (object.senderId == habbo.getHabboInfo().getId() && object.state == ModToolTicketState.OPEN) {
+                    issues.add(object);
                 }
+
+                return true;
             });
         }
 

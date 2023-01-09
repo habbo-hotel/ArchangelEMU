@@ -25,7 +25,7 @@ public class WordQuizCommand extends Command {
                 duration =  Integer.parseInt(params[params.length-1]);
                 params = Arrays.copyOf(params, params.length-1);
             }
-            catch (Exception e) {}
+            catch (Exception ignored) {}
 
             for (int i = 1; i < params.length; i++) {
                 question.append(" ").append(params[i]);

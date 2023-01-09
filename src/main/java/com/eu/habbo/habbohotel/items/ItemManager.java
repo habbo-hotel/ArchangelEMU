@@ -3,7 +3,10 @@ package com.eu.habbo.habbohotel.items;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
-import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.*;
+import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiPuck;
+import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiSphere;
+import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiTeleporter;
+import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiTile;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.gates.InteractionBattleBanzaiGateBlue;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.gates.InteractionBattleBanzaiGateGreen;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.gates.InteractionBattleBanzaiGateRed;
@@ -47,10 +50,10 @@ import com.eu.habbo.habbohotel.items.interactions.wired.effects.*;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraRandom;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraUnseen;
-import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.habbohotel.items.interactions.wired.triggers.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadItemsManagerEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
@@ -60,20 +63,20 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
 import java.sql.*;
 import java.util.*;
 
+@Slf4j
 public class ItemManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemManager.class);
 
     //Configuration. Loaded from database & updated accordingly.
     public static boolean RECYCLER_ENABLED = true;
 
+    @Getter
     private final TIntObjectMap<Item> items;
     private final TIntObjectHashMap<CrackableReward> crackableRewards;
     private final THashSet<ItemInteraction> interactionsList;
@@ -105,7 +108,7 @@ public class ItemManager {
         this.highscoreManager.load();
         this.loadNewUserGifts();
 
-        LOGGER.info("Item Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Item Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     protected void loadItemInteractions() {
@@ -364,7 +367,7 @@ public class ItemManager {
                 return interaction;
         }
 
-        LOGGER.debug("Can't find interaction class: {}", type.getName());
+        log.debug("Can't find interaction class: {}", type.getName());
         return this.getItemInteraction(InteractionDefault.class);
     }
 
@@ -394,12 +397,12 @@ public class ItemManager {
                     else
                         this.items.get(id).update(set);
                 } catch (Exception e) {
-                    LOGGER.error("Failed to load Item ({})", set.getInt("id"));
-                    LOGGER.error("Caught exception", e);
+                    log.error("Failed to load Item ({})", set.getInt("id"));
+                    log.error("Caught exception", e);
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -412,23 +415,23 @@ public class ItemManager {
                 try {
                     reward = new CrackableReward(set);
                 } catch (Exception e) {
-                    LOGGER.error("Failed to load items_crackable item_id = {}", set.getInt("item_id"));
-                    LOGGER.error("Caught exception", e);
+                    log.error("Failed to load items_crackable item_id = {}", set.getInt("item_id"));
+                    log.error("Caught exception", e);
                     continue;
                 }
                 this.crackableRewards.put(set.getInt("item_id"), reward);
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
 
     public int getCrackableCount(int itemId) {
         if (this.crackableRewards.containsKey(itemId))
-            return this.crackableRewards.get(itemId).count;
+            return this.crackableRewards.get(itemId).getCount();
         else
             return 0;
     }
@@ -455,7 +458,7 @@ public class ItemManager {
                 this.soundTracks.put(set.getString("code"), new SoundTrack(set));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -488,16 +491,16 @@ public class ItemManager {
                         try {
                             return itemClass.getDeclaredConstructor(int.class, int.class, Item.class, String.class, int.class, int.class).newInstance(set.getInt(1), habboId, item, extraData, limitedStack, limitedSells);
                         } catch (Exception e) {
-                            LOGGER.error("Caught exception", e);
+                            log.error("Caught exception", e);
                             return new InteractionDefault(set.getInt(1), habboId, item, extraData, limitedStack, limitedSells);
                         }
                     }
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
         return null;
     }
@@ -512,7 +515,7 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -537,7 +540,7 @@ public class ItemManager {
             statement.setInt(1, item.getId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -555,7 +558,7 @@ public class ItemManager {
                 try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO items_presents VALUES (?, ?)")) {
                     while (set.next() && item == null) {
                         preparedStatement.setInt(1, set.getInt(1));
-                        preparedStatement.setInt(2, Integer.valueOf(itemId));
+                        preparedStatement.setInt(2, Integer.parseInt(itemId));
                         preparedStatement.addBatch();
                         item = new InteractionDefault(set.getInt(1), habbo.getHabboInfo().getId(), Emulator.getGameEnvironment().getCatalogManager().ecotronItem, extradata, 0, 0);
                     }
@@ -564,7 +567,7 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return item;
@@ -604,9 +607,9 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
 
         return item;
@@ -618,7 +621,7 @@ public class ItemManager {
             statement.setInt(2, itemTwoId);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -628,7 +631,7 @@ public class ItemManager {
             statement.setInt(2, hopper.getBaseItem().getId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -643,7 +646,7 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return a;
@@ -659,9 +662,9 @@ public class ItemManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
 
         return item;
@@ -677,12 +680,12 @@ public class ItemManager {
 
         if (itemClass != null) {
             try {
-                Constructor c = itemClass.getConstructor(ResultSet.class, Item.class);
+                Constructor<? extends HabboItem> c = itemClass.getConstructor(ResultSet.class, Item.class);
                 c.setAccessible(true);
 
                 return (HabboItem) c.newInstance(set, baseItem);
             } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
+                log.error("Caught exception", e);
             }
         }
 
@@ -706,7 +709,7 @@ public class ItemManager {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
 
@@ -722,7 +725,7 @@ public class ItemManager {
             return null;
 
         if (extraData.length() > 1000) {
-            LOGGER.error("Extradata exceeds maximum length of 1000 characters: {}", extraData);
+            log.error("Extradata exceeds maximum length of 1000 characters: {}", extraData);
             extraData = extraData.substring(0, 1000);
         }
 
@@ -746,17 +749,13 @@ public class ItemManager {
         return this.items.get(itemId);
     }
 
-    public TIntObjectMap<Item> getItems() {
-        return this.items;
-    }
-
     public Item getItem(String itemName) {
         TIntObjectIterator<Item> item = this.items.iterator();
 
         for (int i = this.items.size(); i-- > 0; ) {
             try {
                 item.advance();
-                if (item.value().getName().toLowerCase().equals(itemName.toLowerCase())) {
+                if (item.value().getName().equalsIgnoreCase(itemName)) {
                     return item.value();
                 }
             } catch (NoSuchElementException e) {
@@ -779,7 +778,7 @@ public class ItemManager {
         this.items.clear();
         this.highscoreManager.dispose();
 
-        LOGGER.info("Item Manager -> Disposed!");
+        log.info("Item Manager -> Disposed!");
     }
 
     public List<String> getInteractionList() {

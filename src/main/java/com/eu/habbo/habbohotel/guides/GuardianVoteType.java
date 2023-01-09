@@ -1,5 +1,9 @@
 package com.eu.habbo.habbohotel.guides;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public enum GuardianVoteType {
     FORWARDED(-1),
     WAITING(0),
@@ -9,14 +13,7 @@ public enum GuardianVoteType {
     NOT_VOTED(4),
     SEARCHING(5);
 
+    @Getter
     private final int type;
-
-    GuardianVoteType(int type) {
-        this.type = type;
-    }
-
-    public int getType() {
-        return this.type;
-    }
 
 }

@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.pets;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum PetTasks {
     NONE(""),
     FREE(""),
@@ -52,11 +57,4 @@ public enum PetTasks {
 
     private final String status;
 
-    PetTasks(String status) {
-        this.status = status;
-    }
-
-    public String getStatus() {
-        return this.status;
-    }
 }

@@ -4,13 +4,11 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ChatMessageComposer extends MessageComposer {
     private final RoomChatMessage roomChatMessage;
-
-    public ChatMessageComposer(RoomChatMessage roomChatMessage) {
-        this.roomChatMessage = roomChatMessage;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

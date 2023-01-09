@@ -3,15 +3,12 @@ package com.eu.habbo.messages.outgoing.rooms;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class FavouriteChangedComposer extends MessageComposer {
     private final int roomId;
     private final boolean favorite;
-
-    public FavouriteChangedComposer(int roomId, boolean favorite) {
-        this.roomId = roomId;
-        this.favorite = favorite;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

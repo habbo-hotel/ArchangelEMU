@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RoomMessageNotificationMessageComposer extends MessageComposer {
     private final Room room;
     private final int count;
 
-    public RoomMessageNotificationMessageComposer(Room room, int count) {
-        this.room = room;
-        this.count = count;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

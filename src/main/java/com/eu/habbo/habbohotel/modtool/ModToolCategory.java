@@ -3,9 +3,12 @@ package com.eu.habbo.habbohotel.modtool;
 import gnu.trove.TCollections;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import lombok.Getter;
 
 public class ModToolCategory {
+    @Getter
     private final String name;
+    @Getter
     private final TIntObjectMap<ModToolPreset> presets;
 
     public ModToolCategory(String name) {
@@ -14,14 +17,7 @@ public class ModToolCategory {
     }
 
     public void addPreset(ModToolPreset preset) {
-        this.presets.put(preset.id, preset);
+        this.presets.put(preset.getId(), preset);
     }
 
-    public TIntObjectMap<ModToolPreset> getPresets() {
-        return this.presets;
-    }
-
-    public String getName() {
-        return this.name;
-    }
 }

@@ -4,26 +4,24 @@ import com.eu.habbo.habbohotel.crafting.CraftingRecipe;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CraftingResultComposer extends MessageComposer {
     private final CraftingRecipe recipe;
-    private final boolean succes;
+    private final boolean success;
 
     public CraftingResultComposer(CraftingRecipe recipe) {
         this.recipe = recipe;
-        this.succes = this.recipe != null;
+        this.success = this.recipe != null;
     }
 
-    public CraftingResultComposer(CraftingRecipe recipe, boolean success) {
-        this.recipe = recipe;
-        this.succes = success;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.craftingResultComposer);
 
-        this.response.appendBoolean(this.succes); //succes
+        this.response.appendBoolean(this.success); //succes
 
         if (this.recipe != null) {
             this.response.appendString(this.recipe.getName());

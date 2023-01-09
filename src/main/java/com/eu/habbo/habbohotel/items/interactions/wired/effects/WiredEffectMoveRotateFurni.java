@@ -10,13 +10,11 @@ import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,15 +22,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implements ICycleable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(WiredEffectMoveRotateFurni.class);
 
     public static final WiredEffectType type = WiredEffectType.MOVE_ROTATE;
     private final THashSet<HabboItem> items = new THashSet<>(WiredHandler.MAXIMUM_FURNI_SELECTION / 2);
     private int direction;
     private int rotation;
-    private THashSet<HabboItem> itemCooldowns;
+    private final THashSet<HabboItem> itemCooldowns;
 
     public WiredEffectMoveRotateFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -69,7 +66,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
             boolean slideAnimation = item.getRotation() == newRotation;
 
             FurnitureMovementError furniMoveTest = room.furnitureFitsAt(newLocation, item, newRotation, true);
-            if(newLocation != null && newLocation.state != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && (furniMoveTest == FurnitureMovementError.NONE || ((furniMoveTest == FurnitureMovementError.TILE_HAS_BOTS || furniMoveTest == FurnitureMovementError.TILE_HAS_HABBOS || furniMoveTest == FurnitureMovementError.TILE_HAS_PETS) && newLocation == oldLocation))) {
+            if(newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && (furniMoveTest == FurnitureMovementError.NONE || ((furniMoveTest == FurnitureMovementError.TILE_HAS_BOTS || furniMoveTest == FurnitureMovementError.TILE_HAS_HABBOS || furniMoveTest == FurnitureMovementError.TILE_HAS_PETS) && newLocation == oldLocation))) {
                 if(room.furnitureFitsAt(newLocation, item, newRotation, false) == FurnitureMovementError.NONE && room.moveFurniTo(item, newLocation, newRotation, null, !slideAnimation) == FurnitureMovementError.NONE) {
                     this.itemCooldowns.add(item);
                     if(slideAnimation) {
@@ -181,7 +178,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
         message.appendInt(this.direction);
         message.appendInt(this.rotation);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         message.appendInt(0);
     }
@@ -219,7 +216,6 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
      * @return new rotation
      */
     private int getNewRotation(HabboItem item) {
-        int rotationToAdd = 0;
 
         if(item.getMaximumRotations() == 2) {
             return item.getRotation() == 0 ? 4 : 0;

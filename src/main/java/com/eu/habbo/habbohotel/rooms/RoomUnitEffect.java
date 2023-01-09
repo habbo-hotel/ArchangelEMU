@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum RoomUnitEffect {
     //(\w+)\s(\w+)\s(\w+)
     //\2\(\1\),
@@ -204,11 +209,8 @@ public enum RoomUnitEffect {
     YELLOWDUCK(198),
     FLYNGTURTLE(199);
 
-    private int id;
+    private final int id;
 
-    RoomUnitEffect(int id) {
-        this.id = id;
-    }
 
     public static RoomUnitEffect fromId(int id) {
         for (RoomUnitEffect effect : RoomUnitEffect.values()) {
@@ -218,9 +220,5 @@ public enum RoomUnitEffect {
         }
 
         return RoomUnitEffect.NONE;
-    }
-
-    public int getId() {
-        return this.id;
     }
 }

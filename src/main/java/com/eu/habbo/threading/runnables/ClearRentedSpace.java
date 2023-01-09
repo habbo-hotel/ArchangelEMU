@@ -8,15 +8,12 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ClearRentedSpace implements Runnable {
     private final InteractionRentableSpace item;
     private final Room room;
-
-    public ClearRentedSpace(InteractionRentableSpace item, Room room) {
-        this.item = item;
-        this.room = room;
-    }
 
     @Override
     public void run() {
@@ -36,8 +33,8 @@ public class ClearRentedSpace implements Runnable {
 
         if (owner != null) {
             owner.getClient().sendResponse(new UnseenItemsComposer(items));
-            owner.getHabboStats().rentedItemId = 0;
-            owner.getHabboStats().rentedTimeEnd = 0;
+            owner.getHabboStats().setRentedItemId(0);
+            owner.getHabboStats().setRentedTimeEnd(0);
         } else {
             for (HabboItem i : items) {
                 i.run();

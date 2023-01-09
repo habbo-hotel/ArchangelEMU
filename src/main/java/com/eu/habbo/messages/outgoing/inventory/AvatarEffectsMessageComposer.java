@@ -6,28 +6,27 @@ import com.eu.habbo.habbohotel.users.inventory.EffectsComponent;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.Collection;
 
 
+@Getter
+@AllArgsConstructor
 public class AvatarEffectsMessageComposer extends MessageComposer {
-    public final Habbo habbo;
-    public final Collection<EffectsComponent.HabboEffect> effects;
-
-    public AvatarEffectsMessageComposer(Habbo habbo, Collection<EffectsComponent.HabboEffect> effects) {
-        this.habbo = habbo;
-        this.effects = effects;
-    }
+    private final Habbo habbo;
+    private final Collection<EffectsComponent.HabboEffect> effects;
 
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.avatarEffectsMessageComposer);
 
 
-        if (this.habbo == null || this.habbo.getInventory() == null || this.habbo.getInventory().getEffectsComponent() == null || this.habbo.getInventory().getEffectsComponent().effects == null) {
+        if (this.habbo == null || this.habbo.getInventory() == null || this.habbo.getInventory().getEffectsComponent() == null || this.habbo.getInventory().getEffectsComponent().getEffects() == null) {
             this.response.appendInt(0);
         } else {
-            synchronized (this.habbo.getInventory().getEffectsComponent().effects) {
+            synchronized (this.habbo.getInventory().getEffectsComponent().getEffects()) {
                 this.response.appendInt(this.effects.size());
 
                 for (EffectsComponent.HabboEffect effect : effects) {

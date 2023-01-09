@@ -5,9 +5,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.list.array.TIntArrayList;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 
+@AllArgsConstructor
 public class CampaignCalendarDataMessageComposer extends MessageComposer {
     private final String eventName;
     private final String campaignImage;
@@ -15,15 +17,6 @@ public class CampaignCalendarDataMessageComposer extends MessageComposer {
     private final int currentDay;
     private final ArrayList<CalendarRewardClaimed> unlocked;
     private final boolean lockExpired;
-
-    public CampaignCalendarDataMessageComposer(String eventName, String campaignImage, int totalDays, int currentDay, ArrayList<CalendarRewardClaimed> unlocked, boolean lockExpired) {
-        this.eventName = eventName;
-        this.campaignImage = campaignImage;
-        this.totalDays = totalDays;
-        this.currentDay = currentDay;
-        this.unlocked = unlocked;
-        this.lockExpired = lockExpired;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -35,13 +28,14 @@ public class CampaignCalendarDataMessageComposer extends MessageComposer {
         this.response.appendInt(this.unlocked.size());
 
         TIntArrayList expired = new TIntArrayList();
-        if (this.lockExpired) { for (int i = 0; i < this.totalDays; i++) {
-            expired.add(i);
-        }
+        if (this.lockExpired) {
+            for (int i = 0; i < this.totalDays; i++) {
+                expired.add(i);
+            }
         }
         expired.remove(this.currentDay);
-        if(this.currentDay > 1) expired.remove(this.currentDay - 2);
-        if(this.currentDay > 0) expired.remove(this.currentDay - 1);
+        if (this.currentDay > 1) expired.remove(this.currentDay - 2);
+        if (this.currentDay > 0) expired.remove(this.currentDay - 1);
 
         this.unlocked.forEach(claimed -> {
             CampaignCalendarDataMessageComposer.this.response.appendInt(claimed.getDay());

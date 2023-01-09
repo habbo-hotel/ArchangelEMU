@@ -2,9 +2,10 @@ package com.eu.habbo.networking.camera;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import lombok.Getter;
 
 public class CameraMessage {
-    protected final short header;
+    @Getter protected final short header;
     protected final ByteBuf buffer;
 
     public CameraMessage(short header) {
@@ -12,7 +13,4 @@ public class CameraMessage {
         this.buffer = Unpooled.buffer();
     }
 
-    public short getHeader() {
-        return this.header;
-    }
 }

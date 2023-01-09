@@ -17,7 +17,7 @@ public class ActionBeg extends PetAction {
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         pet.clearPosture();
 
-        if (pet.getHappyness() > 60) {
+        if (pet.getHappiness() > 60) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         } else {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

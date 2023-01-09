@@ -12,12 +12,12 @@ public class SetChatStylePreferenceEvent extends MessageHandler {
 
         if (!this.client.getHabbo().hasPermission(Permission.ACC_ANYCHATCOLOR)) {
             for (String s : Emulator.getConfig().getValue("commands.cmd_chatcolor.banned_numbers").split(";")) {
-                if (Integer.valueOf(s) == chatBubble) {
+                if (Integer.parseInt(s) == chatBubble) {
                     return;
                 }
             }
         }
 
-        this.client.getHabbo().getHabboStats().chatColor = RoomChatMessageBubbles.getBubble(chatBubble);
+        this.client.getHabbo().getHabboStats().setChatColor(RoomChatMessageBubbles.getBubble(chatBubble));
     }
 }

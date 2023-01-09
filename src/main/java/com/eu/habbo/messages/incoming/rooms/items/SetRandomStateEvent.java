@@ -4,11 +4,10 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionRandomState;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SetRandomStateEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SetRandomStateEvent.class);
 
     @Override
     public void handle() throws Exception {
@@ -20,13 +19,12 @@ public class SetRandomStateEvent extends MessageHandler {
 
             HabboItem item = room.getHabboItem(itemId);
 
-            if (item == null || !(item instanceof InteractionRandomState))
+            if (!(item instanceof InteractionRandomState randomStateItem))
                 return;
 
-            InteractionRandomState randomStateItem = (InteractionRandomState)item;
-            randomStateItem.onRandomStateClick(this.client, room);
+            randomStateItem.onRandomStateClick(room);
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 }

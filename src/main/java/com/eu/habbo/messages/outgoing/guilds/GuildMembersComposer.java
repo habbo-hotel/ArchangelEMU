@@ -6,14 +6,16 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+@AllArgsConstructor
 public class GuildMembersComposer extends MessageComposer {
-    private final ArrayList<GuildMember> members;
     private final Guild guild;
+    private final ArrayList<GuildMember> members;
     private final Habbo session;
     private final int pageId;
     private final int level;
@@ -21,16 +23,6 @@ public class GuildMembersComposer extends MessageComposer {
     private final boolean isAdmin;
     private final int totalCount;
 
-    public GuildMembersComposer(Guild guild, ArrayList<GuildMember> members, Habbo session, int pageId, int level, String searchValue, boolean isAdmin, int totalCount) {
-        this.guild = guild;
-        this.members = members;
-        this.session = session;
-        this.pageId = pageId;
-        this.level = level;
-        this.searchValue = searchValue;
-        this.isAdmin = isAdmin;
-        this.totalCount = totalCount;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -45,11 +37,11 @@ public class GuildMembersComposer extends MessageComposer {
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
         for (GuildMember member : this.members) {
             cal.setTimeInMillis(member.getJoinDate() * 1000L);
-            this.response.appendInt(member.getRank().type);
+            this.response.appendInt(member.getRank().getType());
             this.response.appendInt(member.getUserId());
             this.response.appendString(member.getUsername());
             this.response.appendString(member.getLook());
-            this.response.appendString(member.getRank().type < 3 ? cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR) : "");
+            this.response.appendString(member.getRank().getType() < 3 ? cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR) : "");
         }
 
         this.response.appendBoolean(this.isAdmin);

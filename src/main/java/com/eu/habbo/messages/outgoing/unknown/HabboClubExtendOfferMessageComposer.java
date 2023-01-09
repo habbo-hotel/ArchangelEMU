@@ -5,7 +5,9 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class HabboClubExtendOfferMessageComposer extends MessageComposer {
     private final Habbo habbo;
     private final ClubOffer offer;
@@ -14,14 +16,6 @@ public class HabboClubExtendOfferMessageComposer extends MessageComposer {
     private final int pointsType;
     private final int daysRemaining;
 
-    public HabboClubExtendOfferMessageComposer(Habbo habbo, ClubOffer offer, int normalCreditCost, int normalPointsCost, int pointsType, int daysRemaining) {
-        this.habbo = habbo;
-        this.offer = offer;
-        this.normalCreditCost = normalCreditCost;
-        this.normalPointsCost = normalPointsCost;
-        this.pointsType = pointsType;
-        this.daysRemaining = daysRemaining;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

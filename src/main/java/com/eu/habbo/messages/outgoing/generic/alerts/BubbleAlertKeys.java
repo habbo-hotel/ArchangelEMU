@@ -1,5 +1,10 @@
 package com.eu.habbo.messages.outgoing.generic.alerts;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum BubbleAlertKeys {
     ADMIN_PERSISTENT("admin.persistent"),
     ADMIN_TRANSIENT("admin.transient"),
@@ -35,9 +40,6 @@ public enum BubbleAlertKeys {
     FIGURESET_REDEEMED("figureset.redeemed.success"),
     FIGURESET_OWNED_ALREADY("figureset.already.redeemed");
 
-    public final String key;
+    private final String key;
 
-    BubbleAlertKeys(String key) {
-        this.key = key;
-    }
 }

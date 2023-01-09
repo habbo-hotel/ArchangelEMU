@@ -5,15 +5,13 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
+@AllArgsConstructor
 public class CraftingRecipeComposer extends MessageComposer {
     private final CraftingRecipe recipe;
-
-    public CraftingRecipeComposer(CraftingRecipe recipe) {
-        this.recipe = recipe;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

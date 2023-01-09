@@ -1,16 +1,17 @@
 package com.eu.habbo.habbohotel.guilds;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum SettingsState {
     EVERYONE(0),
     MEMBERS(1),
     ADMINS(2),
     OWNER(3);
 
-    public final int state;
-
-    SettingsState(int state) {
-        this.state = state;
-    }
+    private final int state;
 
     public static SettingsState fromValue(int state) {
         try {
@@ -24,7 +25,7 @@ public enum SettingsState {
                 case 3:
                     return OWNER;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return EVERYONE;

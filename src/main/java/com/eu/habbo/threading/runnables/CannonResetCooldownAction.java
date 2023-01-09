@@ -1,13 +1,11 @@
 package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.habbohotel.items.interactions.InteractionCannon;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CannonResetCooldownAction implements Runnable {
     private final InteractionCannon cannon;
-
-    public CannonResetCooldownAction(InteractionCannon cannon) {
-        this.cannon = cannon;
-    }
 
     @Override
     public void run() {

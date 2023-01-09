@@ -1,7 +1,6 @@
 package com.eu.habbo.plugin.events.guilds;
 
 import com.eu.habbo.habbohotel.guilds.Guild;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 
 public class GuildAcceptedMembershipEvent extends GuildEvent {

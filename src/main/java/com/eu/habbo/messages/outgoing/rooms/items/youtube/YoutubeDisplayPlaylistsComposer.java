@@ -4,19 +4,16 @@ import com.eu.habbo.habbohotel.items.YoutubeManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 
+@AllArgsConstructor
 public class YoutubeDisplayPlaylistsComposer extends MessageComposer {
     private final int itemId;
     private final ArrayList<YoutubeManager.YoutubePlaylist> playlists;
     private final YoutubeManager.YoutubePlaylist currentPlaylist;
 
-    public YoutubeDisplayPlaylistsComposer(int itemId, ArrayList<YoutubeManager.YoutubePlaylist> playlists, YoutubeManager.YoutubePlaylist currentPlaylist) {
-        this.itemId = itemId;
-        this.playlists = playlists;
-        this.currentPlaylist = currentPlaylist;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

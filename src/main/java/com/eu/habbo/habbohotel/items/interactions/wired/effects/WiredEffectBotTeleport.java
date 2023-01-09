@@ -62,13 +62,13 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
             return;
         }
 
-        if (tile.state == RoomTileState.INVALID || tile.state == RoomTileState.BLOCKED) {
+        if (tile.getState() == RoomTileState.INVALID || tile.getState() == RoomTileState.BLOCKED) {
             RoomTile alternativeTile = null;
             List<RoomTile> optionalTiles = room.getLayout().getTilesAround(tile);
 
             Collections.reverse(optionalTiles);
             for (RoomTile optionalTile : optionalTiles) {
-                if (optionalTile.state != RoomTileState.INVALID && optionalTile.state != RoomTileState.BLOCKED) {
+                if (optionalTile.getState() != RoomTileState.INVALID && optionalTile.getState() != RoomTileState.BLOCKED) {
                     alternativeTile = optionalTile;
                     break;
                 }
@@ -80,7 +80,7 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
         }
 
         Emulator.getThreading().run(() -> { roomUnit.isWiredTeleporting = true; }, Math.max(0, WiredHandler.TELEPORT_DELAY - 500));
-        Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, tile.x, tile.y, tile.getStackHeight() + (tile.state == RoomTileState.SIT ? -0.5 : 0), roomUnit.getEffectId()), WiredHandler.TELEPORT_DELAY);
+        Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, tile.getX(), tile.getY(), tile.getStackHeight() + (tile.getState() == RoomTileState.SIT ? -0.5 : 0), roomUnit.getEffectId()), WiredHandler.TELEPORT_DELAY);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
         message.appendString(this.botName);
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         message.appendInt(0);
     }

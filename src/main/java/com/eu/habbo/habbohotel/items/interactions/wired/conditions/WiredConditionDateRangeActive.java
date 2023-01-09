@@ -9,7 +9,6 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -73,7 +72,7 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
         message.appendInt(this.startDate);
         message.appendInt(this.endDate);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.startDate);
         message.appendInt(this.endDate);
     }
@@ -138,7 +137,7 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
                 try {
                     this.startDate = Integer.parseInt(data[0]);
                     this.endDate = Integer.parseInt(data[1]);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }

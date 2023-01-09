@@ -5,20 +5,17 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import gnu.trove.procedure.TObjectProcedure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +30,7 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
     private int score;
     private int count;
 
-    private TObjectIntMap<Map.Entry<Integer, Integer>> data = new TObjectIntHashMap<>();
+    private final TObjectIntMap<Map.Entry<Integer, Integer>> data = new TObjectIntHashMap<>();
 
     public WiredEffectGiveScore(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -82,7 +79,7 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
             try {
                 this.data.put(new AbstractMap.SimpleEntry<>(gameStartTime, habbo.getHabboInfo().getId()), 1);
             }
-            catch(IllegalArgumentException e) {
+            catch(IllegalArgumentException ignored) {
 
             }
 
@@ -116,9 +113,9 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
             String[] data = wiredData.split(";");
 
             if (data.length == 3) {
-                this.score = Integer.valueOf(data[0]);
-                this.count = Integer.valueOf(data[1]);
-                this.setDelay(Integer.valueOf(data[2]));
+                this.score = Integer.parseInt(data[0]);
+                this.count = Integer.parseInt(data[1]);
+                this.setDelay(Integer.parseInt(data[2]));
             }
 
             this.needsUpdate(true);
@@ -149,19 +146,16 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
         message.appendInt(this.score);
         message.appendInt(this.count);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
 
         if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
-                @Override
-                public boolean execute(InteractionWiredTrigger object) {
-                    if (!object.isTriggeredByRoomUnit()) {
-                        invalidTriggers.add(object.getBaseItem().getSpriteId());
-                    }
-                    return true;
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
+                if (!object.isTriggeredByRoomUnit()) {
+                    invalidTriggers.add(object.getBaseItem().getSpriteId());
                 }
+                return true;
             });
             message.appendInt(invalidTriggers.size());
             for (Integer i : invalidTriggers) {

@@ -20,7 +20,7 @@ public class ActionBounce extends PetAction {
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.BOUNCE, null, false), this.minimumActionDuration);
-        if (pet.getHappyness() > 80) {
+        if (pet.getHappiness() > 80) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         } else {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

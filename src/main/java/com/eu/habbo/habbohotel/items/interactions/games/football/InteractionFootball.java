@@ -69,8 +69,8 @@ public class InteractionFootball extends InteractionPushable {
     @Override
     public RoomUserRotation getWalkOffDirection(RoomUnit roomUnit, Room room) {
         RoomTile peek = roomUnit.getPath().peek();
-        RoomTile nextWalkTile = peek != null ? room.getLayout().getTile(peek.x, peek.y) : roomUnit.getGoal();
-        return RoomUserRotation.values()[(RoomUserRotation.values().length + Rotation.Calculate(roomUnit.getX(), roomUnit.getY(), nextWalkTile.x, nextWalkTile.y) + 4) % 8];
+        RoomTile nextWalkTile = peek != null ? room.getLayout().getTile(peek.getX(), peek.getY()) : roomUnit.getGoal();
+        return RoomUserRotation.values()[(RoomUserRotation.values().length + Rotation.Calculate(roomUnit.getX(), roomUnit.getY(), nextWalkTile.getX(), nextWalkTile.getY()) + 4) % 8];
     }
 
     public RoomUserRotation getDragDirection(RoomUnit roomUnit, Room room) {
@@ -150,8 +150,8 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public boolean validMove(Room room, RoomTile from, RoomTile to) {
-        if (to == null || to.state == RoomTileState.INVALID) return false;
-        HabboItem topItem = room.getTopItemAt(to.x, to.y, this);
+        if (to == null || to.getState() == RoomTileState.INVALID) return false;
+        HabboItem topItem = room.getTopItemAt(to.getX(), to.getY(), this);
 
         // Move is valid if there isnt any furni yet
         if (topItem == null) {
@@ -174,7 +174,7 @@ public class InteractionFootball extends InteractionPushable {
         // If top item is a football goal, the move is only valid if ball is coming from the front side
         // Ball shouldn't come from the back or from the sides (tested on 22-03-2022)
         if (topItem instanceof InteractionFootballGoal) {
-            int ballDirection = Rotation.Calculate(from.x, from.y, to.x, to.y);
+            int ballDirection = Rotation.Calculate(from.getX(), from.getY(), to.getX(), to.getY());
             int goalRotation = topItem.getRotation();
 
             switch (goalRotation) {
@@ -220,8 +220,8 @@ public class InteractionFootball extends InteractionPushable {
                 return;
             }
         }
-        HabboItem currentTopItem = room.getTopItemAt(from.x, from.y, this);
-        HabboItem topItem = room.getTopItemAt(to.x, to.y, this);
+        HabboItem currentTopItem = room.getTopItemAt(from.getX(), from.getY(), this);
+        HabboItem topItem = room.getTopItemAt(to.getX(), to.getY(), this);
         if ((topItem != null) && ((currentTopItem == null) || (currentTopItem.getId() != topItem.getId())) && ((topItem instanceof InteractionFootballGoal))) {
             GameTeamColors color = ((InteractionGameTeamItem) topItem).teamColor;
             game.onScore(kicker, color);
@@ -247,8 +247,8 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public boolean canStillMove(Room room, RoomTile from, RoomTile to, RoomUserRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
-        HabboItem topItem = room.getTopItemAt(from.x, from.y, this);
-        return !((Emulator.getRandom().nextInt(10) >= 3 && room.hasHabbosAt(to.x, to.y)) || (topItem != null && topItem.getBaseItem().getName().startsWith("fball_goal_") && currentStep != 1));
+        HabboItem topItem = room.getTopItemAt(from.getX(), from.getY(), this);
+        return !((Emulator.getRandom().nextInt(10) >= 3 && room.hasHabbosAt(to.getX(), to.getY())) || (topItem != null && topItem.getBaseItem().getName().startsWith("fball_goal_") && currentStep != 1));
     }
 
     @Override

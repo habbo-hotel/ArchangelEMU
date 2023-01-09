@@ -9,16 +9,15 @@ import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+@AllArgsConstructor
 public class ItemsComposer extends MessageComposer {
     private final Room room;
 
-    public ItemsComposer(Room room) {
-        this.room = room;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

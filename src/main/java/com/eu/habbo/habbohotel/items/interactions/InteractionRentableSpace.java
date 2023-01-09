@@ -12,8 +12,7 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.rentablespaces.RentableSpaceStatusMessageComposer;
 import com.eu.habbo.threading.runnables.ClearRentedSpace;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.sql.Connection;
@@ -21,8 +20,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class InteractionRentableSpace extends HabboItem {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionRentableSpace.class);
 
     private int renterId;
     private String renterName;
@@ -36,8 +35,8 @@ public class InteractionRentableSpace extends HabboItem {
         this.renterName = "Unknown";
 
         if (data.length == 2) {
-            this.renterId = Integer.valueOf(data[0]);
-            this.endTimestamp = Integer.valueOf(data[1]);
+            this.renterId = Integer.parseInt(data[0]);
+            this.endTimestamp = Integer.parseInt(data[1]);
 
             if (this.renterId > 0) {
                 if (this.isRented()) {
@@ -54,7 +53,7 @@ public class InteractionRentableSpace extends HabboItem {
                                 }
                             }
                         } catch (SQLException e) {
-                            LOGGER.error("Caught SQL exception", e);
+                            log.error("Caught SQL exception", e);
                         }
                     }
                 } else {
@@ -184,7 +183,7 @@ public class InteractionRentableSpace extends HabboItem {
                 statement.setInt(1, zero);
                 statement.setInt(2, zero);
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
 
@@ -233,8 +232,8 @@ public class InteractionRentableSpace extends HabboItem {
         String[] data = this.getBaseItem().getName().replace("hblooza_spacerent", "").split("x");
 
         if (data.length == 2) {
-            int x = Integer.valueOf(data[0]);
-            int y = Integer.valueOf(data[1]);
+            int x = Integer.parseInt(data[0]);
+            int y = Integer.parseInt(data[1]);
 
             return 10 * (x * y);
         }

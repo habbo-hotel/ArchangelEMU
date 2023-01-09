@@ -2,20 +2,30 @@ package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.habbohotel.items.Item;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RoomTile {
-    public final short x;
-    public final short y;
-    public final short z;
+    @Getter
+    private final short x;
+    @Getter
+    private final short y;
+    @Getter
+    private final short z;
     private final THashSet<RoomUnit> units;
-    public RoomTileState state;
+    @Setter
+    @Getter
+    private RoomTileState state;
     private double stackHeight;
     private boolean allowStack = true;
+    @Getter
+    @Setter
     private RoomTile previous = null;
     private boolean diagonally;
+    @Getter
     private short gCosts;
     private short hCosts;
 
@@ -47,8 +57,7 @@ public class RoomTile {
         this.units = tile.units;
     }
 
-    public RoomTile()
-    {
+    public RoomTile() {
         x = 0;
         y = 0;
         z = 0;
@@ -124,20 +133,8 @@ public class RoomTile {
         this.diagonally = isDiagonally;
     }
 
-    public RoomTile getPrevious() {
-        return this.previous;
-    }
-
-    public void setPrevious(RoomTile previous) {
-        this.previous = previous;
-    }
-
     public int getfCosts() {
         return this.gCosts + this.hCosts;
-    }
-
-    public int getgCosts() {
-        return this.gCosts;
     }
 
     public void setgCosts(RoomTile previousRoomTile) {
@@ -149,15 +146,15 @@ public class RoomTile {
     }
 
     void setgCosts(RoomTile previousRoomTile, int basicCost) {
-        this.setgCosts((short) (previousRoomTile.getgCosts() + basicCost));
+        this.setgCosts((short) (previousRoomTile.getGCosts() + basicCost));
     }
 
     public int calculategCosts(RoomTile previousRoomTile) {
         if (this.diagonally) {
-            return previousRoomTile.getgCosts() + 14;
+            return previousRoomTile.getGCosts() + 14;
         }
 
-        return previousRoomTile.getgCosts() + 10;
+        return previousRoomTile.getGCosts() + 10;
     }
 
     public void sethCosts(RoomTile parent) {
@@ -170,14 +167,6 @@ public class RoomTile {
 
     public boolean isWalkable() {
         return this.state == RoomTileState.OPEN;
-    }
-
-    public RoomTileState getState() {
-        return this.state;
-    }
-
-    public void setState(RoomTileState state) {
-        this.state = state;
     }
 
     public boolean is(short x, short y) {

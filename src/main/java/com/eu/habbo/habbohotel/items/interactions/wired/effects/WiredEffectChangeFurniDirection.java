@@ -7,8 +7,10 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.habbohotel.wired.*;
-import com.eu.habbo.messages.ClientMessage;
+import com.eu.habbo.habbohotel.wired.WiredChangeDirectionSetting;
+import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
@@ -61,14 +63,14 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
 
         for (Map.Entry<HabboItem, WiredChangeDirectionSetting> entry : this.items.entrySet()) {
             HabboItem item = entry.getKey();
-            RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), entry.getValue().direction.getValue());
+            RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), entry.getValue().getDirection().getValue());
 
             int count = 1;
-            while ((targetTile == null || targetTile.state == RoomTileState.INVALID || room.furnitureFitsAt(targetTile, item, item.getRotation(), false) != FurnitureMovementError.NONE) && count < 8) {
-                entry.getValue().direction = this.nextRotation(entry.getValue().direction);
+            while ((targetTile == null || targetTile.getState() == RoomTileState.INVALID || room.furnitureFitsAt(targetTile, item, item.getRotation(), false) != FurnitureMovementError.NONE) && count < 8) {
+                entry.getValue().setDirection(this.nextRotation(entry.getValue().getDirection()));
 
-                RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), entry.getValue().direction.getValue());
-                if (tile != null && tile.state != RoomTileState.INVALID) {
+                RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), entry.getValue().getDirection().getValue());
+                if (tile != null && tile.getState() != RoomTileState.INVALID) {
                     targetTile = tile;
                 }
 
@@ -78,15 +80,15 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
 
         for (Map.Entry<HabboItem, WiredChangeDirectionSetting> entry : this.items.entrySet()) {
             HabboItem item = entry.getKey();
-            int newDirection = entry.getValue().direction.getValue();
+            int newDirection = entry.getValue().getDirection().getValue();
 
             RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), newDirection);
 
-            if(item.getRotation() != entry.getValue().rotation) {
-                if(room.furnitureFitsAt(targetTile, item, entry.getValue().rotation, false) != FurnitureMovementError.NONE)
+            if(item.getRotation() != entry.getValue().getRotation()) {
+                if(room.furnitureFitsAt(targetTile, item, entry.getValue().getRotation(), false) != FurnitureMovementError.NONE)
                     continue;
 
-                room.moveFurniTo(entry.getKey(), targetTile, entry.getValue().rotation, null, true);
+                room.moveFurniTo(entry.getKey(), targetTile, entry.getValue().getRotation(), null, true);
             }
 
             boolean hasRoomUnits = false;
@@ -101,7 +103,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 }
             }
 
-            if (targetTile != null && targetTile.state != RoomTileState.INVALID && room.furnitureFitsAt(targetTile, item, item.getRotation(), false) == FurnitureMovementError.NONE) {
+            if (targetTile != null && targetTile.getState() != RoomTileState.INVALID && room.furnitureFitsAt(targetTile, item, item.getRotation(), false) == FurnitureMovementError.NONE) {
                 if (!hasRoomUnits) {
                     RoomTile oldLocation = room.getLayout().getTile(entry.getKey().getX(), entry.getKey().getY());
                     double oldZ = entry.getKey().getZ();
@@ -135,7 +137,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
             this.blockedAction = data.blocked_action;
 
             for(WiredChangeDirectionSetting setting : data.items) {
-                HabboItem item = room.getHabboItem(setting.item_id);
+                HabboItem item = room.getHabboItem(setting.getItem_id());
 
                 if (item != null) {
                     this.items.put(item, setting);
@@ -205,7 +207,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
         message.appendInt(this.startRotation != null ? this.startRotation.getValue() : 0);
         message.appendInt(this.blockedAction);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         message.appendInt(0);
     }

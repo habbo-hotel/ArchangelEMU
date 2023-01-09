@@ -28,7 +28,7 @@ public class BanCommand extends Command {
 
         int banTime;
         try {
-            banTime = Integer.valueOf(params[2]);
+            banTime = Integer.parseInt(params[2]);
         } catch (Exception e) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_ban.invalid_time"), RoomChatMessageBubbles.ALERT);
             return true;
@@ -39,7 +39,7 @@ public class BanCommand extends Command {
             return true;
         }
 
-        if (params[1].toLowerCase().equals(gameClient.getHabbo().getHabboInfo().getUsername().toLowerCase())) {
+        if (params[1].equalsIgnoreCase(gameClient.getHabbo().getHabboInfo().getUsername())) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_ban.ban_self"), RoomChatMessageBubbles.ALERT);
             return true;
         }
@@ -73,7 +73,7 @@ public class BanCommand extends Command {
         }
 
         ModToolBan ban = Emulator.getGameEnvironment().getModToolManager().ban(target.getId(), gameClient.getHabbo(), reason.toString(), banTime, ModToolBanType.ACCOUNT, -1).get(0);
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_ban.ban_issued").replace("%user%", target.getUsername()).replace("%time%", ban.expireDate - Emulator.getIntUnixTimestamp() + "").replace("%reason%", ban.reason), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_ban.ban_issued").replace("%user%", target.getUsername()).replace("%time%", ban.getExpireDate() - Emulator.getIntUnixTimestamp() + "").replace("%reason%", ban.getReason()), RoomChatMessageBubbles.ALERT);
 
         return true;
     }

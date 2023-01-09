@@ -67,7 +67,7 @@ public class InteractionMultiHeight extends HabboItem {
                     this.needsUpdate(true);
                     room.updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()));
                     room.updateItemState(this);
-                    //room.sendComposer(new UpdateStackHeightComposer(this.getX(), this.getY(), this.getBaseItem().getMultiHeights()[Integer.valueOf(this.getExtradata())] * 256.0D).compose());
+                    //room.sendComposer(new UpdateStackHeightComposer(this.getX(), this.getY(), this.getBaseItem().getMultiHeights()[Integer.parseInt(this.getExtradata())] * 256.0D).compose());
                 }
             }
         }
@@ -77,9 +77,8 @@ public class InteractionMultiHeight extends HabboItem {
         THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
 
         for(RoomTile tile : occupiedTiles) {
-            Collection<RoomUnit> unitsOnItem = room.getRoomUnitsAt(room.getLayout().getTile(tile.x, tile.y));
+            Collection<RoomUnit> unitsOnItem = room.getRoomUnitsAt(room.getLayout().getTile(tile.getX(), tile.getY()));
 
-            THashSet<RoomUnit> updatedUnits = new THashSet<>();
             for (RoomUnit unit : unitsOnItem) {
                 if (unit.hasStatus(RoomUnitStatus.MOVE) && unit.getGoal() != tile)
                     continue;

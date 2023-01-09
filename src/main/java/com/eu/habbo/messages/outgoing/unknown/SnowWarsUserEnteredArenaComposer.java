@@ -2,13 +2,12 @@ package com.eu.habbo.messages.outgoing.unknown;
 
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class SnowWarsUserEnteredArenaComposer extends MessageComposer {
     private final int type;
 
-    public SnowWarsUserEnteredArenaComposer(int type) {
-        this.type = type;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

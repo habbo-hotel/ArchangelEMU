@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.hotelview;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ConcurrentUsersGoalProgressMessageComposer extends MessageComposer {
     public static final int ACTIVE = 0;
     public static final int HIDDEN = 2;
@@ -12,12 +14,6 @@ public class ConcurrentUsersGoalProgressMessageComposer extends MessageComposer 
     private final int state;
     private final int userCount;
     private final int goal;
-
-    public ConcurrentUsersGoalProgressMessageComposer(int state, int userCount, int goal) {
-        this.state = state;
-        this.userCount = userCount;
-        this.goal = goal;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

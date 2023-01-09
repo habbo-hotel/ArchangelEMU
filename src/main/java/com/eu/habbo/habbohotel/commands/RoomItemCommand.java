@@ -17,7 +17,7 @@ public class RoomItemCommand extends Command {
 
         if (params.length >= 2) {
             try {
-                itemId = Integer.valueOf(params[1]);
+                itemId = Integer.parseInt(params[1]);
 
                 if (itemId < 0) {
                     gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_roomitem.positive"), RoomChatMessageBubbles.ALERT);
@@ -36,10 +36,9 @@ public class RoomItemCommand extends Command {
 
         if (itemId > 0) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_roomitem.given").replace("%item%", itemId + ""), RoomChatMessageBubbles.ALERT);
-            return true;
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_roomitem.removed"), RoomChatMessageBubbles.ALERT);
-            return true;
         }
+        return true;
     }
 }

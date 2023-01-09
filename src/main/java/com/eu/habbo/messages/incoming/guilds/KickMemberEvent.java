@@ -9,8 +9,8 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.FavoriteMembershipUpdateMessageComposer;
-import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildMembershipRejectedMessageComposer;
+import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.plugin.events.guilds.GuildRemovedMemberEvent;
 
 public class KickMemberEvent extends MessageHandler {
@@ -42,8 +42,8 @@ public class KickMemberEvent extends MessageHandler {
 
                 if (habbo != null) {
                     habbo.getHabboStats().removeGuild(guild.getId());
-                    if (habbo.getHabboStats().guild == guildId)
-                        habbo.getHabboStats().guild = 0;
+                    if (habbo.getHabboStats().getGuild() == guildId)
+                        habbo.getHabboStats().setGuild(0);
 
                     if (room != null) {
                         if (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getRoomUnit() != null)

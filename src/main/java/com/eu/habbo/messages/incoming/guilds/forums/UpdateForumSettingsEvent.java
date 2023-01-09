@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.guilds.SettingsState;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.ForumDataMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
@@ -39,7 +39,7 @@ public class UpdateForumSettingsEvent extends MessageHandler {
 
         Emulator.getThreading().run(guild);
 
-        this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_FORUM_SETTINGS_UPDATED.key).compose());
+        this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_FORUM_SETTINGS_UPDATED.getKey()).compose());
 
         this.client.sendResponse(new ForumDataMessageComposer(guild, this.client.getHabbo()));
     }

@@ -6,17 +6,13 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 class HopperActionFive implements Runnable {
     private final HabboItem currentTeleport;
     private final Room room;
     private final GameClient client;
-
-    public HopperActionFive(HabboItem currentTeleport, Room room, GameClient client) {
-        this.currentTeleport = currentTeleport;
-        this.client = client;
-        this.room = room;
-    }
 
     @Override
     public void run() {
