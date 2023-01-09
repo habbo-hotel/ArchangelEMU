@@ -3,15 +3,13 @@ package com.eu.habbo.messages.outgoing.rooms.pets.breeding;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ConfirmBreedingResultComposer extends MessageComposer {
     private final int anInt1;
     private final int anInt2;
 
-    public ConfirmBreedingResultComposer(int anInt1, int anInt2) {
-        this.anInt1 = anInt1;
-        this.anInt2 = anInt2;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

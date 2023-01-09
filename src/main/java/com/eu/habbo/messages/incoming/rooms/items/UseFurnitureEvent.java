@@ -14,11 +14,11 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.furniture.FurnitureToggleEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class UseFurnitureEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UseFurnitureEvent.class);
+
 
     @Override
     public void handle() throws Exception {
@@ -96,13 +96,13 @@ public class UseFurnitureEvent extends MessageHandler {
 
                 boolean isRare = item.getBaseItem().getName().contains("rare");
 
-                if ((!item.getExtradata().isEmpty() && Integer.valueOf(item.getExtradata()) - 1 < 0) || item.getExtradata().isEmpty()) {
+                if (item.getExtradata().isEmpty() || Integer.parseInt(item.getExtradata()) - 1 < 0) {
                     rarity = isRare ? InteractionMonsterPlantSeed.randomGoldenRarityLevel() : InteractionMonsterPlantSeed.randomRarityLevel();
                 }
                 else {
                     try {
-                        rarity = Integer.valueOf(item.getExtradata()) - 1;
-                    } catch (Exception e) {
+                        rarity = Integer.parseInt(item.getExtradata()) - 1;
+                    } catch (Exception ignored) {
                     }
                 }
                 MonsterplantPet pet = Emulator.getGameEnvironment().getPetManager().createMonsterplant(room, this.client.getHabbo(), isRare, room.getLayout().getTile(item.getX(), item.getY()), rarity);
@@ -132,7 +132,7 @@ public class UseFurnitureEvent extends MessageHandler {
                 this.client.getHabbo().getRoomUnit().setGoalLocation(this.client.getHabbo().getRoomUnit().getCurrentLocation());
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 }

@@ -3,15 +3,13 @@ package com.eu.habbo.messages.outgoing.navigator;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Set;
 
+@AllArgsConstructor
 public class PopularRoomTagsResultComposer extends MessageComposer {
     private final Set<String> tags;
-
-    public PopularRoomTagsResultComposer(Set<String> tags) {
-        this.tags = tags;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

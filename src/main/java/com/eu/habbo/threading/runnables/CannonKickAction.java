@@ -10,19 +10,15 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import gnu.trove.map.hash.THashMap;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class CannonKickAction implements Runnable {
     private final InteractionCannon cannon;
     private final Room room;
     private final GameClient client;
-
-    public CannonKickAction(InteractionCannon cannon, Room room, GameClient client) {
-        this.cannon = cannon;
-        this.room = room;
-        this.client = client;
-    }
 
     @Override
     public void run() {
@@ -41,7 +37,7 @@ public class CannonKickAction implements Runnable {
         ServerMessage message = new NotificationDialogMessageComposer("cannon.png", dater).compose();
 
         for (RoomTile t : tiles) {
-            for (Habbo habbo : this.room.getHabbosAt(t.x, t.y)) {
+            for (Habbo habbo : this.room.getHabbosAt(t.getX(), t.getY())) {
                 if (!habbo.hasPermission(Permission.ACC_UNKICKABLE) && !this.room.isOwner(habbo)) {
                     Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room);
                     habbo.getClient().sendResponse(message); //kicked composer

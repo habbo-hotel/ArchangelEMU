@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum RoomUserRotation {
     NORTH(0),
     NORTH_EAST(1),
@@ -12,9 +17,6 @@ public enum RoomUserRotation {
 
     private final int direction;
 
-    RoomUserRotation(int direction) {
-        this.direction = direction;
-    }
 
     public static RoomUserRotation fromValue(int rotation) {
         rotation %= 8;
@@ -40,24 +42,15 @@ public enum RoomUserRotation {
     }
 
     public RoomUserRotation getOpposite() {
-        switch (this) {
-            case NORTH:
-                return RoomUserRotation.SOUTH;
-            case NORTH_EAST:
-                return RoomUserRotation.SOUTH_WEST;
-            case EAST:
-                return RoomUserRotation.WEST;
-            case SOUTH_EAST:
-                return RoomUserRotation.NORTH_WEST;
-            case SOUTH:
-                return RoomUserRotation.NORTH;
-            case SOUTH_WEST:
-                return RoomUserRotation.NORTH_EAST;
-            case WEST:
-                return RoomUserRotation.EAST;
-            case NORTH_WEST:
-                return RoomUserRotation.SOUTH_EAST;
-        }
-        return null;
+        return switch (this) {
+            case NORTH -> RoomUserRotation.SOUTH;
+            case NORTH_EAST -> RoomUserRotation.SOUTH_WEST;
+            case EAST -> RoomUserRotation.WEST;
+            case SOUTH_EAST -> RoomUserRotation.NORTH_WEST;
+            case SOUTH -> RoomUserRotation.NORTH;
+            case SOUTH_WEST -> RoomUserRotation.NORTH_EAST;
+            case WEST -> RoomUserRotation.EAST;
+            case NORTH_WEST -> RoomUserRotation.SOUTH_EAST;
+        };
     }
 }

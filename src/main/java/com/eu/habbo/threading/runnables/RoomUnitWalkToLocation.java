@@ -5,16 +5,18 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 public class RoomUnitWalkToLocation implements Runnable {
-    private RoomUnit walker;
-    private RoomTile goalTile;
-    private Room room;
-    private List<Runnable> targetReached;
-    private List<Runnable> failedReached;
+    private final RoomUnit walker;
+    private final RoomTile goalTile;
+    private final Room room;
+    private final List<Runnable> targetReached;
+    private final List<Runnable> failedReached;
 
     public RoomUnitWalkToLocation(RoomUnit walker, RoomTile goalTile, Room room, Runnable targetReached, Runnable failedReached) {
         this.walker = walker;
@@ -28,13 +30,6 @@ public class RoomUnitWalkToLocation implements Runnable {
         if (failedReached != null) this.targetReached.add(failedReached);
     }
 
-    public RoomUnitWalkToLocation(RoomUnit walker, RoomTile goalTile, Room room, List<Runnable> targetReached, List<Runnable> failedReached) {
-        this.walker = walker;
-        this.goalTile = goalTile;
-        this.room = room;
-        this.targetReached = targetReached;
-        this.failedReached = failedReached;
-    }
 
     @Override
     public void run() {

@@ -4,6 +4,7 @@ package com.eu.habbo.habbohotel.catalog;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.cache.HabboOfferPurchase;
 import com.eu.habbo.messages.ServerMessage;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,18 +12,31 @@ import java.sql.SQLException;
 public class TargetOffer {
     public static int ACTIVE_TARGET_OFFER_ID = 0;
 
+    @Getter
     private final int id;
+    @Getter
     private final int catalogItem;
+    @Getter
     private final String identifier;
+    @Getter
     private final int priceInCredits;
+    @Getter
     private final int priceInActivityPoints;
+    @Getter
     private final int activityPointsType;
+    @Getter
     private final int purchaseLimit;
+    @Getter
     private final int expirationTime;
+    @Getter
     private final String title;
+    @Getter
     private final String description;
+    @Getter
     private final String imageUrl;
+    @Getter
     private final String icon;
+    @Getter
     private final String[] vars;
 
     public TargetOffer(ResultSet set) throws SQLException {
@@ -62,55 +76,4 @@ public class TargetOffer {
         }
     }
 
-    public int getId() {
-        return this.id;
-    }
-
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
-    public int getPriceInCredits() {
-        return this.priceInCredits;
-    }
-
-    public int getPriceInActivityPoints() {
-        return this.priceInActivityPoints;
-    }
-
-    public int getActivityPointsType() {
-        return this.activityPointsType;
-    }
-
-    public int getPurchaseLimit() {
-        return this.purchaseLimit;
-    }
-
-    public int getExpirationTime() {
-        return this.expirationTime;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public String getImageUrl() {
-        return this.imageUrl;
-    }
-
-    public String getIcon() {
-        return this.icon;
-    }
-
-    public String[] getVars() {
-        return this.vars;
-    }
-
-    public int getCatalogItem() {
-        return this.catalogItem;
-    }
 }

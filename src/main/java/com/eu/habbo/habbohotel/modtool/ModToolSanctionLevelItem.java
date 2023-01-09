@@ -1,10 +1,13 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.Getter;
+
+@Getter
 public class ModToolSanctionLevelItem {
-    public int sanctionLevel;
-    public String sanctionType;
-    public int sanctionHourLength;
-    public int sanctionProbationDays;
+    private  int sanctionLevel;
+    private  String sanctionType;
+    private  int sanctionHourLength;
+    private  int sanctionProbationDays;
 
     public ModToolSanctionLevelItem(int sanctionLevel, String sanctionType, int sanctionHourLength, int sanctionProbationDays) {
         this.sanctionLevel = sanctionLevel;

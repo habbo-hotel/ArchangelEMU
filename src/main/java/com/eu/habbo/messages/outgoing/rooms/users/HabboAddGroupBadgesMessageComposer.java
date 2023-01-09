@@ -4,13 +4,12 @@ import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class HabboAddGroupBadgesMessageComposer extends MessageComposer {
     private final Guild guild;
 
-    public HabboAddGroupBadgesMessageComposer(Guild guild) {
-        this.guild = guild;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

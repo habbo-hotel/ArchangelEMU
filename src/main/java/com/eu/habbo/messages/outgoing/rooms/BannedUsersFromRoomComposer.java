@@ -8,15 +8,13 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
 import java.util.NoSuchElementException;
 
+@AllArgsConstructor
 public class BannedUsersFromRoomComposer extends MessageComposer {
     private final Room room;
-
-    public BannedUsersFromRoomComposer(Room room) {
-        this.room = room;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -30,7 +28,7 @@ public class BannedUsersFromRoomComposer extends MessageComposer {
             try {
                 iterator.advance();
 
-                if (iterator.value().endTimestamp > timeStamp)
+                if (iterator.value().getEndTimestamp() > timeStamp)
                     roomBans.add(iterator.value());
             } catch (NoSuchElementException e) {
                 break;
@@ -45,8 +43,8 @@ public class BannedUsersFromRoomComposer extends MessageComposer {
         this.response.appendInt(roomBans.size());
 
         for (RoomBan ban : roomBans) {
-            this.response.appendInt(ban.userId);
-            this.response.appendString(ban.username);
+            this.response.appendInt(ban.getUserId());
+            this.response.appendString(ban.getUsername());
         }
 
         return this.response;

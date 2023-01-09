@@ -1,18 +1,20 @@
 package com.eu.habbo.habbohotel.navigation;
 
 import com.eu.habbo.habbohotel.rooms.Room;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class NavigatorPublicCategory {
-    public final int id;
-    public final String name;
-    public final List<Room> rooms;
-    public final ListMode image;
-    public final int order;
+    private final int id;
+    private final String name;
+    private final List<Room> rooms;
+    private final ListMode image;
+    private final int order;
 
     public NavigatorPublicCategory(ResultSet set) throws SQLException {
         this.id = set.getInt("id");

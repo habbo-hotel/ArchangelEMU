@@ -9,18 +9,16 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
+import lombok.AllArgsConstructor;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Date;
 
+@AllArgsConstructor
 public class SanctionStatusComposer extends MessageComposer {
 
     private final Habbo habbo;
-
-    public SanctionStatusComposer(Habbo habbo) {
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -41,34 +39,34 @@ public class SanctionStatusComposer extends MessageComposer {
                     prevItem = modToolSanctionItems.get(modToolSanctionItems.size() - 2);
                 }
 
-                ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel);
-                ModToolSanctionLevelItem nextModToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel + 1);
+                ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.getSanctionLevel());
+                ModToolSanctionLevelItem nextModToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.getSanctionLevel() + 1);
 
-                if (item.probationTimestamp > 0) {
-                    probationEndTime = new Date((long) item.probationTimestamp * 1000);
+                if (item.getProbationTimestamp() > 0) {
+                    probationEndTime = new Date((long) item.getProbationTimestamp() * 1000);
 
                     probationStartTime = new DateTime(probationEndTime).minusDays(modToolSanctions.getProbationDays(modToolSanctionLevelItem)).toDate();
 
                     Date tradeLockedUntil = null;
 
-                    if (item.tradeLockedUntil > 0) {
-                        tradeLockedUntil = new Date((long) item.tradeLockedUntil * 1000);
+                    if (item.getTradeLockedUntil() > 0) {
+                        tradeLockedUntil = new Date((long) item.getTradeLockedUntil() * 1000);
                     }
 
                     this.response.init(Outgoing.sanctionStatusComposer);
 
-                    this.response.appendBoolean(prevItem != null && prevItem.probationTimestamp > 0); // has prev sanction
-                    this.response.appendBoolean(item.probationTimestamp >= Emulator.getIntUnixTimestamp()); // is on probation
+                    this.response.appendBoolean(prevItem != null && prevItem.getProbationTimestamp() > 0); // has prev sanction
+                    this.response.appendBoolean(item.getProbationTimestamp() >= Emulator.getIntUnixTimestamp()); // is on probation
                     this.response.appendString(modToolSanctions.getSanctionType(modToolSanctionLevelItem)); // current sanction type
                     this.response.appendInt(modToolSanctions.getTimeOfSanction(modToolSanctionLevelItem)); // time of current sanction
                     this.response.appendInt(30); // TODO: unused?
-                    this.response.appendString(item.reason.equals("") ? "cfh.reason.EMPTY" : item.reason); // reason
+                    this.response.appendString(item.getReason().equals("") ? "cfh.reason.EMPTY" : item.getReason()); // reason
                     this.response.appendString(probationStartTime == null ? Emulator.getDate().toString() : probationStartTime.toString()); // probation start time
                     this.response.appendInt(0); // TODO: unused?
                     this.response.appendString(modToolSanctions.getSanctionType(nextModToolSanctionLevelItem)); // next sanction type
                     this.response.appendInt(modToolSanctions.getTimeOfSanction(nextModToolSanctionLevelItem)); // time to be applied in next sanction (in hours)
                     this.response.appendInt(30); // TODO: unused?
-                    this.response.appendBoolean(item.isMuted); // muted
+                    this.response.appendBoolean(item.isMuted()); // muted
                     this.response.appendString(tradeLockedUntil == null ? "" : tradeLockedUntil.toString()); // trade locked until
                 } else {
                     return cleanResponse();

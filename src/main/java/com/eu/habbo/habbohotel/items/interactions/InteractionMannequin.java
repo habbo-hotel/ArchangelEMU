@@ -77,11 +77,11 @@ public class InteractionMannequin extends HabboItem {
         if (gender.isEmpty() || figure.isEmpty() || (!gender.equalsIgnoreCase("m") && !gender.equalsIgnoreCase("f")) || !client.getHabbo().getHabboInfo().getGender().name().equalsIgnoreCase(gender))
             return;
 
-        String newFigure = "";
+        StringBuilder newFigure = new StringBuilder();
 
         for (String playerFigurePart : client.getHabbo().getHabboInfo().getLook().split("\\.")) {
             if (!playerFigurePart.startsWith("ch") && !playerFigurePart.startsWith("lg"))
-                newFigure += playerFigurePart + ".";
+                newFigure.append(playerFigurePart).append(".");
         }
 
         String newFigureParts = figure;

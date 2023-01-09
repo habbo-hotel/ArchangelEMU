@@ -12,7 +12,7 @@ public class AvatarEffectSelectedEvent extends MessageHandler {
                 this.client.getHabbo().getInventory().getEffectsComponent().enableEffect(effectId);
             }
         } else {
-            this.client.getHabbo().getInventory().getEffectsComponent().activatedEffect = 0;
+            this.client.getHabbo().getInventory().getEffectsComponent().setActivatedEffect(0);
 
             if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(this.client.getHabbo().getRoomUnit(), 0, -1);

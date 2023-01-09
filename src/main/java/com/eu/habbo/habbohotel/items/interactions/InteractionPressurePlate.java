@@ -82,7 +82,7 @@ public class InteractionPressurePlate extends InteractionDefault {
         if (tiles == null) return;
 
         for (RoomTile tile : tiles) {
-            boolean hasHabbos = room.hasHabbosAt(tile.x, tile.y);
+            boolean hasHabbos = room.hasHabbosAt(tile.getX(), tile.getY());
             if (!hasHabbos && this.requiresAllTilesOccupied()) {
                 occupied = false;
                 break;

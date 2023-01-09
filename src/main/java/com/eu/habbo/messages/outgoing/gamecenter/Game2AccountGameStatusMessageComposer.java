@@ -3,15 +3,12 @@ package com.eu.habbo.messages.outgoing.gamecenter;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class Game2AccountGameStatusMessageComposer extends MessageComposer {
     private final int gameId;
     private final int gamesLeft;
-
-    public Game2AccountGameStatusMessageComposer(int gameId, int gamesLeft) {
-        this.gameId = gameId;
-        this.gamesLeft = gamesLeft;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

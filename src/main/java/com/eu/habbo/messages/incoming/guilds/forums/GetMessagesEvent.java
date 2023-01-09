@@ -9,9 +9,9 @@ import com.eu.habbo.habbohotel.guilds.forums.ForumThreadState;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.guilds.forums.ThreadMessagesMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.forums.ForumDataMessageComposer;
+import com.eu.habbo.messages.outgoing.guilds.forums.ThreadMessagesMessageComposer;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 
@@ -39,9 +39,9 @@ public class GetMessagesEvent extends MessageHandler {
         if (thread.getState() != ForumThreadState.HIDDEN_BY_GUILD_ADMIN || hasStaffPermissions || isGuildAdministrator) {
             this.client.sendResponse(new ThreadMessagesMessageComposer(guildId, threadId, index, thread.getComments(limit, index)));
             this.client.sendResponse(new ForumDataMessageComposer(guild, this.client.getHabbo()));
-            
-        } else {
-            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_ACCESS_DENIED.key).compose());
+        }
+        else {
+            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FORUMS_ACCESS_DENIED.getKey()).compose());
         }
     }
 }

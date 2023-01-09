@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
 import java.sql.ResultSet;
@@ -68,7 +67,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
                 this.setExtradata("0");
                 room.updateItemState(this);
             }, 4000);
-            pet.addHappyness(25);
+            pet.addHappiness(25);
 
             this.setExtradata("1");
             room.updateItemState(this);

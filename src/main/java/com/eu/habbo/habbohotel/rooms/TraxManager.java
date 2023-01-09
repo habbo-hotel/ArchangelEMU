@@ -17,9 +17,8 @@ import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeboxSongDisksMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.NowPlayingMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.UserSongDisksInventoryMessageComposer;
-import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,12 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class TraxManager implements Disposable {
     public static int NORMAL_JUKEBOX_LIMIT = 10;
     public static int LARGE_JUKEBOX_LIMIT = 20;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TraxManager.class);
     private final Room room;
+    @Getter
     private InteractionJukeBox jukeBox;
     private final List<InteractionMusicDisc> songs = new ArrayList<>(0);
     private int totalLength = 0;
@@ -43,6 +42,7 @@ public class TraxManager implements Disposable {
     private int playingIndex = 0;
     private int cycleStartedTimestamp = 0;
     private Habbo starter = null;
+    @Getter
     private int songsLimit = 0;
 
     private boolean disposed = false;
@@ -85,7 +85,7 @@ public class TraxManager implements Disposable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return null;
@@ -117,7 +117,7 @@ public class TraxManager implements Disposable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -127,7 +127,7 @@ public class TraxManager implements Disposable {
             statement.setInt(2, song_id);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -138,8 +138,9 @@ public class TraxManager implements Disposable {
             statement_1.setInt(1, this.room.getId());
             statement_1.setInt(2, jukeBox.getId());
             statement_1.execute();
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+        }
+        catch (SQLException e) {
+            log.error("Caught SQL exception", e);
             return;
         }
 
@@ -154,8 +155,9 @@ public class TraxManager implements Disposable {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement_1 = connection.prepareStatement("DELETE FROM room_trax WHERE room_id = ?")) {
             statement_1.setInt(1, this.room.getId());
             statement_1.execute();
-        } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+        }
+        catch (SQLException e) {
+            log.error("Caught SQL exception", e);
             return;
         }
 
@@ -238,8 +240,8 @@ public class TraxManager implements Disposable {
     public void addSong(InteractionMusicDisc musicDisc, Habbo habbo) {
         if (this.jukeBox == null) return;
 
-        if (this.songsLimit < this.songs.size() + 1) {
-            THashMap<String, String> codes = new THashMap<>();
+        if(this.songsLimit < this.songs.size() + 1)
+        {
             ServerMessage msg = new NotificationDialogMessageComposer("${playlist.editor.alert.playlist.full.title}", "${playlist.editor.alert.playlist.full}").compose();
             habbo.getClient().sendResponse(msg);
             return;
@@ -256,7 +258,7 @@ public class TraxManager implements Disposable {
                 statement.setInt(2, musicDisc.getId());
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
                 return;
             }
 
@@ -340,7 +342,7 @@ public class TraxManager implements Disposable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -414,14 +416,6 @@ public class TraxManager implements Disposable {
 
     public boolean isPlaying() {
         return this.currentlyPlaying != null;
-    }
-
-    public int getSongsLimit() {
-        return this.songsLimit;
-    }
-
-    public InteractionJukeBox getJukeBox() {
-        return this.jukeBox;
     }
 
     @Override

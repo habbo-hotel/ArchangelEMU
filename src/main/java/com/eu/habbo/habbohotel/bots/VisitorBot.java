@@ -39,9 +39,9 @@ public class VisitorBot extends Bot {
                 StringBuilder list = new StringBuilder();
                 for (ModToolRoomVisit visit : this.visits) {
                     list.append("\r");
-                    list.append(visit.roomName).append(" ");
+                    list.append(visit.getRoomName()).append(" ");
                     list.append(Emulator.getTexts().getValue("generic.time.at")).append(" ");
-                    list.append(DATE_FORMAT.format(new Date((visit.timestamp * 1000L))));
+                    list.append(DATE_FORMAT.format(new Date((visit.getTimestamp() * 1000L))));
                 }
 
                 visitMessage = visitMessage.replace("%list%", list.toString());

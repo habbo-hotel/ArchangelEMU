@@ -6,13 +6,11 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class HeightMapComposer extends MessageComposer {
     private final Room room;
-
-    public HeightMapComposer(Room room) {
-        this.room = room;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -25,7 +23,7 @@ public class HeightMapComposer extends MessageComposer {
 
                 if (t != null) {
                     if(Emulator.getConfig().getBoolean("custom.stacking.enabled")) {
-                        this.response.appendShort((short) (t.z * 256.0));
+                        this.response.appendShort((short) (t.getZ() * 256.0));
                     }
                     else {
                         this.response.appendShort(t.relativeHeight());

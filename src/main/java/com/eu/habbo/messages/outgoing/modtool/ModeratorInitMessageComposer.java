@@ -12,15 +12,13 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
 import java.util.Iterator;
 
+@AllArgsConstructor
 public class ModeratorInitMessageComposer extends MessageComposer implements TObjectProcedure<ModToolCategory> {
     private final Habbo habbo;
-
-    public ModeratorInitMessageComposer(Habbo habbo) {
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -85,12 +83,6 @@ public class ModeratorInitMessageComposer extends MessageComposer implements TOb
     @Override
     public boolean execute(ModToolCategory category) {
         this.response.appendString(category.getName());
-
-
-//
-
-//
-
 
         return true;
     }

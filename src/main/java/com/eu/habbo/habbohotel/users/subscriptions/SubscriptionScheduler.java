@@ -4,18 +4,15 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.core.Scheduler;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.plugin.events.users.subscriptions.UserSubscriptionExpiredEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
 /**
  * @author Beny
  */
+@Slf4j
 public class SubscriptionScheduler extends Scheduler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionScheduler.class);
-
     public SubscriptionScheduler() {
         super(Emulator.getConfig().getInt("subscriptions.scheduler.interval", 10));
         this.reloadConfig();
@@ -45,7 +42,7 @@ public class SubscriptionScheduler extends Scheduler {
 
             try {
                 if (habbo != null) {
-                    for(Subscription subscription : habbo.getHabboStats().subscriptions) {
+                    for(Subscription subscription : habbo.getHabboStats().getSubscriptions()) {
                         if(subscription.isActive() && subscription.getRemaining() < 0) {
                             if (!Emulator.getPluginManager().fireEvent(new UserSubscriptionExpiredEvent(habbo.getHabboInfo().getId(), subscription)).isCancelled()) {
                                 subscription.onExpired();
@@ -55,7 +52,7 @@ public class SubscriptionScheduler extends Scheduler {
                     }
                 }
             } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
+                log.error("Caught exception", e);
             }
         }
 

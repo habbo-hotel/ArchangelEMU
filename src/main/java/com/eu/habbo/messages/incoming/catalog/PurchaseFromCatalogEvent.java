@@ -15,15 +15,16 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseNotAllowedMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
-import com.eu.habbo.messages.outgoing.users.*;
+import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
+import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
+import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import org.apache.commons.lang3.StringUtils;
 
 import static com.eu.habbo.messages.incoming.catalog.ApproveNameEvent.PET_NAME_LENGTH_MAXIMUM;
@@ -34,8 +35,8 @@ public class PurchaseFromCatalogEvent extends MessageHandler {
 
     @Override
     public void handle() throws Exception {
-        if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().lastPurchaseTimestamp >= CatalogManager.PURCHASE_COOLDOWN) {
-            this.client.getHabbo().getHabboStats().lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
+        if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().getLastPurchaseTimestamp() >= CatalogManager.PURCHASE_COOLDOWN) {
+            this.client.getHabbo().getHabboStats().setLastPurchaseTimestamp(Emulator.getIntUnixTimestamp());
             if (ShutdownEmulator.timestamp > 0) {
                 this.client.sendResponse(new HotelWillCloseInMinutesComposer((ShutdownEmulator.timestamp - Emulator.getIntUnixTimestamp()) / 60));
                 return;
@@ -83,12 +84,9 @@ public class PurchaseFromCatalogEvent extends MessageHandler {
 
                 if (page instanceof RoomBundleLayout) {
                     final CatalogItem[] item = new CatalogItem[1];
-                    page.getCatalogItems().forEachValue(new TObjectProcedure<CatalogItem>() {
-                        @Override
-                        public boolean execute(CatalogItem object) {
-                            item[0] = object;
-                            return false;
-                        }
+                    page.getCatalogItems().forEachValue(object -> {
+                        item[0] = object;
+                        return false;
                     });
 
                     CatalogItem roomBundleItem = item[0];
@@ -126,7 +124,7 @@ public class PurchaseFromCatalogEvent extends MessageHandler {
                             keys.put("display", "BUBBLE");
                             keys.put("image", "${image.library.url}album1584/" + badge.getCode() + ".gif");
                             keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
-                            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys)); //:test 1992 s:npc.gift.received i:2 s:npc_name s:Admin s:image s:${image.library.url}album1584/ADM.gif);
+                            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.getKey(), keys)); //:test 1992 s:npc.gift.received i:2 s:npc_name s:Admin s:image s:${image.library.url}album1584/ADM.gif);
                         } else {
                             badgeFound[0] = true;
                         }
@@ -176,10 +174,10 @@ public class PurchaseFromCatalogEvent extends MessageHandler {
                         return;
 
                     if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS))
-                        this.client.getHabbo().getHabboInfo().addCredits(-totalCredits);
+                        this.client.getHabbo().giveCredits(-totalCredits);
 
                     if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
-                        this.client.getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -totalDuckets);
+                        this.client.getHabbo().givePoints(item.getPointsType(), -totalDuckets);
 
 
                     if(this.client.getHabbo().getHabboStats().createSubscription(Subscription.HABBO_CLUB, (totalDays * 86400)) == null) {

@@ -3,11 +3,14 @@ package com.eu.habbo.messages.incoming.rooms.items;
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomLayout;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 
 public class PlaceObjectEvent extends MessageHandler {
@@ -20,7 +23,7 @@ public class PlaceObjectEvent extends MessageHandler {
         if (values.length != 0) itemId = Integer.parseInt(values[0]);
 
         if (!this.client.getHabbo().getRoomUnit().isInRoom()) {
-            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.NO_RIGHTS.errorCode));
+            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
             return;
         }
 
@@ -31,7 +34,7 @@ public class PlaceObjectEvent extends MessageHandler {
 
         HabboItem rentSpace = null;
         if (this.client.getHabbo().getHabboStats().isRentingSpace()) {
-            rentSpace = room.getHabboItem(this.client.getHabbo().getHabboStats().rentedItemId);
+            rentSpace = room.getHabboItem(this.client.getHabbo().getHabboStats().getRentedItemId());
         }
 
         HabboItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
@@ -44,11 +47,11 @@ public class PlaceObjectEvent extends MessageHandler {
 
         //TODO move this to canStackAt() though find a way to handle the different bubble alert keys
         if (item instanceof InteractionMoodLight && !room.getRoomSpecialTypes().getItemsOfType(InteractionMoodLight.class).isEmpty()) {
-            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.MAX_DIMMERS.errorCode));
+            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.MAX_DIMMERS.getErrorCode()));
             return;
         }
         if (item instanceof InteractionJukeBox && !room.getRoomSpecialTypes().getItemsOfType(InteractionJukeBox.class).isEmpty()) {
-            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.MAX_SOUNDFURNI.errorCode));
+            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.MAX_SOUNDFURNI.getErrorCode()));
             return;
         }
 
@@ -83,30 +86,30 @@ public class PlaceObjectEvent extends MessageHandler {
                         item instanceof InteractionCannon ||
                         item instanceof InteractionPuzzleBox ||
                         item.getBaseItem().getType() == FurnitureType.WALL) {
-                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.NO_RIGHTS.errorCode));
+                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
                     return;
                 }
                 if (rentSpace != null && !RoomLayout.squareInSquare(RoomLayout.getRectangle(rentSpace.getX(), rentSpace.getY(), rentSpace.getBaseItem().getWidth(), rentSpace.getBaseItem().getLength(), rentSpace.getRotation()), RoomLayout.getRectangle(x, y, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))) {
-                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.NO_RIGHTS.errorCode));
+                    this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
                     return;
                 }
             }
             FurnitureMovementError error = room.canPlaceFurnitureAt(item, this.client.getHabbo(), tile, rotation);
 
             if (!error.equals(FurnitureMovementError.NONE)) {
-                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, error.errorCode));
+                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
                 return;
             }
 
             error = room.placeFloorFurniAt(item, tile, rotation, this.client.getHabbo());
             if (!error.equals(FurnitureMovementError.NONE)) {
-                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, error.errorCode));
+                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
                 return;
             }
         } else {
             FurnitureMovementError error = room.placeWallFurniAt(item, values[1] + " " + values[2] + " " + values[3], this.client.getHabbo());
             if (!error.equals(FurnitureMovementError.NONE)) {
-                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, error.errorCode));
+                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
                 return;
             }
         }

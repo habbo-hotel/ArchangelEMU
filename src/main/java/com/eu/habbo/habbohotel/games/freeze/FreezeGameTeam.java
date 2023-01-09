@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.games.GameTeam;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
@@ -29,7 +28,7 @@ public class FreezeGameTeam extends GameTeam {
         Room room = roomUnit.getRoom();
         if(room == null) return;
 
-        HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().x, roomUnit.getCurrentLocation().y);
+        HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().getX(), roomUnit.getCurrentLocation().getY());
         int nextEffectM = 0;
         int nextEffectF = 0;
         int nextEffectDuration = -1;

@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionInformationTerminal extends InteractionCustomValues {
-    public static final THashMap<String, String> defaultValues = new THashMap<String, String>() {
+    public static final THashMap<String, String> defaultValues = new THashMap<>() {
         {
             this.put("internalLink", "habbopages/chat/commands");
         }

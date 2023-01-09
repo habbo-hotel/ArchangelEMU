@@ -1,17 +1,19 @@
 package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.Emulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
+@Getter
+@Setter
 public class HorsePet extends RideablePet {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HorsePet.class);
-
     private int hairColor;
     private int hairStyle;
 
@@ -44,26 +46,11 @@ public class HorsePet extends RideablePet {
                 statement.setInt(6, super.getId());
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
             super.run();
         }
     }
 
-    public int getHairColor() {
-        return this.hairColor;
-    }
-
-    public void setHairColor(int hairColor) {
-        this.hairColor = hairColor;
-    }
-
-    public int getHairStyle() {
-        return this.hairStyle;
-    }
-
-    public void setHairStyle(int hairStyle) {
-        this.hairStyle = hairStyle;
-    }
 }

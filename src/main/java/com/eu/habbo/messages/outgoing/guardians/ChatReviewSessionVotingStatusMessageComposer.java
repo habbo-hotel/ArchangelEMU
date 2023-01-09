@@ -6,17 +6,14 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 
+@AllArgsConstructor
 public class ChatReviewSessionVotingStatusMessageComposer extends MessageComposer {
     private final GuardianTicket ticket;
     private final Habbo guardian;
-
-    public ChatReviewSessionVotingStatusMessageComposer(GuardianTicket ticket, Habbo guardian) {
-        this.ticket = ticket;
-        this.guardian = guardian;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

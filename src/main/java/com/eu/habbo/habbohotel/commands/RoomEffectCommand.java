@@ -19,7 +19,7 @@ public class RoomEffectCommand extends Command {
         }
 
         try {
-            int effectId = Integer.valueOf(params[1]);
+            int effectId = Integer.parseInt(params[1]);
 
             if (effectId >= 0) {
                 Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
@@ -27,11 +27,10 @@ public class RoomEffectCommand extends Command {
                     room.giveEffect(habbo, effectId, -1);
                 }
 
-                return true;
             } else {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_roomeffect.positive"), RoomChatMessageBubbles.ALERT);
-                return true;
             }
+            return true;
         } catch (Exception e) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_roomeffect.numbers_only"), RoomChatMessageBubbles.ALERT);
             return true;

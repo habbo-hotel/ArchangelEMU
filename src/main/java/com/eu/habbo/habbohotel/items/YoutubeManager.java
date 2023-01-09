@@ -6,8 +6,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -24,56 +25,24 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
+@Slf4j
 public class YoutubeManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(YoutubeManager.class);
 
+    @Getter
+    @AllArgsConstructor
     public static class YoutubeVideo {
         private final String id;
         private final int duration;
-
-        YoutubeVideo(String id, int duration) {
-            this.id = id;
-            this.duration = duration;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public int getDuration() {
-            return duration;
-        }
     }
 
+    @Getter
+    @AllArgsConstructor
     public static class YoutubePlaylist {
         private final String id;
         private final String name;
         private final String description;
         private final ArrayList<YoutubeVideo> videos;
 
-        YoutubePlaylist(String id, String name, String description, ArrayList<YoutubeVideo> videos) {
-            this.id = id;
-            this.name = name;
-            this.description = description;
-            this.videos = videos;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public ArrayList<YoutubeVideo> getVideos() {
-            return videos;
-        }
     }
 
     private final THashMap<Integer, ArrayList<YoutubePlaylist>> playlists = new THashMap<>();
@@ -89,7 +58,7 @@ public class YoutubeManager {
         Emulator.getThreading().run(() -> {
             ExecutorService youtubeDataLoaderPool = Executors.newFixedThreadPool(10);
 
-            LOGGER.info("YouTube Manager -> Loading...");
+            log.info("YouTube Manager -> Loading...");
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM youtube_playlists")) {
                 try (ResultSet set = statement.executeQuery()) {
@@ -108,25 +77,25 @@ public class YoutubeManager {
                                     this.addPlaylistToItem(itemId, playlist);
                                 }
                             } catch (IOException e) {
-                                LOGGER.error("Failed to load YouTube playlist {} ERROR: {}", playlistId, e);
+                                log.error("Failed to load YouTube playlist {} ERROR: {}", playlistId, e);
                             }
 
                         });
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
             youtubeDataLoaderPool.shutdown();
             try {
                 if(!youtubeDataLoaderPool.awaitTermination(60, TimeUnit.SECONDS))
-                    LOGGER.error("Youtube Manager -> Failed, timeout elapsed before termination!");
+                    log.error("Youtube Manager -> Failed, timeout elapsed before termination!");
             } catch (InterruptedException e) {
-                LOGGER.error("Caught Exception", e);
+                log.error("Caught Exception", e);
                 Thread.currentThread().interrupt();
-            } finally {
-                LOGGER.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+            }finally {
+                log.info("YouTube Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
             }
         });
     }
@@ -143,7 +112,7 @@ public class YoutubeManager {
             BufferedReader playlistBR = new BufferedReader(playlistISR);
             JsonObject errorObj = JsonParser.parseReader(playlistBR).getAsJsonObject();
             String message = errorObj.get("error").getAsJsonObject().get("message").getAsString();
-            LOGGER.error("Failed to load YouTube playlist {} ERROR: {}", playlistId, message);
+            log.error("Failed to load YouTube playlist {} ERROR: {}", playlistId, message);
             return null;
         }
         InputStream playlistInputStream = playlistCon.getInputStream();
@@ -154,7 +123,7 @@ public class YoutubeManager {
 
         JsonArray playlists = playlistData.get("items").getAsJsonArray();
         if (playlists.size() == 0) {
-            LOGGER.error("Playlist {} not found!", playlistId);
+            log.error("Playlist {} not found!", playlistId);
             return null;
         }
         JsonObject playlistItem = playlists.get(0).getAsJsonObject().get("snippet").getAsJsonObject();
@@ -217,7 +186,7 @@ public class YoutubeManager {
         } while (nextPageToken != null);
 
         if (videos.isEmpty()) {
-            LOGGER.warn("Playlist {} has no videos!", playlistId);
+            log.warn("Playlist {} has no videos!", playlistId);
             return null;
         }
         playlist = new YoutubePlaylist(playlistId, name, description, videos);

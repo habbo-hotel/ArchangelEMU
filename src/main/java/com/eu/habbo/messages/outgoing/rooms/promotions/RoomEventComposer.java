@@ -6,15 +6,12 @@ import com.eu.habbo.habbohotel.rooms.RoomPromotion;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RoomEventComposer extends MessageComposer {
     private final Room room;
     private final RoomPromotion roomPromotion;
-
-    public RoomEventComposer(Room room, RoomPromotion roomPromotion) {
-        this.room = room;
-        this.roomPromotion = roomPromotion;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

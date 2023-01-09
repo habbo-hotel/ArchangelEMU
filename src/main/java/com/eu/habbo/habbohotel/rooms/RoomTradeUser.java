@@ -3,12 +3,20 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
 
 public class RoomTradeUser {
+    @Getter
     private final Habbo habbo;
     private final THashSet<HabboItem> items;
+    @Setter
+    @Getter
     private int userId;
+    @Setter
+    @Getter
     private boolean accepted;
+    @Getter
     private boolean confirmed;
 
     public RoomTradeUser(Habbo habbo) {
@@ -21,30 +29,6 @@ public class RoomTradeUser {
         this.accepted = false;
         this.confirmed = false;
         this.items = new THashSet<>();
-    }
-
-    public int getUserId() {
-        return this.userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public Habbo getHabbo() {
-        return this.habbo;
-    }
-
-    public boolean getAccepted() {
-        return this.accepted;
-    }
-
-    public void setAccepted(boolean value) {
-        this.accepted = value;
-    }
-
-    public boolean getConfirmed() {
-        return this.confirmed;
     }
 
     public void confirm() {

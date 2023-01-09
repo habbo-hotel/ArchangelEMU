@@ -1,8 +1,8 @@
 package com.eu.habbo.habbohotel.modtool;
 
 import com.eu.habbo.Emulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,21 +10,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
+@Slf4j
+@Getter
 public class ModToolBan implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModToolBan.class);
 
     public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public int userId;
-    public String ip;
-    public String machineId;
-    public int staffId;
-    public int expireDate;
-    public int timestamp;
-    public String reason;
-    public ModToolBanType type;
-    public int cfhTopic;
+    private  int userId;
+    private  String ip;
+    private  String machineId;
+    private  int staffId;
+    private  int expireDate;
+    private  int timestamp;
+    private  String reason;
+    private  ModToolBanType type;
+    private  int cfhTopic;
 
-    private boolean needsInsert;
+    private  boolean needsInsert;
 
     public ModToolBan(ResultSet set) throws SQLException {
         this.userId = set.getInt("user_id");
@@ -67,7 +68,7 @@ public class ModToolBan implements Runnable {
                 statement.setInt(9, this.cfhTopic);
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }

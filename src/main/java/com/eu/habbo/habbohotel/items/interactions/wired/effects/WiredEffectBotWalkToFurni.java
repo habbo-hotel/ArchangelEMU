@@ -11,7 +11,6 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.set.hash.THashSet;
@@ -62,7 +61,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
         message.appendString(this.botName);
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         message.appendInt(0);
     }
@@ -171,14 +170,14 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
             String[] wiredDataSplit = set.getString("wired_data").split("\t");
 
             if (wiredDataSplit.length >= 2) {
-                this.setDelay(Integer.valueOf(wiredDataSplit[0]));
+                this.setDelay(Integer.parseInt(wiredDataSplit[0]));
                 String[] data = wiredDataSplit[1].split(";");
 
                 if (data.length > 1) {
                     this.botName = data[0];
 
                     for (int i = 1; i < data.length; i++) {
-                        HabboItem item = room.getHabboItem(Integer.valueOf(data[i]));
+                        HabboItem item = room.getHabboItem(Integer.parseInt(data[i]));
 
                         if (item != null)
                             this.items.add(item);

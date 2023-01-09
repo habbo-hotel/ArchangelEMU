@@ -5,17 +5,16 @@ import com.eu.habbo.habbohotel.pets.PetCommand;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@AllArgsConstructor
 public class PetTrainingPanelComposer extends MessageComposer {
     private final Pet pet;
 
-    public PetTrainingPanelComposer(Pet pet) {
-        this.pet = pet;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -27,9 +26,9 @@ public class PetTrainingPanelComposer extends MessageComposer {
         this.response.appendInt(this.pet.getPetData().getPetCommands().size());
 
         for (PetCommand petCommand : this.pet.getPetData().getPetCommands()) {
-            this.response.appendInt(petCommand.id);
+            this.response.appendInt(petCommand.getId());
 
-            if (this.pet.getLevel() >= petCommand.level) {
+            if (this.pet.getLevel() >= petCommand.getLevel()) {
                 enabled.add(petCommand);
             }
         }
@@ -41,7 +40,7 @@ public class PetTrainingPanelComposer extends MessageComposer {
         this.response.appendInt(enabled.size());
 
         for (PetCommand petCommand : enabled) {
-            this.response.appendInt(petCommand.id);
+            this.response.appendInt(petCommand.getId());
         }
 
         return this.response;

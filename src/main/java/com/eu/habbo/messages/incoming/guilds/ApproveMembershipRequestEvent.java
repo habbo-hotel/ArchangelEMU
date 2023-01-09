@@ -41,7 +41,7 @@ public class ApproveMembershipRequestEvent extends MessageHandler {
         if (!Emulator.getGameEnvironment().getGuildManager().joinGuild(guild, this.client, userId, true)) return;
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild.getId(), userId);
 
-        if (member == null || member.getRank().type != GuildRank.REQUESTED.type) {
+        if (member == null || member.getRank().getType() != GuildRank.REQUESTED.getType()) {
             this.client.sendResponse(new GuildMemberMgmtFailedMessageComposer(guild.getId(), GuildMemberMgmtFailedMessageComposer.NO_LONGER_MEMBER));
             return;
         }

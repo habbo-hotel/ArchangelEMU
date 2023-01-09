@@ -9,9 +9,11 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class RoomUnitOnRollerComposer extends MessageComposer {
     // THIS IS WRONG SlideObjectBundleMessageComposer
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnitOnRollerComposer.class);
@@ -24,7 +26,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
     private final Room room;
     private int x;
     private int y;
-    private HabboItem oldTopItem;
+    private final HabboItem oldTopItem;
 
     public RoomUnitOnRollerComposer(RoomUnit roomUnit, HabboItem roller, RoomTile oldLocation, double oldZ, RoomTile newLocation, double newZ, Room room) {
         this.roomUnit = roomUnit;
@@ -34,7 +36,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         this.newLocation = newLocation;
         this.newZ = newZ;
         this.room = room;
-        oldTopItem = this.room.getTopItemAt(oldLocation.x, oldLocation.y);
+        oldTopItem = this.room.getTopItemAt(oldLocation.getX(), oldLocation.getY());
     }
 
     public RoomUnitOnRollerComposer(RoomUnit roomUnit, RoomTile newLocation, Room room) {
@@ -54,10 +56,10 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
             return null;
 
         this.response.init(Outgoing.slideObjectBundleMessageComposer);
-        this.response.appendInt(this.oldLocation.x);
-        this.response.appendInt(this.oldLocation.y);
-        this.response.appendInt(this.newLocation.x);
-        this.response.appendInt(this.newLocation.y);
+        this.response.appendInt(this.oldLocation.getX());
+        this.response.appendInt(this.oldLocation.getY());
+        this.response.appendInt(this.newLocation.getX());
+        this.response.appendInt(this.newLocation.getY());
         this.response.appendInt(0);
         this.response.appendInt(this.roller == null ? 0 : this.roller.getId());
         this.response.appendInt(2);
@@ -68,14 +70,14 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         if (this.roller != null && room.getLayout() != null) {
             Emulator.getThreading().run(() -> {
                 if(!this.roomUnit.isWalking() && this.roomUnit.getCurrentLocation() == this.oldLocation) {
-                    HabboItem topItem = this.room.getTopItemAt(this.oldLocation.x, this.oldLocation.y);
-                    HabboItem topItemNewLocation = this.room.getTopItemAt(this.newLocation.x, this.newLocation.y);
+                    HabboItem topItem = this.room.getTopItemAt(this.oldLocation.getX(), this.oldLocation.getY());
+                    HabboItem topItemNewLocation = this.room.getTopItemAt(this.newLocation.getX(), this.newLocation.getY());
 
                     if (topItem != null && (oldTopItem == null || oldTopItem != topItemNewLocation)) {
                         try {
                             topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
                         } catch (Exception e) {
-                            LOGGER.error("Caught exception", e);
+                            log.error("Caught exception", e);
                         }
                     }
 
@@ -87,7 +89,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
                         try {
                             topItemNewLocation.onWalkOn(this.roomUnit, this.room, new Object[]{this});
                         } catch (Exception e) {
-                            LOGGER.error("Caught exception", e);
+                            log.error("Caught exception", e);
                         }
                     }
                 }
@@ -107,7 +109,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
                         try {
                             topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
                         } catch (Exception e) {
-                            LOGGER.error("Caught exception", e);
+                            log.error("Caught exception", e);
                         }
                     }
                 }

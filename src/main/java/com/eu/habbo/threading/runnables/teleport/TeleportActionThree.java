@@ -9,17 +9,13 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 class TeleportActionThree implements Runnable {
     private final HabboItem currentTeleport;
     private final Room room;
     private final GameClient client;
-
-    public TeleportActionThree(HabboItem currentTeleport, Room room, GameClient client) {
-        this.currentTeleport = currentTeleport;
-        this.client = client;
-        this.room = room;
-    }
 
     @Override
     public void run() {

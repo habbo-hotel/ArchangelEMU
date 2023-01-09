@@ -1,13 +1,24 @@
 package com.eu.habbo.habbohotel.guilds;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class GuildMember implements Comparable<GuildMember> {
+    @Getter
     private final int userId;
+    @Getter
     private final String username;
+    @Getter
+    @Setter
     private String look;
+    @Getter
+    @Setter
     private int joinDate;
+    @Setter
+    @Getter
     private GuildRank rank;
 
     public GuildMember(ResultSet set) throws SQLException {
@@ -24,38 +35,6 @@ public class GuildMember implements Comparable<GuildMember> {
         this.look = look;
         this.joinDate = joinDate;
         this.rank = GuildRank.values()[guildRank];
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getLook() {
-        return look;
-    }
-
-    public void setLook(String look) {
-        this.look = look;
-    }
-
-    public int getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(int joinDate) {
-        this.joinDate = joinDate;
-    }
-
-    public GuildRank getRank() {
-        return rank;
-    }
-
-    public void setRank(GuildRank rank) {
-        this.rank = rank;
     }
 
     @Override

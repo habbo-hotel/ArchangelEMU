@@ -5,14 +5,13 @@ import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GameTimer implements Runnable {
 
     private final InteractionGameTimer timer;
 
-    public GameTimer(InteractionGameTimer timer) {
-        this.timer = timer;
-    }
 
     @Override
     public void run() {

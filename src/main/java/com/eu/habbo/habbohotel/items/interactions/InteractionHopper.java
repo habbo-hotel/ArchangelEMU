@@ -86,10 +86,10 @@ public class InteractionHopper extends HabboItem {
     }
 
     protected boolean canUseTeleport(GameClient client, RoomTile front, Room room) {
-        if (client.getHabbo().getRoomUnit().getX() != front.x)
+        if (client.getHabbo().getRoomUnit().getX() != front.getX())
             return false;
 
-        if (client.getHabbo().getRoomUnit().getY() != front.y)
+        if (client.getHabbo().getRoomUnit().getY() != front.getY())
             return false;
 
         if (client.getHabbo().getRoomUnit().isTeleporting)

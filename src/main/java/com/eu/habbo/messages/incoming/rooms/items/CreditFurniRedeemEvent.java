@@ -7,15 +7,14 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
-import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
+import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.plugin.events.furniture.FurnitureRedeemedEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class CreditFurniRedeemEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CreditFurniRedeemEvent.class);
 
     @Override
     public void handle() throws Exception {
@@ -34,9 +33,9 @@ public class CreditFurniRedeemEvent extends MessageHandler {
                     if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_")) {
                         int credits;
                         try {
-                            credits = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
+                            credits = Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
                         } catch (Exception e) {
-                            LOGGER.error("Failed to parse redeemable furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_<amount>");
+                            log.error("Failed to parse redeemable furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_<amount>");
                             return;
                         }
 
@@ -45,9 +44,9 @@ public class CreditFurniRedeemEvent extends MessageHandler {
                         int pixels;
 
                         try {
-                            pixels = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
+                            pixels = Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
                         } catch (Exception e) {
-                            LOGGER.error("Failed to parse redeemable pixel furniture: " + item.getBaseItem().getName() + ". Must be in format of PF_<amount>");
+                            log.error("Failed to parse redeemable pixel furniture: " + item.getBaseItem().getName() + ". Must be in format of PF_<amount>");
                             return;
                         }
 
@@ -57,16 +56,16 @@ public class CreditFurniRedeemEvent extends MessageHandler {
                         int points;
 
                         try {
-                            pointsType = Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
+                            pointsType = Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
                         } catch (Exception e) {
-                            LOGGER.error("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
+                            log.error("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
                             return;
                         }
 
                         try {
-                            points = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
+                            points = Integer.parseInt(item.getBaseItem().getName().split("_")[2]);
                         } catch (Exception e) {
-                            LOGGER.error("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
+                            log.error("Failed to parse redeemable points furniture: " + item.getBaseItem().getName() + ". Must be in format of DF_<pointstype>_<amount> where <pointstype> equals integer representation of seasonal currency.");
                             return;
                         }
 
@@ -75,9 +74,9 @@ public class CreditFurniRedeemEvent extends MessageHandler {
                         int points;
 
                         try {
-                            points = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
+                            points = Integer.parseInt(item.getBaseItem().getName().split("_")[2]);
                         } catch (Exception e) {
-                            LOGGER.error("Failed to parse redeemable diamonds furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_diamond_<amount>");
+                            log.error("Failed to parse redeemable diamonds furniture: " + item.getBaseItem().getName() + ". Must be in format of CF_diamond_<amount>");
                             return;
                         }
 
@@ -102,27 +101,22 @@ public class CreditFurniRedeemEvent extends MessageHandler {
                     RoomTile t = room.getLayout().getTile(item.getX(), item.getY());
                     t.setStackHeight(room.getStackHeight(item.getX(), item.getY(), false));
                     room.updateTile(t);
-                    room.sendComposer(new HeightMapUpdateMessageComposer(item.getX(), item.getY(), t.z, t.relativeHeight()).compose());
+                    room.sendComposer(new HeightMapUpdateMessageComposer(item.getX(), item.getY(), t.getZ(), t.relativeHeight()).compose());
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 
                     switch (furniRedeemEvent.currencyID) {
-                        case FurnitureRedeemedEvent.CREDITS:
+                        case FurnitureRedeemedEvent.CREDITS -> {
                             this.client.getHabbo().getHabboInfo().addCredits(furniRedeemEvent.amount);
                             this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo()));
-                            break;
-
-                        case FurnitureRedeemedEvent.DIAMONDS:
-                            this.client.getHabbo().givePoints(furniRedeemEvent.amount);
-                            break;
-
-                        case FurnitureRedeemedEvent.PIXELS:
+                        }
+                        case FurnitureRedeemedEvent.DIAMONDS ->
+                                this.client.getHabbo().givePoints(furniRedeemEvent.amount);
+                        case FurnitureRedeemedEvent.PIXELS -> {
                             this.client.getHabbo().getHabboInfo().addPixels(furniRedeemEvent.amount);
                             this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
-                            break;
 
-                        default:
-                            this.client.getHabbo().givePoints(furniRedeemEvent.currencyID, furniRedeemEvent.amount);
-                            break;
+                        }                        default ->
+                                this.client.getHabbo().givePoints(furniRedeemEvent.currencyID, furniRedeemEvent.amount);
                     }
                 }
             }

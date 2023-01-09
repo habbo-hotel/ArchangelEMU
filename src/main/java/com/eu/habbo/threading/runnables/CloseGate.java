@@ -2,15 +2,12 @@ package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CloseGate implements Runnable {
     private final HabboItem gate;
     private final Room room;
-
-    public CloseGate(HabboItem gate, Room room) {
-        this.gate = gate;
-        this.room = room;
-    }
 
     @Override
     public void run() {

@@ -22,7 +22,7 @@ public class UpdateGuildBadgeEvent extends MessageHandler {
 
                 int count = this.packet.readInt();
 
-                String badge = "";
+                StringBuilder badge = new StringBuilder();
 
                 byte base = 1;
 
@@ -32,20 +32,20 @@ public class UpdateGuildBadgeEvent extends MessageHandler {
                     int pos = this.packet.readInt();
 
                     if (base == 1) {
-                        badge += "b";
+                        badge.append("b");
                     } else {
-                        badge += "s";
+                        badge.append("s");
                     }
 
-                    badge += (id < 100 ? "0" : "") + (id < 10 ? "0" : "") + id + (color < 10 ? "0" : "") + color + "" + pos;
+                    badge.append(id < 100 ? "0" : "").append(id < 10 ? "0" : "").append(id).append(color < 10 ? "0" : "").append(color).append(pos);
 
                     base += 3;
                 }
 
-                if (guild.getBadge().toLowerCase().equals(badge.toLowerCase()))
+                if (guild.getBadge().equalsIgnoreCase(badge.toString()))
                     return;
 
-                GuildChangedBadgeEvent badgeEvent = new GuildChangedBadgeEvent(guild, badge);
+                GuildChangedBadgeEvent badgeEvent = new GuildChangedBadgeEvent(guild, badge.toString());
                 Emulator.getPluginManager().fireEvent(badgeEvent);
 
                 if (badgeEvent.isCancelled())

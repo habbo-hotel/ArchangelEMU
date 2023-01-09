@@ -12,8 +12,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.pets.PerkAllowancesComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.breeding.NestBreedingSuccessComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.breeding.ConfirmBreedingRequestComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.breeding.NestBreedingSuccessComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
 import java.sql.ResultSet;
@@ -141,7 +141,7 @@ public class InteractionPetBreedingNest extends HabboItem {
         }
     }
 
-    public void breed(Habbo habbo, String name, int petOneId, int petTwoId) {
+    public void breed(Habbo habbo, String name) {
         Emulator.getThreading().run(new QueryDeleteHabboItem(this.getId()));
 
         this.setExtradata("2");

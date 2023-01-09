@@ -6,20 +6,16 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import lombok.AllArgsConstructor;
 import org.slf4j.LoggerFactory;
 
+@AllArgsConstructor
 public class BanzaiRandomTeleport implements Runnable {
     private final HabboItem item;
     private final HabboItem toItem;
     private final RoomUnit habbo;
     private final Room room;
 
-    public BanzaiRandomTeleport(HabboItem item, HabboItem toItem, RoomUnit habbo, Room room) {
-        this.item = item;
-        this.toItem = toItem;
-        this.habbo = habbo;
-        this.room = room;
-    }
 
     @Override
     public void run() {
@@ -67,7 +63,7 @@ public class BanzaiRandomTeleport implements Runnable {
 
         Emulator.getThreading().run(() -> {
             this.habbo.setRotation(RoomUserRotation.fromValue(Emulator.getRandom().nextInt(8)));
-            this.room.teleportRoomUnitToLocation(this.habbo, newLocation.x, newLocation.y, newLocation.getStackHeight());
+            this.room.teleportRoomUnitToLocation(this.habbo, newLocation.getX(), newLocation.getY(), newLocation.getStackHeight());
         }, 250);
 
     }

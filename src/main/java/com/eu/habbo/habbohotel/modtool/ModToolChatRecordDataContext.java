@@ -1,7 +1,11 @@
 package com.eu.habbo.habbohotel.modtool;
 
 import com.eu.habbo.messages.ServerMessage;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public enum ModToolChatRecordDataContext {
     ROOM_NAME("roomName", 2),
     ROOM_ID("roomId", 1),
@@ -10,13 +14,9 @@ public enum ModToolChatRecordDataContext {
     MESSAGE_ID("messageId", 1),
     PHOTO_ID("extraDataId", 2);
 
-    public final String key;
-    public final int type;
+    private  final String key;
+    private  final int type;
 
-    ModToolChatRecordDataContext(String key, int type) {
-        this.key = key;
-        this.type = type;
-    }
 
     public void append(final ServerMessage message) {
         message.appendString(this.key);

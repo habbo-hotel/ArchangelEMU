@@ -8,23 +8,20 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectProcedure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.Map;
 
+@Slf4j
 public class RoomBundleLayout extends SingleBundle {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomBundleLayout.class);
-
-    public int roomId;
-    public Room room;
+    private final int roomId;
+    private Room room;
     private int lastUpdate = 0;
     private boolean loaded = false;
 
@@ -48,7 +45,7 @@ public class RoomBundleLayout extends SingleBundle {
                 if (this.room != null)
                     this.room.preventUnloading = true;
             } else {
-                LOGGER.error("No room id specified for room bundle " + this.getPageName() + "(" + this.getId() + ")");
+                log.error("No room id specified for room bundle " + this.getPageName() + "(" + this.getId() + ")");
             }
         }
 
@@ -58,15 +55,12 @@ public class RoomBundleLayout extends SingleBundle {
 
         final CatalogItem[] item = {null};
 
-        super.getCatalogItems().forEachValue(new TObjectProcedure<CatalogItem>() {
-            @Override
-            public boolean execute(CatalogItem object) {
-                if (object == null)
-                    return true;
+        super.getCatalogItems().forEachValue(object -> {
+            if (object == null)
+                return true;
 
-                item[0] = object;
-                return false;
-            }
+            item[0] = object;
+            return false;
         });
 
         if (this.room.isPreLoaded()) {
@@ -96,7 +90,7 @@ public class RoomBundleLayout extends SingleBundle {
             }
 
             if (!item[0].getExtradata().isEmpty()) {
-                items.put(Emulator.getGameEnvironment().getItemManager().getItem(Integer.valueOf(item[0].getExtradata())), 1);
+                items.put(Emulator.getGameEnvironment().getItemManager().getItem(Integer.parseInt(item[0].getExtradata())), 1);
             }
 
             StringBuilder data = new StringBuilder();
@@ -190,7 +184,7 @@ public class RoomBundleLayout extends SingleBundle {
                     statement.setInt(3, this.room.getId());
                     statement.execute();
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 }
             }
 
@@ -224,7 +218,7 @@ public class RoomBundleLayout extends SingleBundle {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         Room r = Emulator.getGameEnvironment().getRoomManager().loadRoom(roomId);
@@ -241,7 +235,7 @@ public class RoomBundleLayout extends SingleBundle {
         keys.put("image", "${image.library.url}/notifications/room_bundle_" + this.getId() + ".png");
 
         if (habbo != null) {
-            habbo.getClient().sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.PURCHASING_ROOM.key, keys));
+            habbo.getClient().sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.PURCHASING_ROOM.getKey(), keys));
         }
     }
 }

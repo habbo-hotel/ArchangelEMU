@@ -1,7 +1,10 @@
 package com.eu.habbo.habbohotel;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.core.*;
+import com.eu.habbo.core.CreditsScheduler;
+import com.eu.habbo.core.GotwPointsScheduler;
+import com.eu.habbo.core.PixelScheduler;
+import com.eu.habbo.core.PointsScheduler;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.campaign.CalendarManager;
@@ -23,18 +26,17 @@ import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionScheduler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@Getter
 public class GameEnvironment {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameEnvironment.class);
-
-    public CreditsScheduler creditsScheduler;
-    public PixelScheduler pixelScheduler;
-    public PointsScheduler pointsScheduler;
-    public GotwPointsScheduler gotwPointsScheduler;
-    public SubscriptionScheduler subscriptionScheduler;
+    private CreditsScheduler creditsScheduler;
+    private PixelScheduler pixelScheduler;
+    private PointsScheduler pointsScheduler;
+    private GotwPointsScheduler gotwPointsScheduler;
+    private SubscriptionScheduler subscriptionScheduler;
 
     private HabboManager habboManager;
     private NavigatorManager navigatorManager;
@@ -58,7 +60,7 @@ public class GameEnvironment {
     private CalendarManager calendarManager;
 
     public void load() throws Exception {
-        LOGGER.info("GameEnvironment -> Loading...");
+        log.info("GameEnvironment -> Loading...");
 
         this.permissionsManager = new PermissionsManager();
         this.habboManager = new HabboManager();
@@ -100,7 +102,7 @@ public class GameEnvironment {
         this.subscriptionScheduler = new SubscriptionScheduler();
         Emulator.getThreading().run(this.subscriptionScheduler);
 
-        LOGGER.info("GameEnvironment -> Loaded!");
+        log.info("GameEnvironment -> Loaded!");
     }
 
     public void dispose() {
@@ -118,98 +120,7 @@ public class GameEnvironment {
         this.hotelViewManager.dispose();
         this.subscriptionManager.dispose();
         this.calendarManager.dispose();
-        LOGGER.info("GameEnvironment -> Disposed!");
+        log.info("GameEnvironment -> Disposed!");
     }
 
-    public HabboManager getHabboManager() {
-        return this.habboManager;
-    }
-
-    public NavigatorManager getNavigatorManager() {
-        return this.navigatorManager;
-    }
-
-    public GuildManager getGuildManager() {
-        return this.guildManager;
-    }
-
-    public ItemManager getItemManager() {
-        return this.itemManager;
-    }
-
-    public CatalogManager getCatalogManager() {
-        return this.catalogManager;
-    }
-
-    public HotelViewManager getHotelViewManager() {
-        return this.hotelViewManager;
-    }
-
-    public RoomManager getRoomManager() {
-        return this.roomManager;
-    }
-
-    public CommandHandler getCommandHandler() {
-        return this.commandHandler;
-    }
-
-    public PermissionsManager getPermissionsManager() {
-        return this.permissionsManager;
-    }
-
-    public BotManager getBotManager() {
-        return this.botManager;
-    }
-
-    public ModToolManager getModToolManager() {
-        return this.modToolManager;
-    }
-
-    public ModToolSanctions getModToolSanctions() {
-        return this.modToolSanctions;
-    }
-
-    public PetManager getPetManager() {
-        return this.petManager;
-    }
-
-    public AchievementManager getAchievementManager() {
-        return this.achievementManager;
-    }
-
-    public GuideManager getGuideManager() {
-        return this.guideManager;
-    }
-
-    public WordFilter getWordFilter() {
-        return this.wordFilter;
-    }
-
-    public CraftingManager getCraftingManager() {
-        return this.craftingManager;
-    }
-
-    public PollManager getPollManager() {
-        return this.pollManager;
-    }
-
-    public CreditsScheduler getCreditsScheduler() {
-        return this.creditsScheduler;
-    }
-
-    public PixelScheduler getPixelScheduler() {
-        return this.pixelScheduler;
-    }
-
-    public PointsScheduler getPointsScheduler() { return this.pointsScheduler;
-    }
-
-    public GotwPointsScheduler getGotwPointsScheduler() { return this.gotwPointsScheduler;
-    }
-
-    public SubscriptionManager getSubscriptionManager() {
-        return this.subscriptionManager;
-    }
-
-    public CalendarManager getCalendarManager() { return this.calendarManager; }
 }

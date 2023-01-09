@@ -101,19 +101,9 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard {
             int state = (Integer) objects[0];
 
             switch (state) {
-                case 1: {
-                    this.changeScore(1);
-                }
-                break;
-
-                case 2: {
-                    this.changeScore(-1);
-                }
-                break;
-
-                default:
-                    this.setScore(0);
-                    break;
+                case 1 -> this.changeScore(1);
+                case 2 -> this.changeScore(-1);
+                default -> this.setScore(0);
             }
         } else {
             this.changeScore(1);

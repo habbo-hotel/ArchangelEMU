@@ -8,24 +8,34 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.plugin.events.guilds.forums.GuildForumThreadCommentBeforeCreated;
 import com.eu.habbo.plugin.events.guilds.forums.GuildForumThreadCommentCreated;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 
+@Slf4j
 public class ForumThreadComment implements Runnable, ISerialize {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ForumThreadComment.class);
 
-    private static THashMap<Integer, ForumThreadComment> forumCommentsCache = new THashMap<>();
+    private static final THashMap<Integer, ForumThreadComment> forumCommentsCache = new THashMap<>();
+    @Getter
     private final int commentId;
+    @Getter
     private final int threadId;
+    @Getter
     private final int userId;
+    @Getter
     private final String message;
+    @Getter
     private final int createdAt;
+    @Getter
     private ForumThreadState state;
+    @Getter
     private int adminId;
-    private int index;
-    private boolean needsUpdate;
+    @Setter
+    @Getter
+    private int index = -1;
+    private boolean needsUpdate = false;
 
     public ForumThreadComment(int commentId, int threadId, int userId, String message, int createdAt, ForumThreadState state, int adminId) {
         this.commentId = commentId;
@@ -35,8 +45,6 @@ public class ForumThreadComment implements Runnable, ISerialize {
         this.createdAt = createdAt;
         this.state = state;
         this.adminId = adminId;
-        this.index = -1;
-        this.needsUpdate = false;
     }
 
     public ForumThreadComment(ResultSet set) throws SQLException {
@@ -67,7 +75,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return foundComment;
@@ -106,34 +114,10 @@ public class ForumThreadComment implements Runnable, ISerialize {
                 Emulator.getPluginManager().fireEvent(new GuildForumThreadCommentCreated(createdComment));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return createdComment;
-    }
-
-    public int getCommentId() {
-        return commentId;
-    }
-
-    public int getThreadId() {
-        return threadId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public int getCreatedAt() {
-        return createdAt;
-    }
-
-    public ForumThreadState getState() {
-        return state;
     }
 
     public void setState(ForumThreadState state) {
@@ -141,21 +125,9 @@ public class ForumThreadComment implements Runnable, ISerialize {
         this.needsUpdate = true;
     }
 
-    public int getAdminId() {
-        return adminId;
-    }
-
     public void setAdminId(int adminId) {
         this.adminId = adminId;
         this.needsUpdate = true;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
     }
 
     public Habbo getHabbo() {
@@ -187,7 +159,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
         message.appendInt(this.adminId);
         message.appendString(admin != null ? admin.getUsername() : "");
         message.appendInt(0); // admin action time ago?
-        message.appendInt(habbo != null ? habbo.getHabboStats().forumPostsCount : 0);
+        message.appendInt(habbo != null ? habbo.getHabboStats().getForumPostsCount() : 0);
     }
 
     @Override
@@ -203,7 +175,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
 
             this.needsUpdate = false;
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 }

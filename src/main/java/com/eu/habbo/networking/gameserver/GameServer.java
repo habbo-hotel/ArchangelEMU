@@ -11,8 +11,9 @@ import com.eu.habbo.networking.gameserver.handlers.IdleTimeoutHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.timeout.IdleStateHandler;
+import lombok.Getter;
 
+@Getter
 public class GameServer extends Server {
     private final PacketManager packetManager;
     private final GameClientManager gameClientManager;
@@ -29,7 +30,7 @@ public class GameServer extends Server {
 
         this.serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
-            public void initChannel(SocketChannel ch) throws Exception {
+            public void initChannel(SocketChannel ch) {
                 ch.pipeline().addLast("logger", new LoggingHandler());
 
                 // Decoders.
@@ -54,11 +55,4 @@ public class GameServer extends Server {
         });
     }
 
-    public PacketManager getPacketManager() {
-        return this.packetManager;
-    }
-
-    public GameClientManager getGameClientManager() {
-        return this.gameClientManager;
-    }
 }

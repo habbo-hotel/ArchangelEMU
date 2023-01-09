@@ -3,17 +3,13 @@ package com.eu.habbo.messages.outgoing.catalog;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class NotEnoughBalanceMessageComposer extends MessageComposer {
     private final boolean isCredits;
     private final boolean isPixels;
     private final int pointsType;
-
-    public NotEnoughBalanceMessageComposer(boolean isCredits, boolean isPixels, int pointsType) {
-        this.isCredits = isCredits;
-        this.isPixels = isPixels;
-        this.pointsType = pointsType;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

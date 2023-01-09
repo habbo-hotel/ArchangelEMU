@@ -6,16 +6,15 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class BadgeCommand extends Command {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BadgeCommand.class);
 
     public BadgeCommand() {
         super("cmd_badge", Emulator.getTexts().getValue("commands.keys.cmd_badge").split(";"));
@@ -64,7 +63,6 @@ public class BadgeCommand extends Command {
 
                     if (found) {
                         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_badge.already_owns").replace("%user%", params[1]).replace("%badge%", params[2]), RoomChatMessageBubbles.ALERT);
-                        return true;
                     } else {
                         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_badges (`id`, `user_id`, `slot_id`, `badge_code`) VALUES (null, ?, 0, ?)")) {
                             statement.setInt(1, habboInfo.getId());
@@ -73,10 +71,10 @@ public class BadgeCommand extends Command {
                         }
 
                         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_badge.given").replace("%user%", params[1]).replace("%badge%", params[2]), RoomChatMessageBubbles.ALERT);
-                        return true;
                     }
+                    return true;
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 }
             }
         }

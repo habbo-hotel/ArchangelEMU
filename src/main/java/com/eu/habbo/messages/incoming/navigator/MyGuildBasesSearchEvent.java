@@ -7,6 +7,6 @@ import com.eu.habbo.messages.outgoing.navigator.GuestRoomSearchResultComposer;
 public class MyGuildBasesSearchEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        this.client.sendResponse(new GuestRoomSearchResultComposer(Emulator.getGameEnvironment().getRoomManager().getRoomsInGroup(this.client.getHabbo())));
+        this.client.sendResponse(new GuestRoomSearchResultComposer(Emulator.getGameEnvironment().getRoomManager().getRoomsInGroup()));
     }
 }

@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class InteractionGuildFurni extends InteractionDefault {
     private int guildId;
-    private static final THashSet<String> ROTATION_8_ITEMS = new THashSet<String>() {
+    private static final THashSet<String> ROTATION_8_ITEMS = new THashSet<>() {
         {
             this.add("gld_wall_tall");
         }
@@ -47,8 +47,8 @@ public class InteractionGuildFurni extends InteractionDefault {
             serverMessage.appendString(this.getExtradata());
             serverMessage.appendString(guild.getId() + "");
             serverMessage.appendString(guild.getBadge());
-            serverMessage.appendString(Emulator.getGameEnvironment().getGuildManager().getSymbolColor(guild.getColorOne()).valueA);
-            serverMessage.appendString(Emulator.getGameEnvironment().getGuildManager().getBackgroundColor(guild.getColorTwo()).valueA);
+            serverMessage.appendString(Emulator.getGameEnvironment().getGuildManager().getSymbolColor(guild.getColorOne()).getValueA());
+            serverMessage.appendString(Emulator.getGameEnvironment().getGuildManager().getBackgroundColor(guild.getColorTwo()).getValueA());
         } else {
             serverMessage.appendInt((this.isLimited() ? 256 : 0));
             serverMessage.appendString(this.getExtradata());

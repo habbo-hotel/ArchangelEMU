@@ -2,8 +2,8 @@ package com.eu.habbo.habbohotel.users.subscriptions;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.DatabaseLoggable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,32 +11,21 @@ import java.sql.SQLException;
 /**
  * @author Beny
  */
+@Getter
+@AllArgsConstructor
 public class HcPayDayLogEntry implements Runnable, DatabaseLoggable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HcPayDayLogEntry.class);
     private static final String QUERY = "INSERT INTO `logs_hc_payday` (`timestamp`, `user_id`, `hc_streak`, `total_coins_spent`, `reward_coins_spent`, `reward_streak`, `total_payout`, `currency`, `claimed`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    public final int timestamp;
-    public final int userId;
-    public final int hcStreak;
-    public final int totalCoinsSpent;
-    public final int rewardCoinsSpent;
-    public final int rewardStreak;
-    public final int totalPayout;
-    public final String currency;
-    public final boolean claimed;
+    private final int timestamp;
+    private final int userId;
+    private final int hcStreak;
+    private final int totalCoinsSpent;
+    private final int rewardCoinsSpent;
+    private final int rewardStreak;
+    private final int totalPayout;
+    private final String currency;
+    private final boolean claimed;
 
-    public HcPayDayLogEntry(int timestamp, int userId, int hcStreak, int totalCoinsSpent, int rewardCoinsSpent, int rewardStreak, int totalPayout, String currency, boolean claimed) {
-        this.timestamp = timestamp;
-        this.userId = userId;
-        this.hcStreak = hcStreak;
-        this.totalCoinsSpent = totalCoinsSpent;
-        this.rewardCoinsSpent = rewardCoinsSpent;
-        this.rewardStreak = rewardStreak;
-        this.totalPayout = totalPayout;
-        this.currency = currency;
-        this.claimed = claimed;
-    }
 
     @Override
     public String getQuery() {

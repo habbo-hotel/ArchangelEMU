@@ -7,6 +7,6 @@ public class NavigatorRemoveCollapsedCategoryEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         String category = this.packet.readString();
-        this.client.getHabbo().getHabboStats().navigatorWindowSettings.setDisplayMode(category, DisplayMode.VISIBLE);
+        this.client.getHabbo().getHabboStats().getNavigatorWindowSettings().setDisplayMode(category, DisplayMode.VISIBLE);
     }
 }

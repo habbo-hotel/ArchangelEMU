@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ModToolBanType {
     ACCOUNT("account"),
     MACHINE("machine"),
@@ -9,10 +14,6 @@ public enum ModToolBanType {
 
     private final String type;
 
-    ModToolBanType(String type) {
-        this.type = type;
-    }
-
     public static ModToolBanType fromString(String type) {
         for (ModToolBanType t : ModToolBanType.values()) {
             if (t.type.equalsIgnoreCase(type)) {
@@ -21,9 +22,5 @@ public enum ModToolBanType {
         }
 
         return UNKNOWN;
-    }
-
-    public String getType() {
-        return this.type;
     }
 }

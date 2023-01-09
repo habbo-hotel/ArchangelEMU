@@ -6,14 +6,11 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GuildCreationInfoMessageComposer extends MessageComposer {
     private final THashSet<Room> rooms;
-
-    public GuildCreationInfoMessageComposer(THashSet<Room> rooms) {
-        this.rooms = rooms;
-    }
-
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.guildCreationInfoMessageComposer);

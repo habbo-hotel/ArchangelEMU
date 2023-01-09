@@ -8,16 +8,15 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.catalog.marketplace.GetMarketplaceOffersEvent;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceBuyOfferResultComposer;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceCancelOfferResultComposer;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemCancelledEvent;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemOfferedEvent;
 import com.eu.habbo.plugin.events.marketplace.MarketPlaceItemSoldEvent;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@Slf4j
 public class MarketPlace {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarketPlace.class);
 
     //Configuration. Loaded from database & updated accordingly.
     public static boolean MARKETPLACE_ENABLED = true;
@@ -47,7 +46,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return offers;
@@ -105,7 +104,7 @@ public class MarketPlace {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
                 habbo.getClient().sendResponse(new MarketplaceCancelOfferResultComposer(offer, false));
             }
         }
@@ -169,7 +168,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return offers;
@@ -199,7 +198,7 @@ public class MarketPlace {
             message.appendInt(1);
             message.appendInt(itemId);
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -214,7 +213,7 @@ public class MarketPlace {
                 number = set.getInt("number");
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return number;
@@ -232,7 +231,7 @@ public class MarketPlace {
                 avg = set.getInt("avg");
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return calculateCommision(avg);
@@ -279,7 +278,7 @@ public class MarketPlace {
                                         client.getHabbo().getInventory().getItemsComponent().addItem(item);
 
                                         if (MARKETPLACE_CURRENCY == 0) {
-                                            client.getHabbo().getHabboInfo().addCredits(-event.price);
+                                            client.getHabbo().giveCredits(-event.price);
                                         } else {
                                             client.getHabbo().givePoints(MARKETPLACE_CURRENCY, -event.price);
                                         }
@@ -300,22 +299,23 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
 
     public static void sendErrorMessage(GameClient client, int baseItemId, int offerId) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT marketplace_items.*, COUNT( * ) AS count\n" +
-                "FROM marketplace_items\n" +
-                "INNER JOIN items ON marketplace_items.item_id = items.id\n" +
-                "INNER JOIN items_base ON items.item_id = items_base.id\n" +
-                "WHERE items_base.sprite_id = ( \n" +
-                "SELECT items_base.sprite_id\n" +
-                "FROM items_base\n" +
-                "WHERE items_base.id = ? LIMIT 1)\n" +
-                "ORDER BY price ASC\n" +
-                "LIMIT 1", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+                """
+                FROM marketplace_items
+                INNER JOIN items ON marketplace_items.item_id = items.id
+                INNER JOIN items_base ON items.item_id = items_base.id
+                WHERE items_base.sprite_id = ( 
+                SELECT items_base.sprite_id
+                FROM items_base
+                WHERE items_base.id = ? LIMIT 1)
+                ORDER BY price ASC
+                LIMIT 1""", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             statement.setInt(1, baseItemId);
             try (ResultSet countSet = statement.executeQuery()) {
                 countSet.last();
@@ -327,7 +327,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -373,7 +373,7 @@ public class MarketPlace {
                 client.getHabbo().getInventory().removeMarketplaceOffer(offer);
                 credits += offer.getPrice();
                 removeUser(offer);
-                offer.needsUpdate(true);
+                offer.setNeedsUpdate(true);
                 Emulator.getThreading().run(offer);
             }
         }
@@ -381,7 +381,7 @@ public class MarketPlace {
         offers.clear();
 
         if (MARKETPLACE_CURRENCY == 0) {
-            client.getHabbo().getHabboInfo().addCredits(credits);
+            client.getHabbo().giveCredits(credits);
         } else {
             client.getHabbo().givePoints(MARKETPLACE_CURRENCY, credits);
         }
@@ -394,7 +394,7 @@ public class MarketPlace {
             statement.setInt(2, offer.getOfferId());
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 

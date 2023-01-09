@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum RoomState {
     OPEN(0),
     LOCKED(1),
@@ -8,11 +13,5 @@ public enum RoomState {
 
     private final int state;
 
-    RoomState(int state) {
-        this.state = state;
-    }
 
-    public int getState() {
-        return this.state;
-    }
 }

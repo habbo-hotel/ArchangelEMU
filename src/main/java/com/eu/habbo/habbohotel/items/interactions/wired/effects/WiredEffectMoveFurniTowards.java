@@ -6,11 +6,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
@@ -62,16 +60,16 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
         for (RoomUserRotation rot : rotations) {
             RoomTile tile = layout.getTileInFront(currentTile, rot.getValue());
 
-            if (tile == null || tile.state == RoomTileState.BLOCKED || tile.state == RoomTileState.INVALID)
+            if (tile == null || tile.getState() == RoomTileState.BLOCKED || tile.getState() == RoomTileState.INVALID)
                 continue;
 
-            if (!layout.tileExists(tile.x, tile.y))
+            if (!layout.tileExists(tile.getX(), tile.getY()))
                 continue;
 
             if (room.furnitureFitsAt(tile, item, item.getRotation()) == FurnitureMovementError.INVALID_MOVE)
                 continue;
 
-            HabboItem topItem = room.getTopItemAt(tile.x, tile.y);
+            HabboItem topItem = room.getTopItemAt(tile.getX(), tile.getY());
             if (topItem != null && !topItem.getBaseItem().allowStack())
                 continue;
 
@@ -131,7 +129,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                         startTile = layout.getTileInFront(startTile, rot.getValue());
                     }
 
-                    if (startTile != null && layout.tileExists(startTile.x, startTile.y)) {
+                    if (startTile != null && layout.tileExists(startTile.getX(), startTile.getY())) {
                         Collection<RoomUnit> roomUnitsAtTile = room.getRoomUnitsAt(startTile);
                         if (roomUnitsAtTile.size() > 0) {
                             target = roomUnitsAtTile.iterator().next();
@@ -222,7 +220,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
 
             if(newTile != null) {
                 lastDirections.put(item.getId(), moveDirection);
-                if(newTile.state != RoomTileState.INVALID && newTile != oldLocation && room.furnitureFitsAt(newTile, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
+                if(newTile.getState() != RoomTileState.INVALID && newTile != oldLocation && room.furnitureFitsAt(newTile, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
                     if (room.moveFurniTo(item, newTile, item.getRotation(), null, false) == FurnitureMovementError.NONE) {
                         room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newTile, item.getZ(), 0, room).compose());
                     }
@@ -309,7 +307,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
         message.appendString("");
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         message.appendInt(0);
     }

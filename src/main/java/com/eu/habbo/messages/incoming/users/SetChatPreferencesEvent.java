@@ -7,7 +7,7 @@ import com.eu.habbo.plugin.events.users.UserSavedSettingsEvent;
 public class SetChatPreferencesEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        this.client.getHabbo().getHabboStats().preferOldChat = this.packet.readBoolean();
+        this.client.getHabbo().getHabboStats().setPreferOldChat(this.packet.readBoolean());
         Emulator.getPluginManager().fireEvent(new UserSavedSettingsEvent(this.client.getHabbo()));
     }
 }

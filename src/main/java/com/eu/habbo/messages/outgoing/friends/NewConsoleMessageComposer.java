@@ -6,7 +6,9 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class NewConsoleMessageComposer extends MessageComposer {
     private final Message message;
     private final int toId;
@@ -18,11 +20,6 @@ public class NewConsoleMessageComposer extends MessageComposer {
         this.fromId = message.getFromId();
     }
 
-    public NewConsoleMessageComposer(Message message, int toId, int fromId) {
-        this.message = message;
-        this.toId = toId;
-        this.fromId = fromId;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

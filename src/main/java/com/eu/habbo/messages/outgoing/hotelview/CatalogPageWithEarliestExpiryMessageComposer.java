@@ -4,15 +4,12 @@ import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CatalogPageWithEarliestExpiryMessageComposer extends MessageComposer {
     private final CatalogPage page;
     private final String image;
-
-    public CatalogPageWithEarliestExpiryMessageComposer(CatalogPage page, String image) {
-        this.page = page;
-        this.image = image;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -4,15 +4,14 @@ import com.eu.habbo.util.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 public class ServerMessage {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServerMessage.class);
     private boolean initialized;
 
     private int header;

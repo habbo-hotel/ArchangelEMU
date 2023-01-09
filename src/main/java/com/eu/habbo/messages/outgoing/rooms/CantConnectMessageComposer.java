@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.rooms;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CantConnectMessageComposer extends MessageComposer {
     public static final int ROOM_ERROR_GUESTROOM_FULL = 1;
     public static final int ROOM_ERROR_CANT_ENTER = 2;
@@ -23,10 +25,6 @@ public class CantConnectMessageComposer extends MessageComposer {
         this.queError = "";
     }
 
-    public CantConnectMessageComposer(int errorCode, String queError) {
-        this.errorCode = errorCode;
-        this.queError = queError;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

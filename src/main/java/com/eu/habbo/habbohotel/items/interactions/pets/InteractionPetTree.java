@@ -55,7 +55,7 @@ public class InteractionPetTree extends InteractionDefault {
                  pet.packetUpdate = true;
                 RoomUnitStatus finalTask = task;
                 Emulator.getThreading().run(() -> {
-                     pet.addHappyness(25);
+                     pet.addHappiness(25);
                      pet.getRoomUnit().clearStatus();
                      new PetClearPosture(pet, finalTask, null, true);
                      if (this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getCurrentLocation())) {

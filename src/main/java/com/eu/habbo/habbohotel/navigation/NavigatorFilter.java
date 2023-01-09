@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class NavigatorFilter {
@@ -29,11 +28,11 @@ public abstract class NavigatorFilter {
         }
 
         for (SearchResultList result : collection) {
-            if (!result.filter) {
+            if (!result.isFilter()) {
                 continue;
             }
 
-            this.filterRooms(method, value, result.rooms);
+            this.filterRooms(method, value, result.getRooms());
         }
     }
 
@@ -82,7 +81,7 @@ public abstract class NavigatorFilter {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         result.removeAll(toRemove);

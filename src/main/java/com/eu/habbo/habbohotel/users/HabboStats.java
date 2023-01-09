@@ -1,12 +1,12 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.campaign.CalendarRewardClaimed;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.achievements.TalentTrackType;
+import com.eu.habbo.habbohotel.campaign.CalendarRewardClaimed;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomTrade;
 import com.eu.habbo.habbohotel.users.cache.HabboOfferPurchase;
@@ -19,87 +19,111 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.THashSet;
 import gnu.trove.stack.array.TIntArrayStack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
+@Getter
 public class HabboStats implements Runnable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HabboStats.class);
-
-    public final TIntArrayList secretRecipes;
-    public final HabboNavigatorWindowSettings navigatorWindowSettings;
-    public final THashMap<String, Object> cache;
-    public final ArrayList<CalendarRewardClaimed> calendarRewardsClaimed;
-    public final TIntObjectMap<HabboOfferPurchase> offerCache = new TIntObjectHashMap<>();
+    private final TIntArrayList secretRecipes;
+    private final HabboNavigatorWindowSettings navigatorWindowSettings;
+    private final THashMap<String, Object> cache;
+    private final ArrayList<CalendarRewardClaimed> calendarRewardsClaimed;
+    private final TIntObjectMap<HabboOfferPurchase> offerCache = new TIntObjectHashMap<>();
     private final AtomicInteger lastOnlineTime = new AtomicInteger(Emulator.getIntUnixTimestamp());
     private final THashMap<Achievement, Integer> achievementProgress;
     private final THashMap<Achievement, Integer> achievementCache;
     private final THashMap<Integer, CatalogItem> recentPurchases;
     private final TIntArrayList favoriteRooms;
     private final TIntArrayList ignoredUsers;
-    private TIntArrayList roomsVists;
-    public int achievementScore;
-    public int respectPointsReceived;
-    public int respectPointsGiven;
-    public int respectPointsToGive;
-    public int petRespectPointsToGive;
-    public boolean blockFollowing;
-    public boolean blockFriendRequests;
-    public boolean blockRoomInvites;
-    public boolean blockStaffAlerts;
-    public boolean preferOldChat;
-    public boolean blockCameraFollow;
-    public RoomChatMessageBubbles chatColor;
-    public int volumeSystem;
-    public int volumeFurni;
-    public int volumeTrax;
-    public int guild;
-    public List<Integer> guilds;
-    public String[] tags;
-    public TIntArrayStack votedRooms;
-    public int loginStreak;
-    public int rentedItemId;
-    public int rentedTimeEnd;
+    private final TIntArrayList roomsVists;
+    private int achievementScore;
+    @Setter
+    private int respectPointsReceived;
+    @Setter
+    private int respectPointsGiven;
+    @Setter
+    private int respectPointsToGive;
+    @Setter
+    private int petRespectPointsToGive;
+    @Setter
+    private boolean blockFollowing;
+    @Setter
+    private boolean blockFriendRequests;
+    @Setter
+    private boolean blockRoomInvites;
+    @Setter
+    private boolean blockStaffAlerts;
+    @Setter
+    private boolean preferOldChat;
+    @Setter
+    private boolean blockCameraFollow;
+    @Setter
+    private RoomChatMessageBubbles chatColor;
+    @Setter
+    private int volumeSystem;
+    @Setter
+    private int volumeFurni;
+    @Setter
+    private int volumeTrax;
+    @Setter private  int guild;
+    private final List<Integer> guilds;
+    private final String[] tags;
+    private final TIntArrayStack votedRooms;
+    @Setter
+    private int loginStreak;
+    @Setter
+    private int rentedItemId;
+    @Setter
+    private int rentedTimeEnd;
     public int hofPoints;
-    public boolean ignorePets;
-    public boolean ignoreBots;
-    public int citizenshipLevel;
-    public int helpersLevel;
-    public boolean perkTrade;
+    @Setter private boolean ignorePets;
+    @Setter private boolean ignoreBots;
+    private int citizenshipLevel;
+    private int helpersLevel;
+    @Setter private boolean perkTrade;
     public long roomEnterTimestamp;
-    public AtomicInteger chatCounter = new AtomicInteger(0);
-    public long lastChat;
-    public long lastUsersSearched;
-    public boolean nux;
-    public boolean nuxReward;
-    public int nuxStep = 1;
-    public int mutedCount = 0;
-    public boolean mutedBubbleTracker = false;
-    public String changeNameChecked = "";
-    public boolean allowNameChange;
-    public boolean isPurchasingFurniture = false;
-    public int forumPostsCount;
-    public THashMap<Integer, List<Integer>> ltdPurchaseLog = new THashMap<>(0);
-    public long lastTradeTimestamp = Emulator.getIntUnixTimestamp();
-    public long lastGiftTimestamp = Emulator.getIntUnixTimestamp();
-    public long lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
-    public int uiFlags;
-    public boolean hasGottenDefaultSavedSearches;
+    private final AtomicInteger chatCounter = new AtomicInteger(0);
+    @Setter private long lastChat;
+    private long lastUsersSearched;
+    @Setter private boolean nux;
+    @Setter private boolean nuxReward;
+    private int nuxStep = 1;
+    @Setter private int mutedCount = 0;
+    @Setter
+    private boolean mutedBubbleTracker = false;
+    @Setter private String changeNameChecked = "";
+    @Setter private boolean allowNameChange;
+    @Setter private boolean isPurchasingFurniture = false;
+    @Setter private int forumPostsCount;
+    @Setter
+    private THashMap<Integer, List<Integer>> ltdPurchaseLog = new THashMap<>(0);
+    @Setter private long lastTradeTimestamp = Emulator.getIntUnixTimestamp();
+    @Setter private long lastGiftTimestamp = Emulator.getIntUnixTimestamp();
+    @Setter private  long lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
+    @Setter private  int uiFlags;
+    @Setter private boolean hasGottenDefaultSavedSearches;
     private HabboInfo habboInfo;
+    @Setter
     private boolean allowTrade;
-    private int clubExpireTimestamp;
+    private final int clubExpireTimestamp;
     private int muteEndTime;
-    public int maxFriends;
-    public int maxRooms;
-    public int lastHCPayday;
-    public int hcGiftsClaimed;
-    public int hcMessageLastModified = Emulator.getIntUnixTimestamp();
-    public THashSet<Subscription> subscriptions;
+    @Setter private int maxFriends;
+    @Setter private int maxRooms;
+    @Setter private int lastHCPayday;
+    @Setter private  int hcGiftsClaimed;
+    @Setter private int hcMessageLastModified = Emulator.getIntUnixTimestamp();
+    private final THashSet<Subscription> subscriptions;
 
     private HabboStats(ResultSet set, HabboInfo habboInfo) throws SQLException {
         this.cache = new THashMap<>(0);
@@ -257,7 +281,7 @@ public class HabboStats implements Runnable {
             statement.setInt(1, habboInfo.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return load(habboInfo);
@@ -283,10 +307,8 @@ public class HabboStats implements Runnable {
                     statement.setInt(1, habboInfo.getId());
                     try (ResultSet set = statement.executeQuery()) {
 
-                        int i = 0;
                         while (set.next()) {
                             stats.guilds.add(set.getInt("guild_id"));
-                            i++;
                         }
                     }
                 }
@@ -316,7 +338,7 @@ public class HabboStats implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return stats;
@@ -369,16 +391,16 @@ public class HabboStats implements Runnable {
                 statement.setInt(37, this.lastHCPayday);
                 statement.setInt(38, this.hcGiftsClaimed);
                 statement.setInt(39, this.habboInfo.getId());
-                
+
                 statement.executeUpdate();
             }
 
             try (PreparedStatement statement = connection.prepareStatement("UPDATE user_window_settings SET x = ?, y = ?, width = ?, height = ?, open_searches = ? WHERE user_id = ? LIMIT 1")) {
-                statement.setInt(1, this.navigatorWindowSettings.x);
-                statement.setInt(2, this.navigatorWindowSettings.y);
-                statement.setInt(3, this.navigatorWindowSettings.width);
-                statement.setInt(4, this.navigatorWindowSettings.height);
-                statement.setString(5, this.navigatorWindowSettings.openSearches ? "1" : "0");
+                statement.setInt(1, this.navigatorWindowSettings.getX());
+                statement.setInt(2, this.navigatorWindowSettings.getY());
+                statement.setInt(3, this.navigatorWindowSettings.getWidth());
+                statement.setInt(4, this.navigatorWindowSettings.getHeight());
+                statement.setString(5, this.navigatorWindowSettings.isOpenSearches() ? "1" : "0");
                 statement.setInt(6, this.habboInfo.getId());
                 statement.executeUpdate();
             }
@@ -400,7 +422,7 @@ public class HabboStats implements Runnable {
 
             this.navigatorWindowSettings.save(connection);
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -424,10 +446,6 @@ public class HabboStats implements Runnable {
         return this.guilds.contains(guildId);
     }
 
-    public int getAchievementScore() {
-        return this.achievementScore;
-    }
-
     public void addAchievementScore(int achievementScore) {
         this.achievementScore += achievementScore;
     }
@@ -443,29 +461,13 @@ public class HabboStats implements Runnable {
         this.achievementProgress.put(achievement, progress);
     }
 
-    public int getRentedTimeEnd() {
-        return this.rentedTimeEnd;
-    }
-
-    public void setRentedTimeEnd(int rentedTimeEnd) {
-        this.rentedTimeEnd = rentedTimeEnd;
-    }
-
-    public int getRentedItemId() {
-        return this.rentedItemId;
-    }
-
-    public void setRentedItemId(int rentedItemId) {
-        this.rentedItemId = rentedItemId;
-    }
-
     public boolean isRentingSpace() {
         return this.rentedTimeEnd >= Emulator.getIntUnixTimestamp();
     }
 
     public Subscription getSubscription(String subscriptionType) {
-        for(Subscription subscription : subscriptions) {
-            if(subscription.getSubscriptionType().equalsIgnoreCase(subscriptionType) && subscription.isActive() && subscription.getRemaining() > 0) {
+        for (Subscription subscription : subscriptions) {
+            if (subscription.getSubscriptionType().equalsIgnoreCase(subscriptionType) && subscription.isActive() && subscription.getRemaining() > 0) {
                 return subscription;
             }
         }
@@ -480,7 +482,7 @@ public class HabboStats implements Runnable {
     public int getSubscriptionExpireTimestamp(String subscriptionType) {
         Subscription subscription = getSubscription(subscriptionType);
 
-        if(subscription == null)
+        if (subscription == null)
             return 0;
 
         return subscription.getTimestampEnd();
@@ -489,7 +491,7 @@ public class HabboStats implements Runnable {
     public Subscription createSubscription(String subscriptionType, int duration) {
         Subscription subscription = getSubscription(subscriptionType);
 
-        if(subscription != null) {
+        if (subscription != null) {
             if (!Emulator.getPluginManager().fireEvent(new UserSubscriptionExtendedEvent(this.habboInfo.getId(), subscription, duration)).isCancelled()) {
                 subscription.addDuration(duration);
                 subscription.onExtended(duration);
@@ -516,14 +518,13 @@ public class HabboStats implements Runnable {
                             this.subscriptions.add(sub);
                             sub.onCreated();
                             return sub;
-                        }
-                        catch (Exception e) {
-                            LOGGER.error("Caught exception", e);
+                        } catch (Exception e) {
+                            log.error("Caught exception", e);
                         }
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
 
@@ -538,11 +539,11 @@ public class HabboStats implements Runnable {
         Subscription subscription = getSubscription(Subscription.HABBO_CLUB);
         int duration = clubExpireTimestamp - Emulator.getIntUnixTimestamp();
 
-        if(subscription != null) {
+        if (subscription != null) {
             duration = clubExpireTimestamp - subscription.getTimestampStart();
         }
 
-        if(duration > 0) {
+        if (duration > 0) {
             createSubscription(Subscription.HABBO_CLUB, duration);
         }
     }
@@ -553,8 +554,8 @@ public class HabboStats implements Runnable {
 
     public int getPastTimeAsClub() {
         int pastTimeAsHC = 0;
-        for(Subscription subs : this.subscriptions) {
-            if(subs.getSubscriptionType().equalsIgnoreCase(Subscription.HABBO_CLUB)) {
+        for (Subscription subs : this.subscriptions) {
+            if (subs.getSubscriptionType().equalsIgnoreCase(Subscription.HABBO_CLUB)) {
                 pastTimeAsHC += subs.getDuration() - (Math.max(subs.getRemaining(), 0));
             }
         }
@@ -563,31 +564,19 @@ public class HabboStats implements Runnable {
 
     public int getTimeTillNextClubGift() {
         int pastTimeAsClub = getPastTimeAsClub();
-        int totalGifts = (int)Math.ceil(pastTimeAsClub / 2678400.0);
+        int totalGifts = (int) Math.ceil(pastTimeAsClub / 2678400.0);
         return (totalGifts * 2678400) - pastTimeAsClub;
     }
 
     public int getRemainingClubGifts() {
-        int totalGifts = (int)Math.ceil(getPastTimeAsClub() / 2678400.0);
+        int totalGifts = (int) Math.ceil(getPastTimeAsClub() / 2678400.0);
         return totalGifts - this.hcGiftsClaimed;
-    }
-
-    public THashMap<Achievement, Integer> getAchievementProgress() {
-        return this.achievementProgress;
-    }
-
-    public THashMap<Achievement, Integer> getAchievementCache() {
-        return this.achievementCache;
     }
 
     public void addPurchase(CatalogItem item) {
         if (!this.recentPurchases.containsKey(item.getId())) {
             this.recentPurchases.put(item.getId(), item);
         }
-    }
-
-    public THashMap<Integer, CatalogItem> getRecentPurchases() {
-        return this.recentPurchases;
     }
 
     public void disposeRecentPurchases() {
@@ -606,7 +595,7 @@ public class HabboStats implements Runnable {
             statement.setInt(2, roomId);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         this.favoriteRooms.add(roomId);
@@ -620,7 +609,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(2, roomId);
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -629,12 +618,12 @@ public class HabboStats implements Runnable {
         return this.favoriteRooms.contains(roomId);
     }
 
-    public boolean visitedRoom(int roomId) { return this.roomsVists.contains(roomId); }
+    public boolean visitedRoom(int roomId) {
+        return this.roomsVists.contains(roomId);
+    }
 
-    public void addVisitRoom(int roomId) { this.roomsVists.add(roomId); }
-
-    public TIntArrayList getFavoriteRooms() {
-        return this.favoriteRooms;
+    public void addVisitRoom(int roomId) {
+        this.roomsVists.add(roomId);
     }
 
     public boolean hasRecipe(int id) {
@@ -650,7 +639,7 @@ public class HabboStats implements Runnable {
             statement.setInt(2, id);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         this.secretRecipes.add(id);
@@ -671,10 +660,6 @@ public class HabboStats implements Runnable {
             this.citizenshipLevel = level;
         else if (type == TalentTrackType.HELPER)
             this.helpersLevel = level;
-    }
-
-    public int getMuteEndTime() {
-        return this.muteEndTime;
     }
 
     public int addMuteTime(int seconds) {
@@ -730,7 +715,7 @@ public class HabboStats implements Runnable {
      * Ignore an user.
      *
      * @param gameClient The client to which this HabboStats instance belongs.
-     * @param userId The user to ignore.
+     * @param userId     The user to ignore.
      * @return true if successfully ignored, false otherwise.
      */
     public boolean ignoreUser(GameClient gameClient, int userId) {
@@ -755,7 +740,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(2, userId);
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
 
@@ -772,7 +757,7 @@ public class HabboStats implements Runnable {
                 statement.setInt(2, userId);
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -790,15 +775,59 @@ public class HabboStats implements Runnable {
         else return this.allowTrade;
     }
 
-    public void setAllowTrade(boolean allowTrade) {
-        this.allowTrade = allowTrade;
-    }
-
     public HabboOfferPurchase getHabboOfferPurchase(int offerId) {
         return this.offerCache.get(offerId);
     }
 
     public void addHabboOfferPurchase(HabboOfferPurchase offerPurchase) {
         this.offerCache.put(offerPurchase.getOfferId(), offerPurchase);
+    }
+
+    public void increaseRespectPointsReceived() {
+        increaseRespectPointsReceived(1);
+    }
+
+    public void increaseRespectPointsReceived(int amount) {
+        respectPointsReceived += amount;
+    }
+
+    public void increaseRespectPointsGiven() {
+        increaseRespectPointsGiven(1);
+    }
+
+    public void increaseRespectPointsGiven(int amount) {
+        respectPointsGiven += amount;
+    }
+
+    public void increaseRespectPointsToGive() {
+        increaseRespectPointsToGive(1);
+    }
+
+    public void increaseRespectPointsToGive(int amount) {
+        respectPointsToGive += amount;
+    }
+
+    public void decreasePetRespectPointsToGive() {
+        decreasePetRespectPointsToGive(1);
+    }
+
+    public void decreasePetRespectPointsToGive(int amount) {
+        petRespectPointsToGive -= amount;
+    }
+    public void increasePetRespectPointToGive() {
+        increasePetRespectPointsToGive(1);
+    }
+
+    public void increasePetRespectPointsToGive(int amount) {
+        petRespectPointsToGive += amount;
+    }
+
+    public int increaseNuxStep() {
+        return increaseNuxStep(1);
+    }
+
+    public int increaseNuxStep(int amount) {
+        nuxStep += amount;
+        return nuxStep;
     }
 }

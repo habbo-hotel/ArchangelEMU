@@ -18,7 +18,7 @@ public class NavigatorRoomAdsFilter extends NavigatorFilter {
     public List<SearchResultList> getResult(Habbo habbo) {
         boolean showInvisible = habbo.hasPermission(Permission.ACC_ENTERANYROOM) || habbo.hasPermission(Permission.ACC_ANYROOMOWNER);
         List<SearchResultList> resultList = new ArrayList<>();
-        resultList.add(new SearchResultList(0, "categories", "", SearchAction.NONE, habbo.getHabboStats().navigatorWindowSettings.getListModeForCategory("categories", ListMode.LIST), habbo.getHabboStats().navigatorWindowSettings.getDisplayModeForCategory("official-root", DisplayMode.VISIBLE), Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("categories", habbo), false, showInvisible, DisplayOrder.ACTIVITY, 0));
+        resultList.add(new SearchResultList(0, "categories", "", SearchAction.NONE, habbo.getHabboStats().getNavigatorWindowSettings().getListModeForCategory("categories", ListMode.LIST), habbo.getHabboStats().getNavigatorWindowSettings().getDisplayModeForCategory("official-root", DisplayMode.VISIBLE), Emulator.getGameEnvironment().getNavigatorManager().getRoomsForCategory("categories", habbo), false, showInvisible, DisplayOrder.ACTIVITY, 0));
         return resultList;
     }
 }

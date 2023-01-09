@@ -3,13 +3,11 @@ package com.eu.habbo.messages.outgoing.habboway.nux;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class InClientLinkMessageComposer extends MessageComposer {
     private final String link;
-
-    public InClientLinkMessageComposer(String link) {
-        this.link = link;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

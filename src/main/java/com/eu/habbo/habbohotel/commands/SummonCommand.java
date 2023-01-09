@@ -52,10 +52,9 @@ public class SummonCommand extends Command {
 
             habbo.alert(Emulator.getTexts().getValue("commands.generic.cmd_summon.been_summoned").replace("%user%", gameClient.getHabbo().getHabboInfo().getUsername()));
 
-            return true;
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_summon.forgot_username"), RoomChatMessageBubbles.ALERT);
-            return true;
         }
+        return true;
     }
 }

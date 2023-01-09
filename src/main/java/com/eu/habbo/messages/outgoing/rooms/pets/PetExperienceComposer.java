@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class PetExperienceComposer extends MessageComposer {
     private final Pet pet;
     private final int amount;
 
-    public PetExperienceComposer(Pet pet, int amount) {
-        this.pet = pet;
-        this.amount = amount;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

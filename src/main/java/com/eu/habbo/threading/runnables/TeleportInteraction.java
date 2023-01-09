@@ -8,14 +8,13 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 class TeleportInteraction extends Thread {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TeleportInteraction.class);
 
     private final Room room;
     private final GameClient client;
@@ -107,7 +106,7 @@ class TeleportInteraction extends Thread {
             } else if (this.state == 1) {
                 RoomTile loc = HabboItem.getSquareInFront(this.room.getLayout(), this.teleportOne);
 
-                if (this.client.getHabbo().getRoomUnit().getX() == loc.x && this.client.getHabbo().getRoomUnit().getY() == loc.y) {
+                if (this.client.getHabbo().getRoomUnit().getX() == loc.getX() && this.client.getHabbo().getRoomUnit().getY() == loc.getY()) {
                     this.teleportOne.setExtradata("1");
                     this.room.updateItem(this.teleportOne);
                     this.state = 2;
@@ -116,7 +115,7 @@ class TeleportInteraction extends Thread {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 

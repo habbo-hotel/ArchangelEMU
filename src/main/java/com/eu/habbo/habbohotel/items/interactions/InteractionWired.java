@@ -9,18 +9,17 @@ import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.OneWayDoorStatusMessageComposer;
 import gnu.trove.map.hash.TLongLongHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public abstract class InteractionWired extends InteractionDefault {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionWired.class);
     private long cooldown;
-    private TLongLongHashMap userExecutionCache = new TLongLongHashMap(3);
+    private final TLongLongHashMap userExecutionCache = new TLongLongHashMap(3);
 
     InteractionWired(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -58,7 +57,7 @@ public abstract class InteractionWired extends InteractionDefault {
                 statement.setInt(2, this.getId());
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
         super.run();
@@ -72,7 +71,7 @@ public abstract class InteractionWired extends InteractionDefault {
     public abstract void onPickUp();
 
     public void activateBox(Room room) {
-        this.activateBox(room, (RoomUnit)null, 0L);
+        this.activateBox(room, null, 0L);
     }
 
     public void activateBox(Room room, RoomUnit roomUnit, long millis) {
@@ -107,18 +106,14 @@ public abstract class InteractionWired extends InteractionDefault {
     }
 
     public boolean userCanExecute(int roomUnitId, long timestamp) {
-        if (roomUnitId == -1) {
-            return true;
-        } else {
-            if (this.userExecutionCache.containsKey((long)roomUnitId)) {
-                long lastTimestamp = this.userExecutionCache.get((long)roomUnitId);
-                if (timestamp - lastTimestamp < 100L) {
-                    return false;
-                }
+        if (roomUnitId != -1) {
+            if (this.userExecutionCache.containsKey(roomUnitId)) {
+                long lastTimestamp = this.userExecutionCache.get(roomUnitId);
+                return timestamp - lastTimestamp >= 100L;
             }
 
-            return true;
         }
+        return true;
     }
 
     public void clearUserExecutionCache() {
@@ -126,7 +121,7 @@ public abstract class InteractionWired extends InteractionDefault {
     }
 
     public void addUserExecutionCache(int roomUnitId, long timestamp) {
-        this.userExecutionCache.put((long)roomUnitId, timestamp);
+        this.userExecutionCache.put(roomUnitId, timestamp);
     }
 
     public static WiredSettings readSettings(ClientMessage packet, boolean isEffect)
@@ -159,4 +154,5 @@ public abstract class InteractionWired extends InteractionDefault {
         settings.setStuffTypeSelectionCode(packet.readInt());
         return settings;
     }
+
 }

@@ -8,8 +8,8 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.achievements.AchievementComposer;
 import com.eu.habbo.messages.outgoing.achievements.AchievementUnlockedComposer;
 import com.eu.habbo.messages.outgoing.achievements.talenttrack.TalentLevelUpComposer;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import com.eu.habbo.messages.outgoing.users.UserBadgesComposer;
@@ -18,16 +18,14 @@ import com.eu.habbo.plugin.events.users.achievements.UserAchievementLeveledEvent
 import com.eu.habbo.plugin.events.users.achievements.UserAchievementProgressEvent;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectIntProcedure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Slf4j
 public class AchievementManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AchievementManager.class);
-
     public static boolean TALENTTRACK_ENABLED = false;
 
     private final THashMap<String, Achievement> achievements;
@@ -59,7 +57,7 @@ public class AchievementManager {
                     statement.setInt(4, amount);
                     statement.execute();
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 }
             }
         }
@@ -97,7 +95,7 @@ public class AchievementManager {
 
         AchievementLevel oldLevel = achievement.getLevelForProgress(currentProgress);
 
-        if (oldLevel != null && (oldLevel.level == achievement.levels.size() && currentProgress >= oldLevel.progress)) //Maximum achievement gotten.
+        if (oldLevel != null && (oldLevel.getLevel() == achievement.levels.size() && currentProgress >= oldLevel.getProgress())) //Maximum achievement gotten.
             return;
 
         habbo.getHabboStats().setProgress(achievement, currentProgress + amount);
@@ -109,7 +107,7 @@ public class AchievementManager {
                 if (Emulator.getGameEnvironment().getAchievementManager().talentTrackLevels.containsKey(type)) {
                     for (Map.Entry<Integer, TalentTrackLevel> entry : Emulator.getGameEnvironment().getAchievementManager().talentTrackLevels.get(type).entrySet()) {
                         if (entry.getValue().achievements.containsKey(achievement)) {
-                            Emulator.getGameEnvironment().getAchievementManager().handleTalentTrackAchievement(habbo, type, achievement);
+                            Emulator.getGameEnvironment().getAchievementManager().handleTalentTrackAchievement(habbo, type);
                             break;
                         }
                     }
@@ -118,7 +116,7 @@ public class AchievementManager {
         }
 
         if (newLevel == null ||
-                (oldLevel != null && (oldLevel.level == newLevel.level && newLevel.level < achievement.levels.size()))) {
+                (oldLevel != null && (oldLevel.getLevel() == newLevel.getLevel() && newLevel.getLevel() < achievement.levels.size()))) {
             habbo.getClient().sendResponse(new AchievementComposer(habbo, achievement));
         } else {
             if (Emulator.getPluginManager().isRegistered(UserAchievementLeveledEvent.class, true)) {
@@ -139,14 +137,14 @@ public class AchievementManager {
 
             if (oldLevel != null) {
                 try {
-                    badge = habbo.getInventory().getBadgesComponent().getBadge(("ACH_" + achievement.name + oldLevel.level).toLowerCase());
+                    badge = habbo.getInventory().getBadgesComponent().getBadge(("ACH_" + achievement.name + oldLevel.getLevel()).toLowerCase());
                 } catch (Exception e) {
-                    LOGGER.error("Caught exception", e);
+                    log.error("Caught exception", e);
                     return;
                 }
             }
 
-            String newBadgCode = "ACH_" + achievement.name + newLevel.level;
+            String newBadgCode = "ACH_" + achievement.name + newLevel.getLevel();
 
             if (badge != null) {
                 badge.setCode(newBadgCode);
@@ -173,10 +171,10 @@ public class AchievementManager {
 
             habbo.getClient().sendResponse(new UnseenItemsComposer(badge.getId(), UnseenItemsComposer.AddHabboItemCategory.BADGE));
 
-            habbo.getHabboStats().addAchievementScore(newLevel.points);
+            habbo.getHabboStats().addAchievementScore(newLevel.getPoints());
 
-            if (newLevel.rewardAmount > 0) {
-                habbo.givePoints(newLevel.rewardType, newLevel.rewardAmount);
+            if (newLevel.getRewardAmount() > 0) {
+                habbo.givePoints(newLevel.getRewardType(), newLevel.getRewardAmount());
             }
 
             if (habbo.getHabboInfo().getCurrentRoom() != null) {
@@ -197,9 +195,9 @@ public class AchievementManager {
         if (level == null)
             return false;
 
-        AchievementLevel nextLevel = achievement.levels.get(level.level + 1);
+        AchievementLevel nextLevel = achievement.levels.get(level.getLevel() + 1);
 
-        return nextLevel == null && currentProgress >= level.progress;
+        return nextLevel == null && currentProgress >= level.getProgress();
     }
 
     public static void createUserEntry(Habbo habbo, Achievement achievement) {
@@ -209,7 +207,7 @@ public class AchievementManager {
             statement.setInt(3, 1);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -223,7 +221,7 @@ public class AchievementManager {
             }
             statement.executeBatch();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -237,7 +235,7 @@ public class AchievementManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return 0;
@@ -260,9 +258,9 @@ public class AchievementManager {
                         }
                     }
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 } catch (Exception e) {
-                    LOGGER.error("Caught exception", e);
+                    log.error("Caught exception", e);
                 }
 
 
@@ -282,13 +280,13 @@ public class AchievementManager {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
-                LOGGER.error("Achievement Manager -> Failed to load!");
+                log.error("Caught SQL exception", e);
+                log.error("Achievement Manager -> Failed to load!");
                 return;
             }
         }
 
-        LOGGER.info("Achievement Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Achievement Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public Achievement getAchievement(String name) {
@@ -343,7 +341,7 @@ public class AchievementManager {
         return level;
     }
 
-    public void handleTalentTrackAchievement(Habbo habbo, TalentTrackType type, Achievement achievement) {
+    public void handleTalentTrackAchievement(Habbo habbo, TalentTrackType type) {
         TalentTrackLevel currentLevel = this.calculateTalenTrackLevel(habbo, type);
 
         if (currentLevel != null) {
@@ -375,7 +373,8 @@ public class AchievementManager {
                         if (level.perks != null && level.perks.length > 0) {
                             for (String perk : level.perks) {
                                 if (perk.equalsIgnoreCase("TRADE")) {
-                                    habbo.getHabboStats().perkTrade = true;
+                                    habbo.getHabboStats().setPerkTrade(true);
+                                    break;
                                 }
                             }
                         }

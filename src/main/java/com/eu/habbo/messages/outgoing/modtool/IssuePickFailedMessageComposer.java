@@ -4,13 +4,11 @@ import com.eu.habbo.habbohotel.modtool.ModToolIssue;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class IssuePickFailedMessageComposer extends MessageComposer {
     private final ModToolIssue issue;
-
-    public IssuePickFailedMessageComposer(ModToolIssue issue) {
-        this.issue = issue;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

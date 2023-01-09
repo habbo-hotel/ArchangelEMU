@@ -2,16 +2,15 @@ package com.eu.habbo.threading;
 
 import com.eu.habbo.Emulator;
 import io.netty.util.concurrent.DefaultThreadFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class ThreadPooling {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadPooling.class);
 
     public final int threads;
     private final ScheduledExecutorService scheduledPool;
@@ -21,7 +20,7 @@ public class ThreadPooling {
         this.threads = threads;
         this.scheduledPool = new HabboExecutorService(this.threads, new DefaultThreadFactory("HabExec"));
         this.canAdd = true;
-        LOGGER.info("Thread Pool -> Loaded!");
+        log.info("Thread Pool -> Loaded!");
     }
 
     public ScheduledFuture run(Runnable run) {
@@ -34,7 +33,7 @@ public class ThreadPooling {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
 
         return null;
@@ -47,12 +46,12 @@ public class ThreadPooling {
                     try {
                         run.run();
                     } catch (Exception e) {
-                        LOGGER.error("Caught exception", e);
+                        log.error("Caught exception", e);
                     }
                 }, delay, TimeUnit.MILLISECONDS);
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
 
         return null;
@@ -62,7 +61,7 @@ public class ThreadPooling {
         this.canAdd = false;
         this.scheduledPool.shutdownNow();
 
-        LOGGER.info("Threading -> Disposed!");
+        log.info("Threading -> Disposed!");
     }
 
     public void setCanAdd(boolean canAdd) {

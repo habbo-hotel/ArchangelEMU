@@ -1,18 +1,19 @@
 package com.eu.habbo.habbohotel.guilds.forums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@AllArgsConstructor
 public class ForumView {
+    @Getter
     private final int userId;
+    @Getter
     private final int guildId;
+    @Getter
     private final int timestamp;
-
-    public ForumView(int userId, int guildId, int timestamp) {
-        this.userId = userId;
-        this.guildId = guildId;
-        this.timestamp = timestamp;
-    }
 
     public ForumView(ResultSet set) throws SQLException {
         this.userId = set.getInt("user_id");
@@ -20,15 +21,4 @@ public class ForumView {
         this.timestamp = set.getInt("timestamp");
     }
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public int getGuildId() {
-        return guildId;
-    }
-
-    public int getTimestamp() {
-        return timestamp;
-    }
 }

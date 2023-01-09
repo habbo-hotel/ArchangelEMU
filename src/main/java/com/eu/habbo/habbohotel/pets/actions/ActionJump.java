@@ -2,14 +2,12 @@ package com.eu.habbo.habbohotel.pets.actions;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetTrampoline;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetTree;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetAction;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.PetVocalsType;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
 public class ActionJump extends PetAction {
@@ -26,7 +24,7 @@ public class ActionJump extends PetAction {
         pet.setTask(PetTasks.JUMP);
         Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.JUMP, null, false), this.minimumActionDuration);
 
-        if (pet.getHappyness() > 60)
+        if (pet.getHappiness() > 60)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         else
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

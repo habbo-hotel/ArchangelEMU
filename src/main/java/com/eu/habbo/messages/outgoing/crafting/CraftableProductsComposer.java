@@ -5,18 +5,15 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Collection;
 import java.util.List;
 
+@AllArgsConstructor
 public class CraftableProductsComposer extends MessageComposer {
     private final List<CraftingRecipe> recipes;
     private final Collection<Item> ingredients;
-
-    public CraftableProductsComposer(List<CraftingRecipe> recipes, Collection<Item> ingredients) {
-        this.recipes = recipes;
-        this.ingredients = ingredients;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

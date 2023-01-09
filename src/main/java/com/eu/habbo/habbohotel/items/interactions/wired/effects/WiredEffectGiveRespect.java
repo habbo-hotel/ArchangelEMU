@@ -5,16 +5,13 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
-import gnu.trove.procedure.TObjectProcedure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,19 +41,16 @@ public class WiredEffectGiveRespect extends InteractionWiredEffect {
         message.appendString(this.respects + "");
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(type.code);
+        message.appendInt(type.getCode());
         message.appendInt(this.getDelay());
 
         if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
-                @Override
-                public boolean execute(InteractionWiredTrigger object) {
-                    if (!object.isTriggeredByRoomUnit()) {
-                        invalidTriggers.add(object.getBaseItem().getSpriteId());
-                    }
-                    return true;
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
+                if (!object.isTriggeredByRoomUnit()) {
+                    invalidTriggers.add(object.getBaseItem().getSpriteId());
                 }
+                return true;
             });
             message.appendInt(invalidTriggers.size());
             for (Integer i : invalidTriggers) {
@@ -92,7 +86,7 @@ public class WiredEffectGiveRespect extends InteractionWiredEffect {
         if (habbo == null)
             return false;
 
-        habbo.getHabboStats().respectPointsReceived += this.respects;
+        habbo.getHabboStats().increaseRespectPointsReceived(respects);
         AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RespectEarned"), this.respects);
 
         return true;
@@ -117,10 +111,10 @@ public class WiredEffectGiveRespect extends InteractionWiredEffect {
             this.respects = 0;
 
             if (data.length >= 2) {
-                super.setDelay(Integer.valueOf(data[0]));
+                super.setDelay(Integer.parseInt(data[0]));
 
                 try {
-                    this.respects = Integer.valueOf(data[1]);
+                    this.respects = Integer.parseInt(data[1]);
                 } catch (Exception e) {
                 }
             }

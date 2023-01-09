@@ -2,41 +2,35 @@ package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
-import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetTree;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.rooms.pets.PetLevelUpdatedComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetExperienceComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PetLevelUpdatedComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetRespectNotificationComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.ChatMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
 import com.eu.habbo.plugin.events.pets.PetTalkEvent;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Map;
+import java.util.TimeZone;
 
-/**
- * This class represents a virtual pet in a virtual world. It has fields representing the state of the
- * pet, such as its name, type, level, hunger level, and thirst level. It also has methods for
- * interacting with the virtual world, such as speaking, updating its status, and running tasks.
- */
+@Slf4j
 public class Pet implements ISerialize, Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Pet.class);
 
-    /**
-     * The level of thirst of the pet.
-     */
+    @Getter
+    @Setter
     public int levelThirst;
-
-    /**
-     * The level of hunger of the pet.
-     */
+    @Getter
+    @Setter
     public int levelHunger;
 
     /**
@@ -48,75 +42,48 @@ public class Pet implements ISerialize, Runnable {
      * Whether the pet needs to be sent as a packet update.
      */
     public boolean packetUpdate = false;
-
-    /**
-     * The ID of the pet.
-     */
+    @Getter
     protected int id;
-
-    /**
-     * The ID of the user that owns the pet.
-     */
+    @Getter
+    @Setter
     protected int userId;
-
-    /**
-     * The room that the pet is in.
-     */
+    @Getter
+    @Setter
     protected Room room;
-
-    /**
-     * The name of the pet.
-     */
+    @Getter
+    @Setter
     protected String name;
-
-    /**
-     * The data for the type of pet.
-     */
+    @Setter
+    @Getter
     protected PetData petData;
-
-    /**
-     * The race of the pet.
-     */
+    @Setter
+    @Getter
     protected int race;
-
-    /**
-     * The color of the pet.
-     */
+    @Getter
+    @Setter
     protected String color;
-
-    /**
-     * The happyness level of the pet.
-     */
-    protected int happyness;
-
-    /**
-     * The experience points of the pet.
-     */
+    @Getter
+    @Setter
+    protected int happiness;
+    @Getter
+    @Setter
     protected int experience;
-
-    /**
-     * The energy level of the pet.
-     */
+    @Setter
+    @Getter
     protected int energy;
 
     /**
      * The respect points of the pet.
      */
     protected int respect;
-
-    /**
-     * The timestamp of when the pet was created.
-     */
+    @Getter
+    @Setter
     protected int created;
-
-    /**
-     * The current level of the pet.
-     */
+    @Getter
+    @Setter
     protected int level;
-
-    /**
-     * The unit that represents the pet in a room.
-     */
+    @Getter
+    @Setter
     RoomUnit roomUnit;
 
     /**
@@ -128,15 +95,7 @@ public class Pet implements ISerialize, Runnable {
      * The tick timeout of the pet.
      */
     private int tickTimeout = Emulator.getIntUnixTimestamp();
-
-    /**
-     * The happyness delay of the pet.
-     */
-    private int happynessDelay = Emulator.getIntUnixTimestamp();
-
-    /**
-     * The gesture tick timeout of the pet.
-     */
+    private int happinessDelay = Emulator.getIntUnixTimestamp();
     private int gestureTickTimeout = Emulator.getIntUnixTimestamp();
 
     /**
@@ -148,10 +107,8 @@ public class Pet implements ISerialize, Runnable {
      * The posture timeout of the pet.
      */
     private int postureTimeout = Emulator.getIntUnixTimestamp();
-
-    /**
-     * The time when the pet started staying.
-     */
+    @Getter
+    @Setter
     private int stayStartedAt = 0;
     /**
      * The number of ticks that the pet has spent idle while waiting for a command.
@@ -163,14 +120,12 @@ public class Pet implements ISerialize, Runnable {
      */
     private int freeCommandTicks = -1;
 
-    /**
-     * The current task of the pet.
-     */
+    @Getter
+    @Setter
     private PetTasks task = PetTasks.FREE;
 
-    /**
-     * Whether the pet is muted.
-     */
+    @Setter
+    @Getter
     private boolean muted = false;
 
     /**
@@ -188,12 +143,12 @@ public class Pet implements ISerialize, Runnable {
         this.name = set.getString("name");
         this.petData = Emulator.getGameEnvironment().getPetManager().getPetData(set.getInt("type"));
         if (this.petData == null) {
-            LOGGER.error("WARNING! Missing pet data for type: " + set.getInt("type") + "! Insert a new entry into the pet_actions table for this type!");
+            log.error("WARNING! Missing pet data for type: " + set.getInt("type") + "! Insert a new entry into the pet_actions table for this type!");
             this.petData = Emulator.getGameEnvironment().getPetManager().getPetData(0);
         }
         this.race = set.getInt("race");
         this.experience = set.getInt("experience");
-        this.happyness = set.getInt("happyness");
+        this.happiness = set.getInt("happyness");
         this.energy = set.getInt("energy");
         this.respect = set.getInt("respect");
         this.created = set.getInt("created");
@@ -220,13 +175,13 @@ public class Pet implements ISerialize, Runnable {
         this.petData = Emulator.getGameEnvironment().getPetManager().getPetData(type);
 
         if (this.petData == null) {
-            LOGGER.warn("Missing pet data for type: " + type + "! Insert a new entry into the pet_actions table for this type!");
+            log.warn("Missing pet data for type: " + type + "! Insert a new entry into the pet_actions table for this type!");
         }
 
         this.race = race;
         this.color = color;
         this.experience = 0;
-        this.happyness = 100;
+        this.happiness = 100;
         this.energy = 100;
         this.respect = 0;
         this.levelThirst = 0;
@@ -253,7 +208,7 @@ public class Pet implements ISerialize, Runnable {
 
     public void say(PetVocal vocal) {
         if (vocal != null)
-            this.say(vocal.message);
+            this.say(vocal.getMessage());
     }
 
 
@@ -270,19 +225,15 @@ public class Pet implements ISerialize, Runnable {
             this.energy = 0;
     }
 
-    /**
-     * Increases the happyness of the pet by the given amount.
-     *
-     * @param amount the amount to increase the happyness by
-     */
-    public void addHappyness(int amount) {
-        this.happyness += amount;
 
-        if (this.happyness > 100)
-            this.happyness = 100;
+    public void addHappiness(int amount) {
+        this.happiness += amount;
 
-        if (this.happyness < 0)
-            this.happyness = 0;
+        if (this.happiness > 100)
+            this.happiness = 100;
+
+        if (this.happiness < 0)
+            this.happiness = 0;
     }
 
     /**
@@ -343,7 +294,7 @@ public class Pet implements ISerialize, Runnable {
                         statement.setInt(8, this.roomUnit != null ? this.roomUnit.getBodyRotation().getValue() : 0);
                         statement.setInt(9, this.levelHunger);
                         statement.setInt(10, this.levelThirst);
-                        statement.setInt(11, this.happyness);
+                        statement.setInt(11, this.happiness);
                         statement.setInt(12, this.created);
                         statement.setInt(13, this.id);
                         statement.execute();
@@ -371,7 +322,7 @@ public class Pet implements ISerialize, Runnable {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
             this.needsUpdate = false;
@@ -423,7 +374,7 @@ public class Pet implements ISerialize, Runnable {
 
                    //this.addEnergy(5);
 
-                    this.addHappyness(1);
+                    this.addHappiness(1);
 
                     if (this.energy == PetManager.maxEnergy(this.level)) {
                         this.roomUnit.removeStatus(RoomUnitStatus.LAY);
@@ -453,8 +404,7 @@ public class Pet implements ISerialize, Runnable {
                     this.getRoomUnit().setCanWalk(true);
                 }
             } else {
-                int timeout = Emulator.getRandom().nextInt(10) * 2;
-                this.roomUnit.setWalkTimeOut(timeout < 20 ? 20 + time : timeout + time);
+                this.roomUnit.setWalkTimeOut(20 + time);
 
                 if (this.energy >= 2)
                     this.addEnergy(-1);
@@ -466,9 +416,9 @@ public class Pet implements ISerialize, Runnable {
                 if (this.levelThirst < 100)
                     this.levelThirst++;
 
-                if (this.happyness > 0 && time - this.happynessDelay >= 30) {
-                    this.happyness--;
-                    this.happynessDelay = time;
+                if (this.happiness > 0 && time - this.happinessDelay >= 30) {
+                    this.happiness--;
+                    this.happinessDelay = time;
                 }
             }
 
@@ -485,9 +435,9 @@ public class Pet implements ISerialize, Runnable {
                         this.say(this.petData.randomVocal(PetVocalsType.TIRED));
                         if (this.energy <= 10)
                             this.findNest();
-                    } else if (this.happyness > 85) {
+                    } else if (this.happiness > 85) {
                         this.say(this.petData.randomVocal(PetVocalsType.GENERIC_HAPPY));
-                    } else if (this.happyness < 15) {
+                    } else if (this.happiness < 15) {
                         this.say(this.petData.randomVocal(PetVocalsType.GENERIC_SAD));
                     } else if (this.levelHunger > 50) {
                         this.say(this.petData.randomVocal(PetVocalsType.HUNGRY));
@@ -534,25 +484,11 @@ public class Pet implements ISerialize, Runnable {
         if (this.task == null)
             return true;
 
-        switch (this.task) {
-            case DOWN:
-            case FLAT:
-            case HERE:
-            case SIT:
-            case BEG:
-            case PLAY:
-            case PLAY_FOOTBALL:
-            case PLAY_DEAD:
-            case FOLLOW:
-            case JUMP:
-            case STAND:
-            case NEST:
-            case RIDE:
+        return switch (this.task) {
+            case DOWN, FLAT, HERE, SIT, BEG, PLAY, PLAY_FOOTBALL, PLAY_DEAD, FOLLOW, JUMP, STAND, NEST, RIDE -> false;
+            default -> true;
+        };
 
-                return false;
-        }
-
-        return true;
     }
 
     /**
@@ -597,12 +533,12 @@ public class Pet implements ISerialize, Runnable {
         if (this.energy < 30) {
             this.roomUnit.setStatus(RoomUnitStatus.GESTURE, PetGestures.TIRED.getKey());
             this.findNest();
-        } else if (this.happyness == 100) {
+        } else if (this.happiness == 100) {
             this.roomUnit.setStatus(RoomUnitStatus.GESTURE, PetGestures.LOVE.getKey());
-        } else if (this.happyness >= 90) {
+        } else if (this.happiness >= 90) {
             this.randomHappyAction();
             this.roomUnit.setStatus(RoomUnitStatus.GESTURE, PetGestures.HAPPY.getKey());
-        } else if (this.happyness <= 5) {
+        } else if (this.happiness <= 5) {
             this.randomSadAction();
             this.roomUnit.setStatus(RoomUnitStatus.GESTURE, PetGestures.SAD.getKey());
         } else if (this.levelHunger > 80) {
@@ -738,8 +674,8 @@ public class Pet implements ISerialize, Runnable {
      * Makes the pet perform a random happy action.
      */
     public void randomHappyAction() {
-        if (this.petData.actionsHappy.length > 0) {
-            this.roomUnit.setStatus(RoomUnitStatus.fromString(this.petData.actionsHappy[Emulator.getRandom().nextInt(this.petData.actionsHappy.length)]), "");
+        if (this.petData.getActionsHappy().length > 0) {
+            this.roomUnit.setStatus(RoomUnitStatus.fromString(this.petData.getActionsHappy()[Emulator.getRandom().nextInt(this.petData.getActionsHappy().length)]), "");
         }
     }
 
@@ -747,8 +683,8 @@ public class Pet implements ISerialize, Runnable {
      * Makes the pet perform a random sad action.
      */
     public void randomSadAction() {
-        if (this.petData.actionsTired.length > 0) {
-            this.roomUnit.setStatus(RoomUnitStatus.fromString(this.petData.actionsTired[Emulator.getRandom().nextInt(this.petData.actionsTired.length)]), "");
+        if (this.petData.getActionsTired().length > 0) {
+            this.roomUnit.setStatus(RoomUnitStatus.fromString(this.petData.getActionsTired()[Emulator.getRandom().nextInt(this.petData.getActionsTired().length)]), "");
         }
     }
 
@@ -756,8 +692,8 @@ public class Pet implements ISerialize, Runnable {
      * Makes the pet perform a random action.
      */
     public void randomAction() {
-        if (this.petData.actionsRandom.length > 0) {
-            this.roomUnit.setStatus(RoomUnitStatus.fromString(this.petData.actionsRandom[Emulator.getRandom().nextInt(this.petData.actionsRandom.length)]), "");
+        if (this.petData.getActionsRandom().length > 0) {
+            this.roomUnit.setStatus(RoomUnitStatus.fromString(this.petData.getActionsRandom()[Emulator.getRandom().nextInt(this.petData.getActionsRandom().length)]), "");
         }
     }
 
@@ -791,7 +727,7 @@ public class Pet implements ISerialize, Runnable {
             }
             this.level++;
             this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
-            this.addHappyness(100);
+            this.addHappiness(100);
             this.roomUnit.setStatus(RoomUnitStatus.GESTURE, "exp");
             this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
             AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
@@ -845,13 +781,13 @@ public class Pet implements ISerialize, Runnable {
      * @param habbo the habbo who scratched the pet
      */
     public void scratched(Habbo habbo) {
-        this.addHappyness(10);
+        this.addHappiness(10);
         this.addExperience(10);
         this.addRespect();
         this.needsUpdate = true;
 
         if (habbo != null) {
-            habbo.getHabboStats().petRespectPointsToGive--;
+            habbo.getHabboStats().decreasePetRespectPointsToGive();
             habbo.getHabboInfo().getCurrentRoom().sendComposer(new PetRespectNotificationComposer(this).compose());
 
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetRespectGiver"));
@@ -860,298 +796,11 @@ public class Pet implements ISerialize, Runnable {
         AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetRespectReceiver"));
     }
 
-    /**
-     * Gets the ID of the pet.
-     *
-     * @return the ID of the pet
-     */
-    public int getId() {
-        return this.id;
-    }
 
-    /**
-     * Gets the ID of the user who owns the pet.
-     *
-     * @return the ID of the user who owns the pet
-     */
-    public int getUserId() {
-        return this.userId;
-    }
-
-    /**
-     * Sets the ID of the user who owns the pet.
-     *
-     * @param userId the ID of the user who owns the pet
-     */
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    /**
-     * Gets the room the pet is currently in.
-     *
-     * @return the room the pet is currently in
-     */
-    public Room getRoom() {
-        return this.room;
-    }
-
-    /**
-     * Sets the room the pet is currently in.
-     *
-     * @param room the room the pet is currently in
-     */
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
-    /**
-     * Gets the name of the pet.
-     *
-     * @return the name of the pet
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * Sets the name of the pet.
-     *
-     * @param name the name of the pet
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Gets the data for the pet's species.
-     *
-     * @return the data for the pet's species
-     */
-    public PetData getPetData() {
-        return this.petData;
-    }
-
-    /**
-     * Sets the data for the pet's species.
-     *
-     * @param petData the data for the pet's species
-     */
-    public void setPetData(PetData petData) {
-        this.petData = petData;
-    }
-
-    /**
-     * Gets the race of the pet.
-     *
-     * @return the race of the pet
-     */
-    public int getRace() {
-        return this.race;
-    }
-
-    /**
-     * Sets the race of the pet.
-     *
-     * @param race the race of the pet
-     */
-    public void setRace(int race) {
-        this.race = race;
-    }
-
-    /**
-     * Gets the color of the pet.
-     *
-     * @return the color of the pet
-     */
-    public String getColor() {
-        return this.color;
-    }
-
-    /**
-     * Sets the color of the pet.
-     *
-     * @param color the color of the pet
-     */
-    public void setColor(String color) {
-        this.color = color;
-    }
-    /**
-     * Gets the happiness level of the pet.
-     *
-     * @return the happiness level of the pet
-     */
-    public int getHappyness() {
-        return this.happyness;
-    }
-
-    /**
-     * Sets the happiness level of the pet.
-     *
-     * @param happyness the happiness level of the pet
-     */
-    public void setHappyness(int happyness) {
-        this.happyness = happyness;
-    }
-
-
-    /**
-     * Gets the experience points of the pet.
-     *
-     * @return the experience points of the pet
-     */
-    public int getExperience() {
-        return this.experience;
-    }
-
-    /**
-     * Sets the experience points of the pet.
-     *
-     * @param experience the experience points of the pet
-     */
-    public void setExperience(int experience) {
-        this.experience = experience;
-    }
-
-    /**
-     * Gets the energy level of the pet.
-     * @return the energy level of the pet
-     */
-    public int getEnergy() {
-        return this.energy;
-    }
-
-    /**
-     * Sets the energy of the pet.
-     * @param energy the new energy value for the pet
-     */
-    public void setEnergy(int energy) {
-        this.energy = energy;
-    }
-
-    /**
-     * Gets the maximum energy that the pet can have at its current level.
-     * @return the maximum energy that the pet can have at its current level
-     */
     public int getMaxEnergy() {
         return this.level * 100;
     }
 
-    /**
-     * Gets the time that the pet was created.
-     * @return the time that the pet was created
-     */
-    public int getCreated() {
-        return this.created;
-    }
-
-    /**
-     * Sets the time that the pet was created.
-     * @param created the new time that the pet was created
-     */
-    public void setCreated(int created) {
-        this.created = created;
-    }
-
-    /**
-     * Gets the level of the pet.
-     * @return the level of the pet
-     */
-    public int getLevel() {
-        return this.level;
-    }
-
-    /**
-     * Sets the level of the pet.
-     * @param level the new level of the pet
-     */
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    /**
-     * Gets the room unit object associated with this pet.
-     * @return the room unit object associated with this pet
-     */
-    public RoomUnit getRoomUnit() {
-        return this.roomUnit;
-    }
-
-    /**
-     * Sets the room unit object associated with this pet.
-     * @param roomUnit the new room unit object for this pet
-     */
-    public void setRoomUnit(RoomUnit roomUnit) {
-        this.roomUnit = roomUnit;
-    }
-
-    /**
-     * Gets the current task of this pet.
-     * @return the current task of this pet
-     */
-    public PetTasks getTask() {
-        return this.task;
-    }
-
-    /**
-     * Sets the current task of this pet.
-     * @param newTask the new task for this pet
-     */
-    public void setTask(PetTasks newTask) {
-        this.task = newTask;
-    }
-
-    /**
-     * Gets whether this pet is currently muted.
-     * @return true if this pet is muted, false otherwise
-     */
-    public boolean isMuted() {
-        return this.muted;
-    }
-
-    /**
-     * Sets whether this pet is currently muted.
-     * @param muted true if this pet should be muted, false otherwise
-     */
-    public void setMuted(boolean muted) {
-        this.muted = muted;
-    }
-
-    /**
-     * Gets the current thirst level of this pet.
-     * @return the current thirst level of this pet
-     */
-    public int getLevelThirst() {
-        return this.levelThirst;
-    }
-
-    /**
-     * Sets the current thirst level of this pet.
-     * @param levelThirst the new thirst level of this pet
-     */
-    public void setLevelThirst(int levelThirst) {
-        this.levelThirst = levelThirst;
-    }
-
-    /**
-     * Gets the current hunger level of this pet.
-     * @return the current hunger level of this pet
-     */
-    public int getLevelHunger() {
-        return this.levelHunger;
-    }
-
-    /**
-     * Sets the current hunger level of this pet.
-     * @param levelHunger the new hunger level of this pet
-     */
-    public void setLevelHunger(int levelHunger) {
-        this.levelHunger = levelHunger;
-    }
-
-    /**
-     * Removes this pet from the room.
-     */
     public void removeFromRoom() {
         removeFromRoom(false);
     }
@@ -1176,19 +825,4 @@ public class Pet implements ISerialize, Runnable {
         this.needsUpdate = true;
     }
 
-    /**
-     * Gets the time at which this pet started staying in the room.
-     * @return the time at which this pet started staying in the room
-     */
-    public int getStayStartedAt() {
-        return stayStartedAt;
-    }
-
-    /**
-     * Sets the time at which this pet started staying in the room.
-     * @param stayStartedAt the new time at which this pet started staying in the room
-     */
-    public void setStayStartedAt(int stayStartedAt) {
-        this.stayStartedAt = stayStartedAt;
-    }
 }

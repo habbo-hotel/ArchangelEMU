@@ -6,8 +6,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.friends.MessengerErrorComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,8 +15,8 @@ import java.sql.SQLException;
 
 import static com.eu.habbo.habbohotel.users.HabboManager.getOfflineHabboInfo;
 
+@Slf4j
 public class AcceptFriendEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AcceptFriendEvent.class);
 
     @Override
     public void handle() throws Exception {
@@ -54,7 +53,7 @@ public class AcceptFriendEvent extends MessageHandler {
                         }
                     }
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                     return;
                 }
             }
@@ -65,12 +64,12 @@ public class AcceptFriendEvent extends MessageHandler {
                 continue;
             }
 
-            if(this.client.getHabbo().getMessenger().getFriends().size() >= this.client.getHabbo().getHabboStats().maxFriends && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
+            if(this.client.getHabbo().getMessenger().getFriends().size() >= this.client.getHabbo().getHabboStats().getMaxFriends() && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
                 this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_OWN_FULL));
                 break;
             }
 
-            if(target.getMessenger().getFriends().size() >= target.getHabboStats().maxFriends && !target.hasPermission("acc_infinite_friends")) {
+            if(target.getMessenger().getFriends().size() >= target.getHabboStats().getMaxFriends() && !target.hasPermission("acc_infinite_friends")) {
                 this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_TARGET_FULL));
                 continue;
             }

@@ -28,7 +28,7 @@ public class GiveRankCommand extends Command {
 
         if (params.length == 3) {
             if (StringUtils.isNumeric(params[2])) {
-                int rankId = Integer.valueOf(params[2]);
+                int rankId = Integer.parseInt(params[2]);
                 if (Emulator.getGameEnvironment().getPermissionsManager().rankExists(rankId))
                     rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(rankId);
             } else {
@@ -52,11 +52,10 @@ public class GiveRankCommand extends Command {
                     Emulator.getGameEnvironment().getHabboManager().setRank(habbo.getId(), rank.getId());
 
                     gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_give_rank.updated").replace("%id%", rank.getName()).replace("%username%", params[1]), RoomChatMessageBubbles.ALERT);
-                    return true;
                 } else {
                     gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_give_rank.user_offline").replace("%id%", rank.getName()).replace("%username%", params[1]), RoomChatMessageBubbles.ALERT);
-                    return true;
                 }
+                return true;
             }
         }
 

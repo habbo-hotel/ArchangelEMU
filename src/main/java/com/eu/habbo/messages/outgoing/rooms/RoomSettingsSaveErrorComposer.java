@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.rooms;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RoomSettingsSaveErrorComposer extends MessageComposer {
     public final static int PASSWORD_REQUIRED = 5;
     public final static int ROOM_NAME_MISSING = 7;
@@ -16,12 +18,6 @@ public class RoomSettingsSaveErrorComposer extends MessageComposer {
     private final int roomId;
     private final int errorCode;
     private final String info;
-
-    public RoomSettingsSaveErrorComposer(int roomId, int errorCode, String info) {
-        this.roomId = roomId;
-        this.errorCode = errorCode;
-        this.info = info;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

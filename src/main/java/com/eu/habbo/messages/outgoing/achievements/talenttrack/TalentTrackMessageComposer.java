@@ -9,18 +9,19 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+@AllArgsConstructor
+@Getter
 public class TalentTrackMessageComposer extends MessageComposer {
-    public final Habbo habbo;
-    public final TalentTrackType type;
-    public TalentTrackMessageComposer(Habbo habbo, TalentTrackType type) {
-        this.habbo = habbo;
-        this.type = type;
-    }
+    private final Habbo habbo;
+    private final TalentTrackType type;
+
 
     @Override
     protected ServerMessage composeInternal() {
@@ -65,7 +66,7 @@ public class TalentTrackMessageComposer extends MessageComposer {
                                 achievementLevel = achievement.firstLevel();
                             }
                             if (finalState != TalentTrackState.LOCKED) {
-                                if (achievementLevel != null && achievementLevel.progress <= progress) {
+                                if (achievementLevel != null && achievementLevel.getProgress() <= progress) {
                                     this.response.appendInt(2);
                                 } else {
                                     this.response.appendInt(1);
@@ -74,7 +75,7 @@ public class TalentTrackMessageComposer extends MessageComposer {
                                 this.response.appendInt(0);
                             }
                             this.response.appendInt(progress);
-                            this.response.appendInt(achievementLevel != null ? achievementLevel.progress : 0);
+                            this.response.appendInt(achievementLevel != null ? achievementLevel.getProgress() : 0);
                         } else {
                             this.response.appendInt(0);
                             this.response.appendInt(0);

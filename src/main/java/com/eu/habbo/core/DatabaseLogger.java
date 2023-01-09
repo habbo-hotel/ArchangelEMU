@@ -1,18 +1,15 @@
 package com.eu.habbo.core;
 
 import com.eu.habbo.Emulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+@Slf4j
 public class DatabaseLogger {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseLogger.class);
-
     private final ConcurrentLinkedQueue<DatabaseLoggable> loggables = new ConcurrentLinkedQueue<>();
 
     public void store(DatabaseLoggable loggable) {
@@ -39,7 +36,7 @@ public class DatabaseLogger {
 
             }
         } catch (SQLException e) {
-            LOGGER.error("Exception caught while saving loggables to database.", e);
+            log.error("Exception caught while saving loggables to database.", e);
         }
     }
 

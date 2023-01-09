@@ -13,10 +13,9 @@ import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,9 +23,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
+@Slf4j
 public class ItemsComponent {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ItemsComponent.class);
 
+    @Getter
     private final TIntObjectMap<HabboItem> items = TCollections.synchronizedMap(new TIntObjectHashMap<>());
 
     private final HabboInventory inventory;
@@ -50,15 +50,15 @@ public class ItemsComponent {
                         if (item != null) {
                             itemsList.put(set.getInt("id"), item);
                         } else {
-                            LOGGER.error("Failed to load HabboItem: " + set.getInt("id"));
+                            log.error("Failed to load HabboItem: " + set.getInt("id"));
                         }
                     } catch (SQLException e) {
-                        LOGGER.error("Caught SQL exception", e);
+                        log.error("Caught SQL exception", e);
                     }
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return itemsList;
@@ -103,16 +103,13 @@ public class ItemsComponent {
     public HabboItem getAndRemoveHabboItem(final Item item) {
         final HabboItem[] habboItem = {null};
         synchronized (this.items) {
-            this.items.forEachValue(new TObjectProcedure<HabboItem>() {
-                @Override
-                public boolean execute(HabboItem object) {
-                    if (object.getBaseItem() == item) {
-                        habboItem[0] = object;
-                        return false;
-                    }
-
-                    return true;
+            this.items.forEachValue(object -> {
+                if (object.getBaseItem() == item) {
+                    habboItem[0] = object;
+                    return false;
                 }
+
+                return true;
             });
         }
         this.removeHabboItem(habboItem[0]);
@@ -134,10 +131,6 @@ public class ItemsComponent {
         }
     }
 
-    public TIntObjectMap<HabboItem> getItems() {
-        return this.items;
-    }
-
     public THashSet<HabboItem> getItemsAsValueCollection() {
         THashSet<HabboItem> items = new THashSet<>();
         items.addAll(this.items.valueCollection());
@@ -154,7 +147,7 @@ public class ItemsComponent {
             TIntObjectIterator<HabboItem> items = this.items.iterator();
 
             if (items == null) {
-                LOGGER.error("Items is NULL!");
+                log.error("Items is NULL!");
                 return;
             }
 

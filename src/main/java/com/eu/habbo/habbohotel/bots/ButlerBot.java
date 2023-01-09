@@ -10,8 +10,7 @@ import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToRoomUnit;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -22,8 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class ButlerBot extends Bot {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ButlerBot.class);
     public static THashMap<THashSet<String>, Integer> serveItems = new THashMap<>();
 
     public ButlerBot(ResultSet set) throws SQLException {
@@ -48,7 +47,7 @@ public class ButlerBot extends Bot {
                 serveItems.put(ks, set.getInt("item"));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -94,13 +93,13 @@ public class ButlerBot extends Bot {
                                 tasks.add(new RoomUnitGiveHanditem(this.getRoomUnit(), serveEvent.habbo.getHabboInfo().getCurrentRoom(), 0));
 
                                 tasks.add(() -> {
-                                    if(this.getRoom() != null) {
+                                    if (this.getRoom() != null) {
                                         String botMessage = Emulator.getTexts()
                                                 .getValue("bots.butler.given")
                                                 .replace("%key%", key)
                                                 .replace("%username%", serveEvent.habbo.getHabboInfo().getUsername());
 
-                                        if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), this.getRoom(), new Object[]{ botMessage })) {
+                                        if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), this.getRoom(), new Object[]{botMessage})) {
                                             bot.talk(botMessage);
                                         }
                                     }
@@ -124,7 +123,7 @@ public class ButlerBot extends Bot {
                                     Emulator.getThreading().run(failedReached.get(0), 1000);
                                 }
                             } else {
-                                if(this.getRoom() != null) {
+                                if (this.getRoom() != null) {
                                     this.getRoom().giveHandItem(serveEvent.habbo, serveEvent.itemId);
 
                                     String msg = Emulator.getTexts().getValue("bots.butler.given").replace("%key%", keyword).replace("%username%", serveEvent.habbo.getHabboInfo().getUsername());

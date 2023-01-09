@@ -1,15 +1,22 @@
 package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.habbohotel.users.Habbo;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class RideablePet extends Pet {
 
+    @Setter
+    @Getter
     private Habbo rider;
     private boolean hasSaddle;
+    @Setter
     private boolean anyoneCanRide;
+    @Setter
+    @Getter
     private int saddleItemId;
 
     public RideablePet(ResultSet set) throws SQLException {
@@ -34,23 +41,4 @@ public class RideablePet extends Pet {
         return this.anyoneCanRide;
     }
 
-    public void setAnyoneCanRide(boolean anyoneCanRide) {
-        this.anyoneCanRide = anyoneCanRide;
-    }
-
-    public Habbo getRider() {
-        return this.rider;
-    }
-
-    public void setRider(Habbo rider) {
-        this.rider = rider;
-    }
-
-    public int getSaddleItemId() {
-        return saddleItemId;
-    }
-
-    public void setSaddleItemId(int saddleItemId) {
-        this.saddleItemId = saddleItemId;
-    }
 }

@@ -1,25 +1,24 @@
 package com.eu.habbo.habbohotel.wired;
 
-public class WiredGiveRewardItem {
-    public final int id;
-    public final boolean badge;
-    public final String data;
-    public final int probability;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    public WiredGiveRewardItem(int id, boolean badge, String data, int probability) {
-        this.id = id;
-        this.badge = badge;
-        this.data = data;
-        this.probability = probability;
-    }
+@Getter
+@AllArgsConstructor
+public class WiredGiveRewardItem {
+    private final int id;
+    private final boolean badge;
+    private final String data;
+    private final int probability;
+
 
     public WiredGiveRewardItem(String dataString) {
         String[] data = dataString.split(",");
 
-        this.id = Integer.valueOf(data[0]);
+        this.id = Integer.parseInt(data[0]);
         this.badge = data[1].equalsIgnoreCase("0");
         this.data = data[2];
-        this.probability = Integer.valueOf(data[3]);
+        this.probability = Integer.parseInt(data[3]);
     }
 
     @Override

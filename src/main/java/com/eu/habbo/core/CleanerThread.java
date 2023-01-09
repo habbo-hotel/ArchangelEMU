@@ -7,8 +7,7 @@ import com.eu.habbo.messages.incoming.friends.HabboSearchEvent;
 import com.eu.habbo.messages.incoming.navigator.RoomTextSearchEvent;
 import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 import com.eu.habbo.threading.runnables.AchievementUpdater;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,9 +15,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
+@Slf4j
 public class CleanerThread implements Runnable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CleanerThread.class);
 
     private static final int DELAY = 10000;
     private static final int RELOAD_HALL_OF_FAME = 1800;
@@ -128,10 +126,10 @@ public class CleanerThread implements Runnable {
                 statement.execute("DELETE FROM users_effects WHERE total <= 0");
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
-        LOGGER.info("Database -> Cleaned!");
+        log.info("Database -> Cleaned!");
     }
 
     public void refillDailyRespects() {
@@ -140,13 +138,13 @@ public class CleanerThread implements Runnable {
             statement.setInt(2, Emulator.getConfig().getInt("hotel.daily.respect.pets"));
             statement.executeUpdate();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         if (Emulator.isReady) {
             for (Habbo habbo : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values()) {
-                habbo.getHabboStats().respectPointsToGive = Emulator.getConfig().getInt("hotel.daily.respect");
-                habbo.getHabboStats().petRespectPointsToGive = Emulator.getConfig().getInt("hotel.daily.respect.pets");
+                habbo.getHabboStats().setRespectPointsToGive(Emulator.getConfig().getInt("hotel.daily.respect"));
+                habbo.getHabboStats().setPetRespectPointsToGive(Emulator.getConfig().getInt("hotel.daily.respect.pets"));
                 habbo.getClient().sendResponse(new UserObjectComposer(habbo));
             }
         }
@@ -162,7 +160,7 @@ public class CleanerThread implements Runnable {
                     habbo.clearCaches();
                 }
             } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
+                log.error("Caught exception", e);
             }
         }
     }

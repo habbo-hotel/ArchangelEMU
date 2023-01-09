@@ -1,11 +1,18 @@
 package com.eu.habbo.habbohotel.catalog;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@AllArgsConstructor
 public class VoucherHistoryEntry {
+    @Getter
     private final int voucherId;
+    @Getter
     private final int userId;
+    @Getter
     private final int timestamp;
 
     public VoucherHistoryEntry(ResultSet set) throws SQLException {
@@ -14,21 +21,4 @@ public class VoucherHistoryEntry {
         this.timestamp = set.getInt("timestamp");
     }
 
-    public VoucherHistoryEntry(int voucherId, int userId, int timestamp) {
-        this.voucherId = voucherId;
-        this.userId = userId;
-        this.timestamp = timestamp;
-    }
-
-    public int getVoucherId() {
-        return voucherId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public int getTimestamp() {
-        return timestamp;
-    }
 }

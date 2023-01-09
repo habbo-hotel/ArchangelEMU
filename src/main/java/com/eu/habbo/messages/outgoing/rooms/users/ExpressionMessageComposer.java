@@ -5,15 +5,12 @@ import com.eu.habbo.habbohotel.rooms.RoomUserAction;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ExpressionMessageComposer extends MessageComposer {
-    private RoomUserAction action;
-    private RoomUnit roomUnit;
-
-    public ExpressionMessageComposer(RoomUnit roomUnit, RoomUserAction action) {
-        this.roomUnit = roomUnit;
-        this.action = action;
-    }
+    private final RoomUnit roomUnit;
+    private final RoomUserAction action;
 
     @Override
     protected ServerMessage composeInternal() {

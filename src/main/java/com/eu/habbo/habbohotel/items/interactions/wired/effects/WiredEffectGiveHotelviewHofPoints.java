@@ -4,16 +4,13 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
-import gnu.trove.procedure.TObjectProcedure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,19 +40,16 @@ public class WiredEffectGiveHotelviewHofPoints extends InteractionWiredEffect {
         message.appendString(this.amount + "");
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(type.code);
+        message.appendInt(type.getCode());
         message.appendInt(this.getDelay());
 
         if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
-                @Override
-                public boolean execute(InteractionWiredTrigger object) {
-                    if (!object.isTriggeredByRoomUnit()) {
-                        invalidTriggers.add(object.getBaseItem().getSpriteId());
-                    }
-                    return true;
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
+                if (!object.isTriggeredByRoomUnit()) {
+                    invalidTriggers.add(object.getBaseItem().getSpriteId());
                 }
+                return true;
             });
             message.appendInt(invalidTriggers.size());
             for (Integer i : invalidTriggers) {
@@ -117,11 +111,11 @@ public class WiredEffectGiveHotelviewHofPoints extends InteractionWiredEffect {
             this.amount = 0;
 
             if (wiredData.split("\t").length >= 2) {
-                super.setDelay(Integer.valueOf(wiredData.split("\t")[0]));
+                super.setDelay(Integer.parseInt(wiredData.split("\t")[0]));
 
                 try {
-                    this.amount = Integer.valueOf(this.getWiredData().split("\t")[1]);
-                } catch (Exception e) {
+                    this.amount = Integer.parseInt(this.getWiredData().split("\t")[1]);
+                } catch (Exception ignored) {
                 }
             }
 

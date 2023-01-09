@@ -2,20 +2,24 @@ package com.eu.habbo.habbohotel.users.cache;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class HabboOfferPurchase {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HabboOfferPurchase.class);
     private final int userId;
+    @Getter
     private final int offerId;
+    @Getter
     private int state;
+    @Getter
     private int amount;
+    @Getter
     private int lastPurchaseTimestamp;
     private boolean needsUpdate = false;
 
@@ -41,7 +45,7 @@ public class HabboOfferPurchase {
                 statement.setInt(2, offerId);
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
                 return null;
             }
 
@@ -52,30 +56,14 @@ public class HabboOfferPurchase {
         return purchase;
     }
 
-    public int getOfferId() {
-        return this.offerId;
-    }
-
-    public int getState() {
-        return this.state;
-    }
-
     public void setState(int state) {
         this.state = state;
         this.needsUpdate = true;
     }
 
-    public int getAmount() {
-        return this.amount;
-    }
-
     public void incrementAmount(int amount) {
         this.amount += amount;
         this.needsUpdate = true;
-    }
-
-    public int getLastPurchaseTimestamp() {
-        return this.lastPurchaseTimestamp;
     }
 
     public void setLastPurchaseTimestamp(int timestamp) {

@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class FurniRentOrBuyoutOfferMessageComposer extends MessageComposer {
     private final boolean unknownBoolean1;
     private final String unknownString1;
@@ -11,15 +13,6 @@ public class FurniRentOrBuyoutOfferMessageComposer extends MessageComposer {
     private final int credits;
     private final int points;
     private final int pointsType;
-
-    public FurniRentOrBuyoutOfferMessageComposer(boolean unknownBoolean1, String unknownString1, boolean unknownBoolean2, int credits, int points, int pointsType) {
-        this.unknownBoolean1 = unknownBoolean1;
-        this.unknownString1 = unknownString1;
-        this.unknownBoolean2 = unknownBoolean2;
-        this.credits = credits;
-        this.points = points;
-        this.pointsType = pointsType;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -1,11 +1,14 @@
 package com.eu.habbo.habbohotel.wired;
 
+import lombok.Getter;
+
+@Getter
 public class WiredMatchFurniSetting {
-    public final int item_id;
-    public final String state;
-    public final int rotation;
-    public final int x;
-    public final int y;
+    private final int item_id;
+    private final String state;
+    private final int rotation;
+    private final int x;
+    private final int y;
 
     public WiredMatchFurniSetting(int itemId, String state, int rotation, int x, int y) {
         this.item_id = itemId;

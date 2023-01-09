@@ -3,7 +3,6 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -21,7 +20,7 @@ public class InteractionNoSidesVendingMachine extends InteractionVendingMachine 
     @Override
     public THashSet<RoomTile> getActivatorTiles(Room room) {
 
-        THashSet<RoomTile> tiles = new THashSet<RoomTile>();
+        THashSet<RoomTile> tiles = new THashSet<>();
         for(int x = -1; x <= 1; x++) {
             for(int y = -1; y <= 1; y++) {
                 RoomTile tile = room.getLayout().getTile((short)(this.getX() + x), (short)(this.getY() + y));

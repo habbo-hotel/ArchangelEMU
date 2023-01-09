@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.handshake;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ErrorReportComposer extends MessageComposer {
     private final int messageId;
     private final int errorCode;
@@ -13,12 +15,6 @@ public class ErrorReportComposer extends MessageComposer {
         this.messageId = 0;
         this.errorCode = errorCode;
         this.timestamp = "";
-    }
-
-    public ErrorReportComposer(int messageId, int errorCode, String timestamp) {
-        this.messageId = messageId;
-        this.errorCode = errorCode;
-        this.timestamp = timestamp;
     }
 
     @Override

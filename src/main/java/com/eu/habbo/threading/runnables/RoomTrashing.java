@@ -46,9 +46,9 @@ public class RoomTrashing implements Runnable {
 
                     RoomTile t = null;
                     while (offset > 0) {
-                        t = INSTANCE.room.getLayout().getTileInFront(INSTANCE.room.getLayout().getTile(event.toLocation.x, event.toLocation.y), event.habbo.getRoomUnit().getBodyRotation().getValue(), (short) offset);
+                        t = INSTANCE.room.getLayout().getTileInFront(INSTANCE.room.getLayout().getTile(event.toLocation.getX(), event.toLocation.getY()), event.habbo.getRoomUnit().getBodyRotation().getValue(), (short) offset);
 
-                        if (!INSTANCE.room.getLayout().tileWalkable(t.x, t.y)) {
+                        if (!INSTANCE.room.getLayout().tileWalkable(t.getX(), t.getY())) {
                             offset--;
                         } else {
                             break;
@@ -56,7 +56,7 @@ public class RoomTrashing implements Runnable {
                     }
 
                     for (HabboItem item : items) {
-                        double offsetZ = (INSTANCE.room.getTopHeightAt(t.x, t.y)) - item.getZ();
+                        double offsetZ = (INSTANCE.room.getTopHeightAt(t.getX(), t.getY())) - item.getZ();
 
                         messages.add(new FloorItemOnRollerComposer(item, null, t, offsetZ, INSTANCE.room).compose());
                     }
@@ -66,9 +66,9 @@ public class RoomTrashing implements Runnable {
 
                     t = null;
                     while (offset > 0) {
-                        t = INSTANCE.room.getLayout().getTileInFront(INSTANCE.room.getLayout().getTile(event.toLocation.x, event.toLocation.y), event.habbo.getRoomUnit().getBodyRotation().getValue() + 7, (short) offset);
+                        t = INSTANCE.room.getLayout().getTileInFront(INSTANCE.room.getLayout().getTile(event.toLocation.getX(), event.toLocation.getY()), event.habbo.getRoomUnit().getBodyRotation().getValue() + 7, (short) offset);
 
-                        if (!INSTANCE.room.getLayout().tileWalkable(t.x, t.y)) {
+                        if (!INSTANCE.room.getLayout().tileWalkable(t.getX(), t.getY())) {
                             offset--;
                         } else {
                             break;
@@ -82,7 +82,7 @@ public class RoomTrashing implements Runnable {
                     }
 
                     for (HabboItem item : items) {
-                        double offsetZ = (INSTANCE.room.getTopHeightAt(t.x, t.y)) - item.getZ();
+                        double offsetZ = (INSTANCE.room.getTopHeightAt(t.getX(), t.getY())) - item.getZ();
 
                         messages.add(new FloorItemOnRollerComposer(item, null, t, offsetZ, INSTANCE.room).compose());
                     }
@@ -93,7 +93,7 @@ public class RoomTrashing implements Runnable {
                     while (offset > 0) {
                         t = INSTANCE.getRoom().getLayout().getTileInFront(event.toLocation, event.habbo.getRoomUnit().getBodyRotation().getValue() + 1, (short) offset);
 
-                        if (!INSTANCE.room.getLayout().tileWalkable(t.x, t.y)) {
+                        if (!INSTANCE.room.getLayout().tileWalkable(t.getX(), t.getY())) {
                             offset--;
                         } else {
                             break;
@@ -104,7 +104,7 @@ public class RoomTrashing implements Runnable {
                     items = INSTANCE.room.getItemsAt(s);
 
                     for (HabboItem item : items) {
-                        double offsetZ = (INSTANCE.room.getTopHeightAt(t.x, t.y)) - item.getZ();
+                        double offsetZ = (INSTANCE.room.getTopHeightAt(t.getX(), t.getY())) - item.getZ();
 
                         messages.add(new FloorItemOnRollerComposer(item, null, t, offsetZ, INSTANCE.room).compose());
                     }

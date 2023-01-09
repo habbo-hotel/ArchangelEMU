@@ -5,21 +5,17 @@ import com.eu.habbo.habbohotel.modtool.ModToolRoomVisit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+@AllArgsConstructor
 public class UserChatlogComposer extends MessageComposer {
     private final SimpleDateFormat format = new SimpleDateFormat("HH:mm");
     private final ArrayList<ModToolRoomVisit> set;
     private final int userId;
     private final String username;
-
-    public UserChatlogComposer(ArrayList<ModToolRoomVisit> set, int userId, String username) {
-        this.set = set;
-        this.userId = userId;
-        this.username = username;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -33,17 +29,17 @@ public class UserChatlogComposer extends MessageComposer {
             this.response.appendShort(2);
             this.response.appendString("roomName");
             this.response.appendByte(2);
-            this.response.appendString(visit.roomName);
+            this.response.appendString(visit.getRoomName());
             this.response.appendString("roomId");
             this.response.appendByte(1);
-            this.response.appendInt(visit.roomId);
+            this.response.appendInt(visit.getRoomId());
 
-            this.response.appendShort(visit.chat.size());
-            for (ModToolChatLog chatLog : visit.chat) {
-                this.response.appendString(format.format(chatLog.timestamp * 1000L));
-                this.response.appendInt(chatLog.habboId);
-                this.response.appendString(chatLog.username);
-                this.response.appendString(chatLog.message);
+            this.response.appendShort(visit.getChat().size());
+            for (ModToolChatLog chatLog : visit.getChat()) {
+                this.response.appendString(format.format(chatLog.getTimestamp() * 1000L));
+                this.response.appendInt(chatLog.getHabboId());
+                this.response.appendString(chatLog.getUsername());
+                this.response.appendString(chatLog.getMessage());
                 this.response.appendBoolean(false);
             }
         }

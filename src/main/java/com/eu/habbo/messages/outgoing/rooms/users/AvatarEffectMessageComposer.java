@@ -4,7 +4,9 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class AvatarEffectMessageComposer extends MessageComposer {
     private final RoomUnit roomUnit;
     private final int effectId;
@@ -14,10 +16,6 @@ public class AvatarEffectMessageComposer extends MessageComposer {
         this.effectId = -1;
     }
 
-    public AvatarEffectMessageComposer(RoomUnit roomUnit, int effectId) {
-        this.roomUnit = roomUnit;
-        this.effectId = effectId;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

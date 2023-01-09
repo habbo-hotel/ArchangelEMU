@@ -46,9 +46,9 @@ public class InteractionMonsterCrackable extends InteractionCrackable implements
     @Override
     public void reset(Room room) {
         RoomTile tile = room.getRandomWalkableTile();
-        this.setX(tile.x);
-        this.setY(tile.y);
-        this.setZ(room.getStackHeight(tile.x, tile.y, false));
+        this.setX(tile.getX());
+        this.setY(tile.getY());
+        this.setZ(room.getStackHeight(tile.getX(), tile.getY(), false));
         super.reset(room);
     }
 

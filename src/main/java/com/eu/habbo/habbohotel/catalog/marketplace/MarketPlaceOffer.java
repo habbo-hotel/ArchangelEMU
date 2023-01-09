@@ -5,25 +5,38 @@ import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 
+@Slf4j
 public class MarketPlaceOffer implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarketPlaceOffer.class);
-
-    public int avarage;
+    public int average;
     public int count;
+    @Getter
+    @Setter
     private int offerId;
-    private Item baseItem;
-    private int itemId;
+    private final Item baseItem;
+
+    private final int itemId;
+
+    @Getter
     private int price;
+    @Getter
     private int limitedStack;
+    @Getter
     private int limitedNumber;
+    @Getter
     private int timestamp = Emulator.getIntUnixTimestamp();
+    @Getter
+    @Setter
     private int soldTimestamp = 0;
+    @Getter
+    @Setter
     private MarketPlaceState state = MarketPlaceState.OPEN;
+    @Setter
     private boolean needsUpdate = false;
 
     public MarketPlaceOffer(ResultSet set, boolean privateOffer) throws SQLException {
@@ -36,12 +49,12 @@ public class MarketPlaceOffer implements Runnable {
         this.itemId = set.getInt("item_id");
 
         if (!set.getString("ltd_data").split(":")[1].equals("0")) {
-            this.limitedStack = Integer.valueOf(set.getString("ltd_data").split(":")[0]);
-            this.limitedNumber = Integer.valueOf(set.getString("ltd_data").split(":")[1]);
+            this.limitedStack = Integer.parseInt(set.getString("ltd_data").split(":")[0]);
+            this.limitedNumber = Integer.parseInt(set.getString("ltd_data").split(":")[1]);
         }
 
         if (!privateOffer) {
-            this.avarage = set.getInt("avg");
+            this.average = set.getInt("avg");
             this.count = set.getInt("number");
             this.price = set.getInt("minPrice");
         }
@@ -70,7 +83,7 @@ public class MarketPlaceOffer implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -90,69 +103,10 @@ public class MarketPlaceOffer implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
-    public int getOfferId() {
-        return this.offerId;
-    }
-
-    public void setOfferId(int offerId) {
-        this.offerId = offerId;
-    }
-
-    public int getItemId() {
-        return this.baseItem.getSpriteId();
-    }
-
-    public int getPrice() {
-        return this.price;
-    }
-
-    public MarketPlaceState getState() {
-        return this.state;
-    }
-
-    public void setState(MarketPlaceState state) {
-        this.state = state;
-    }
-
-    public int getTimestamp() {
-        return this.timestamp;
-    }
-
-    public int getSoldTimestamp() {
-        return this.soldTimestamp;
-    }
-
-    public void setSoldTimestamp(int soldTimestamp) {
-        this.soldTimestamp = soldTimestamp;
-    }
-
-    public int getLimitedStack() {
-        return this.limitedStack;
-    }
-
-    public int getLimitedNumber() {
-        return this.limitedNumber;
-    }
-
-    public int getSoldItemId() {
-        return this.itemId;
-    }
-
-    public void needsUpdate(boolean value) {
-        this.needsUpdate = value;
-    }
-
-    public int getType() {
-        if (this.limitedStack > 0) {
-            return 3;
-        }
-
-        return this.baseItem.getType().equals(FurnitureType.WALL) ? 2 : 1;
-    }
 
     @Override
     public void run() {
@@ -164,8 +118,25 @@ public class MarketPlaceOffer implements Runnable {
                 statement.setInt(3, this.offerId);
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
+    }
+
+    public int getType() {
+        if (this.limitedStack > 0) {
+            return 3;
+        }
+
+        return this.baseItem.getType().equals(FurnitureType.WALL) ? 2 : 1;
+    }
+
+    public int getItemId() {
+        return this.baseItem.getSpriteId();
+    }
+
+
+    public int getSoldItemId() {
+        return this.itemId;
     }
 }

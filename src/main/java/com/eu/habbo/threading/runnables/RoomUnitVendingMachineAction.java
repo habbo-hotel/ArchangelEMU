@@ -5,21 +5,16 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@AllArgsConstructor
 public class RoomUnitVendingMachineAction implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnitVendingMachineAction.class);
 
     private final Habbo habbo;
     private final HabboItem habboItem;
     private final Room room;
-
-    public RoomUnitVendingMachineAction(Habbo habbo, HabboItem habboItem, Room room) {
-        this.habbo = habbo;
-        this.habboItem = habboItem;
-        this.room = room;
-    }
 
     @Override
     public void run() {
@@ -32,10 +27,10 @@ public class RoomUnitVendingMachineAction implements Runnable {
                             try {
                                 this.habboItem.onClick(this.habbo.getClient(), this.room, new Object[]{0});
                             } catch (Exception e) {
-                                LOGGER.error("Caught exception", e);
+                                log.error("Caught exception", e);
                             }
                         } else {
-                            if (this.room.getLayout().getTile(tile.x, tile.y).isWalkable()) {
+                            if (this.room.getLayout().getTile(tile.getX(), tile.getY()).isWalkable()) {
                                 this.habbo.getRoomUnit().setGoalLocation(tile);
                                 Emulator.getThreading().run(this, (long) this.habbo.getRoomUnit().getPath().size() + 2 * 510);
                             }

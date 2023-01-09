@@ -6,15 +6,13 @@ import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.habbohotel.catalog.CatalogPageLayouts;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.catalog.*;
+import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.users.ClubGiftSelectedComposer;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SelectClubGiftEvent extends MessageHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SelectClubGiftEvent.class);
 
     @Override
     public void handle() throws Exception {
@@ -22,13 +20,13 @@ public class SelectClubGiftEvent extends MessageHandler {
         String itemName = this.packet.readString();
 
         if(itemName.isEmpty()) {
-            LOGGER.error("itemName is empty");
+            log.error("itemName is empty");
             this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
 
         if(this.client.getHabbo().getHabboStats().getRemainingClubGifts() < 1) {
-            LOGGER.error("User has no remaining club gifts");
+            log.error("User has no remaining club gifts");
             this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
@@ -36,7 +34,7 @@ public class SelectClubGiftEvent extends MessageHandler {
         CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().getCatalogPageByLayout(CatalogPageLayouts.club_gift.name().toLowerCase());
 
         if(page == null) {
-            LOGGER.error("Catalog page not found");
+            log.error("Catalog page not found");
             this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
@@ -44,7 +42,7 @@ public class SelectClubGiftEvent extends MessageHandler {
         CatalogItem catalogItem = page.getCatalogItems().valueCollection().stream().filter(x -> x.getName().equalsIgnoreCase(itemName)).findAny().orElse(null);
 
         if(catalogItem == null) {
-            LOGGER.error("Catalog item not found");
+            log.error("Catalog item not found");
             this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
@@ -56,7 +54,7 @@ public class SelectClubGiftEvent extends MessageHandler {
         catch (NumberFormatException ignored) { }
 
         if(daysRequired > (int) Math.floor(this.client.getHabbo().getHabboStats().getPastTimeAsClub() / 86400.0)) {
-            LOGGER.error("Not been member for long enough");
+            log.error("Not been member for long enough");
             this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
             return;
         }
@@ -68,7 +66,7 @@ public class SelectClubGiftEvent extends MessageHandler {
             }
         }
 
-        this.client.getHabbo().getHabboStats().hcGiftsClaimed++;
+        this.client.getHabbo().getHabboStats().setHcGiftsClaimed(this.client.getHabbo().getHabboStats().getHcGiftsClaimed()+1);
         Emulator.getThreading().run(this.client.getHabbo().getHabboStats());
 
         this.client.sendResponse(new ClubGiftSelectedComposer(itemName, itemsGiven));

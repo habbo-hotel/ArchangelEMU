@@ -20,17 +20,17 @@ public class CloseIssueDefaultActionEvent extends MessageHandler {
                 CfhTopic modToolCategory = Emulator.getGameEnvironment().getModToolManager().getCfhTopic(category);
 
                 if (modToolCategory != null) {
-                    ModToolPreset defaultSanction = modToolCategory.defaultSanction;
+                    ModToolPreset defaultSanction = modToolCategory.getDefaultSanction();
 
                     if (defaultSanction != null) {
                         Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(issue.reportedId);
 
-                        if (defaultSanction.banLength > 0) {
-                            Emulator.getGameEnvironment().getModToolManager().ban(issue.reportedId, this.client.getHabbo(), defaultSanction.message, defaultSanction.banLength * 86400, ModToolBanType.ACCOUNT, modToolCategory.id);
-                        } else if (defaultSanction.muteLength > 0) {
+                        if (defaultSanction.getBanLength() > 0) {
+                            Emulator.getGameEnvironment().getModToolManager().ban(issue.reportedId, this.client.getHabbo(), defaultSanction.getMessage(), defaultSanction.getBanLength() * 86400, ModToolBanType.ACCOUNT, modToolCategory.getId());
+                        } else if (defaultSanction.getMuteLength() > 0) {
 
                             if (target != null) {
-                                target.mute(defaultSanction.muteLength * 86400, false);
+                                target.mute(defaultSanction.getMuteLength() * 86400, false);
                             }
                         }
                     }

@@ -6,8 +6,8 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 
 public class MoveWallItemEvent extends MessageHandler {
     @Override
@@ -18,7 +18,7 @@ public class MoveWallItemEvent extends MessageHandler {
             return;
 
         if (!room.hasRights(this.client.getHabbo()) && !this.client.getHabbo().hasPermission(Permission.ACC_PLACEFURNI) && !(room.getGuildId() > 0 && room.getGuildRightLevel(this.client.getHabbo()).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
-            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.NO_RIGHTS.errorCode));
+            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
             return;
         }
 

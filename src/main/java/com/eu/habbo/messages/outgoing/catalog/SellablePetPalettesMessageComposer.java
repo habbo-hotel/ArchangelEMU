@@ -5,15 +5,13 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class SellablePetPalettesMessageComposer extends MessageComposer {
     private final String petName;
     private final THashSet<PetRace> petRaces;
 
-    public SellablePetPalettesMessageComposer(String petName, THashSet<PetRace> petRaces) {
-        this.petName = petName;
-        this.petRaces = petRaces;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -23,11 +21,11 @@ public class SellablePetPalettesMessageComposer extends MessageComposer {
         this.response.appendString(this.petName);
         this.response.appendInt(this.petRaces.size());
         for (PetRace race : this.petRaces) {
-            this.response.appendInt(race.race);
-            this.response.appendInt(race.colorOne);
-            this.response.appendInt(race.colorTwo);
-            this.response.appendBoolean(race.hasColorOne);
-            this.response.appendBoolean(race.hasColorTwo);
+            this.response.appendInt(race.getRace());
+            this.response.appendInt(race.getColorOne());
+            this.response.appendInt(race.getColorTwo());
+            this.response.appendBoolean(race.isHasColorOne());
+            this.response.appendBoolean(race.isHasColorTwo());
         }
         return this.response;
     }

@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlaceOffer;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class MarketplaceCancelOfferResultComposer extends MessageComposer {
     private final MarketPlaceOffer offer;
     private final boolean success;
 
-    public MarketplaceCancelOfferResultComposer(MarketPlaceOffer offer, Boolean success) {
-        this.offer = offer;
-        this.success = success;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

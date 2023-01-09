@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ModToolTicketState {
     CLOSED(0),
     OPEN(1),
@@ -7,9 +12,6 @@ public enum ModToolTicketState {
 
     private final int state;
 
-    ModToolTicketState(int state) {
-        this.state = state;
-    }
 
     public static ModToolTicketState getState(int number) {
         for (ModToolTicketState s : ModToolTicketState.values()) {
@@ -20,7 +22,4 @@ public enum ModToolTicketState {
         return CLOSED;
     }
 
-    public int getState() {
-        return this.state;
-    }
 }

@@ -83,7 +83,7 @@ public class HabboDiffieHellman {
         this.DHPrime = decryptBigInteger(signedPrime);
         this.DHGenerator = decryptBigInteger(signedGenerator);
 
-        if (this.DHPrime == null || this.DHGenerator == null) {
+        if (this.DHPrime == null) {
             throw new HabboCryptoException("DHPrime or DHGenerator was null.");
         }
 

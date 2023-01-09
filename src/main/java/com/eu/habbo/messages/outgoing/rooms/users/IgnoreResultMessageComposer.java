@@ -4,7 +4,9 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class IgnoreResultMessageComposer extends MessageComposer {
     public final static int IGNORED = 1;
     public final static int MUTED = 2;
@@ -13,10 +15,7 @@ public class IgnoreResultMessageComposer extends MessageComposer {
     private final Habbo habbo;
     private final int state;
 
-    public IgnoreResultMessageComposer(Habbo habbo, int state) {
-        this.habbo = habbo;
-        this.state = state;
-    }
+
 
     @Override
     protected ServerMessage composeInternal() {

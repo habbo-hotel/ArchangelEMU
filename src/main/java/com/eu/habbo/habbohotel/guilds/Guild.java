@@ -1,36 +1,65 @@
 package com.eu.habbo.habbohotel.guilds;
 
 import com.eu.habbo.Emulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class Guild implements Runnable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Guild.class);
     public boolean needsUpdate;
     public int lastRequested = Emulator.getIntUnixTimestamp();
+    @Setter
+    @Getter
     private int id;
-    private int ownerId;
-    private String ownerName;
+    @Getter
+    private final int ownerId;
+    @Getter
+    private final String ownerName;
+    @Setter
+    @Getter
     private String name;
+    @Setter
+    @Getter
     private String description;
-    private int roomId;
+    @Getter
+    private final int roomId;
+    @Setter
+    @Getter
     private String roomName;
+    @Setter
+    @Getter
     private GuildState state;
+    @Setter
+    @Getter
     private boolean rights;
+    @Setter
+    @Getter
     private int colorOne;
+    @Setter
+    @Getter
     private int colorTwo;
+    @Setter
+    @Getter
     private String badge;
-    private int dateCreated;
+    @Getter
+    private final int dateCreated;
+    @Getter
     private int memberCount;
+    @Getter
     private int requestCount;
-    private boolean forum = false;
+    @Setter
+    private boolean hasForum = false;
+    @Setter
     private SettingsState readForum = SettingsState.ADMINS;
+    @Setter
     private SettingsState postMessages = SettingsState.ADMINS;
+    @Setter
     private SettingsState postThreads = SettingsState.ADMINS;
     private SettingsState modForum = SettingsState.ADMINS;
 
@@ -48,7 +77,7 @@ public class Guild implements Runnable {
         this.colorTwo = set.getInt("color_two");
         this.badge = set.getString("badge");
         this.dateCreated = set.getInt("date_created");
-        this.forum = set.getString("forum").equalsIgnoreCase("1");
+        this.hasForum = set.getString("forum").equalsIgnoreCase("1");
         this.readForum = SettingsState.valueOf(set.getString("read_forum"));
         this.postMessages = SettingsState.valueOf(set.getString("post_messages"));
         this.postThreads = SettingsState.valueOf(set.getString("post_threads"));
@@ -94,7 +123,7 @@ public class Guild implements Runnable {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -104,7 +133,7 @@ public class Guild implements Runnable {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE guilds SET name = ?, description = ?, state = ?, rights = ?, color_one = ?, color_two = ?, badge = ?, read_forum = ?, post_messages = ?, post_threads = ?, mod_forum = ?, forum = ? WHERE id = ?")) {
                 statement.setString(1, this.name);
                 statement.setString(2, this.description);
-                statement.setInt(3, this.state.state);
+                statement.setInt(3, this.state.getState());
                 statement.setString(4, this.rights ? "1" : "0");
                 statement.setInt(5, this.colorOne);
                 statement.setInt(6, this.colorTwo);
@@ -113,107 +142,15 @@ public class Guild implements Runnable {
                 statement.setString(9, this.postMessages.name());
                 statement.setString(10, this.postThreads.name());
                 statement.setString(11, this.modForum.name());
-                statement.setString(12, this.forum ? "1" : "0");
+                statement.setString(12, this.hasForum ? "1" : "0");
                 statement.setInt(13, this.id);
                 statement.execute();
 
                 this.needsUpdate = false;
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getOwnerName() {
-        return this.ownerName;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getRoomId() {
-        return this.roomId;
-    }
-
-    public String getRoomName() {
-        return this.roomName;
-    }
-
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
-    }
-
-    public GuildState getState() {
-        return this.state;
-    }
-
-    public void setState(GuildState state) {
-        this.state = state;
-    }
-
-    public boolean getRights() {
-        return this.rights;
-    }
-
-    public void setRights(boolean rights) {
-        this.rights = rights;
-    }
-
-    public int getColorOne() {
-        return this.colorOne;
-    }
-
-    public void setColorOne(int colorOne) {
-        this.colorOne = colorOne;
-    }
-
-    public int getColorTwo() {
-        return this.colorTwo;
-    }
-
-    public void setColorTwo(int colorTwo) {
-        this.colorTwo = colorTwo;
-    }
-
-    public String getBadge() {
-        return this.badge;
-    }
-
-    public void setBadge(String badge) {
-        this.badge = badge;
-    }
-
-    public int getOwnerId() {
-        return this.ownerId;
-    }
-
-    public int getDateCreated() {
-        return dateCreated;
-    }
-
-    public int getMemberCount() {
-        return this.memberCount;
     }
 
     public void increaseMemberCount() {
@@ -222,10 +159,6 @@ public class Guild implements Runnable {
 
     public void decreaseMemberCount() {
         this.memberCount--;
-    }
-
-    public int getRequestCount() {
-        return this.requestCount;
     }
 
     public void increaseRequestCount() {
@@ -237,35 +170,19 @@ public class Guild implements Runnable {
     }
 
     public boolean hasForum() {
-        return this.forum;
-    }
-
-    public void setForum(boolean forum) {
-        this.forum = forum;
+        return this.hasForum;
     }
 
     public SettingsState canReadForum() {
         return this.readForum;
     }
 
-    public void setReadForum(SettingsState readForum) {
-        this.readForum = readForum;
-    }
-
     public SettingsState canPostMessages() {
         return this.postMessages;
     }
 
-    public void setPostMessages(SettingsState postMessages) {
-        this.postMessages = postMessages;
-    }
-
     public SettingsState canPostThreads() {
         return this.postThreads;
-    }
-
-    public void setPostThreads(SettingsState postThreads) {
-        this.postThreads = postThreads;
     }
 
     public SettingsState canModForum() {

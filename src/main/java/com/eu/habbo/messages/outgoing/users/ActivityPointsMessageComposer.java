@@ -5,17 +5,15 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@AllArgsConstructor
 public class ActivityPointsMessageComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ActivityPointsMessageComposer.class);
 
     private final Habbo habbo;
 
-    public ActivityPointsMessageComposer(Habbo habbo) {
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -25,9 +23,9 @@ public class ActivityPointsMessageComposer extends MessageComposer {
         for (String s : pointsTypes) {
             int type;
             try {
-                type = Integer.valueOf(s);
+                type = Integer.parseInt(s);
             } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
+                log.error("Caught exception", e);
                 return null;
             }
 

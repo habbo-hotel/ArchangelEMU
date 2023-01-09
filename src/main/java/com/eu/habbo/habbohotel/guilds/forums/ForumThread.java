@@ -9,33 +9,48 @@ import com.eu.habbo.plugin.events.guilds.forums.GuildForumThreadBeforeCreated;
 import com.eu.habbo.plugin.events.guilds.forums.GuildForumThreadCreated;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.*;
 
+@Slf4j
+
 public class ForumThread implements Runnable, ISerialize {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ForumThread.class);
 
 
     private final static THashMap<Integer, THashSet<ForumThread>> guildThreadsCache = new THashMap<>();
     private final static THashMap<Integer, ForumThread> forumThreadsCache = new THashMap<>();
+    @Getter
     private final int threadId;
+    @Getter
     private final int guildId;
+    @Getter
     private final int openerId;
+    @Getter
     private final String subject;
+    @Getter
     private final int createdAt;
     private final THashMap<Integer, ForumThreadComment> comments;
+    @Getter
     private int postsCount;
+    @Getter
     private int updatedAt;
+    @Getter
     private ForumThreadState state;
+    @Getter
     private boolean pinned;
+    @Getter
     private boolean locked;
+    @Getter
     private int adminId;
     private boolean needsUpdate;
     private boolean hasCommentsLoaded;
     private int commentIndex;
+    @Setter
+    @Getter
     private ForumThreadComment lastComment;
 
     public ForumThread(int threadId, int guildId, int openerId, String subject, int postsCount, int createdAt, int updatedAt, ForumThreadState state, boolean pinned, boolean locked, int adminId, ForumThreadComment lastComment) {
@@ -74,7 +89,7 @@ public class ForumThread implements Runnable, ISerialize {
         try {
             this.lastComment = ForumThreadComment.getById(set.getInt("last_comment_id"));
         } catch (SQLException e) {
-            LOGGER.error("ForumThread last_comment_id exception", e);
+            log.error("ForumThread last_comment_id exception", e);
         }
 
         this.comments = new THashMap<>();
@@ -113,7 +128,7 @@ public class ForumThread implements Runnable, ISerialize {
                 Emulator.getPluginManager().fireEvent(new GuildForumThreadCreated(createdThread));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return createdThread;
@@ -159,7 +174,7 @@ public class ForumThread implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return threads;
@@ -184,7 +199,7 @@ public class ForumThread implements Runnable, ISerialize {
                         "ORDER BY B.`id` " +
                         ") " +
                         "ORDER BY `id` DESC " +
-                        ") B ON A.`id` = B.`thread_id` " +
+                        ") B ON A.`iód` = B.`thread_id` " +
                         "WHERE A.`id` = ? " +
                         "ORDER BY A.`pinned` DESC, B.`created_at` DESC " +
                         "LIMIT 1"
@@ -198,7 +213,7 @@ public class ForumThread implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return foundThread;
@@ -236,37 +251,9 @@ public class ForumThread implements Runnable, ISerialize {
         }
     }
 
-    public int getThreadId() {
-        return threadId;
-    }
-
-    public int getGuildId() {
-        return guildId;
-    }
-
-    public int getOpenerId() {
-        return openerId;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public int getCreatedAt() {
-        return createdAt;
-    }
-
-    public int getPostsCount() {
-        return postsCount;
-    }
-
     public void setPostsCount(int postsCount) {
         this.postsCount = postsCount;
         this.needsUpdate = true;
-    }
-
-    public int getUpdatedAt() {
-        return updatedAt;
     }
 
     public void setUpdatedAt(int updatedAt) {
@@ -274,17 +261,9 @@ public class ForumThread implements Runnable, ISerialize {
         this.needsUpdate = true;
     }
 
-    public ForumThreadState getState() {
-        return state;
-    }
-
     public void setState(ForumThreadState state) {
         this.state = state;
         this.needsUpdate = true;
-    }
-
-    public boolean isPinned() {
-        return pinned;
     }
 
     public void setPinned(boolean pinned) {
@@ -292,30 +271,14 @@ public class ForumThread implements Runnable, ISerialize {
         this.needsUpdate = true;
     }
 
-    public boolean isLocked() {
-        return locked;
-    }
-
     public void setLocked(boolean locked) {
         this.locked = locked;
         this.needsUpdate = true;
     }
 
-    public int getAdminId() {
-        return adminId;
-    }
-
     public void setAdminId(int adminId) {
         this.adminId = adminId;
         this.needsUpdate = true;
-    }
-
-    public ForumThreadComment getLastComment() {
-        return lastComment;
-    }
-
-    public void setLastComment(ForumThreadComment lastComment) {
-        this.lastComment = lastComment;
     }
 
     private void loadComments() {
@@ -337,7 +300,7 @@ public class ForumThread implements Runnable, ISerialize {
                     addComment(comment);
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -461,7 +424,7 @@ public class ForumThread implements Runnable, ISerialize {
 
             this.needsUpdate = false;
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 }

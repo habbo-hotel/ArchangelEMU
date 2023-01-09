@@ -6,16 +6,18 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 public class RoomUnitWalkToRoomUnit implements Runnable {
+    private final RoomUnit walker;
+    private final RoomUnit target;
+    private final Room room;
+    private final List<Runnable> targetReached;
+    private final List<Runnable> failedReached;
     private final int minDistance;
-    private RoomUnit walker;
-    private RoomUnit target;
-    private Room room;
-    private List<Runnable> targetReached;
-    private List<Runnable> failedReached;
 
     private RoomTile goalTile = null;
 
@@ -26,15 +28,6 @@ public class RoomUnitWalkToRoomUnit implements Runnable {
         this.targetReached = targetReached;
         this.failedReached = failedReached;
         this.minDistance = 1;
-    }
-
-    public RoomUnitWalkToRoomUnit(RoomUnit walker, RoomUnit target, Room room, List<Runnable> targetReached, List<Runnable> failedReached, int minDistance) {
-        this.walker = walker;
-        this.target = target;
-        this.room = room;
-        this.targetReached = targetReached;
-        this.failedReached = failedReached;
-        this.minDistance = minDistance;
     }
 
     @Override
@@ -59,7 +52,7 @@ public class RoomUnitWalkToRoomUnit implements Runnable {
     }
 
     private void findNewLocation() {
-        this.goalTile = this.walker.getClosestAdjacentTile(this.target.getCurrentLocation().x, this.target.getCurrentLocation().y, true);
+        this.goalTile = this.walker.getClosestAdjacentTile(this.target.getCurrentLocation().getX(), this.target.getCurrentLocation().getY(), true);
 
         if (this.goalTile == null) {
             if (this.failedReached != null) {

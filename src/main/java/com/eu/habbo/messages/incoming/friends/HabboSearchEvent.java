@@ -13,7 +13,7 @@ public class HabboSearchEvent extends MessageHandler {
 
     @Override
     public void handle() throws Exception {
-        if (System.currentTimeMillis() - this.client.getHabbo().getHabboStats().lastUsersSearched < 3000)
+        if (System.currentTimeMillis() - this.client.getHabbo().getHabboStats().getLastUsersSearched() < 3000)
             return;
 
         String username = this.packet.readString().replace(" ", "").toLowerCase();

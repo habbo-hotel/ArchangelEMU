@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum RoomUnitType {
     USER(1),
     BOT(4),
@@ -8,11 +13,4 @@ public enum RoomUnitType {
 
     private final int typeId;
 
-    RoomUnitType(int typeId) {
-        this.typeId = typeId;
-    }
-
-    public int getTypeId() {
-        return this.typeId;
-    }
 }

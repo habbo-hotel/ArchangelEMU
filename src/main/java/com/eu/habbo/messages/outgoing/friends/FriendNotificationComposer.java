@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.friends;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class FriendNotificationComposer extends MessageComposer {
     public final static int INSTANT_MESSAGE = -1;
     public final static int ROOM_EVENT = 0;
@@ -16,12 +18,6 @@ public class FriendNotificationComposer extends MessageComposer {
     private final int userId;
     private final int type;
     private final String data;
-
-    public FriendNotificationComposer(int userId, int type, String data) {
-        this.userId = userId;
-        this.type = type;
-        this.data = data;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

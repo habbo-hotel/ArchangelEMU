@@ -4,13 +4,13 @@ import com.eu.habbo.habbohotel.users.inventory.EffectsComponent;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class AvatarEffectExpiredMessageComposer extends MessageComposer {
-    public final EffectsComponent.HabboEffect effect;
-
-    public AvatarEffectExpiredMessageComposer(EffectsComponent.HabboEffect effect) {
-        this.effect = effect;
-    }
+    private final EffectsComponent.HabboEffect effect;
 
     @Override
     protected ServerMessage composeInternal() {

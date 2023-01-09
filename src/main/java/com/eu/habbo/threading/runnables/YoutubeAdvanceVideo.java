@@ -4,13 +4,11 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionYoutubeTV;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayVideoMessageComposer;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class YoutubeAdvanceVideo implements Runnable {
     private final InteractionYoutubeTV tv;
-
-    public YoutubeAdvanceVideo(InteractionYoutubeTV tv) {
-        this.tv = tv;
-    }
 
     @Override
     public void run() {

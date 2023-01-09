@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,9 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NewUserGift implements ISerialize {
+    @Getter
     private final int id;
+    @Getter
     private final Type type;
+    @Getter
     private final String imageUrl;
+    @Getter
     private Map<String, String> items = new HashMap<>();
 
     public NewUserGift(ResultSet set) throws SQLException {
@@ -57,22 +62,6 @@ public class NewUserGift implements ISerialize {
         } else if (this.type == Type.ROOM) {
             //TODO Give room
         }
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public Type getType() {
-        return this.type;
-    }
-
-    public String getImageUrl() {
-        return this.imageUrl;
-    }
-
-    public Map<String, String> getItems() {
-        return this.items;
     }
 
     public enum Type {

@@ -32,11 +32,11 @@ import com.eu.habbo.messages.incoming.users.NewUserExperienceScriptProceedEvent;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorComposer;
 import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.polls.PollOfferComposer;
-import com.eu.habbo.messages.outgoing.polls.infobus.QuestionFinishedComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.QuestionComposer;
+import com.eu.habbo.messages.outgoing.polls.infobus.QuestionFinishedComposer;
 import com.eu.habbo.messages.outgoing.rooms.*;
-import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemsComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomEventComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
@@ -50,19 +50,17 @@ import com.eu.habbo.plugin.events.users.UserEnterRoomEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TIntProcedure;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class RoomManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomManager.class);
 
     private static final int page = 0;
     //Configuration. Loaded from database & updated accordingly.
@@ -93,7 +91,7 @@ public class RoomManager {
         registerGameType(IceTagGame.class);
         registerGameType(RollerskateGame.class);
 
-        LOGGER.info("Room Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Room Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public void loadRoomModels() {
@@ -103,7 +101,7 @@ public class RoomManager {
                 this.mapNames.add(set.getString("name"));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -117,7 +115,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return layout;
@@ -131,7 +129,7 @@ public class RoomManager {
                 this.roomCategories.put(set.getInt("id"), new RoomCategory(set));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -147,15 +145,15 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
     public THashMap<Integer, List<Room>> findRooms(NavigatorFilterField filterField, String value, int category, boolean showInvisible) {
         THashMap<Integer, List<Room>> rooms = new THashMap<>();
-        String query = filterField.databaseQuery + " AND rooms.state NOT LIKE " + (showInvisible ? "''" : "'invisible'") + (category >= 0 ? "AND rooms.category = '" + category + "'" : "") + "  ORDER BY rooms.users, rooms.id DESC LIMIT " + (page * NavigatorManager.MAXIMUM_RESULTS_PER_PAGE) + "" + ((page * NavigatorManager.MAXIMUM_RESULTS_PER_PAGE) + NavigatorManager.MAXIMUM_RESULTS_PER_PAGE);
+        String query = filterField.getDatabaseQuery() + " AND rooms.state NOT LIKE " + (showInvisible ? "''" : "'invisible'") + (category >= 0 ? "AND rooms.category = '" + category + "'" : "") + "  ORDER BY rooms.users, rooms.id DESC LIMIT " + (/* TODO: This is always 0?*/page * NavigatorManager.MAXIMUM_RESULTS_PER_PAGE) + "" + ((page * NavigatorManager.MAXIMUM_RESULTS_PER_PAGE) + NavigatorManager.MAXIMUM_RESULTS_PER_PAGE);
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, (filterField.comparator == NavigatorFilterComparator.EQUALS ? value : "%" + value + "%"));
+            statement.setString(1, (filterField.getComparator() == NavigatorFilterComparator.EQUALS ? value : "%" + value + "%"));
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     Room room = this.activeRooms.get(set.getInt("id"));
@@ -173,7 +171,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -280,7 +278,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -321,7 +319,7 @@ public class RoomManager {
                 this.activeRooms.put(room.getId(), room);
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return room;
@@ -346,7 +344,7 @@ public class RoomManager {
                     room = this.loadRoom(set.getInt(1));
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return room;
@@ -371,7 +369,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -421,7 +419,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return layout;
@@ -445,7 +443,7 @@ public class RoomManager {
 
             room.setScore(room.getScore() + 1);
             room.setNeedsUpdate(true);
-            habbo.getHabboStats().votedRooms.push(room.getId());
+            habbo.getHabboStats().getVotedRooms().push(room.getId());
             for (Habbo h : room.getHabbos()) {
                 h.getClient().sendResponse(new RoomRatingComposer(room.getScore(), !this.hasVotedForRoom(h, room)));
             }
@@ -455,7 +453,7 @@ public class RoomManager {
                 statement.setInt(2, room.getId());
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -464,7 +462,7 @@ public class RoomManager {
         if (room.getOwnerId() == habbo.getHabboInfo().getId())
             return true;
 
-        for (int i : habbo.getHabboStats().votedRooms.toArray()) {
+        for (int i : habbo.getHabboStats().getVotedRooms().toArray()) {
             if (i == room.getId())
                 return true;
         }
@@ -612,7 +610,7 @@ public class RoomManager {
             } else {
                 habbo.getRoomUnit().setCanLeaveRoomByDoor(false);
                 habbo.getRoomUnit().isTeleporting = true;
-                HabboItem topItem = room.getTopItemAt(doorLocation.x, doorLocation.y);
+                HabboItem topItem = room.getTopItemAt(doorLocation.getX(), doorLocation.getY());
                 if (topItem != null) {
                     habbo.getRoomUnit().setRotation(RoomUserRotation.values()[topItem.getRotation()]);
                 }
@@ -638,7 +636,7 @@ public class RoomManager {
         habbo.getRoomUnit().setInRoom(true);
         if (habbo.getHabboInfo().getCurrentRoom() != room && habbo.getHabboInfo().getCurrentRoom() != null) {
             habbo.getHabboInfo().getCurrentRoom().removeHabbo(habbo, true);
-        } else if (!habbo.getHabboStats().blockFollowing && habbo.getHabboInfo().getCurrentRoom() == null) {
+        } else if (!habbo.getHabboStats().isBlockFollowing() && habbo.getHabboInfo().getCurrentRoom() == null) {
             habbo.getMessenger().connectionChanged(habbo, true, true);
         }
 
@@ -748,15 +746,15 @@ public class RoomManager {
                 habbo.getClient().sendResponse(new UserUpdateComposer(habbos));
             }
 
-            if (habbo.getHabboStats().guild != 0) {
-                Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(habbo.getHabboStats().guild);
+            if (habbo.getHabboStats().getGuild() != 0) {
+                Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(habbo.getHabboStats().getGuild());
 
                 if (guild != null) {
                     room.sendComposer(new HabboAddGroupBadgesMessageComposer(guild).compose());
                 }
             }
 
-            int effect = habbo.getInventory().getEffectsComponent().activatedEffect;
+            int effect = habbo.getInventory().getEffectsComponent().getActivatedEffect();
             room.giveEffect(habbo.getRoomUnit(), effect, -1);
         }
 
@@ -798,20 +796,17 @@ public class RoomManager {
                 }
             }
 
-            allFloorItems.forEach(new TObjectProcedure<HabboItem>() {
-                @Override
-                public boolean execute(HabboItem object) {
-                    if (room.isHideWired() && object instanceof InteractionWired)
-                        return true;
-
-                    floorItems.add(object);
-                    if (floorItems.size() == 250) {
-                        habbo.getClient().sendResponse(new ObjectsMessageComposer(room.getFurniOwnerNames(), floorItems));
-                        floorItems.clear();
-                    }
-
+            allFloorItems.forEach(object -> {
+                if (room.isHideWired() && object instanceof InteractionWired)
                     return true;
+
+                floorItems.add(object);
+                if (floorItems.size() == 250) {
+                    habbo.getClient().sendResponse(new ObjectsMessageComposer(room.getFurniOwnerNames(), floorItems));
+                    floorItems.clear();
                 }
+
+                return true;
             });
 
             habbo.getClient().sendResponse(new ObjectsMessageComposer(room.getFurniOwnerNames(), floorItems));
@@ -826,13 +821,13 @@ public class RoomManager {
         }
 
         if (!habbo.getHabboStats().allowTalk()) {
-            habbo.getHabboStats().mutedBubbleTracker = true;
+            habbo.getHabboStats().setMutedBubbleTracker(true);
             int remainingMuteTime = habbo.getHabboStats().remainingMuteTime();
             habbo.getClient().sendResponse(new FloodControlMessageComposer(remainingMuteTime));
             habbo.getClient().sendResponse(new RemainingMutePeriodComposer(remainingMuteTime));
             room.sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.MUTED).compose());
-        } else if (habbo.getHabboStats().mutedBubbleTracker) {
-            habbo.getHabboStats().mutedBubbleTracker = false;
+        } else if (habbo.getHabboStats().isMutedBubbleTracker()) {
+            habbo.getHabboStats().setMutedBubbleTracker(false);
         }
 
         THashMap<Integer, String> guildBadges = new THashMap<>();
@@ -864,19 +859,19 @@ public class RoomManager {
                     habbo.getClient().sendResponse(new IgnoreResultMessageComposer(roomHabbo, IgnoreResultMessageComposer.IGNORED));
                 }
 
-                if (roomHabbo.getHabboStats().guild != 0 && !guildBadges.containsKey(roomHabbo.getHabboStats().guild)) {
-                    Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(roomHabbo.getHabboStats().guild);
+                if (roomHabbo.getHabboStats().getGuild() != 0 && !guildBadges.containsKey(roomHabbo.getHabboStats().getGuild())) {
+                    Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(roomHabbo.getHabboStats().getGuild());
 
                     if (guild != null) {
-                        guildBadges.put(roomHabbo.getHabboStats().guild, guild.getBadge());
+                        guildBadges.put(roomHabbo.getHabboStats().getGuild(), guild.getBadge());
                     }
                 }
 
                 if (roomHabbo.getRoomUnit().getRoomUnitType().equals(RoomUnitType.PET)) {
                     try {
                         habbo.getClient().sendResponse(new UserRemoveMessageComposer(roomHabbo.getRoomUnit()));
-                        habbo.getClient().sendResponse(new RoomUserPetComposer(((PetData) roomHabbo.getHabboStats().cache.get("pet_type")).getType(), (Integer) roomHabbo.getHabboStats().cache.get("pet_race"), (String) roomHabbo.getHabboStats().cache.get("pet_color"), roomHabbo));
-                    } catch (Exception e) {
+                        habbo.getClient().sendResponse(new RoomUserPetComposer(((PetData) roomHabbo.getHabboStats().getCache().get("pet_type")).getType(), (Integer) roomHabbo.getHabboStats().getCache().get("pet_race"), (String) roomHabbo.getHabboStats().getCache().get("pet_color"), roomHabbo));
+                    } catch (Exception ignored) {
 
                     }
                 }
@@ -914,7 +909,7 @@ public class RoomManager {
         WiredHandler.handle(WiredTriggerType.ENTER_ROOM, habbo.getRoomUnit(), room, null);
         room.habboEntered(habbo);
 
-        if (!habbo.getHabboStats().nux && (room.isOwner(habbo) || room.isPublicRoom())) {
+        if (!habbo.getHabboStats().isNux() && (room.isOwner(habbo) || room.isPublicRoom())) {
             NewUserExperienceScriptProceedEvent.handle(habbo);
         }
     }
@@ -924,13 +919,13 @@ public class RoomManager {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_enter_log (room_id, user_id, timestamp) VALUES(?, ?, ?)")) {
             statement.setInt(1, room.getId());
             statement.setInt(2, habbo.getHabboInfo().getId());
-            statement.setInt(3, (int) (habbo.getHabboStats().roomEnterTimestamp));
+            statement.setInt(3, (int) (habbo.getHabboStats().getRoomEnterTimestamp()));
             statement.execute();
 
             if (!habbo.getHabboStats().visitedRoom(room.getId()))
                 habbo.getHabboStats().addVisitRoom(room.getId());
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -983,7 +978,7 @@ public class RoomManager {
                 statement.setInt(3, room.getId());
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }
@@ -1030,7 +1025,7 @@ public class RoomManager {
 
         Collections.sort(rooms);
 
-        return new ArrayList<>(rooms.subList(0, (rooms.size() < count ? rooms.size() : count)));
+        return new ArrayList<>(rooms.subList(0, (Math.min(rooms.size(), count))));
     }
 
     public ArrayList<Room> getPopularRooms(int count, int category) {
@@ -1048,7 +1043,7 @@ public class RoomManager {
 
         Collections.sort(rooms);
 
-        return new ArrayList<>(rooms.subList(0, (rooms.size() < count ? rooms.size() : count)));
+        return new ArrayList<>(rooms.subList(0, (Math.min(rooms.size(), count))));
     }
 
     public Map<Integer, List<Room>> getPopularRoomsByCategory(int count) {
@@ -1072,7 +1067,7 @@ public class RoomManager {
 
             Collections.sort(set.getValue());
 
-            result.put(set.getKey(), new ArrayList<>(set.getValue().subList(0, (set.getValue().size() < count ? set.getValue().size() : count))));
+            result.put(set.getKey(), new ArrayList<>(set.getValue().subList(0, (Math.min(set.getValue().size(), count)))));
         }
 
         return result;
@@ -1112,7 +1107,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1123,7 +1118,7 @@ public class RoomManager {
 
         for (Room room : this.activeRooms.values()) {
             for (String s : room.getTags().split(";")) {
-                if (s.toLowerCase().equals(tag.toLowerCase())) {
+                if (s.equalsIgnoreCase(tag)) {
                     rooms.add(room);
                     break;
                 }
@@ -1172,7 +1167,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1238,7 +1233,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         Collections.sort(rooms);
@@ -1249,20 +1244,17 @@ public class RoomManager {
     public ArrayList<Room> getRoomsFavourite(Habbo habbo) {
         final ArrayList<Room> rooms = new ArrayList<>();
 
-        habbo.getHabboStats().getFavoriteRooms().forEach(new TIntProcedure() {
-            @Override
-            public boolean execute(int value) {
-                Room room = RoomManager.this.getRoom(value);
+        habbo.getHabboStats().getFavoriteRooms().forEach(value -> {
+            Room room = RoomManager.this.getRoom(value);
 
-                if (room != null) {
-                    if (room.getState() == RoomState.INVISIBLE) {
-                        room.loadData();
-                        if (!room.hasRights(habbo)) return true;
-                    }
-                    rooms.add(room);
+            if (room != null) {
+                if (room.getState() == RoomState.INVISIBLE) {
+                    room.loadData();
+                    if (!room.hasRights(habbo)) return true;
                 }
-                return true;
+                rooms.add(room);
             }
+            return true;
         });
 
         return rooms;
@@ -1284,7 +1276,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         Collections.sort(rooms);
@@ -1307,7 +1299,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1349,7 +1341,7 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return rooms;
@@ -1371,13 +1363,13 @@ public class RoomManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return rooms;
     }
 
-    public ArrayList<Room> getRoomsInGroup(Habbo habbo) {
+    public ArrayList<Room> getRoomsInGroup() {
         return new ArrayList<>();
     }
 
@@ -1475,7 +1467,7 @@ public class RoomManager {
 
         this.activeRooms.clear();
 
-        LOGGER.info("Room Manager -> Disposed!");
+        log.info("Room Manager -> Disposed!");
     }
 
     public CustomRoomLayout insertCustomLayout(Room room, String map, int doorX, int doorY, int doorDirection) {
@@ -1492,7 +1484,7 @@ public class RoomManager {
             statement.setString(10, map);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return this.loadCustomLayout(room);
@@ -1556,15 +1548,13 @@ public class RoomManager {
         return gameTypes;
     }
 
+    @Getter
+    @AllArgsConstructor
     public enum RoomBanTypes {
         RWUAM_BAN_USER_HOUR(60 * 60),
         RWUAM_BAN_USER_DAY(24 * 60 * 60),
         RWUAM_BAN_USER_PERM(10 * 365 * 24 * 60 * 60);
 
-        public int duration;
-
-        RoomBanTypes(int duration) {
-            this.duration = duration;
-        }
+        private final int duration;
     }
 }

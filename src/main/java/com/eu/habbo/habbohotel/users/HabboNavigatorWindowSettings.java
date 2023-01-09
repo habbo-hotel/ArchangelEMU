@@ -4,8 +4,9 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.navigation.DisplayMode;
 import com.eu.habbo.habbohotel.navigation.ListMode;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,16 +14,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
+@Slf4j
+@Getter
+@Setter
 public class HabboNavigatorWindowSettings {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HabboNavigatorWindowSettings.class);
     public final THashMap<String, HabboNavigatorPersonalDisplayMode> displayModes = new THashMap<>(2);
     private final int userId;
-    public int x = 100;
-    public int y = 100;
-    public int width = 425;
-    public int height = 535;
-    public boolean openSearches = false;
-    public int unknown = 0;
+    private int x = 100;
+    private int y = 100;
+    private int width = 425;
+    private int height = 535;
+    private boolean openSearches = false;
+    private int unknown = 0;
 
     public HabboNavigatorWindowSettings(int userId) {
         this.userId = userId;
@@ -56,7 +59,7 @@ public class HabboNavigatorWindowSettings {
                 statement.setString(4, displayMode.name().toLowerCase());
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
             this.displayModes.put(category, new HabboNavigatorPersonalDisplayMode(listMode, displayMode));
@@ -67,7 +70,7 @@ public class HabboNavigatorWindowSettings {
         HabboNavigatorPersonalDisplayMode personalDisplayMode = this.displayModes.get(category);
 
         if (personalDisplayMode != null) {
-            personalDisplayMode.displayMode = displayMode;
+            personalDisplayMode.setDisplayMode(displayMode);
         } else {
             this.insertDisplayMode(category, ListMode.LIST, displayMode);
         }
@@ -77,7 +80,7 @@ public class HabboNavigatorWindowSettings {
         HabboNavigatorPersonalDisplayMode personalDisplayMode = this.displayModes.get(category);
 
         if (personalDisplayMode != null) {
-            personalDisplayMode.listMode = listMode;
+            personalDisplayMode.setListMode(listMode);
         } else {
             this.insertDisplayMode(category, listMode, DisplayMode.VISIBLE);
         }
@@ -89,7 +92,7 @@ public class HabboNavigatorWindowSettings {
 
     public DisplayMode getDisplayModeForCategory(String category, DisplayMode standard) {
         if (this.displayModes.containsKey(category)) {
-            return this.displayModes.get(category).displayMode;
+            return this.displayModes.get(category).getDisplayMode();
         }
 
         return standard;
@@ -101,7 +104,7 @@ public class HabboNavigatorWindowSettings {
 
     public ListMode getListModeForCategory(String category, ListMode standard) {
         if (this.displayModes.containsKey(category)) {
-            return this.displayModes.get(category).listMode;
+            return this.displayModes.get(category).getListMode();
         }
 
         return standard;
@@ -110,14 +113,14 @@ public class HabboNavigatorWindowSettings {
     public void save(Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement("UPDATE users_navigator_settings SET list_type = ?, display = ? WHERE user_id = ? AND caption = ? LIMIT 1")) {
             for (Map.Entry<String, HabboNavigatorPersonalDisplayMode> set : this.displayModes.entrySet()) {
-                statement.setString(1, set.getValue().listMode.name().toLowerCase());
-                statement.setString(2, set.getValue().displayMode.name().toLowerCase());
+                statement.setString(1, set.getValue().getListMode().name().toLowerCase());
+                statement.setString(2, set.getValue().getDisplayMode().name().toLowerCase());
                 statement.setInt(3, this.userId);
                 statement.setString(4, set.getKey());
                 statement.execute();
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 }

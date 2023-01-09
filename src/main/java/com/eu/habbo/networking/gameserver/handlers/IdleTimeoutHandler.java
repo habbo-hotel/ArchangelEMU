@@ -54,7 +54,7 @@ public class IdleTimeoutHandler extends ChannelDuplexHandler {
     }
 
     @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+    public void handlerAdded(ChannelHandlerContext ctx) {
         if (ctx.channel().isActive() && ctx.channel().isRegistered()) {
             // channelActvie() event has been fired already, which means this.channelActive() will
             // not be invoked. We have to initialize here instead.
@@ -66,7 +66,7 @@ public class IdleTimeoutHandler extends ChannelDuplexHandler {
     }
 
     @Override
-    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+    public void handlerRemoved(ChannelHandlerContext ctx) {
         destroy();
     }
 
@@ -101,8 +101,7 @@ public class IdleTimeoutHandler extends ChannelDuplexHandler {
          * TODO: is it the right place to do it?
          * how to handle it if you are using multi revision?
          */
-        if(msg instanceof ClientMessage) {
-            ClientMessage packet = (ClientMessage) msg;
+        if(msg instanceof ClientMessage packet) {
             if(packet.getMessageId() == Incoming.pongEvent) {
                 this.lastPongTime = System.nanoTime();
             }

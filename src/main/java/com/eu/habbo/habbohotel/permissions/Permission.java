@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.permissions;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class Permission {
     public static String ACC_ANYCHATCOLOR = "acc_anychatcolor"; // allows them to pick and choose any color from the chat bubbles.
     public static String ACC_ANYROOMOWNER = "acc_anyroomowner";
@@ -43,10 +48,8 @@ public class Permission {
     public static String ACC_HELPER_GIVE_GUIDE_TOURS = "acc_helper_give_guide_tours";
     public static String ACC_HELPER_JUDGE_CHAT_REVIEWS = "acc_helper_judge_chat_reviews";
     public static String ACC_FLOORPLAN_EDITOR = "acc_floorplan_editor";
-    public final String key;
-    public final PermissionSetting setting;
-    public Permission(String key, PermissionSetting setting) {
-        this.key = key;
-        this.setting = setting;
-    }
+
+    private final String key;
+    private final PermissionSetting setting;
+
 }

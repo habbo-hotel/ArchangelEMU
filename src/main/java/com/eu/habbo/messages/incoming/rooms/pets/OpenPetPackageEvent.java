@@ -62,7 +62,7 @@ public class OpenPetPackageEvent extends MessageHandler {
                             room.sendComposer(new RemoveFloorItemComposer(item).compose());
                             RoomTile tile = room.getLayout().getTile(item.getX(), item.getY());
                             room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
-                            room.sendComposer(new HeightMapUpdateMessageComposer(tile.x, tile.y, tile.z, tile.relativeHeight()).compose());
+                            room.sendComposer(new HeightMapUpdateMessageComposer(tile.getX(), tile.getY(), tile.getZ(), tile.relativeHeight()).compose());
                             item.setUserId(0);
                         } else {
                             this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));

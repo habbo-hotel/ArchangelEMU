@@ -1,5 +1,9 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public enum RoomChatMessageBubbles {
     NORMAL(0, "", true, true),
     ALERT(1, "", true, true),
@@ -48,17 +52,14 @@ public enum RoomChatMessageBubbles {
     UNKNOWN_44(44, "", true, false),
     UNKNOWN_45(45, "", true, false);
 
+    @Getter
     private final int type;
+    @Getter
     private final String permission;
+    @Getter
     private final boolean overridable;
     private final boolean triggersTalkingFurniture;
 
-    RoomChatMessageBubbles(int type, String permission, boolean overridable, boolean triggersTalkingFurniture) {
-        this.type = type;
-        this.permission = permission;
-        this.overridable = overridable;
-        this.triggersTalkingFurniture = triggersTalkingFurniture;
-    }
 
     public static RoomChatMessageBubbles getBubble(int bubbleId) {
         try {
@@ -66,18 +67,6 @@ public enum RoomChatMessageBubbles {
         } catch (Exception e) {
             return NORMAL;
         }
-    }
-
-    public int getType() {
-        return this.type;
-    }
-
-    public String getPermission() {
-        return this.permission;
-    }
-
-    public boolean isOverridable() {
-        return this.overridable;
     }
 
     public boolean triggersTalkingFurniture() {

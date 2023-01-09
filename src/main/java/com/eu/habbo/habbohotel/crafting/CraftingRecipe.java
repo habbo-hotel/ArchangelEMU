@@ -3,18 +3,27 @@ package com.eu.habbo.habbohotel.crafting;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CraftingRecipe {
+    @Getter
     private final int id;
+    @Getter
     private final String name;
+    @Getter
     private final Item reward;
+    @Getter
     private final boolean secret;
+    @Getter
     private final String achievement;
+    @Getter
     private final boolean limited;
+    @Getter
     private final THashMap<Item, Integer> ingredients;
+    @Getter
     private int remaining;
 
     public CraftingRecipe(ResultSet set) throws SQLException {
@@ -30,7 +39,7 @@ public class CraftingRecipe {
     }
 
     public boolean canBeCrafted() {
-        return !this.limited || this.remaining > 0;
+        return this.limited && this.remaining <= 0;
     }
 
     public synchronized boolean decrease() {
@@ -54,35 +63,4 @@ public class CraftingRecipe {
         return this.ingredients.containsKey(item);
     }
 
-    public int getId() {
-        return this.id;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public Item getReward() {
-        return this.reward;
-    }
-
-    public boolean isSecret() {
-        return this.secret;
-    }
-
-    public String getAchievement() {
-        return this.achievement;
-    }
-
-    public boolean isLimited() {
-        return this.limited;
-    }
-
-    public THashMap<Item, Integer> getIngredients() {
-        return this.ingredients;
-    }
-
-    public int getRemaining() {
-        return this.remaining;
-    }
 }

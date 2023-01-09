@@ -4,13 +4,11 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionLoveLock;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class FriendFurniStartConfirmationMessageComposer extends MessageComposer {
     private final InteractionLoveLock loveLock;
-
-    public FriendFurniStartConfirmationMessageComposer(InteractionLoveLock loveLock) {
-        this.loveLock = loveLock;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

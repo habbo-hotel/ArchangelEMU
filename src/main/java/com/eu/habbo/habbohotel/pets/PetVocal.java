@@ -1,9 +1,10 @@
 package com.eu.habbo.habbohotel.pets;
 
-public class PetVocal {
-    public final String message;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    public PetVocal(String message) {
-        this.message = message;
-    }
+@Getter
+@AllArgsConstructor
+public class PetVocal {
+    private  final String message;
 }

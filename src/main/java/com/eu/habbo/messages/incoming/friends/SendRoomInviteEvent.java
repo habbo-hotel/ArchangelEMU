@@ -26,7 +26,7 @@ public class SendRoomInviteEvent extends MessageHandler {
                 Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(i);
 
                 if (habbo != null) {
-                    if (!habbo.getHabboStats().blockRoomInvites) {
+                    if (!habbo.getHabboStats().isBlockRoomInvites()) {
                         habbo.getClient().sendResponse(new RoomInviteComposer(this.client.getHabbo().getHabboInfo().getId(), message));
                     }
                 }

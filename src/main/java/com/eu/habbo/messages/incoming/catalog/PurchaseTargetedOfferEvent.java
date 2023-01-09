@@ -17,8 +17,8 @@ public class PurchaseTargetedOfferEvent extends MessageHandler {
         if (amount <= 0) return;
 
 
-        if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().lastPurchaseTimestamp >= CatalogManager.PURCHASE_COOLDOWN) {
-            this.client.getHabbo().getHabboStats().lastPurchaseTimestamp = Emulator.getIntUnixTimestamp();
+        if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().getLastPurchaseTimestamp() >= CatalogManager.PURCHASE_COOLDOWN) {
+            this.client.getHabbo().getHabboStats().setLastPurchaseTimestamp(Emulator.getIntUnixTimestamp());
 
             TargetOffer offer = Emulator.getGameEnvironment().getCatalogManager().getTargetOffer(offerId);
 

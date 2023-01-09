@@ -7,7 +7,9 @@ import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ScrSendUserInfoComposer extends MessageComposer {
     private final Habbo habbo;
     private final String subscriptionType;
@@ -29,12 +31,6 @@ public class ScrSendUserInfoComposer extends MessageComposer {
         this.habbo = habbo;
         this.subscriptionType = subscriptionType;
         this.responseType = 0;
-    }
-
-    public ScrSendUserInfoComposer(Habbo habbo, String subscriptionType, int responseType) {
-        this.habbo = habbo;
-        this.subscriptionType = subscriptionType;
-        this.responseType = responseType;
     }
 
     @Override
@@ -85,8 +81,8 @@ public class ScrSendUserInfoComposer extends MessageComposer {
         this.response.appendInt(0); // pastClubDays
         this.response.appendInt((int) Math.floor(pastTimeAsHC / 86400.0)); // pastVIPdays
         this.response.appendInt(minutes); // minutesTillExpiration
-        this.response.appendInt((Emulator.getIntUnixTimestamp() - this.habbo.getHabboStats().hcMessageLastModified) / 60); // minutesSinceLastModified
-        this.habbo.getHabboStats().hcMessageLastModified = Emulator.getIntUnixTimestamp();
+        this.response.appendInt((Emulator.getIntUnixTimestamp() - this.habbo.getHabboStats().getHcMessageLastModified()) / 60); // minutesSinceLastModified
+        this.habbo.getHabboStats().setHcMessageLastModified(Emulator.getIntUnixTimestamp());
 
         // int - daysToPeriodEnd
         // int - memberPeriods

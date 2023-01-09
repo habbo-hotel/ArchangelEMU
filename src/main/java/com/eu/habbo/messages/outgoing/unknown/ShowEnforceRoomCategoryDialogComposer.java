@@ -3,13 +3,12 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ShowEnforceRoomCategoryDialogComposer extends MessageComposer {
     private final int unknownInt1;
 
-    public ShowEnforceRoomCategoryDialogComposer(int unknownInt1) {
-        this.unknownInt1 = unknownInt1;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

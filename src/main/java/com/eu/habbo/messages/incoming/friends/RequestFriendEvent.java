@@ -4,11 +4,10 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.friends.NewFriendRequestComposer;
 import com.eu.habbo.messages.outgoing.friends.MessengerErrorComposer;
+import com.eu.habbo.messages.outgoing.friends.NewFriendRequestComposer;
 import com.eu.habbo.plugin.events.users.friends.UserRequestFriendshipEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,9 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
+@Slf4j
 public class RequestFriendEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestFriendEvent.class);
-
     @Override
     public void handle() throws Exception {
         String username = this.packet.readString();
@@ -40,7 +38,7 @@ public class RequestFriendEvent extends MessageHandler {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
                 return;
             }
         }
@@ -51,7 +49,7 @@ public class RequestFriendEvent extends MessageHandler {
         }
 
         int targetId = targetHabbo.getHabboInfo().getId();
-        boolean targetBlocksFriendRequests = targetHabbo.getHabboStats().blockFriendRequests;
+        boolean targetBlocksFriendRequests = targetHabbo.getHabboStats().isBlockFriendRequests();
 
         // Making friends with yourself would be very pathetic, we try to avoid that
         if (targetId == this.client.getHabbo().getHabboInfo().getId())
@@ -65,13 +63,13 @@ public class RequestFriendEvent extends MessageHandler {
         }
 
         // You can only have x friends
-        if (this.client.getHabbo().getMessenger().getFriends().values().size() >= this.client.getHabbo().getHabboStats().maxFriends && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
+        if (this.client.getHabbo().getMessenger().getFriends().values().size() >= this.client.getHabbo().getHabboStats().getMaxFriends() && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
             this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_OWN_FULL));
             return;
         }
 
         // Check if targets friendlist is full
-        if (targetHabbo.getMessenger().getFriends().values().size() >= targetHabbo.getHabboStats().maxFriends && !targetHabbo.hasPermission("acc_infinite_friends")) {
+        if (targetHabbo.getMessenger().getFriends().values().size() >= targetHabbo.getHabboStats().getMaxFriends() && !targetHabbo.hasPermission("acc_infinite_friends")) {
             this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_TARGET_FULL));
             return;
         }

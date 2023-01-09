@@ -1,15 +1,19 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Getter
 public class CfhTopic {
-    public final int id;
-    public final String name;
-    public final CfhActionType action;
-    public final boolean ignoreTarget;
-    public final String reply;
-    public final ModToolPreset defaultSanction;
+    private  final int id;
+    private  final String name;
+    private  final CfhActionType action;
+    private  final boolean ignoreTarget;
+
+    private  final String reply;
+    private  final ModToolPreset defaultSanction;
 
     public CfhTopic(ResultSet set, ModToolPreset defaultSanction) throws SQLException {
         this.id = set.getInt("id");

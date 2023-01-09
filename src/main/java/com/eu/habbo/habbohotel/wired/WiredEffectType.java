@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.wired;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum WiredEffectType {
     TOGGLE_STATE(0),
     RESET_TIMERS(1),
@@ -28,9 +33,5 @@ public enum WiredEffectType {
     BOT_CLOTHES(26),
     BOT_TALK_TO_AVATAR(27);
 
-    public final int code;
-
-    WiredEffectType(int code) {
-        this.code = code;
-    }
+    private final int code;
 }

@@ -22,7 +22,7 @@ public class SelectFavouriteHabboGroupEvent extends MessageHandler {
             if (favoriteSetEvent.isCancelled())
                 return;
 
-            this.client.getHabbo().getHabboStats().guild = guildId;
+            this.client.getHabbo().getHabboStats().setGuild(guildId);
 
             if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
                 if (guild != null) {

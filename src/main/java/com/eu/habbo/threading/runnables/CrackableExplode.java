@@ -7,11 +7,13 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionCrackable;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectAddMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CrackableExplode implements Runnable {
     private final Room room;
     private final InteractionCrackable habboItem;
@@ -19,16 +21,6 @@ public class CrackableExplode implements Runnable {
     private final boolean toInventory;
     private final short x;
     private final short y;
-
-    public CrackableExplode(Room room, InteractionCrackable item, Habbo habbo, boolean toInventory, short x, short y) {
-        this.room = room;
-        this.habboItem = item;
-        this.habbo = habbo;
-        this.toInventory = toInventory;
-
-        this.x = x;
-        this.y = y;
-    }
 
     @Override
     public void run() {

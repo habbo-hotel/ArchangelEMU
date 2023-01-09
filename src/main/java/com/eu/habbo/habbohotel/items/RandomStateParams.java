@@ -1,14 +1,15 @@
 package com.eu.habbo.habbohotel.items;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 
+@Slf4j
 public class RandomStateParams {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RandomStateParams.class);
-
+    @Getter
     private int states = -1;
+    @Getter
     private int delay = -1;
 
     public RandomStateParams(String customparams) throws Exception {
@@ -18,15 +19,9 @@ public class RandomStateParams {
             if (keyValue.length != 2) return;
 
             switch (keyValue[0]) {
-                case "states":
-                    this.states = Integer.parseInt(keyValue[1]);
-                    break;
-                case "delay":
-                    this.delay = Integer.parseInt(keyValue[1]);
-                    break;
-                default:
-                    LOGGER.warn("RandomStateParams: unknown key: " + keyValue[0]);
-                    break;
+                case "states" -> this.states = Integer.parseInt(keyValue[1]);
+                case "delay" -> this.delay = Integer.parseInt(keyValue[1]);
+                default -> log.warn("RandomStateParams: unknown key: " + keyValue[0]);
             }
         });
 
@@ -34,11 +29,4 @@ public class RandomStateParams {
         if (this.delay < 0) throw new Exception("RandomStateParams: states not defined");
     }
 
-    public int getStates() {
-        return states;
-    }
-
-    public int getDelay() {
-        return delay;
-    }
 }

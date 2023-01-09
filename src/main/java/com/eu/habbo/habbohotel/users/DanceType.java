@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.users;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum DanceType {
     NONE(0),
     HAB_HOP(1),
@@ -8,12 +13,4 @@ public enum DanceType {
     THE_ROLLIE(4);
 
     private final int type;
-
-    DanceType(int type) {
-        this.type = type;
-    }
-
-    public int getType() {
-        return this.type;
-    }
 }

@@ -7,7 +7,9 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemsDataUpdateComposer;
 import gnu.trove.set.hash.THashSet;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class BattleBanzaiTilesFlicker implements Runnable {
     private final THashSet<HabboItem> items;
     private final GameTeamColors color;
@@ -16,11 +18,6 @@ public class BattleBanzaiTilesFlicker implements Runnable {
     private boolean on = false;
     private int count = 0;
 
-    public BattleBanzaiTilesFlicker(THashSet<HabboItem> items, GameTeamColors color, Room room) {
-        this.items = items;
-        this.color = color;
-        this.room = room;
-    }
 
     @Override
     public void run() {

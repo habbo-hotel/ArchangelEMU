@@ -27,12 +27,13 @@ public class UpdateConditionEvent extends MessageHandler {
                     if (condition.saveData(settings)) {
                         this.client.sendResponse(new WiredSavedComposer());
 
-                        condition.needsUpdate(true);
+                                condition.needsUpdate(true);
 
                         Emulator.getThreading().run(condition);
                     } else {
                         this.client.sendResponse(new WiredValidationErrorComposer("There was an error while saving that condition"));
                     }
+
                 }
             }
         }

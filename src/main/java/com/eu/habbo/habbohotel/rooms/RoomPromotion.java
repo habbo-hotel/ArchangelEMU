@@ -1,20 +1,27 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
+@Getter
+@Setter
 public class RoomPromotion {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomPromotion.class);
+
     private final Room room;
     public boolean needsUpdate;
+
     private String title;
+
     private String description;
+
     private int endTimestamp;
     private int startTimestamp;
     private int category;
@@ -46,58 +53,15 @@ public class RoomPromotion {
                 statement.setInt(4, this.room.getId());
                 statement.executeUpdate();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
             this.needsUpdate = false;
         }
     }
 
-    public Room getRoom() {
-        return this.room;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getEndTimestamp() {
-        return this.endTimestamp;
-    }
-
-    public void setEndTimestamp(int endTimestamp) {
-        this.endTimestamp = endTimestamp;
-    }
-
     public void addEndTimestamp(int time) {
         this.endTimestamp += time;
     }
 
-    public int getStartTimestamp() {
-        return startTimestamp;
-    }
-
-    public void setStartTimestamp(int startTimestamp) {
-        this.startTimestamp = startTimestamp;
-    }
-
-    public int getCategory() {
-        return category;
-    }
-
-    public void setCategory(int category) {
-        this.category = category;
-    }
 }

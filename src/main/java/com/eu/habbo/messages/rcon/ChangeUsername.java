@@ -4,15 +4,14 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Slf4j
 public class ChangeUsername extends RCONMessage<ChangeUsername.JSON> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChangeUsername.class);
 
     public ChangeUsername() {
         super(ChangeUsername.JSON.class);
@@ -34,7 +33,7 @@ public class ChangeUsername extends RCONMessage<ChangeUsername.JSON> {
                 if (json.canChange)
                     habbo.alert(Emulator.getTexts().getValue("rcon.alert.user.change_username"));
 
-                habbo.getHabboStats().allowNameChange = json.canChange;
+                habbo.getHabboStats().setAllowNameChange(json.canChange);
                 habbo.getClient().sendResponse(new UserObjectComposer(habbo));
             } else {
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
@@ -45,11 +44,11 @@ public class ChangeUsername extends RCONMessage<ChangeUsername.JSON> {
                         success = statement.executeUpdate() >= 1;
                     } catch (SQLException sqlException) {
                         this.message = "SQL Exception occurred";
-                        LOGGER.error(this.message, sqlException);
+                        log.error(this.message, sqlException);
                     }
                 } catch (SQLException sqlException) {
                     this.message = "SQL Exception occurred";
-                    LOGGER.error(this.message, sqlException);
+                    log.error(this.message, sqlException);
                 }
             }
 
@@ -59,7 +58,7 @@ public class ChangeUsername extends RCONMessage<ChangeUsername.JSON> {
         catch (Exception e) {
             this.status = RCONMessage.SYSTEM_ERROR;
             this.message = "Exception occurred";
-            LOGGER.error(this.message, e);
+            log.error(message, e);
         }
     }
 

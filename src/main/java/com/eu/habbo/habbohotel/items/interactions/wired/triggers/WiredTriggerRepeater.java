@@ -3,7 +3,6 @@ package com.eu.habbo.habbohotel.items.interactions.wired.triggers;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredTriggerReset;
@@ -11,9 +10,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
-import gnu.trove.procedure.TObjectProcedure;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -56,7 +53,7 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICy
             this.repeatTime = data.repeatTime;
         } else {
             if (wiredData.length() >= 1) {
-                this.repeatTime = (Integer.valueOf(wiredData));
+                this.repeatTime = (Integer.parseInt(wiredData));
             }
         }
 
@@ -87,18 +84,15 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICy
         message.appendInt(1);
         message.appendInt(this.repeatTime / 500);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
 
         if (!this.isTriggeredByRoomUnit()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getEffects(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredEffect>() {
-                @Override
-                public boolean execute(InteractionWiredEffect object) {
-                    if (object.requiresTriggeringUser()) {
-                        invalidTriggers.add(object.getBaseItem().getSpriteId());
-                    }
-                    return true;
+            room.getRoomSpecialTypes().getEffects(this.getX(), this.getY()).forEach(object -> {
+                if (object.requiresTriggeringUser()) {
+                    invalidTriggers.add(object.getBaseItem().getSpriteId());
                 }
+                return true;
             });
             message.appendInt(invalidTriggers.size());
             for (Integer i : invalidTriggers) {

@@ -11,7 +11,6 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
@@ -168,7 +167,7 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
         message.appendInt(this.direction);
         message.appendInt(this.spacing);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
         message.appendInt(0);
     }

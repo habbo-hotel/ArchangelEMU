@@ -6,12 +6,14 @@ import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.GamePlayerValueMessageComposer;
+import lombok.Getter;
 
 public class FreezeGamePlayer extends GamePlayer {
     public boolean nextDiagonal;
     public boolean nextHorizontal;
     public boolean tempMassiveExplosion;
     public boolean dead;
+    @Getter
     private int lives;
     private int snowBalls;
     private int explosionBoost;
@@ -67,10 +69,6 @@ public class FreezeGamePlayer extends GamePlayer {
         } else {
             super.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new GamePlayerValueMessageComposer(this).compose());
         }
-    }
-
-    public int getLives() {
-        return this.lives;
     }
 
     public boolean canPickupLife() {

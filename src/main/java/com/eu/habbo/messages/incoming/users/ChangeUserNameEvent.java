@@ -10,8 +10,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserNameChangedMessageComposer
 import com.eu.habbo.messages.outgoing.users.CheckUserNameResultMessageComposer;
 import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 import com.eu.habbo.plugin.events.users.UserNameChangedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,27 +18,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class ChangeUserNameEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChangeUserNameEvent.class);
 
     public static final List<String> changingUsernames = new ArrayList<>(2);
 
     @Override
     public void handle() throws Exception {
-        if (!this.client.getHabbo().getHabboStats().allowNameChange)
+        if (!this.client.getHabbo().getHabboStats().isAllowNameChange())
             return;
 
         String name = this.packet.readString();
 
         if (name.equalsIgnoreCase(this.client.getHabbo().getHabboInfo().getUsername())) {
-            this.client.getHabbo().getHabboStats().allowNameChange = false;
+            this.client.getHabbo().getHabboStats().setAllowNameChange(false);
             this.client.sendResponse(new ChangeUserNameResultMessageEvent(this.client.getHabbo()));
             this.client.sendResponse(new UserNameChangedMessageComposer(this.client.getHabbo()).compose());
             this.client.sendResponse(new UserObjectComposer(this.client.getHabbo()));
             return;
         }
 
-        if (name.equals(this.client.getHabbo().getHabboStats().changeNameChecked)) {
+        if (name.equals(this.client.getHabbo().getHabboStats().getChangeNameChecked())) {
             HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(name);
 
             if (habboInfo == null) {
@@ -51,7 +50,7 @@ public class ChangeUserNameEvent extends MessageHandler {
                 }
 
                 String oldName = this.client.getHabbo().getHabboInfo().getUsername();
-                this.client.getHabbo().getHabboStats().allowNameChange = false;
+                this.client.getHabbo().getHabboStats().setAllowNameChange(false);
                 this.client.getHabbo().getHabboInfo().setUsername(name);
                 this.client.getHabbo().getHabboInfo().run();
 
@@ -84,7 +83,7 @@ public class ChangeUserNameEvent extends MessageHandler {
                     statement.setInt(4, Emulator.getIntUnixTimestamp());
                     statement.execute();
                 } catch (SQLException e) {
-                    LOGGER.error("Caught SQL exception", e);
+                    log.error("Caught SQL exception", e);
                 }
             } else {
                 this.client.sendResponse(new CheckUserNameResultMessageComposer(CheckUserNameResultMessageComposer.TAKEN_WITH_SUGGESTIONS, name, new ArrayList<>()));

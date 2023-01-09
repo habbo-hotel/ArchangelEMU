@@ -15,8 +15,7 @@ import com.eu.habbo.messages.outgoing.generic.ClubGiftNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
 import com.eu.habbo.messages.outgoing.users.*;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,8 +29,8 @@ import java.util.TreeMap;
 /**
  * @author Beny
  */
+@Slf4j
 public class SubscriptionHabboClub extends Subscription {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionHabboClub.class);
 
     public static boolean HC_PAYDAY_ENABLED = false;
     public static int HC_PAYDAY_NEXT_DATE = Integer.MAX_VALUE; // yyyy-MM-dd HH:mm:ss
@@ -73,9 +72,9 @@ public class SubscriptionHabboClub extends Subscription {
         HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(this.getUserId());
         HabboStats stats = habboInfo.getHabboStats();
 
-        stats.maxFriends = Messenger.MAXIMUM_FRIENDS_HC;
-        stats.maxRooms = RoomManager.MAXIMUM_ROOMS_HC;
-        stats.lastHCPayday = HC_PAYDAY_COINSSPENT_RESET_ON_EXPIRE ? Emulator.getIntUnixTimestamp() : HC_PAYDAY_NEXT_DATE - Emulator.timeStringToSeconds(HC_PAYDAY_INTERVAL);
+        stats.setMaxFriends(Messenger.MAXIMUM_FRIENDS_HC);
+        stats.setMaxRooms(RoomManager.MAXIMUM_ROOMS_HC);
+        stats.setLastHCPayday(HC_PAYDAY_COINSSPENT_RESET_ON_EXPIRE ? Emulator.getIntUnixTimestamp() : HC_PAYDAY_NEXT_DATE - Emulator.timeStringToSeconds(HC_PAYDAY_INTERVAL));
         Emulator.getThreading().run(stats);
 
         progressAchievement(habboInfo);
@@ -87,11 +86,11 @@ public class SubscriptionHabboClub extends Subscription {
                 habbo.getClient().sendResponse(new ClubGiftNotificationComposer(habbo.getHabboStats().getRemainingClubGifts()));
             }
 
-            if ((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().hcMessageLastModified) < 60) {
+            if ((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().getHcMessageLastModified()) < 60) {
                 Emulator.getThreading().run(() -> {
                     habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo));
                     habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
-                }, (Emulator.getIntUnixTimestamp() - habbo.getHabboStats().hcMessageLastModified));
+                }, (Emulator.getIntUnixTimestamp() - habbo.getHabboStats().getHcMessageLastModified()));
             } else {
                 habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo, SubscriptionHabboClub.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_NORMAL));
                 habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
@@ -152,8 +151,8 @@ public class SubscriptionHabboClub extends Subscription {
         HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(this.getUserId());
         HabboStats stats = habboInfo.getHabboStats();
 
-        stats.maxFriends = Messenger.MAXIMUM_FRIENDS;
-        stats.maxRooms = RoomManager.MAXIMUM_ROOMS_USER;
+        stats.setMaxFriends(Messenger.MAXIMUM_FRIENDS);
+        stats.setMaxRooms(RoomManager.MAXIMUM_ROOMS_USER);
         Emulator.getThreading().run(stats);
 
         if (habbo != null && ClothingValidationManager.VALIDATE_ON_HC_EXPIRE) {
@@ -190,7 +189,7 @@ public class SubscriptionHabboClub extends Subscription {
         int creditRewardForMonthlySpent = 0;
         int timeUntilPayday = 0;
 
-        for (Subscription sub : habbo.getHabboStats().subscriptions) {
+        for (Subscription sub : habbo.getHabboStats().getSubscriptions()) {
             if (sub.getSubscriptionType().equalsIgnoreCase(Subscription.HABBO_CLUB)) {
 
                 if (firstEverSub == null || sub.getTimestampStart() < firstEverSub.getTimestampStart()) {
@@ -215,9 +214,9 @@ public class SubscriptionHabboClub extends Subscription {
                 }
             }
 
-            THashMap<String, Object> queryParams = new THashMap();
+            THashMap<String, Object> queryParams = new THashMap<>();
             queryParams.put("@user_id", habbo.getId());
-            queryParams.put("@timestamp_start", habbo.getHabboStats().lastHCPayday);
+            queryParams.put("@timestamp_start", habbo.getHabboStats().getLastHCPayday());
             queryParams.put("@timestamp_end", HC_PAYDAY_NEXT_DATE);
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
@@ -230,7 +229,7 @@ public class SubscriptionHabboClub extends Subscription {
                 }
 
             } catch (SQLException e) {
-                SubscriptionManager.LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
 
             creditRewardForMonthlySpent = (int) Math.floor(totalCreditsSpent * HC_PAYDAY_KICKBACK_PERCENTAGE);
@@ -270,16 +269,16 @@ public class SubscriptionHabboClub extends Subscription {
                         HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(userId);
                         HabboStats stats = habboInfo.getHabboStats();
                         ScrSendKickbackInfoMessageComposer calculated = calculatePayday(habboInfo);
-                        int totalReward = (calculated.creditRewardForMonthlySpent + calculated.creditRewardForStreakBonus);
+                        int totalReward = (calculated.getCreditRewardForMonthlySpent() + calculated.getCreditRewardForStreakBonus());
                         if (totalReward > 0) {
                             boolean claimed = claimPayDay(Emulator.getGameEnvironment().getHabboManager().getHabbo(userId), totalReward, HC_PAYDAY_CURRENCY);
-                            HcPayDayLogEntry le = new HcPayDayLogEntry(timestampNow, userId, calculated.currentHcStreak, calculated.totalCreditsSpent, calculated.creditRewardForMonthlySpent, calculated.creditRewardForStreakBonus, totalReward, HC_PAYDAY_CURRENCY, claimed);
+                            HcPayDayLogEntry le = new HcPayDayLogEntry(timestampNow, userId, calculated.getCurrentHcStreak(), calculated.getTotalCreditsSpent(), calculated.getCreditRewardForMonthlySpent(), calculated.getCreditRewardForStreakBonus(), totalReward, HC_PAYDAY_CURRENCY, claimed);
                             Emulator.getThreading().run(le);
                         }
-                        stats.lastHCPayday = timestampNow;
+                        stats.setLastHCPayday(timestampNow);
                         Emulator.getThreading().run(stats);
                     } catch (Exception e) {
-                        SubscriptionManager.LOGGER.error("Exception processing HC payday for user #" + set.getInt("user_id"), e);
+                        log.error("Exception processing HC payday for user #" + set.getInt("user_id"), e);
                     }
                 }
             }
@@ -303,7 +302,7 @@ public class SubscriptionHabboClub extends Subscription {
             }
 
         } catch (SQLException e) {
-            SubscriptionManager.LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
         isExecuting = false;
     }
@@ -340,13 +339,13 @@ public class SubscriptionHabboClub extends Subscription {
                             }
                         }
                     } catch (Exception e) {
-                        SubscriptionManager.LOGGER.error("Exception processing HC payday for user #" + set.getInt("user_id"), e);
+                        log.error("Exception processing HC payday for user #" + set.getInt("user_id"), e);
                     }
                 }
             }
 
         } catch (SQLException e) {
-            SubscriptionManager.LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -370,45 +369,36 @@ public class SubscriptionHabboClub extends Subscription {
             return false;
 
         int pointCurrency;
-        switch(currency.toLowerCase()) {
-            case "credits":
-            case "coins":
-            case "credit":
-            case "coin":
-                habbo.getClient().getHabbo().getHabboInfo().addCredits(amount);
+        switch (currency.toLowerCase()) {
+            case "credits", "coins", "credit", "coin" -> {
+                habbo.getClient().getHabbo().giveCredits(amount);
                 habbo.getClient().sendResponse(new CreditBalanceComposer(habbo.getClient().getHabbo()));
-                break;
-
-            case "diamonds":
-            case "diamond":
+            }
+            case "diamonds", "diamond" -> {
                 pointCurrency = 5;
-                habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
+                habbo.getClient().getHabbo().givePoints(pointCurrency, amount);
                 habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
-                break;
 
-            case "duckets":
-            case "ducket":
-            case "pixels":
-            case "pixel":
+            }
+            case "duckets", "ducket", "pixels", "pixel" -> {
                 pointCurrency = 0;
-                habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
+                habbo.getClient().getHabbo().givePoints(pointCurrency, amount);
                 habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
-                break;
 
-            default:
+            }
+            default -> {
                 pointCurrency = -1;
                 try {
                     pointCurrency = Integer.parseInt(currency);
+                } catch (NumberFormatException ex) {
+                    log.error("Couldn't convert the type point currency {} on HC PayDay. The number must be a integer and positive.", pointCurrency);
                 }
-                catch (NumberFormatException ex) {
-                    LOGGER.error("Couldn't convert the type point currency {} on HC PayDay. The number must be a integer and positive.", pointCurrency);
-                }
-
                 if (pointCurrency >= 0) {
-                    habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(pointCurrency, amount);
+                    habbo.getClient().getHabbo().givePoints(pointCurrency, amount);
                     habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(pointCurrency), amount, pointCurrency));
+
                 }
-                break;
+            }
         }
 
         habbo.alert(Emulator.getTexts().getValue("subscriptions.hc.payday.message", "Woohoo HC Payday has arrived! You have received %amount% credits to your purse. Enjoy!").replace("%amount%", "" + amount));

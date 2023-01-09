@@ -3,15 +3,13 @@ package com.eu.habbo.messages.outgoing.polls.infobus;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class QuestionFinishedComposer extends MessageComposer {
     private final int no;
     private final int yes;
 
-    public QuestionFinishedComposer(int no, int yes) {
-        this.no = no;
-        this.yes = yes;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

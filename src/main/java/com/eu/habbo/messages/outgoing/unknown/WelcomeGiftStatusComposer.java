@@ -3,21 +3,15 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class WelcomeGiftStatusComposer extends MessageComposer {
     private final String email;
     private final boolean unknownB1;
     private final boolean unknownB2;
     private final int furniId;
     private final boolean unknownB3;
-
-    public WelcomeGiftStatusComposer(String email, boolean unknownB1, boolean unknownB2, int furniId, boolean unknownB3) {
-        this.email = email;
-        this.unknownB1 = unknownB1;
-        this.unknownB2 = unknownB2;
-        this.furniId = furniId;
-        this.unknownB3 = unknownB3;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

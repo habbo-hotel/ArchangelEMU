@@ -4,13 +4,11 @@ import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GuildEditInfoMessageComposer extends MessageComposer {
     private final Guild guild;
-
-    public GuildEditInfoMessageComposer(Guild guild) {
-        this.guild = guild;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -26,8 +24,8 @@ public class GuildEditInfoMessageComposer extends MessageComposer {
         this.response.appendInt(this.guild.getRoomId());
         this.response.appendInt(this.guild.getColorOne());
         this.response.appendInt(this.guild.getColorTwo());
-        this.response.appendInt(this.guild.getState().state);
-        this.response.appendInt(this.guild.getRights() ? 0 : 1);
+        this.response.appendInt(this.guild.getState().getState());
+        this.response.appendInt(this.guild.isRights() ? 0 : 1);
         this.response.appendBoolean(false);
         this.response.appendString("");
         this.response.appendInt(5);

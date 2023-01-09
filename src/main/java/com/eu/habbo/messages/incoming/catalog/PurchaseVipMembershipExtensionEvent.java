@@ -9,15 +9,10 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
-import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 
 public class PurchaseVipMembershipExtensionEvent extends MessageHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PurchaseVipMembershipExtensionEvent.class);
-
     @Override
     public void handle() throws Exception {
 
@@ -56,10 +51,10 @@ public class PurchaseVipMembershipExtensionEvent extends MessageHandler {
                             return;
 
                         if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS))
-                            this.client.getHabbo().getHabboInfo().addCredits(-totalCredits);
+                            this.client.getHabbo().giveCredits(-totalCredits);
 
                         if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
-                            this.client.getHabbo().getHabboInfo().addCurrencyAmount(deal.getPointsType(), -totalDuckets);
+                            this.client.getHabbo().givePoints(deal.getPointsType(), -totalDuckets);
 
 
                         if(this.client.getHabbo().getHabboStats().createSubscription(Subscription.HABBO_CLUB, (totalDays * 86400)) == null) {

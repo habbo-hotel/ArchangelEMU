@@ -1,5 +1,10 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum ModToolTicketType {
     NORMAL(1),
     NORMAL_UNKNOWN(2),
@@ -19,11 +24,4 @@ public enum ModToolTicketType {
 
     private final int type;
 
-    ModToolTicketType(int type) {
-        this.type = type;
-    }
-
-    public int getType() {
-        return this.type;
-    }
 }

@@ -113,15 +113,15 @@ public class InteractionBuildArea extends InteractionCustomValues {
         THashSet<RoomTile> oldTiles = this.tiles;
         THashSet<RoomTile> newTiles = new THashSet<>();
 
-        int minX = Math.max(0, newLocation.x - Integer.parseInt(this.values.get("tilesBack")));
-        int minY = Math.max(0, newLocation.y - Integer.parseInt(this.values.get("tilesRight")));
-        int maxX = Math.min(room.getLayout().getMapSizeX(), newLocation.x + Integer.parseInt(this.values.get("tilesFront")));
-        int maxY = Math.min(room.getLayout().getMapSizeY(), newLocation.y + Integer.parseInt(this.values.get("tilesLeft")));
+        int minX = Math.max(0, newLocation.getX() - Integer.parseInt(this.values.get("tilesBack")));
+        int minY = Math.max(0, newLocation.getY() - Integer.parseInt(this.values.get("tilesRight")));
+        int maxX = Math.min(room.getLayout().getMapSizeX(), newLocation.getX() + Integer.parseInt(this.values.get("tilesFront")));
+        int maxY = Math.min(room.getLayout().getMapSizeY(), newLocation.getY() + Integer.parseInt(this.values.get("tilesLeft")));
 
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
                 RoomTile tile = room.getLayout().getTile((short) x, (short) y);
-                if (tile != null && tile.state != RoomTileState.INVALID)
+                if (tile != null && tile.getState() != RoomTileState.INVALID)
                     newTiles.add(tile);
             }
         }
@@ -162,7 +162,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
                 RoomTile tile = room.getLayout().getTile((short) x, (short) y);
-                if (tile != null && tile.state != RoomTileState.INVALID)
+                if (tile != null && tile.getState() != RoomTileState.INVALID)
                     this.tiles.add(tile);
             }
         }
@@ -197,7 +197,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
                 RoomTile tile = room.getLayout().getTile((short) x, (short) y);
-                if (tile != null && tile.state != RoomTileState.INVALID && !this.tiles.contains(tile))
+                if (tile != null && tile.getState() != RoomTileState.INVALID && !this.tiles.contains(tile))
                     oldTiles.add(tile);
             }
         }
@@ -224,8 +224,8 @@ public class InteractionBuildArea extends InteractionCustomValues {
             for (RoomTile tile : this.tiles) {
                 id--;
                 HabboItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
-                item.setX(tile.x);
-                item.setY(tile.y);
+                item.setX(tile.getX());
+                item.setY(tile.getY());
                 item.setZ(tile.relativeHeight());
                 items.add(item);
             }

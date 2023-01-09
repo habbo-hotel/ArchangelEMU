@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.wired;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class WiredRewardResultMessageComposer extends MessageComposer {
     public static final int LIMITED_NO_MORE_AVAILABLE = 0;
     public static final int REWARD_ALREADY_RECEIVED = 1;
@@ -17,9 +19,6 @@ public class WiredRewardResultMessageComposer extends MessageComposer {
 
     private final int code;
 
-    public WiredRewardResultMessageComposer(int code) {
-        this.code = code;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -1,14 +1,16 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+@Getter
 public class WordFilterWord {
-    public final String key;
-    public final String replacement;
-    public final boolean hideMessage;
-    public final boolean autoReport;
-    public final int muteTime;
+    private  final String key;
+    private  final String replacement;
+    private  final boolean hideMessage;
+    private  final boolean autoReport;
+    private  final int muteTime;
 
     public WordFilterWord(ResultSet set) throws SQLException {
         this.key = set.getString("key");

@@ -1,7 +1,6 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.RandomStateParams;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -26,7 +25,7 @@ public class InteractionRandomState extends InteractionDefault {
         room.updateItemState(this);
     }
 
-    public void onRandomStateClick(GameClient client, Room room) throws Exception {
+    public void onRandomStateClick(Room room) throws Exception {
         RandomStateParams params = new RandomStateParams(this.getBaseItem().getCustomParams());
 
         this.setExtradata("");

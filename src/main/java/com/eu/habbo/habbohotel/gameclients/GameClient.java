@@ -7,24 +7,28 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import io.netty.channel.Channel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class GameClient {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameClient.class);
-
+    
+    @Getter
     private final Channel channel;
+    @Getter
     private final HabboEncryption encryption;
 
+    @Setter
+    @Getter
     private Habbo habbo;
+    @Setter
+    @Getter
     private boolean handshakeFinished;
+    @Getter
     private String machineId = "";
 
     public final ConcurrentHashMap<Integer, Integer> incomingPacketCounter = new ConcurrentHashMap<>(25);
@@ -41,41 +45,6 @@ public class GameClient {
                 : null;
     }
 
-    public Channel getChannel() {
-        return this.channel;
-    }
-
-    public HabboEncryption getEncryption() {
-        return encryption;
-    }
-
-    public Habbo getHabbo() {
-        return this.habbo;
-    }
-
-    public void setHabbo(Habbo habbo) {
-        this.habbo = habbo;
-    }
-
-    public boolean isHandshakeFinished() {
-        return handshakeFinished;
-    }
-
-    public void setHandshakeFinished(boolean handshakeFinished) {
-        this.handshakeFinished = handshakeFinished;
-    }
-
-    public String getMachineId() {
-        return this.machineId;
-    }
-
-    public void setMachineId(String machineId) {
-        if (machineId == null) {
-            throw new RuntimeException("Cannot set machineID to NULL");
-        }
-
-        this.machineId = machineId;
-    }
 
     public void sendResponse(MessageComposer composer) {
         this.sendResponse(composer.compose());
@@ -119,7 +88,16 @@ public class GameClient {
                 this.habbo = null;
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
+
+    public void setMachineId(String machineId) {
+        if (machineId == null) {
+            throw new RuntimeException("Cannot set machineID to NULL");
+        }
+
+        this.machineId = machineId;
+    }
+
 }

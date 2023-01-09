@@ -4,15 +4,12 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class UserUnbannedFromRoomComposer extends MessageComposer {
     private final Room room;
     private final int userId;
-
-    public UserUnbannedFromRoomComposer(Room room, int userId) {
-        this.room = room;
-        this.userId = userId;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -6,15 +6,13 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.TIntIntHashMap;
+import lombok.AllArgsConstructor;
 
 import java.util.Calendar;
 
+@AllArgsConstructor
 public class ChatReviewSessionStartedMessageComposer extends MessageComposer {
     private final GuardianTicket ticket;
-
-    public ChatReviewSessionStartedMessageComposer(GuardianTicket ticket) {
-        this.ticket = ticket;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -33,11 +31,11 @@ public class ChatReviewSessionStartedMessageComposer extends MessageComposer {
         fullMessage.append("\r");
 
         for (ModToolChatLog chatLog : this.ticket.getChatLogs()) {
-            if (!mappedUsers.containsKey(chatLog.habboId)) {
-                mappedUsers.put(chatLog.habboId, mappedUsers.size());
+            if (!mappedUsers.containsKey(chatLog.getHabboId())) {
+                mappedUsers.put(chatLog.getHabboId(), mappedUsers.size());
             }
 
-            fullMessage.append("unused;").append(mappedUsers.get(chatLog.habboId)).append(";").append(chatLog.message).append("\r");
+            fullMessage.append("unused;").append(mappedUsers.get(chatLog.getHabboId())).append(";").append(chatLog.getMessage()).append("\r");
         }
 
         this.response.init(Outgoing.chatReviewSessionStartedMessageComposer);

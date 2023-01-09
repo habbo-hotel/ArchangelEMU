@@ -4,14 +4,11 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GuideOnDutyStatusMessageComposer extends MessageComposer {
     private final boolean onDuty;
-
-    public GuideOnDutyStatusMessageComposer(boolean onDuty) {
-        this.onDuty = onDuty;
-    }
-
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.guideOnDutyStatusMessageComposer);

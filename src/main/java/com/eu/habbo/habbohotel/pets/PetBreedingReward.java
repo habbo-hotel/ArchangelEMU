@@ -1,17 +1,16 @@
 package com.eu.habbo.habbohotel.pets;
 
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+@Getter
 public class PetBreedingReward {
+    private  final int petType;
 
-    public final int petType;
+    private  final int rarityLevel;
 
-
-    public final int rarityLevel;
-
-
-    public final int breed;
+    private  final int breed;
 
     public PetBreedingReward(ResultSet set) throws SQLException {
         this.petType = set.getInt("pet_type");

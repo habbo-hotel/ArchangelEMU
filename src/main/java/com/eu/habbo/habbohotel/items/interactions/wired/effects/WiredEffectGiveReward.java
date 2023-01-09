@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -17,7 +16,6 @@ import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.generic.alerts.WiredValidationErrorComposer;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -80,12 +78,12 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
         else {
             String[] data = wiredData.split(":");
             if (data.length > 0) {
-                this.limit = Integer.valueOf(data[0]);
-                this.given = Integer.valueOf(data[1]);
-                this.rewardTime = Integer.valueOf(data[2]);
+                this.limit = Integer.parseInt(data[0]);
+                this.given = Integer.parseInt(data[1]);
+                this.rewardTime = Integer.parseInt(data[2]);
                 this.uniqueRewards = data[3].equals("1");
-                this.limitationInterval = Integer.valueOf(data[4]);
-                this.setDelay(Integer.valueOf(data[5]));
+                this.limitationInterval = Integer.parseInt(data[4]);
+                this.setDelay(Integer.parseInt(data[5]));
 
                 if (data.length > 6) {
                     if (!data[6].equalsIgnoreCase("\t")) {
@@ -96,7 +94,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
                         for (String s : items) {
                             try {
                                 this.rewardItems.add(new WiredGiveRewardItem(s));
-                            } catch (Exception e) {
+                            } catch (Exception ignored) {
                             }
                         }
                     }
@@ -151,19 +149,16 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
         message.appendInt(this.limit);
         message.appendInt(this.limitationInterval);
         message.appendInt(this.limit > 0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
 
         if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
-                @Override
-                public boolean execute(InteractionWiredTrigger object) {
-                    if (!object.isTriggeredByRoomUnit()) {
-                        invalidTriggers.add(object.getBaseItem().getSpriteId());
-                    }
-                    return true;
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
+                if (!object.isTriggeredByRoomUnit()) {
+                    invalidTriggers.add(object.getBaseItem().getSpriteId());
                 }
+                return true;
             });
             message.appendInt(invalidTriggers.size());
             for (Integer i : invalidTriggers) {
@@ -196,7 +191,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
 
                 if (d.length == 3) {
                     if (!(d[1].contains(":") || d[1].contains(";"))) {
-                        this.rewardItems.add(new WiredGiveRewardItem(i, d[0].equalsIgnoreCase("0"), d[1], Integer.valueOf(d[2])));
+                        this.rewardItems.add(new WiredGiveRewardItem(i, d[0].equalsIgnoreCase("0"), d[1], Integer.parseInt(d[2])));
                         continue;
                     }
                 }

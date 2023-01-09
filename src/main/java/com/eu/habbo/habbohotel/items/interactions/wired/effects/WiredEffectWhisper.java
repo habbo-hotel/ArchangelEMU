@@ -7,7 +7,10 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
@@ -45,7 +48,7 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
         message.appendString(this.message);
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(type.code);
+        message.appendInt(type.getCode());
         message.appendInt(this.getDelay());
 
         if (this.requiresTriggeringUser()) {
@@ -132,7 +135,7 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
             this.message = "";
 
             if (wiredData.split("\t").length >= 2) {
-                super.setDelay(Integer.valueOf(wiredData.split("\t")[0]));
+                super.setDelay(Integer.parseInt(wiredData.split("\t")[0]));
                 this.message = wiredData.split("\t")[1];
             }
 

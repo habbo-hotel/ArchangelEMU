@@ -3,17 +3,15 @@ package com.eu.habbo.messages.outgoing.camera;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class CameraPublishStatusMessageComposer extends MessageComposer {
-    public final boolean isOk;
-    public final int cooldownSeconds;
-    public final String extraDataId;
-
-    public CameraPublishStatusMessageComposer(boolean isOk, int cooldownSeconds, String extraDataId) {
-        this.isOk = isOk;
-        this.cooldownSeconds = cooldownSeconds;
-        this.extraDataId = extraDataId;
-    }
+    private final boolean isOk;
+    private final int cooldownSeconds;
+    private final String extraDataId;
 
     @Override
     protected ServerMessage composeInternal() {

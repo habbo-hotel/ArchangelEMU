@@ -7,13 +7,11 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class TradingItemListComposer extends MessageComposer {
     private final RoomTrade roomTrade;
-
-    public TradingItemListComposer(RoomTrade roomTrade) {
-        this.roomTrade = roomTrade;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

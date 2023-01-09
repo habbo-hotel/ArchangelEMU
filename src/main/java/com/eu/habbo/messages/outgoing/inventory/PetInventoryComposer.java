@@ -6,15 +6,13 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.iterator.TIntObjectIterator;
+import lombok.AllArgsConstructor;
 
 import java.util.NoSuchElementException;
 
+@AllArgsConstructor
 public class PetInventoryComposer extends MessageComposer {
     private final Habbo habbo;
-
-    public PetInventoryComposer(Habbo habbo) {
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

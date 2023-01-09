@@ -26,20 +26,25 @@ public class RequestRoomPropertySet extends MessageHandler {
                 return;
             }
 
-            if (item.getBaseItem().getName().equals("floor")) {
-                room.setFloorPaint(item.getExtradata());
+            switch (item.getBaseItem().getName()) {
+                case "floor":
+                    room.setFloorPaint(item.getExtradata());
 
-                AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoFloor"));
-            } else if (item.getBaseItem().getName().equals("wallpaper")) {
-                room.setWallPaint(item.getExtradata());
+                    AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoFloor"));
+                    break;
+                case "wallpaper":
+                    room.setWallPaint(item.getExtradata());
 
-                AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoWallpaper"));
-            } else if (item.getBaseItem().getName().equals("landscape")) {
-                room.setBackgroundPaint(item.getExtradata());
+                    AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoWallpaper"));
+                    break;
+                case "landscape":
+                    room.setBackgroundPaint(item.getExtradata());
 
-                AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoLandscape"));
-            } else
-                return;
+                    AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoLandscape"));
+                    break;
+                default:
+                    return;
+            }
 
             this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
             room.setNeedsUpdate(true);

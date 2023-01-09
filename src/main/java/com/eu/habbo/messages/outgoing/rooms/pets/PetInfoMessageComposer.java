@@ -10,17 +10,14 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class PetInfoMessageComposer extends MessageComposer {
     private final Pet pet;
     private final Room room;
     private final Habbo requestingHabbo;
 
-    public PetInfoMessageComposer(Pet pet, Room room, Habbo requestingHabbo) {
-        this.pet = pet;
-        this.room = room;
-        this.requestingHabbo = requestingHabbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -43,7 +40,7 @@ public class PetInfoMessageComposer extends MessageComposer {
         }
         this.response.appendInt(this.pet.getEnergy());
         this.response.appendInt(this.pet.getMaxEnergy()); //Max energy
-        this.response.appendInt(this.pet.getHappyness()); //this.pet.getHappyness()
+        this.response.appendInt(this.pet.getHappiness()); //this.pet.getHappyness()
         this.response.appendInt(100);
         this.response.appendInt(this.pet.getRespect());
         this.response.appendInt(this.pet.getUserId());

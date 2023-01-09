@@ -4,19 +4,15 @@ import com.eu.habbo.habbohotel.navigation.SearchResultList;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class NavigatorSearchResultBlocksComposer extends MessageComposer {
     private final String searchCode;
     private final String searchQuery;
     private final List<SearchResultList> resultList;
-
-    public NavigatorSearchResultBlocksComposer(String searchCode, String searchQuery, List<SearchResultList> resultList) {
-        this.searchCode = searchCode;
-        this.searchQuery = searchQuery;
-        this.resultList = resultList;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

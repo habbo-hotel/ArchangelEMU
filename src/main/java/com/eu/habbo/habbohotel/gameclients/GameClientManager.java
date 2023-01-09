@@ -4,7 +4,11 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.networking.gameserver.GameServerAttributes;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelId;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +17,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class GameClientManager {
 
+    @Getter
     private final ConcurrentMap<ChannelId, GameClient> clients;
 
     public GameClientManager() {
@@ -20,19 +25,10 @@ public class GameClientManager {
     }
 
 
-    public ConcurrentMap<ChannelId, GameClient> getSessions() {
-        return this.clients;
-    }
-
 
     public boolean addClient(ChannelHandlerContext ctx) {
         GameClient client = new GameClient(ctx.channel());
-        ctx.channel().closeFuture().addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                GameClientManager.this.disposeClient(ctx.channel());
-            }
-        });
+        ctx.channel().closeFuture().addListener((ChannelFutureListener) channelFuture -> GameClientManager.this.disposeClient(ctx.channel()));
 
         ctx.channel().attr(GameServerAttributes.CLIENT).set(client);
         ctx.fireChannelRegistered();

@@ -5,21 +5,19 @@ import com.eu.habbo.habbohotel.polls.PollQuestion;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class PollContentsComposer extends MessageComposer {
     private final Poll poll;
-
-    public PollContentsComposer(Poll poll) {
-        this.poll = poll;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.pollContentsComposer);
 
-        this.response.appendInt(this.poll.id);
-        this.response.appendString(this.poll.title);
-        this.response.appendString(this.poll.thanksMessage);
+        this.response.appendInt(this.poll.getId());
+        this.response.appendString(this.poll.getTitle());
+        this.response.appendString(this.poll.getThanksMessage());
         this.response.appendInt(this.poll.getQuestions().size());
         for (PollQuestion question : this.poll.getQuestions()) {
             question.serialize(this.response);

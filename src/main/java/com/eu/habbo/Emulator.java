@@ -17,6 +17,7 @@ import com.eu.habbo.plugin.events.emulator.EmulatorStartShutdownEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorStoppedEvent;
 import com.eu.habbo.threading.ThreadPooling;
 import com.eu.habbo.util.imager.badges.BadgeImager;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public final class Emulator {
 
     public static final int MAJOR = 4;
@@ -45,14 +47,17 @@ public final class Emulator {
     private static final Logger LOGGER = LoggerFactory.getLogger(Emulator.class);
     private static final String OS_NAME = (System.getProperty("os.name") != null ? System.getProperty("os.name") : "Unknown");
     private static final String CLASS_PATH = (System.getProperty("java.class.path") != null ? System.getProperty("java.class.path") : "Unknown");
+
     private static final String logo =
-            "\n" +
-                    "███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗ \n" +
-                    "████╗ ████║██╔═══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗\n" +
-                    "██╔████╔██║██║   ██║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗███████╗   ██║   ███████║██████╔╝\n" +
-                    "██║╚██╔╝██║██║   ██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚════██║   ██║   ██╔══██║██╔══██╗\n" +
-                    "██║ ╚═╝ ██║╚██████╔╝██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝███████║   ██║   ██║  ██║██║  ██║\n" +
-                    "╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝\n";
+            """
+
+                    ███╗   ███╗ ██████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ███████╗████████╗ █████╗ ██████╗\s
+                    ████╗ ████║██╔═══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗
+                    ██╔████╔██║██║   ██║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗███████╗   ██║   ███████║██████╔╝
+                    ██║╚██╔╝██║██║   ██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚════██║   ██║   ██╔══██║██╔══██╗
+                    ██║ ╚═╝ ██║╚██████╔╝██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝███████║   ██║   ██║  ██║██║  ██║
+                    ╚═╝     ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝
+                    """;
 
 
 
@@ -64,7 +69,6 @@ public final class Emulator {
     private static GameServer gameServer;
     private static RCONServer rconServer;
     private static CameraClient cameraClient;
-    private static Logging logging;
     private static Database database;
     private static DatabaseLogger databaseLogger;
     private static ThreadPooling threading;
@@ -90,7 +94,7 @@ public final class Emulator {
         scanner.nextLine();
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         try {
             // Check if running on Windows and not in IntelliJ.
             // If so, we need to reconfigure the console appender and enable Jansi for colors.
@@ -107,7 +111,6 @@ public final class Emulator {
             setBuild();
             Emulator.stopped = false;
             ConsoleCommand.load();
-            Emulator.logging = new Logging();
 
             System.out.println(logo);
 
@@ -116,11 +119,11 @@ public final class Emulator {
                 System.out.println();
                 promptEnterKey();
             }
-            LOGGER.info("eek. Has it really been a year?");
-            LOGGER.info("This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
-            LOGGER.info("Version: {}", version);
-            LOGGER.info("Build: {}", build);
-            LOGGER.info("Follow our development at https://git.krews.org/morningstar/Arcturus-Community");
+            log.info("eek. Has it really been a year?");
+            log.info("This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
+            log.info("Version: {}", version);
+            log.info("Build: {}", build);
+            log.info("Follow our development at https://git.krews.org/morningstar/Arcturus-Community");
 
             long startTime = System.nanoTime();
 
@@ -153,16 +156,16 @@ public final class Emulator {
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
 
-            LOGGER.info("Arcturus Morningstar has successfully loaded.");
-            LOGGER.info("System launched in: {}ms. Using {} threads!", (System.nanoTime() - startTime) / 1e6, Runtime.getRuntime().availableProcessors() * 2);
-            LOGGER.info("Memory: {}/{}MB", (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024), (runtime.freeMemory()) / (1024 * 1024));
+            log.info("Arcturus Morningstar has successfully loaded.");
+            log.info("System launched in: {}ms. Using {} threads!", (System.nanoTime() - startTime) / 1e6, Runtime.getRuntime().availableProcessors() * 2);
+            log.info("Memory: {}/{}MB", (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024), (runtime.freeMemory()) / (1024 * 1024));
 
             Emulator.debugging = Emulator.getConfig().getBoolean("debug.mode");
 
             if (debugging) {
                 ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
                 root.setLevel(Level.DEBUG);
-                LOGGER.debug("Debugging enabled.");
+                log.debug("Debugging enabled.");
             }
 
             Emulator.getPluginManager().fireEvent(new EmulatorLoadedEvent());
@@ -170,7 +173,7 @@ public final class Emulator {
             Emulator.timeStarted = getIntUnixTimestamp();
 
             if (Emulator.getConfig().getInt("runtime.threads") < (Runtime.getRuntime().availableProcessors() * 2)) {
-                LOGGER.warn("Emulator settings runtime.threads ({}) can be increased to ({}) to possibly increase performance.",
+                log.warn("Emulator settings runtime.threads ({}) can be increased to ({}) to possibly increase performance.",
                         Emulator.getConfig().getInt("runtime.threads"),
                         Runtime.getRuntime().availableProcessors() * 2);
             }
@@ -193,7 +196,7 @@ public final class Emulator {
                         System.out.println("Waiting for command: ");
                     } catch (Exception e) {
                         if (!(e instanceof IOException && e.getMessage().equals("Bad file descriptor"))) {
-                            LOGGER.error("Error while reading command", e);
+                            log.error("Error while reading command", e);
                         }
                     }
                 }
@@ -234,7 +237,7 @@ public final class Emulator {
         Emulator.isShuttingDown = true;
         Emulator.isReady = false;
 
-        LOGGER.info("Stopping Arcturus Morningstar {}", version);
+        log.info("Stopping Arcturus Morningstar {}", version);
 
         try {
             if (Emulator.getPluginManager() != null)
@@ -285,7 +288,7 @@ public final class Emulator {
         } catch (Exception ignored) {
         }
 
-        LOGGER.info("Stopped Arcturus Morningstar {}", version);
+        log.info("Stopped Arcturus Morningstar {}", version);
 
         if (Emulator.database != null) {
             Emulator.getDatabase().dispose();
@@ -332,13 +335,6 @@ public final class Emulator {
         return rconServer;
     }
 
-    /**
-     * @deprecated Do not use. Please use LoggerFactory.getLogger(YourClass.class) to log.
-     */
-    @Deprecated
-    public static Logging getLogging() {
-        return logging;
-    }
 
     public static ThreadPooling getThreading() {
         return threading;
@@ -384,7 +380,7 @@ public final class Emulator {
         int totalSeconds = 0;
 
         Matcher m = Pattern.compile("(([0-9]*) (second|minute|hour|day|week|month|year))").matcher(timeString);
-        Map<String,Integer> map = new HashMap<String,Integer>();
+        Map<String,Integer> map = new HashMap<>();
         map.put("second", 1);
         map.put("minute", 60);
         map.put("hour", 3600);
@@ -406,13 +402,12 @@ public final class Emulator {
     }
 
     public static Date modifyDate(Date date, String timeString) {
-        int totalSeconds = 0;
 
         Calendar c = Calendar.getInstance();
         c.setTime(date);
 
         Matcher m = Pattern.compile("(([0-9]*) (second|minute|hour|day|week|month|year))").matcher(timeString);
-        Map<String, Integer> map = new HashMap<String, Integer>();
+        Map<String, Integer> map = new HashMap<>();
         map.put("second", Calendar.SECOND);
         map.put("minute", Calendar.MINUTE);
         map.put("hour", Calendar.HOUR);
@@ -437,7 +432,7 @@ public final class Emulator {
         String res = "";
         Date aux = stringToDate("1970-01-01 00:00:00");
         if(aux == null) return null;
-        
+
         Timestamp aux1 = dateToTimeStamp(aux);
         Timestamp aux2 = dateToTimeStamp(date);
         long difference = aux2.getTime() - aux1.getTime();
@@ -451,7 +446,7 @@ public final class Emulator {
         try {
             res = format.parse(date);
         } catch (Exception e) {
-            LOGGER.error("Error parsing date", e);
+            log.error("Error parsing date", e);
         }
         return res;
     }

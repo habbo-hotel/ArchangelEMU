@@ -3,19 +3,15 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
+@AllArgsConstructor
 public class RoomUserQuestionAnsweredComposer extends MessageComposer {
     private final int userId;
     private final String value;
     private final Map<String, Integer> unknownMap;
-
-    public RoomUserQuestionAnsweredComposer(int userId, String value, Map<String, Integer> unknownMap) {
-        this.userId = userId;
-        this.value = value;
-        this.unknownMap = unknownMap;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

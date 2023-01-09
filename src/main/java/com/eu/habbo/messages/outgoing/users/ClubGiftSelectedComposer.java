@@ -5,16 +5,13 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ClubGiftSelectedComposer extends MessageComposer {
     //:test 735 s:t i:1 s:s i:230 s:throne i:1 b:1 i:1 i:10;
     private final String name;
     private final THashSet<Item> items;
-
-    public ClubGiftSelectedComposer(String name, THashSet<Item> items) {
-        this.name = name;
-        this.items = items;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

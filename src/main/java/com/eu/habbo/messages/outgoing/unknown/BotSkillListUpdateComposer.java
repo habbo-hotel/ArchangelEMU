@@ -3,17 +3,14 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
+@AllArgsConstructor
 public class BotSkillListUpdateComposer extends MessageComposer {
     private final int unknownInt1;
     private final Map<Integer, String> unknownMap;
-
-    public BotSkillListUpdateComposer(int unknownInt1, Map<Integer, String> unknownMap) {
-        this.unknownInt1 = unknownInt1;
-        this.unknownMap = unknownMap;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -3,19 +3,19 @@ package com.eu.habbo.messages.rcon;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.users.FigureSetIdsComposer;
 import com.google.gson.Gson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@Slf4j
 public class GiveUserClothing extends RCONMessage<GiveUserClothing.JSONGiveUserClothing> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GiveUserClothing.class);
+
 
     public GiveUserClothing() {
         super(GiveUserClothing.JSONGiveUserClothing.class);
@@ -30,7 +30,7 @@ public class GiveUserClothing extends RCONMessage<GiveUserClothing.JSONGiveUserC
             statement.setInt(2, object.clothing_id);
             statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         if (habbo != null) {
@@ -39,7 +39,7 @@ public class GiveUserClothing extends RCONMessage<GiveUserClothing.JSONGiveUserC
             if (client != null) {
                 habbo.getInventory().getWardrobeComponent().getClothing().add(object.clothing_id);
                 client.sendResponse(new FigureSetIdsComposer(habbo));
-                client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FIGURESET_REDEEMED.key));
+                client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FIGURESET_REDEEMED.getKey()));
             }
         }
     }

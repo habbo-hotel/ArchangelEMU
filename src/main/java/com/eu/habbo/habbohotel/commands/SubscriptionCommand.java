@@ -3,7 +3,6 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.HabboStats;
@@ -54,7 +53,7 @@ public class SubscriptionCommand extends Command {
                     }
                 }
                 
-                if(!Emulator.getGameEnvironment().getSubscriptionManager().types.containsKey(subscription)) {
+                if(!Emulator.getGameEnvironment().getSubscriptionManager().getTypes().containsKey(subscription)) {
                     gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_subscription.type_not_found", "%subscription% is not a valid subscription type").replace("%subscription%", subscription), RoomChatMessageBubbles.ALERT);
                     return true;
                 }

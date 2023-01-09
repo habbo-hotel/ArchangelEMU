@@ -7,17 +7,14 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RoomUnitRidePet implements Runnable {
-    private RideablePet pet;
-    private Habbo habbo;
-    private RoomTile goalTile;
+    private final RideablePet pet;
+    private final Habbo habbo;
+    private final RoomTile goalTile;
 
-    public RoomUnitRidePet(RideablePet pet, Habbo habbo, RoomTile goalTile) {
-        this.pet = pet;
-        this.habbo = habbo;
-        this.goalTile = goalTile;
-    }
 
     @Override
     public void run() {

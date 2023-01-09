@@ -13,8 +13,9 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,16 +23,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
+@Slf4j
+@Getter
+@AllArgsConstructor
 public class ForumDataMessageComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ForumDataMessageComposer.class);
 
-    public final Guild guild;
-    public Habbo habbo;
 
-    public ForumDataMessageComposer(Guild guild, Habbo habbo) {
-        this.guild = guild;
-        this.habbo = habbo;
-    }
+    private final Guild guild;
+    private Habbo habbo;
 
     public static void serializeForumData(ServerMessage response, Guild guild, Habbo habbo) {
 
@@ -78,7 +77,7 @@ public class ForumDataMessageComposer extends MessageComposer {
                 newComments = set.getInt(1);
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         response.appendInt(guild.getId());
@@ -107,7 +106,7 @@ public class ForumDataMessageComposer extends MessageComposer {
             serializeForumData(this.response, guild, habbo);
 
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo);
-            boolean isAdmin = member != null && (member.getRank().type < GuildRank.MEMBER.type || guild.getOwnerId() == this.habbo.getHabboInfo().getId());
+            boolean isAdmin = member != null && (member.getRank().getType() < GuildRank.MEMBER.getType() || guild.getOwnerId() == this.habbo.getHabboInfo().getId());
             boolean isStaff = this.habbo.hasPermission(Permission.ACC_MODTOOL_TICKET_Q);
 
             String errorRead = "";
@@ -115,52 +114,52 @@ public class ForumDataMessageComposer extends MessageComposer {
             String errorStartThread = "";
             String errorModerate = "";
 
-            if (guild.canReadForum().state == 1 && member == null && !isStaff) {
+            if (guild.canReadForum().getState() == 1 && member == null && !isStaff) {
                 errorRead = "not_member";
-            } else if (guild.canReadForum().state == 2 && !isAdmin && !isStaff) {
+            } else if (guild.canReadForum().getState() == 2 && !isAdmin && !isStaff) {
                 errorRead = "not_admin";
             }
 
-            if (guild.canPostMessages().state == 1 && member == null && !isStaff) {
+            if (guild.canPostMessages().getState() == 1 && member == null && !isStaff) {
                 errorPost = "not_member";
-            } else if (guild.canPostMessages().state == 2 && !isAdmin && !isStaff) {
+            } else if (guild.canPostMessages().getState() == 2 && !isAdmin && !isStaff) {
                 errorPost = "not_admin";
-            } else if (guild.canPostMessages().state == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
+            } else if (guild.canPostMessages().getState() == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
                 errorPost = "not_owner";
             }
 
-            if (guild.canPostThreads().state == 1 && member == null && !isStaff) {
+            if (guild.canPostThreads().getState() == 1 && member == null && !isStaff) {
                 errorStartThread = "not_member";
-            } else if (guild.canPostThreads().state == 2 && !isAdmin && !isStaff) {
+            } else if (guild.canPostThreads().getState() == 2 && !isAdmin && !isStaff) {
                 errorStartThread = "not_admin";
-            } else if (guild.canPostThreads().state == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
+            } else if (guild.canPostThreads().getState() == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
                 errorStartThread = "not_owner";
             }
 
-            if (guild.canModForum().state == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
+            if (guild.canModForum().getState() == 3 && guild.getOwnerId() != this.habbo.getHabboInfo().getId() && !isStaff) {
                 errorModerate = "not_owner";
             } else if (!isAdmin && !isStaff) {
                 errorModerate = "not_admin";
             }
 
-            this.response.appendInt(guild.canReadForum().state);
-            this.response.appendInt(guild.canPostMessages().state);
-            this.response.appendInt(guild.canPostThreads().state);
-            this.response.appendInt(guild.canModForum().state);
+            this.response.appendInt(guild.canReadForum().getState());
+            this.response.appendInt(guild.canPostMessages().getState());
+            this.response.appendInt(guild.canPostThreads().getState());
+            this.response.appendInt(guild.canModForum().getState());
             this.response.appendString(errorRead);
             this.response.appendString(errorPost);
             this.response.appendString(errorStartThread);
             this.response.appendString(errorModerate);
             this.response.appendString(""); //citizen
             this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId()); //Forum Settings
-            if (guild.canModForum().state == 3) {
+            if (guild.canModForum().getState() == 3) {
                 this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId() || isStaff);
             }
             else {
                 this.response.appendBoolean(guild.getOwnerId() == this.habbo.getHabboInfo().getId() || isStaff || isAdmin); //Can Mod (staff)
             }
         } catch (Exception e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
             return new ErrorReportComposer(500).compose();
         }
 

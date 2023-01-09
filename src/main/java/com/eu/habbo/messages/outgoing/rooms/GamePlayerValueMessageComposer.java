@@ -4,13 +4,11 @@ import com.eu.habbo.habbohotel.games.freeze.FreezeGamePlayer;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GamePlayerValueMessageComposer extends MessageComposer {
     private final FreezeGamePlayer gamePlayer;
-
-    public GamePlayerValueMessageComposer(FreezeGamePlayer gamePlayer) {
-        this.gamePlayer = gamePlayer;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -8,9 +8,8 @@ import com.eu.habbo.messages.outgoing.friends.NewConsoleMessageComposer;
 import com.eu.habbo.plugin.events.users.UserTriggerWordFilterEvent;
 import gnu.trove.iterator.hash.TObjectHashIterator;
 import gnu.trove.set.hash.THashSet;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -19,8 +18,8 @@ import java.sql.Statement;
 import java.text.Normalizer;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class WordFilter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WordFilter.class);
 
     private static final Pattern DIACRITICS_AND_FRIENDS = Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
     //Configuration. Loaded from database & updated accordingly.
@@ -33,7 +32,7 @@ public class WordFilter {
     public WordFilter() {
         long start = System.currentTimeMillis();
         this.reload();
-        LOGGER.info("WordFilter -> Loaded! (" + (System.currentTimeMillis() - start) + " MS)");
+        log.info("WordFilter -> Loaded! (" + (System.currentTimeMillis() - start) + " MS)");
     }
 
     private static String stripDiacritics(String str) {
@@ -58,20 +57,20 @@ public class WordFilter {
                     try {
                         word = new WordFilterWord(set);
                     } catch (SQLException e) {
-                        LOGGER.error("Caught SQL exception", e);
+                        log.error("Caught SQL exception", e);
                         continue;
                     }
 
-                    if (word.autoReport)
+                    if (word.isAutoReport())
                         this.autoReportWords.add(word);
-                    else if (word.hideMessage)
+                    else if (word.isHideMessage())
                         this.hideMessageWords.add(word);
 
                     this.words.add(word);
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -90,16 +89,12 @@ public class WordFilter {
     public boolean autoReportCheck(RoomChatMessage roomChatMessage) {
         String message = this.normalise(roomChatMessage.getMessage()).toLowerCase();
 
-        TObjectHashIterator iterator = this.autoReportWords.iterator();
-
-        while (iterator.hasNext()) {
-            WordFilterWord word = (WordFilterWord) iterator.next();
-
-            if (message.contains(word.key)) {
+        for (WordFilterWord word : this.autoReportWords) {
+            if (message.contains(word.getKey())) {
                 Emulator.getGameEnvironment().getModToolManager().quickTicket(roomChatMessage.getHabbo(), "Automatic WordFilter", roomChatMessage.getMessage());
 
                 if (Emulator.getConfig().getBoolean("notify.staff.chat.auto.report")) {
-                    Emulator.getGameEnvironment().getHabboManager().sendPacketToHabbosWithPermission(new NewConsoleMessageComposer(new Message(roomChatMessage.getHabbo().getHabboInfo().getId(), 0, Emulator.getTexts().getValue("warning.auto.report").replace("%user%", roomChatMessage.getHabbo().getHabboInfo().getUsername()).replace("%word%", word.key))).compose(), "acc_staff_chat");
+                    Emulator.getGameEnvironment().getHabboManager().sendPacketToHabbosWithPermission(new NewConsoleMessageComposer(new Message(roomChatMessage.getHabbo().getHabboInfo().getId(), 0, Emulator.getTexts().getValue("warning.auto.report").replace("%user%", roomChatMessage.getHabbo().getHabboInfo().getUsername()).replace("%word%", word.getKey()))).compose(), "acc_staff_chat");
                 }
                 return true;
             }
@@ -111,12 +106,8 @@ public class WordFilter {
     public boolean hideMessageCheck(String message) {
         message = this.normalise(message).toLowerCase();
 
-        TObjectHashIterator iterator = this.hideMessageWords.iterator();
-
-        while (iterator.hasNext()) {
-            WordFilterWord word = (WordFilterWord) iterator.next();
-
-            if (message.contains(word.key)) {
+        for (WordFilterWord word : this.hideMessageWords) {
+            if (message.contains(word.getKey())) {
                 return true;
             }
         }
@@ -145,16 +136,16 @@ public class WordFilter {
         while (iterator.hasNext()) {
             WordFilterWord word = (WordFilterWord) iterator.next();
 
-            if (StringUtils.containsIgnoreCase(filteredMessage, word.key)) {
+            if (StringUtils.containsIgnoreCase(filteredMessage, word.getKey())) {
                 if (habbo != null) {
                     if (Emulator.getPluginManager().fireEvent(new UserTriggerWordFilterEvent(habbo, word)).isCancelled())
                         continue;
                 }
-                filteredMessage = filteredMessage.replace("(?i)" + word.key, word.replacement);
+                filteredMessage = filteredMessage.replace("(?i)" + word.getKey(), word.getReplacement());
                 foundShit = true;
 
-                if (habbo != null && word.muteTime > 0) {
-                    habbo.mute(word.muteTime, false);
+                if (habbo != null && word.getMuteTime() > 0) {
+                    habbo.mute(word.getMuteTime(), false);
                 }
             }
         }
@@ -173,18 +164,14 @@ public class WordFilter {
             message = this.normalise(message);
         }
 
-        TObjectHashIterator iterator = this.words.iterator();
-
-        while (iterator.hasNext()) {
-            WordFilterWord word = (WordFilterWord) iterator.next();
-
-            if (StringUtils.containsIgnoreCase(message, word.key)) {
+        for (WordFilterWord word : this.words) {
+            if (StringUtils.containsIgnoreCase(message, word.getKey())) {
                 if (habbo != null) {
                     if (Emulator.getPluginManager().fireEvent(new UserTriggerWordFilterEvent(habbo, word)).isCancelled())
                         continue;
                 }
 
-                message = message.replace(word.key, word.replacement);
+                message = message.replace(word.getKey(), word.getReplacement());
                 roomChatMessage.filtered = true;
             }
         }

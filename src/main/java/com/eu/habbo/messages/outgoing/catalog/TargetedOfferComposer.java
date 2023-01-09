@@ -6,15 +6,13 @@ import com.eu.habbo.habbohotel.users.cache.HabboOfferPurchase;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class TargetedOfferComposer extends MessageComposer {
     private final Habbo habbo;
     private final TargetOffer offer;
 
-    public TargetedOfferComposer(Habbo habbo, TargetOffer offer) {
-        this.habbo = habbo;
-        this.offer = offer;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

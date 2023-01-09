@@ -4,14 +4,11 @@ import com.eu.habbo.habbohotel.guides.GuideTour;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GuideSessionStartedComposer extends MessageComposer {
     private final GuideTour tour;
-
-    public GuideSessionStartedComposer(GuideTour tour) {
-        this.tour = tour;
-    }
-
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.guideSessionStartedComposer);

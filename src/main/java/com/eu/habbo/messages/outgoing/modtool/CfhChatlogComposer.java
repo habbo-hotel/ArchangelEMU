@@ -6,30 +6,21 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class CfhChatlogComposer extends MessageComposer {
     private final SimpleDateFormat format = new SimpleDateFormat("HH:mm");
     private final ModToolIssue issue;
     private final List<ModToolChatLog> chatlog;
     private final String roomName;
     private ModToolIssueChatlogType type = ModToolIssueChatlogType.CHAT;
-
-    public CfhChatlogComposer(ModToolIssue issue, List<ModToolChatLog> chatlog, String roomName) {
-        this.issue = issue;
-        this.chatlog = chatlog;
-        this.roomName = roomName;
-    }
-
-    public CfhChatlogComposer(ModToolIssue issue, List<ModToolChatLog> chatlog, String roomName, ModToolIssueChatlogType type) {
-        this.issue = issue;
-        this.chatlog = chatlog;
-        this.roomName = roomName;
-        this.type = type;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -88,14 +79,15 @@ public class CfhChatlogComposer extends MessageComposer {
 
         this.response.appendShort(this.chatlog.size());
         for (ModToolChatLog chatLog : this.chatlog) {
-            this.response.appendString(format.format(chatLog.timestamp * 1000L));
-            this.response.appendInt(chatLog.habboId);
-            this.response.appendString(chatLog.username);
-            this.response.appendString(chatLog.message);
-            this.response.appendBoolean(chatLog.highlighted);
+            this.response.appendString(format.format(chatLog.getTimestamp() * 1000L));
+            this.response.appendInt(chatLog.getHabboId());
+            this.response.appendString(chatLog.getUsername());
+            this.response.appendString(chatLog.getMessage());
+            this.response.appendBoolean(chatLog.isHighlighted());
         }
         //}
 
         return this.response;
     }
 }
+

@@ -6,15 +6,12 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class TalentLevelUpComposer extends MessageComposer {
     private final TalentTrackType talentTrackType;
     private final TalentTrackLevel talentTrackLevel;
-
-    public TalentLevelUpComposer(TalentTrackType talentTrackType, TalentTrackLevel talentTrackLevel) {
-        this.talentTrackType = talentTrackType;
-        this.talentTrackLevel = talentTrackLevel;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

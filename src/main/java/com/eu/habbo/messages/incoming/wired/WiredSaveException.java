@@ -1,12 +1,10 @@
 package com.eu.habbo.messages.incoming.wired;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class WiredSaveException extends Exception {
-
     private final String message;
-
-    public WiredSaveException(String message) {
-        this.message = message;
-    }
 
     @Override
     public String getMessage() {

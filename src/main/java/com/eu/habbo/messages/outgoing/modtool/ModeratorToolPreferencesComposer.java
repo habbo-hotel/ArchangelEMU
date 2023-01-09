@@ -3,19 +3,14 @@ package com.eu.habbo.messages.outgoing.modtool;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ModeratorToolPreferencesComposer extends MessageComposer {
     private final int x;
     private final int y;
     private final int width;
     private final int height;
-
-    public ModeratorToolPreferencesComposer(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

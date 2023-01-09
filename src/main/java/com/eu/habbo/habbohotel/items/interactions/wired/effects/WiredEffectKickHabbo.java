@@ -88,7 +88,7 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
                 String[] data = set.getString("wired_data").split("\t");
 
                 if (data.length >= 1) {
-                    this.setDelay(Integer.valueOf(data[0]));
+                    this.setDelay(Integer.parseInt(data[0]));
 
                     if (data.length >= 2) {
                         this.message = data[1];
@@ -124,7 +124,7 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
         message.appendString(this.message);
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
 
         if (this.requiresTriggeringUser()) {

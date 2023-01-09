@@ -5,15 +5,13 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 class RemoveFloorItemTask implements Runnable {
     private final Room room;
     private final HabboItem item;
 
-    public RemoveFloorItemTask(Room room, HabboItem item) {
-        this.room = room;
-        this.item = item;
-    }
 
     @Override
     public void run() {
@@ -24,6 +22,6 @@ class RemoveFloorItemTask implements Runnable {
         this.room.removeHabboItem(this.item);
         this.room.updateTile(tile);
         this.room.sendComposer(new RemoveFloorItemComposer(this.item, true).compose());
-        this.room.sendComposer(new HeightMapUpdateMessageComposer(this.item.getX(), this.item.getY(), tile.z, tile.relativeHeight()).compose());
+        this.room.sendComposer(new HeightMapUpdateMessageComposer(this.item.getX(), this.item.getY(), tile.getZ(), tile.relativeHeight()).compose());
     }
 }

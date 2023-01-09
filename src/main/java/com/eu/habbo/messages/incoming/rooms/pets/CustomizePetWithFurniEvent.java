@@ -10,8 +10,8 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.PetStatusUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetFigureUpdateComposer;
+import com.eu.habbo.messages.outgoing.rooms.pets.PetStatusUpdateComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
@@ -34,7 +34,7 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
 
         if (pet instanceof HorsePet) {
             if (item.getBaseItem().getName().toLowerCase().startsWith("horse_dye")) {
-                int race = Integer.valueOf(item.getBaseItem().getName().split("_")[2]);
+                int race = Integer.parseInt(item.getBaseItem().getName().split("_")[2]);
                 int raceType = (race * 4) - 2;
 
                 if (race >= 13 && race <= 17)
@@ -44,9 +44,9 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                     raceType = 0;
 
                 pet.setRace(raceType);
-                ((HorsePet) pet).needsUpdate = true;
+                pet.needsUpdate = true;
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_hairdye")) {
-                int splittedHairdye = Integer.valueOf(item.getBaseItem().getName().toLowerCase().split("_")[2]);
+                int splittedHairdye = Integer.parseInt(item.getBaseItem().getName().toLowerCase().split("_")[2]);
                 int newHairdye = 48;
 
                 if (splittedHairdye == 0) {
@@ -60,9 +60,9 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                 }
 
                 ((HorsePet) pet).setHairColor(newHairdye);
-                ((HorsePet) pet).needsUpdate = true;
+                pet.needsUpdate = true;
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_hairstyle")) {
-                int splittedHairstyle = Integer.valueOf(item.getBaseItem().getName().toLowerCase().split("_")[2]);
+                int splittedHairstyle = Integer.parseInt(item.getBaseItem().getName().toLowerCase().split("_")[2]);
                 int newHairstyle = 100;
 
                 if (splittedHairstyle == 0) {
@@ -72,14 +72,14 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                 }
 
                 ((HorsePet) pet).setHairStyle(newHairstyle);
-                ((HorsePet) pet).needsUpdate = true;
+                pet.needsUpdate = true;
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_saddle")) {
                 ((HorsePet) pet).hasSaddle(true);
                 ((HorsePet) pet).setSaddleItemId(item.getBaseItem().getId());
-                ((HorsePet) pet).needsUpdate = true;
+                pet.needsUpdate = true;
             }
 
-            if (((HorsePet) pet).needsUpdate) {
+            if (pet.needsUpdate) {
                 Emulator.getThreading().run(pet);
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetFigureUpdateComposer((HorsePet) pet).compose());
 
@@ -94,7 +94,7 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                     ((MonsterplantPet) pet).setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.timeToLive);
                     pet.getRoomUnit().clearStatus();
                     pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "rev");
-                    ((MonsterplantPet) pet).packetUpdate = true;
+                    pet.packetUpdate = true;
 
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().removeHabboItem(item);
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RemoveFloorItemComposer(item).compose());

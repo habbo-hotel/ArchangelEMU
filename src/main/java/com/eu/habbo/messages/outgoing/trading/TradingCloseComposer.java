@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.trading;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class TradingCloseComposer extends MessageComposer {
     public static final int USER_CANCEL_TRADE = 0;
     public static final int ITEMS_NOT_FOUND = 1;
@@ -11,10 +13,6 @@ public class TradingCloseComposer extends MessageComposer {
     private final int userId;
     private final int errorCode;
 
-    public TradingCloseComposer(int userId, int errorCode) {
-        this.userId = userId;
-        this.errorCode = errorCode;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

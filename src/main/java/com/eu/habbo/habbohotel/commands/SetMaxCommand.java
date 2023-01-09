@@ -14,7 +14,7 @@ public class SetMaxCommand extends Command {
         if (params.length >= 2) {
             int max;
             try {
-                max = Integer.valueOf(params[1]);
+                max = Integer.parseInt(params[1]);
             } catch (Exception e) {
                 return false;
             }
@@ -22,11 +22,10 @@ public class SetMaxCommand extends Command {
             if (max > 0 && max < 9999) {
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().setUsersMax(max);
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.success.cmd_setmax").replace("%value%", max + ""), RoomChatMessageBubbles.ALERT);
-                return true;
             } else {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_setmax.invalid_number"), RoomChatMessageBubbles.ALERT);
-                return true;
             }
+            return true;
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_setmax.forgot_number"), RoomChatMessageBubbles.ALERT);
             return true;

@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
 import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 import gnu.trove.map.hash.THashMap;
 
@@ -31,7 +31,7 @@ public class MassBadgeCommand extends Command {
                 keys.put("display", "BUBBLE");
                 keys.put("image", "${image.library.url}album1584/" + badge + ".gif");
                 keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
-                ServerMessage message = new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.key, keys).compose();
+                ServerMessage message = new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.getKey(), keys).compose();
 
                 for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
                     Habbo habbo = set.getValue();
@@ -40,18 +40,17 @@ public class MassBadgeCommand extends Command {
                         if (habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && !habbo.getInventory().getBadgesComponent().hasBadge(badge)) {
                             HabboBadge b = BadgesComponent.createBadge(badge, habbo);
 
-                            if (b != null) {
-                                habbo.getClient().sendResponse(new BadgeReceivedComposer(b));
-
-                                habbo.getClient().sendResponse(message);
-                            }
+                            habbo.getClient().sendResponse(new BadgeReceivedComposer(b));
+                            habbo.getClient().sendResponse(message);
                         }
                     }
                 }
+                return true;
             }
-            return true;
         }
         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_massbadge.no_badge"), RoomChatMessageBubbles.ALERT);
         return true;
+
+
     }
 }

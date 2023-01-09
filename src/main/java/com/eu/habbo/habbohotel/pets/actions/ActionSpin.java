@@ -20,7 +20,7 @@ public class ActionSpin extends PetAction {
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
 
-        if (pet.getHappyness() > 50) {
+        if (pet.getHappiness() > 50) {
             Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.SPIN, null, false), this.minimumActionDuration);
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));
             return true;

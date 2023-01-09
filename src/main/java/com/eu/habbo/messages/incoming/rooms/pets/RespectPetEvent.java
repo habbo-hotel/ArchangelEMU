@@ -21,7 +21,7 @@ public class RespectPetEvent extends MessageHandler {
             return;
         }
 
-        if (this.client.getHabbo().getHabboStats().petRespectPointsToGive > 0 || pet instanceof MonsterplantPet) {
+        if (this.client.getHabbo().getHabboStats().getPetRespectPointsToGive() > 0 || pet instanceof MonsterplantPet) {
             pet.scratched(this.client.getHabbo());
 
             // Update the stats to the database.

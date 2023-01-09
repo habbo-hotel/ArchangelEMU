@@ -4,33 +4,31 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.MessageComposer;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.messages.outgoing.trading.*;
 import com.eu.habbo.plugin.events.trading.TradeConfirmEvent;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Slf4j
 public class RoomTrade {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoomTrade.class);
     //Configuration. Loaded from database & updated accordingly.
     public static boolean TRADING_ENABLED = true;
     public static boolean TRADING_REQUIRES_PERK = true;
 
     private final List<RoomTradeUser> users;
     private final Room room;
-    private boolean tradeCompleted;
 
     public RoomTrade(Habbo userOne, Habbo userTwo, Room room) {
         this.users = new ArrayList<>();
-        this.tradeCompleted = false;
 
         this.users.add(new RoomTradeUser(userOne));
         this.users.add(new RoomTradeUser(userTwo));
@@ -104,8 +102,10 @@ public class RoomTrade {
         this.sendMessageToUsers(new TradingAcceptComposer(user));
         boolean accepted = true;
         for (RoomTradeUser roomTradeUser : this.users) {
-            if (!roomTradeUser.getAccepted())
+            if (!roomTradeUser.isAccepted()) {
                 accepted = false;
+                break;
+            }
         }
         if (accepted) {
             this.sendMessageToUsers(new TradingConfirmationComposer());
@@ -120,8 +120,10 @@ public class RoomTrade {
         this.sendMessageToUsers(new TradingAcceptComposer(user));
         boolean accepted = true;
         for (RoomTradeUser roomTradeUser : this.users) {
-            if (!roomTradeUser.getConfirmed())
+            if (!roomTradeUser.isConfirmed()) {
                 accepted = false;
+                break;
+            }
         }
         if (accepted) {
             if (this.tradeItems()) {
@@ -216,7 +218,7 @@ public class RoomTrade {
                 statement.executeBatch();
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         THashSet<HabboItem> itemsUserOne = new THashSet<>(userOne.getItems());
@@ -327,10 +329,12 @@ public class RoomTrade {
     }
 
     public static int getCreditsByItem(HabboItem item) {
+        if (!Emulator.getConfig().getBoolean("redeem.currency.trade")) return 0;
+
         if (!item.getBaseItem().getName().startsWith("CF_") && !item.getBaseItem().getName().startsWith("CFC_")) return 0;
 
         try {
-            return Integer.valueOf(item.getBaseItem().getName().split("_")[1]);
+            return Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
         } catch (Exception e) {
             return 0;
         }

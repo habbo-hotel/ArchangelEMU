@@ -3,39 +3,28 @@ package com.eu.habbo.messages;
 import com.eu.habbo.util.PacketUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import lombok.Getter;
 
+@Getter
 public class ClientMessage {
-    private final int header;
+    private final int messageId;
     private final ByteBuf buffer;
 
     public ClientMessage(int messageId, ByteBuf buffer) {
-        this.header = messageId;
+        this.messageId = messageId;
         this.buffer = ((buffer == null) || (buffer.readableBytes() == 0) ? Unpooled.EMPTY_BUFFER : buffer);
     }
 
-    public ByteBuf getBuffer() {
-        return this.buffer;
-    }
 
-    public int getMessageId() {
-        return this.header;
-    }
-    
-    
-    /**
-     *
-     * @return
-     * @throws CloneNotSupportedException
-     */
     @Override
-    public ClientMessage clone() throws CloneNotSupportedException {
-        return new ClientMessage(this.header, this.buffer.duplicate());
+    public ClientMessage clone() {
+        return new ClientMessage(this.messageId, this.buffer.duplicate());
     }
 
     public int readShort() {
         try {
             return this.buffer.readShort();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return 0;
@@ -44,7 +33,7 @@ public class ClientMessage {
     public Integer readInt() {
         try {
             return this.buffer.readInt();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return 0;
@@ -53,7 +42,7 @@ public class ClientMessage {
     public boolean readBoolean() {
         try {
             return this.buffer.readByte() == 1;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         return false;

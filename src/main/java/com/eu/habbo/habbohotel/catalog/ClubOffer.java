@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.catalog;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,27 +12,21 @@ import java.util.TimeZone;
 
 public class ClubOffer implements ISerialize {
 
+    @Getter
     private final int id;
-
-
+    @Getter
     private final String name;
-
-
+    @Getter
     private final int days;
-
-
+    @Getter
     private final int credits;
-
-
+    @Getter
     private final int points;
-
-
+    @Getter
     private final int pointsType;
-
-
+    @Getter
     private final boolean vip;
-
-
+    @Getter
     private final boolean deal;
 
     public ClubOffer(ResultSet set) throws SQLException {
@@ -43,38 +38,6 @@ public class ClubOffer implements ISerialize {
         this.pointsType = set.getInt("points_type");
         this.vip = set.getString("type").equalsIgnoreCase("vip");
         this.deal = set.getString("deal").equals("1");
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public int getDays() {
-        return this.days;
-    }
-
-    public int getCredits() {
-        return this.credits;
-    }
-
-    public int getPoints() {
-        return this.points;
-    }
-
-    public int getPointsType() {
-        return this.pointsType;
-    }
-
-    public boolean isVip() {
-        return this.vip;
-    }
-
-    public boolean isDeal() {
-        return this.deal;
     }
 
     @Override

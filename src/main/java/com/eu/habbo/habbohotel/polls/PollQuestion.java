@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.polls;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,29 +11,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
+@Getter
 public class PollQuestion implements ISerialize, Comparable<PollQuestion> {
 
-    public final int id;
-
-
-    public final int parentId;
-
-
-    public final int type;
-
-
-    public final String question;
-
-
-    public final THashMap<Integer, String[]> options;
-
-
-    public final int minSelections;
-
-
-    public final int order;
-
-    private ArrayList<PollQuestion> subQuestions;
+    private  final int id;
+    private  final int parentId;
+    private  final int type;
+    private  final String question;
+    private  final THashMap<Integer, String[]> options;
+    private  final int minSelections;
+    private  final int order;
+    private final ArrayList<PollQuestion> subQuestions;
 
     public PollQuestion(ResultSet set) throws SQLException {
         this.id = set.getInt("id");

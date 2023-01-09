@@ -20,7 +20,7 @@ public class ActionPlayDead extends PetAction {
 
         pet.getRoomUnit().setStatus(RoomUnitStatus.DEAD, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
 
-        if (pet.getHappyness() > 50)
+        if (pet.getHappiness() > 50)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));
         else
             pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

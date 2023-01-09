@@ -10,7 +10,7 @@ public class ConfirmAcceptTradingEvent extends MessageHandler {
         Habbo habbo = this.client.getHabbo();
         RoomTrade trade = habbo.getHabboInfo().getCurrentRoom().getActiveTradeForHabbo(habbo);
 
-        if (trade == null || !trade.getRoomTradeUserForHabbo(habbo).getAccepted())
+        if (trade == null || !trade.getRoomTradeUserForHabbo(habbo).isAccepted())
             return;
 
         trade.confirm(habbo);

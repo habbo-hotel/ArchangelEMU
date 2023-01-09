@@ -23,13 +23,12 @@ public class FreezeCommand extends Command {
                     habbo.getRoomUnit().setCanWalk(false);
                     habbo.whisper(Emulator.getTexts().getValue("commands.succes.cmd_freeze.frozen"), RoomChatMessageBubbles.ALERT);
                     gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_freeze.user_frozen").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
-                    return true;
                 } else {
                     habbo.getRoomUnit().setCanWalk(true);
                     habbo.whisper(Emulator.getTexts().getValue("commands.succes.cmd_freeze.unfrozen"), RoomChatMessageBubbles.ALERT);
                     gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_freeze.user_unfrozen").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
-                    return true;
                 }
+                return true;
             }
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_freeze.not_found").replace("%user%", ""), RoomChatMessageBubbles.ALERT);

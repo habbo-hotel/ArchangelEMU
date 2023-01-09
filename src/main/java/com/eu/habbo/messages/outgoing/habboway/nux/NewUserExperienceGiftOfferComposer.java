@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.items.NewUserGift;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class NewUserExperienceGiftOfferComposer extends MessageComposer {
     private final List<List<NewUserGift>> options;
-
-    public NewUserExperienceGiftOfferComposer(List<List<NewUserGift>> options) {
-        this.options = options;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

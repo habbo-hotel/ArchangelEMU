@@ -5,15 +5,13 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
+@AllArgsConstructor
 public class FlatControllersComposer extends MessageComposer {
     private final Room room;
-
-    public FlatControllersComposer(Room room) {
-        this.room = room;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

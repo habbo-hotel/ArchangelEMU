@@ -9,7 +9,6 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
@@ -86,7 +85,7 @@ public class WiredConditionTeamMember extends InteractionWiredCondition {
         message.appendInt(1);
         message.appendInt(this.teamColor.type);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(0);
         message.appendInt(0);
     }

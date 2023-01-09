@@ -4,17 +4,14 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.map.hash.THashMap;
+import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
+@AllArgsConstructor
 public class NotificationDialogMessageComposer extends MessageComposer {
     private final String errorKey;
     private final THashMap<String, String> keys;
-
-    public NotificationDialogMessageComposer(String errorKey, THashMap<String, String> keys) {
-        this.errorKey = errorKey;
-        this.keys = keys;
-    }
 
     public NotificationDialogMessageComposer(String errorKey, String message) {
         this.errorKey = errorKey;

@@ -41,8 +41,8 @@ public class UserUpdateComposer extends MessageComposer {
             this.response.appendInt(this.roomUnits.size());
             for (RoomUnit roomUnit : this.roomUnits) {
                 this.response.appendInt(roomUnit.getId());
-                this.response.appendInt(roomUnit.getPreviousLocation().x);
-                this.response.appendInt(roomUnit.getPreviousLocation().y);
+                this.response.appendInt(roomUnit.getPreviousLocation().getX());
+                this.response.appendInt(roomUnit.getPreviousLocation().getY());
                 this.response.appendString((this.overrideZ != -1 ? this.overrideZ : roomUnit.getPreviousLocationZ()) + "");
 
 
@@ -62,8 +62,8 @@ public class UserUpdateComposer extends MessageComposer {
                 this.response.appendInt(this.habbos.size());
                 for (Habbo habbo : this.habbos) {
                     this.response.appendInt(habbo.getRoomUnit().getId());
-                    this.response.appendInt(habbo.getRoomUnit().getPreviousLocation().x);
-                    this.response.appendInt(habbo.getRoomUnit().getPreviousLocation().y);
+                    this.response.appendInt(habbo.getRoomUnit().getPreviousLocation().getX());
+                    this.response.appendInt(habbo.getRoomUnit().getPreviousLocation().getY());
                     this.response.appendString(habbo.getRoomUnit().getPreviousLocationZ() + "");
 
 

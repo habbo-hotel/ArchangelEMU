@@ -4,19 +4,15 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class RoomUserPetComposer extends MessageComposer {
     private final int petType;
     private final int race;
     private final String color;
     private final Habbo habbo;
 
-    public RoomUserPetComposer(int petType, int race, String color, Habbo habbo) {
-        this.petType = petType;
-        this.race = race;
-        this.color = color;
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

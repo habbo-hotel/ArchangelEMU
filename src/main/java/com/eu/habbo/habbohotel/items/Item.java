@@ -6,19 +6,28 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.list.array.TIntArrayList;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Item implements ISerialize {
 
+    @Getter
     private int id;
+    @Getter
     private int spriteId;
+    @Getter
     private String name;
+    @Getter
     private String fullName;
+    @Getter
     private FurnitureType type;
+    @Getter
     private short width;
+    @Getter
     private short length;
+    @Getter
     private double height;
     private boolean allowStack;
     private boolean allowWalk;
@@ -29,15 +38,24 @@ public class Item implements ISerialize {
     private boolean allowMarketplace;
     private boolean allowGift;
     private boolean allowInventoryStack;
+    @Getter
     private short stateCount;
+    @Getter
     private short effectM;
+    @Getter
     private short effectF;
+    @Getter
     private TIntArrayList vendingItems;
+    @Getter
     private double[] multiHeights;
+    @Getter
     private String customParams;
+    @Getter
     private String clothingOnWalk;
 
+    @Getter
     private ItemInteraction interactionType;
+    @Getter
     private int rotations;
 
     public Item(ResultSet set) throws SQLException {
@@ -55,9 +73,9 @@ public class Item implements ISerialize {
             }
 
             try {
-                int index = Integer.valueOf(item.getExtradata()) % (item.getBaseItem().getMultiHeights().length);
+                int index = Integer.parseInt(item.getExtradata()) % (item.getBaseItem().getMultiHeights().length);
                 return item.getBaseItem().getMultiHeights()[(item.getExtradata().isEmpty() ? 0 : index)];
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
 
             }
         }
@@ -103,7 +121,7 @@ public class Item implements ISerialize {
             this.vendingItems = new TIntArrayList();
             String[] vendingIds = set.getString("vending_ids").replace(";", ",").split(",");
             for (String s : vendingIds) {
-                this.vendingItems.add(Integer.valueOf(s.replace(" ", "")));
+                this.vendingItems.add(Integer.parseInt(s.replace(" ", "")));
             }
         }
 
@@ -127,38 +145,6 @@ public class Item implements ISerialize {
             this.rotations = set.getInt("rotations");
         }
         catch (SQLException ignored) { }
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public int getSpriteId() {
-        return this.spriteId;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public String getFullName() {
-        return this.fullName;
-    }
-
-    public FurnitureType getType() {
-        return this.type;
-    }
-
-    public int getWidth() {
-        return this.width;
-    }
-
-    public int getLength() {
-        return this.length;
-    }
-
-    public double getHeight() {
-        return this.height;
     }
 
     public boolean allowStack() {
@@ -197,42 +183,8 @@ public class Item implements ISerialize {
         return this.allowInventoryStack;
     }
 
-    public int getStateCount() {
-        return this.stateCount;
-    }
-
-    public int getEffectM() {
-        return this.effectM;
-    }
-
-    public int getEffectF() {
-        return this.effectF;
-    }
-
-    public ItemInteraction getInteractionType() {
-        return this.interactionType;
-    }
-
-    public TIntArrayList getVendingItems() {
-        return this.vendingItems;
-    }
-
     public int getRandomVendingItem() {
         return this.vendingItems.get(Emulator.getRandom().nextInt(this.vendingItems.size()));
-    }
-
-    public double[] getMultiHeights() {
-        return this.multiHeights;
-    }
-
-    public String getCustomParams() {
-        return customParams;
-    }
-
-    public String getClothingOnWalk() { return clothingOnWalk; }
-
-    public int getRotations() {
-        return rotations;
     }
 
     @Override

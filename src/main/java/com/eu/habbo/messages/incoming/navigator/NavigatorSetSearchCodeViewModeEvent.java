@@ -12,7 +12,7 @@ public class NavigatorSetSearchCodeViewModeEvent extends MessageHandler {
         int viewMode = this.packet.readInt();
 
         RoomCategory roomCategory = Emulator.getGameEnvironment().getRoomManager().getCategory(category);
-        this.client.getHabbo().getHabboStats().navigatorWindowSettings.setListMode(
+        this.client.getHabbo().getHabboStats().getNavigatorWindowSettings().setListMode(
                 roomCategory != null ? roomCategory.getCaptionSave() : category, viewMode == 1 ? ListMode.THUMBNAILS : ListMode.LIST);
     }
 }

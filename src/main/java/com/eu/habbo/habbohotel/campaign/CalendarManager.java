@@ -5,8 +5,7 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.events.calendar.CampaignCalendarDoorOpenedMessageComposer;
 import com.eu.habbo.plugin.events.users.calendar.UserClaimRewardEvent;
 import gnu.trove.map.hash.THashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.time.temporal.ChronoUnit;
@@ -14,8 +13,9 @@ import java.util.Date;
 import java.util.*;
 
 
+
+@Slf4j
 public class CalendarManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CalendarManager.class);
 
     private static final Map<Integer, CalendarCampaign> calendarCampaigns = new THashMap<>();
     public static double HC_MODIFIER;
@@ -23,7 +23,7 @@ public class CalendarManager {
     public CalendarManager() {
         long millis = System.currentTimeMillis();
         this.reload();
-        LOGGER.info("Calendar Manager -> Loaded! ({} MS)", (System.currentTimeMillis() - millis));
+        log.info("Calendar Manager -> Loaded! ({} MS)", (System.currentTimeMillis() - millis));
     }
 
     public void dispose() {
@@ -39,7 +39,7 @@ public class CalendarManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
             return false;
         }
 
@@ -53,7 +53,7 @@ public class CalendarManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
             return false;
         }
 
@@ -84,7 +84,7 @@ public class CalendarManager {
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         calendarCampaigns.put(campaign.getId(), campaign);
@@ -97,7 +97,7 @@ public class CalendarManager {
             statement.setInt(1, campaign.getId());
             return statement.execute();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         return false;
@@ -113,7 +113,7 @@ public class CalendarManager {
 
     public void claimCalendarReward(Habbo habbo, String campaignName, int day, boolean force) {
         CalendarCampaign campaign = calendarCampaigns.values().stream().filter(cc -> Objects.equals(cc.getName(), campaignName)).findFirst().orElse(null);
-        if (campaign == null || campaign.getRewards().isEmpty() || (habbo.getHabboStats().calendarRewardsClaimed.stream().anyMatch(claimed -> claimed.getCampaignId() == campaign.getId() && claimed.getDay() == day)))
+        if (campaign == null || campaign.getRewards().isEmpty() || (habbo.getHabboStats().getCalendarRewardsClaimed().stream().anyMatch(claimed -> claimed.getCampaignId() == campaign.getId() && claimed.getDay() == day)))
             return;
 
         List<CalendarRewardObject> rewards = new ArrayList<>(campaign.getRewards().values());
@@ -125,7 +125,7 @@ public class CalendarManager {
             if (Emulator.getPluginManager().fireEvent(new UserClaimRewardEvent(habbo, campaign, day, object, force)).isCancelled()) {
                 return;
             }
-            habbo.getHabboStats().calendarRewardsClaimed.add(new CalendarRewardClaimed(habbo.getHabboInfo().getId(), campaign.getId(), day, object.getId(), new Timestamp(System.currentTimeMillis())));
+            habbo.getHabboStats().getCalendarRewardsClaimed().add(new CalendarRewardClaimed(habbo.getHabboInfo().getId(), campaign.getId(), day, object.getId(), new Timestamp(System.currentTimeMillis())));
             habbo.getClient().sendResponse(new CampaignCalendarDoorOpenedMessageComposer(true, object, habbo));
             object.give(habbo);
 
@@ -137,7 +137,7 @@ public class CalendarManager {
                 statement.setInt(5, Emulator.getIntUnixTimestamp());
                 statement.execute();
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }

@@ -7,7 +7,11 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class RentableSpaceStatusMessageComposer extends MessageComposer {
     public static final int SPACE_ALREADY_RENTED = 100;
     public static final int SPACE_EXTEND_NOT_RENTED = 101;
@@ -23,19 +27,7 @@ public class RentableSpaceStatusMessageComposer extends MessageComposer {
 
     private final Habbo habbo;
     private final HabboItem item;
-    private final int errorCode;
-
-    public RentableSpaceStatusMessageComposer(Habbo habbo, HabboItem item) {
-        this.habbo = habbo;
-        this.item = item;
-        this.errorCode = 0;
-    }
-
-    public RentableSpaceStatusMessageComposer(Habbo habbo, HabboItem item, int errorCode) {
-        this.habbo = habbo;
-        this.item = item;
-        this.errorCode = errorCode;
-    }
+    private int errorCode = 0;
 
     @Override
     protected ServerMessage composeInternal() {

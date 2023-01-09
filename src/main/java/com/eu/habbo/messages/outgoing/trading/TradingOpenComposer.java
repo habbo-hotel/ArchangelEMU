@@ -5,7 +5,9 @@ import com.eu.habbo.habbohotel.rooms.RoomTradeUser;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class TradingOpenComposer extends MessageComposer {
     private final RoomTrade roomTrade;
     private final int state;
@@ -13,11 +15,6 @@ public class TradingOpenComposer extends MessageComposer {
     public TradingOpenComposer(RoomTrade roomTrade) {
         this.roomTrade = roomTrade;
         this.state = 1;
-    }
-
-    public TradingOpenComposer(RoomTrade roomTrade, int state) {
-        this.roomTrade = roomTrade;
-        this.state = state;
     }
 
     @Override

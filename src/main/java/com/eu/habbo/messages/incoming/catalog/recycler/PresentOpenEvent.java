@@ -6,8 +6,8 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.PresentOpenedMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
@@ -61,7 +61,7 @@ public class PresentOpenEvent extends MessageHandler {
                 if(roomLayout != null) {
                     RoomTile roomTile = roomLayout.getTile(item.getX(), item.getY());
                     if(roomTile != null) {
-                        z = roomTile.z;
+                        z = roomTile.getZ();
                     }
                 }
                 room.sendComposer(new HeightMapUpdateMessageComposer(item.getX(), item.getY(), z, room.getStackHeight(item.getX(), item.getY(), true)).compose());

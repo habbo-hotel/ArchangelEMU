@@ -47,10 +47,10 @@ public class ModMuteEvent extends MessageHandler {
         ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
         if (item == null) return;
 
-        if (item.probationTimestamp >= Emulator.getIntUnixTimestamp()) {
-            ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.sanctionLevel);
-            int muteDurationTimestamp = Math.toIntExact(new Date(System.currentTimeMillis() + ((long) modToolSanctionLevelItem.sanctionHourLength * 60 * 60)).getTime() / 1000);
-            modToolSanctions.run(userId, this.client.getHabbo(), item.sanctionLevel, cfhTopic, message, 0, true, muteDurationTimestamp);
+        if (item.getProbationTimestamp() >= Emulator.getIntUnixTimestamp()) {
+            ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.getSanctionLevel());
+            int muteDurationTimestamp = Math.toIntExact(new Date(System.currentTimeMillis() + ((long) modToolSanctionLevelItem.getSanctionHourLength() * 60 * 60)).getTime() / 1000);
+            modToolSanctions.run(userId, this.client.getHabbo(), item.getSanctionLevel(), cfhTopic, message, 0, true, muteDurationTimestamp);
         }
     }
 }

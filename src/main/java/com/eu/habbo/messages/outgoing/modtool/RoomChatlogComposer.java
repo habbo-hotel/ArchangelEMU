@@ -5,19 +5,16 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+@AllArgsConstructor
 public class RoomChatlogComposer extends MessageComposer {
     private final Room room;
     private final ArrayList<ModToolChatLog> chatlog;
-
-    public RoomChatlogComposer(Room room, ArrayList<ModToolChatLog> chatlog) {
-        this.room = room;
-        this.chatlog = chatlog;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -35,10 +32,10 @@ public class RoomChatlogComposer extends MessageComposer {
 
         this.response.appendShort(this.chatlog.size());
         for (ModToolChatLog line : this.chatlog) {
-            this.response.appendString(formatDate.format(new Date((line.timestamp * 1000L))));
-            this.response.appendInt(line.habboId);
-            this.response.appendString(line.username);
-            this.response.appendString(line.message);
+            this.response.appendString(formatDate.format(new Date((line.getTimestamp() * 1000L))));
+            this.response.appendInt(line.getHabboId());
+            this.response.appendString(line.getUsername());
+            this.response.appendString(line.getMessage());
             this.response.appendBoolean(false);
         }
         return this.response;

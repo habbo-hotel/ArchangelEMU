@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.catalog;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ApproveNameMessageComposer extends MessageComposer {
     public static final int NAME_OK = 0;
     public static final int NAME_TO_LONG = 1;
@@ -14,10 +16,6 @@ public class ApproveNameMessageComposer extends MessageComposer {
     private final int type;
     private final String value;
 
-    public ApproveNameMessageComposer(int type, String value) {
-        this.type = type;
-        this.value = value;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

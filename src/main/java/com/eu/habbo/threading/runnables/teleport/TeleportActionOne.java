@@ -8,17 +8,13 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class TeleportActionOne implements Runnable {
     private final HabboItem currentTeleport;
     private final Room room;
     private final GameClient client;
-
-    public TeleportActionOne(HabboItem currentTeleport, Room room, GameClient client) {
-        this.currentTeleport = currentTeleport;
-        this.client = client;
-        this.room = room;
-    }
 
     @Override
     public void run() {

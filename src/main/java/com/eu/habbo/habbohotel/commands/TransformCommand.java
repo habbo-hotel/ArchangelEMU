@@ -31,7 +31,6 @@ public class TransformCommand extends Command {
             }
 
             gameClient.sendResponse(new MOTDNotificationComposer(new String[]{petNames.toString()}));
-            return true;
         } else {
             String petName = params[1];
             PetData petData = Emulator.getGameEnvironment().getPetManager().getPetData(petName);
@@ -40,7 +39,7 @@ public class TransformCommand extends Command {
 
             if (params.length >= 3) {
                 try {
-                    race = Integer.valueOf(params[2]);
+                    race = Integer.parseInt(params[2]);
                 } catch (Exception e) {
                     return true;
                 }
@@ -54,16 +53,16 @@ public class TransformCommand extends Command {
             if (petData != null) {
                 RoomUnit roomUnit = gameClient.getHabbo().getRoomUnit();
                 roomUnit.setRoomUnitType(RoomUnitType.PET);
-                gameClient.getHabbo().getHabboStats().cache.put("pet_type", petData);
-                gameClient.getHabbo().getHabboStats().cache.put("pet_race", race);
-                gameClient.getHabbo().getHabboStats().cache.put("pet_color", color);
+                gameClient.getHabbo().getHabboStats().getCache().put("pet_type", petData);
+                gameClient.getHabbo().getHabboStats().getCache().put("pet_race", race);
+                gameClient.getHabbo().getHabboStats().getCache().put("pet_color", color);
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserRemoveMessageComposer(gameClient.getHabbo().getRoomUnit()).compose());
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserPetComposer(petData.getType(), race, color, gameClient.getHabbo()).compose());
             } else {
                 //Pet Not Found
                 return true;
             }
-            return true;
         }
+        return true;
     }
 }

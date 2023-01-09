@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class NavigatorSavedSearchesComposer extends MessageComposer {
     private final List<NavigatorSavedSearch> searches;
-
-    public NavigatorSavedSearchesComposer(List<NavigatorSavedSearch> searches) {
-        this.searches = searches;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

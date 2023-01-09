@@ -5,7 +5,9 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class UserNameChangedMessageComposer extends MessageComposer {
 
     private final int userId;
@@ -20,12 +22,6 @@ public class UserNameChangedMessageComposer extends MessageComposer {
         this.userId = habbo.getHabboInfo().getId();
         this.roomId = habbo.getRoomUnit().getId();
         this.name = (includePrefix ? Room.PREFIX_FORMAT.replace("%color%", habbo.getHabboInfo().getRank().getPrefixColor()).replace("%prefix%", habbo.getHabboInfo().getRank().getPrefix()) : "") + habbo.getHabboInfo().getUsername();
-    }
-
-    public UserNameChangedMessageComposer(int userId, int roomId, String name) {
-        this.userId = userId;
-        this.roomId = roomId;
-        this.name = name;
     }
 
     @Override

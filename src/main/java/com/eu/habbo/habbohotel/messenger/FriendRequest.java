@@ -1,8 +1,12 @@
 package com.eu.habbo.habbohotel.messenger;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+@Getter
+@AllArgsConstructor
 public class FriendRequest {
     private int id;
     private String username;
@@ -12,23 +16,5 @@ public class FriendRequest {
         this.id = set.getInt("id");
         this.username = set.getString("username");
         this.look = set.getString("look");
-    }
-
-    public FriendRequest(int id, String username, String look) {
-        this.id = id;
-        this.username = username;
-        this.look = look;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public String getLook() {
-        return this.look;
     }
 }

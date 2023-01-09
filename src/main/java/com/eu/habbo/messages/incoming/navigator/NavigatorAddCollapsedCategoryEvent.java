@@ -7,6 +7,6 @@ public class NavigatorAddCollapsedCategoryEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
         String category = this.packet.readString();
-        this.client.getHabbo().getHabboStats().navigatorWindowSettings.setDisplayMode(category, DisplayMode.COLLAPSED);
+        this.client.getHabbo().getHabboStats().getNavigatorWindowSettings().setDisplayMode(category, DisplayMode.COLLAPSED);
     }
 }

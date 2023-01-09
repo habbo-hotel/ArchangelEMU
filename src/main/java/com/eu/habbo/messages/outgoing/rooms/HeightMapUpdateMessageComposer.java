@@ -41,10 +41,10 @@ public class HeightMapUpdateMessageComposer extends MessageComposer {
                 for(int i = 0; i < 127; i++) {
                     RoomTile t = tiles[i];
                     updateTiles.remove(t); // remove it from the set
-                    this.response.appendByte((int) t.x);
-                    this.response.appendByte((int) t.y);
+                    this.response.appendByte((int) t.getX());
+                    this.response.appendByte((int) t.getY());
                     if(Emulator.getConfig().getBoolean("custom.stacking.enabled")) {
-                        this.response.appendShort((short) (t.z * 256.0));
+                        this.response.appendShort((short) (t.getZ() * 256.0));
                     }
                     else {
                         this.response.appendShort(t.relativeHeight());
@@ -57,10 +57,10 @@ public class HeightMapUpdateMessageComposer extends MessageComposer {
 
             this.response.appendByte(this.updateTiles.size());
             for (RoomTile t : this.updateTiles) {
-                this.response.appendByte((int) t.x);
-                this.response.appendByte((int) t.y);
+                this.response.appendByte((int) t.getX());
+                this.response.appendByte((int) t.getY());
                 if(Emulator.getConfig().getBoolean("custom.stacking.enabled")) {
-                    this.response.appendShort((short) (t.z * 256.0));
+                    this.response.appendShort((short) (t.getZ() * 256.0));
                 }
                 else {
                     this.response.appendShort(t.relativeHeight());

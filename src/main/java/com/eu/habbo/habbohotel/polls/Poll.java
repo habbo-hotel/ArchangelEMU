@@ -1,24 +1,22 @@
 package com.eu.habbo.habbohotel.polls;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+@Getter
 public class Poll {
 
-    public final int id;
-
-
-    public final String title;
-
-
-    public final String thanksMessage;
-
-
-    public final String badgeReward;
-
-    public int lastQuestionId;
+    private  final int id;
+    private  final String title;
+    private  final String thanksMessage;
+    private  final String badgeReward;
+    @Setter
+    private  int lastQuestionId;
 
     private ArrayList<PollQuestion> questions;
 
@@ -36,7 +34,7 @@ public class Poll {
 
     public PollQuestion getQuestion(int id) {
         for (PollQuestion q : this.questions) {
-            if (q.id == id) {
+            if (q.getId() == id) {
                 return q;
             }
         }

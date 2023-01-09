@@ -3,12 +3,11 @@ package com.eu.habbo.habbohotel.users.inventory;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,8 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 
+@Slf4j
+@Getter
 public class WardrobeComponent {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WardrobeComponent.class);
     private final THashMap<Integer, WardrobeItem> looks;
     private final TIntSet clothing;
     private final TIntSet clothingSets;
@@ -48,13 +48,13 @@ public class WardrobeComponent {
                             try {
                                 this.clothingSets.add(Integer.parseInt(x));
                             }
-                            catch (Exception e) { }
+                            catch (Exception ignored) { }
                         }
                     }
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -62,28 +62,14 @@ public class WardrobeComponent {
         return new WardrobeItem(habbo.getHabboInfo().getGender(), look, slotId, habbo);
     }
 
-    public THashMap<Integer, WardrobeItem> getLooks() {
-        return this.looks;
-    }
-
-    public TIntCollection getClothing() {
-        return this.clothing;
-    }
-
-    public TIntCollection getClothingSets() {
-        return this.clothingSets;
-    }
-
     public void dispose() {
-        this.looks.values().stream().filter(item -> item.needsInsert || item.needsUpdate).forEach(item -> {
-            Emulator.getThreading().run(item);
-        });
+        this.looks.values().stream().filter(item -> item.needsInsert || item.needsUpdate).forEach(item -> Emulator.getThreading().run(item));
 
         this.looks.clear();
     }
 
     public class WardrobeItem implements Runnable {
-        private int slotId;
+        private final int slotId;
         private HabboGender gender;
         private Habbo habbo;
         private String look;
@@ -165,7 +151,7 @@ public class WardrobeComponent {
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
     }

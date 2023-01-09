@@ -8,7 +8,6 @@ import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
 import com.eu.habbo.habbohotel.catalog.TargetOffer;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlace;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.games.tag.TagGame;
 import com.eu.habbo.habbohotel.items.ItemManager;
@@ -21,9 +20,9 @@ import com.eu.habbo.habbohotel.navigation.EventCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.habbohotel.users.HabboManager;
+import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
@@ -48,8 +47,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gnu.trove.iterator.hash.TObjectHashIterator;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,10 +62,8 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class PluginManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameClient.class);
-
     private final THashSet<HabboPlugin> plugins = new THashSet<>();
     private final THashSet<Method> methods = new THashSet<>();
 
@@ -126,9 +122,9 @@ public class PluginManager {
         RoomChatMessage.BANNED_BUBBLES = new int[bannedBubbles.length];
         for (int i = 0; i < RoomChatMessage.BANNED_BUBBLES.length; i++) {
             try {
-                RoomChatMessage.BANNED_BUBBLES[i] = Integer.valueOf(bannedBubbles[i]);
+                RoomChatMessage.BANNED_BUBBLES[i] = Integer.parseInt(bannedBubbles[i]);
             } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
+                log.error("Caught exception", e);
             }
         }
 
@@ -229,7 +225,7 @@ public class PluginManager {
             Emulator.getGameEnvironment().getPointsScheduler().reloadConfig();
             Emulator.getGameEnvironment().getPixelScheduler().reloadConfig();
             Emulator.getGameEnvironment().getGotwPointsScheduler().reloadConfig();
-            Emulator.getGameEnvironment().subscriptionScheduler.reloadConfig();
+            Emulator.getGameEnvironment().getSubscriptionScheduler().reloadConfig();
         }
     }
 
@@ -240,7 +236,7 @@ public class PluginManager {
 
         if (!loc.exists()) {
             if (loc.mkdirs()) {
-                LOGGER.info("Created plugins directory!");
+                log.info("Created plugins directory!");
             }
         }
 
@@ -274,12 +270,12 @@ public class PluginManager {
                         this.plugins.add(plugin);
                         plugin.onEnable();
                     } catch (Exception e) {
-                        LOGGER.error("Could not load plugin {}!", pluginConfigurtion.name);
-                        LOGGER.error("Caught exception", e);
+                        log.error("Could not load plugin {}!", pluginConfigurtion.name);
+                        log.error("Caught exception", e);
                     }
                 }
             } catch (Exception e) {
-                LOGGER.error("Caught exception", e);
+                log.error("Caught exception", e);
             }
         }
     }
@@ -312,8 +308,8 @@ public class PluginManager {
                 try {
                     method.invoke(null, event);
                 } catch (Exception e) {
-                    LOGGER.error("Could not pass default event {} to {}: {}!", event.getClass().getName(), method.getClass().getName(), method.getName());
-                    LOGGER.error("Caught exception", e);
+                    log.error("Could not pass default event {} to {}: {}!", event.getClass().getName(), method.getClass().getName(), method.getName());
+                    log.error("Caught exception", e);
                 }
             }
         }
@@ -331,8 +327,8 @@ public class PluginManager {
                             try {
                                 method.invoke(plugin, event);
                             } catch (Exception e) {
-                                LOGGER.error("Could not pass event {} to {}", event.getClass().getName(), plugin.configuration.name);
-                                LOGGER.error("Caught exception", e);
+                                log.error("Could not pass event {} to {}", event.getClass().getName(), plugin.configuration.name);
+                                log.error("Caught exception", e);
                             }
                         }
                     }
@@ -371,7 +367,7 @@ public class PluginManager {
     public void dispose() {
         this.disposePlugins();
 
-        LOGGER.info("Disposed Plugin Manager!");
+        log.info("Disposed Plugin Manager!");
     }
 
     private void disposePlugins() {
@@ -387,9 +383,9 @@ public class PluginManager {
                         p.stream.close();
                         p.classLoader.close();
                     } catch (IOException e) {
-                        LOGGER.error("Caught exception", e);
+                        log.error("Caught exception", e);
                     } catch (Exception ex) {
-                        LOGGER.error("Failed to disable {} because of an exception.", p.configuration.name, ex);
+                        log.error("Failed to disable {} because of an exception.", p.configuration.name, ex);
                     }
                 }
             } catch (NoSuchElementException e) {
@@ -406,7 +402,7 @@ public class PluginManager {
 
         this.loadPlugins();
 
-        LOGGER.info("Plugin Manager -> Loaded! " + this.plugins.size() + " plugins! (" + (System.currentTimeMillis() - millis) + " MS)");
+        log.info("Plugin Manager -> Loaded! " + this.plugins.size() + " plugins! (" + (System.currentTimeMillis() - millis) + " MS)");
 
         this.registerDefaultEvents();
     }
@@ -425,8 +421,8 @@ public class PluginManager {
             this.methods.add(PluginManager.class.getMethod("globalOnConfigurationUpdated", EmulatorConfigUpdatedEvent.class));
             this.methods.add(WiredHighscoreManager.class.getMethod("onEmulatorLoaded", EmulatorLoadedEvent.class));
         } catch (NoSuchMethodException e) {
-            LOGGER.info("Failed to define default events!");
-            LOGGER.error("Caught exception", e);
+            log.info("Failed to define default events!");
+            log.error("Caught exception", e);
         }
     }
 

@@ -21,17 +21,14 @@ import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.threading.runnables.freeze.FreezeClearEffects;
 import com.eu.habbo.threading.runnables.freeze.FreezeThrowSnowball;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class FreezeGame extends Game {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FreezeGame.class);
-
     public static final int effectId = 39;
 
     public static int POWER_UP_POINTS;
@@ -113,7 +110,7 @@ public class FreezeGame extends Game {
             for (int j = 0; j < radius; j++) {
                 t = this.room.getLayout().getTileInFront(this.room.getLayout().getTile(x, y), rotatation, j);
 
-                if (t == null || t.x < 0 || t.y < 0 || t.x >= this.room.getLayout().getMapSizeX() || t.y >= this.room.getLayout().getMapSizeY())
+                if (t == null || t.getX() < 0 || t.getY() < 0 || t.getX() >= this.room.getLayout().getMapSizeX() || t.getY() >= this.room.getLayout().getMapSizeY())
                     continue;
 
                 tiles.add(t);
@@ -127,13 +124,13 @@ public class FreezeGame extends Game {
         THashSet<RoomTile> tiles = new THashSet<>();
 
         for (int rotation = 1; rotation < 9; rotation += 2) {
-            RoomTile t = this.room.getLayout().getTile(x, y);
+            RoomTile t;
 
             for (int j = 0; j < radius; j++) {
                 t = this.room.getLayout().getTileInFront(this.room.getLayout().getTile(x, y), rotation, j);
 
                 if (t != null) {
-                    if (t.x < 0 || t.y < 0 || t.x >= this.room.getLayout().getMapSizeX() || t.y >= this.room.getLayout().getMapSizeY())
+                    if (t.getX() < 0 || t.getY() < 0 || t.getX() >= this.room.getLayout().getMapSizeX() || t.getY() >= this.room.getLayout().getMapSizeY())
                         continue;
 
                     tiles.add(t);
@@ -159,37 +156,16 @@ public class FreezeGame extends Game {
         player.addScore(FreezeGame.POWER_UP_POINTS);
 
         switch (powerUpId) {
-            case 2: {
-                player.increaseExplosion();
-                break;
-            }
-
-            case 3: {
-                player.addSnowball();
-                break;
-            }
-
-            case 4: {
-                player.nextDiagonal = true;
-                break;
-            }
-
-            case 5: {
+            case 2 -> player.increaseExplosion();
+            case 3 -> player.addSnowball();
+            case 4 -> player.nextDiagonal = true;
+            case 5 -> {
                 player.nextHorizontal = true;
                 player.nextDiagonal = true;
                 player.tempMassiveExplosion = true;
-                break;
             }
-
-            case 6: {
-                player.addLife();
-                break;
-            }
-
-            case 7: {
-                player.addProtection();
-                break;
-            }
+            case 6 -> player.addLife();
+            case 7 -> player.addProtection();
         }
     }
 
@@ -265,7 +241,7 @@ public class FreezeGame extends Game {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
@@ -318,13 +294,10 @@ public class FreezeGame extends Game {
     }
 
     public void setFreezeTileState(String state) {
-        this.room.getRoomSpecialTypes().getFreezeExitTiles().forEachValue(new TObjectProcedure<InteractionFreezeExitTile>() {
-            @Override
-            public boolean execute(InteractionFreezeExitTile object) {
-                object.setExtradata(state);
-                FreezeGame.this.room.updateItemState(object);
-                return true;
-            }
+        this.room.getRoomSpecialTypes().getFreezeExitTiles().forEachValue(object -> {
+            object.setExtradata(state);
+            FreezeGame.this.room.updateItemState(object);
+            return true;
         });
 
     }

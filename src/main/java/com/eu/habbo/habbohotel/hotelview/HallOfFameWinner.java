@@ -1,20 +1,19 @@
 package com.eu.habbo.habbohotel.hotelview;
 
+import lombok.Getter;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class HallOfFameWinner implements Comparable<HallOfFameWinner> {
-
-    private int id;
-
-
-    private String username;
-
-
-    private String look;
-
-
-    private int points;
+    @Getter
+    private final int id;
+    @Getter
+    private final String username;
+    @Getter
+    private final String look;
+    @Getter
+    private final int points;
 
     public HallOfFameWinner(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
@@ -23,25 +22,6 @@ public class HallOfFameWinner implements Comparable<HallOfFameWinner> {
         this.points = set.getInt("hof_points");
     }
 
-
-    public int getId() {
-        return this.id;
-    }
-
-
-    public String getUsername() {
-        return this.username;
-    }
-
-
-    public String getLook() {
-        return this.look;
-    }
-
-
-    public int getPoints() {
-        return this.points;
-    }
 
     @Override
     public int compareTo(HallOfFameWinner o) {

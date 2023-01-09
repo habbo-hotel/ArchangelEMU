@@ -57,7 +57,7 @@ public class ConfirmBreedingRequestComposer extends MessageComposer {
             this.response.appendInt(rewardBreeds.get(4).size()); //Count
             {
                 for (PetBreedingReward reward : rewardBreeds.get(4)) {
-                    this.response.appendInt(reward.breed);
+                    this.response.appendInt(reward.getBreed());
                 }
             }
 
@@ -65,7 +65,7 @@ public class ConfirmBreedingRequestComposer extends MessageComposer {
             this.response.appendInt(rewardBreeds.get(3).size()); //Count
             {
                 for (PetBreedingReward reward : rewardBreeds.get(3)) {
-                    this.response.appendInt(reward.breed);
+                    this.response.appendInt(reward.getBreed());
                 }
             }
 
@@ -73,7 +73,7 @@ public class ConfirmBreedingRequestComposer extends MessageComposer {
             this.response.appendInt(rewardBreeds.get(2).size()); //Count
             {
                 for (PetBreedingReward reward : rewardBreeds.get(2)) {
-                    this.response.appendInt(reward.breed);
+                    this.response.appendInt(reward.getBreed());
                 }
             }
 
@@ -81,7 +81,7 @@ public class ConfirmBreedingRequestComposer extends MessageComposer {
             this.response.appendInt(rewardBreeds.get(1).size()); //Count
             {
                 for (PetBreedingReward reward : rewardBreeds.get(1)) {
-                    this.response.appendInt(reward.breed);
+                    this.response.appendInt(reward.getBreed());
                 }
             }
 

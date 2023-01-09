@@ -1,14 +1,17 @@
 package com.eu.habbo.habbohotel.modtool;
 
+import lombok.Getter;
+
+@Getter
 public class ModToolSanctionItem {
-    public int id;
-    public int habboId;
-    public int sanctionLevel;
-    public int probationTimestamp;
-    public boolean isMuted;
-    public int muteDuration;
-    public int tradeLockedUntil;
-    public String reason;
+    private  int id;
+    private  int habboId;
+    private  int sanctionLevel;
+    private  int probationTimestamp;
+    private  boolean isMuted;
+    private  int muteDuration;
+    private  int tradeLockedUntil;
+    private  String reason;
 
     public ModToolSanctionItem(int id, int habboId, int sanctionLevel, int probationTimestamp, boolean isMuted, int muteDuration, int tradeLockedUntil, String reason) {
         this.id = id;

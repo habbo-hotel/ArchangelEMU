@@ -3,13 +3,11 @@ package com.eu.habbo.messages.outgoing.guilds.forums;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class UnreadForumsCountMessageComposer extends MessageComposer {
     public final int count;
-
-    public UnreadForumsCountMessageComposer(int count) {
-        this.count = count;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

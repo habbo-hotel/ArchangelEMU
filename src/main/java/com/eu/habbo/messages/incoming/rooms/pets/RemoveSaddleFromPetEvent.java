@@ -7,28 +7,26 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.PetFigureUpdateComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class RemoveSaddleFromPetEvent extends MessageHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RemoveSaddleFromPetEvent.class);
+
 
     @Override
     public void handle() throws Exception {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
         Pet pet = room.getPet(this.packet.readInt());
 
-        if (pet == null || !(pet instanceof HorsePet) || pet.getUserId() != this.client.getHabbo().getHabboInfo().getId()) return;
-
-        HorsePet horse = (HorsePet) pet;
+        if (!(pet instanceof HorsePet horse) || pet.getUserId() != this.client.getHabbo().getHabboInfo().getId()) return;
 
         if (!horse.hasSaddle()) return;
 
@@ -40,12 +38,12 @@ public class RemoveSaddleFromPetEvent extends MessageHandler {
                     if (set.next()) {
                         saddleItemId = set.getInt("id");
                     } else {
-                        LOGGER.error("There is no viable fallback saddle item for old horses with no saddle item ID. Horse pet ID: " + horse.getId());
+                        log.error("There is no viable fallback saddle item for old horses with no saddle item ID. Horse pet ID: " + horse.getId());
                         return;
                     }
                 }
             } catch (SQLException e) {
-                LOGGER.error("Caught SQL exception", e);
+                log.error("Caught SQL exception", e);
             }
         }
 

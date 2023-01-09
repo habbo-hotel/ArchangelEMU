@@ -3,17 +3,15 @@ package com.eu.habbo.habbohotel.crafting;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectProcedure;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class CraftingManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CraftingManager.class);
 
     private final THashMap<Item, CraftingAltar> altars;
 
@@ -29,7 +27,7 @@ public class CraftingManager {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM crafting_altars_recipes " +
                 "INNER JOIN crafting_recipes ON crafting_altars_recipes.recipe_id = crafting_recipes.id " +
                 "INNER JOIN crafting_recipes_ingredients ON crafting_recipes.id = crafting_recipes_ingredients.recipe_id " +
-                "WHERE crafting_recipes.enabled = ? ORDER BY altar_id ASC")) {
+                "WHERE crafting_recipes.enabled = ? ORDER BY altar_id ")) {
             statement.setString(1, "1");
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
@@ -56,14 +54,14 @@ public class CraftingManager {
                                 recipe.addIngredient(ingredientItem, set.getInt("crafting_recipes_ingredients.amount"));
                                 altar.addIngredient(ingredientItem);
                             } else {
-                                LOGGER.error("Unknown ingredient item " + set.getInt("crafting_recipes_ingredients.item_id"));
+                                log.error("Unknown ingredient item " + set.getInt("crafting_recipes_ingredients.item_id"));
                             }
                         }
                     }
                 }
             }
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
     }
 
@@ -71,15 +69,12 @@ public class CraftingManager {
         final int[] i = {0};
 
         synchronized (this.altars) {
-            this.altars.forEachValue(new TObjectProcedure<CraftingAltar>() {
-                @Override
-                public boolean execute(CraftingAltar altar) {
-                    if (altar.hasIngredient(item)) {
-                        i[0]++;
-                    }
-
-                    return true;
+            this.altars.forEachValue(altar -> {
+                if (altar.hasIngredient(item)) {
+                    i[0]++;
                 }
+
+                return true;
             });
         }
 
@@ -117,7 +112,7 @@ public class CraftingManager {
             }
             statement.executeBatch();
         } catch (SQLException e) {
-            LOGGER.error("Caught SQL exception", e);
+            log.error("Caught SQL exception", e);
         }
 
         this.altars.clear();

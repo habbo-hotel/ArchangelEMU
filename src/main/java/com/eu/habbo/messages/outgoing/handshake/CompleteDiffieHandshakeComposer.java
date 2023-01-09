@@ -3,7 +3,9 @@ package com.eu.habbo.messages.outgoing.handshake;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CompleteDiffieHandshakeComposer extends MessageComposer {
 
     private final String publicKey;
@@ -13,10 +15,6 @@ public class CompleteDiffieHandshakeComposer extends MessageComposer {
         this(publicKey, true);
     }
 
-    public CompleteDiffieHandshakeComposer(String publicKey, boolean clientEncryption) {
-        this.publicKey = publicKey;
-        this.clientEncryption = clientEncryption;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

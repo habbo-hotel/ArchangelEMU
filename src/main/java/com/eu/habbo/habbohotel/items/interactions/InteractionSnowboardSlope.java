@@ -76,10 +76,10 @@ public class InteractionSnowboardSlope extends InteractionMultiHeight {
 
     @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
-        Rectangle newRect = RoomLayout.getRectangle(newLocation.x, newLocation.y, this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+        Rectangle newRect = RoomLayout.getRectangle(newLocation.getX(), newLocation.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
 
         for (Habbo habbo : room.getHabbosOnItem(this)) {
-            if (habbo.getRoomUnit().getEffectId() == 97 && !newRect.contains(habbo.getRoomUnit().getCurrentLocation().x, habbo.getRoomUnit().getCurrentLocation().y)) {
+            if (habbo.getRoomUnit().getEffectId() == 97 && !newRect.contains(habbo.getRoomUnit().getCurrentLocation().getX(), habbo.getRoomUnit().getCurrentLocation().getY())) {
                 room.giveEffect(habbo, 0, -1);
             }
         }

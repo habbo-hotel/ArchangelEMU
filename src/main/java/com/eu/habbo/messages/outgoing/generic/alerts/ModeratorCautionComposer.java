@@ -3,15 +3,12 @@ package com.eu.habbo.messages.outgoing.generic.alerts;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ModeratorCautionComposer extends MessageComposer {
     private final String message;
     private final String link;
-
-    public ModeratorCautionComposer(String message, String link) {
-        this.message = message;
-        this.link = link;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

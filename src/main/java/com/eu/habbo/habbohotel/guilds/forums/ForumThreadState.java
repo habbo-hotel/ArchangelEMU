@@ -1,16 +1,18 @@
 package com.eu.habbo.habbohotel.guilds.forums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public enum ForumThreadState {
     OPEN(0),
     CLOSED(1),
     HIDDEN_BY_STAFF_MEMBER(10),
     HIDDEN_BY_GUILD_ADMIN(20);
 
+    @Getter
     private int stateId;
 
-    ForumThreadState(int stateId) {
-        this.stateId = stateId;
-    }
 
     public static ForumThreadState fromValue(int value) {
         for (ForumThreadState state : ForumThreadState.values()) {
@@ -22,7 +24,4 @@ public enum ForumThreadState {
         return CLOSED;
     }
 
-    public int getStateId() {
-        return this.stateId;
-    }
 }

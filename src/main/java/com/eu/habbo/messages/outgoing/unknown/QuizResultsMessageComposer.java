@@ -3,17 +3,14 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class QuizResultsMessageComposer extends MessageComposer {
     private final String unknownString;
     private final List<Integer> unknownIntegerList;
-
-    public QuizResultsMessageComposer(String unknownString, List<Integer> unknownIntegerList) {
-        this.unknownString = unknownString;
-        this.unknownIntegerList = unknownIntegerList;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

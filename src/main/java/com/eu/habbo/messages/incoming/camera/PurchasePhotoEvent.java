@@ -6,8 +6,8 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.camera.CameraPurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.NotEnoughBalanceMessageComposer;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.plugin.events.users.UserPurchasePictureEvent;
 
 public class PurchasePhotoEvent extends MessageHandler {

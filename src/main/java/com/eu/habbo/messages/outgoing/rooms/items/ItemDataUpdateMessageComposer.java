@@ -4,13 +4,12 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionPostIt;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class ItemDataUpdateMessageComposer extends MessageComposer {
     private final InteractionPostIt postIt;
 
-    public ItemDataUpdateMessageComposer(InteractionPostIt postIt) {
-        this.postIt = postIt;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

@@ -4,13 +4,12 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class GuideSessionInvitedToGuideRoomMessageComposer extends MessageComposer {
     private final Room room;
 
-    public GuideSessionInvitedToGuideRoomMessageComposer(Room room) {
-        this.room = room;
-    }
 
     //Helper invites noob
     @Override

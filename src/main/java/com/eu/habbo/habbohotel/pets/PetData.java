@@ -2,10 +2,14 @@ package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.pets.*;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
+import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetToy;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class PetData implements Comparable<PetData> {
 
     public static final String BLINK = "eyb";
@@ -24,11 +29,11 @@ public class PetData implements Comparable<PetData> {
     public static final List<Item> generalNestItems = new ArrayList<>();
     public static final List<Item> generalToyItems = new ArrayList<>();
     public static final THashMap<PetVocalsType, THashSet<PetVocal>> generalPetVocals = new THashMap<>();
-    public String[] actionsHappy;
-    public String[] actionsTired;
-    public String[] actionsRandom;
-    public THashMap<PetVocalsType, THashSet<PetVocal>> petVocals;
-    public boolean canSwim;
+    private  String[] actionsHappy;
+    private  String[] actionsTired;
+    private  String[] actionsRandom;
+    private  THashMap<PetVocalsType, THashSet<PetVocal>> petVocals;
+    private  boolean canSwim;
     private int type;
     private String name;
     private List<PetCommand> petCommands;

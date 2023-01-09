@@ -4,17 +4,14 @@ import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 
+@AllArgsConstructor
 public class UserBadgesComposer extends MessageComposer {
     private final ArrayList<HabboBadge> badges;
     private final int habbo;
-
-    public UserBadgesComposer(ArrayList<HabboBadge> badges, int habbo) {
-        this.badges = badges;
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {

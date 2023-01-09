@@ -5,9 +5,6 @@ import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
-import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.outgoing.MessageComposer;
-import com.eu.habbo.messages.outgoing.Outgoing;
 import com.eu.habbo.messages.outgoing.friends.NewFriendRequestComposer;
 import com.google.gson.Gson;
 

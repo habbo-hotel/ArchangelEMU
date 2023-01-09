@@ -8,17 +8,14 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@AllArgsConstructor
 public class AchievementsComposer extends MessageComposer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AchievementsComposer.class);
 
     private final Habbo habbo;
-
-    public AchievementsComposer(Habbo habbo) {
-        this.habbo = habbo;
-    }
 
     @Override
     protected ServerMessage composeInternal() {
@@ -34,16 +31,16 @@ public class AchievementsComposer extends MessageComposer {
 
                 achievementProgress = this.habbo.getHabboStats().getAchievementProgress(achievement);
                 currentLevel = achievement.getLevelForProgress(achievementProgress);
-                nextLevel = achievement.getNextLevel(currentLevel != null ? currentLevel.level : 0);
+                nextLevel = achievement.getNextLevel(currentLevel != null ? currentLevel.getLevel() : 0);
 
                 this.response.appendInt(achievement.id); //ID
-                this.response.appendInt(nextLevel != null ? nextLevel.level : currentLevel != null ? currentLevel.level : 0); //
-                this.response.appendString("ACH_" + achievement.name + (nextLevel != null ? nextLevel.level : currentLevel != null ? currentLevel.level : 0)); //Target badge code
-                this.response.appendInt(currentLevel != null ? currentLevel.progress : 0); //Last level progress needed
-                this.response.appendInt(nextLevel != null ? nextLevel.progress : -1); //Progress needed
-                this.response.appendInt(nextLevel != null ? nextLevel.rewardAmount : -1); //Reward amount
-                this.response.appendInt(nextLevel != null ? nextLevel.rewardType : -1); //Reward currency ID
-                this.response.appendInt(achievementProgress <= 0 ? 0 : achievementProgress); //Current progress
+                this.response.appendInt(nextLevel != null ? nextLevel.getLevel() : currentLevel != null ? currentLevel.getLevel() : 0); //
+                this.response.appendString("ACH_" + achievement.name + (nextLevel != null ? nextLevel.getLevel() : currentLevel != null ? currentLevel.getLevel() : 0)); //Target badge code
+                this.response.appendInt(currentLevel != null ? currentLevel.getProgress() : 0); //Last level progress needed
+                this.response.appendInt(nextLevel != null ? nextLevel.getProgress() : -1); //Progress needed
+                this.response.appendInt(nextLevel != null ? nextLevel.getRewardAmount() : -1); //Reward amount
+                this.response.appendInt(nextLevel != null ? nextLevel.getRewardType() : -1); //Reward currency ID
+                this.response.appendInt(Math.max(achievementProgress, 0)); //Current progress
                 this.response.appendBoolean(AchievementManager.hasAchieved(this.habbo, achievement)); //Achieved? (Current Progress == MaxLevel.Progress)
                 this.response.appendString(achievement.category.toString().toLowerCase()); //Category
                 this.response.appendString(""); //Empty, completly unused in client code
@@ -53,7 +50,7 @@ public class AchievementsComposer extends MessageComposer {
 
             this.response.appendString("");
         } catch (Exception e) {
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
 
         return this.response;

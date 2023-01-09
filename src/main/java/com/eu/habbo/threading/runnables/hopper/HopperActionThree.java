@@ -10,7 +10,9 @@ import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 class HopperActionThree implements Runnable {
     private final HabboItem teleportOne;
     private final Room room;
@@ -18,13 +20,6 @@ class HopperActionThree implements Runnable {
     private final int targetRoomId;
     private final int targetItemId;
 
-    public HopperActionThree(HabboItem teleportOne, Room room, GameClient client, int targetRoomId, int targetItemId) {
-        this.teleportOne = teleportOne;
-        this.room = room;
-        this.client = client;
-        this.targetRoomId = targetRoomId;
-        this.targetItemId = targetItemId;
-    }
 
     @Override
     public void run() {

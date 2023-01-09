@@ -11,17 +11,16 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class InteractionFireworks extends InteractionDefault {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InteractionFireworks.class);
 
     private static final String STATE_EMPTY = "0"; // Not used since the removal of pixels
     private static final String STATE_CHARGED = "1";
@@ -129,7 +128,7 @@ public class InteractionFireworks extends InteractionDefault {
             try {
                 explodeDuration = Integer.parseInt(this.getBaseItem().getCustomParams());
             } catch (NumberFormatException e) {
-                LOGGER.error("Incorrect customparams (" + this.getBaseItem().getCustomParams() + ") for base item ID (" + this.getBaseItem().getId() + ") of type (" + this.getBaseItem().getName() + ")");
+                log.error("Incorrect customparams (" + this.getBaseItem().getCustomParams() + ") for base item ID (" + this.getBaseItem().getId() + ") of type (" + this.getBaseItem().getName() + ")");
             }
         }
 

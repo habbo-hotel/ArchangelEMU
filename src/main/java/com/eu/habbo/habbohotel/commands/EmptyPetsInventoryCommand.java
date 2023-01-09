@@ -6,8 +6,8 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.inventory.PetInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
+import com.eu.habbo.messages.outgoing.inventory.PetInventoryComposer;
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class EmptyPetsInventoryCommand extends Command {

@@ -9,9 +9,9 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.LimitedEditionSoldOutComposer;
 import com.eu.habbo.messages.outgoing.crafting.CraftingResultComposer;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
+import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItems;
 import gnu.trove.map.hash.TIntObjectHashMap;
 

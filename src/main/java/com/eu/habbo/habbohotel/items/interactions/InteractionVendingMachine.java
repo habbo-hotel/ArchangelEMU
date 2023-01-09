@@ -55,7 +55,7 @@ public class InteractionVendingMachine extends HabboItem {
 
         boolean inActivatorSpace = false;
 
-        for(RoomTile tile : activatorTiles) {
+        for(RoomTile ignored : activatorTiles) {
             if(unit.getCurrentLocation().is(unit.getX(), unit.getY())) {
                 inActivatorSpace = true;
             }
@@ -77,7 +77,7 @@ public class InteractionVendingMachine extends HabboItem {
         }
 
         if(!unit.isWalking() && !unit.hasStatus(RoomUnitStatus.SIT) && !unit.hasStatus(RoomUnitStatus.LAY)) {
-            this.rotateToMachine(room, unit);
+            this.rotateToMachine(unit);
         }
 
         Emulator.getThreading().run(() -> {
@@ -113,7 +113,7 @@ public class InteractionVendingMachine extends HabboItem {
         boolean inActivatorSpace = false;
 
         for(RoomTile tile : activatorTiles) {
-            if(unit.getCurrentLocation().is(tile.x, tile.y)) {
+            if(unit.getCurrentLocation().is(tile.getX(), tile.getY())) {
                 inActivatorSpace = true;
             }
         }
@@ -121,18 +121,16 @@ public class InteractionVendingMachine extends HabboItem {
         if(!inActivatorSpace) {
             RoomTile tileToWalkTo = null;
             for(RoomTile tile : activatorTiles) {
-                if((tile.state == RoomTileState.OPEN || tile.state == RoomTileState.SIT) && (tileToWalkTo == null || tileToWalkTo.distance(unit.getCurrentLocation()) > tile.distance(unit.getCurrentLocation()))) {
+                if((tile.getState() == RoomTileState.OPEN || tile.getState() == RoomTileState.SIT) && (tileToWalkTo == null || tileToWalkTo.distance(unit.getCurrentLocation()) > tile.distance(unit.getCurrentLocation()))) {
                     tileToWalkTo = tile;
                 }
             }
 
             if(tileToWalkTo != null) {
-                List<Runnable> onSuccess = new ArrayList<Runnable>();
-                List<Runnable> onFail = new ArrayList<Runnable>();
+                List<Runnable> onSuccess = new ArrayList<>();
+                List<Runnable> onFail = new ArrayList<>();
 
-                onSuccess.add(() -> {
-                    tryInteract(client, room, unit);
-                });
+                onSuccess.add(() -> tryInteract(client, room, unit));
 
                 unit.setGoalLocation(tileToWalkTo);
                 Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tileToWalkTo, room, onSuccess, onFail));
@@ -175,7 +173,7 @@ public class InteractionVendingMachine extends HabboItem {
         return true;
     }
 
-    private void rotateToMachine(Room room, RoomUnit unit) {
+    private void rotateToMachine(RoomUnit unit) {
         RoomUserRotation rotation = RoomUserRotation.values()[Rotation.Calculate(unit.getX(), unit.getY(), this.getX(), this.getY())];
 
         if(Math.abs(unit.getBodyRotation().getValue() - rotation.getValue()) > 1) {

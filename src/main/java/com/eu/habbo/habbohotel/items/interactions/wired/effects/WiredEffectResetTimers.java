@@ -10,7 +10,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.WiredResetTimers;
 import gnu.trove.procedure.TObjectProcedure;
@@ -44,7 +43,7 @@ public class WiredEffectResetTimers extends InteractionWiredEffect {
         message.appendInt(1);
         message.appendInt(this.getDelay());
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
 
         if (this.requiresTriggeringUser()) {

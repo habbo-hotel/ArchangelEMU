@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
@@ -80,7 +79,7 @@ public class WiredTriggerScoreAchieved extends InteractionWiredTrigger {
         message.appendInt(1);
         message.appendInt(this.score);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(0);
         message.appendInt(0);
     }

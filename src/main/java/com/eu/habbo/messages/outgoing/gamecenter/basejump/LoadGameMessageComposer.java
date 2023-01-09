@@ -5,19 +5,16 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class LoadGameMessageComposer extends MessageComposer {
     public static String FASTFOOD_KEY = "";
 
     private final GameClient client;
     private final int game;
 
-    public LoadGameMessageComposer(GameClient client, int game) {
-        this.client = client;
-        this.game = game;
-    }
-
-    @Override
+   @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.loadGameMessageComposer);
 

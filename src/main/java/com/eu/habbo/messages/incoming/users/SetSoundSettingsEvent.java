@@ -11,9 +11,9 @@ public class SetSoundSettingsEvent extends MessageHandler {
         int furni = this.packet.readInt();
         int trax = this.packet.readInt();
 
-        this.client.getHabbo().getHabboStats().volumeSystem = system;
-        this.client.getHabbo().getHabboStats().volumeFurni = furni;
-        this.client.getHabbo().getHabboStats().volumeTrax = trax;
+        this.client.getHabbo().getHabboStats().setVolumeSystem(system);
+        this.client.getHabbo().getHabboStats().setVolumeFurni(furni);
+        this.client.getHabbo().getHabboStats().setVolumeTrax(trax);
 
         Emulator.getPluginManager().fireEvent(new UserSavedSettingsEvent(this.client.getHabbo()));
     }

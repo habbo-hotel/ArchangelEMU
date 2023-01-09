@@ -4,15 +4,13 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TIntHashSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class ClothingValidationManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClothingValidationManager.class);
 
     public static String FIGUREDATA_URL = "";
     public static boolean VALIDATE_ON_HC_EXPIRE = false;
@@ -38,7 +36,7 @@ public class ClothingValidationManager {
             VALIDATE_ON_MIMIC = false;
             VALIDATE_ON_MANNEQUIN = false;
             VALIDATE_ON_FBALLGATE = false;
-            LOGGER.error("Caught exception", e);
+            log.error("Caught exception", e);
         }
     }
 
@@ -115,16 +113,16 @@ public class ClothingValidationManager {
         {
             FiguredataSettype settype = x.getValue();
 
-            if(gender.equalsIgnoreCase("M") && !isHC && !settype.mandatoryMale0)
+            if(gender.equalsIgnoreCase("M") && !isHC && !settype.isMandatoryMale0())
                 return;
 
-            if(gender.equalsIgnoreCase("F") && !isHC && !settype.mandatoryFemale0)
+            if(gender.equalsIgnoreCase("F") && !isHC && !settype.isMandatoryFemale0())
                 return;
 
-            if(gender.equalsIgnoreCase("M") && isHC && !settype.mandatoryMale1)
+            if(gender.equalsIgnoreCase("M") && isHC && !settype.isMandatoryMale1())
                 return;
 
-            if(gender.equalsIgnoreCase("F") && isHC && !settype.mandatoryFemale1)
+            if(gender.equalsIgnoreCase("F") && isHC && !settype.isMandatoryFemale1())
                 return;
 
             parts.put(x.getKey(), new String[] { x.getKey() });
@@ -140,9 +138,9 @@ public class ClothingValidationManager {
                         return;
                     }
 
-                    FiguredataPalette palette = FIGUREDATA.palettes.get(settype.paletteId);
+                    FiguredataPalette palette = FIGUREDATA.palettes.get(settype.getPaletteId());
                     if (palette == null) {
-                        throw new Exception("Palette " + settype.paletteId + " does not exist");
+                        throw new Exception("Palette " + settype.getPaletteId() + " does not exist");
                     }
 
                     int setId;
@@ -151,21 +149,21 @@ public class ClothingValidationManager {
                     setId = Integer.parseInt(data.length >= 2 ? data[1] : "-1");
                     set = settype.getSet(setId);
 
-                    if (set == null || (set.club && !isHC) || !set.selectable || (set.sellable && !ownedClothing.contains(set.id)) || (!set.gender.equalsIgnoreCase("U") && !set.gender.equalsIgnoreCase(gender))) {
-                        if (gender.equalsIgnoreCase("M") && !isHC && !settype.mandatoryMale0)
+                    if (set == null || (set.isClub() && !isHC) || !set.isSelectable() || (set.isSellable() && !ownedClothing.contains(set.getId())) || (!set.getGender().equalsIgnoreCase("U") && !set.getGender().equalsIgnoreCase(gender))) {
+                        if (gender.equalsIgnoreCase("M") && !isHC && !settype.isMandatoryMale0())
                             return;
 
-                        if (gender.equalsIgnoreCase("F") && !isHC && !settype.mandatoryFemale0)
+                        if (gender.equalsIgnoreCase("F") && !isHC && !settype.isMandatoryFemale0())
                             return;
 
-                        if (gender.equalsIgnoreCase("M") && isHC && !settype.mandatoryMale1)
+                        if (gender.equalsIgnoreCase("M") && isHC && !settype.isMandatoryMale1())
                             return;
 
-                        if (gender.equalsIgnoreCase("F") && isHC && !settype.mandatoryFemale1)
+                        if (gender.equalsIgnoreCase("F") && isHC && !settype.isMandatoryFemale1())
                             return;
 
                         set = settype.getFirstNonHCSetForGender(gender);
-                        setId = set.id;
+                        setId = set.getId();
                     }
 
                     ArrayList<String> dataParts = new ArrayList<>();
@@ -173,23 +171,23 @@ public class ClothingValidationManager {
                     int color1 = -1;
                     int color2 = -1;
 
-                    if (set.colorable) {
+                    if (set.isColorable()) {
                         color1 = data.length >= 3 ? Integer.parseInt(data[2]) : -1;
                         FiguredataPaletteColor color = palette.getColor(color1);
-                        if (color == null || (color.club && !isHC)) {
-                            color1 = palette.getFirstNonHCColor().id;
+                        if (color == null || (color.isClub() && !isHC)) {
+                            color1 = palette.getFirstNonHCColor().getId();
                         }
                     }
 
-                    if (data.length >= 4 && set.colorable) {
+                    if (data.length >= 4 && set.isColorable()) {
                         color2 = Integer.parseInt(data[3]);
                         FiguredataPaletteColor color = palette.getColor(color2);
-                        if (color == null || (color.club && !isHC)) {
-                            color2 = palette.getFirstNonHCColor().id;
+                        if (color == null || (color.isClub() && !isHC)) {
+                            color2 = palette.getFirstNonHCColor().getId();
                         }
                     }
 
-                    dataParts.add(settype.type);
+                    dataParts.add(settype.getType());
                     dataParts.add("" + setId);
 
                     if (color1 > -1) {
@@ -204,7 +202,7 @@ public class ClothingValidationManager {
                 }
             } catch (Exception e) {
                 //habbo.alert(e.getMessage());
-                LOGGER.error("Error in clothing validation", e);
+                log.error("Error in clothing validation", e);
             }
         });
 

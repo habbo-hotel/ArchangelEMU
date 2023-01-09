@@ -8,8 +8,8 @@ import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
+import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemAddMessageComposer;
 
@@ -46,7 +46,7 @@ public class PlacePostItEvent extends MessageHandler {
 
                     }
                     else {
-                        this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.key, FurnitureMovementError.MAX_STICKIES.errorCode));
+                        this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.MAX_STICKIES.getErrorCode()));
                     }
 
                     //this.client.sendResponse(new PostItStickyPoleOpenComposer(item));

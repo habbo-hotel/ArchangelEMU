@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
@@ -12,10 +11,8 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -62,19 +59,16 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
         message.appendString("");
         message.appendInt(0);
         message.appendInt(0);
-        message.appendInt(this.getType().code);
+        message.appendInt(this.getType().getCode());
         message.appendInt(this.getDelay());
 
         if (this.requiresTriggeringUser()) {
             List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(new TObjectProcedure<InteractionWiredTrigger>() {
-                @Override
-                public boolean execute(InteractionWiredTrigger object) {
-                    if (!object.isTriggeredByRoomUnit()) {
-                        invalidTriggers.add(object.getBaseItem().getSpriteId());
-                    }
-                    return true;
+            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
+                if (!object.isTriggeredByRoomUnit()) {
+                    invalidTriggers.add(object.getBaseItem().getSpriteId());
                 }
+                return true;
             });
             message.appendInt(invalidTriggers.size());
             for (Integer i : invalidTriggers) {
@@ -133,7 +127,7 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
             {
                 found = false;
                 for (RoomTile tile : usedTiles) {
-                    if (tile.x == item.getX() && tile.y == item.getY()) {
+                    if (tile.getX() == item.getX() && tile.getY() == item.getY()) {
                         found = true;
                         break;
                     }

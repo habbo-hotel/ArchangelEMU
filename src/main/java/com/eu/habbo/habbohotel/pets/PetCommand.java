@@ -4,35 +4,21 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * A class representing a command that can be given to a pet.
- */
+@Getter
 public class PetCommand implements Comparable<PetCommand> {
+    private final int id;
+    private final String key;
+    private final int level;
+    private final int xp;
+    private final int energyCost;
+    private final int happinessCost;
 
-    /** The ID of the command. */
-    public final int id;
-
-    /** The key (name) of the command. */
-    public final String key;
-
-    /** The level required to use the command. */
-    public final int level;
-
-    /** The amount of XP rewarded for using the command. */
-    public final int xp;
-
-    /** The cost in energy to use the command. */
-    public final int energyCost;
-
-    /** The cost in happiness to use the command. */
-    public final int happynessCost;
-
-    /** The action associated with the command. */
-    public final PetAction action;
+    private final PetAction action;
 
     /**
      * Creates a new PetCommand instance.
@@ -46,7 +32,7 @@ public class PetCommand implements Comparable<PetCommand> {
         this.level = set.getInt("required_level");
         this.xp = set.getInt("reward_xp");
         this.energyCost = set.getInt("cost_energy");
-        this.happynessCost = set.getInt("cost_happyness");
+        this.happinessCost = set.getInt("cost_happyness");
         this.action = action;
     }
 
@@ -70,7 +56,7 @@ public class PetCommand implements Comparable<PetCommand> {
      */
     public void handle(Pet pet, Habbo habbo, String[] data) {
         // check if enough energy, happiness, and randomize do or dont || should possibly add if not hungry and thirsty but @brenoepic does those - oliver
-        if (this.action != null && pet.energy > this.energyCost && pet.happyness > this.happynessCost && Emulator.getRandom().nextInt((pet.level - this.level <= 0 ? 2 : pet.level - this.level) + 2) == 0) {
+        if (this.action != null && pet.energy > this.energyCost && pet.happiness > this.happinessCost && Emulator.getRandom().nextInt((pet.level - this.level <= 0 ? 2 : pet.level - this.level) + 2) == 0) {
             if (this.action.petTask != pet.getTask()) {
                 if (this.action.stopsPetWalking) {
                     pet.getRoomUnit().setGoalLocation(pet.getRoomUnit().getCurrentLocation());
@@ -87,7 +73,7 @@ public class PetCommand implements Comparable<PetCommand> {
                     pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, this.action.gestureToSet);
                     pet.getRoom().sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
                     pet.addEnergy(-this.energyCost);
-                    pet.addHappyness(-this.happynessCost);
+                    pet.addHappiness(-this.happinessCost);
                     pet.addExperience(this.xp);
                 }
             }
@@ -95,7 +81,7 @@ public class PetCommand implements Comparable<PetCommand> {
             // this is disobey
             if (this.action.apply(pet, habbo, data)) {
                 pet.addEnergy(-this.energyCost / 2);
-                pet.addHappyness(-this.happynessCost / 2);
+                pet.addHappiness(-this.happinessCost / 2);
             }
 
             pet.say(pet.petData.randomVocal(PetVocalsType.DISOBEY));

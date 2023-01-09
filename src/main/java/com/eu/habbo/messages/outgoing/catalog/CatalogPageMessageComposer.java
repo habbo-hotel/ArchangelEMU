@@ -11,24 +11,21 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@AllArgsConstructor
 public class CatalogPageMessageComposer extends MessageComposer {
     private final CatalogPage page;
     private final Habbo habbo;
     private final int offerId;
     private final String mode;
 
-    public CatalogPageMessageComposer(CatalogPage page, Habbo habbo, int offerId, String mode) {
-        this.page = page;
-        this.habbo = habbo;
-        this.offerId = offerId;
-        this.mode = mode;
-    }
+
 
     @Override
     protected ServerMessage composeInternal() {

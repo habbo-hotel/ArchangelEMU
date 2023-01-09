@@ -44,7 +44,7 @@ public class InteractionTotemHead extends InteractionDefault {
         if(extraData < 3) {
             return TotemColor.NONE;
         }
-        return TotemColor.fromInt(extraData - 3 - (4 * (getTotemType().type - 1)));
+        return TotemColor.fromInt(extraData - 3 - (4 * (getTotemType().getType() - 1)));
     }
 
     private void update(Room room, RoomTile tile) {
@@ -58,7 +58,7 @@ public class InteractionTotemHead extends InteractionDefault {
         if(legs == null)
             return;
 
-        this.setExtradata(((4 * this.getTotemType().type) + legs.getTotemColor().color) - 1 + "");
+        this.setExtradata(((4 * this.getTotemType().getType()) + legs.getTotemColor().getColor()) - 1 + "");
     }
 
     public void updateTotemState(Room room) {
@@ -66,7 +66,7 @@ public class InteractionTotemHead extends InteractionDefault {
     }
 
     public void updateTotemState(Room room, RoomTile tile) {
-        this.setExtradata(getTotemType().type - 1 + "");
+        this.setExtradata(getTotemType().getType() - 1 + "");
         update(room, tile);
         this.needsUpdate(true);
         room.updateItem(this);
@@ -77,12 +77,12 @@ public class InteractionTotemHead extends InteractionDefault {
         if (!((client != null && room != null && room.hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
             return;
 
-        TotemType newType = TotemType.fromInt(getTotemType().type + 1);
+        TotemType newType = TotemType.fromInt(getTotemType().getType() + 1);
         if(newType == TotemType.NONE) {
             newType = TotemType.TROLL;
         }
 
-        this.setExtradata(newType.type - 1 + "");
+        this.setExtradata(newType.getType() - 1 + "");
 
         updateTotemState(room);
     }

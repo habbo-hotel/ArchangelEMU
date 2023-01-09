@@ -9,8 +9,8 @@ import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.UserNameChangedMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserNameChangedMessageComposer;
 import com.eu.habbo.plugin.events.bots.BotSavedChatEvent;
 import com.eu.habbo.plugin.events.bots.BotSavedLookEvent;
 import com.eu.habbo.plugin.events.bots.BotSavedNameEvent;
@@ -37,30 +37,24 @@ public class CommandBotEvent extends MessageHandler {
             int settingId = this.packet.readInt();
 
             switch (settingId) {
-                case 1:
+                case 1 -> {
                     BotSavedLookEvent lookEvent = new BotSavedLookEvent(bot,
                             this.client.getHabbo().getHabboInfo().getGender(),
                             this.client.getHabbo().getHabboInfo().getLook(),
                             this.client.getHabbo().getRoomUnit().getEffectId());
                     Emulator.getPluginManager().fireEvent(lookEvent);
-
                     if (lookEvent.isCancelled())
                         break;
-
                     bot.setFigure(lookEvent.newLook);
                     bot.setGender(lookEvent.gender);
                     bot.setEffect(lookEvent.effect, -1);
                     bot.needsUpdate(true);
-                    break;
-
-                case 2:
+                }
+                case 2 -> {
                     String messageString = this.packet.readString();
-
                     if (messageString.length() > 5112)
                         break;
-
                     String[] data = messageString.split(";#;");
-
                     ArrayList<String> chat = new ArrayList<>();
                     int totalChatLength = 0;
                     for (int i = 0; i < data.length - 3 && totalChatLength <= 120; i++) {
@@ -90,44 +84,36 @@ public class CommandBotEvent extends MessageHandler {
                             }
                         }
                     }
-
                     int chatSpeed = 7;
-
                     try {
-                        chatSpeed = Integer.valueOf(data[data.length - 2]);
+                        chatSpeed = Integer.parseInt(data[data.length - 2]);
                         if (chatSpeed < BotManager.MINIMUM_CHAT_SPEED) {
                             chatSpeed = BotManager.MINIMUM_CHAT_SPEED;
                         }
                     } catch (Exception e) {
                         //Invalid chatspeed. Use 7.
                     }
-
-                    BotSavedChatEvent chatEvent = new BotSavedChatEvent(bot, Boolean.valueOf(data[data.length - 3]), Boolean.valueOf(data[data.length - 1]), chatSpeed, chat);
+                    BotSavedChatEvent chatEvent = new BotSavedChatEvent(bot, Boolean.parseBoolean(data[data.length - 3]), Boolean.parseBoolean(data[data.length - 1]), chatSpeed, chat);
                     Emulator.getPluginManager().fireEvent(chatEvent);
-
                     if (chatEvent.isCancelled())
                         break;
-
                     bot.setChatAuto(chatEvent.autoChat);
                     bot.setChatRandom(chatEvent.randomChat);
                     bot.setChatDelay((short) chatEvent.chatDelay);
                     bot.clearChat();
                     bot.addChatLines(chat);
                     bot.needsUpdate(true);
-                    break;
-
-                case 3:
+                }
+                case 3 -> {
                     bot.setCanWalk(!bot.canWalk());
                     bot.needsUpdate(true);
-                    break;
-
-                case 4:
+                }
+                case 4 -> {
                     bot.getRoomUnit().setDanceType(DanceType.values()[(bot.getRoomUnit().getDanceType().getType() + 1) % DanceType.values().length]);
                     room.sendComposer(new DanceMessageComposer(bot.getRoomUnit()).compose());
                     bot.needsUpdate(true);
-                    break;
-
-                case 5:
+                }
+                case 5 -> {
                     String name = this.packet.readString();
                     boolean invalidName = name.length() > BotManager.MAXIMUM_NAME_LENGTH || name.contains("<") || name.contains(">");
                     if (!invalidName) {
@@ -146,20 +132,17 @@ public class CommandBotEvent extends MessageHandler {
                             room.sendComposer(new UserNameChangedMessageComposer(bot.getRoomUnit().getId(), bot.getRoomUnit().getId(), nameEvent.name).compose());
                         }
                     }
-
                     if (invalidName) {
                         this.client.sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_BOTS_NAME_NOT_ACCEPT));
                     }
-                    break;
-                case 9:
+                }
+                case 9 -> {
                     String motto = this.packet.readString();
-
-                    if(motto.length() > Emulator.getConfig().getInt("motto.max_length", 38)) break;
-
+                    if (motto.length() > Emulator.getConfig().getInt("motto.max_length", 38)) break;
                     bot.setMotto(motto);
                     bot.needsUpdate(true);
                     room.sendComposer(new RoomUsersComposer(bot).compose());
-                    break;
+                }
             }
 
             if (bot.needsUpdate()) {

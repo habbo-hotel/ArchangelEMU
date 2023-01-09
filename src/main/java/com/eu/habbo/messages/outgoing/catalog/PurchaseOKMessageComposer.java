@@ -4,13 +4,12 @@ import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class PurchaseOKMessageComposer extends MessageComposer {
     private final CatalogItem catalogItem;
 
-    public PurchaseOKMessageComposer(CatalogItem catalogItem) {
-        this.catalogItem = catalogItem;
-    }
 
     public PurchaseOKMessageComposer() {
         this.catalogItem = null;
