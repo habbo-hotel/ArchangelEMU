@@ -60,7 +60,7 @@ public class InteractionTrap extends InteractionDefault {
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) {
     }
 
 }

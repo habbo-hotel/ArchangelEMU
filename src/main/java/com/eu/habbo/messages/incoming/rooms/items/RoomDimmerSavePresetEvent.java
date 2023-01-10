@@ -14,11 +14,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RoomDimmerSavePresetEvent extends MessageHandler {
-    public static List<String> MOODLIGHT_AVAILABLE_COLORS = Arrays.asList("#74F5F5,#0053F7,#E759DE,#EA4532,#F2F851,#82F349,#000000".split(","));
-    public static int MIN_BRIGHTNESS = (int) Math.floor(0.3 * 0xFF);
+    private static final List<String> MOODLIGHT_AVAILABLE_COLORS = Arrays.asList("#74F5F5,#0053F7,#E759DE,#EA4532,#F2F851,#82F349,#000000".split(","));
+    private static final int MIN_BRIGHTNESS = (int) Math.floor(0.3 * 0xFF);
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if ((room.getGuildId() <= 0 && room.getGuildRightLevel(this.client.getHabbo()).isLessThan(RoomRightLevels.GUILD_RIGHTS)) && !room.hasRights(this.client.getHabbo()))

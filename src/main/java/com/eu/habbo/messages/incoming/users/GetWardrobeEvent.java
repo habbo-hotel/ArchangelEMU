@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.users.WardrobeMessageComposer;
 
 public class GetWardrobeEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new WardrobeMessageComposer(this.client.getHabbo().getInventory().getWardrobeComponent()));
     }
 }

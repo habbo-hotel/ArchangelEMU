@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.guides.GuideSessionMessageMessageComposer;
 
 public class GuideSessionMessageEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByHabbo(this.client.getHabbo());
 
         if (tour != null) {

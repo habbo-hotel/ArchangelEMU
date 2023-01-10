@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.rooms.GetGuestRoomResultComposer;
 
 public class SubmitRoomToCompetitionEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_STAFF_PICK)) {
             int roomId = this.packet.readInt();
 

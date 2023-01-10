@@ -7,14 +7,16 @@ import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.unknown.IgnoredUsersMessageComposer;
 import gnu.trove.list.array.TIntArrayList;
+import lombok.Getter;
 
 import java.util.ArrayList;
 
+@Getter
 public class GetIgnoredUsersEvent extends MessageHandler {
 
-    ArrayList<String> ignoredUsernames = new ArrayList<>();
+    private final ArrayList<String> ignoredUsernames = new ArrayList<>();
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Habbo habbo = this.client.getHabbo();
         if(habbo == null) return;
 

@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.catalog.CatalogPagesListComposer;
 
 public class GetCatalogIndexEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
 
         String MODE = this.packet.readString();
         if (MODE.equalsIgnoreCase("normal")) {

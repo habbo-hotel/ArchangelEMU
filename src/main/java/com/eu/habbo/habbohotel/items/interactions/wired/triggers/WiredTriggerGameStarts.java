@@ -37,7 +37,7 @@ public class WiredTriggerGameStarts extends InteractionWiredTrigger {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredData(ResultSet set, Room room) {
     }
 
     @Override

@@ -11,7 +11,7 @@ public class UnloadRoomCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getOwnerId() == gameClient.getHabbo().getHabboInfo().getId() || gameClient.getHabbo().getHabboInfo().getRank().getId() > 4) {
             Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
 

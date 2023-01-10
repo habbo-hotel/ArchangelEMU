@@ -12,7 +12,7 @@ public class UpdateItemsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getItemManager().loadItems();
         Emulator.getGameEnvironment().getItemManager().loadCrackable();
         Emulator.getGameEnvironment().getItemManager().loadSoundTracks();

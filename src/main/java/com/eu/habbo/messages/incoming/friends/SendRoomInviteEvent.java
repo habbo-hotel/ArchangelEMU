@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.friends.RoomInviteComposer;
 
 public class SendRoomInviteEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboStats().allowTalk()) {
             int[] userIds = new int[this.packet.readInt()];
 

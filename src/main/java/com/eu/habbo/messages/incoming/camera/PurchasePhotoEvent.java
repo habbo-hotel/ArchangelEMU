@@ -16,7 +16,7 @@ public class PurchasePhotoEvent extends MessageHandler {
     public static int CAMERA_PURCHASE_POINTS_TYPE = 0;
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboInfo().getCredits() < PurchasePhotoEvent.CAMERA_PURCHASE_CREDITS) {
             this.client.sendResponse(new NotEnoughBalanceMessageComposer(true, false, 0));
             return;

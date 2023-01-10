@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.gamecenter.basejump.LoadGameUrlMessageComp
 
 public class JoinQueueEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int gameId = this.packet.readInt();
 
         if (gameId == 3) //BaseJump

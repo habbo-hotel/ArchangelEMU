@@ -12,7 +12,7 @@ import com.eu.habbo.messages.outgoing.modtool.CallForHelpResultMessageComposer;
 
 public class GuideSessionReportEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String message = this.packet.readString();
 
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByHabbo(this.client.getHabbo());

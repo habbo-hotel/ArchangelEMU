@@ -11,7 +11,7 @@ import java.util.Collections;
 
 public class ForwardToSomeRoomEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String data = this.packet.readString();
 
         if (data.equals("random_friending_room")) {

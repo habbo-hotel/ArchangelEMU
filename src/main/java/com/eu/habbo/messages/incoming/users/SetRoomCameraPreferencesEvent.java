@@ -6,7 +6,7 @@ import com.eu.habbo.plugin.events.users.UserSavedSettingsEvent;
 
 public class SetRoomCameraPreferencesEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.getHabbo().getHabboStats().setBlockCameraFollow(this.packet.readBoolean());
         Emulator.getPluginManager().fireEvent(new UserSavedSettingsEvent(this.client.getHabbo()));
     }

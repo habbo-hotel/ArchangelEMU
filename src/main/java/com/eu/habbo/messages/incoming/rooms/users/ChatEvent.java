@@ -15,7 +15,7 @@ public class ChatEvent extends MessageHandler {
 
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
         if (room == null)
             return;

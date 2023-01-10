@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 public class ClientHelloEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.packet.readString();
     }
 }

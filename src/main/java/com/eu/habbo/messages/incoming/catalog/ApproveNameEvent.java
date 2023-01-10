@@ -10,7 +10,7 @@ public class ApproveNameEvent extends MessageHandler {
     public static int PET_NAME_LENGTH_MAXIMUM = Emulator.getConfig().getInt("hotel.pets.name.length.max");
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String petName = this.packet.readString();
 
         if (petName.length() < PET_NAME_LENGTH_MINIMUM) {

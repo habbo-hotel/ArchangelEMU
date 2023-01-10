@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.handshake.LatencyPingResponseMessageCompos
 
 public class LatencyPingRequestEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new LatencyPingResponseMessageComposer(this.packet.readInt()));
     }
 }

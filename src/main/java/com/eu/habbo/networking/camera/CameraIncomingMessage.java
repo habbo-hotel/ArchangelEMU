@@ -59,5 +59,5 @@ public abstract class CameraIncomingMessage extends CameraMessage {
         return this.buffer.readableBytes();
     }
 
-    public abstract void handle(Channel client) throws Exception;
+    public abstract void handle(Channel client);
 }

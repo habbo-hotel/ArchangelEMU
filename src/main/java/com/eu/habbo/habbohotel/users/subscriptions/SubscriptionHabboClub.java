@@ -36,7 +36,7 @@ public class SubscriptionHabboClub extends Subscription {
     public static int HC_PAYDAY_NEXT_DATE = Integer.MAX_VALUE; // yyyy-MM-dd HH:mm:ss
     public static String HC_PAYDAY_INTERVAL = "";
     public static String HC_PAYDAY_QUERY = "";
-    public static TreeMap<Integer, Integer> HC_PAYDAY_STREAK = new TreeMap<>();
+    public static final TreeMap<Integer, Integer> HC_PAYDAY_STREAK = new TreeMap<>();
     public static String HC_PAYDAY_CURRENCY = "";
     public static Double HC_PAYDAY_KICKBACK_PERCENTAGE = 0.1;
     public static String ACHIEVEMENT_NAME = "";

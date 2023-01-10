@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.users.TalentTrackLevelMessageEvent;
 
 public class GetTalentTrackLevelEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new TalentTrackLevelMessageEvent(this.packet.readString()));
     }
 }

@@ -12,7 +12,7 @@ public class StaffAlertCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (params.length > 1) {
             StringBuilder message = new StringBuilder();
             for (int i = 1; i < params.length; i++) {

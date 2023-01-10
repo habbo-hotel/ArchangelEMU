@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.rooms.pets.PetTrainingPanelComposer;
 
 public class GetPetCommandsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int petId = this.packet.readInt();
 
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)

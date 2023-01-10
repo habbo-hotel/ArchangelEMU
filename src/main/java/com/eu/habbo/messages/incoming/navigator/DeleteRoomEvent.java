@@ -24,7 +24,7 @@ public class DeleteRoomEvent extends MessageHandler {
 
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int roomId = this.packet.readInt();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 
 public class QuitEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.getHabbo().getHabboInfo().setLoadingRoom(0);
 
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {

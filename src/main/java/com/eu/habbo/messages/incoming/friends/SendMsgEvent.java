@@ -7,7 +7,7 @@ import com.eu.habbo.plugin.events.users.friends.UserFriendChatEvent;
 
 public class SendMsgEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         String message = this.packet.readString();
 

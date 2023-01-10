@@ -15,7 +15,7 @@ import com.eu.habbo.messages.outgoing.rooms.items.ItemAddMessageComposer;
 
 public class PlacePostItEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
         String location = this.packet.readString();
 

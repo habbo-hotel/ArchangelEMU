@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class NavigatorSetSearchCodeViewModeEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String category = this.packet.readString();
         int viewMode = this.packet.readInt();
 

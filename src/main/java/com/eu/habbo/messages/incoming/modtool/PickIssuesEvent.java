@@ -12,7 +12,7 @@ public class PickIssuesEvent extends MessageHandler {
     public static boolean send = false;
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             this.packet.readInt();
             ModToolIssue issue = Emulator.getGameEnvironment().getModToolManager().getTicket(this.packet.readInt());

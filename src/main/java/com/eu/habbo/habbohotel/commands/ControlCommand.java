@@ -11,7 +11,7 @@ public class ControlCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             if (params.length == 2) {
                 Habbo target = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[1]);

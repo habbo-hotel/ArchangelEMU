@@ -18,7 +18,7 @@ public abstract class InteractionWiredExtra extends InteractionWired {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
         if (client != null) {
             if (room.hasRights(client.getHabbo())) {
                 this.activateBox(room);

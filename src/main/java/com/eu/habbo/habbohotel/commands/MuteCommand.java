@@ -12,7 +12,7 @@ public class MuteCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1) {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mute.not_specified"), RoomChatMessageBubbles.ALERT);
             return true;

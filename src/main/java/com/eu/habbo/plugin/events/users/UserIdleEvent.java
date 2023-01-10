@@ -1,10 +1,12 @@
 package com.eu.habbo.plugin.events.users;
 
 import com.eu.habbo.habbohotel.users.Habbo;
+import lombok.Getter;
 
+@Getter
 public class UserIdleEvent extends UserEvent {
-    public final IdleReason reason;
-    public boolean idle;
+    private final IdleReason reason;
+    private final boolean idle;
     public UserIdleEvent(Habbo habbo, IdleReason reason, boolean idle) {
         super(habbo);
 

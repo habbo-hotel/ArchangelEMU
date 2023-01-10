@@ -12,7 +12,7 @@ import java.util.List;
 
 public class PassCarryItemEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();

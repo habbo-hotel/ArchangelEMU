@@ -17,7 +17,7 @@ public class InvisibleCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         RoomUnit roomUnit = gameClient.getHabbo().getRoomUnit();
 
         if (roomUnit.isInvisible()) {

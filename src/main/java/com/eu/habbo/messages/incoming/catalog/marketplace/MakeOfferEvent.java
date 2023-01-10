@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MakeOfferEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (!MarketPlace.MARKETPLACE_ENABLED) {
             this.client.sendResponse(new MarketplaceMakeOfferResult(MarketplaceMakeOfferResult.MARKETPLACE_DISABLED));
             return;

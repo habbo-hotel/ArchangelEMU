@@ -6,7 +6,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class EventLogEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String type = this.packet.readString();
         String value = this.packet.readString();
         String action = this.packet.readString();

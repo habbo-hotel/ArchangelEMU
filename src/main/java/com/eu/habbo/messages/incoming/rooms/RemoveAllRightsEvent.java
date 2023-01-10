@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.NoSuchFlatComposer;
 
 public class RemoveAllRightsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         final Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if (room == null || room.getId() != this.packet.readInt())

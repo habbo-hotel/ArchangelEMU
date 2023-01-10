@@ -6,7 +6,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class AcceptTradingEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Habbo habbo = this.client.getHabbo();
 
         if (habbo == null || habbo.getHabboInfo() == null || habbo.getHabboInfo().getCurrentRoom() == null)

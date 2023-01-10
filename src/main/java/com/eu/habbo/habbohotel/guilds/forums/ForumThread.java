@@ -180,7 +180,7 @@ public class ForumThread implements Runnable, ISerialize {
         return threads;
     }
 
-    public static ForumThread getById(int threadId) throws SQLException {
+    public static ForumThread getById(int threadId) {
         ForumThread foundThread = forumThreadsCache.get(threadId);
 
         if (foundThread != null)

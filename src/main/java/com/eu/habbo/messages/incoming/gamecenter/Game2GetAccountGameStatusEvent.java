@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.gamecenter.GameCenterGameComposer;
 
 public class Game2GetAccountGameStatusEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new GameCenterGameComposer(this.packet.readInt(), GameCenterGameComposer.OK));
     }
 }

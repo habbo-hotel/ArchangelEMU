@@ -10,7 +10,7 @@ import com.eu.habbo.plugin.events.users.UserRightsGivenEvent;
 
 public class AssignRightsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();

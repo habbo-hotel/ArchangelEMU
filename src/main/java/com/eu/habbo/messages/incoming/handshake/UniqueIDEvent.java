@@ -11,7 +11,7 @@ public class UniqueIDEvent extends MessageHandler {
     private static final int HASH_LENGTH = 64;
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String storedMachineId = this.packet.readString();
         String clientFingerprint = this.packet.readString();
         String capabilities = this.packet.readString();

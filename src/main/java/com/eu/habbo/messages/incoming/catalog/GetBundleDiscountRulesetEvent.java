@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.catalog.BundleDiscountRulesetMessageCompos
 
 public class GetBundleDiscountRulesetEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new BundleDiscountRulesetMessageComposer());
     }
 }

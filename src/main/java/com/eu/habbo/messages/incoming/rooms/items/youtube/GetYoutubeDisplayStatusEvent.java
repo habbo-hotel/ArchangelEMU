@@ -16,7 +16,7 @@ public class GetYoutubeDisplayStatusEvent extends MessageHandler {
 
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {

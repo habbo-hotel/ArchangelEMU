@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CreditFurniRedeemEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();

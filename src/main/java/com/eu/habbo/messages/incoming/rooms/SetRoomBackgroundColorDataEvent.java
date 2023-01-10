@@ -9,7 +9,7 @@ import com.eu.habbo.plugin.events.furniture.FurnitureRoomTonerEvent;
 
 public class SetRoomBackgroundColorDataEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
@@ -31,9 +31,9 @@ public class SetRoomBackgroundColorDataEvent extends MessageHandler {
             if (event.isCancelled())
                 return;
 
-            hue = event.hue % 256;
-            saturation = event.saturation % 256;
-            brightness = event.brightness % 256;
+            hue = event.getHue() % 256;
+            saturation = event.getSaturation() % 256;
+            brightness = event.getBrightness() % 256;
 
             item.setExtradata(item.getExtradata().split(":")[0] + ":" + hue + ":" + saturation + ":" + brightness);
             item.needsUpdate(true);

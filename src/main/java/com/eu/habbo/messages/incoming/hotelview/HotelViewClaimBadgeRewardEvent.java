@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
 
 public class HotelViewClaimBadgeRewardEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String request = this.packet.readString();
 
         if (Emulator.getConfig().getBoolean("hotelview.badgereward." + request + ".enabled")) {

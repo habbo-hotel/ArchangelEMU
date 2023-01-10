@@ -8,7 +8,7 @@ import com.eu.habbo.plugin.events.users.UserSavedWardrobeEvent;
 
 public class SaveWardrobeOutfitEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int slotId = this.packet.readInt();
         String look = this.packet.readString();
         String gender = this.packet.readString();

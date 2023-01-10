@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.navigator.NewNavigatorPreferencesComposer;
 
 public class GetUserEventCatsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
 
 
         this.client.sendResponse(new NewNavigatorPreferencesComposer(this.client.getHabbo().getHabboStats().getNavigatorWindowSettings()));

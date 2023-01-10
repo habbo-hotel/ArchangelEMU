@@ -10,7 +10,7 @@ import gnu.trove.map.hash.THashMap;
 
 public class SetObjectDataEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
         if (room == null)
             return;

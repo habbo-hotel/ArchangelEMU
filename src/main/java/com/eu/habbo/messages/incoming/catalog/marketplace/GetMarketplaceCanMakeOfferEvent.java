@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceCanMakeOffe
 
 public class GetMarketplaceCanMakeOfferEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (MarketPlace.MARKETPLACE_ENABLED)
             this.client.sendResponse(new MarketplaceCanMakeOfferResult(1, 0, 0));
         else

@@ -9,7 +9,7 @@ import com.eu.habbo.plugin.events.users.UserIdleEvent;
 
 public class DanceEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
             return;
 
@@ -35,7 +35,7 @@ public class DanceEvent extends MessageHandler {
                 Emulator.getPluginManager().fireEvent(event);
 
                 if (!event.isCancelled()) {
-                    if (!event.idle) {
+                    if (!event.isIdle()) {
                         this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(habbo);
                     }
                 }

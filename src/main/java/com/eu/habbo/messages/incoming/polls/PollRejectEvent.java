@@ -13,7 +13,7 @@ import java.sql.SQLException;
 public class PollRejectEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int pollId = this.packet.readInt();
 
 

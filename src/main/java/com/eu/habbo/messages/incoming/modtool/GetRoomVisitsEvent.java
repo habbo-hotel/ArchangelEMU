@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.modtool.RoomVisitsComposer;
 
 public class GetRoomVisitsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             int userId = this.packet.readInt();
 

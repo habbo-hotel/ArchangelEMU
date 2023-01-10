@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class ModTradingLockEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         String message = this.packet.readString();
         int duration = this.packet.readInt();

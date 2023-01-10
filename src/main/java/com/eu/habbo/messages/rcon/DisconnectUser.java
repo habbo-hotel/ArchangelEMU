@@ -35,7 +35,7 @@ public class DisconnectUser extends RCONMessage<DisconnectUser.DisconnectUserJSO
 
     static class DisconnectUserJSON {
 
-        public int user_id = -1;
+        public final int user_id = -1;
 
 
         public String username;

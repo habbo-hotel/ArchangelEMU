@@ -32,7 +32,7 @@ public class RoomLayout {
     private RoomTile doorTile;
     private final Room room;
 
-    public RoomLayout(ResultSet set, Room room) throws SQLException {
+    public RoomLayout(ResultSet set, Room room) {
         this.room = room;
         try {
             this.name = set.getString("name");

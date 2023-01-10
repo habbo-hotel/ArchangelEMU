@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserTypingMessageComposer;
 
 public class StartTypingEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null) {
             return;
         }

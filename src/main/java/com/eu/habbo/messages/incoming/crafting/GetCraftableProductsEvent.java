@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.crafting.CraftingRecipeComposer;
 
 public class GetCraftableProductsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String recipeName = this.packet.readString();
         CraftingRecipe recipe = Emulator.getGameEnvironment().getCraftingManager().getRecipe(recipeName);
 

@@ -7,7 +7,7 @@ import com.eu.habbo.plugin.events.users.UserRespectedEvent;
 
 public class RespectUserEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
 
         if (userId == client.getHabbo().getHabboInfo().getId()) {

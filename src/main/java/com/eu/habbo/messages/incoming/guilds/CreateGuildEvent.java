@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CreateGuildEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String name = this.packet.readString();
         String description = this.packet.readString();
 

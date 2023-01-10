@@ -12,7 +12,7 @@ public class GetLimitedOfferAppearingNextEvent extends MessageHandler {
     public static String ITEM_NAME;
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (ENABLED) {
             int timeremaining = Math.max(TIMESTAMP - Emulator.getIntUnixTimestamp(), -1);
             this.client.sendResponse(new LimitedOfferAppearingNextMessageComposer(

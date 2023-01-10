@@ -11,7 +11,7 @@ public class FreezeBotsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             if (gameClient.getHabbo().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getCurrentRoom().getOwnerId() || gameClient.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().setAllowBotsWalk(!gameClient.getHabbo().getHabboInfo().getCurrentRoom().isAllowBotsWalk());

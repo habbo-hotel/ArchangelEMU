@@ -13,8 +13,7 @@ public class ModToolRoomVisit implements Comparable<ModToolRoomVisit> {
     private final String roomName;
     private final int timestamp;
     private int exitTimestamp;
-    private THashSet<ModToolChatLog> chat = new THashSet<>();
-    ;
+    private final THashSet<ModToolChatLog> chat = new THashSet<>();
 
     public ModToolRoomVisit(ResultSet set) throws SQLException {
         this.roomId = set.getInt("room_id");

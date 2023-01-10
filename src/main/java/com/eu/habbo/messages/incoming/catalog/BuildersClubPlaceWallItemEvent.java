@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class BuildersClubPlaceWallItemEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
 
         Subscription subscription = this.client.getHabbo().getHabboStats().getSubscription(SubscriptionHabboClub.HABBO_CLUB);
 

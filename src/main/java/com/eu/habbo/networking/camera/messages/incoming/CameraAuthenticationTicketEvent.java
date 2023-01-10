@@ -11,7 +11,7 @@ public class CameraAuthenticationTicketEvent extends CameraIncomingMessage {
     }
 
     @Override
-    public void handle(Channel client) throws Exception {
+    public void handle(Channel client) {
         String ticket = this.readString();
 
         if (ticket.startsWith("FASTFOOD")) {

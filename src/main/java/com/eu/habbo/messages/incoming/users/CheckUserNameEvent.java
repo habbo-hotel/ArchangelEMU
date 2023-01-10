@@ -12,7 +12,7 @@ public class CheckUserNameEvent extends MessageHandler {
     public static String VALID_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-=!?@:,.";
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (!this.client.getHabbo().getHabboStats().isAllowNameChange())
             return;
 

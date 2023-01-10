@@ -15,7 +15,7 @@ public class SetItemDataEvent extends MessageHandler {
     private static final List<String> COLORS = Arrays.asList("9CCEFF", "FF9CFF", "9CFF9C", "FFFF33");
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
         String color = this.packet.readString();
         String text = this.packet.readString().replace(((char) 9) + "", "");

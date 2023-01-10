@@ -15,7 +15,7 @@ import java.util.Date;
 
 public class ModMuteEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         String message = this.packet.readString();
         int cfhTopic = this.packet.readInt();

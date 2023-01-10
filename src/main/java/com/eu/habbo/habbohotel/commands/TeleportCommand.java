@@ -10,7 +10,7 @@ public class TeleportCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboInfo().getRiding() == null) //TODO Make this an event plugin which fires that can be cancelled
             if (gameClient.getHabbo().getRoomUnit().cmdTeleport) {
                 gameClient.getHabbo().getRoomUnit().cmdTeleport = false;

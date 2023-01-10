@@ -16,7 +16,7 @@ public class EmptyBotsInventoryCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1 || (params.length >= 2 && !params[1].equals(Emulator.getTexts().getValue("generic.yes")))) {
             if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
                 if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getUserCount() > 10) {

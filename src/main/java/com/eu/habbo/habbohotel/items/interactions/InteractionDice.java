@@ -57,8 +57,8 @@ public class InteractionDice extends HabboItem {
                     room.updateItemState(this);
                     Emulator.getThreading().run(this);
 
-                    if (event.result > 0) {
-                        Emulator.getThreading().run(new RandomDiceNumber(room, this, event.result), 1500);
+                    if (event.getResult() > 0) {
+                        Emulator.getThreading().run(new RandomDiceNumber(room, this, event.getResult()), 1500);
                     } else {
                         Emulator.getThreading().run(new RandomDiceNumber(this, room, this.getBaseItem().getStateCount()), 1500);
                     }
@@ -68,7 +68,7 @@ public class InteractionDice extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 

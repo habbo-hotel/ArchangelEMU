@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.hotelview.HotelViewBadgeButtonConfigCompos
 
 public class HotelViewRequestBadgeRewardEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String badge = this.packet.readString();
         this.client.sendResponse(new HotelViewBadgeButtonConfigComposer(Emulator.getConfig().getValue("hotelview.badgereward." + badge + ".badge"), Emulator.getConfig().getBoolean("hotelview.badgereward." + badge + ".enabled")));
     }

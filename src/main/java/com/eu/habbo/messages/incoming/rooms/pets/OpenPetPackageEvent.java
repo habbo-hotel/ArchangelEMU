@@ -14,7 +14,7 @@ import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
 public class OpenPetPackageEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
         String name = this.packet.readString();
 

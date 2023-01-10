@@ -2,9 +2,13 @@ package com.eu.habbo.plugin.events.inventory;
 
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
+@Getter
 public class InventoryItemEvent extends InventoryEvent {
-    public HabboItem item;
+    private final HabboItem item;
 
     public InventoryItemEvent(HabboInventory inventory, HabboItem item) {
         super(inventory);

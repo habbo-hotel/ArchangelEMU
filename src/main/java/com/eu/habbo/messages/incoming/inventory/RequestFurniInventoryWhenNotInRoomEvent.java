@@ -14,7 +14,7 @@ import java.util.NoSuchElementException;
 public class RequestFurniInventoryWhenNotInRoomEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int totalItems = this.client.getHabbo().getInventory().getItemsComponent().getItems().size();
 
         if (totalItems == 0) {

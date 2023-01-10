@@ -19,7 +19,7 @@ public class InteractionVikingCotie extends InteractionDefault {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
         if (this.getExtradata().isEmpty()) {
             this.setExtradata("0");
         }

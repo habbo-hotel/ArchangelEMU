@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class ChatReviewSessionCreateEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboStats().allowTalk()) {
             this.client.sendResponse(new CallForHelpDisabledNotifyMessageComposer());
             return;

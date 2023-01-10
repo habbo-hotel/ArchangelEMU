@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.guides.GuideSessionPartnerIsTypingComposer
 
 public class GuideSessionIsTypingEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         boolean typing = this.packet.readBoolean();
 
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByHabbo(this.client.getHabbo());

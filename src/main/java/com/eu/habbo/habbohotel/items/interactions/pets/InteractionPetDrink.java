@@ -36,7 +36,7 @@ public class InteractionPetDrink extends InteractionDefault {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
         if (client == null)
             return;
 

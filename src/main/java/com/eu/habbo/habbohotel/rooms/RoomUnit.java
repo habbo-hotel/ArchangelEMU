@@ -225,7 +225,7 @@ public class RoomUnit {
                     Emulator.getPluginManager().fireEvent(event);
 
                     if (!event.isCancelled()) {
-                        if (!event.idle) {
+                        if (!event.isIdle()) {
                             room.unIdle(habbo);
                             this.idleTimer = 0;
                         }

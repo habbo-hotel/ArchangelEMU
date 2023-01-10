@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.rooms.items.jukebox.OfficialSongIdMessageC
 
 public class GetOfficialSongIdEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String songName = this.packet.readString();
 
         final SoundTrack track = Emulator.getGameEnvironment().getItemManager().getSoundTrack(songName);

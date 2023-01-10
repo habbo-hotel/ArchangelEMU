@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.modtool.ModeratorRoomInfoComposer;
 
 public class GetModeratorRoomInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             int roomId = this.packet.readInt();
 

@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.users.NavigatorSettingsComposer;
 
 public class UpdateHomeRoomEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int roomId = this.packet.readInt();
 
         if (roomId != this.client.getHabbo().getHabboInfo().getHomeRoom()) {

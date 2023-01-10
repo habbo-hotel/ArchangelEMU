@@ -11,7 +11,7 @@ public class ShowInteractionsCommand extends ConsoleCommand {
     }
 
     @Override
-    public void handle(String[] args) throws Exception {
+    public void handle(String[] args) {
         for (String interaction : Emulator.getGameEnvironment().getItemManager().getInteractionList()) {
             log.info(interaction);
         }

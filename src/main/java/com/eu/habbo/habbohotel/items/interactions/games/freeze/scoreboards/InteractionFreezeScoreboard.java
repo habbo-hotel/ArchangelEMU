@@ -29,7 +29,7 @@ public class InteractionFreezeScoreboard extends InteractionGameScoreboard {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 }

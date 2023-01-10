@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.guides.GuideOnDutyStatusMessageComposer;
 
 public class GuideSessionOnDutyUpdateEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         boolean onDuty = this.packet.readBoolean();
 
         if (onDuty) {

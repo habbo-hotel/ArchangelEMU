@@ -9,7 +9,7 @@ import gnu.trove.iterator.TIntObjectIterator;
 
 public class GetProductOfferEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int offerId = this.packet.readInt();
 
         int pageId = Emulator.getGameEnvironment().getCatalogManager().offerDefs.get(offerId);

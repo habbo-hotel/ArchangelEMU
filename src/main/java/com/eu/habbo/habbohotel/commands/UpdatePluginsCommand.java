@@ -10,7 +10,7 @@ public class UpdatePluginsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getPluginManager().reload();
 
         gameClient.getHabbo().whisper("This is an unsafe command and could possibly lead to memory leaks.\rIt is recommended to restart the emulator in order to reload plugins.");

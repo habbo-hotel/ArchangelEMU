@@ -19,7 +19,7 @@ public class PublishPhotoEvent extends MessageHandler {
     public static int CAMERA_PUBLISH_POINTS_TYPE = 0;
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Habbo habbo = this.client.getHabbo();
 
         if (habbo == null) return;
@@ -43,9 +43,9 @@ public class PublishPhotoEvent extends MessageHandler {
             if (!Emulator.getPluginManager().fireEvent(publishPictureEvent).isCancelled()) {
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO camera_web (user_id, room_id, timestamp, url) VALUES (?, ?, ?, ?)")) {
                     statement.setInt(1, this.client.getHabbo().getHabboInfo().getId());
-                    statement.setInt(2, publishPictureEvent.roomId);
-                    statement.setInt(3, publishPictureEvent.timestamp);
-                    statement.setString(4, publishPictureEvent.URL);
+                    statement.setInt(2, publishPictureEvent.getRoomId());
+                    statement.setInt(3, publishPictureEvent.getTimestamp());
+                    statement.setString(4, publishPictureEvent.getURL());
                     statement.execute();
 
                     this.client.getHabbo().getHabboInfo().setWebPublishTimestamp(timestamp);

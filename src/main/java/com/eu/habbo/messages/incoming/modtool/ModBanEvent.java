@@ -22,7 +22,7 @@ public class ModBanEvent extends MessageHandler {
     public final int DAY_IN_SECONDS = 24 * 60 * 60;
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         String message = this.packet.readString();
         int cfhTopic = this.packet.readInt();

@@ -9,7 +9,7 @@ import com.eu.habbo.plugin.events.guilds.GuildChangedBadgeEvent;
 
 public class UpdateGuildBadgeEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
@@ -51,7 +51,7 @@ public class UpdateGuildBadgeEvent extends MessageHandler {
                 if (badgeEvent.isCancelled())
                     return;
 
-                guild.setBadge(badgeEvent.badge);
+                guild.setBadge(badgeEvent.getBadge());
                 guild.needsUpdate = true;
 
                 if (Emulator.getConfig().getBoolean("imager.internal.enabled")) {

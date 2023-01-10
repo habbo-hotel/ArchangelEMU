@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.rooms.RoomFilterSettingsMessageComposer;
 
 public class GetCustomRoomFilterEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.packet.readInt());
 
         if (room != null && room.hasRights(this.client.getHabbo())) {

@@ -9,7 +9,7 @@ import java.util.Calendar;
 
 public class GetGuideReportingStatusEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         GuardianTicket ticket = Emulator.getGameEnvironment().getGuideManager().getRecentTicket(this.client.getHabbo());
 
         if (ticket != null) {

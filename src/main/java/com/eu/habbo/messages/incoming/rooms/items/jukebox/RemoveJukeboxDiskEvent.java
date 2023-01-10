@@ -5,7 +5,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class RemoveJukeboxDiskEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int index = this.packet.readInt();
 
         InteractionMusicDisc musicDisc = this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().getSongs().get(index);

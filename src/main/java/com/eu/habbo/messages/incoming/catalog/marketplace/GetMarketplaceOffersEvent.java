@@ -14,7 +14,7 @@ public class GetMarketplaceOffersEvent extends MessageHandler {
     public final static Map<Integer, ServerMessage> cachedResults = new ConcurrentHashMap<>(0);
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int min = this.packet.readInt();
         int max = this.packet.readInt();
         String query = this.packet.readString();

@@ -14,7 +14,7 @@ public class ConsoleInfoCommand extends ConsoleCommand {
     }
 
     @Override
-    public void handle(String[] args) throws Exception {
+    public void handle(String[] args) {
         int seconds = Emulator.getIntUnixTimestamp() - Emulator.getTimeStarted();
         int day = (int) TimeUnit.SECONDS.toDays(seconds);
         long hours = TimeUnit.SECONDS.toHours(seconds) - (day * 24);

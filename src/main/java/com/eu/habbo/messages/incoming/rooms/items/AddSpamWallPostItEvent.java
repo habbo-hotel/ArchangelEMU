@@ -16,7 +16,7 @@ public class AddSpamWallPostItEvent extends MessageHandler {
 
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         this.packet.readString();

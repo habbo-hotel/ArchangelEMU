@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.guilds.GuildEditInfoMessageComposer;
 
 public class GetGuildEditInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(this.packet.readInt());
 
         this.client.sendResponse(new GuildEditInfoMessageComposer(guild));

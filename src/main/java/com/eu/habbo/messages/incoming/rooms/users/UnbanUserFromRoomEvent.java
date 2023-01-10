@@ -6,7 +6,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class UnbanUserFromRoomEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         int roomId = this.packet.readInt();
 

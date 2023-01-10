@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 
 public class MovePetEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Pet pet = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(this.packet.readInt());
 
         if (pet != null) {

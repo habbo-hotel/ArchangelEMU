@@ -13,7 +13,7 @@ public class RoomKickCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         final Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
         if (room != null) {
             if (params.length > 1) {

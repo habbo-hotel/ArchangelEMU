@@ -14,7 +14,7 @@ import gnu.trove.set.hash.THashSet;
 
 public class DeactivateGuildEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);

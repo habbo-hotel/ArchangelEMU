@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 public class WiredEffectMatchFurni extends InteractionWiredEffect implements InteractionWiredMatchFurniSettings {
 
     private static final WiredEffectType type = WiredEffectType.MATCH_SSHOT;
-    public boolean checkForWiredResetPermission = true;
+    private final boolean checkForWiredResetPermission = true;
     private final THashSet<WiredMatchFurniSetting> settings;
     private boolean state = false;
     private boolean direction = false;

@@ -8,7 +8,7 @@ import com.eu.habbo.threading.runnables.UpdateModToolIssue;
 
 public class ModToolSanctionEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             int ticketId = this.packet.readInt();
             int unknownInt = this.packet.readInt();

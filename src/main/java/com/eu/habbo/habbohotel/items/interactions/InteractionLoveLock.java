@@ -65,12 +65,12 @@ public class InteractionLoveLock extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
         if (this.getExtradata().contains("\t"))
             return;
 

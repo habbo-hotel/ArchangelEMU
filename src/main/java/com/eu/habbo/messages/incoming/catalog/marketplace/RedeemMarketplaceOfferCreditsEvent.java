@@ -5,7 +5,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class RedeemMarketplaceOfferCreditsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         MarketPlace.getCredits(this.client);
     }
 }

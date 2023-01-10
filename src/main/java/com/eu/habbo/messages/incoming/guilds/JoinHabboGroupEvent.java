@@ -10,7 +10,7 @@ import com.eu.habbo.messages.outgoing.guilds.HabboGroupJoinFailedMessageComposer
 
 public class JoinHabboGroupEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
 
         if (this.client.getHabbo().getHabboStats().hasGuild(guildId))

@@ -16,7 +16,7 @@ import com.eu.habbo.threading.runnables.OpenGift;
 
 public class PresentOpenEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if (room == null)

@@ -9,7 +9,7 @@ import com.eu.habbo.plugin.events.guilds.GuildRemovedFavoriteEvent;
 
 public class DeselectFavouriteHabboGroupEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
 
         if (this.client.getHabbo().getHabboStats().hasGuild(guildId)) {

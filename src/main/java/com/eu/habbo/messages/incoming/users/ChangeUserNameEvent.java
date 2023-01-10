@@ -24,7 +24,7 @@ public class ChangeUserNameEvent extends MessageHandler {
     public static final List<String> changingUsernames = new ArrayList<>(2);
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (!this.client.getHabbo().getHabboStats().isAllowNameChange())
             return;
 

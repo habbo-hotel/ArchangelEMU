@@ -39,7 +39,7 @@ public class WiredConditionGroupMember extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredData(ResultSet set, Room room) {
 
     }
 

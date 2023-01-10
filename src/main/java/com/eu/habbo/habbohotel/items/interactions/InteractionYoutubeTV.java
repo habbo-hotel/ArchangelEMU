@@ -41,7 +41,7 @@ public class InteractionYoutubeTV extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 

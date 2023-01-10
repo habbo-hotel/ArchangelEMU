@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class ModAlertEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         String message = this.packet.readString();
         int cfhTopic = this.packet.readInt();

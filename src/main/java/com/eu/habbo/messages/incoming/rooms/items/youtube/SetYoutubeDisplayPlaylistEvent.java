@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class SetYoutubeDisplayPlaylistEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
         String playlistId = this.packet.readString();
 

@@ -51,12 +51,12 @@ public class InteractionPetBreedingNest extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         Pet pet = room.getPet(roomUnit);
 
         if (pet != null) {
@@ -96,7 +96,7 @@ public class InteractionPetBreedingNest extends HabboItem {
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) {
         if (this.petOne != null && this.petOne.getRoomUnit() == roomUnit) this.petOne = null;
         if (this.petTwo != null && this.petTwo.getRoomUnit() == roomUnit) this.petTwo = null;
 

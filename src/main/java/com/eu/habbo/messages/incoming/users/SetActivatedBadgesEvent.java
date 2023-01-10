@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class SetActivatedBadgesEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         BadgesComponent.resetSlots(this.client.getHabbo());
 
         ArrayList<HabboBadge> updatedBadges = new ArrayList<>();

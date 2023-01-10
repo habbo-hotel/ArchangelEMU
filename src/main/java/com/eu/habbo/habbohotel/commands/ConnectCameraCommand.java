@@ -9,7 +9,7 @@ public class ConnectCameraCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         return false;
     }
 }

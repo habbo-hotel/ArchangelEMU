@@ -15,7 +15,7 @@ import com.eu.habbo.plugin.events.guilds.GuildDeclinedMembershipEvent;
 
 public class RejectMembershipRequestEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
         int userId = this.packet.readInt();
 

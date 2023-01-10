@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.modtool.SanctionStatusComposer;
 public class GetCfhStatusEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new SanctionStatusComposer(this.client.getHabbo()));
     }
 }

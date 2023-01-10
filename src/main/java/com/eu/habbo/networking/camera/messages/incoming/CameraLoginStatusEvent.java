@@ -22,7 +22,7 @@ public class CameraLoginStatusEvent extends CameraIncomingMessage {
     }
 
     @Override
-    public void handle(Channel client) throws Exception {
+    public void handle(Channel client) {
         int status = this.readInt();
 
         if (status == LOGIN_ERROR) {

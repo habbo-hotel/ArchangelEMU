@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatReviewGuideVoteEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int voteType = this.packet.readInt();
 
         GuardianTicket ticket = Emulator.getGameEnvironment().getGuideManager().getTicketForGuardian(this.client.getHabbo());

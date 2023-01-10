@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class AddJukeboxDiskEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (!this.client.getHabbo().getHabboInfo().getCurrentRoom().hasRights(this.client.getHabbo())) return;
 
         int itemId = this.packet.readInt();

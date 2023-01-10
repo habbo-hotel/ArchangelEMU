@@ -22,7 +22,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
     public static int MAXIMUM_FLOORPLAN_SIZE = 64 * 64;
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (!this.client.getHabbo().hasPermission(Permission.ACC_FLOORPLAN_EDITOR)) {
             this.client.sendResponse(new HabboBroadcastMessageComposer(Emulator.getTexts().getValue("floorplan.permission")));
             return;

@@ -93,7 +93,7 @@ public class InteractionRentableSpace extends HabboItem {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
         this.sendRentWidget(client.getHabbo());
     }
 
@@ -103,7 +103,7 @@ public class InteractionRentableSpace extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 

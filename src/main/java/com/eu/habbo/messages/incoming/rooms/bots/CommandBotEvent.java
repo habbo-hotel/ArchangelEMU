@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class CommandBotEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if (room == null)
@@ -45,9 +45,9 @@ public class CommandBotEvent extends MessageHandler {
                     Emulator.getPluginManager().fireEvent(lookEvent);
                     if (lookEvent.isCancelled())
                         break;
-                    bot.setFigure(lookEvent.newLook);
-                    bot.setGender(lookEvent.gender);
-                    bot.setEffect(lookEvent.effect, -1);
+                    bot.setFigure(lookEvent.getNewLook());
+                    bot.setGender(lookEvent.getGender());
+                    bot.setEffect(lookEvent.getEffect(), -1);
                     bot.needsUpdate(true);
                 }
                 case 2 -> {
@@ -97,9 +97,9 @@ public class CommandBotEvent extends MessageHandler {
                     Emulator.getPluginManager().fireEvent(chatEvent);
                     if (chatEvent.isCancelled())
                         break;
-                    bot.setChatAuto(chatEvent.autoChat);
-                    bot.setChatRandom(chatEvent.randomChat);
-                    bot.setChatDelay((short) chatEvent.chatDelay);
+                    bot.setChatAuto(chatEvent.isAutoChat());
+                    bot.setChatRandom(chatEvent.isRandomChat());
+                    bot.setChatDelay((short) chatEvent.getChatDelay());
                     bot.clearChat();
                     bot.addChatLines(chat);
                     bot.needsUpdate(true);
@@ -127,9 +127,9 @@ public class CommandBotEvent extends MessageHandler {
                             if (nameEvent.isCancelled())
                                 break;
 
-                            bot.setName(nameEvent.name);
+                            bot.setName(nameEvent.getName());
                             bot.needsUpdate(true);
-                            room.sendComposer(new UserNameChangedMessageComposer(bot.getRoomUnit().getId(), bot.getRoomUnit().getId(), nameEvent.name).compose());
+                            room.sendComposer(new UserNameChangedMessageComposer(bot.getRoomUnit().getId(), bot.getRoomUnit().getId(), nameEvent.getName()).compose());
                         }
                     }
                     if (invalidName) {

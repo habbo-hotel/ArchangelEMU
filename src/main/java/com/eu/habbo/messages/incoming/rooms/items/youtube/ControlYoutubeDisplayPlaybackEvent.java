@@ -37,7 +37,7 @@ public class ControlYoutubeDisplayPlaybackEvent extends MessageHandler {
     }
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
         YoutubeState state = YoutubeState.getByState(this.packet.readInt());
 

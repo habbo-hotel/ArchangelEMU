@@ -10,7 +10,7 @@ import java.util.List;
 
 public class GetGuildCreationInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         List<Room> rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo());
 
         THashSet<Room> roomList = new THashSet<>();

@@ -10,7 +10,7 @@ public class DiagonalCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) {
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().moveDiagonally(!gameClient.getHabbo().getHabboInfo().getCurrentRoom().moveDiagonally());

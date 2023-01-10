@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.guides.GuideSessionErrorMessageComposer;
 
 public class GuideSessionCreateEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int type = this.packet.readInt();
         String message = this.packet.readString();
 

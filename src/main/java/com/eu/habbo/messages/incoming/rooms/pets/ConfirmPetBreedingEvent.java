@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 public class ConfirmPetBreedingEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
         String name = this.packet.readString();
         int petOneId = this.packet.readInt();

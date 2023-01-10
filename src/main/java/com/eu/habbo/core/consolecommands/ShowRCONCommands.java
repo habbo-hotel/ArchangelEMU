@@ -11,7 +11,7 @@ public class ShowRCONCommands extends ConsoleCommand {
     }
 
     @Override
-    public void handle(String[] args) throws Exception {
+    public void handle(String[] args) {
         for (String command : Emulator.getRconServer().getCommands()) {
             log.info(command);
         }

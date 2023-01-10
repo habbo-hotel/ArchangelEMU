@@ -11,7 +11,7 @@ public class RoomCreditsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 2) {
             int amount;
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GetRoomAdPurchaseInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         List<Room> roomsToShow = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo());
         roomsToShow.addAll(Emulator.getGameEnvironment().getRoomManager().getRoomsWithRights(this.client.getHabbo()));
         roomsToShow.addAll(Emulator.getGameEnvironment().getRoomManager().getRoomsWithAdminRights(this.client.getHabbo()));

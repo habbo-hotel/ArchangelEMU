@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.modtool.CallForHelpPendingCallsMessageComp
 
 public class GetPendingCallsForHelpEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new CallForHelpPendingCallsMessageComposer(Emulator.getGameEnvironment().getModToolManager().openTicketsForHabbo(this.client.getHabbo())));
     }
 }

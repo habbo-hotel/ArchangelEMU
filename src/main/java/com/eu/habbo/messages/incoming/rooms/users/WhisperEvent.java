@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WhisperEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
             return;
 

@@ -121,7 +121,7 @@ public class InteractionFootballGate extends HabboItem {
                 UserSavedLookEvent lookEvent = new UserSavedLookEvent(habbo, habbo.getHabboInfo().getGender(), oldlook);
                 Emulator.getPluginManager().fireEvent(lookEvent);
                 if (!lookEvent.isCancelled()) {
-                    habbo.getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_FBALLGATE ? ClothingValidationManager.validateLook(habbo, lookEvent.newLook, lookEvent.gender.name()) : lookEvent.newLook);
+                    habbo.getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_FBALLGATE ? ClothingValidationManager.validateLook(habbo, lookEvent.getNewLook(), lookEvent.getGender().name()) : lookEvent.getNewLook());
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
                     room.sendComposer(new UserChangeMessageComposer(habbo).compose());
@@ -135,7 +135,7 @@ public class InteractionFootballGate extends HabboItem {
                 Emulator.getPluginManager().fireEvent(lookEvent);
                 if (!lookEvent.isCancelled()) {
                     habbo.getHabboStats().getCache().put(CACHE_KEY, habbo.getHabboInfo().getLook());
-                    habbo.getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_FBALLGATE ? ClothingValidationManager.validateLook(habbo, lookEvent.newLook, lookEvent.gender.name()) : lookEvent.newLook);
+                    habbo.getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_FBALLGATE ? ClothingValidationManager.validateLook(habbo, lookEvent.getNewLook(), lookEvent.getGender().name()) : lookEvent.getNewLook());
                     Emulator.getThreading().run(habbo.getHabboInfo());
                     habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
                     room.sendComposer(new UserChangeMessageComposer(habbo).compose());

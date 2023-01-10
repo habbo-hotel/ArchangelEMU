@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class SetClothingChangeDataEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if (room == null || this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())

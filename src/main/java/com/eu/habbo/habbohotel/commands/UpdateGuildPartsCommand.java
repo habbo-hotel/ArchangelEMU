@@ -9,7 +9,7 @@ public class UpdateGuildPartsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getGuildManager().loadGuildParts();
         Emulator.getBadgeImager().reload();
         return true;

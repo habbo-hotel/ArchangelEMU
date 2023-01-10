@@ -12,7 +12,7 @@ import java.util.List;
 
 public class FindNewFriendsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         List<RoomCategory> roomCategories = Emulator.getGameEnvironment().getRoomManager().roomCategoriesForHabbo(this.client.getHabbo());
         Collections.shuffle(roomCategories);
 

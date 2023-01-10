@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.inventory.PetInventoryComposer;
 
 public class GetPetInventoryEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new PetInventoryComposer(this.client.getHabbo()));
     }
 }

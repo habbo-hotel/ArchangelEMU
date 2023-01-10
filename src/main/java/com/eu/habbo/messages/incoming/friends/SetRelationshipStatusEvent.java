@@ -7,7 +7,7 @@ import com.eu.habbo.plugin.events.users.friends.UserRelationShipEvent;
 
 public class SetRelationshipStatusEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         int relationId = this.packet.readInt();
 
@@ -15,7 +15,7 @@ public class SetRelationshipStatusEvent extends MessageHandler {
         if (buddy != null && relationId >= 0 && relationId <= 3) {
             UserRelationShipEvent event = new UserRelationShipEvent(this.client.getHabbo(), buddy, relationId);
             if (!event.isCancelled()) {
-                buddy.setRelation(event.relationShip);
+                buddy.setRelation(event.getRelationShip());
                 this.client.sendResponse(new UpdateFriendComposer(this.client.getHabbo(), buddy, 0));
             }
         }

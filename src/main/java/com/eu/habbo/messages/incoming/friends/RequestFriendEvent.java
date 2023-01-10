@@ -18,7 +18,7 @@ import java.sql.SQLException;
 @Slf4j
 public class RequestFriendEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String username = this.packet.readString();
 
         if (this.client == null || username == null || username.isEmpty())

@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.navigator.PopularRoomTagsResultComposer;
 
 public class GetPopularRoomTagsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new PopularRoomTagsResultComposer(Emulator.getGameEnvironment().getRoomManager().getTags()));
     }
 }

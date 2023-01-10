@@ -8,7 +8,7 @@ import gnu.trove.set.hash.THashSet;
 
 public class GetGuildMembershipsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         THashSet<Guild> guilds = new THashSet<>();
 
         for (int i : this.client.getHabbo().getHabboStats().getGuilds()) {

@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.rooms.RoomForwardMessageComposer;
 
 public class FollowFriendEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_AMBASSADOR)) {
             String username = this.packet.readString();
 

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.rooms.GetGuestRoomResultComposer;
 
 public class GetGuestRoomEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(this.packet.readInt());
 
         int something = this.packet.readInt();

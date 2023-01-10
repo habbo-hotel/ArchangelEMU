@@ -16,7 +16,7 @@ public class PurchaseRoomAdEvent extends MessageHandler {
     public static String ROOM_PROMOTION_BADGE = "RADZZ";
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int pageId = this.packet.readInt();
         int itemId = this.packet.readInt();
         int roomId = this.packet.readInt();
