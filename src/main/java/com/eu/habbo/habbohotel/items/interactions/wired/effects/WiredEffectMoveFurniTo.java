@@ -197,7 +197,7 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
                     this.direction = Integer.parseInt(data[0]);
                     this.spacing = Integer.parseInt(data[1]);
                     this.setDelay(Integer.parseInt(data[2]));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
 
                 for (String s : data[3].split("\r")) {

@@ -6,8 +6,6 @@ import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.unknown.HabboClubExtendOfferMessageComposer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BuildersClubPlaceWallItemEvent extends MessageHandler {
 

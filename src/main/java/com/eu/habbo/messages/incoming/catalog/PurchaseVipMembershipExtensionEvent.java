@@ -12,7 +12,7 @@ import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
 import com.eu.habbo.messages.outgoing.users.CreditBalanceComposer;
 
-public class PurchaseVipMembershipExtensionEvent extends MessageHandler {
+public class PurchaseVipMembershipExtensionEvent extends PurchaseEvent {
     @Override
     public void handle() throws Exception {
 
@@ -43,39 +43,12 @@ public class PurchaseVipMembershipExtensionEvent extends MessageHandler {
                     int totalCredits = deal.getCredits();
                     int totalDuckets = deal.getPoints();
 
-                    if (totalDays > 0) {
-                        if (this.client.getHabbo().getHabboInfo().getCurrencyAmount(deal.getPointsType()) < totalDuckets)
-                            return;
-
-                        if (this.client.getHabbo().getHabboInfo().getCredits() < totalCredits)
-                            return;
-
-                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS))
-                            this.client.getHabbo().giveCredits(-totalCredits);
-
-                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
-                            this.client.getHabbo().givePoints(deal.getPointsType(), -totalDuckets);
-
-
-                        if(this.client.getHabbo().getHabboStats().createSubscription(Subscription.HABBO_CLUB, (totalDays * 86400)) == null) {
-                            this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
-                            throw new Exception("Unable to create or extend subscription");
-                        }
-
-                        if (totalCredits > 0)
-                            this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo()));
-
-                        if (totalDuckets > 0)
-                            this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
-
-                        this.client.sendResponse(new PurchaseOKMessageComposer(null));
-                        this.client.sendResponse(new FurniListInvalidateComposer());
-
-                        this.client.getHabbo().getHabboStats().run();
-                    }
+                    purchase(deal, totalDays, totalCredits, totalDuckets);
                 }
             }
         }
 
     }
+
+
 }

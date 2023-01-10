@@ -125,6 +125,37 @@ public abstract class CatalogPage implements Comparable<CatalogPage>, ISerialize
         }
     }
 
+    protected void appendImagesAndText(ServerMessage message) {
+        message.appendInt(3);
+        message.appendString(getHeaderImage());
+        message.appendString(getTeaserImage());
+        message.appendString(getSpecialImage());
+        message.appendInt(3);
+        message.appendString(getTextOne());
+        message.appendString(getTextDetails());
+        message.appendString(getTextTeaser());
+    }
+
+    protected void appendGuildImagesAndText(ServerMessage message) {
+        message.appendInt(2);
+        message.appendString(getHeaderImage());
+        message.appendString(getTeaserImage());
+        message.appendInt(3);
+        message.appendString(getTextOne());
+        message.appendString(getTextDetails());
+        message.appendString(getTextTeaser());
+    }
+
+    protected void appendPetImagesAndText(ServerMessage message){
+        message.appendInt(2);
+        message.appendString(getHeaderImage());
+        message.appendString(getTeaserImage());
+        message.appendInt(4);
+        message.appendString(getTextOne());
+        message.appendString(getTextTwo());
+        message.appendString(getTextDetails());
+        message.appendString(getTextTeaser());
+    }
     @Override
     public int compareTo(CatalogPage page) {
         return this.getOrderNum() - page.getOrderNum();

@@ -1,6 +1,7 @@
-package com.eu.habbo.habbohotel.commands;
+package com.eu.habbo.habbohotel.commands.badge;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -14,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Slf4j
-public class BadgeCommand extends Command {
+public class BadgeCommand extends BaseBadgeCommand {
 
     public BadgeCommand() {
         super("cmd_badge", Emulator.getTexts().getValue("commands.keys.cmd_badge").split(";"));

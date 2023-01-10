@@ -7,29 +7,16 @@ import gnu.trove.map.hash.THashMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class InteractionRoomAds extends InteractionCustomValues {
-    public final static THashMap<String, String> defaultValues = new THashMap<>() {
-        {
-            this.put("imageUrl", "");
-        }
-
-        {
-            this.put("clickUrl", "");
-        }
-
-        {
-            this.put("offsetX", "0");
-        }
-
-        {
-            this.put("offsetY", "0");
-        }
-
-        {
-            this.put("offsetZ", "0");
-        }
-    };
+    public final static THashMap<String, String> defaultValues = new THashMap<>(Map.of(
+            "imageUrl", "" ,
+            "clickUrl", "",
+            "offsetX", "0",
+            "offsetY", "0",
+            "offsetZ", "0")
+    );
 
     public InteractionRoomAds(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem, defaultValues);

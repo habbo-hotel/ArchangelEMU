@@ -98,7 +98,7 @@ public class ForumThread implements Runnable, ISerialize {
         this.commentIndex = 0;
     }
 
-    public static ForumThread create(Guild guild, Habbo opener, String subject, String message) throws Exception {
+    public static ForumThread create(Guild guild, Habbo opener, String subject, String message) {
         ForumThread createdThread = null;
 
         if (Emulator.getPluginManager().fireEvent(new GuildForumThreadBeforeCreated(guild, opener, subject, message)).isCancelled())

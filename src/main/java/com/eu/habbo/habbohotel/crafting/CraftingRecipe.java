@@ -39,7 +39,7 @@ public class CraftingRecipe {
     }
 
     public boolean canBeCrafted() {
-        return this.limited && this.remaining <= 0;
+        return !this.limited || this.remaining > 0;
     }
 
     public synchronized boolean decrease() {

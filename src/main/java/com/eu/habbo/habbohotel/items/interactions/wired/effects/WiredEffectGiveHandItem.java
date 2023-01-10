@@ -27,7 +27,7 @@ public class WiredEffectGiveHandItem extends WiredEffectWhisper {
             if (habbo != null) {
                 room.giveHandItem(habbo, itemId);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return false;
     }

@@ -128,9 +128,7 @@ public class InteractionTeleport extends HabboItem {
             List<Runnable> onSuccess = new ArrayList<>();
             List<Runnable> onFail = new ArrayList<>();
 
-            onSuccess.add(() -> {
-                tryTeleport(client, room);
-            });
+            onSuccess.add(() -> tryTeleport(client, room));
 
             unit.setGoalLocation(infrontTile);
             Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, infrontTile, room, onSuccess, onFail));
@@ -202,10 +200,7 @@ public class InteractionTeleport extends HabboItem {
         if (unit == null)
             return false;
 
-        if (habbo.getHabboInfo().getRiding() != null)
-            return false;
-
-        return true;
+        return habbo.getHabboInfo().getRiding() == null;
     }
 
     public void startTeleport(Room room, Habbo habbo) {

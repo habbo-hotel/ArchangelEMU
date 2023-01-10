@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 
-public class ControlYoutubeDisplayPlaybackEvent extends MessageHandler {
+public class ControlYoutubeDisplayPlaybackEvent extends YoutubeEvent {
     @Getter
     @AllArgsConstructor
     public enum YoutubeState {
@@ -45,15 +45,9 @@ public class ControlYoutubeDisplayPlaybackEvent extends MessageHandler {
 
         Habbo habbo = this.client.getHabbo();
 
-        if (habbo == null) return;
-
+        if(!validate(habbo)) return;
 
         Room room = habbo.getHabboInfo().getCurrentRoom();
-
-        if (room == null) return;
-        if (!room.isOwner(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER)) return;
-
-
         HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
 
         if (!(item instanceof InteractionYoutubeTV tv)) return;
@@ -70,7 +64,7 @@ public class ControlYoutubeDisplayPlaybackEvent extends MessageHandler {
             case RESUME -> {
                 tv.playing = true;
                 tv.startedWatchingAt = Emulator.getIntUnixTimestamp();
-                tv.autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo(tv), (tv.currentVideo.getDuration() - tv.offset) * 1000);
+                tv.autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo(tv), (tv.currentVideo.getDuration() - tv.offset) * 1000L);
                 room.sendComposer(new YoutubeControlVideoMessageComposer(tv.getId(), 1).compose());
             }
             case PREVIOUS -> {

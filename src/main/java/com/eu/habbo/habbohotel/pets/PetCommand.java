@@ -85,7 +85,6 @@ public class PetCommand implements Comparable<PetCommand> {
             }
 
             pet.say(pet.petData.randomVocal(PetVocalsType.DISOBEY));
-            return;
         }
     }
 }

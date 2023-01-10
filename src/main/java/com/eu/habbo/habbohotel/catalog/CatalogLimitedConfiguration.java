@@ -26,14 +26,14 @@ public class CatalogLimitedConfiguration implements Runnable {
     public CatalogLimitedConfiguration(int itemId, LinkedList<Integer> availableNumbers, int totalSet) {
         this.itemId = itemId;
         this.totalSet = totalSet;
-        LinkedList<Integer> numbers = new LinkedList(availableNumbers);
+        LinkedList<Integer> numbers = new LinkedList<>(availableNumbers);
 
         if (Emulator.getConfig().getBoolean("catalog.ltd.random", true)) {
             Collections.shuffle(numbers);
         } else {
             Collections.reverse(numbers);
         }
-        limitedNumbers = new LinkedBlockingQueue(numbers);
+        limitedNumbers = new LinkedBlockingQueue<>(numbers);
     }
 
     public int getNumber() {
@@ -70,7 +70,7 @@ public class CatalogLimitedConfiguration implements Runnable {
 
     public void generateNumbers(int starting, int amount) {
         synchronized (lock) {
-            LinkedList<Integer> numbers = new LinkedList();
+            LinkedList<Integer> numbers = new LinkedList<>();
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO catalog_items_limited (catalog_item_id, number) VALUES (?, ?)")) {
                 statement.setInt(1, this.itemId);
 
@@ -93,7 +93,7 @@ public class CatalogLimitedConfiguration implements Runnable {
                 Collections.reverse(numbers);
             }
 
-            limitedNumbers = new LinkedBlockingQueue(numbers);
+            limitedNumbers = new LinkedBlockingQueue<>(numbers);
         }
 
     }

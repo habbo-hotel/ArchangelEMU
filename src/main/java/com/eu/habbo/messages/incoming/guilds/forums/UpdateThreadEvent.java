@@ -16,7 +16,7 @@ import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 public class UpdateThreadEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
         int threadId = this.packet.readInt();
         boolean isPinned = this.packet.readBoolean();

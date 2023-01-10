@@ -127,7 +127,7 @@ public class WiredTriggerHabboWalkOnFurni extends InteractionWiredTrigger {
 
                             if (item != null)
                                 this.items.add(item);
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
                     }
                 }

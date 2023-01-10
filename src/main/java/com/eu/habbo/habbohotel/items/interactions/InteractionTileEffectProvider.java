@@ -8,13 +8,12 @@ import gnu.trove.map.hash.THashMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class InteractionTileEffectProvider extends InteractionCustomValues {
-    public static final THashMap<String, String> defaultValues = new THashMap<>() {
-        {
-            this.put("effectId", "0");
-        }
-    };
+    public static final THashMap<String, String> defaultValues = new THashMap<>(
+            Map.of("effectId", "0")
+    );
 
     public InteractionTileEffectProvider(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem, defaultValues);

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class WiredTriggerHabboWalkOffFurni extends InteractionWiredTrigger {
     public static final WiredTriggerType type = WiredTriggerType.WALKS_OFF_FURNI;
 
-    private THashSet<HabboItem> items;
+    private final THashSet<HabboItem> items;
 
     public WiredTriggerHabboWalkOffFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -76,7 +76,7 @@ public class WiredTriggerHabboWalkOffFurni extends InteractionWiredTrigger {
 
                             if (item != null)
                                 this.items.add(item);
-                        } catch (Exception e) {
+                        } catch (Exception ignored) {
                         }
                     }
                 }

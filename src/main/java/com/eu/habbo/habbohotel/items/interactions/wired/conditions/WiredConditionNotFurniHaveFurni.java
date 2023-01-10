@@ -23,7 +23,7 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.NOT_FURNI_HAVE_FURNI;
 
     private boolean all;
-    private THashSet<HabboItem> items;
+    private final THashSet<HabboItem> items;
 
     public WiredConditionNotFurniHaveFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);

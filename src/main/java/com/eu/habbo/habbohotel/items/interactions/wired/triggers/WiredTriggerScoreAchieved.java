@@ -53,7 +53,7 @@ public class WiredTriggerScoreAchieved extends InteractionWiredTrigger {
         } else {
             try {
                 this.score = Integer.parseInt(wiredData);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

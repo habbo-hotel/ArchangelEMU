@@ -5,21 +5,11 @@ import com.eu.habbo.habbohotel.rooms.RoomTrade;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class ConfirmDeclineTradingEvent extends MessageHandler {
+public class ConfirmDeclineTradingEvent extends TradingEvent {
     @Override
     public void handle() {
-        Habbo habbo = this.client.getHabbo();
-        Room room = habbo.getHabboInfo().getCurrentRoom();
-
-        if (room == null)
-            return;
-
-        RoomTrade trade = room.getActiveTradeForHabbo(habbo);
-
-        if (trade == null)
-            return;
-
-        trade.stopTrade(habbo);
-        room.stopTrade(trade);
+        stopTrade(this.client.getHabbo());
     }
+
+
 }
