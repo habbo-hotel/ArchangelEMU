@@ -13,7 +13,7 @@ public class ConsoleTestCommand extends ConsoleCommand {
     }
 
     @Override
-    public void handle(String[] args) throws Exception {
+    public void handle(String[] args) {
         if (Emulator.debugging) {
             log.info("This is a test command for live debugging.");
 

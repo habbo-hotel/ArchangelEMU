@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.guilds.GuildMemberFurniCountInHQMessageCom
 
 public class GetMemberGuildItemCountEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
         int userId = this.packet.readInt();
 

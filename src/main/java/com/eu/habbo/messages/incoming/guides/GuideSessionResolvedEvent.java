@@ -6,7 +6,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class GuideSessionResolvedEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByHabbo(this.client.getHabbo());
 
         if (tour != null) {

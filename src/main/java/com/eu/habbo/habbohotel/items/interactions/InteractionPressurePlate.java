@@ -33,7 +33,7 @@ public class InteractionPressurePlate extends InteractionDefault {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
 
     }
 

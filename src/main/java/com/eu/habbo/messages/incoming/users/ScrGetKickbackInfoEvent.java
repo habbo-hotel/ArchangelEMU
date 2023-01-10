@@ -5,7 +5,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class ScrGetKickbackInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(SubscriptionHabboClub.calculatePayday(this.client.getHabbo().getHabboInfo()));
     }
 }

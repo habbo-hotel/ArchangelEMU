@@ -4,7 +4,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class AvatarEffectActivatedEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int effectId = this.packet.readInt();
 
         if (this.client.getHabbo().getInventory().getEffectsComponent().ownsEffect(effectId)) {

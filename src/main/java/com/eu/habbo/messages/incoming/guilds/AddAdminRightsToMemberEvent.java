@@ -12,7 +12,7 @@ import com.eu.habbo.plugin.events.guilds.GuildGivenAdminEvent;
 
 public class AddAdminRightsToMemberEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
         int userId = this.packet.readInt();
 

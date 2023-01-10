@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.hotelview.BonusRareInfoMessageComposer;
 
 public class GetBonusRareInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new BonusRareInfoMessageComposer(this.client.getHabbo()));
     }
 }

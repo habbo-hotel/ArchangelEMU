@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.users.RelationshipStatusInfoComposer;
 
 public class GetRelationshipStatusInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 

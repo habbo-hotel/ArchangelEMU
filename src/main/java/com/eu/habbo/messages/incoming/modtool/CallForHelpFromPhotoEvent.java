@@ -14,7 +14,7 @@ import com.eu.habbo.threading.runnables.InsertModToolIssue;
 
 public class CallForHelpFromPhotoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         boolean hasExtradataId = this.packet.readShort() != 0;
 
         this.packet.getBuffer().resetReaderIndex();

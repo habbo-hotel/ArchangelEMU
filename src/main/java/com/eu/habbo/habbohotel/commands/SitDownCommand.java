@@ -11,7 +11,7 @@ public class SitDownCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
             if (habbo.getRoomUnit().isWalking()) {
                 habbo.getRoomUnit().stopWalking();

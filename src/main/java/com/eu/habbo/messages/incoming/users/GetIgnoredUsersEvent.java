@@ -16,7 +16,7 @@ public class GetIgnoredUsersEvent extends MessageHandler {
 
     private final ArrayList<String> ignoredUsernames = new ArrayList<>();
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Habbo habbo = this.client.getHabbo();
         if(habbo == null) return;
 

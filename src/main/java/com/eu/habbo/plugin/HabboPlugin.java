@@ -15,9 +15,9 @@ public abstract class HabboPlugin {
     public URLClassLoader classLoader;
     public InputStream stream;
 
-    public abstract void onEnable() throws Exception;
+    public abstract void onEnable();
 
-    public abstract void onDisable() throws Exception;
+    public abstract void onDisable();
 
     public boolean isRegistered(Class<? extends Event> clazz) {
         return this.registeredEvents.containsKey(clazz);

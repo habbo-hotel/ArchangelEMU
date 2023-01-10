@@ -48,7 +48,7 @@ public class WiredConditionTeamMember extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredData(ResultSet set, Room room) {
         try {
             String wiredData = set.getString("wired_data");
 

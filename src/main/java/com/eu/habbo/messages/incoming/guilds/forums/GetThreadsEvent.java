@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 public class GetThreadsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = packet.readInt();
         int index = packet.readInt();
 

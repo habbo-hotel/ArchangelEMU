@@ -4,7 +4,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class DeclineFriendEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         boolean all = this.packet.readBoolean();
 
         if (all) {

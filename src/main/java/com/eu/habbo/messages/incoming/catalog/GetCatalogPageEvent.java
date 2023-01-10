@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.catalog.CatalogPageMessageComposer;
 public class GetCatalogPageEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int catalogPageId = this.packet.readInt();
         int offerId = this.packet.readInt();
         String mode = this.packet.readString();

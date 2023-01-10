@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.rooms.RoomFloorThicknessUpdatedComposer;
 
 public class GetRoomEntryTileEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
             return;
 

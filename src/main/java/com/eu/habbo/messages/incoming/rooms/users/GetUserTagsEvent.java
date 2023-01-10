@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserTagsMessageComposer;
 
 public class GetUserTagsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int roomUnitId = this.packet.readInt();
 
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {

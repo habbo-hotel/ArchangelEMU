@@ -6,7 +6,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class BreedPetsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int unknownInt = this.packet.readInt(); //Something state. 2 = accept
 
         if (unknownInt == 0) {

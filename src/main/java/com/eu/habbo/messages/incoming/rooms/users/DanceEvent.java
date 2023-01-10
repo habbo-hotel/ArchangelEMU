@@ -9,7 +9,7 @@ import com.eu.habbo.plugin.events.users.UserIdleEvent;
 
 public class DanceEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
             return;
 

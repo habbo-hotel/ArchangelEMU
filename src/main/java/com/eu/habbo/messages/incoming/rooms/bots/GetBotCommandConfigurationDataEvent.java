@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.rooms.BotCommandConfigurationComposer;
 
 public class GetBotCommandConfigurationDataEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if (room == null)

@@ -9,7 +9,7 @@ import com.eu.habbo.plugin.events.furniture.FurnitureRoomTonerEvent;
 
 public class SetRoomBackgroundColorDataEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();

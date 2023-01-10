@@ -12,7 +12,7 @@ import com.eu.habbo.messages.outgoing.wired.WiredSavedComposer;
 
 public class UpdateConditionEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();

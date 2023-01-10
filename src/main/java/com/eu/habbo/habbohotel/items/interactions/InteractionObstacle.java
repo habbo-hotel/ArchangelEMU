@@ -55,7 +55,7 @@ public class InteractionObstacle extends HabboItem implements ICycleable {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
         /*Pet pet = room.getPet(roomUnit);
 
         if (pet instanceof HorsePet && ((HorsePet) pet).getRider() != null) {

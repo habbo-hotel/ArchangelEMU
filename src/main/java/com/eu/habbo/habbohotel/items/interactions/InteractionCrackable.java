@@ -135,17 +135,17 @@ public class InteractionCrackable extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 
     @Override
-    public void onWalkOn(RoomUnit client, Room room, Object[] objects) throws Exception {
+    public void onWalkOn(RoomUnit client, Room room, Object[] objects) {
 
     }
 
     @Override
-    public void onWalkOff(RoomUnit client, Room room, Object[] objects) throws Exception {
+    public void onWalkOff(RoomUnit client, Room room, Object[] objects) {
 
     }
 

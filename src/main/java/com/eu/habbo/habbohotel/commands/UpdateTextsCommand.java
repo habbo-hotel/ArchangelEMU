@@ -10,7 +10,7 @@ public class UpdateTextsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         try {
             Emulator.getTexts().reload();
             Emulator.getGameEnvironment().getCommandHandler().reloadCommands();

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class MessengerInitEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         ArrayList<ServerMessage> messages = new ArrayList<>();
         messages.add(new MessengerInitComposer(this.client.getHabbo()).compose());
         messages.addAll(FriendListFragmentMessageComposer.getMessagesForBuddyList(this.client.getHabbo().getMessenger().getFriends().values()));

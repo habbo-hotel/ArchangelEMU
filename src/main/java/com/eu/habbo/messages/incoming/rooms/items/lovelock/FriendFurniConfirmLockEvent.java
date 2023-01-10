@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.rooms.items.lovelock.FriendFurniOtherLockC
 
 public class FriendFurniConfirmLockEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         if (this.packet.readBoolean()) {

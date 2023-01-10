@@ -5,7 +5,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class SetTargetedOfferStateEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int id = this.packet.readInt();
         int state = this.packet.readInt();
 

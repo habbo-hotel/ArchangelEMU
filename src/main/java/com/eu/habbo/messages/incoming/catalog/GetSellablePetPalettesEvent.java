@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.catalog.SellablePetPalettesMessageComposer
 
 public class GetSellablePetPalettesEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String petName = this.packet.readString();
         this.client.sendResponse(new SellablePetPalettesMessageComposer(petName, Emulator.getGameEnvironment().getPetManager().getBreeds(petName)));
     }

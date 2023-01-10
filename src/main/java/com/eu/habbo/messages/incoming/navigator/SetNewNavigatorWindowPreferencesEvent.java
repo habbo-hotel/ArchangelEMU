@@ -5,7 +5,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class SetNewNavigatorWindowPreferencesEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         HabboNavigatorWindowSettings windowSettings = this.client.getHabbo().getHabboStats().getNavigatorWindowSettings();
 
         windowSettings.setX(this.packet.readInt());

@@ -5,7 +5,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class OpenCampaignCalendarDoorEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String campaignName = this.packet.readString();
         int day = this.packet.readInt();
 

@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SetRandomStateEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         try {
             int itemId = this.packet.readInt();
             int state = this.packet.readInt();

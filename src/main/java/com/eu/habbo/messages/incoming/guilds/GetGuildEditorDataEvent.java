@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.guilds.GuildEditorDataMessageComposer;
 
 public class GetGuildEditorDataEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new GuildEditorDataMessageComposer());
     }
 }

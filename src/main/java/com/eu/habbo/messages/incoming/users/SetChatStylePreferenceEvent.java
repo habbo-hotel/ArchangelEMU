@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class SetChatStylePreferenceEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int chatBubble = this.packet.readInt();
 
         if (!this.client.getHabbo().hasPermission(Permission.ACC_ANYCHATCOLOR)) {

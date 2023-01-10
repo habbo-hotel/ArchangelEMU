@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class ConfirmDeclineTradingEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Habbo habbo = this.client.getHabbo();
         Room room = habbo.getHabboInfo().getCurrentRoom();
 

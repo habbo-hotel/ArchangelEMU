@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 public class OpenFlatConnectionEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int roomId = this.packet.readInt();
         String password = this.packet.readString();
 

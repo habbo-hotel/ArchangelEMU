@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.crafting.CraftableProductsComposer;
 
 public class GetCraftingRecipeEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
         HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
 

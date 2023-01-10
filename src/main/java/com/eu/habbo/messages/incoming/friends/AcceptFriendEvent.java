@@ -19,7 +19,7 @@ import static com.eu.habbo.habbohotel.users.HabboManager.getOfflineHabboInfo;
 public class AcceptFriendEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int count = this.packet.readInt();
         int userId;
 

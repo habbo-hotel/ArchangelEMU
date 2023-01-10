@@ -15,7 +15,7 @@ public class CameraUpdateNotification extends CameraIncomingMessage {
     }
 
     @Override
-    public void handle(Channel client) throws Exception {
+    public void handle(Channel client) {
         boolean alert = this.readBoolean();
         String message = this.readString();
         int type = this.readInt();

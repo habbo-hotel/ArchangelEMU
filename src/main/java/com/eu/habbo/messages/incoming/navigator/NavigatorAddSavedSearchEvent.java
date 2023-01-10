@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.navigator.NavigatorSavedSearchesComposer;
 
 public class NavigatorAddSavedSearchEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String searchCode = this.packet.readString();
         String filter = this.packet.readString();
 

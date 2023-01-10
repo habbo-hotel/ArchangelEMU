@@ -15,7 +15,7 @@ import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 
 public class PlaceObjectEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String[] values = this.packet.readString().split(" ");
 
         int itemId = -1;

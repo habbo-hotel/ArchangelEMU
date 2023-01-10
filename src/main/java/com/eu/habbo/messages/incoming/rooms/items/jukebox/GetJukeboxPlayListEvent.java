@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.rooms.items.jukebox.UserSongDisksInventory
 
 public class GetJukeboxPlayListEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         TraxManager traxManager = this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager();
         this.client.sendResponse(new JukeboxSongDisksMessageComposer(traxManager.getSongs(), traxManager.totalLength()));
         this.client.sendResponse(new UserSongDisksInventoryMessageComposer(traxManager.myList(this.client.getHabbo())));

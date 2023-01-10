@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SelectClubGiftEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
 
         String itemName = this.packet.readString();
 

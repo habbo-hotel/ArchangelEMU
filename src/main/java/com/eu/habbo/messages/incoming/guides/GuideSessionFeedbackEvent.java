@@ -6,7 +6,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class GuideSessionFeedbackEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         boolean recommend = this.packet.readBoolean();
 
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByNoob(this.client.getHabbo());

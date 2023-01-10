@@ -11,7 +11,7 @@ public class ThankyouArcturusCommand extends ConsoleCommand {
     }
 
     @Override
-    public void handle(String[] args) throws Exception {
+    public void handle(String[] args) {
             log.info("Arcturus Morningstar is an opensource community fork of Arcturus Emulator by TheGeneral");
         log.info("Thankyou to the following people who have helped with it's development:");
         log.info("TheGeneral - For Creating Arcturus.");

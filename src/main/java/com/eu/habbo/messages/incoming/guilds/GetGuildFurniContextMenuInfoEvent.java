@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.guilds.GuildFurniContextMenuInfoMessageCom
 
 public class GetGuildFurniContextMenuInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
         int guildId = this.packet.readInt();
 

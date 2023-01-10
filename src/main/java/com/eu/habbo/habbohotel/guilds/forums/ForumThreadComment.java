@@ -89,7 +89,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
         forumCommentsCache.clear();
     }
 
-    public static ForumThreadComment create(ForumThread thread, Habbo poster, String message) throws Exception {
+    public static ForumThreadComment create(ForumThread thread, Habbo poster, String message) {
         ForumThreadComment createdComment = null;
 
         if (Emulator.getPluginManager().fireEvent(new GuildForumThreadCommentBeforeCreated(thread, poster, message)).isCancelled())
@@ -135,11 +135,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
     }
 
     public ForumThread getThread() {
-        try {
-            return ForumThread.getById(this.threadId);
-        } catch (SQLException e) {
-            return null;
-        }
+        return ForumThread.getById(this.threadId);
     }
 
     @Override

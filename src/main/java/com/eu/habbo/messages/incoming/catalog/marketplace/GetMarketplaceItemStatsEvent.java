@@ -5,7 +5,7 @@ import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceItemStatsCo
 
 public class GetMarketplaceItemStatsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.packet.readInt();
         int id = this.packet.readInt();
 

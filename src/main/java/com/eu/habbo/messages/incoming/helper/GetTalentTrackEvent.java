@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.achievements.talenttrack.TalentTrackMessag
 
 public class GetTalentTrackEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (Emulator.getConfig().getBoolean("hotel.talenttrack.enabled")) {
             this.client.sendResponse(new TalentTrackMessageComposer(this.client.getHabbo(), TalentTrackType.valueOf(this.packet.readString().toUpperCase())));
         }

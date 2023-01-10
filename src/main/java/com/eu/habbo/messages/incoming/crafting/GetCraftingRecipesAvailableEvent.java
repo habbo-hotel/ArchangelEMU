@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class GetCraftingRecipesAvailableEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int altarId = this.packet.readInt();
 
         HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(altarId);

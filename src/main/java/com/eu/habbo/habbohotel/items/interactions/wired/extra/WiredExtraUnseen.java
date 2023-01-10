@@ -42,7 +42,7 @@ public class WiredExtraUnseen extends InteractionWiredExtra {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredData(ResultSet set, Room room) {
 
     }
 
@@ -52,7 +52,7 @@ public class WiredExtraUnseen extends InteractionWiredExtra {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 

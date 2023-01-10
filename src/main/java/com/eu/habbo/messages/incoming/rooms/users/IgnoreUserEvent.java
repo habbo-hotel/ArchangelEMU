@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.IgnoreResultMessageComposer;
 
 public class IgnoreUserEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if (room != null) {

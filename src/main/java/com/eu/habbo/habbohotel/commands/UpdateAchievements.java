@@ -10,7 +10,7 @@ public class UpdateAchievements extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getAchievementManager().reload();
         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_achievements.updated"), RoomChatMessageBubbles.ALERT);
         return true;

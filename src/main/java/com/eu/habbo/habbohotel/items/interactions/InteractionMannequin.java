@@ -65,7 +65,7 @@ public class InteractionMannequin extends HabboItem {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
         String[] data = this.getExtradata().split(":");
 
         if(data.length < 2)
@@ -104,17 +104,17 @@ public class InteractionMannequin extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 
     @Override
-    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 }

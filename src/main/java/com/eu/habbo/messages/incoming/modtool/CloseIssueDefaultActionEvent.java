@@ -8,7 +8,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class CloseIssueDefaultActionEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             int issueId = this.packet.readInt();
             int unknown = this.packet.readInt();

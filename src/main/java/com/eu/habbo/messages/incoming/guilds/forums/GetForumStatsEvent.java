@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.guilds.forums.ForumDataMessageComposer;
 
 public class GetForumStatsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);

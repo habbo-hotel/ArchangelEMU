@@ -7,7 +7,7 @@ import com.eu.habbo.plugin.events.users.friends.UserRelationShipEvent;
 
 public class SetRelationshipStatusEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         int relationId = this.packet.readInt();
 

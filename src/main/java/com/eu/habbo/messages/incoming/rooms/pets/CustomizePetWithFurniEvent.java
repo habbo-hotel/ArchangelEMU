@@ -17,7 +17,7 @@ import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
 public class CustomizePetWithFurniEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();

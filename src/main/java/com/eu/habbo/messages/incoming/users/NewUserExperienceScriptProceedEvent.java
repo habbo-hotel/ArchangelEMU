@@ -40,7 +40,7 @@ public class NewUserExperienceScriptProceedEvent extends MessageHandler {
     }
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         handle(this.client.getHabbo());
     }
 }

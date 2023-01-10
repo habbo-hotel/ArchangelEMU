@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 public class NewNavigatorSearchEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String view = this.packet.readString();
         String query = this.packet.readString();
 

@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 public class UpdateForumSettingsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = packet.readInt();
         int canRead = packet.readInt();
         int postMessages = packet.readInt();

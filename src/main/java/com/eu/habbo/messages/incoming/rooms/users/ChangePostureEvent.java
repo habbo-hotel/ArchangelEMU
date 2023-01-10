@@ -6,7 +6,7 @@ import com.eu.habbo.plugin.events.users.UserIdleEvent;
 
 public class ChangePostureEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
             if (this.client.getHabbo().getRoomUnit().isWalking()) {
                 this.client.getHabbo().getRoomUnit().stopWalking();

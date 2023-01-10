@@ -10,7 +10,7 @@ public class HideWiredCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
 
         if (room != null) {

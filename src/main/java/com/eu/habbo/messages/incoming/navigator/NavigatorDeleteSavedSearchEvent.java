@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.navigator.NavigatorSavedSearchesComposer;
 
 public class NavigatorDeleteSavedSearchEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int searchId = this.packet.readInt();
 
         NavigatorSavedSearch search = null;

@@ -22,7 +22,7 @@ public class RemoveSaddleFromPetEvent extends MessageHandler {
 
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
         Pet pet = room.getPet(this.packet.readInt());
 

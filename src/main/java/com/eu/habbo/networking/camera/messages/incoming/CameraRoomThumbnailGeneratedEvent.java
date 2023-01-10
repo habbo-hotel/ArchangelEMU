@@ -13,7 +13,7 @@ public class CameraRoomThumbnailGeneratedEvent extends CameraIncomingMessage {
     }
 
     @Override
-    public void handle(Channel client) throws Exception {
+    public void handle(Channel client) {
         int userId = this.readInt();
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);

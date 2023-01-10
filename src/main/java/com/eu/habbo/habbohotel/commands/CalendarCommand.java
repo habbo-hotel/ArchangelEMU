@@ -17,7 +17,7 @@ public class CalendarCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (Emulator.getConfig().getBoolean("hotel.calendar.enabled")) {
             String campaignName = Emulator.getConfig().getValue("hotel.calendar.default");
 

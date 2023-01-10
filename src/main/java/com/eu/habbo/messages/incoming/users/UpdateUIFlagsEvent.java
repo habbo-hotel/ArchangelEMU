@@ -4,7 +4,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class UpdateUIFlagsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int flags = this.packet.readInt();
 
         this.client.getHabbo().getHabboStats().setUiFlags(flags);

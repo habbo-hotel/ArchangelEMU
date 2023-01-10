@@ -6,7 +6,7 @@ import com.eu.habbo.plugin.events.users.UserSavedSettingsEvent;
 
 public class SetSoundSettingsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int system = this.packet.readInt();
         int furni = this.packet.readInt();
         int trax = this.packet.readInt();

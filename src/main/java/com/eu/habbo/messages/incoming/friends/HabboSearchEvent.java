@@ -12,7 +12,7 @@ public class HabboSearchEvent extends MessageHandler {
     public static final ConcurrentHashMap<String, THashSet<MessengerBuddy>> cachedResults = new ConcurrentHashMap<>();
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (System.currentTimeMillis() - this.client.getHabbo().getHabboStats().getLastUsersSearched() < 3000)
             return;
 

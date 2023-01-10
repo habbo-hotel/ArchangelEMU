@@ -6,7 +6,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class GuideSessionRequesterCancelsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByNoob(this.client.getHabbo());
 
         if (tour != null) {

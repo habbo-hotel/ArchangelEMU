@@ -17,7 +17,7 @@ public class CameraResultURLEvent extends CameraIncomingMessage {
     }
 
     @Override
-    public void handle(Channel client) throws Exception {
+    public void handle(Channel client) {
         int userId = this.readInt();
         int status = this.readInt();
         String URL = this.readString();

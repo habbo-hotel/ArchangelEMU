@@ -10,7 +10,7 @@ public class HandItemCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 2) {
             try {
                 if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {

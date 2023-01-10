@@ -8,7 +8,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 public class RespectPetEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         final int petId = this.packet.readInt();
 
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null) {

@@ -9,7 +9,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class CloseIssuesEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             int state = this.packet.readInt();
             int something = this.packet.readInt();

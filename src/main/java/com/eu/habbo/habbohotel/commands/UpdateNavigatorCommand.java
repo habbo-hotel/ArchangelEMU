@@ -10,7 +10,7 @@ public class UpdateNavigatorCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getNavigatorManager().loadNavigator();
         Emulator.getGameEnvironment().getRoomManager().loadRoomModels();
         Emulator.getGameEnvironment().getRoomManager().loadPublicRooms();

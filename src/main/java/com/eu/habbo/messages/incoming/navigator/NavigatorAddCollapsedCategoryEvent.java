@@ -5,7 +5,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class NavigatorAddCollapsedCategoryEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String category = this.packet.readString();
         this.client.getHabbo().getHabboStats().getNavigatorWindowSettings().setDisplayMode(category, DisplayMode.COLLAPSED);
     }

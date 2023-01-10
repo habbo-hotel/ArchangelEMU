@@ -4,7 +4,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class AvatarEffectSelectedEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int effectId = this.packet.readInt();
 
         if (effectId > 0) {

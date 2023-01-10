@@ -19,7 +19,7 @@ public class RoomBundleCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         int parentId;
         int credits;
         int points;

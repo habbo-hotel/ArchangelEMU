@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class CraftSecretEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int altarId = this.packet.readInt();
         int count = this.packet.readInt();
 

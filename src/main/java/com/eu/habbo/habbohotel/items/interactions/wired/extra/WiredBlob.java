@@ -80,7 +80,7 @@ public class WiredBlob extends InteractionDefault {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
         if (!this.RESETS_WITH_GAME && objects != null && objects.length == 2 && objects[1].equals(WiredEffectType.TOGGLE_STATE) && room.getGames().stream().anyMatch(game -> game.getState().equals(GameState.RUNNING) || game.getState().equals(GameState.PAUSED))) {
             this.setExtradata(this.getExtradata().equals(WiredBlobState.ACTIVE.getState()) ? WiredBlobState.USED.getState() : WiredBlobState.ACTIVE.getState());
             room.updateItem(this);

@@ -10,7 +10,7 @@ import com.eu.habbo.messages.outgoing.users.RemainingMutePeriodComposer;
 
 public class RoomUserMuteEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int userId = this.packet.readInt();
         int roomId = this.packet.readInt();
         int minutes = this.packet.readInt();

@@ -18,7 +18,7 @@ public class RedeemCommand extends Command {
     }
 
     @Override
-    public boolean handle(final GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(final GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getActiveTradeForHabbo(gameClient.getHabbo()) != null)
             return false;
         ArrayList<HabboItem> items = new ArrayList<>();

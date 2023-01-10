@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.rooms.BannedUsersFromRoomComposer;
 
 public class GetBannedUsersFromRoomEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int roomId = this.packet.readInt();
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);

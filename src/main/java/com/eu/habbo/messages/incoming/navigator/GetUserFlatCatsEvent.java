@@ -9,7 +9,7 @@ import java.util.List;
 
 public class GetUserFlatCatsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         List<RoomCategory> roomCategoryList = Emulator.getGameEnvironment().getRoomManager().roomCategoriesForHabbo(this.client.getHabbo());
         this.client.sendResponse(new UserFlatCatsComposer(roomCategoryList));
         //this.client.sendResponse(new NewNavigatorEventCategoriesComposer());

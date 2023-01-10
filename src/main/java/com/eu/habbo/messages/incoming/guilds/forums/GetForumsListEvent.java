@@ -18,7 +18,7 @@ import java.util.Set;
 public class GetForumsListEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int mode = this.packet.readInt();
         int offset = this.packet.readInt();
         int amount = this.packet.readInt();

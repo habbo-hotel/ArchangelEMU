@@ -24,7 +24,7 @@ public class TextsManager {
         }
     }
 
-    public void reload() throws Exception {
+    public void reload() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM emulator_texts")) {
             while (set.next()) {
                 if (this.texts.containsKey(set.getString("key"))) {

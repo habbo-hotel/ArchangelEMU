@@ -10,7 +10,7 @@ import com.eu.habbo.plugin.events.users.UserSignEvent;
 
 public class SignEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int signId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();

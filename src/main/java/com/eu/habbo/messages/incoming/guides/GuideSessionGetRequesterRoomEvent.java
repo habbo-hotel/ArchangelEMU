@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.guides.GuideSessionRequesterRoomMessageCom
 
 public class GuideSessionGetRequesterRoomEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByHelper(this.client.getHabbo());
 
         if (tour != null) {

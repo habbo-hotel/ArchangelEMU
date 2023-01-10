@@ -10,7 +10,7 @@ import com.eu.habbo.messages.outgoing.guilds.GuildMembersComposer;
 
 public class GetGuildMembersEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int groupId = this.packet.readInt();
         int pageId = this.packet.readInt();
         String query = this.packet.readString();

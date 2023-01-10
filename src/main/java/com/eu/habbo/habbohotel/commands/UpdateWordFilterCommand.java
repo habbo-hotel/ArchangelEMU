@@ -10,7 +10,7 @@ public class UpdateWordFilterCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getWordFilter().reload();
 
         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_wordfilter"), RoomChatMessageBubbles.ALERT);

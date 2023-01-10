@@ -11,7 +11,7 @@ public class RoomPointsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         int type = Emulator.getConfig().getInt("seasonal.primary.type");
         String amountString;
         if (params.length == 3) {

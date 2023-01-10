@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.rooms.HeightMapComposer;
 
 public class GetRoomEntryDataEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().getHabboInfo().getLoadingRoom() > 0) {
             Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(this.client.getHabbo().getHabboInfo().getLoadingRoom());
 

@@ -13,7 +13,7 @@ public class PluginsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         StringBuilder message = new StringBuilder("Plugins (" + Emulator.getPluginManager().getPlugins().size() + ")\r");
 
         for (HabboPlugin plugin : Emulator.getPluginManager().getPlugins()) {

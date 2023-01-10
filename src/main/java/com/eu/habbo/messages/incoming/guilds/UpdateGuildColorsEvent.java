@@ -9,7 +9,7 @@ import com.eu.habbo.plugin.events.guilds.GuildChangedColorsEvent;
 
 public class UpdateGuildColorsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);

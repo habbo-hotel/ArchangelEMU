@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.rooms.promotions.RoomEventComposer;
 public class EditEventEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
 
         int id = this.packet.readInt();
         String promotionName = this.packet.readString();

@@ -23,7 +23,7 @@ public class ApplySnapshotEvent extends MessageHandler {
     }
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         // Executing Habbo has to be in a Room

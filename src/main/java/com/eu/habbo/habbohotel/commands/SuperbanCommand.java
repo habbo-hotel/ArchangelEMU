@@ -14,7 +14,7 @@ public class SuperbanCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         HabboInfo habbo = null;
         StringBuilder reason = new StringBuilder();
         if (params.length >= 2) {

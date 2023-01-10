@@ -15,7 +15,7 @@ public class RoomTextSearchEvent extends MessageHandler {
     public final static THashMap<Rank, THashMap<String, ServerMessage>> cachedResults = new THashMap<>(4);
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String name = this.packet.readString();
 
         String prefix = "";

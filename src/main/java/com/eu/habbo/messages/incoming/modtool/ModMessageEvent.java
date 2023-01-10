@@ -9,7 +9,7 @@ import com.eu.habbo.plugin.events.support.SupportUserAlertedReason;
 
 public class ModMessageEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             Habbo alertedUser = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.packet.readInt());
 

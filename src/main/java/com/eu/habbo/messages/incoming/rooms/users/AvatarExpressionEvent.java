@@ -10,7 +10,7 @@ import com.eu.habbo.plugin.events.users.UserIdleEvent;
 
 public class AvatarExpressionEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
         if (room != null) {
             Habbo habbo = this.client.getHabbo();

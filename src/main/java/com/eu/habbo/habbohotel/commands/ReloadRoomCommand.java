@@ -16,7 +16,7 @@ public class ReloadRoomCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getThreading().run(() -> {
             Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
             if (room != null) {

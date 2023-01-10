@@ -37,7 +37,7 @@ import java.util.Calendar;
 @Slf4j
 public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (Emulator.getIntUnixTimestamp() - this.client.getHabbo().getHabboStats().getLastGiftTimestamp() >= CatalogManager.PURCHASE_COOLDOWN) {
             this.client.getHabbo().getHabboStats().setLastGiftTimestamp(Emulator.getIntUnixTimestamp());
             if (ShutdownEmulator.timestamp > 0) {

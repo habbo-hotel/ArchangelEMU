@@ -24,7 +24,7 @@ public class RCONServer extends Server {
     @Getter
     private final List<String> allowedAdresses = new ArrayList<>();
 
-    public RCONServer(String host, int port) throws Exception {
+    public RCONServer(String host, int port) {
         super("RCON Server", host, port, 1, 2);
 
         this.messages = new THashMap<>();
@@ -73,7 +73,7 @@ public class RCONServer extends Server {
 
         this.serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
-            public void initChannel(SocketChannel ch) throws Exception {
+            public void initChannel(SocketChannel ch) {
                 ch.pipeline().addLast(new RCONServerHandler());
             }
         });
@@ -84,7 +84,7 @@ public class RCONServer extends Server {
         this.messages.put(key, clazz);
     }
 
-    public String handle(ChannelHandlerContext ctx, String key, String body) throws Exception {
+    public String handle(ChannelHandlerContext ctx, String key, String body) {
         Class<? extends RCONMessage> message = this.messages.get(key.replace("_", "").toLowerCase());
 
         String result;

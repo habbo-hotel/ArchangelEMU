@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.polls.PollContentsComposer;
 
 public class PollStartEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int pollId = this.packet.readInt();
 
         Poll poll = Emulator.getGameEnvironment().getPollManager().getPoll(pollId);

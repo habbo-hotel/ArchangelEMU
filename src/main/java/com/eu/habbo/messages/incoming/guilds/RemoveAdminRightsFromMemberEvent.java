@@ -13,7 +13,7 @@ import com.eu.habbo.plugin.events.guilds.GuildRemovedAdminEvent;
 
 public class RemoveAdminRightsFromMemberEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);

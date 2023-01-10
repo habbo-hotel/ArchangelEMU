@@ -18,7 +18,7 @@ public class RoomDimmerSavePresetEvent extends MessageHandler {
     private static final int MIN_BRIGHTNESS = (int) Math.floor(0.3 * 0xFF);
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
         if ((room.getGuildId() <= 0 && room.getGuildRightLevel(this.client.getHabbo()).isLessThan(RoomRightLevels.GUILD_RIGHTS)) && !room.hasRights(this.client.getHabbo()))

@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.navigator.GuestRoomSearchResultComposer;
 
 public class MyRoomHistorySearchEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         this.client.sendResponse(new GuestRoomSearchResultComposer(Emulator.getGameEnvironment().getRoomManager().getRoomsVisited(this.client.getHabbo(), false, 25)));
     }
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MountPetEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int petId = this.packet.readInt();
         Habbo habbo = this.client.getHabbo();
         Room room = habbo.getHabboInfo().getCurrentRoom();

@@ -10,7 +10,7 @@ import com.eu.habbo.plugin.events.guilds.GuildFavoriteSetEvent;
 
 public class SelectFavouriteHabboGroupEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);

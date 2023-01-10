@@ -20,7 +20,7 @@ public class MassGiftCommand extends Command {
     }
 
     @Override
-    public boolean handle(final GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(final GameClient gameClient, String[] params) {
         if (params.length >= 2) {
             int itemId;
 

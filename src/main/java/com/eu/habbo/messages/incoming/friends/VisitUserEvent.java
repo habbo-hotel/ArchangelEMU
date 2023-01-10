@@ -12,7 +12,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.WhisperMessageComposer;
 
 public class VisitUserEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int friendId = this.packet.readInt();
 
         MessengerBuddy buddy = this.client.getHabbo().getMessenger().getFriend(friendId);

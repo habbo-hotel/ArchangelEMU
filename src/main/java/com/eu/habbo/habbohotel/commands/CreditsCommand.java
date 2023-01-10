@@ -13,7 +13,7 @@ public class CreditsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 3) {
             HabboInfo info = HabboManager.getOfflineHabboInfo(params[1]);
 

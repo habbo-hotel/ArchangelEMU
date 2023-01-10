@@ -10,7 +10,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class DiceOffEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int itemId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();

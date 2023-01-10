@@ -15,7 +15,7 @@ import java.sql.SQLException;
 @Slf4j
 public class AnswerPollEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int pollId = this.packet.readInt();
         int questionId = this.packet.readInt();
         int count = this.packet.readInt();

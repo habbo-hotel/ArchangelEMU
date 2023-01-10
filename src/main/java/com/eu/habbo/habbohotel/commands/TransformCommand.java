@@ -18,7 +18,7 @@ public class TransformCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1) {
             StringBuilder petNames = new StringBuilder();
             petNames.append(Emulator.getTexts().getValue("commands.generic.cmd_transform.title"));

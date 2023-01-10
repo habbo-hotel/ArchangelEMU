@@ -41,7 +41,7 @@ public class InteractionPyramid extends InteractionGate {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
     }
 
     @Override

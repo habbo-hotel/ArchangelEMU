@@ -10,7 +10,7 @@ public class UpdateYoutubePlaylistsCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getItemManager().getYoutubeManager().load();
 
         gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_youtube_playlists"), RoomChatMessageBubbles.ALERT);

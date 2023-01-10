@@ -138,14 +138,14 @@ public class InteractionTeleport extends HabboItem {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
         if (room != null && client != null && objects != null && objects.length <= 1) {
             tryTeleport(client, room);
         }
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
     }
 
     @Override

@@ -26,7 +26,7 @@ public class InteractionSnowboardSlope extends InteractionMultiHeight {
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         room.giveEffect(roomUnit, 97, -1);
     }
 

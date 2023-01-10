@@ -6,7 +6,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class UpdateRoomFilterEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         final int roomId = this.packet.readInt();
         final boolean add = this.packet.readBoolean();
         String word = this.packet.readString();

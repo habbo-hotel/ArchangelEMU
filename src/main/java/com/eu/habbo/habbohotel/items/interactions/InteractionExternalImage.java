@@ -30,7 +30,7 @@ public class InteractionExternalImage extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 
@@ -43,7 +43,7 @@ public class InteractionExternalImage extends HabboItem {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+    public void onClick(GameClient client, Room room, Object[] objects) {
     }
 
     //{"t":10000000, "u":"http://arcturus.pw/camera/", "m":"idk", "s":1, "w":"http://arcturus.pw/camera/image.png"}

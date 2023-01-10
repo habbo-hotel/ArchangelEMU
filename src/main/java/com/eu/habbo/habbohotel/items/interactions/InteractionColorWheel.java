@@ -58,12 +58,12 @@ public class InteractionColorWheel extends HabboItem {
     }
 
     @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
     }
 
     @Override
-    public void onWalkOn(RoomUnit client, Room room, Object[] objects) throws Exception {
+    public void onWalkOn(RoomUnit client, Room room, Object[] objects) {
 
     }
 

@@ -8,7 +8,7 @@ import com.eu.habbo.messages.outgoing.users.ExtendedProfileMessageComposer;
 
 public class GetExtendedProfileEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int habboId = this.packet.readInt();
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(habboId);
 

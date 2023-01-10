@@ -9,7 +9,7 @@ public class UpdateHotelViewCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getHotelViewManager().getNewsList().reload();
         Emulator.getGameEnvironment().getHotelViewManager().getHallOfFame().reload();
 

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 
 public class GetHabboGroupDetailsEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = this.packet.readInt();
         boolean newWindow = this.packet.readBoolean();
 

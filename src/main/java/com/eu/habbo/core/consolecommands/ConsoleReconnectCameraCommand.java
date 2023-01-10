@@ -11,7 +11,7 @@ public class ConsoleReconnectCameraCommand extends ConsoleCommand {
     }
 
     @Override
-    public void handle(String[] args) throws Exception {
+    public void handle(String[] args) {
         log.info("Connecting to the camera...");
         CameraClient.attemptReconnect = true;
     }

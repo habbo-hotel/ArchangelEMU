@@ -34,10 +34,9 @@ public class SubscriptionCommand extends Command {
      * @param gameClient Client that executed the command
      * @param params Command parameters
      * @return Boolean indicating success
-     * @throws Exception Exception
      */
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         if (params.length >= 4) {
             HabboInfo info = HabboManager.getOfflineHabboInfo(params[1]);
 

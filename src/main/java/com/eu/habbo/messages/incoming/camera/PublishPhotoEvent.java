@@ -19,7 +19,7 @@ public class PublishPhotoEvent extends MessageHandler {
     public static int CAMERA_PUBLISH_POINTS_TYPE = 0;
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         Habbo habbo = this.client.getHabbo();
 
         if (habbo == null) return;

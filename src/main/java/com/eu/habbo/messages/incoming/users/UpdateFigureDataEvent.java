@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UpdateFigureDataEvent extends MessageHandler {
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         String genderCode = this.packet.readString();
         HabboGender gender;
 

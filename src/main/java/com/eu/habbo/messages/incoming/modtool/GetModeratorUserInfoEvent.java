@@ -8,7 +8,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class GetModeratorUserInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
             ModToolManager.requestUserInfo(this.client, this.packet);
         } else {

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class GetSongInfoEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int count = this.packet.readInt();
 
         List<SoundTrack> tracks = new ArrayList<>(count);

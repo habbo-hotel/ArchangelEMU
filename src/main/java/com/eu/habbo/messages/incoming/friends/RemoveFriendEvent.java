@@ -16,7 +16,7 @@ public class RemoveFriendEvent extends MessageHandler {
     }
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int count = this.packet.readInt();
         for (int i = 0; i < count; i++) {
             int habboId = this.packet.readInt();

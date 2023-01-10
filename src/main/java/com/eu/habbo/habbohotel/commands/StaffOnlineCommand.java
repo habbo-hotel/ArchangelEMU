@@ -15,7 +15,7 @@ public class StaffOnlineCommand extends Command {
     }
 
     @Override
-    public boolean handle(GameClient gameClient, String[] params) throws Exception {
+    public boolean handle(GameClient gameClient, String[] params) {
         int minRank = Emulator.getConfig().getInt("commands.cmd_staffonline.min_rank");
 
         if (params.length >= 2) {

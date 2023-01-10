@@ -21,7 +21,7 @@ public class UseFurnitureEvent extends MessageHandler {
 
 
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         try {
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
 
