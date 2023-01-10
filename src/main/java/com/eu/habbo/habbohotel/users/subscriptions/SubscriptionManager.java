@@ -20,7 +20,7 @@ import java.sql.SQLException;
 @Getter
 public class SubscriptionManager {
 
-    private THashMap<String, Class<? extends Subscription>> types;
+    private final THashMap<String, Class<? extends Subscription>> types;
 
     public SubscriptionManager() {
         this.types = new THashMap<>();

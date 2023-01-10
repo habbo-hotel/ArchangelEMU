@@ -15,7 +15,7 @@ public class SetRelationshipStatusEvent extends MessageHandler {
         if (buddy != null && relationId >= 0 && relationId <= 3) {
             UserRelationShipEvent event = new UserRelationShipEvent(this.client.getHabbo(), buddy, relationId);
             if (!event.isCancelled()) {
-                buddy.setRelation(event.relationShip);
+                buddy.setRelation(event.getRelationShip());
                 this.client.sendResponse(new UpdateFriendComposer(this.client.getHabbo(), buddy, 0));
             }
         }

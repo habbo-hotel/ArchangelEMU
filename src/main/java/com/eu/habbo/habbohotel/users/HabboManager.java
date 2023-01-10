@@ -113,7 +113,6 @@ public class HabboManager {
                     userId = s.getInt("id");
                 }
             }
-            statement.close();
         } catch (SQLException e) {
             log.error("Caught SQL exception", e);
         }

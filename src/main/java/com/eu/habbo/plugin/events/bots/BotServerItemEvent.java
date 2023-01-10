@@ -2,12 +2,14 @@ package com.eu.habbo.plugin.events.bots;
 
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.users.Habbo;
+import lombok.Getter;
 
+@Getter
 public class BotServerItemEvent extends BotEvent {
 
-    public Habbo habbo;
+    private final Habbo habbo;
 
-    public int itemId;
+    private final int itemId;
 
 
     public BotServerItemEvent(Bot bot, Habbo habbo, int itemId) {

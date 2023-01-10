@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionTileEffectProvider extends InteractionCustomValues {
-    public static THashMap<String, String> defaultValues = new THashMap<>() {
+    public static final THashMap<String, String> defaultValues = new THashMap<>() {
         {
             this.put("effectId", "0");
         }

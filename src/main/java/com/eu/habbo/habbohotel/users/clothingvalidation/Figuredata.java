@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.users.clothingvalidation;
 
+import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,9 +19,10 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.TreeMap;
 
+@Getter
 public class Figuredata {
-    public Map<Integer, FiguredataPalette> palettes;
-    public Map<String, FiguredataSettype> settypes;
+    private final Map<Integer, FiguredataPalette> palettes;
+    private final Map<String, FiguredataSettype> settypes;
 
     public Figuredata() {
         palettes = new TreeMap<>();

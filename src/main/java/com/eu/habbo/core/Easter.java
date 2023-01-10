@@ -12,8 +12,8 @@ import com.eu.habbo.plugin.events.users.UserSavedMottoEvent;
 public class Easter {
     @EventHandler
     public static void onUserChangeMotto(UserSavedMottoEvent event) {
-        if (Emulator.getConfig().getBoolean("easter_eggs.enabled") && event.newMotto.equalsIgnoreCase("crickey!")) {
-            event.habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(event.newMotto, event.habbo, event.habbo, RoomChatMessageBubbles.ALERT)));
+        if (Emulator.getConfig().getBoolean("easter_eggs.enabled") && event.getNewMotto().equalsIgnoreCase("crickey!")) {
+            event.habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(event.getNewMotto(), event.habbo, event.habbo, RoomChatMessageBubbles.ALERT)));
 
             Room room = event.habbo.getHabboInfo().getCurrentRoom();
 

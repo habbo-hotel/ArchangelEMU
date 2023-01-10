@@ -22,9 +22,9 @@ public class UpdateGuildColorsEvent extends MessageHandler {
                 if (colorsEvent.isCancelled())
                     return;
 
-                if (guild.getColorOne() != colorsEvent.colorOne || guild.getColorTwo() != colorsEvent.colorTwo) {
-                    guild.setColorOne(colorsEvent.colorOne);
-                    guild.setColorTwo(colorsEvent.colorTwo);
+                if (guild.getColorOne() != colorsEvent.getColorOne() || guild.getColorTwo() != colorsEvent.getColorTwo()) {
+                    guild.setColorOne(colorsEvent.getColorOne());
+                    guild.setColorTwo(colorsEvent.getColorTwo());
 
                     Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
 

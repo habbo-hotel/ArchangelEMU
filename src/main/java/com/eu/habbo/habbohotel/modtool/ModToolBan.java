@@ -14,18 +14,18 @@ import java.text.SimpleDateFormat;
 @Getter
 public class ModToolBan implements Runnable {
 
-    public static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private  int userId;
-    private  String ip;
-    private  String machineId;
-    private  int staffId;
-    private  int expireDate;
-    private  int timestamp;
-    private  String reason;
-    private  ModToolBanType type;
-    private  int cfhTopic;
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final int userId;
+    private final String ip;
+    private final String machineId;
+    private final int staffId;
+    private final int expireDate;
+    private final int timestamp;
+    private final String reason;
+    private final ModToolBanType type;
+    private final int cfhTopic;
 
-    private  boolean needsInsert;
+    private final boolean needsInsert;
 
     public ModToolBan(ResultSet set) throws SQLException {
         this.userId = set.getInt("user_id");

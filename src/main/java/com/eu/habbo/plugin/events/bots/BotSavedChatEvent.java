@@ -1,21 +1,23 @@
 package com.eu.habbo.plugin.events.bots;
 
 import com.eu.habbo.habbohotel.bots.Bot;
+import lombok.Getter;
 
 import java.util.ArrayList;
 
+@Getter
 public class BotSavedChatEvent extends BotEvent {
 
-    public boolean autoChat;
+    private final boolean autoChat;
 
 
-    public boolean randomChat;
+    private final boolean randomChat;
 
 
-    public int chatDelay;
+    private final int chatDelay;
 
 
-    public ArrayList<String> chat;
+    private final ArrayList<String> chat;
 
 
     public BotSavedChatEvent(Bot bot, boolean autoChat, boolean randomChat, int chatDelay, ArrayList<String> chat) {

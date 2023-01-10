@@ -1,13 +1,12 @@
 package com.eu.habbo.plugin.events.users;
 
 import com.eu.habbo.habbohotel.users.Habbo;
+import lombok.Getter;
 
+@Getter
 public class UserPointsEvent extends UserEvent {
-
-    public int points;
-
-
-    public int type;
+    private final int points;
+    private final int type;
 
 
     public UserPointsEvent(Habbo habbo, int points, int type) {

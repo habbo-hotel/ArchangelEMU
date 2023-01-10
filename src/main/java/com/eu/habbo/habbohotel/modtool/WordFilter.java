@@ -25,9 +25,9 @@ public class WordFilter {
     //Configuration. Loaded from database & updated accordingly.
     public static boolean ENABLED_FRIENDCHAT = true;
     public static String DEFAULT_REPLACEMENT = "bobba";
-    protected THashSet<WordFilterWord> autoReportWords = new THashSet<>();
-    protected THashSet<WordFilterWord> hideMessageWords = new THashSet<>();
-    protected THashSet<WordFilterWord> words = new THashSet<>();
+    protected final THashSet<WordFilterWord> autoReportWords = new THashSet<>();
+    protected final THashSet<WordFilterWord> hideMessageWords = new THashSet<>();
+    protected final THashSet<WordFilterWord> words = new THashSet<>();
 
     public WordFilter() {
         long start = System.currentTimeMillis();

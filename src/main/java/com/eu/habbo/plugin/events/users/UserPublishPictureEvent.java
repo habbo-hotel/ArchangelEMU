@@ -1,16 +1,15 @@
 package com.eu.habbo.plugin.events.users;
 
 import com.eu.habbo.habbohotel.users.Habbo;
+import lombok.Getter;
 
+@Getter
 public class UserPublishPictureEvent extends UserEvent {
+    private final String URL;
 
-    public String URL;
+    private final int timestamp;
 
-
-    public int timestamp;
-
-
-    public int roomId;
+    private final int roomId;
 
 
     public UserPublishPictureEvent(Habbo habbo, String url, int timestamp, int roomId) {

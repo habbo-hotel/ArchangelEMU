@@ -15,11 +15,11 @@ public class ScrSendUserInfoComposer extends MessageComposer {
     private final String subscriptionType;
     private final int responseType;
 
-    public static int RESPONSE_TYPE_NORMAL = 0;
-    public static int RESPONSE_TYPE_LOGIN = 1;
-    public static int RESPONSE_TYPE_PURCHASE = 2; // closes the catalog after buying
-    public static int RESPONSE_TYPE_DISCOUNT_AVAILABLE = 3;
-    public static int RESPONSE_TYPE_CITIZENSHIP_DISCOUNT = 4;
+    public static final int RESPONSE_TYPE_NORMAL = 0;
+    public static final int RESPONSE_TYPE_LOGIN = 1;
+    public static final int RESPONSE_TYPE_PURCHASE = 2; // closes the catalog after buying
+    public static final int RESPONSE_TYPE_DISCOUNT_AVAILABLE = 3;
+    public static final int RESPONSE_TYPE_CITIZENSHIP_DISCOUNT = 4;
 
     public ScrSendUserInfoComposer(Habbo habbo) {
         this.habbo = habbo;

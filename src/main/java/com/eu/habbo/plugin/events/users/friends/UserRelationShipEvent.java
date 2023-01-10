@@ -2,9 +2,11 @@ package com.eu.habbo.plugin.events.users.friends;
 
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.users.Habbo;
+import lombok.Getter;
 
+@Getter
 public class UserRelationShipEvent extends UserFriendEvent {
-    public int relationShip;
+    private final int relationShip;
 
 
     public UserRelationShipEvent(Habbo habbo, MessengerBuddy friend, int relationShip) {

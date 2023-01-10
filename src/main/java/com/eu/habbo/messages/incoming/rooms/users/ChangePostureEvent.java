@@ -17,7 +17,7 @@ public class ChangePostureEvent extends MessageHandler {
             Emulator.getPluginManager().fireEvent(event);
 
             if (!event.isCancelled()) {
-                if (!event.idle) {
+                if (!event.isIdle()) {
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(this.client.getHabbo());
                 }
             }

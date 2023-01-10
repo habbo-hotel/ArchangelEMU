@@ -8,7 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomChatType;
 import com.eu.habbo.habbohotel.users.Habbo;
 
 public class YouAreAPirate implements Runnable {
-    public static String[] iamapirate = new String[]{
+    public static final String[] iamapirate = new String[]{
             "Do what you want, 'cause a pirate is free,",
             "You are a pirate!",
             "",

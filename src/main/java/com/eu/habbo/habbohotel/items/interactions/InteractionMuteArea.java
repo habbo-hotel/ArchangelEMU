@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionMuteArea extends InteractionCustomValues {
-    public static THashMap<String, String> defaultValues = new THashMap<>() {
+    public static final THashMap<String, String> defaultValues = new THashMap<>() {
         {
             this.put("tilesLeft", "0");
         }

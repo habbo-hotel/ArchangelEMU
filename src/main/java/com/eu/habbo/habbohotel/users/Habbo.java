@@ -206,7 +206,7 @@ public class Habbo implements Runnable {
         if (Emulator.getPluginManager().fireEvent(event).isCancelled())
             return;
 
-        this.getHabboInfo().addCredits(event.credits);
+        this.getHabboInfo().addCredits(event.getCredits());
 
         if (this.client != null) this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo()));
     }
@@ -221,7 +221,7 @@ public class Habbo implements Runnable {
         if (Emulator.getPluginManager().fireEvent(event).isCancelled())
             return;
 
-        this.getHabboInfo().addPixels(event.points);
+        this.getHabboInfo().addPixels(event.getPoints());
         if (this.client != null) this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo()));
     }
 
@@ -239,9 +239,9 @@ public class Habbo implements Runnable {
         if (Emulator.getPluginManager().fireEvent(event).isCancelled())
             return;
 
-        this.getHabboInfo().addCurrencyAmount(event.type, event.points);
+        this.getHabboInfo().addCurrencyAmount(event.getType(), event.getPoints());
         if (this.client != null)
-            this.client.sendResponse(new HabboActivityPointNotificationMessageComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.points, event.type));
+            this.client.sendResponse(new HabboActivityPointNotificationMessageComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(type), event.getPoints(), event.getType()));
     }
 
 

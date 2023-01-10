@@ -397,7 +397,7 @@ public class ModToolManager {
             return;
 
         if (target != null)
-            alertedEvent.target.getClient().sendResponse(new IssueCloseNotificationMessageComposer(alertedEvent.message));
+            alertedEvent.getTarget().getClient().sendResponse(new IssueCloseNotificationMessageComposer(alertedEvent.getMessage()));
     }
 
     public void kick(Habbo moderator, Habbo target, String message) {
@@ -471,17 +471,17 @@ public class ModToolManager {
         SupportRoomActionEvent roomActionEvent = new SupportRoomActionEvent(moderator, room, kickUsers, lockDoor, changeTitle);
         Emulator.getPluginManager().fireEvent(roomActionEvent);
 
-        if (roomActionEvent.changeTitle) {
+        if (roomActionEvent.isChangeTitle()) {
             room.setName(Emulator.getTexts().getValue("hotel.room.inappropriate.title"));
             room.setNeedsUpdate(true);
         }
 
-        if (roomActionEvent.lockDoor) {
+        if (roomActionEvent.isLockDoor()) {
             room.setState(RoomState.LOCKED);
             room.setNeedsUpdate(true);
         }
 
-        if (roomActionEvent.kickUsers) {
+        if (roomActionEvent.isKickUsers()) {
             for (Habbo habbo : room.getHabbos()) {
                 if (!(habbo.hasPermission(Permission.ACC_UNKICKABLE) || habbo.hasPermission(Permission.ACC_SUPPORTTOOL) || room.isOwner(habbo))) {
                     room.kickHabbo(habbo, false);

@@ -1,14 +1,16 @@
 package com.eu.habbo.plugin.events.support;
 
 import com.eu.habbo.habbohotel.users.Habbo;
+import lombok.Getter;
 
+@Getter
 public class SupportUserAlertedEvent extends SupportEvent {
 
-    public Habbo target;
+    private final Habbo target;
 
-    public String message;
+    private final String message;
 
-    public SupportUserAlertedReason reason;
+    private final SupportUserAlertedReason reason;
 
     public SupportUserAlertedEvent(Habbo moderator, Habbo target, String message, SupportUserAlertedReason reason) {
         super(moderator);

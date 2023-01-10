@@ -9,6 +9,7 @@ import gnu.trove.map.hash.THashMap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -20,7 +21,8 @@ public class RCONServer extends Server {
     
     private final THashMap<String, Class<? extends RCONMessage>> messages;
     private final GsonBuilder gsonBuilder;
-    List<String> allowedAdresses = new ArrayList<>();
+    @Getter
+    private final List<String> allowedAdresses = new ArrayList<>();
 
     public RCONServer(String host, int port) throws Exception {
         super("RCON Server", host, port, 1, 2);

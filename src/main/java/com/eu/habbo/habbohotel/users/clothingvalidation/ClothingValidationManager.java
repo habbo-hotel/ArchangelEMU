@@ -90,7 +90,7 @@ public class ClothingValidationManager {
      * @return Cleaned figure string
      */
     public static String validateLook(String look, String gender, boolean isHC, TIntCollection ownedClothing) {
-        if(FIGUREDATA.palettes.size() == 0 || FIGUREDATA.settypes.size() == 0)
+        if(FIGUREDATA.getPalettes().size() == 0 || FIGUREDATA.getSettypes().size() == 0)
             return look;
 
         String[] newLookParts = look.split(Pattern.quote("."));
@@ -102,14 +102,14 @@ public class ClothingValidationManager {
         for(String lookpart : newLookParts) {
             if (lookpart.contains("-")) {
                 String[] data = lookpart.split(Pattern.quote("-"));
-                FiguredataSettype settype = FIGUREDATA.settypes.get(data[0]);
+                FiguredataSettype settype = FIGUREDATA.getSettypes().get(data[0]);
                 if(settype != null) {
                     parts.put(data[0], data);
                 }
             }
         }
 
-        FIGUREDATA.settypes.entrySet().stream().filter(x -> !parts.containsKey(x.getKey())).forEach(x ->
+        FIGUREDATA.getSettypes().entrySet().stream().filter(x -> !parts.containsKey(x.getKey())).forEach(x ->
         {
             FiguredataSettype settype = x.getValue();
 
@@ -132,13 +132,13 @@ public class ClothingValidationManager {
         parts.forEach((key, data) -> {
             try {
                 if (data.length >= 1) {
-                    FiguredataSettype settype = FIGUREDATA.settypes.get(data[0]);
+                    FiguredataSettype settype = FIGUREDATA.getSettypes().get(data[0]);
                     if (settype == null) {
                         //throw new Exception("Set type " + data[0] + " does not exist");
                         return;
                     }
 
-                    FiguredataPalette palette = FIGUREDATA.palettes.get(settype.getPaletteId());
+                    FiguredataPalette palette = FIGUREDATA.getPalettes().get(settype.getPaletteId());
                     if (palette == null) {
                         throw new Exception("Palette " + settype.getPaletteId() + " does not exist");
                     }
