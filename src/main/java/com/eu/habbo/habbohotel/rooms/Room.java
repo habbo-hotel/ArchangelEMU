@@ -100,7 +100,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public static String PREFIX_FORMAT = "[<font color=\"%color%\">%prefix%</font>] ";
     public static int ROLLERS_MAXIMUM_ROLL_AVATARS = 1;
     public static boolean MUTEAREA_CAN_WHISPER = false;
-    public static double MAXIMUM_FURNI_HEIGHT = 40d;
+    public static final double MAXIMUM_FURNI_HEIGHT = 40d;
 
     static {
         for (int i = 1; i <= 3; i++) {
@@ -141,7 +141,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     //Use appropriately. Could potentially cause memory leaks when used incorrectly.
     public volatile boolean preventUnloading = false;
     public volatile boolean preventUncaching = false;
-    public ConcurrentSet<ServerMessage> scheduledComposers = new ConcurrentSet<>();
+    public final ConcurrentSet<ServerMessage> scheduledComposers = new ConcurrentSet<>();
     public ConcurrentSet<Runnable> scheduledTasks = new ConcurrentSet<>();
     public String wordQuiz = "";
     public int noVotes = 0;
@@ -2872,7 +2872,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         Emulator.getPluginManager().fireEvent(event);
 
         if (!event.isCancelled()) {
-            if (!event.idle) {
+            if (!event.isIdle()) {
                 this.unIdle(habbo);
             }
         }

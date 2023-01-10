@@ -7,14 +7,16 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class WiredExtraUnseen extends InteractionWiredExtra {
-    public List<Integer> seenList = new ArrayList<>();
+    private final List<Integer> seenList = new ArrayList<>();
 
     public WiredExtraUnseen(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);

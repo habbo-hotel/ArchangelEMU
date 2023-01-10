@@ -75,7 +75,7 @@ public class ItemsComponent {
         }
 
         synchronized (this.items) {
-            this.items.put(event.item.getId(), event.item);
+            this.items.put(event.getItem().getId(), event.getItem());
         }
     }
 
@@ -127,7 +127,7 @@ public class ItemsComponent {
         }
 
         synchronized (this.items) {
-            this.items.remove(event.item.getId());
+            this.items.remove(event.getItem().getId());
         }
     }
 

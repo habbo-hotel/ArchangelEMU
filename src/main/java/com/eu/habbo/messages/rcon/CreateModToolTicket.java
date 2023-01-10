@@ -31,7 +31,7 @@ public class CreateModToolTicket extends RCONMessage<CreateModToolTicket.JSON> {
         public String reported_username;
 
 
-        public int reported_room_id = 0;
+        public final int reported_room_id = 0;
 
 
         public String message;

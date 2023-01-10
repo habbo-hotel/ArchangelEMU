@@ -27,7 +27,7 @@ import java.util.Map;
 public class PetManager {
     public static int MAXIMUM_PET_INVENTORY_SIZE = 25;
     public static final int[] experiences = new int[]{100, 200, 400, 600, 900, 1300, 1800, 2400, 3200, 4300, 5700, 7600, 10100, 13300, 17500, 23000, 30200, 39600, 51900};
-    static int[] skins = new int[]{0, 1, 6, 7};
+    static final int[] skins = new int[]{0, 1, 6, 7};
     public final THashMap<Integer, PetAction> petActions = new THashMap<>() {
         {
             this.put(0, new ActionFree());

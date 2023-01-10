@@ -3,24 +3,16 @@ package com.eu.habbo.habbohotel.games;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class GamePlayer {
 
     private final Habbo habbo;
-
-
-    private GameTeamColors teamColor;
-
+    private final GameTeamColors teamColor;
 
     private int score;
     private int wiredScore;
-
-
-    public GamePlayer(Habbo habbo, GameTeamColors teamColor) {
-        this.habbo = habbo;
-        this.teamColor = teamColor;
-    }
-
 
     public void reset() {
         this.score = 0;

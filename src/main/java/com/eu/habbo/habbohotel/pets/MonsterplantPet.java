@@ -59,8 +59,8 @@ public class MonsterplantPet extends Pet implements IPetLook {
     };
     public static final ArrayList<Pair<String, Integer>> indexedBody = new ArrayList<>(MonsterplantPet.bodyRarity.values());
     public static final ArrayList<Pair<String, Integer>> indexedColors = new ArrayList<>(MonsterplantPet.colorRarity.values());
-    public static int growTime = (30 * 60);
-    public static int timeToLive = (3 * 24 * 60 * 60); //3 days
+    public static final int growTime = (30 * 60);
+    public static final int timeToLive = (3 * 24 * 60 * 60); //3 days
     private final int nose;
     private final int noseColor;
     private final int eyes;
@@ -68,8 +68,8 @@ public class MonsterplantPet extends Pet implements IPetLook {
     private final int mouth;
     private final int mouthColor;
     public String look;
-    private int type;
-    private int hue;
+    private final int type;
+    private final int hue;
     private int deathTimestamp = Emulator.getIntUnixTimestamp() + timeToLive;
     private boolean canBreed = true;
     private boolean publiclyBreedable = false;
@@ -170,6 +170,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                     for (RoomUnitStatus s : this.roomUnit.getStatusMap().keySet()) {
                         if (s.equals(RoomUnitStatus.GROW)) {
                             clear = true;
+                            break;
                         }
                     }
 

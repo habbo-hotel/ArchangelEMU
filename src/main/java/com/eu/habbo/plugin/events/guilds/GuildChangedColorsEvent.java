@@ -1,13 +1,15 @@
 package com.eu.habbo.plugin.events.guilds;
 
 import com.eu.habbo.habbohotel.guilds.Guild;
+import lombok.Getter;
 
+@Getter
 public class GuildChangedColorsEvent extends GuildEvent {
 
-    public int colorOne;
+    private final int colorOne;
 
 
-    public int colorTwo;
+    private final int colorTwo;
 
 
     public GuildChangedColorsEvent(Guild guild, int colorOne, int colorTwo) {

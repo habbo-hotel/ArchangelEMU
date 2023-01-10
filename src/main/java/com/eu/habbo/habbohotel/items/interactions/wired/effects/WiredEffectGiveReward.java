@@ -17,26 +17,28 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.generic.alerts.WiredValidationErrorComposer;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class WiredEffectGiveReward extends InteractionWiredEffect {
     public final static int LIMIT_ONCE = 0;
     public final static int LIMIT_N_DAY = 1;
     public final static int LIMIT_N_HOURS = 2;
     public final static int LIMIT_N_MINUTES = 3;
 
-    public final static WiredEffectType type = WiredEffectType.GIVE_REWARD;
-    public int limit;
-    public int limitationInterval;
-    public int given;
-    public int rewardTime;
-    public boolean uniqueRewards;
+    private final static WiredEffectType type = WiredEffectType.GIVE_REWARD;
+    private int limit;
+    private int limitationInterval;
+    private int given;
+    private int rewardTime;
+    private boolean uniqueRewards;
 
-    public THashSet<WiredGiveRewardItem> rewardItems = new THashSet<>();
+    private final THashSet<WiredGiveRewardItem> rewardItems = new THashSet<>();
 
     public WiredEffectGiveReward(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -64,7 +66,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
     public void loadWiredData(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
-        if(wiredData.startsWith("{")) {
+        if (wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
             this.setDelay(data.delay);
             this.limit = data.limit;
@@ -74,8 +76,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
             this.limitationInterval = data.limit_interval;
             this.rewardItems.clear();
             this.rewardItems.addAll(data.rewards);
-        }
-        else {
+        } else {
             String[] data = wiredData.split(":");
             if (data.length > 0) {
                 this.limit = Integer.parseInt(data[0]);
@@ -172,7 +173,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
     @Override
     public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
         if (gameClient.getHabbo().hasPermission(Permission.ACC_SUPERWIRED)) {
-            if(settings.getIntParams().length < 4) throw new WiredSaveException("Invalid data");
+            if (settings.getIntParams().length < 4) throw new WiredSaveException("Invalid data");
             this.rewardTime = settings.getIntParams()[0];
             this.uniqueRewards = settings.getIntParams()[1] == 1;
             this.limit = settings.getIntParams()[2];
@@ -220,6 +221,10 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
         return 0;
     }
 
+    public void incrementGiven() {
+        given++;
+    }
+
     static class JsonData {
         int limit;
         int given;
@@ -239,4 +244,6 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
             this.delay = delay;
         }
     }
+
+
 }

@@ -6,6 +6,8 @@ import com.eu.habbo.messages.ClientMessage;
 public abstract class MessageHandler {
     public GameClient client;
     public ClientMessage packet;
+
+    @SuppressWarnings("CanBeFinal")
     public boolean isCancelled = false;
 
     public abstract void handle() throws Exception;

@@ -35,8 +35,8 @@ public class UpdateFigureDataEvent extends MessageHandler {
         if (lookEvent.isCancelled())
             return;
 
-        this.client.getHabbo().getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_CHANGE_LOOKS ? ClothingValidationManager.validateLook(this.client.getHabbo(), lookEvent.newLook, lookEvent.gender.name()) : lookEvent.newLook);
-        this.client.getHabbo().getHabboInfo().setGender(lookEvent.gender);
+        this.client.getHabbo().getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_CHANGE_LOOKS ? ClothingValidationManager.validateLook(this.client.getHabbo(), lookEvent.getNewLook(), lookEvent.getGender().name()) : lookEvent.getNewLook());
+        this.client.getHabbo().getHabboInfo().setGender(lookEvent.getGender());
         Emulator.getThreading().run(this.client.getHabbo().getHabboInfo());
         this.client.sendResponse(new FigureUpdateComposer(this.client.getHabbo()));
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {

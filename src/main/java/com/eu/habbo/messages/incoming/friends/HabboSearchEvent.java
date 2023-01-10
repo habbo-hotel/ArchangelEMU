@@ -9,7 +9,7 @@ import gnu.trove.set.hash.THashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HabboSearchEvent extends MessageHandler {
-    public static ConcurrentHashMap<String, THashSet<MessengerBuddy>> cachedResults = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, THashSet<MessengerBuddy>> cachedResults = new ConcurrentHashMap<>();
 
     @Override
     public void handle() throws Exception {

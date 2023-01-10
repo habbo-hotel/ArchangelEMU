@@ -346,14 +346,14 @@ public class MarketPlace {
 
         GetMarketplaceOffersEvent.cachedResults.clear();
 
-        client.sendResponse(new FurniListRemoveComposer(event.item.getGiftAdjustedId()));
+        client.sendResponse(new FurniListRemoveComposer(event.getItem().getGiftAdjustedId()));
         client.sendResponse(new FurniListInvalidateComposer());
 
-        event.item.setFromGift(false);
+        event.getItem().setFromGift(false);
 
-        MarketPlaceOffer offer = new MarketPlaceOffer(event.item, event.price, client.getHabbo());
+        MarketPlaceOffer offer = new MarketPlaceOffer(event.getItem(), event.getPrice(), client.getHabbo());
         client.getHabbo().getInventory().addMarketplaceOffer(offer);
-        client.getHabbo().getInventory().getItemsComponent().removeHabboItem(event.item);
+        client.getHabbo().getInventory().getItemsComponent().removeHabboItem(event.getItem());
         item.setUserId(-1);
         item.needsUpdate(true);
         Emulator.getThreading().run(item);

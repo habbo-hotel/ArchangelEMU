@@ -10,8 +10,9 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class RentableSpaceStatusMessageComposer extends MessageComposer {
     public static final int SPACE_ALREADY_RENTED = 100;
     public static final int SPACE_EXTEND_NOT_RENTED = 101;

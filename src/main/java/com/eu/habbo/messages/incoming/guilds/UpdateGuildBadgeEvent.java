@@ -51,7 +51,7 @@ public class UpdateGuildBadgeEvent extends MessageHandler {
                 if (badgeEvent.isCancelled())
                     return;
 
-                guild.setBadge(badgeEvent.badge);
+                guild.setBadge(badgeEvent.getBadge());
                 guild.needsUpdate = true;
 
                 if (Emulator.getConfig().getBoolean("imager.internal.enabled")) {

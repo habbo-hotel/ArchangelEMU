@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserEventCatsComposer extends MessageComposer {
-    public static List<EventCategory> CATEGORIES = new ArrayList<>();
+    public static final List<EventCategory> CATEGORIES = new ArrayList<>();
 
     @Override
     protected ServerMessage composeInternal() {

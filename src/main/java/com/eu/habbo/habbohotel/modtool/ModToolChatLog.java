@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ModToolChatLog implements Comparable<ModToolChatLog> {
     private final int timestamp;
-    private  final int habboId;
-    private  final String username;
-    private  final String message;
-    private  boolean highlighted = false;
+    private final int habboId;
+    private final String username;
+    private final String message;
+    private boolean highlighted = false;
 
 
     @Override

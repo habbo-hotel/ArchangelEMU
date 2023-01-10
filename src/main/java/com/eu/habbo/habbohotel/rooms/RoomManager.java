@@ -723,8 +723,8 @@ public class RoomManager {
 
             if (Emulator.getPluginManager().isRegistered(HabboAddedToRoomEvent.class, false)) {
                 HabboAddedToRoomEvent event = Emulator.getPluginManager().fireEvent(new HabboAddedToRoomEvent(habbo, room, habbosToSendEnter, visibleHabbos));
-                habbosToSendEnter = event.habbosToSendEnter;
-                visibleHabbos = event.visibleHabbos;
+                habbosToSendEnter = event.getHabbosToSendEnter();
+                visibleHabbos = event.getVisibleHabbos();
             }
 
             for (Habbo habboToSendEnter : habbosToSendEnter) {

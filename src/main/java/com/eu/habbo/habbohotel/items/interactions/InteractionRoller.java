@@ -16,7 +16,7 @@ import java.util.List;
 
 public class InteractionRoller extends HabboItem {
     public static boolean NO_RULES = false;
-    public static int DELAY = 400;
+    public static final int DELAY = 400;
 
     public InteractionRoller(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);

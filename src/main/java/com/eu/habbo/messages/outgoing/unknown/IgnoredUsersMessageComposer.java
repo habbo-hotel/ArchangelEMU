@@ -3,16 +3,16 @@ package com.eu.habbo.messages.outgoing.unknown;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.ArrayList;
 
+@Getter
+@AllArgsConstructor
 public class IgnoredUsersMessageComposer extends MessageComposer {
 
-    ArrayList<String> ignoredUsers;
-
-    public IgnoredUsersMessageComposer(ArrayList<String> ignoredUsers) {
-        this.ignoredUsers = ignoredUsers;
-    }
+    private final ArrayList<String> ignoredUsers;
 
     @Override
     protected ServerMessage composeInternal() {

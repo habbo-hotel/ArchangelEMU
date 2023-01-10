@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NewUserExperienceScriptProceedEvent extends MessageHandler {
-    public static Map<Integer, String> keys = new HashMap<>() {
+    public static final Map<Integer, String> keys = new HashMap<>() {
         {
             this.put(1, "BOTTOM_BAR_RECEPTION");
             this.put(2, "BOTTOM_BAR_NAVIGATOR");

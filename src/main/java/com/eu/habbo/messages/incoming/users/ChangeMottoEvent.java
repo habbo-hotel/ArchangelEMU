@@ -12,7 +12,7 @@ public class ChangeMottoEvent extends MessageHandler {
         String motto = this.packet.readString();
         UserSavedMottoEvent event = new UserSavedMottoEvent(this.client.getHabbo(), this.client.getHabbo().getHabboInfo().getMotto(), motto);
         Emulator.getPluginManager().fireEvent(event);
-        motto = event.newMotto;
+        motto = event.getNewMotto();
         
         if(motto.length() <= Emulator.getConfig().getInt("motto.max_length", 38)) {
             this.client.getHabbo().getHabboInfo().setMotto(motto);

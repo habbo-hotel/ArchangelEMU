@@ -20,7 +20,7 @@ public class SignEvent extends MessageHandler {
 
         UserSignEvent event = new UserSignEvent(this.client.getHabbo(), signId);
         if (!Emulator.getPluginManager().fireEvent(event).isCancelled()) {
-            this.client.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.SIGN, event.sign + "");
+            this.client.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.SIGN, event.getSign() + "");
             this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(this.client.getHabbo());
 
             if(signId <= 10) {

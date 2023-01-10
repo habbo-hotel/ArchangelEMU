@@ -29,7 +29,7 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
     private final List<HabboItem> items = new ArrayList<>();
     private int direction;
     private int spacing = 1;
-    private Map<Integer, Integer> indexOffset = new LinkedHashMap<>();
+    private final Map<Integer, Integer> indexOffset = new LinkedHashMap<>();
 
     public WiredEffectMoveFurniTo(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);

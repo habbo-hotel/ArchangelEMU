@@ -27,7 +27,7 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
     private int count;
     private GameTeamColors teamColor = GameTeamColors.RED;
 
-    private TIntIntHashMap startTimes = new TIntIntHashMap();
+    private final TIntIntHashMap startTimes = new TIntIntHashMap();
 
     public WiredEffectGiveScoreToTeam(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);

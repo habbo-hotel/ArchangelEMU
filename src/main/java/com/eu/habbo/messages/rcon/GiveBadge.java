@@ -88,7 +88,7 @@ public class GiveBadge extends RCONMessage<GiveBadge.GiveBadgeJSON> {
 
     static class GiveBadgeJSON {
 
-        public int user_id = -1;
+        public final int user_id = -1;
 
 
         public String badge;

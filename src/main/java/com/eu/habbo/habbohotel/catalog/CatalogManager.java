@@ -1054,16 +1054,16 @@ public class CatalogManager {
                 Emulator.getPluginManager().fireEvent(purchasedEvent);
 
                 if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
-                    if (purchasedEvent.totalCredits > 0) {
-                        habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.totalCredits);
+                    if (purchasedEvent.getTotalCredits() > 0) {
+                        habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.getTotalCredits());
                         habbo.getClient().sendResponse(new CreditBalanceComposer(habbo.getClient().getHabbo()));
                     }
                 }
 
                 if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
-                    if (purchasedEvent.totalPoints > 0) {
-                        habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.totalPoints);
-                        habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.totalPoints, item.getPointsType()));
+                    if (purchasedEvent.getTotalPoints() > 0) {
+                        habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.getTotalPoints());
+                        habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.getTotalPoints(), item.getPointsType()));
                     }
                 }
 
@@ -1080,11 +1080,11 @@ public class CatalogManager {
                     }
                 }
 
-                if (!purchasedEvent.badges.isEmpty() && !unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.BADGE)) {
+                if (!purchasedEvent.getBadges().isEmpty() && !unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.BADGE)) {
                     unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.BADGE, new ArrayList<>());
                 }
 
-                for (String b : purchasedEvent.badges) {
+                for (String b : purchasedEvent.getBadges()) {
                     HabboBadge badge = new HabboBadge(0, b, 0, habbo);
                     Emulator.getThreading().run(badge);
                     habbo.getInventory().getBadgesComponent().addBadge(badge);
@@ -1096,11 +1096,11 @@ public class CatalogManager {
                     habbo.getClient().sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.getKey(), keys));
                     unseenItems.get(UnseenItemsComposer.AddHabboItemCategory.BADGE).add(badge.getId());
                 }
-                habbo.getClient().getHabbo().getHabboStats().addPurchase(purchasedEvent.catalogItem);
+                habbo.getClient().getHabbo().getHabboStats().addPurchase(purchasedEvent.getCatalogItem());
 
                 habbo.getClient().sendResponse(new UnseenItemsComposer(unseenItems));
 
-                habbo.getClient().sendResponse(new PurchaseOKMessageComposer(purchasedEvent.catalogItem));
+                habbo.getClient().sendResponse(new PurchaseOKMessageComposer(purchasedEvent.getCatalogItem()));
                 habbo.getClient().sendResponse(new FurniListInvalidateComposer());
 
                 THashSet<String> itemIds = new THashSet<>();
@@ -1113,11 +1113,11 @@ public class CatalogManager {
                     Emulator.getThreading().run(new CatalogPurchaseLogEntry(
                             Emulator.getIntUnixTimestamp(),
                             purchasedEvent.habbo.getHabboInfo().getId(),
-                            purchasedEvent.catalogItem != null ? purchasedEvent.catalogItem.getId() : 0,
+                            purchasedEvent.getCatalogItem() != null ? purchasedEvent.getCatalogItem().getId() : 0,
                             String.join(";", itemIds),
-                            purchasedEvent.catalogItem != null ? purchasedEvent.catalogItem.getName() : "",
-                            purchasedEvent.totalCredits,
-                            purchasedEvent.totalPoints,
+                            purchasedEvent.getCatalogItem() != null ? purchasedEvent.getCatalogItem().getName() : "",
+                            purchasedEvent.getTotalCredits(),
+                            purchasedEvent.getTotalPoints(),
                             item.getPointsType(),
                             amount
                     ));

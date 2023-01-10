@@ -22,14 +22,14 @@ public class UpdateGuildIdentityEvent extends MessageHandler {
                 if (nameEvent.isCancelled())
                     return;
 
-                if (guild.getName().equals(nameEvent.name) && guild.getDescription().equals(nameEvent.description))
+                if (guild.getName().equals(nameEvent.getName()) && guild.getDescription().equals(nameEvent.getDescription()))
                     return;
 
-                if(nameEvent.name.length() > 29 || nameEvent.description.length() > 254)
+                if(nameEvent.getName().length() > 29 || nameEvent.getDescription().length() > 254)
                     return;
 
-                guild.setName(nameEvent.name);
-                guild.setDescription(nameEvent.description);
+                guild.setName(nameEvent.getName());
+                guild.setDescription(nameEvent.getDescription());
                 guild.needsUpdate = true;
                 guild.run();
 

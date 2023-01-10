@@ -82,7 +82,7 @@ public class MoveAvatarEvent extends MessageHandler {
                             Emulator.getPluginManager().fireEvent(event);
 
                             if (!event.isCancelled()) {
-                                if (!event.idle) {
+                                if (!event.isIdle()) {
                                     if (roomUnit.getRoom() != null) roomUnit.getRoom().unIdle(habbo);
                                     roomUnit.resetIdleTimer();
                                 }
