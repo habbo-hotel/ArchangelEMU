@@ -5,12 +5,11 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeboxSongDisksMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.UserSongDisksInventoryMessageComposer;
 
-public class JukeBoxEventOne extends MessageHandler {
+public class JukeBoxEventOne extends JukeboxEvent {
     @Override
     public void handle() {
-        TraxManager traxManager = this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager();
-        this.client.sendResponse(new JukeboxSongDisksMessageComposer(traxManager.getSongs(), traxManager.totalLength()));
-        this.client.sendResponse(new UserSongDisksInventoryMessageComposer(traxManager.myList(this.client.getHabbo())));
-        this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().updateCurrentPlayingSong(this.client.getHabbo());
+        updateHabboWithCurrentPlaying();
     }
+
+
 }

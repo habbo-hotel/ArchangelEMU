@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class WiredConditionNotFurniTypeMatch extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.NOT_STUFF_IS;
 
-    private THashSet<HabboItem> items = new THashSet<>();
+    private final THashSet<HabboItem> items = new THashSet<>();
 
     public WiredConditionNotFurniTypeMatch(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -39,8 +39,7 @@ public class WiredConditionNotFurniTypeMatch extends InteractionWiredCondition {
 
         if (stuff != null) {
             if (stuff.length >= 1) {
-                if (stuff[0] instanceof HabboItem) {
-                    HabboItem triggeringItem = (HabboItem)stuff[0];
+                if (stuff[0] instanceof HabboItem triggeringItem) {
                     return this.items.stream().noneMatch(item -> item == triggeringItem);
                 }
             }

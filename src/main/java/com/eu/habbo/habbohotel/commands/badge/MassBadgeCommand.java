@@ -1,6 +1,7 @@
-package com.eu.habbo.habbohotel.commands;
+package com.eu.habbo.habbohotel.commands.badge;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -14,7 +15,7 @@ import gnu.trove.map.hash.THashMap;
 
 import java.util.Map;
 
-public class MassBadgeCommand extends Command {
+public class MassBadgeCommand extends BaseBadgeCommand {
     public MassBadgeCommand() {
         super("cmd_massbadge", Emulator.getTexts().getValue("commands.keys.cmd_massbadge").split(";"));
     }
@@ -27,23 +28,12 @@ public class MassBadgeCommand extends Command {
             badge = params[1];
 
             if (!badge.isEmpty()) {
-                THashMap<String, String> keys = new THashMap<>();
-                keys.put("display", "BUBBLE");
-                keys.put("image", "${image.library.url}album1584/" + badge + ".gif");
-                keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
-                ServerMessage message = new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.getKey(), keys).compose();
+                ServerMessage message = createServerMessage(badge);
 
                 for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
                     Habbo habbo = set.getValue();
 
-                    if (habbo.isOnline()) {
-                        if (habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && !habbo.getInventory().getBadgesComponent().hasBadge(badge)) {
-                            HabboBadge b = BadgesComponent.createBadge(badge, habbo);
-
-                            habbo.getClient().sendResponse(new BadgeReceivedComposer(b));
-                            habbo.getClient().sendResponse(message);
-                        }
-                    }
+                    sendBadgeToClient(badge, message, habbo);
                 }
                 return true;
             }
@@ -53,4 +43,6 @@ public class MassBadgeCommand extends Command {
 
 
     }
+
+
 }

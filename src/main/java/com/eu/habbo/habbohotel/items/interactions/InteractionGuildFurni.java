@@ -10,14 +10,13 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class InteractionGuildFurni extends InteractionDefault {
     private int guildId;
-    private static final THashSet<String> ROTATION_8_ITEMS = new THashSet<>() {
-        {
-            this.add("gld_wall_tall");
-        }
-    };
+    private static final THashSet<String> ROTATION_8_ITEMS = new THashSet<>(
+            List.of("gld_wall_tall")
+    );
 
     public InteractionGuildFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);

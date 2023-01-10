@@ -50,7 +50,7 @@ public class WiredConditionLessTimeElapsed extends InteractionWiredCondition {
                 if (!wiredData.equals(""))
                     this.cycles = Integer.parseInt(wiredData);
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

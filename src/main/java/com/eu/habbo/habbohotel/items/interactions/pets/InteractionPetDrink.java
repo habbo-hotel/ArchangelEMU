@@ -50,9 +50,7 @@ public class InteractionPetDrink extends InteractionDefault {
 
             if (closestTile != null && !closestTile.equals(client.getHabbo().getRoomUnit().getCurrentLocation())) {
                 List<Runnable> onSuccess = new ArrayList<>();
-                onSuccess.add(() -> {
-                    this.change(room, this.getBaseItem().getStateCount() - 1);
-                });
+                onSuccess.add(() -> this.change(room, this.getBaseItem().getStateCount() - 1));
 
                 client.getHabbo().getRoomUnit().setGoalLocation(closestTile);
                 Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), closestTile, room, onSuccess, new ArrayList<>()));

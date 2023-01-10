@@ -14,13 +14,6 @@ public class RecyclerPrizesLayout extends CatalogPage {
     @Override
     public void serialize(ServerMessage message) {
         message.appendString("recycler_prizes");
-        message.appendInt(3);
-        message.appendString(super.getHeaderImage());
-        message.appendString(super.getTeaserImage());
-        message.appendString(super.getSpecialImage());
-        message.appendInt(3);
-        message.appendString(super.getTextOne());
-        message.appendString(super.getTextDetails());
-        message.appendString(super.getTextTeaser());
+        appendImagesAndText(message);
     }
 }

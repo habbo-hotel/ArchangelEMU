@@ -1,13 +1,14 @@
-package com.eu.habbo.habbohotel.commands;
+package com.eu.habbo.habbohotel.commands.points;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.util.Map;
 
-public class MassPointsCommand extends Command {
+public class MassPointsCommand extends BasePointsCommand {
     public MassPointsCommand() {
         super("cmd_masspoints", Emulator.getTexts().getValue("commands.keys.cmd_masspoints").split(";"));
     }

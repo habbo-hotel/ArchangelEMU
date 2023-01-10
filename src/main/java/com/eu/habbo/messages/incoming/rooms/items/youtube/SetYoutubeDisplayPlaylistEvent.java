@@ -13,7 +13,7 @@ import com.eu.habbo.threading.runnables.YoutubeAdvanceVideo;
 
 import java.util.Optional;
 
-public class SetYoutubeDisplayPlaylistEvent extends MessageHandler {
+public class SetYoutubeDisplayPlaylistEvent extends YoutubeEvent {
     @Override
     public void handle() {
         int itemId = this.packet.readInt();
@@ -21,13 +21,9 @@ public class SetYoutubeDisplayPlaylistEvent extends MessageHandler {
 
         Habbo habbo = this.client.getHabbo();
 
-        if (habbo == null) return;
-
+        if (!validate(habbo)) return;
 
         Room room = habbo.getHabboInfo().getCurrentRoom();
-
-        if (room == null) return;
-        if (!room.isOwner(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER)) return;
 
 
         HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);

@@ -115,7 +115,7 @@ public class WiredEffectGiveRespect extends InteractionWiredEffect {
 
                 try {
                     this.respects = Integer.parseInt(data[1]);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
 

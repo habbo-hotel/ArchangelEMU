@@ -14,7 +14,7 @@ public class CustomRoomLayout extends RoomLayout implements Runnable {
     private final int roomId;
     private boolean needsUpdate;
 
-    public CustomRoomLayout(ResultSet set, Room room) throws SQLException {
+    public CustomRoomLayout(ResultSet set, Room room) {
         super(set, room);
 
         this.roomId = room.getId();

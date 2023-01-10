@@ -14,12 +14,6 @@ public class GuildForumLayout extends CatalogPage {
     @Override
     public void serialize(ServerMessage message) {
         message.appendString("guild_forum");
-        message.appendInt(2);
-        message.appendString(super.getHeaderImage());
-        message.appendString(super.getTeaserImage());
-        message.appendInt(3);
-        message.appendString(super.getTextOne());
-        message.appendString(super.getTextDetails());
-        message.appendString(super.getTextTeaser());
+        appendGuildImagesAndText(message);
     }
 }

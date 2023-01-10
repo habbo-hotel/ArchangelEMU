@@ -17,7 +17,7 @@ public class ConsoleInfoCommand extends ConsoleCommand {
     public void handle(String[] args) {
         int seconds = Emulator.getIntUnixTimestamp() - Emulator.getTimeStarted();
         int day = (int) TimeUnit.SECONDS.toDays(seconds);
-        long hours = TimeUnit.SECONDS.toHours(seconds) - (day * 24);
+        long hours = TimeUnit.SECONDS.toHours(seconds) - (day * 24L);
         long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds) * 60);
         long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) * 60);
 

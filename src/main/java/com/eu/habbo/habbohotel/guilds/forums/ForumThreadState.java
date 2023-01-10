@@ -11,7 +11,7 @@ public enum ForumThreadState {
     HIDDEN_BY_GUILD_ADMIN(20);
 
     @Getter
-    private int stateId;
+    private final int stateId;
 
 
     public static ForumThreadState fromValue(int value) {

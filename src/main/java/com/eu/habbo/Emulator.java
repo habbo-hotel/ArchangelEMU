@@ -217,13 +217,14 @@ public final class Emulator {
         try {
             String filepath = new File(Emulator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
             MessageDigest md = MessageDigest.getInstance("MD5");// MD5
-            FileInputStream fis = new FileInputStream(filepath);
-            byte[] dataBytes = new byte[1024];
-            int nread;
-            while ((nread = fis.read(dataBytes)) != -1)
-                md.update(dataBytes, 0, nread);
-            byte[] mdbytes = md.digest();
-            for (byte mdbyte : mdbytes) sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
+            try(FileInputStream fis = new FileInputStream(filepath)) {
+                byte[] dataBytes = new byte[1024];
+                int nread;
+                while ((nread = fis.read(dataBytes)) != -1)
+                    md.update(dataBytes, 0, nread);
+                byte[] mdbytes = md.digest();
+                for (byte mdbyte : mdbytes) sb.append(Integer.toString((mdbyte & 0xff) + 0x100, 16).substring(1));
+            }
         } catch (Exception e) {
             build = "4.0 Developer Preview Branch";
             return;

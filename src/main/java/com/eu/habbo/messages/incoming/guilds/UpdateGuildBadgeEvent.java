@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.guilds.GuildChangedBadgeEvent;
 
-public class UpdateGuildBadgeEvent extends MessageHandler {
+public class UpdateGuildBadgeEvent extends GuildBadgeEvent {
     @Override
     public void handle() {
         int guildId = this.packet.readInt();
@@ -22,25 +22,7 @@ public class UpdateGuildBadgeEvent extends MessageHandler {
 
                 int count = this.packet.readInt();
 
-                StringBuilder badge = new StringBuilder();
-
-                byte base = 1;
-
-                while (base < count) {
-                    int id = this.packet.readInt();
-                    int color = this.packet.readInt();
-                    int pos = this.packet.readInt();
-
-                    if (base == 1) {
-                        badge.append("b");
-                    } else {
-                        badge.append("s");
-                    }
-
-                    badge.append(id < 100 ? "0" : "").append(id < 10 ? "0" : "").append(id).append(color < 10 ? "0" : "").append(color).append(pos);
-
-                    base += 3;
-                }
+                StringBuilder badge = createBadge(count);
 
                 if (guild.getBadge().equalsIgnoreCase(badge.toString()))
                     return;
@@ -63,4 +45,6 @@ public class UpdateGuildBadgeEvent extends MessageHandler {
             }
         }
     }
+
+
 }

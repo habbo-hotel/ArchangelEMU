@@ -1,6 +1,7 @@
-package com.eu.habbo.habbohotel.commands;
+package com.eu.habbo.habbohotel.commands.bans;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.modtool.ModToolBan;
 import com.eu.habbo.habbohotel.modtool.ModToolBanType;

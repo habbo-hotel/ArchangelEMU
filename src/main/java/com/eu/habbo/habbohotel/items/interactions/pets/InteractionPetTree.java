@@ -40,12 +40,12 @@ public class InteractionPetTree extends InteractionDefault {
 
         Pet pet = room.getPet(roomUnit);
         if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
-            RoomUnitStatus task = RoomUnitStatus.HANG;
-            switch(pet.getTask()){
-                case RING_OF_FIRE: task = RoomUnitStatus.RINGOFFIRE; break;
-                case SWING: task = RoomUnitStatus.SWING; break;
-                case ROLL: task = RoomUnitStatus.ROLL; break;
-            }
+            RoomUnitStatus task = switch (pet.getTask()) {
+                case RING_OF_FIRE -> RoomUnitStatus.RINGOFFIRE;
+                case SWING -> RoomUnitStatus.SWING;
+                case ROLL -> RoomUnitStatus.ROLL;
+                default -> RoomUnitStatus.HANG;
+            };
             if (pet.getEnergy() >= 35 && task != RoomUnitStatus.HANG) {
 
                  pet.getRoomUnit().setCanWalk(false);

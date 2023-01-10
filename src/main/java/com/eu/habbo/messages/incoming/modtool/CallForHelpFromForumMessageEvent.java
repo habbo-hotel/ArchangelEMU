@@ -12,7 +12,7 @@ import com.eu.habbo.threading.runnables.InsertModToolIssue;
 
 public class CallForHelpFromForumMessageEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int groupId = this.packet.readInt();
         int threadId = this.packet.readInt();
         int commentId = this.packet.readInt();

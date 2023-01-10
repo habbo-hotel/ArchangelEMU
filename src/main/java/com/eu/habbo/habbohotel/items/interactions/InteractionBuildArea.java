@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class InteractionBuildArea extends InteractionCustomValues {
-    protected static final THashMap<String, String> defaultValues = new THashMap<String, String>();
+    protected static final THashMap<String, String> defaultValues = new THashMap<>();
 
     private final THashSet<RoomTile> tiles;
 
@@ -110,7 +110,6 @@ public class InteractionBuildArea extends InteractionCustomValues {
             }
         }
 
-        THashSet<RoomTile> oldTiles = this.tiles;
         THashSet<RoomTile> newTiles = new THashSet<>();
 
         int minX = Math.max(0, newLocation.getX() - Integer.parseInt(this.values.get("tilesBack")));
@@ -127,7 +126,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
         }
 
         if (!canBuild.isEmpty()) {
-            for (RoomTile tile : oldTiles) {
+            for (RoomTile tile : this.tiles) {
                 THashSet<HabboItem> tileItems = room.getItemsAt(tile);
                 if (newTiles.contains(tile)) continue;
                 for (HabboItem tileItem : tileItems) {

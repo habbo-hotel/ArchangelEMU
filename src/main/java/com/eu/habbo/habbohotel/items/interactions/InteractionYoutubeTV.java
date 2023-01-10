@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayVideoMessageComposer;
+import com.eu.habbo.threading.runnables.YoutubeAdvanceVideo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

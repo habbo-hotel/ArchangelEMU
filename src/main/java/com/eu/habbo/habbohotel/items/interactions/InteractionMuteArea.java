@@ -19,29 +19,18 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class InteractionMuteArea extends InteractionCustomValues {
-    public static final THashMap<String, String> defaultValues = new THashMap<>() {
-        {
-            this.put("tilesLeft", "0");
-        }
-
-        {
-            this.put("tilesRight", "0");
-        }
-
-        {
-            this.put("tilesFront", "0");
-        }
-
-        {
-            this.put("tilesBack", "0");
-        }
-
-        {
-            this.put("state", "0");
-        }
-    };
+    public static final THashMap<String, String> defaultValues = new THashMap<>(
+            Map.of(
+                "tilesLeft", "0",
+                    "tilesRight", "0",
+                    "tilesFront", "0",
+                    "tilesBack", "0",
+                    "state", "0"
+            )
+    );
 
     private final THashSet<RoomTile> tiles;
 

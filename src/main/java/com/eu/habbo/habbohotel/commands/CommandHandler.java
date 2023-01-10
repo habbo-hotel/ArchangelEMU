@@ -2,6 +2,17 @@ package com.eu.habbo.habbohotel.commands;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.CommandLog;
+import com.eu.habbo.habbohotel.commands.badge.BadgeCommand;
+import com.eu.habbo.habbohotel.commands.badge.MassBadgeCommand;
+import com.eu.habbo.habbohotel.commands.badge.RoomBadgeCommand;
+import com.eu.habbo.habbohotel.commands.bans.BanCommand;
+import com.eu.habbo.habbohotel.commands.bans.MachineBanCommand;
+import com.eu.habbo.habbohotel.commands.bans.SuperbanCommand;
+import com.eu.habbo.habbohotel.commands.gift.GiftCommand;
+import com.eu.habbo.habbohotel.commands.gift.MassGiftCommand;
+import com.eu.habbo.habbohotel.commands.points.MassPointsCommand;
+import com.eu.habbo.habbohotel.commands.points.PointsCommand;
+import com.eu.habbo.habbohotel.commands.points.RoomPointsCommand;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.permissions.PermissionSetting;

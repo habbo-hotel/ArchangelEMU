@@ -17,7 +17,7 @@ import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 
 public class ModerateThreadEvent extends MessageHandler {
     @Override
-    public void handle() throws Exception {
+    public void handle() {
         int guildId = packet.readInt();
         int threadId = packet.readInt();
         int state = packet.readInt();

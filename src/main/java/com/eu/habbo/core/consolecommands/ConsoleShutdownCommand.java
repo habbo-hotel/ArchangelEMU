@@ -8,7 +8,7 @@ public class ConsoleShutdownCommand extends ConsoleCommand {
     }
 
     @Override
-    public void handle(String[] args) throws Exception {
+    public void handle(String[] args) {
         new ShutdownCommand().handle(null, args);
     }
 }

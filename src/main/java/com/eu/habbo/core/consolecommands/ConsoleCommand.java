@@ -59,6 +59,6 @@ public abstract class ConsoleCommand {
         return false;
     }
 
-    public abstract void handle(String[] args) throws Exception;
+    public abstract void handle(String[] args);
 
 }

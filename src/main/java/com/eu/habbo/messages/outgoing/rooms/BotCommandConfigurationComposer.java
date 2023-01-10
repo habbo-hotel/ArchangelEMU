@@ -21,12 +21,9 @@ public class BotCommandConfigurationComposer extends MessageComposer {
         this.response.appendInt(this.settingId);
 
         switch (this.settingId) {
-            case 1:
-                this.response.appendString("");
-                break;
-            case 2:
+            case 1, 3, 4, 6 -> this.response.appendString("");
+            case 2 -> {
                 StringBuilder data = new StringBuilder();
-
                 if (this.bot.hasChat()) {
                     for (String s : this.bot.getChatLines()) {
                         data.append(s).append("\r");
@@ -34,28 +31,13 @@ public class BotCommandConfigurationComposer extends MessageComposer {
                 } else {
                     data.append(Bot.NO_CHAT_SET);
                 }
-
-
                 data.append(";#;").append(this.bot.isChatAuto() ? "true" : "false");
                 data.append(";#;").append(this.bot.getChatDelay());
                 data.append(";#;").append(this.bot.isChatRandom() ? "true" : "false");
                 this.response.appendString(data.toString());
-                break;
-            case 3:
-                this.response.appendString("");
-                break;
-            case 4:
-                this.response.appendString("");
-                break;
-            case 5:
-                this.response.appendString(this.bot.getName());
-                break;
-            case 6:
-                this.response.appendString("");
-                break;
-            case 9:
-                this.response.appendString(this.bot.getMotto());
-                break;
+            }
+            case 5 -> this.response.appendString(this.bot.getName());
+            case 9 -> this.response.appendString(this.bot.getMotto());
         }
         return this.response;
     }

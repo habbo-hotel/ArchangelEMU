@@ -9,13 +9,14 @@ import gnu.trove.map.hash.THashMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class InteractionInformationTerminal extends InteractionCustomValues {
-    public static final THashMap<String, String> defaultValues = new THashMap<>() {
-        {
-            this.put("internalLink", "habbopages/chat/commands");
-        }
-    };
+    public static final THashMap<String, String> defaultValues = new THashMap<>(
+            Map.of(
+                    "internalLink", "habbopages/chat/commands"
+            )
+    );
 
     public InteractionInformationTerminal(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem, defaultValues);

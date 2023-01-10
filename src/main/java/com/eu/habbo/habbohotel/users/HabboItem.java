@@ -37,6 +37,7 @@ import java.util.List;
 @Slf4j
 public abstract class HabboItem implements Runnable, IEventTriggers {
     
+    @SuppressWarnings("rawtypes")
     private static final Class[] TOGGLING_INTERACTIONS = new Class[]{
             InteractionGameTimer.class,
             InteractionWired.class,

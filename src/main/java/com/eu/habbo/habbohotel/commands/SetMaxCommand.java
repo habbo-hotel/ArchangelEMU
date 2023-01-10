@@ -25,10 +25,9 @@ public class SetMaxCommand extends Command {
             } else {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_setmax.invalid_number"), RoomChatMessageBubbles.ALERT);
             }
-            return true;
         } else {
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_setmax.forgot_number"), RoomChatMessageBubbles.ALERT);
-            return true;
         }
+        return true;
     }
 }
