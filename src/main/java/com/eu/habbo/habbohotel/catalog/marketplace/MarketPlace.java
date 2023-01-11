@@ -26,8 +26,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
+
 
 @Slf4j
+
 public class MarketPlace {
 
     //Configuration. Loaded from database & updated accordingly.
@@ -35,6 +38,9 @@ public class MarketPlace {
 
     //Currency to use.
     public static int MARKETPLACE_CURRENCY = 0;
+
+    private MarketPlace() {
+    }
 
 
     public static THashSet<MarketPlaceOffer> getOwnOffers(Habbo habbo) {
@@ -47,7 +53,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         return offers;
@@ -105,7 +111,7 @@ public class MarketPlace {
                     }
                 }
             } catch (SQLException e) {
-                log.error("Caught SQL exception", e);
+                log.error(CAUGHT_SQL_EXCEPTION, e);
                 habbo.getClient().sendResponse(new MarketplaceCancelOfferResultComposer(offer, false));
             }
         }
@@ -169,7 +175,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         return offers;
@@ -199,7 +205,7 @@ public class MarketPlace {
             message.appendInt(1);
             message.appendInt(itemId);
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
 
@@ -214,7 +220,7 @@ public class MarketPlace {
                 number = set.getInt("number");
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         return number;
@@ -232,7 +238,7 @@ public class MarketPlace {
                 avg = set.getInt("avg");
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         return calculateCommision(avg);
@@ -241,58 +247,59 @@ public class MarketPlace {
 
     public static void buyItem(int offerId, GameClient client) {
         GetMarketplaceOffersEvent.cachedResults.clear();
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM marketplace_items WHERE id = ? LIMIT 1")) {
-                statement.setInt(1, offerId);
-                try (ResultSet set = statement.executeQuery()) {
-                    if (set.next()) {
-                        try (PreparedStatement itemStatement = connection.prepareStatement("SELECT * FROM items WHERE id = ? LIMIT 1", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-                            itemStatement.setInt(1, set.getInt("item_id"));
-                            try (ResultSet itemSet = itemStatement.executeQuery()) {
-                                itemSet.first();
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM marketplace_items WHERE id = ? LIMIT 1")) {
+            statement.setInt(1, offerId);
+            try (ResultSet set = statement.executeQuery()) {
+                if (set.next()) {
+                    try (PreparedStatement itemStatement = connection.prepareStatement("SELECT * FROM items WHERE id = ? LIMIT 1", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+                        itemStatement.setInt(1, set.getInt("item_id"));
+                        try (ResultSet itemSet = itemStatement.executeQuery()) {
+                            itemSet.first();
 
-                                if (itemSet.getRow() > 0) {
-                                    int price = MarketPlace.calculateCommision(set.getInt("price"));
-                                    if (set.getInt("state") != 1) {
-                                        sendErrorMessage(client, set.getInt("item_id"), offerId);
-                                    } else if ((MARKETPLACE_CURRENCY == 0 && price > client.getHabbo().getHabboInfo().getCredits()) || (MARKETPLACE_CURRENCY > 0 && price > client.getHabbo().getHabboInfo().getCurrencyAmount(MARKETPLACE_CURRENCY))) {
-                                        client.sendResponse(new MarketplaceBuyOfferResultComposer(MarketplaceBuyOfferResultComposer.NOT_ENOUGH_CREDITS, 0, offerId, price));
-                                    } else {
-                                        try (PreparedStatement updateOffer = connection.prepareStatement("UPDATE marketplace_items SET state = 2, sold_timestamp = ? WHERE id = ?")) {
-                                            updateOffer.setInt(1, Emulator.getIntUnixTimestamp());
-                                            updateOffer.setInt(2, offerId);
-                                            updateOffer.execute();
-                                        }
-                                        Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(set.getInt(DatabaseConstants.USER_ID));
-                                        HabboItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(itemSet);
+                            if (itemSet.getRow() <= 0) {
+                                return;
+                            }
 
-                                        MarketPlaceItemSoldEvent event = new MarketPlaceItemSoldEvent(habbo, client.getHabbo(), item, set.getInt("price"));
-                                        if (Emulator.getPluginManager().fireEvent(event).isCancelled()) {
-                                            return;
-                                        }
-                                        event.price = calculateCommision(event.price);
+                            int price = MarketPlace.calculateCommision(set.getInt("price"));
+                            if (set.getInt("state") != 1) {
+                                sendErrorMessage(client, set.getInt("item_id"), offerId);
+                            } else if ((MARKETPLACE_CURRENCY == 0 && price > client.getHabbo().getHabboInfo().getCredits()) || (MARKETPLACE_CURRENCY > 0 && price > client.getHabbo().getHabboInfo().getCurrencyAmount(MARKETPLACE_CURRENCY))) {
+                                client.sendResponse(new MarketplaceBuyOfferResultComposer(MarketplaceBuyOfferResultComposer.NOT_ENOUGH_CREDITS, 0, offerId, price));
+                            } else {
+                                try (PreparedStatement updateOffer = connection.prepareStatement("UPDATE marketplace_items SET state = 2, sold_timestamp = ? WHERE id = ?")) {
+                                    updateOffer.setInt(1, Emulator.getIntUnixTimestamp());
+                                    updateOffer.setInt(2, offerId);
+                                    updateOffer.execute();
+                                }
+                                Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(set.getInt(DatabaseConstants.USER_ID));
+                                HabboItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(itemSet);
 
-                                        item.setUserId(client.getHabbo().getHabboInfo().getId());
-                                        item.needsUpdate(true);
-                                        Emulator.getThreading().run(item);
+                                MarketPlaceItemSoldEvent event = new MarketPlaceItemSoldEvent(habbo, client.getHabbo(), item, set.getInt("price"));
+                                if (Emulator.getPluginManager().fireEvent(event).isCancelled()) {
+                                    return;
+                                }
+                                event.price = calculateCommision(event.price);
 
-                                        client.getHabbo().getInventory().getItemsComponent().addItem(item);
+                                item.setUserId(client.getHabbo().getHabboInfo().getId());
+                                item.needsUpdate(true);
+                                Emulator.getThreading().run(item);
 
-                                        if (MARKETPLACE_CURRENCY == 0) {
-                                            client.getHabbo().giveCredits(-event.price);
-                                        } else {
-                                            client.getHabbo().givePoints(MARKETPLACE_CURRENCY, -event.price);
-                                        }
+                                client.getHabbo().getInventory().getItemsComponent().addItem(item);
 
-                                        client.sendResponse(new CreditBalanceComposer(client.getHabbo()));
-                                        client.sendResponse(new UnseenItemsComposer(item));
-                                        client.sendResponse(new FurniListInvalidateComposer());
-                                        client.sendResponse(new MarketplaceBuyOfferResultComposer(MarketplaceBuyOfferResultComposer.REFRESH, 0, offerId, price));
+                                if (MARKETPLACE_CURRENCY == 0) {
+                                    client.getHabbo().giveCredits(-event.price);
+                                } else {
+                                    client.getHabbo().givePoints(MARKETPLACE_CURRENCY, -event.price);
+                                }
 
-                                        if (habbo != null) {
-                                            habbo.getInventory().getOffer(offerId).setState(MarketPlaceState.SOLD);
-                                        }
-                                    }
+                                client.sendResponse(new CreditBalanceComposer(client.getHabbo()));
+                                client.sendResponse(new UnseenItemsComposer(item));
+                                client.sendResponse(new FurniListInvalidateComposer());
+                                client.sendResponse(new MarketplaceBuyOfferResultComposer(MarketplaceBuyOfferResultComposer.REFRESH, 0, offerId, price));
+
+                                if (habbo != null) {
+                                    habbo.getInventory().getOffer(offerId).setState(MarketPlaceState.SOLD);
                                 }
                             }
                         }
@@ -300,7 +307,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
 
@@ -308,15 +315,15 @@ public class MarketPlace {
     public static void sendErrorMessage(GameClient client, int baseItemId, int offerId) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT marketplace_items.*, COUNT( * ) AS count\n" +
                 """
-                FROM marketplace_items
-                INNER JOIN items ON marketplace_items.item_id = items.id
-                INNER JOIN items_base ON items.item_id = items_base.id
-                WHERE items_base.sprite_id = ( 
-                SELECT items_base.sprite_id
-                FROM items_base
-                WHERE items_base.id = ? LIMIT 1)
-                ORDER BY price ASC
-                LIMIT 1""", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+                        FROM marketplace_items
+                        INNER JOIN items ON marketplace_items.item_id = items.id
+                        INNER JOIN items_base ON items.item_id = items_base.id
+                        WHERE items_base.sprite_id = (
+                        SELECT items_base.sprite_id
+                        FROM items_base
+                        WHERE items_base.id = ? LIMIT 1)
+                        ORDER BY price
+                        LIMIT 1""", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             statement.setInt(1, baseItemId);
             try (ResultSet countSet = statement.executeQuery()) {
                 countSet.last();
@@ -328,7 +335,7 @@ public class MarketPlace {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
 
@@ -395,7 +402,7 @@ public class MarketPlace {
             statement.setInt(2, offer.getOfferId());
             statement.execute();
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
 

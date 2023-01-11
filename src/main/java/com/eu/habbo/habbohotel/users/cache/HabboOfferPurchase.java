@@ -13,6 +13,7 @@ import java.sql.SQLException;
 
 @Slf4j
 public class HabboOfferPurchase {
+    @Getter
     private final int userId;
     @Getter
     private final int offerId;

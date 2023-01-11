@@ -24,6 +24,8 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
+
 @Slf4j
 public class Pet implements ISerialize, Runnable {
 
@@ -34,15 +36,13 @@ public class Pet implements ISerialize, Runnable {
     @Setter
     public int levelHunger;
 
-    /**
-     * Whether the pet needs to be updated.
-     */
-    public boolean needsUpdate = false;
+    @Setter
+    @Getter
+    private boolean needsUpdate = false;
 
-    /**
-     * Whether the pet needs to be sent as a packet update.
-     */
-    public boolean packetUpdate = false;
+    @Setter
+    @Getter
+    private boolean packetUpdate = false;
     @Getter
     protected int id;
     @Getter
@@ -162,10 +162,10 @@ public class Pet implements ISerialize, Runnable {
     /**
      * Creates a new pet with the given type, race, color, name, and owner.
      *
-     * @param type the type of the pet
-     * @param race the race of the pet
-     * @param color the color of the pet
-     * @param name the name of the pet
+     * @param type   the type of the pet
+     * @param race   the race of the pet
+     * @param color  the color of the pet
+     * @param name   the name of the pet
      * @param userId the ID of the user that owns the pet
      */
     public Pet(int type, int race, String color, String name, int userId) {
@@ -281,7 +281,7 @@ public class Pet implements ISerialize, Runnable {
      */
     @Override
     public void run() {
-        if (this.needsUpdate) {
+        if (this.isNeedsUpdate()) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
                 if (this.id > 0) {
                     try (PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET room_id = ?, experience = ?, energy = ?, respect = ?, x = ?, y = ?, z = ?, rot = ?, hunger = ?, thirst = ?, happyness = ?, created = ? WHERE id = ?")) {
@@ -323,16 +323,16 @@ public class Pet implements ISerialize, Runnable {
                     }
                 }
             } catch (SQLException e) {
-                log.error("Caught SQL exception", e);
+                log.error(CAUGHT_SQL_EXCEPTION, e);
             }
 
-            this.needsUpdate = false;
+            this.setNeedsUpdate(false);
         }
     }
 
     /**
-     *  Performs a cycle of updates for the pet. This includes updates to their walking, tasks, happiness, hunger, thirst, and energy levels.
-     *  It also includes updates to their gestures and random actions, as well as vocalizing if they are not muted.
+     * Performs a cycle of updates for the pet. This includes updates to their walking, tasks, happiness, hunger, thirst, and energy levels.
+     * It also includes updates to their gestures and random actions, as well as vocalizing if they are not muted.
      */
     public void cycle() {
         this.idleCommandTicks++;
@@ -341,7 +341,7 @@ public class Pet implements ISerialize, Runnable {
         if (this.roomUnit != null && this.task != PetTasks.RIDE) {
             if (time - this.gestureTickTimeout > 5 && this.roomUnit.hasStatus(RoomUnitStatus.GESTURE)) {
                 this.roomUnit.removeStatus(RoomUnitStatus.GESTURE);
-                this.packetUpdate = true;
+                this.setPacketUpdate(true);
             }
 
             if (time - this.postureTimeout > 1 && this.task == null) {
@@ -373,7 +373,6 @@ public class Pet implements ISerialize, Runnable {
                     if (this.levelThirst > 0)
                         this.levelThirst--;
 
-                   //this.addEnergy(5);
 
                     this.addHappiness(1);
 
@@ -430,27 +429,25 @@ public class Pet implements ISerialize, Runnable {
                 this.randomActionTickTimeout = time + (10 * Emulator.getRandom().nextInt(60));
             }
 
-            if (!this.muted) {
-                if (this.chatTimeout <= time) {
-                    if (this.energy <= 30) {
-                        this.say(this.petData.randomVocal(PetVocalsType.TIRED));
-                        if (this.energy <= 10)
-                            this.findNest();
-                    } else if (this.happiness > 85) {
-                        this.say(this.petData.randomVocal(PetVocalsType.GENERIC_HAPPY));
-                    } else if (this.happiness < 15) {
-                        this.say(this.petData.randomVocal(PetVocalsType.GENERIC_SAD));
-                    } else if (this.levelHunger > 50) {
-                        this.say(this.petData.randomVocal(PetVocalsType.HUNGRY));
-                        this.eat();
-                    } else if (this.levelThirst > 50) {
-                        this.say(this.petData.randomVocal(PetVocalsType.THIRSTY));
-                        this.drink();
-                    }
-
-                    int timeOut = Emulator.getRandom().nextInt(30);
-                    this.chatTimeout = time + (timeOut < 3 ? 30 : timeOut);
+            if (!this.muted && this.chatTimeout <= time) {
+                if (this.energy <= 30) {
+                    this.say(this.petData.randomVocal(PetVocalsType.TIRED));
+                    if (this.energy <= 10)
+                        this.findNest();
+                } else if (this.happiness > 85) {
+                    this.say(this.petData.randomVocal(PetVocalsType.GENERIC_HAPPY));
+                } else if (this.happiness < 15) {
+                    this.say(this.petData.randomVocal(PetVocalsType.GENERIC_SAD));
+                } else if (this.levelHunger > 50) {
+                    this.say(this.petData.randomVocal(PetVocalsType.HUNGRY));
+                    this.eat();
+                } else if (this.levelThirst > 50) {
+                    this.say(this.petData.randomVocal(PetVocalsType.THIRSTY));
+                    this.drink();
                 }
+
+                int timeOut = Emulator.getRandom().nextInt(30);
+                this.chatTimeout = time + (timeOut < 3 ? 30 : timeOut);
             }
         }
     }
@@ -459,8 +456,8 @@ public class Pet implements ISerialize, Runnable {
      * Handles a pet command.
      *
      * @param command The command to handle.
-     * @param habbo The user who issued the command.
-     * @param data The data for the command.
+     * @param habbo   The user who issued the command.
+     * @param data    The data for the command.
      */
     public void handleCommand(PetCommand command, Habbo habbo, String[] data) {
         this.idleCommandTicks = 0;
@@ -520,7 +517,7 @@ public class Pet implements ISerialize, Runnable {
                 this.roomUnit.setStatus(entry.getKey(), entry.getValue());
             }
 
-            if (!keys.isEmpty()) this.packetUpdate = true;
+            if (!keys.isEmpty()) this.setPacketUpdate(true);
         }
     }
 
@@ -602,7 +599,8 @@ public class Pet implements ISerialize, Runnable {
             if (this.getRoomUnit().getCurrentLocation().distance(this.room.getLayout().getTile(item.getX(), item.getY())) == 0) {
                 try {
                     item.onWalkOn(this.getRoomUnit(), this.getRoom(), null);
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             } else {
                 this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
             }
@@ -615,11 +613,9 @@ public class Pet implements ISerialize, Runnable {
      */
     public void eat() {
         HabboItem item = this.petData.randomFoodItem(this.room.getRoomSpecialTypes().getPetFoods());
-        {
-            if (item != null) {
-                this.roomUnit.setCanWalk(true);
-                this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
-            }
+        if (item != null) {
+            this.roomUnit.setCanWalk(true);
+            this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
         }
     }
 
@@ -630,19 +626,19 @@ public class Pet implements ISerialize, Runnable {
      */
     public boolean findToy() {
         HabboItem item = this.petData.randomToyItem(this.room.getRoomSpecialTypes().getPetToys());
-        {
-            if (item != null) {
-                this.roomUnit.setCanWalk(true);
-                if (this.getRoomUnit().getCurrentLocation().distance(this.room.getLayout().getTile(item.getX(), item.getY())) == 0) {
-                    try {
-                        item.onWalkOn(this.getRoomUnit(), this.getRoom(), null);
-                    } catch (Exception ignored) {}
-                    return true;
+        if (item != null) {
+            this.roomUnit.setCanWalk(true);
+            if (this.getRoomUnit().getCurrentLocation().distance(this.room.getLayout().getTile(item.getX(), item.getY())) == 0) {
+                try {
+                    item.onWalkOn(this.getRoomUnit(), this.getRoom(), null);
+                } catch (Exception ignored) {
                 }
-                this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
                 return true;
             }
+            this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
+            return true;
         }
+
         return false;
     }
 
@@ -656,18 +652,19 @@ public class Pet implements ISerialize, Runnable {
     public boolean findPetItem(PetTasks task, Class<? extends HabboItem> type) {
         HabboItem item = this.petData.randomToyHabboItem(this.room.getRoomSpecialTypes().getItemsOfType(type));
 
-            if (item != null) {
-                this.roomUnit.setCanWalk(true);
-                this.setTask(task);
-                if (this.getRoomUnit().getCurrentLocation().distance(this.room.getLayout().getTile(item.getX(), item.getY())) == 0) {
-                       try {
-                            item.onWalkOn(this.getRoomUnit(), this.getRoom(), null);
-                        } catch (Exception ignored) {}
-                       return true;
+        if (item != null) {
+            this.roomUnit.setCanWalk(true);
+            this.setTask(task);
+            if (this.getRoomUnit().getCurrentLocation().distance(this.room.getLayout().getTile(item.getX(), item.getY())) == 0) {
+                try {
+                    item.onWalkOn(this.getRoomUnit(), this.getRoom(), null);
+                } catch (Exception ignored) {
                 }
-                this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
                 return true;
             }
+            this.roomUnit.setGoalLocation(this.room.getLayout().getTile(item.getX(), item.getY()));
+            return true;
+        }
         return false;
     }
 
@@ -710,7 +707,7 @@ public class Pet implements ISerialize, Runnable {
         if (this.room != null) {
             this.room.sendComposer(new PetExperienceComposer(this, amount).compose());
 
-            if(this.level < PetManager.experiences.length + 1 && this.experience >= PetManager.experiences[this.level - 1]) {
+            if (this.level < PetManager.experiences.length + 1 && this.experience >= PetManager.experiences[this.level - 1]) {
                 this.levelUp();
             }
         }
@@ -720,20 +717,20 @@ public class Pet implements ISerialize, Runnable {
      * Levels up the pet if it has enough experience.
      */
     protected void levelUp() {
-            if (this.level >= PetManager.experiences.length + 1)
-                return;
+        if (this.level >= PetManager.experiences.length + 1)
+            return;
 
-            if (this.experience > PetManager.experiences[this.level - 1]) {
-                this.experience = PetManager.experiences[this.level - 1];
-            }
-            this.level++;
-            this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
-            this.addHappiness(100);
-            this.roomUnit.setStatus(RoomUnitStatus.GESTURE, "exp");
-            this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
-            AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
-            this.room.sendComposer(new PetLevelUpdatedComposer(this).compose());
+        if (this.experience > PetManager.experiences[this.level - 1]) {
+            this.experience = PetManager.experiences[this.level - 1];
         }
+        this.level++;
+        this.say(this.petData.randomVocal(PetVocalsType.LEVEL_UP));
+        this.addHappiness(100);
+        this.roomUnit.setStatus(RoomUnitStatus.GESTURE, "exp");
+        this.gestureTickTimeout = Emulator.getIntUnixTimestamp();
+        AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetLevelUp"));
+        this.room.sendComposer(new PetLevelUpdatedComposer(this).compose());
+    }
 
     /**
      * Increases the pet's thirst level by a given amount.
@@ -785,7 +782,7 @@ public class Pet implements ISerialize, Runnable {
         this.addHappiness(10);
         this.addExperience(10);
         this.addRespect();
-        this.needsUpdate = true;
+        this.setNeedsUpdate(true);
 
         if (habbo != null) {
             habbo.getHabboStats().decreasePetRespectPointsToGive();
@@ -808,6 +805,7 @@ public class Pet implements ISerialize, Runnable {
 
     /**
      * Removes this pet from the room.
+     *
      * @param dontSendPackets if true, packets will not be sent to update clients
      */
     public void removeFromRoom(boolean dontSendPackets) {
@@ -823,7 +821,7 @@ public class Pet implements ISerialize, Runnable {
 
         this.roomUnit = null;
         this.room = null;
-        this.needsUpdate = true;
+        this.setNeedsUpdate(true);
     }
 
 }

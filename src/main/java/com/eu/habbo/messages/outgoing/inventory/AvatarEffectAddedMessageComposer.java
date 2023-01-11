@@ -14,10 +14,10 @@ public class AvatarEffectAddedMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.avatarEffectAddedMessageComposer);
-        this.response.appendInt(this.effect.effect); //Type
+        this.response.appendInt(this.effect.getEffect()); //Type
         this.response.appendInt(0); //Unknown Costume?
-        this.response.appendInt(effect.duration > 0 ? effect.duration : Integer.MAX_VALUE); //Duration
-        this.response.appendBoolean(effect.duration <= 0); //Is active
+        this.response.appendInt(effect.getDuration() > 0 ? effect.getDuration() : Integer.MAX_VALUE); //Duration
+        this.response.appendBoolean(effect.getDuration() <= 0); //Is active
         return this.response;
     }
 }

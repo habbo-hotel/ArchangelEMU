@@ -30,18 +30,18 @@ public class AvatarEffectsMessageComposer extends MessageComposer {
                 this.response.appendInt(this.effects.size());
 
                 for (EffectsComponent.HabboEffect effect : effects) {
-                    AvatarEffectsMessageComposer.this.response.appendInt(effect.effect);
+                    AvatarEffectsMessageComposer.this.response.appendInt(effect.getEffect());
                     AvatarEffectsMessageComposer.this.response.appendInt(0);
-                    AvatarEffectsMessageComposer.this.response.appendInt(effect.duration > 0 ? effect.duration : Integer.MAX_VALUE);
-                    AvatarEffectsMessageComposer.this.response.appendInt((effect.duration > 0 ? (effect.total - (effect.isActivated() ? 1 : 0)) : 0));
+                    AvatarEffectsMessageComposer.this.response.appendInt(effect.getDuration() > 0 ? effect.getDuration() : Integer.MAX_VALUE);
+                    AvatarEffectsMessageComposer.this.response.appendInt((effect.getDuration() > 0 ? (effect.getTotal() - (effect.isActivated() ? 1 : 0)) : 0));
 
-                    if(!effect.isActivated() && effect.duration > 0) {
+                    if(!effect.isActivated() && effect.getDuration() > 0) {
                         AvatarEffectsMessageComposer.this.response.appendInt(0);
                     }
                     else {
-                        AvatarEffectsMessageComposer.this.response.appendInt(effect.duration > 0 ? (Emulator.getIntUnixTimestamp() - effect.activationTimestamp) + effect.duration : 0);
+                        AvatarEffectsMessageComposer.this.response.appendInt(effect.getDuration() > 0 ? (Emulator.getIntUnixTimestamp() - effect.getActivationTimestamp()) + effect.getDuration() : 0);
                     }
-                    AvatarEffectsMessageComposer.this.response.appendBoolean(effect.duration <= 0); // is perm
+                    AvatarEffectsMessageComposer.this.response.appendBoolean(effect.getDuration() <= 0); // is perm
                 }
             }
         }

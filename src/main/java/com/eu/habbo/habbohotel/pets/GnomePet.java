@@ -41,7 +41,7 @@ public class GnomePet extends Pet implements IPetLook {
 
     @Override
     public void run() {
-        if (this.needsUpdate) {
+        if (this.isNeedsUpdate()) {
             super.run();
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET gnome_data = ? WHERE id = ? LIMIT 1")) {

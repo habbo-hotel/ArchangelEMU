@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 
+import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
+
 @Slf4j
 public class ForumThreadComment implements Runnable, ISerialize {
 
@@ -76,7 +78,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         return foundComment;
@@ -115,7 +117,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
                 Emulator.getPluginManager().fireEvent(new GuildForumThreadCommentCreated(createdComment));
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         return createdComment;
@@ -172,7 +174,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
 
             this.needsUpdate = false;
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
 }

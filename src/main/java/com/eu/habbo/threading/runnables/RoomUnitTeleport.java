@@ -28,8 +28,8 @@ public class RoomUnitTeleport implements Runnable {
         if (roomUnit == null || roomUnit.getRoom() == null || room.getLayout() == null)
             return;
 
-        if (roomUnit.isLeavingTeleporter) {
-            roomUnit.isWiredTeleporting = false;
+        if (roomUnit.isLeavingTeleporter()) {
+            roomUnit.setWiredTeleporting(false);
             return;
         }
 
@@ -54,7 +54,7 @@ public class RoomUnitTeleport implements Runnable {
         this.roomUnit.setLocation(newLocation);
         //this.room.sendComposer(teleportMessage);
         this.roomUnit.statusUpdate(true);
-        roomUnit.isWiredTeleporting = false;
+        roomUnit.setWiredTeleporting(false);
 
         this.room.updateHabbosAt(newLocation.getX(), newLocation.getY());
         this.room.updateBotsAt(newLocation.getX(), newLocation.getY());

@@ -36,7 +36,7 @@ public class HorsePet extends RideablePet {
 
     @Override
     public void run() {
-        if (this.needsUpdate) {
+        if (this.isNeedsUpdate()) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET hair_style = ?, hair_color = ?, saddle = ?, ride = ?, saddle_item_id = ? WHERE id = ?")) {
                 statement.setInt(1, this.hairStyle);
                 statement.setInt(2, this.hairColor);

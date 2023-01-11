@@ -18,6 +18,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
+
 @Slf4j
 @AllArgsConstructor
 public class ModeratorUserInfoComposer extends MessageComposer {
@@ -30,19 +32,7 @@ public class ModeratorUserInfoComposer extends MessageComposer {
         try {
             int totalBans = 0;
 
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
-                 PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) AS amount FROM bans WHERE user_id = ?")) {
-                statement.setInt(1, this.set.getInt(DatabaseConstants.USER_ID));
-                try (ResultSet set = statement.executeQuery()) {
-                    if (set.next()) {
-                       totalBans = set.getInt("amount");
-                    }
-                } catch (SQLException e) {
-                    log.error("Caught SQL exception", e);
-                }
-            } catch (SQLException e) {
-                log.error("Caught SQL exception", e);
-            }
+            totalBans = getTotalBansFromDB(totalBans);
 
             this.response.appendInt(this.set.getInt(DatabaseConstants.USER_ID));
             this.response.appendString(this.set.getString("username"));
@@ -68,7 +58,7 @@ public class ModeratorUserInfoComposer extends MessageComposer {
                 THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(this.set.getInt(DatabaseConstants.USER_ID));
                 ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(this.set.getInt(DatabaseConstants.USER_ID));
 
-                if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) //has sanction
+                if (modToolSanctionItems != null && !modToolSanctionItems.isEmpty()) //has sanction
                 {
                     ModToolSanctionItem item = modToolSanctionItems.get(modToolSanctionItems.size() - 1);
                     ModToolSanctionLevelItem modToolSanctionLevelItem = modToolSanctions.getSanctionLevelItem(item.getSanctionLevel());
@@ -81,8 +71,26 @@ public class ModeratorUserInfoComposer extends MessageComposer {
 
             return this.response;
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
         return null;
+    }
+
+    private int getTotalBansFromDB() {
+        int totalBans = 0;
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) AS amount FROM bans WHERE user_id = ?")) {
+            statement.setInt(1, this.set.getInt(DatabaseConstants.USER_ID));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    totalBans = resultSet.getInt("amount");
+                }
+            } catch (SQLException e) {
+                log.error(CAUGHT_SQL_EXCEPTION, e);
+            }
+        } catch (SQLException e) {
+            log.error(CAUGHT_SQL_EXCEPTION, e);
+        }
+        return totalBans;
     }
 }

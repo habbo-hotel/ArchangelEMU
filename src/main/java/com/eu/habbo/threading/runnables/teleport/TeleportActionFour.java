@@ -23,7 +23,7 @@ class TeleportActionFour implements Runnable {
         }
 
         if(this.client.getHabbo().getRoomUnit() != null) {
-            this.client.getHabbo().getRoomUnit().isLeavingTeleporter = true;
+            this.client.getHabbo().getRoomUnit().setLeavingTeleporter(true);
         }
 
         Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 500);

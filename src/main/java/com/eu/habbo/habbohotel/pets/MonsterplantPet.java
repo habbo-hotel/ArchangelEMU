@@ -57,10 +57,8 @@ public class MonsterplantPet extends Pet implements IPetLook {
             this.put(10, new Pair<>("Cinereus", 3));
         }
     };
-    public static final ArrayList<Pair<String, Integer>> indexedBody = new ArrayList<>(MonsterplantPet.bodyRarity.values());
-    public static final ArrayList<Pair<String, Integer>> indexedColors = new ArrayList<>(MonsterplantPet.colorRarity.values());
-    public static final int growTime = (30 * 60);
-    public static final int timeToLive = (3 * 24 * 60 * 60); //3 days
+    public static final int GROW_TIME = (30 * 60);
+    public static final int TIME_TO_LIVE = (3 * 24 * 60 * 60); //3 days
     private final int nose;
     private final int noseColor;
     private final int eyes;
@@ -70,7 +68,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
     public String look;
     private final int type;
     private final int hue;
-    private int deathTimestamp = Emulator.getIntUnixTimestamp() + timeToLive;
+    private int deathTimestamp = Emulator.getIntUnixTimestamp() + TIME_TO_LIVE;
     private boolean canBreed = true;
     private boolean publiclyBreedable = false;
     private int growthStage = 0;
@@ -122,7 +120,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
 
     @Override
     public void run() {
-        if (this.needsUpdate) {
+        if (this.isNeedsUpdate()) {
             super.run();
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET mp_type = ?, mp_color = ?, mp_nose = ?, mp_eyes = ?, mp_mouth = ?, mp_nose_color = ?, mp_eyes_color = ?, mp_mouth_color = ?, mp_death_timestamp = ?, mp_breedable = ?, mp_allow_breed = ?, mp_is_dead = ? WHERE id = ?")) {
@@ -156,15 +154,15 @@ public class MonsterplantPet extends Pet implements IPetLook {
                     AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantGardenOfDeath"));
 
                     this.hasDied = true;
-                    this.needsUpdate = true;
+                    this.setNeedsUpdate(true);
                 }
 
                 this.roomUnit.clearStatus();
                 this.roomUnit.setStatus(RoomUnitStatus.RIP, "");
-                this.packetUpdate = true;
+                this.setPacketUpdate(true);
             } else {
                 int difference = Emulator.getIntUnixTimestamp() - this.created + 1;
-                if (difference >= growTime) {
+                if (difference >= GROW_TIME) {
                     this.growthStage = 7;
                     boolean clear = false;
                     for (RoomUnitStatus s : this.roomUnit.getStatus().keySet()) {
@@ -176,22 +174,22 @@ public class MonsterplantPet extends Pet implements IPetLook {
 
                     if (clear) {
                         this.roomUnit.clearStatus();
-                        this.packetUpdate = true;
+                        this.setPacketUpdate(true);
                     }
                 } else {
-                    int g = (int) Math.ceil(difference / (growTime / 7.0));
+                    int g = (int) Math.ceil(difference / (GROW_TIME / 7.0));
 
                     if (g > this.growthStage) {
                         this.growthStage = g;
                         this.roomUnit.clearStatus();
                         this.roomUnit.setStatus(RoomUnitStatus.fromString("grw" + this.growthStage), "");
-                        this.packetUpdate = true;
+                        this.setPacketUpdate(true);
                     }
                 }
 
                 if (Emulator.getRandom().nextInt(1000) < 10) {
                     super.updateGesture(Emulator.getIntUnixTimestamp());
-                    this.packetUpdate = true;
+                    this.setPacketUpdate(true);
                 }
             }
         }
@@ -271,7 +269,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
             return 0;
         }
 
-        return Math.max(0, growTime - (Emulator.getIntUnixTimestamp() - this.created));
+        return Math.max(0, GROW_TIME - (Emulator.getIntUnixTimestamp() - this.created));
     }
 
     public boolean isFullyGrown() {
@@ -368,7 +366,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
 
     @Override
     public int getMaxEnergy() {
-        return MonsterplantPet.timeToLive;
+        return MonsterplantPet.TIME_TO_LIVE;
     }
 
     @Override
@@ -384,7 +382,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
     public synchronized void scratched(Habbo habbo) {
         if (this.mayScratch()) {
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantTreater"), 5);
-            this.setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.timeToLive);
+            this.setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.TIME_TO_LIVE);
             this.addHappiness(10);
             this.addExperience(10);
             this.room.sendComposer(new PetStatusUpdateComposer(this).compose());

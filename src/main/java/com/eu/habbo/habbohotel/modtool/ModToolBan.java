@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 @Getter
 public class ModToolBan implements Runnable {
 
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final int userId;
     private final String ip;
     private final String machineId;

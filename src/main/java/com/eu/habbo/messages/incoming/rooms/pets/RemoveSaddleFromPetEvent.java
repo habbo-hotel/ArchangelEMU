@@ -52,7 +52,7 @@ public class RemoveSaddleFromPetEvent extends MessageHandler {
         if (saddleItem == null) return;
 
         horse.hasSaddle(false);
-        horse.needsUpdate = true;
+        horse.setNeedsUpdate(true);
         Emulator.getThreading().run(pet);
         this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetFigureUpdateComposer(horse).compose());
 

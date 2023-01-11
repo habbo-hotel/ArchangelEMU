@@ -17,9 +17,9 @@ public class LayCommand extends Command {
         if (gameClient.getHabbo().getRoomUnit() == null || !gameClient.getHabbo().getRoomUnit().canForcePosture())
             return true;
 
-        gameClient.getHabbo().getRoomUnit().cmdLay = true;
+        gameClient.getHabbo().getRoomUnit().setCmdLay(true);
         gameClient.getHabbo().getHabboInfo().getCurrentRoom().updateHabbo(gameClient.getHabbo());
-        gameClient.getHabbo().getRoomUnit().cmdSit = true;
+        gameClient.getHabbo().getRoomUnit().setCmdSit(true);
         gameClient.getHabbo().getRoomUnit().setBodyRotation(RoomUserRotation.values()[gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() - gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() % 2]);
 
         RoomTile tile = gameClient.getHabbo().getRoomUnit().getCurrentLocation();

@@ -26,7 +26,7 @@ public class UserUpdateComposer extends MessageComposer {
         this.overrideZ = overrideZ;
     }
 
-    public UserUpdateComposer(THashSet<RoomUnit> roomUnits, boolean value) {
+    public UserUpdateComposer(THashSet<RoomUnit> roomUnits) {
         this.roomUnits = roomUnits;
     }
 

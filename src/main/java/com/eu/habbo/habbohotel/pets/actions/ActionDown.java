@@ -20,11 +20,11 @@ public class ActionDown extends PetAction {
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         if (pet.getTask() != PetTasks.DOWN && !pet.getRoomUnit().hasStatus(RoomUnitStatus.LAY)) {
-            pet.getRoomUnit().cmdLay = true;
+            pet.getRoomUnit().setCmdLay(true);
             pet.getRoomUnit().setStatus(RoomUnitStatus.LAY, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
 
             Emulator.getThreading().run(() -> {
-                pet.getRoomUnit().cmdLay = false;
+                pet.getRoomUnit().setCmdLay(false);
                 pet.clearPosture();
             }, this.minimumActionDuration);
 

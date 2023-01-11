@@ -33,7 +33,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
 
         for (Pet pet : room.getPetsAt(oldLocation)) {
             pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 
@@ -43,7 +43,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
 
         for (Pet pet : room.getPetsOnItem(this)) {
             pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 
@@ -84,7 +84,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
             this.setExtradata("0");
             room.updateItem(this);
             pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 

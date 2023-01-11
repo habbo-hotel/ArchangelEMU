@@ -45,6 +45,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
+
 @Slf4j
 public class CatalogManager {
 
@@ -256,7 +258,7 @@ public class CatalogManager {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         for (Map.Entry<Integer, LinkedList<Integer>> set : limiteds.entrySet()) {
@@ -289,7 +291,7 @@ public class CatalogManager {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         pages.forEachValue((object) -> {
@@ -330,7 +332,7 @@ public class CatalogManager {
                 ));
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
 
@@ -341,10 +343,7 @@ public class CatalogManager {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM catalog_items")) {
             CatalogItem item;
             while (set.next()) {
-                if (set.getString("item_ids").equals("0"))
-                    continue;
-
-                if (set.getInt("amount") < 1)
+                if (set.getString("item_ids").equals("0") || set.getInt("amount") < 1)
                     continue;
 
                 if (set.getString("catalog_name").contains("HABBO_CLUB_")) {
@@ -377,7 +376,7 @@ public class CatalogManager {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         for (CatalogPage page : this.catalogPages.valueCollection()) {
@@ -402,7 +401,7 @@ public class CatalogManager {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
 
@@ -418,7 +417,7 @@ public class CatalogManager {
                     }
                 }
             } catch (SQLException e) {
-                log.error("Caught SQL exception", e);
+                log.error(CAUGHT_SQL_EXCEPTION, e);
             }
         }
     }
@@ -433,7 +432,7 @@ public class CatalogManager {
                     this.vouchers.add(new Voucher(set));
                 }
             } catch (SQLException e) {
-                log.error("Caught SQL exception", e);
+                log.error(CAUGHT_SQL_EXCEPTION, e);
             }
         }
     }
@@ -457,7 +456,7 @@ public class CatalogManager {
                     }
                 }
             } catch (SQLException e) {
-                log.error("Caught SQL exception", e);
+                log.error(CAUGHT_SQL_EXCEPTION, e);
             }
         }
     }
@@ -477,7 +476,7 @@ public class CatalogManager {
                         }
                     }
                 } catch (SQLException e) {
-                    log.error("Caught SQL exception", e);
+                    log.error(CAUGHT_SQL_EXCEPTION, e);
                 }
             }
         }
@@ -492,7 +491,7 @@ public class CatalogManager {
                     this.clothing.put(set.getInt("id"), new ClothItem(set));
                 }
             } catch (SQLException e) {
-                log.error("Caught SQL exception", e);
+                log.error(CAUGHT_SQL_EXCEPTION, e);
             }
         }
     }
@@ -571,7 +570,7 @@ public class CatalogManager {
 
             return statement.executeUpdate() >= 1;
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         return false;
@@ -728,7 +727,7 @@ public class CatalogManager {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         if (catalogPage != null) {
@@ -792,8 +791,6 @@ public class CatalogManager {
 
 
     public void purchaseItem(CatalogPage page, CatalogItem item, Habbo habbo, int amount, String extradata, boolean free) {
-          Item cBaseItem = null;
-
         if (item == null || habbo.getHabboStats().isPurchasingFurniture()) {
             habbo.getClient().sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR).compose());
             return;
@@ -1054,23 +1051,19 @@ public class CatalogManager {
                 UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
                 Emulator.getPluginManager().fireEvent(purchasedEvent);
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
-                    if (purchasedEvent.getTotalCredits() > 0) {
-                        habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.getTotalCredits());
-                        habbo.getClient().sendResponse(new CreditBalanceComposer(habbo.getClient().getHabbo()));
-                    }
+                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS) && purchasedEvent.getTotalCredits() > 0) {
+                    habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.getTotalCredits());
+                    habbo.getClient().sendResponse(new CreditBalanceComposer(habbo.getClient().getHabbo()));
                 }
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) {
-                    if (purchasedEvent.getTotalPoints() > 0) {
-                        habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.getTotalPoints());
-                        habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.getTotalPoints(), item.getPointsType()));
-                    }
+                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS) && purchasedEvent.getTotalPoints() > 0) {
+                    habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.getTotalPoints());
+                    habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.getTotalPoints(), item.getPointsType()));
                 }
 
                 if (purchasedEvent.itemsList != null && !purchasedEvent.itemsList.isEmpty()) {
                     habbo.getClient().getHabbo().getInventory().getItemsComponent().addItems(purchasedEvent.itemsList);
-                    unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.OWNED_FURNI, purchasedEvent.itemsList.stream().map(HabboItem::getId).collect(Collectors.toList()));
+                    unseenItems.put(UnseenItemsComposer.AddHabboItemCategory.OWNED_FURNI, purchasedEvent.itemsList.stream().map(HabboItem::getId).toList());
 
                     Emulator.getPluginManager().fireEvent(new UserCatalogFurnitureBoughtEvent(habbo, item, purchasedEvent.itemsList));
 

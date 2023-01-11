@@ -44,7 +44,7 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                     raceType = 0;
 
                 pet.setRace(raceType);
-                pet.needsUpdate = true;
+                pet.setNeedsUpdate(true);
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_hairdye")) {
                 int splittedHairdye = Integer.parseInt(item.getBaseItem().getName().toLowerCase().split("_")[2]);
                 int newHairdye = 48;
@@ -60,7 +60,7 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                 }
 
                 ((HorsePet) pet).setHairColor(newHairdye);
-                pet.needsUpdate = true;
+                pet.setNeedsUpdate(true);
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_hairstyle")) {
                 int splittedHairstyle = Integer.parseInt(item.getBaseItem().getName().toLowerCase().split("_")[2]);
                 int newHairstyle = 100;
@@ -72,14 +72,14 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                 }
 
                 ((HorsePet) pet).setHairStyle(newHairstyle);
-                pet.needsUpdate = true;
+                pet.setNeedsUpdate(true);
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_saddle")) {
                 ((HorsePet) pet).hasSaddle(true);
                 ((HorsePet) pet).setSaddleItemId(item.getBaseItem().getId());
-                pet.needsUpdate = true;
+                pet.setNeedsUpdate(true);
             }
 
-            if (pet.needsUpdate) {
+            if (pet.isNeedsUpdate()) {
                 Emulator.getThreading().run(pet);
                 this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetFigureUpdateComposer((HorsePet) pet).compose());
 
@@ -91,10 +91,10 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
         } else if (pet instanceof MonsterplantPet) {
             if (item.getBaseItem().getName().equalsIgnoreCase("mnstr_revival")) {
                 if (((MonsterplantPet) pet).isDead()) {
-                    ((MonsterplantPet) pet).setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.timeToLive);
+                    ((MonsterplantPet) pet).setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.TIME_TO_LIVE);
                     pet.getRoomUnit().clearStatus();
                     pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "rev");
-                    pet.packetUpdate = true;
+                    pet.setPacketUpdate(true);
 
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().removeHabboItem(item);
                     this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RemoveFloorItemComposer(item).compose());
@@ -107,7 +107,7 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                 }
             } else if (item.getBaseItem().getName().equalsIgnoreCase("mnstr_fert")) {
                 if (!((MonsterplantPet) pet).isFullyGrown()) {
-                    pet.setCreated(pet.getCreated() - MonsterplantPet.growTime);
+                    pet.setCreated(pet.getCreated() - MonsterplantPet.GROW_TIME);
                     pet.getRoomUnit().clearStatus();
                     pet.cycle();
                     pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "spd");

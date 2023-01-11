@@ -93,7 +93,7 @@ public class SubscriptionHabboClub extends Subscription {
                     habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
                 }, (Emulator.getIntUnixTimestamp() - habbo.getHabboStats().getHcMessageLastModified()));
             } else {
-                habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo, SubscriptionHabboClub.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_NORMAL));
+                habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo, Subscription.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_NORMAL));
                 habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
             }
         }
@@ -112,7 +112,7 @@ public class SubscriptionHabboClub extends Subscription {
         if (amount < 0) {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId());
             if (habbo != null && habbo.getClient() != null) {
-                habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo, SubscriptionHabboClub.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_NORMAL));
+                habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo, Subscription.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_NORMAL));
                 habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
             }
         }
@@ -131,7 +131,7 @@ public class SubscriptionHabboClub extends Subscription {
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId());
 
         if (habbo != null && habbo.getClient() != null) {
-            habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo, SubscriptionHabboClub.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_NORMAL));
+            habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo, Subscription.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_NORMAL));
             habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
         }
     }
@@ -170,7 +170,7 @@ public class SubscriptionHabboClub extends Subscription {
         }
 
         if (habbo != null && habbo.getClient() != null) {
-            habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo, SubscriptionHabboClub.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_NORMAL));
+            habbo.getClient().sendResponse(new ScrSendUserInfoComposer(habbo, Subscription.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_NORMAL));
             habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
         }
     }
@@ -329,16 +329,16 @@ public class SubscriptionHabboClub extends Subscription {
                 while (set.next()) {
                     try {
                         int logId = set.getInt("id");
-                        int userId = set.getInt(DatabaseConstants.USER_ID);
                         int totalPayout = set.getInt("total_payout");
                         String currency = set.getString("currency");
 
-                        if (claimPayDay(habbo, totalPayout, currency)) {
-                            try (PreparedStatement stm2 = connection.prepareStatement("UPDATE logs_hc_payday SET claimed = 1 WHERE id = ?")) {
-                                stm2.setInt(1, logId);
-                                stm2.execute();
-                            }
+                        claimPayDay(habbo, totalPayout, currency);
+
+                    try (PreparedStatement stm2 = connection.prepareStatement("UPDATE logs_hc_payday SET claimed = 1 WHERE id = ?")) {
+                            stm2.setInt(1, logId);
+                            stm2.execute();
                         }
+
                     } catch (Exception e) {
                         log.error("Exception processing HC payday for user #" + set.getInt(DatabaseConstants.USER_ID), e);
                     }
@@ -351,7 +351,6 @@ public class SubscriptionHabboClub extends Subscription {
     }
 
     /**
-     *
      * Seperated these because Beny shouldn't have tied them to Payday.
      */
     public static void processClubBadge(Habbo habbo) {
@@ -360,13 +359,14 @@ public class SubscriptionHabboClub extends Subscription {
 
     /**
      * Issues rewards to user.
-     * @param habbo User to reward to
-     * @param amount Amount of currency to reward
+     *
+     * @param habbo    User to reward to
+     * @param amount   Amount of currency to reward
      * @param currency Currency string (Can be one of: credits, diamonds, duckets, pixels or a currency ID e.g. 5)
      * @return Boolean indicating success of the operation
      */
     public static boolean claimPayDay(Habbo habbo, int amount, String currency) {
-        if(habbo == null)
+        if (habbo == null)
             return false;
 
         int pointCurrency;
@@ -410,16 +410,16 @@ public class SubscriptionHabboClub extends Subscription {
     private static void progressAchievement(HabboInfo habboInfo) {
         HabboStats stats = habboInfo.getHabboStats();
         Achievement achievement = Emulator.getGameEnvironment().getAchievementManager().getAchievement(ACHIEVEMENT_NAME);
-        if(achievement != null) {
+        if (achievement != null) {
             int currentProgress = stats.getAchievementProgress(achievement);
-            if(currentProgress == -1) {
+            if (currentProgress == -1) {
                 currentProgress = 0;
             }
 
-            int progressToSet = (int)Math.ceil(stats.getPastTimeAsClub() / 2678400.0);
+            int progressToSet = (int) Math.ceil(stats.getPastTimeAsClub() / 2678400.0);
             int toIncrease = Math.max(progressToSet - currentProgress, 0);
 
-            if(toIncrease > 0) {
+            if (toIncrease > 0) {
                 AchievementManager.progressAchievement(habboInfo.getId(), achievement, toIncrease);
             }
         }

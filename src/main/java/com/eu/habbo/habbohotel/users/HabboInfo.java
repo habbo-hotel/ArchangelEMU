@@ -17,6 +17,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
@@ -57,6 +58,7 @@ public class HabboInfo implements Runnable {
     @Setter
     private boolean online;
     @Setter
+    @Accessors(chain = true)
     private int loadingRoom;
     @Setter
     private Room currentRoom;

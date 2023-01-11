@@ -56,7 +56,7 @@ public class PetInfoMessageComposer extends MessageComposer {
         this.response.appendBoolean(!(this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).isFullyGrown())); //unknown 1
         this.response.appendBoolean(this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).isDead()); //Dead
         this.response.appendInt(this.pet instanceof MonsterplantPet ? ((MonsterplantPet) this.pet).getRarity() : 0);
-        this.response.appendInt(MonsterplantPet.timeToLive); //Maximum wellbeing
+        this.response.appendInt(MonsterplantPet.TIME_TO_LIVE); //Maximum wellbeing
         this.response.appendInt(this.pet instanceof MonsterplantPet ? ((MonsterplantPet) this.pet).remainingTimeToLive() : 0); //Remaining Wellbeing
         this.response.appendInt(this.pet instanceof MonsterplantPet ? ((MonsterplantPet) this.pet).remainingGrowTime() : 0);
         this.response.appendBoolean(this.pet instanceof MonsterplantPet && ((MonsterplantPet) this.pet).isPubliclyBreedable()); //Breedable checkbox
