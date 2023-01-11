@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.campaign;
 
+import com.eu.habbo.database.DatabaseConstants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,7 +18,7 @@ public class CalendarRewardClaimed {
     private final Timestamp timestamp;
 
     public CalendarRewardClaimed(ResultSet set) throws SQLException {
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.campaignId = set.getInt("campaign_id");
         this.day = set.getInt("day");
         this.rewardId = set.getInt("reward_id");

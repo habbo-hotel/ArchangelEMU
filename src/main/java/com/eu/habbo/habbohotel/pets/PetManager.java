@@ -407,7 +407,7 @@ public class PetManager {
                         client.getHabbo().getHabboInfo().getId()
                 );
 
-            pet.needsUpdate = true;
+            pet.setNeedsUpdate(true);
             pet.run();
             return pet;
         }
@@ -421,7 +421,7 @@ public class PetManager {
     public Pet createPet(int type, int race, String name, GameClient client) {
         if (this.petData.containsKey(type)) {
             Pet pet = new Pet(type, race, "FFFFFF", name, client.getHabbo().getHabboInfo().getId());
-            pet.needsUpdate = true;
+            pet.setNeedsUpdate(true);
             pet.run();
             return pet;
         }
@@ -445,7 +445,7 @@ public class PetManager {
         pet.setRoom(room);
         pet.setRoomUnit(new RoomUnit());
         pet.getRoomUnit().setPathFinderRoom(room);
-        pet.needsUpdate = true;
+        pet.setNeedsUpdate(true);
         pet.run();
         return pet;
     }
@@ -464,7 +464,7 @@ public class PetManager {
         pet.setRoom(room);
         pet.setRoomUnit(new RoomUnit());
         pet.getRoomUnit().setPathFinderRoom(room);
-        pet.needsUpdate = true;
+        pet.setNeedsUpdate(true);
         pet.run();
 
         return pet;
@@ -484,7 +484,7 @@ public class PetManager {
         pet.setRoom(room);
         pet.setRoomUnit(new RoomUnit());
         pet.getRoomUnit().setPathFinderRoom(room);
-        pet.needsUpdate = true;
+        pet.setNeedsUpdate(true);
         pet.run();
 
         return pet;

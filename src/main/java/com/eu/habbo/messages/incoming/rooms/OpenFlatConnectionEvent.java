@@ -22,8 +22,8 @@ public class OpenFlatConnectionEvent extends MessageHandler {
                 this.client.getHabbo().getHabboInfo().setCurrentRoom(null);
             }
 
-            if (this.client.getHabbo().getRoomUnit() != null && this.client.getHabbo().getRoomUnit().isTeleporting) {
-                this.client.getHabbo().getRoomUnit().isTeleporting = false;
+            if (this.client.getHabbo().getRoomUnit() != null && this.client.getHabbo().getRoomUnit().isTeleporting()) {
+                this.client.getHabbo().getRoomUnit().setTeleporting(false);
             }
 
             Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), roomId, password);

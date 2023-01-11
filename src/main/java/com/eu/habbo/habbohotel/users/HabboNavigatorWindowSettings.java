@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.navigation.DisplayMode;
 import com.eu.habbo.habbohotel.navigation.ListMode;
 import gnu.trove.map.hash.THashMap;
@@ -32,7 +33,7 @@ public class HabboNavigatorWindowSettings {
     }
 
     public HabboNavigatorWindowSettings(ResultSet set) throws SQLException {
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.x = set.getInt("x");
         this.y = set.getInt("y");
         this.width = set.getInt("width");

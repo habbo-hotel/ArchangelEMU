@@ -46,7 +46,7 @@ class HopperActionTwo implements Runnable {
         } else {
             this.teleportOne.setExtradata("0");
             this.client.getHabbo().getRoomUnit().setCanWalk(true);
-            this.client.getHabbo().getRoomUnit().isTeleporting = false;
+            this.client.getHabbo().getRoomUnit().setTeleporting(false);
             Emulator.getThreading().run(new HopperActionFour(this.teleportOne, this.room, this.client), 500);
         }
 

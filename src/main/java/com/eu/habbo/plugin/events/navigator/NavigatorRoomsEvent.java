@@ -5,13 +5,14 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.plugin.events.users.UserEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class NavigatorRoomsEvent extends UserEvent {
 
-    public final ArrayList<Room> rooms;
+    public final List<Room> rooms;
 
 
-    public NavigatorRoomsEvent(Habbo habbo, ArrayList<Room> rooms) {
+    public NavigatorRoomsEvent(Habbo habbo, List<Room> rooms) {
         super(habbo);
 
         this.rooms = rooms;

@@ -8,9 +8,9 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -42,7 +42,7 @@ public class ItemsComposer extends MessageComposer {
             this.response.appendString(set.getValue());
         }
 
-        THashSet<HabboItem> items = this.room.getWallItems();
+        List<HabboItem> items = this.room.getWallItems();
 
         this.response.appendInt(items.size());
         for (HabboItem item : items) {

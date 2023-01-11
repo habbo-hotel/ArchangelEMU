@@ -23,14 +23,14 @@ public class InteractionPetTree extends InteractionDefault {
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         for (Pet pet : room.getPetsAt(oldLocation)) {
             pet.getRoomUnit().clearStatus();
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
     @Override
     public void onPickUp(Room room) {
         for (Pet pet : room.getPetsOnItem(this)) {
             pet.getRoomUnit().clearStatus();
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 
@@ -39,7 +39,7 @@ public class InteractionPetTree extends InteractionDefault {
         super.onWalkOn(roomUnit, room, objects);
 
         Pet pet = room.getPet(roomUnit);
-        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
+        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoalLocation())) {
             RoomUnitStatus task = switch (pet.getTask()) {
                 case RING_OF_FIRE -> RoomUnitStatus.RINGOFFIRE;
                 case SWING -> RoomUnitStatus.SWING;
@@ -52,7 +52,7 @@ public class InteractionPetTree extends InteractionDefault {
                  pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
                  pet.getRoomUnit().clearStatus();
                  pet.getRoomUnit().setStatus(task, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
-                 pet.packetUpdate = true;
+                 pet.setPacketUpdate(true);
                 RoomUnitStatus finalTask = task;
                 Emulator.getThreading().run(() -> {
                      pet.addHappiness(25);
@@ -64,13 +64,13 @@ public class InteractionPetTree extends InteractionDefault {
                         pet.clearPosture();
                      }
                      pet.getRoomUnit().setCanWalk(true);
-                     pet.packetUpdate = true;
+                     pet.setPacketUpdate(true);
                  }, (long) 2500 + (Emulator.getRandom().nextInt(20) * 500));
              } else {
                 pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
                 pet.getRoomUnit().clearStatus();
                 pet.getRoomUnit().setStatus(RoomUnitStatus.HANG, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
-                pet.packetUpdate = true;
+                pet.setPacketUpdate(true);
             }
         }
     }
@@ -83,7 +83,7 @@ public class InteractionPetTree extends InteractionDefault {
 
         if (pet != null) {
             pet.getRoomUnit().clearStatus();
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.guilds;
 
+import com.eu.habbo.database.DatabaseConstants;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +23,7 @@ public class GuildMember implements Comparable<GuildMember> {
     private GuildRank rank;
 
     public GuildMember(ResultSet set) throws SQLException {
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.username = set.getString("username");
         this.look = set.getString("look");
         this.joinDate = set.getInt("member_since");

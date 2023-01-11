@@ -19,27 +19,25 @@ public class RoomUnitTeleportWalkToAction implements Runnable {
 
     @Override
     public void run() {
-        if (this.habbo.getHabboInfo().getCurrentRoom() == this.room) {
-            if (this.habboItem.getRoomId() == this.room.getId()) {
-                RoomTile tile = HabboItem.getSquareInFront(this.room.getLayout(), this.habboItem);
-
-                if (tile != null) {
-                    if (this.habbo.getRoomUnit().getGoal().equals(tile)) {
-                        if (this.habbo.getRoomUnit().getCurrentLocation().equals(tile)) {
-                            try {
-                                this.habboItem.onClick(this.habbo.getClient(), this.room, new Object[]{0});
-                            } catch (Exception e) {
-                                log.error("Caught exception", e);
-                            }
-                        } else {
-                            if (tile.isWalkable()) {
-                                this.habbo.getRoomUnit().setGoalLocation(tile);
-                                Emulator.getThreading().run(this, (long) this.habbo.getRoomUnit().getPath().size() + 2 * 510);
-                            }
-                        }
-                    }
-                }
-            }
+        if (this.habbo.getHabboInfo().getCurrentRoom() != this.room || this.habboItem.getRoomId() != this.room.getId()) {
+            return;
         }
+        RoomTile tile = HabboItem.getSquareInFront(this.room.getLayout(), this.habboItem);
+
+        if (!this.habbo.getRoomUnit().getGoalLocation().equals(tile)) {
+            return;
+        }
+
+        if (this.habbo.getRoomUnit().getCurrentLocation().equals(tile)) {
+            try {
+                this.habboItem.onClick(this.habbo.getClient(), this.room, new Object[]{0});
+            } catch (Exception e) {
+                log.error("Caught exception", e);
+            }
+        } else if (tile.isWalkable()) {
+            this.habbo.getRoomUnit().setGoalLocation(tile);
+            Emulator.getThreading().run(this, (long) this.habbo.getRoomUnit().getPath().size() + 2 * 510);
+        }
+
     }
 }

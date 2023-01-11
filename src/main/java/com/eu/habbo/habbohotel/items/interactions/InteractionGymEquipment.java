@@ -41,7 +41,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
 
         if (this.forceRotation()) {
             roomUnit.setRotation(RoomUserRotation.fromValue(this.getRotation()));
-            roomUnit.canRotate = false;
+            roomUnit.setCanRotate(false);
         }
         this.roomUnitId = roomUnit.getId();
 
@@ -79,7 +79,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
             }
 
             if (this.forceRotation()) {
-                roomUnit.canRotate = true;
+                roomUnit.setCanRotate(true);
             }
 
             if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {

@@ -43,7 +43,7 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
     }
 
     public static void teleportUnitToTile(RoomUnit roomUnit, RoomTile tile) {
-        if (roomUnit == null || tile == null || roomUnit.isWiredTeleporting)
+        if (roomUnit == null || tile == null || roomUnit.isWiredTeleporting())
             return;
 
         Room room = roomUnit.getRoom();
@@ -79,7 +79,7 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
             }
         }
 
-        Emulator.getThreading().run(() -> roomUnit.isWiredTeleporting = true, Math.max(0, WiredHandler.TELEPORT_DELAY - 500));
+        Emulator.getThreading().run(() -> roomUnit.setWiredTeleporting(true), Math.max(0, WiredHandler.TELEPORT_DELAY - 500));
         Emulator.getThreading().run(new RoomUnitTeleport(roomUnit, room, tile.getX(), tile.getY(), tile.getStackHeight() + (tile.getState() == RoomTileState.SIT ? -0.5 : 0), roomUnit.getEffectId()), WiredHandler.TELEPORT_DELAY);
     }
 

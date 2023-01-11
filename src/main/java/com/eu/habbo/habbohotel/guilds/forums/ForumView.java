@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.guilds.forums;
 
+import com.eu.habbo.database.DatabaseConstants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,7 +17,7 @@ public class ForumView {
     private final int timestamp;
 
     public ForumView(ResultSet set) throws SQLException {
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.guildId = set.getInt("guild_id");
         this.timestamp = set.getInt("timestamp");
     }

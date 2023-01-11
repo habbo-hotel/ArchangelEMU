@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users.subscriptions;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
@@ -67,7 +68,7 @@ public class SubscriptionManager {
                     Class<? extends Subscription> subClazz = Emulator.getGameEnvironment().getSubscriptionManager().getSubscriptionClass(set.getString("subscription_type"));
                     Constructor<? extends Subscription> c = subClazz.getConstructor(Integer.class, Integer.class, String.class, Integer.class, Integer.class, Boolean.class);
                     c.setAccessible(true);
-                    Subscription subscription = c.newInstance(set.getInt("id"), set.getInt("user_id"), set.getString("subscription_type"), set.getInt("timestamp_start"), set.getInt("duration"), set.getInt("active") == 1);
+                    Subscription subscription = c.newInstance(set.getInt("id"), set.getInt(DatabaseConstants.USER_ID), set.getString("subscription_type"), set.getInt("timestamp_start"), set.getInt("duration"), set.getInt("active") == 1);
                     subscriptions.add(subscription);
                 }
             } catch (IllegalAccessException e) {

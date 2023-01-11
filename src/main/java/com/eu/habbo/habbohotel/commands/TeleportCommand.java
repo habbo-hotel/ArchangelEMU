@@ -12,12 +12,12 @@ public class TeleportCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboInfo().getRiding() == null) //TODO Make this an event plugin which fires that can be cancelled
-            if (gameClient.getHabbo().getRoomUnit().cmdTeleport) {
-                gameClient.getHabbo().getRoomUnit().cmdTeleport = false;
+            if (gameClient.getHabbo().getRoomUnit().isCmdTeleport()) {
+                gameClient.getHabbo().getRoomUnit().setCmdTeleport(false);
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_teleport.disabled"), RoomChatMessageBubbles.ALERT);
                 return true;
             } else {
-                gameClient.getHabbo().getRoomUnit().cmdTeleport = true;
+                gameClient.getHabbo().getRoomUnit().setCmdTeleport(true);
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_teleport.enabled"), RoomChatMessageBubbles.ALERT);
                 return true;
             }

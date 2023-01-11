@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.modtool;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,7 +15,7 @@ import java.text.SimpleDateFormat;
 @Getter
 public class ModToolBan implements Runnable {
 
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final int userId;
     private final String ip;
     private final String machineId;
@@ -28,7 +29,7 @@ public class ModToolBan implements Runnable {
     private final boolean needsInsert;
 
     public ModToolBan(ResultSet set) throws SQLException {
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.ip = set.getString("ip");
         this.machineId = set.getString("machine_id");
         this.staffId = set.getInt("user_staff_id");

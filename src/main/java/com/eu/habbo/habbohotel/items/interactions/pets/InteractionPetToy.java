@@ -33,7 +33,7 @@ public class InteractionPetToy extends InteractionDefault {
 
         for (Pet pet : room.getPetsAt(oldLocation)) {
             pet.getRoomUnit().clearStatus();
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
     @Override
@@ -42,7 +42,7 @@ public class InteractionPetToy extends InteractionDefault {
 
         for (Pet pet : room.getPetsOnItem(this)) {
             pet.getRoomUnit().clearStatus();
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 
@@ -52,7 +52,7 @@ public class InteractionPetToy extends InteractionDefault {
 
         Pet pet = room.getPet(roomUnit);
 
-        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
+        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoalLocation())) {
             if (pet.getEnergy() <= 35) {
                 return;
             }
@@ -62,7 +62,7 @@ public class InteractionPetToy extends InteractionDefault {
             pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
             pet.getRoomUnit().clearStatus();
             pet.getRoomUnit().setStatus(RoomUnitStatus.PLAY, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
             HabboItem item = this;
             Emulator.getThreading().run(() -> {
                 pet.addHappiness(25);
@@ -70,7 +70,7 @@ public class InteractionPetToy extends InteractionDefault {
                 room.updateItem(item);
                 pet.getRoomUnit().clearStatus();
                 new PetClearPosture(pet, RoomUnitStatus.PLAY, null, true).run();
-                pet.packetUpdate = true;
+                pet.setPacketUpdate(true);
             }, ((long)(Emulator.getRandom().nextInt(20) * 500) + 2500));
             this.setExtradata("1");
             room.updateItemState(this);
@@ -87,7 +87,7 @@ public class InteractionPetToy extends InteractionDefault {
             this.setExtradata("0");
             room.updateItem(this);
             pet.getRoomUnit().clearStatus();
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 

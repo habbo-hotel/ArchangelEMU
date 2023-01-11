@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.bots;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
@@ -82,7 +83,7 @@ public class Bot implements Runnable {
         this.motto = set.getString("motto");
         this.figure = set.getString("figure");
         this.gender = HabboGender.valueOf(set.getString("gender"));
-        this.ownerId = set.getInt("user_id");
+        this.ownerId = set.getInt(DatabaseConstants.USER_ID);
         this.ownerName = set.getString("owner_name");
         this.chatAuto = set.getString("chat_auto").equals("1");
         this.chatRandom = set.getString("chat_random").equals("1");

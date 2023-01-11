@@ -34,7 +34,7 @@ public class LookToEvent extends MessageHandler {
         if (roomUnit.isWalking() || roomUnit.hasStatus(RoomUnitStatus.MOVE))
             return;
 
-        if (roomUnit.cmdLay || roomUnit.hasStatus(RoomUnitStatus.LAY))
+        if (roomUnit.isCmdLay() || roomUnit.hasStatus(RoomUnitStatus.LAY))
             return;
 
         if (roomUnit.isIdle())

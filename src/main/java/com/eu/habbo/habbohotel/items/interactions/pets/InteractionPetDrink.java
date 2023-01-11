@@ -74,14 +74,14 @@ public class InteractionPetDrink extends InteractionDefault {
             pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
             pet.getRoomUnit().clearStatus();
             pet.getRoomUnit().setStatus(RoomUnitStatus.EAT, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
 
             Emulator.getThreading().run(() -> {
                 pet.addThirst(-75);
                 this.change(room, -1);
                 pet.getRoomUnit().clearStatus();
                 new PetClearPosture(pet, RoomUnitStatus.EAT, null, true);
-                pet.packetUpdate = true;
+                pet.setPacketUpdate(true);
             }, 1000);
 
             AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(pet.getUserId()), Emulator.getGameEnvironment().getAchievementManager().getAchievement("PetFeeding"), 75);

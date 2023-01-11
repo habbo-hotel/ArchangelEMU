@@ -271,7 +271,8 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
             case ACTION_TURN_RIGHT_45 -> RoomUserRotation.clockwise(currentRotation);
             case ACTION_TURN_RIGHT_90 -> RoomUserRotation.clockwise(RoomUserRotation.clockwise(currentRotation));
             case ACTION_TURN_RANDOM -> RoomUserRotation.fromValue(Emulator.getRandom().nextInt(8));
-            case ACTION_WAIT, default -> currentRotation;
+            case ACTION_WAIT -> currentRotation;
+            default -> currentRotation;
         };
     }
 

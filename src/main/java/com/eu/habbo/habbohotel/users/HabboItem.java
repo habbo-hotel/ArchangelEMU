@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
@@ -21,6 +22,7 @@ import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
@@ -70,6 +72,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
     private int rotation;
     @Setter
     @Getter
+    @Accessors(chain = true)
     private String extradata;
     @Getter
     private int limitedStack;
@@ -81,7 +84,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
 
     public HabboItem(ResultSet set, Item baseItem) throws SQLException {
         this.id = set.getInt("id");
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.roomId = set.getInt("room_id");
         this.baseItem = baseItem;
         this.wallPosition = set.getString("wall_pos");
@@ -236,10 +239,8 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         if (client != null && this.getBaseItem().getType() == FurnitureType.FLOOR) {
-            if (objects != null && objects.length >= 2) {
-                if (objects[1] instanceof WiredEffectType) {
-                    return;
-                }
+            if (objects != null && objects.length >= 2 && objects[1] instanceof WiredEffectType) {
+                return;
             }
 
             if ((this.getBaseItem().getStateCount() > 1 && !(this instanceof InteractionDice)) || Arrays.asList(HabboItem.TOGGLING_INTERACTIONS).contains(this.getClass()) || (objects != null && objects.length == 1 && objects[0].equals("TOGGLE_OVERRIDE"))) {
@@ -260,7 +261,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
             room.sendComposer(new DanceMessageComposer(roomUnit).compose());
         }
 
-        if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousLocation() != roomUnit.getGoal() && roomUnit.getGoal() == room.getLayout().getTile(this.x, this.y)) {
+        if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousLocation() != roomUnit.getGoalLocation() && roomUnit.getGoalLocation() == room.getLayout().getTile(this.x, this.y)) {
             Habbo habbo = room.getHabbo(roomUnit);
 
             if (habbo != null && habbo.getClient() != null) {
@@ -387,45 +388,46 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
             oldHabbos.removeAll(newHabbos);
             oldBots.removeAll(newBots);
 
-            for (Habbo habbo : oldHabbos) {
+            int finalNextEffectM = nextEffectM;
+            int finalNextEffectF = nextEffectF;
+
+            oldHabbos.forEach(habbo -> {
                 if (this.getBaseItem().getEffectM() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.M) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM()) {
-                    room.giveEffect(habbo, nextEffectM, -1);
+                    room.giveEffect(habbo, finalNextEffectM, -1);
                 }
-
                 if (this.getBaseItem().getEffectF() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.F) && habbo.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF()) {
-                    room.giveEffect(habbo, nextEffectF, -1);
+                    room.giveEffect(habbo, finalNextEffectF, -1);
                 }
-            }
+            });
 
-            for (Habbo habbo : newHabbos) {
+            newHabbos.forEach(habbo -> {
                 if (this.getBaseItem().getEffectM() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.M) && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
                     room.giveEffect(habbo, this.getBaseItem().getEffectM(), -1);
                 }
-
                 if (this.getBaseItem().getEffectF() > 0 && habbo.getHabboInfo().getGender().equals(HabboGender.F) && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF()) {
                     room.giveEffect(habbo, this.getBaseItem().getEffectF(), -1);
                 }
-            }
+            });
 
-            for (Bot bot : oldBots) {
+
+            oldBots.forEach(bot -> {
                 if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM()) {
-                    room.giveEffect(bot.getRoomUnit(), nextEffectM, -1);
+                    room.giveEffect(bot.getRoomUnit(), finalNextEffectM, -1);
                 }
 
                 if (this.getBaseItem().getEffectF() > 0 && bot.getGender().equals(HabboGender.F) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectF()) {
-                    room.giveEffect(bot.getRoomUnit(), nextEffectF, -1);
+                    room.giveEffect(bot.getRoomUnit(), finalNextEffectF, -1);
                 }
-            }
+            });
 
-            for (Bot bot : newBots) {
+            newBots.forEach(bot -> {
                 if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
                     room.giveEffect(bot.getRoomUnit(), this.getBaseItem().getEffectM(), -1);
                 }
-
                 if (this.getBaseItem().getEffectF() > 0 && bot.getGender().equals(HabboGender.F) && bot.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF()) {
                     room.giveEffect(bot.getRoomUnit(), this.getBaseItem().getEffectF(), -1);
                 }
-            }
+            });
         }
     }
 

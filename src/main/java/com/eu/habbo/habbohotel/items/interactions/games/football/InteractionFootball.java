@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.games.football.FootballGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPushable;
-import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTeamItem;
 import com.eu.habbo.habbohotel.items.interactions.games.football.goals.InteractionFootballGoal;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -33,7 +32,7 @@ public class InteractionFootball extends InteractionPushable {
         if (roomUnit.getPath().isEmpty() && roomUnit.tilesWalked() == 2 && this.getExtradata().equals("1"))
             return 0;
 
-        if (roomUnit.getPath().size() == 0 && roomUnit.tilesWalked() == 1)
+        if (roomUnit.getPath().isEmpty() && roomUnit.tilesWalked() == 1)
             return 6;
 
         return 1;
@@ -41,7 +40,7 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public int getWalkOffVelocity(RoomUnit roomUnit, Room room) {
-        if (roomUnit.getPath().size() == 0 && roomUnit.tilesWalked() == 0)
+        if (roomUnit.getPath().isEmpty() && roomUnit.tilesWalked() == 0)
             return 6;
 
         return 1;
@@ -69,7 +68,7 @@ public class InteractionFootball extends InteractionPushable {
     @Override
     public RoomUserRotation getWalkOffDirection(RoomUnit roomUnit, Room room) {
         RoomTile peek = roomUnit.getPath().peek();
-        RoomTile nextWalkTile = peek != null ? room.getLayout().getTile(peek.getX(), peek.getY()) : roomUnit.getGoal();
+        RoomTile nextWalkTile = peek != null ? room.getLayout().getTile(peek.getX(), peek.getY()) : roomUnit.getGoalLocation();
         return RoomUserRotation.values()[(RoomUserRotation.values().length + Rotation.Calculate(roomUnit.getX(), roomUnit.getY(), nextWalkTile.getX(), nextWalkTile.getY()) + 4) % 8];
     }
 
@@ -85,16 +84,11 @@ public class InteractionFootball extends InteractionPushable {
     @Override
     public int getNextRollDelay(int currentStep, int totalSteps) {
 
-        if(totalSteps > 4) {
-            if(currentStep <= 4) {
-                return 125;
-            }
+        if (totalSteps > 4 && currentStep <= 4) {
+            return 125;
         }
 
         return 500;
-
-        /*int t = 2500;
-        return (totalSteps == 1) ? 500 : 100 * ((t = t / t - 1) * t * t * t * t + 1) + (currentStep * 100);*/
     }
 
     @Override
@@ -177,16 +171,13 @@ public class InteractionFootball extends InteractionPushable {
             int ballDirection = Rotation.Calculate(from.getX(), from.getY(), to.getX(), to.getY());
             int goalRotation = topItem.getRotation();
 
-            switch (goalRotation) {
-                case 0:
-                    return ballDirection > 2 && ballDirection < 6;
-                case 2:
-                    return ballDirection > 4;
-                case 4:
-                    return ballDirection > 6 || ballDirection < 2;
-                case 6:
-                    return ballDirection > 0 && ballDirection < 4;
-            }
+            return switch (goalRotation) {
+                case 0 -> ballDirection > 2 && ballDirection < 6;
+                case 2 -> ballDirection > 4;
+                case 4 -> ballDirection > 6 || ballDirection < 2;
+                case 6 -> ballDirection > 0 && ballDirection < 4;
+                default -> topItem.getBaseItem().allowStack();
+            };
         }
 
         return topItem.getBaseItem().allowStack();
@@ -214,7 +205,7 @@ public class InteractionFootball extends InteractionPushable {
         FootballGame game = (FootballGame) room.getGame(FootballGame.class);
         if (game == null) {
             try {
-                game = FootballGame.class.getDeclaredConstructor(new Class[]{Room.class}).newInstance(room);
+                game = FootballGame.class.getDeclaredConstructor(Room.class).newInstance(room);
                 room.addGame(game);
             } catch (Exception e) {
                 return;
@@ -222,16 +213,13 @@ public class InteractionFootball extends InteractionPushable {
         }
         HabboItem currentTopItem = room.getTopItemAt(from.getX(), from.getY(), this);
         HabboItem topItem = room.getTopItemAt(to.getX(), to.getY(), this);
-        if ((topItem != null) && ((currentTopItem == null) || (currentTopItem.getId() != topItem.getId())) && ((topItem instanceof InteractionFootballGoal))) {
-            GameTeamColors color = ((InteractionGameTeamItem) topItem).teamColor;
+        if ((topItem != null) && ((currentTopItem == null) || (currentTopItem.getId() != topItem.getId())) && topItem instanceof InteractionFootballGoal interactionFootballGoal) {
+            GameTeamColors color = interactionFootballGoal.teamColor;
             game.onScore(kicker, color);
         }
 
         this.setExtradata(Math.abs(currentStep - (totalSteps + 1)) + "");
         room.sendComposer(new OneWayDoorStatusMessageComposer(this).compose());
-
-        /*this.setExtradata(nextRoll <= 200 ? "8" : (nextRoll <= 250 ? "7" : (nextRoll <= 300 ? "6" : (nextRoll <= 350 ? "5" : (nextRoll <= 400 ? "4" : (nextRoll <= 450 ? "3" : (nextRoll <= 500 ? "2" : "1")))))));
-        room.sendComposer(new ItemStateComposer(this).compose());*/
     }
 
     @Override

@@ -26,8 +26,8 @@ class TeleportActionFive implements Runnable {
     public void run() {
         RoomUnit unit = this.client.getHabbo().getRoomUnit();
 
-        unit.isLeavingTeleporter = false;
-        unit.isTeleporting = false;
+        unit.setLeavingTeleporter(false);
+        unit.setTeleporting(false);
         unit.setCanWalk(true);
 
         if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != this.room)
@@ -45,13 +45,13 @@ class TeleportActionFive implements Runnable {
             onSuccess.add(() -> {
                 unit.setCanLeaveRoomByDoor(true);
 
-                Emulator.getThreading().run(() -> unit.isLeavingTeleporter = false, 300);
+                Emulator.getThreading().run(() -> unit.setLeavingTeleporter(false), 300);
             });
 
             unit.setCanLeaveRoomByDoor(false);
             unit.setGoalLocation(tile);
             unit.statusUpdate(true);
-            unit.isLeavingTeleporter = true;
+            unit.setLeavingTeleporter(true);
             Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onSuccess, onSuccess));
         }
 

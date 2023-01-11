@@ -28,7 +28,7 @@ public class MovePetEvent extends MessageHandler {
                         pet.getRoomUnit().setRotation(RoomUserRotation.fromValue(this.packet.readInt()));
                         pet.getRoomUnit().setPreviousLocationZ(pet.getRoomUnit().getZ());
                         room.sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
-                        pet.needsUpdate = true;
+                        pet.setNeedsUpdate(true);
                     }
                 }
             }

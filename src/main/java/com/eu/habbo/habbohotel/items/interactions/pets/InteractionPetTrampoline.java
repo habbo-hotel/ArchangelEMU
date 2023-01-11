@@ -33,7 +33,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
 
         for (Pet pet : room.getPetsAt(oldLocation)) {
             pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 
@@ -43,7 +43,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
 
         for (Pet pet : room.getPetsOnItem(this)) {
             pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 
@@ -53,7 +53,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
 
         Pet pet = room.getPet(roomUnit);
 
-        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
+        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoalLocation())) {
             if (pet.getEnergy() <= 35) {
                 return;
             }
@@ -84,7 +84,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
             this.setExtradata("0");
             room.updateItem(this);
             pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
-            pet.packetUpdate = true;
+            pet.setPacketUpdate(true);
         }
     }
 

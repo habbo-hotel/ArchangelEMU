@@ -71,7 +71,7 @@ public class InteractionBackgroundToner extends HabboItem {
                 return;
             }
             
-            if (client.getHabbo().getRoomUnit().cmdSit && client.getHabbo().getRoomUnit().getEffectId() == 1337) {
+            if (client.getHabbo().getRoomUnit().isCmdSit() && client.getHabbo().getRoomUnit().getEffectId() == 1337) {
                 new BackgroundAnimation(this, room).run();
                 return;
             }

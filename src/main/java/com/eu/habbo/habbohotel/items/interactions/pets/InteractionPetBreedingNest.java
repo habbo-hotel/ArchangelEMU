@@ -20,8 +20,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionPetBreedingNest extends HabboItem {
-    public Pet petOne = null;
-    public Pet petTwo = null;
+    private Pet petOne = null;
+    private Pet petTwo = null;
 
     public InteractionPetBreedingNest(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -59,19 +59,17 @@ public class InteractionPetBreedingNest extends HabboItem {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         Pet pet = room.getPet(roomUnit);
 
-        if (pet != null) {
-            if (!this.boxFull()) {
-                this.addPet(pet);
+        if (pet != null && !this.boxFull()) {
+            this.addPet(pet);
 
-                if (this.boxFull()) {
-                    Habbo ownerPetOne = room.getHabbo(this.petOne.getUserId());
-                    Habbo ownerPetTwo = room.getHabbo(this.petTwo.getUserId());
+            if (this.boxFull()) {
+                Habbo ownerPetOne = room.getHabbo(this.petOne.getUserId());
+                Habbo ownerPetTwo = room.getHabbo(this.petTwo.getUserId());
 
-                    if (ownerPetOne != null && ownerPetTwo != null && this.petOne.getPetData().getType() == this.petTwo.getPetData().getType() && this.petOne.getPetData().getOffspringType() != -1) {
-                        ownerPetTwo.getClient().sendResponse(new ConfirmBreedingRequestComposer(this.getId(), this.petOne.getPetData().getOffspringType(), this.petOne, ownerPetOne.getHabboInfo().getUsername(), this.petTwo, ownerPetTwo.getHabboInfo().getUsername()));
-                        this.setExtradata("1");
-                        room.updateItem(this);
-                    }
+                if (ownerPetOne != null && ownerPetTwo != null && this.petOne.getPetData().getType() == this.petTwo.getPetData().getType() && this.petOne.getPetData().getOffspringType() != -1) {
+                    ownerPetTwo.getClient().sendResponse(new ConfirmBreedingRequestComposer(this.getId(), this.petOne.getPetData().getOffspringType(), this.petOne, ownerPetOne.getHabboInfo().getUsername(), this.petTwo, ownerPetTwo.getHabboInfo().getUsername()));
+                    this.setExtradata("1");
+                    room.updateItem(this);
                 }
             }
         }
@@ -148,14 +146,12 @@ public class InteractionPetBreedingNest extends HabboItem {
         habbo.getHabboInfo().getCurrentRoom().updateItem(this);
 
         HabboItem box = this;
-        Pet petOne = this.petOne;
-        Pet petTwo = this.petTwo;
+
         Emulator.getThreading().run(() -> {
             Pet offspring = Emulator.getGameEnvironment().getPetManager().createPet(petOne.getPetData().getOffspringType(), (int) Math.min(Math.round(Math.max(1d, PetManager.getNormalDistributionForBreeding(petOne.getLevel(), petTwo.getLevel()).sample())), 20), name, habbo.getClient());
 
-            //habbo.getClient().sendResponse(new PetPackageNameValidationComposer(box.getId(), PetPackageNameValidationComposer.CLOSE_WIDGET, ""));
-            habbo.getHabboInfo().getCurrentRoom().placePet(offspring, box.getX(), box.getY(), box.getZ(), box.getRotation());
-            offspring.needsUpdate = true;
+            habbo.getHabboInfo().getCurrentRoom().placePet(offspring, box.getX(), box.getY(), box.getZ());
+            offspring.setNeedsUpdate(true);
             offspring.run();
             InteractionPetBreedingNest.this.freePets();
             habbo.getHabboInfo().getCurrentRoom().removeHabboItem(box);

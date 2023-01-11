@@ -10,6 +10,7 @@ import com.eu.habbo.plugin.events.navigator.NavigatorSearchResultEvent;
 import gnu.trove.map.hash.THashMap;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RoomTextSearchEvent extends MessageHandler {
     public final static THashMap<Rank, THashMap<String, ServerMessage>> cachedResults = new THashMap<>(4);
@@ -20,7 +21,7 @@ public class RoomTextSearchEvent extends MessageHandler {
 
         String prefix = "";
         String query = name;
-        ArrayList<Room> rooms;
+        List<Room> rooms;
 
         ServerMessage message = null;
         if (cachedResults.containsKey(this.client.getHabbo().getHabboInfo().getRank())) {
@@ -33,7 +34,7 @@ public class RoomTextSearchEvent extends MessageHandler {
             if (name.startsWith("owner:")) {
                 query = name.split("owner:")[1];
                 prefix = "owner:";
-                rooms = (ArrayList<Room>) Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(name);
+                rooms = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(name);
             } else if (name.startsWith("tag:")) {
                 query = name.split("tag:")[1];
                 prefix = "tag:";

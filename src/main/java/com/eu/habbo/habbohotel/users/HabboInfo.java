@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
@@ -16,6 +17,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
@@ -56,6 +58,7 @@ public class HabboInfo implements Runnable {
     @Setter
     private boolean online;
     @Setter
+    @Accessors(chain = true)
     private int loadingRoom;
     @Setter
     private Room currentRoom;
@@ -211,7 +214,7 @@ public class HabboInfo implements Runnable {
             statement.setInt(1, this.id);
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    this.messengerCategories.add(new MessengerCategory(set.getString("name"), set.getInt("user_id"), set.getInt("id")));
+                    this.messengerCategories.add(new MessengerCategory(set.getString("name"), set.getInt(DatabaseConstants.USER_ID), set.getInt("id")));
                 }
             }
         } catch (SQLException e) {

@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.guilds.forums;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ISerialize;
@@ -13,6 +14,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
+
+import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
 
 @Slf4j
 public class ForumThreadComment implements Runnable, ISerialize {
@@ -50,7 +53,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
     public ForumThreadComment(ResultSet set) throws SQLException {
         this.commentId = set.getInt("id");
         this.threadId = set.getInt("thread_id");
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.message = set.getString("message");
         this.createdAt = set.getInt("created_at");
         this.state = ForumThreadState.fromValue(set.getInt("state"));
@@ -75,7 +78,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
                 }
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         return foundComment;
@@ -114,7 +117,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
                 Emulator.getPluginManager().fireEvent(new GuildForumThreadCommentCreated(createdComment));
             }
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         return createdComment;
@@ -171,7 +174,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
 
             this.needsUpdate = false;
         } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
     }
 }

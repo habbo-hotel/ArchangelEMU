@@ -84,7 +84,7 @@ public class PlacePetEvent extends MessageHandler {
         }
         pet.setRoomUnit(roomUnit);
         room.addPet(pet);
-        pet.needsUpdate = true;
+        pet.setNeedsUpdate(true);
         Emulator.getThreading().run(pet);
         room.sendComposer(new RoomPetComposer(pet).compose());
         this.client.getHabbo().getInventory().getPetsComponent().removePet(pet);
