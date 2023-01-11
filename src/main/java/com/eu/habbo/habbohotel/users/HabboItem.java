@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
@@ -21,6 +22,7 @@ import com.eu.habbo.messages.outgoing.users.FigureUpdateComposer;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.util.Pair;
@@ -70,6 +72,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
     private int rotation;
     @Setter
     @Getter
+    @Accessors(chain = true)
     private String extradata;
     @Getter
     private int limitedStack;
@@ -81,7 +84,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
 
     public HabboItem(ResultSet set, Item baseItem) throws SQLException {
         this.id = set.getInt("id");
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.roomId = set.getInt("room_id");
         this.baseItem = baseItem;
         this.wallPosition = set.getString("wall_pos");
@@ -260,7 +263,7 @@ public abstract class HabboItem implements Runnable, IEventTriggers {
             room.sendComposer(new DanceMessageComposer(roomUnit).compose());
         }
 
-        if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousLocation() != roomUnit.getGoal() && roomUnit.getGoal() == room.getLayout().getTile(this.x, this.y)) {
+        if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousLocation() != roomUnit.getGoalLocation() && roomUnit.getGoalLocation() == room.getLayout().getTile(this.x, this.y)) {
             Habbo habbo = room.getHabbo(roomUnit);
 
             if (habbo != null && habbo.getClient() != null) {

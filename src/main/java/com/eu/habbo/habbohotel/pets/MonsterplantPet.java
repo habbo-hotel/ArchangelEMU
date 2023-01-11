@@ -167,7 +167,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                 if (difference >= growTime) {
                     this.growthStage = 7;
                     boolean clear = false;
-                    for (RoomUnitStatus s : this.roomUnit.getStatusMap().keySet()) {
+                    for (RoomUnitStatus s : this.roomUnit.getStatus().keySet()) {
                         if (s.equals(RoomUnitStatus.GROW)) {
                             clear = true;
                             break;

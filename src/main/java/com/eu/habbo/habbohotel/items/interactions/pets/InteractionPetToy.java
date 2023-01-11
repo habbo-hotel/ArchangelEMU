@@ -52,7 +52,7 @@ public class InteractionPetToy extends InteractionDefault {
 
         Pet pet = room.getPet(roomUnit);
 
-        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
+        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoalLocation())) {
             if (pet.getEnergy() <= 35) {
                 return;
             }

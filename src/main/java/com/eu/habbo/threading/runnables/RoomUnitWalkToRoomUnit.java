@@ -38,7 +38,7 @@ public class RoomUnitWalkToRoomUnit implements Runnable {
             return;
         }
 
-        if (this.walker.getGoal().equals(this.goalTile)) { // check that the action hasn't been cancelled by changing the goal
+        if (this.walker.getGoalLocation().equals(this.goalTile)) { // check that the action hasn't been cancelled by changing the goal
             if (this.walker.getCurrentLocation().distance(this.goalTile) <= this.minDistance) {
                 for (Runnable r : this.targetReached) {
                     Emulator.getThreading().run(r);

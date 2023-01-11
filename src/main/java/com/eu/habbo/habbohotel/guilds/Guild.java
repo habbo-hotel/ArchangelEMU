@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.guilds;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +66,7 @@ public class Guild implements Runnable {
 
     public Guild(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
-        this.ownerId = set.getInt("user_id");
+        this.ownerId = set.getInt(DatabaseConstants.USER_ID);
         this.ownerName = set.getString("username");
         this.name = set.getString("name");
         this.description = set.getString("description");

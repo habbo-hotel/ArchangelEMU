@@ -52,7 +52,7 @@ public class OpenPetPackageEvent extends MessageHandler {
                         }
 
                         if (pet != null) {
-                            room.placePet(pet, item.getX(), item.getY(), item.getZ(), item.getRotation());
+                            room.placePet(pet, item.getX(), item.getY(), item.getZ());
                             pet.setUserId(this.client.getHabbo().getHabboInfo().getId());
                             pet.needsUpdate = true;
                             pet.getRoomUnit().setLocation(room.getLayout().getTile(item.getX(), item.getY()));

@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.outgoing.modtool;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.modtool.ModToolSanctionItem;
 import com.eu.habbo.habbohotel.modtool.ModToolSanctionLevelItem;
 import com.eu.habbo.habbohotel.modtool.ModToolSanctions;
@@ -31,7 +32,7 @@ public class ModeratorUserInfoComposer extends MessageComposer {
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
                  PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) AS amount FROM bans WHERE user_id = ?")) {
-                statement.setInt(1, this.set.getInt("user_id"));
+                statement.setInt(1, this.set.getInt(DatabaseConstants.USER_ID));
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
                        totalBans = set.getInt("amount");
@@ -43,7 +44,7 @@ public class ModeratorUserInfoComposer extends MessageComposer {
                 log.error("Caught SQL exception", e);
             }
 
-            this.response.appendInt(this.set.getInt("user_id"));
+            this.response.appendInt(this.set.getInt(DatabaseConstants.USER_ID));
             this.response.appendString(this.set.getString("username"));
             this.response.appendString(this.set.getString("look"));
             this.response.appendInt((Emulator.getIntUnixTimestamp() - this.set.getInt("account_created")) / 60);
@@ -56,7 +57,7 @@ public class ModeratorUserInfoComposer extends MessageComposer {
             this.response.appendInt(this.set.getInt("tradelock_amount"));
             this.response.appendString(""); //Trading lock expiry timestamp
             this.response.appendString(""); //Last Purchase Timestamp
-            this.response.appendInt(this.set.getInt("user_id")); //Personal Identification #
+            this.response.appendInt(this.set.getInt(DatabaseConstants.USER_ID)); //Personal Identification #
             this.response.appendInt(0); // Number of account bans
             this.response.appendString(this.set.getBoolean("hide_mail") ? "" : this.set.getString("mail"));
             this.response.appendString("Rank (" + this.set.getInt("rank_id") + "): " + this.set.getString("rank_name")); //user_class_txt
@@ -64,8 +65,8 @@ public class ModeratorUserInfoComposer extends MessageComposer {
             ModToolSanctions modToolSanctions = Emulator.getGameEnvironment().getModToolSanctions();
 
             if (Emulator.getConfig().getBoolean("hotel.sanctions.enabled")) {
-                THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(this.set.getInt("user_id"));
-                ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(this.set.getInt("user_id"));
+                THashMap<Integer, ArrayList<ModToolSanctionItem>> modToolSanctionItemsHashMap = Emulator.getGameEnvironment().getModToolSanctions().getSanctions(this.set.getInt(DatabaseConstants.USER_ID));
+                ArrayList<ModToolSanctionItem> modToolSanctionItems = modToolSanctionItemsHashMap.get(this.set.getInt(DatabaseConstants.USER_ID));
 
                 if (modToolSanctionItems != null && modToolSanctionItems.size() > 0) //has sanction
                 {

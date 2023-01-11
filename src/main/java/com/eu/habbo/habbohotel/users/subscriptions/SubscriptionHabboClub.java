@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.users.subscriptions;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.database.Database;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.messenger.Messenger;
@@ -265,7 +266,7 @@ public class SubscriptionHabboClub extends Subscription {
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     try {
-                        int userId = set.getInt("user_id");
+                        int userId = set.getInt(DatabaseConstants.USER_ID);
                         HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(userId);
                         HabboStats stats = habboInfo.getHabboStats();
                         ScrSendKickbackInfoMessageComposer calculated = calculatePayday(habboInfo);
@@ -278,7 +279,7 @@ public class SubscriptionHabboClub extends Subscription {
                         stats.setLastHCPayday(timestampNow);
                         Emulator.getThreading().run(stats);
                     } catch (Exception e) {
-                        log.error("Exception processing HC payday for user #" + set.getInt("user_id"), e);
+                        log.error("Exception processing HC payday for user #" + set.getInt(DatabaseConstants.USER_ID), e);
                     }
                 }
             }
@@ -328,7 +329,7 @@ public class SubscriptionHabboClub extends Subscription {
                 while (set.next()) {
                     try {
                         int logId = set.getInt("id");
-                        int userId = set.getInt("user_id");
+                        int userId = set.getInt(DatabaseConstants.USER_ID);
                         int totalPayout = set.getInt("total_payout");
                         String currency = set.getString("currency");
 
@@ -339,7 +340,7 @@ public class SubscriptionHabboClub extends Subscription {
                             }
                         }
                     } catch (Exception e) {
-                        log.error("Exception processing HC payday for user #" + set.getInt("user_id"), e);
+                        log.error("Exception processing HC payday for user #" + set.getInt(DatabaseConstants.USER_ID), e);
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.catalog;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.catalog.layouts.*;
@@ -249,7 +250,7 @@ public class CatalogManager {
 
                     totals.adjustOrPutValue(set.getInt("catalog_item_id"), 1, 1);
 
-                    if (set.getInt("user_id") == 0) {
+                    if (set.getInt(DatabaseConstants.USER_ID) == 0) {
                         limiteds.get(set.getInt("catalog_item_id")).push(set.getInt("number"));
                     }
                 }

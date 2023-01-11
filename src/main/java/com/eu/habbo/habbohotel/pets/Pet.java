@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.pets;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -138,7 +139,7 @@ public class Pet implements ISerialize, Runnable {
     public Pet(ResultSet set) throws SQLException {
         super();
         this.id = set.getInt("id");
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.room = null;
         this.name = set.getString("name");
         this.petData = Emulator.getGameEnvironment().getPetManager().getPetData(set.getInt("type"));

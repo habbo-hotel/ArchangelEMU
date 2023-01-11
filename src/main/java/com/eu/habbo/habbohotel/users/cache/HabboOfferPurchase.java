@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users.cache;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.users.Habbo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class HabboOfferPurchase {
     private boolean needsUpdate = false;
 
     public HabboOfferPurchase(ResultSet set) throws SQLException {
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.offerId = set.getInt("offer_id");
         this.state = set.getInt("state");
         this.amount = set.getInt("amount");

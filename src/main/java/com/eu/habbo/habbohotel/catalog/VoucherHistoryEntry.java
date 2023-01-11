@@ -1,5 +1,6 @@
 package com.eu.habbo.habbohotel.catalog;
 
+import com.eu.habbo.database.DatabaseConstants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,7 +18,7 @@ public class VoucherHistoryEntry {
 
     public VoucherHistoryEntry(ResultSet set) throws SQLException {
         this.voucherId = set.getInt("voucher_id");
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.timestamp = set.getInt("timestamp");
     }
 

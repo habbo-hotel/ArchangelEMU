@@ -39,7 +39,7 @@ public class InteractionPetTree extends InteractionDefault {
         super.onWalkOn(roomUnit, room, objects);
 
         Pet pet = room.getPet(roomUnit);
-        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoal())) {
+        if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoalLocation())) {
             RoomUnitStatus task = switch (pet.getTask()) {
                 case RING_OF_FIRE -> RoomUnitStatus.RINGOFFIRE;
                 case SWING -> RoomUnitStatus.SWING;

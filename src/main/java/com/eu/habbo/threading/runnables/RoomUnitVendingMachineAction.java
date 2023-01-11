@@ -22,7 +22,7 @@ public class RoomUnitVendingMachineAction implements Runnable {
             if (this.habboItem.getRoomId() == this.room.getId()) {
                 RoomTile tile = HabboItem.getSquareInFront(this.room.getLayout(), this.habboItem);
                 if (tile != null) {
-                    if (this.habbo.getRoomUnit().getGoal().equals(tile)) {
+                    if (this.habbo.getRoomUnit().getGoalLocation().equals(tile)) {
                         if (this.habbo.getRoomUnit().getCurrentLocation().equals(tile)) {
                             try {
                                 this.habboItem.onClick(this.habbo.getClient(), this.room, new Object[]{0});

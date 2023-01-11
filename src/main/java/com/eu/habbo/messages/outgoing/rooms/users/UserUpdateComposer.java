@@ -50,7 +50,7 @@ public class UserUpdateComposer extends MessageComposer {
                 this.response.appendInt(roomUnit.getBodyRotation().getValue());
 
                 StringBuilder status = new StringBuilder("/");
-                for (Map.Entry<RoomUnitStatus, String> entry : roomUnit.getStatusMap().entrySet()) {
+                for (Map.Entry<RoomUnitStatus, String> entry : roomUnit.getStatus().entrySet()) {
                     status.append(entry.getKey()).append(" ").append(entry.getValue()).append("/");
                 }
 
@@ -72,7 +72,7 @@ public class UserUpdateComposer extends MessageComposer {
 
                     StringBuilder status = new StringBuilder("/");
 
-                    for (Map.Entry<RoomUnitStatus, String> entry : habbo.getRoomUnit().getStatusMap().entrySet()) {
+                    for (Map.Entry<RoomUnitStatus, String> entry : habbo.getRoomUnit().getStatus().entrySet()) {
                         status.append(entry.getKey()).append(" ").append(entry.getValue()).append("/");
                     }
                     this.response.appendString(status.toString());

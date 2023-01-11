@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.guilds;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.guilds.forums.ForumView;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGuildFurni;
@@ -433,7 +434,7 @@ public class GuildManager {
             statement.setInt(1, guild.getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    guildAdmins.put(set.getInt("user_id"), new GuildMember(set));
+                    guildAdmins.put(set.getInt(DatabaseConstants.USER_ID), new GuildMember(set));
                 }
             }
         } catch (SQLException e) {

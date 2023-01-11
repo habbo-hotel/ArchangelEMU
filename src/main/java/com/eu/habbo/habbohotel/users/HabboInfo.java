@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
@@ -211,7 +212,7 @@ public class HabboInfo implements Runnable {
             statement.setInt(1, this.id);
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    this.messengerCategories.add(new MessengerCategory(set.getString("name"), set.getInt("user_id"), set.getInt("id")));
+                    this.messengerCategories.add(new MessengerCategory(set.getString("name"), set.getInt(DatabaseConstants.USER_ID), set.getInt("id")));
                 }
             }
         } catch (SQLException e) {

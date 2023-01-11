@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.catalog.marketplace;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
@@ -262,7 +263,7 @@ public class MarketPlace {
                                             updateOffer.setInt(2, offerId);
                                             updateOffer.execute();
                                         }
-                                        Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(set.getInt("user_id"));
+                                        Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(set.getInt(DatabaseConstants.USER_ID));
                                         HabboItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(itemSet);
 
                                         MarketPlaceItemSoldEvent event = new MarketPlaceItemSoldEvent(habbo, client.getHabbo(), item, set.getInt("price"));

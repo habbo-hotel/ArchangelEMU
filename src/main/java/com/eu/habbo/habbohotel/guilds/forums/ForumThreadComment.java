@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.guilds.forums;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ISerialize;
@@ -50,7 +51,7 @@ public class ForumThreadComment implements Runnable, ISerialize {
     public ForumThreadComment(ResultSet set) throws SQLException {
         this.commentId = set.getInt("id");
         this.threadId = set.getInt("thread_id");
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.message = set.getString("message");
         this.createdAt = set.getInt("created_at");
         this.state = ForumThreadState.fromValue(set.getInt("state"));

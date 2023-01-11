@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.database.DatabaseConstants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class RoomBan {
 
     public RoomBan(ResultSet set) throws SQLException {
         this.roomId = set.getInt("room_id");
-        this.userId = set.getInt("user_id");
+        this.userId = set.getInt(DatabaseConstants.USER_ID);
         this.username = set.getString("username");
         this.endTimestamp = set.getInt("ends");
     }

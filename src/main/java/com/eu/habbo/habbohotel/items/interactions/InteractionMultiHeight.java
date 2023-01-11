@@ -80,7 +80,7 @@ public class InteractionMultiHeight extends HabboItem {
             Collection<RoomUnit> unitsOnItem = room.getRoomUnitsAt(room.getLayout().getTile(tile.getX(), tile.getY()));
 
             for (RoomUnit unit : unitsOnItem) {
-                if (unit.hasStatus(RoomUnitStatus.MOVE) && unit.getGoal() != tile)
+                if (unit.hasStatus(RoomUnitStatus.MOVE) && unit.getGoalLocation() != tile)
                     continue;
 
                 if (this.getBaseItem().allowSit() || unit.hasStatus(RoomUnitStatus.SIT)) {

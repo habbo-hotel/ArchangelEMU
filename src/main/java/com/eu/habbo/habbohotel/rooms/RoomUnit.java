@@ -22,6 +22,9 @@ import com.eu.habbo.util.pathfinding.Rotation;
 import gnu.trove.map.TMap;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -35,6 +38,7 @@ public class RoomUnit {
     public boolean isWiredTeleporting = false;
     public boolean isLeavingTeleporter = false;
     public boolean isSwimming = false;
+    @Getter
     private final ConcurrentHashMap<RoomUnitStatus, String> status;
     private final THashMap<String, Object> cacheable;
     public boolean canRotate = true;
@@ -48,22 +52,42 @@ public class RoomUnit {
     public boolean isKicked;
     public int kickCount = 0;
     private int id;
+    @Getter
     private RoomTile startLocation;
+    @Getter
     private RoomTile previousLocation;
+    @Getter
+    @Setter @Accessors(chain = true)
     private double previousLocationZ;
     private RoomTile currentLocation;
+    @Getter
     private RoomTile goalLocation;
+    @Getter
     private double z;
     private int tilesWalked;
+    @Getter
+    @Setter
     private boolean inRoom;
+    @Setter
+    @Accessors(chain = true)
     private boolean canWalk;
+    @Setter
+    @Getter
     private boolean fastWalk = false;
     private boolean statusUpdate = false;
     private boolean invisible = false;
     private boolean canLeaveRoomByDoor = true;
+    @Setter
     private RoomUserRotation bodyRotation = RoomUserRotation.NORTH;
+    @Getter
+    @Setter
     private RoomUserRotation headRotation = RoomUserRotation.NORTH;
+    @Getter
+    @Setter
     private DanceType danceType;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private RoomUnitType roomUnitType;
     private Deque<RoomTile> path = new LinkedList<>();
     private int handItem;
@@ -129,7 +153,7 @@ public class RoomUnit {
 
             if (rider != null) {
                 // copy things from rider
-                if (this.status.containsKey(RoomUnitStatus.MOVE) && !rider.getRoomUnit().getStatusMap().containsKey(RoomUnitStatus.MOVE)) {
+                if (this.status.containsKey(RoomUnitStatus.MOVE) && !rider.getRoomUnit().getStatus().containsKey(RoomUnitStatus.MOVE)) {
                     this.status.remove(RoomUnitStatus.MOVE);
                 }
 
@@ -341,7 +365,7 @@ public class RoomUnit {
                         this.setZ(zHeight - 1.0);
                         ridingUnit.setRotation(RoomUserRotation.values()[Rotation.Calculate(this.getX(), this.getY(), next.getX(), next.getY())]);
                         ridingUnit.setPreviousLocation(this.getCurrentLocation());
-                        ridingUnit.setGoalLocation(this.getGoal());
+                        ridingUnit.setGoalLocation(this.getGoalLocation());
                         ridingUnit.setStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + (zHeight - 1.0));
                         room.sendComposer(new UserUpdateComposer(ridingUnit).compose());
                         //ridingUnit.setZ(zHeight - 1.0);
@@ -404,10 +428,6 @@ public class RoomUnit {
         return this.currentLocation.getY();
     }
 
-    public double getZ() {
-        return this.z;
-    }
-
     public void setZ(double z) {
         this.z = z;
 
@@ -419,22 +439,6 @@ public class RoomUnit {
         }
     }
 
-    public synchronized boolean isInRoom() {
-        return this.inRoom;
-    }
-
-    public synchronized void setInRoom(boolean inRoom) {
-        this.inRoom = inRoom;
-    }
-
-    public synchronized RoomUnitType getRoomUnitType() {
-        return this.roomUnitType;
-    }
-
-    public synchronized void setRoomUnitType(RoomUnitType roomUnitType) {
-        this.roomUnitType = roomUnitType;
-    }
-
     public void setRotation(RoomUserRotation rotation) {
         this.bodyRotation = rotation;
         this.headRotation = rotation;
@@ -444,60 +448,19 @@ public class RoomUnit {
         return this.bodyRotation;
     }
 
-    public void setBodyRotation(RoomUserRotation bodyRotation) {
-        this.bodyRotation = bodyRotation;
-    }
-
-    public RoomUserRotation getHeadRotation() {
-        return this.headRotation;
-    }
-
-    public void setHeadRotation(RoomUserRotation headRotation) {
-        this.headRotation = headRotation;
-    }
-
-    public synchronized DanceType getDanceType() {
-        return this.danceType;
-    }
-
-    public synchronized void setDanceType(DanceType danceType) {
-        this.danceType = danceType;
-    }
-
-    public void setCanWalk(boolean value) {
-        this.canWalk = value;
-    }
-
     public boolean canWalk() {
         return this.canWalk;
-    }
-
-    public boolean isFastWalk() {
-        return this.fastWalk;
-    }
-
-    public void setFastWalk(boolean fastWalk) {
-        this.fastWalk = fastWalk;
-    }
-
-    public RoomTile getStartLocation() {
-        return this.startLocation;
     }
 
     public int tilesWalked() {
         return this.tilesWalked;
     }
 
-    public RoomTile getGoal() {
-        return this.goalLocation;
-    }
-
-    public void setGoalLocation(RoomTile goalLocation) {
+    public RoomUnit setGoalLocation(RoomTile goalLocation) {
         if (goalLocation != null) {
-            //      if (goalLocation.state != RoomTileState.INVALID) {
             this.setGoalLocation(goalLocation, false);
         }
-        //}
+        return  this;
     }
 
     public void setGoalLocation(RoomTile goalLocation, boolean noReset) {
@@ -525,17 +488,14 @@ public class RoomUnit {
         }
     }
 
-    public void setLocation(RoomTile location) {
+    public RoomUnit setLocation(RoomTile location) {
         if (location != null) {
             this.startLocation = location;
             setPreviousLocation(location);
             setCurrentLocation(location);
             this.goalLocation = location;
         }
-    }
-
-    public RoomTile getPreviousLocation() {
-        return this.previousLocation;
+        return this;
     }
 
     public void setPreviousLocation(RoomTile previousLocation) {
@@ -543,16 +503,9 @@ public class RoomUnit {
         this.previousLocationZ = this.z;
     }
 
-    public double getPreviousLocationZ() {
-        return this.previousLocationZ;
-    }
-
-    public void setPreviousLocationZ(double z) {
-        this.previousLocationZ = z;
-    }
-
-    public void setPathFinderRoom(Room room) {
+    public RoomUnit setPathFinderRoom(Room room) {
         this.room = room;
+        return this;
     }
 
     public void findPath() {
@@ -572,10 +525,6 @@ public class RoomUnit {
 
     public String getStatus(RoomUnitStatus key) {
         return this.status.get(key);
-    }
-
-    public ConcurrentHashMap<RoomUnitStatus, String> getStatusMap() {
-        return this.status;
     }
 
     public void removeStatus(RoomUnitStatus key) {

@@ -109,7 +109,7 @@ public class UseFurnitureEvent extends MessageHandler {
                 room.sendComposer(new RemoveFloorItemComposer(item, true).compose());
                 room.removeHabboItem(item);
                 room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
-                room.placePet(pet, item.getX(), item.getY(), item.getZ(), item.getRotation());
+                room.placePet(pet, item.getX(), item.getY(), item.getZ());
                 pet.cycle();
                 room.sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
                 return;
