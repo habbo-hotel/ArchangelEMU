@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `pet_actions`;
 CREATE TABLE IF NOT EXISTS `pet_actions` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `pet_type` int(11) NOT NULL,
   `pet_name` varchar(32) NOT NULL,
   `offspring_type` int(11) NOT NULL DEFAULT -1,
@@ -9,9 +9,9 @@ CREATE TABLE IF NOT EXISTS `pet_actions` (
   `random_actions` varchar(100) NOT NULL DEFAULT '',
   `can_swim` enum('1','0') DEFAULT '0',
   PRIMARY KEY (`ID`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=77 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=MyISAM AUTO_INCREMENT=77 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
-INSERT INTO `pet_actions` (`ID`, `pet_type`, `pet_name`, `offspring_type`, `happy_actions`, `tired_actions`, `random_actions`, `can_swim`) VALUES
+INSERT INTO `pet_actions` (`id`, `pet_type`, `pet_name`, `offspring_type`, `happy_actions`, `tired_actions`, `random_actions`, `can_swim`) VALUES
 	(0, 0, 'Dog', -1, '', '', '', '0'),
 	(1, 1, 'Cat', -1, '', '', '', '0'),
 	(2, 2, 'Crocodile', -1, '', '', '', '0'),
@@ -60,13 +60,13 @@ REPLACE INTO `pet_commands` (`pet_id`, `command_id`) VALUES (0, 46),(0, 0),(0, 1
 DROP TABLE IF EXISTS `pet_commands_data`;
 CREATE TABLE IF NOT EXISTS `pet_commands_data` (
   `command_id` int(11) NOT NULL,
-  `text` varchar(15) NOT NULL,
+  `text` varchar(25) NOT NULL,
   `required_level` int(11) NOT NULL,
   `reward_xp` int(11) NOT NULL DEFAULT 5,
   `cost_happyness` int(11) NOT NULL DEFAULT 0,
   `cost_energy` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`command_id`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 INSERT INTO `pet_commands_data` (`command_id`, `text`, `required_level`, `reward_xp`, `cost_happyness`, `cost_energy`) VALUES
 	(0, 'Free', 1, 5, 0, 0),
@@ -120,8 +120,8 @@ DROP TABLE IF EXISTS `pet_vocals`;
 CREATE TABLE IF NOT EXISTS `pet_vocals` (
   `pet_id` int(11) NOT NULL DEFAULT 0 COMMENT 'Leave 0 to have it apply to all pet types.',
   `type` enum('DISOBEY','DRINKING','EATING','GENERIC_HAPPY','GENERIC_NEUTRAL','GENERIC_SAD','GREET_OWNER','HUNGRY','LEVEL_UP','MUTED','PLAYFUL','SLEEPING','THIRSTY','TIRED','UNKNOWN_COMMAND') NOT NULL DEFAULT 'GENERIC_HAPPY',
-  `message` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci PAGE_CHECKSUM=1 ROW_FORMAT=DYNAMIC;
+  `message` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `pet_vocals` (`pet_id`, `type`, `message`) VALUES
 	(15, 'DISOBEY', 'Nay. (Geddit?)'),
