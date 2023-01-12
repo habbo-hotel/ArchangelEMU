@@ -149,7 +149,7 @@ public class Pet implements ISerialize, Runnable {
         }
         this.race = set.getInt("race");
         this.experience = set.getInt("experience");
-        this.happiness = set.getInt("happyness");
+        this.happiness = set.getInt("happiness");
         this.energy = set.getInt("energy");
         this.respect = set.getInt("respect");
         this.created = set.getInt("created");
@@ -284,7 +284,7 @@ public class Pet implements ISerialize, Runnable {
         if (this.isNeedsUpdate()) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
                 if (this.id > 0) {
-                    try (PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET room_id = ?, experience = ?, energy = ?, respect = ?, x = ?, y = ?, z = ?, rot = ?, hunger = ?, thirst = ?, happyness = ?, created = ? WHERE id = ?")) {
+                    try (PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET room_id = ?, experience = ?, energy = ?, respect = ?, x = ?, y = ?, z = ?, rot = ?, hunger = ?, thirst = ?, happiness = ?, created = ? WHERE id = ?")) {
                         statement.setInt(1, (this.room == null ? 0 : this.room.getId()));
                         statement.setInt(2, this.experience);
                         statement.setInt(3, this.energy);
@@ -774,7 +774,7 @@ public class Pet implements ISerialize, Runnable {
     }
 
     /**
-     * Increases the pet's happyness level when it is scratched.
+     * Increases the pet's happiness level when it is scratched.
      *
      * @param habbo the habbo who scratched the pet
      */

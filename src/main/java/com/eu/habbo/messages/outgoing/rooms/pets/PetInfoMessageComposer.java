@@ -40,7 +40,7 @@ public class PetInfoMessageComposer extends MessageComposer {
         }
         this.response.appendInt(this.pet.getEnergy());
         this.response.appendInt(this.pet.getMaxEnergy()); //Max energy
-        this.response.appendInt(this.pet.getHappiness()); //this.pet.getHappyness()
+        this.response.appendInt(this.pet.getHappiness());
         this.response.appendInt(100);
         this.response.appendInt(this.pet.getRespect());
         this.response.appendInt(this.pet.getUserId());
