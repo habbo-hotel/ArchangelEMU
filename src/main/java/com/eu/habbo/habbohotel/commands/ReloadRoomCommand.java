@@ -24,9 +24,7 @@ public class ReloadRoomCommand extends Command {
                 Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
                 room = Emulator.getGameEnvironment().getRoomManager().loadRoom(room.getId());
                 ServerMessage message = new RoomForwardMessageComposer(room.getId()).compose();
-                for (Habbo habbo : habbos) {
-                    habbo.getClient().sendResponse(message);
-                }
+                habbos.forEach(habbo -> habbo.getClient().sendResponse(message));
             }
         }, 100);
 

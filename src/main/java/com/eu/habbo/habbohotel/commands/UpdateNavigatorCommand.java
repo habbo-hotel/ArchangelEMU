@@ -14,7 +14,7 @@ public class UpdateNavigatorCommand extends Command {
         Emulator.getGameEnvironment().getNavigatorManager().loadNavigator();
         Emulator.getGameEnvironment().getRoomManager().loadRoomModels();
         Emulator.getGameEnvironment().getRoomManager().loadPublicRooms();
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_navigator"), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_update_navigator"), RoomChatMessageBubbles.ALERT);
 
         return true;
     }

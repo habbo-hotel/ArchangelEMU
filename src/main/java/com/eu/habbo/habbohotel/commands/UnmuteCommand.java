@@ -13,30 +13,30 @@ public class UnmuteCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_unmute.not_specified"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_unmute.not_specified"), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[1]);
 
         if (habbo == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_unmute.not_found").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_unmute.not_found"), params[1]), RoomChatMessageBubbles.ALERT);
             return true;
-        } else {
-            if (!habbo.getHabboStats().allowTalk() || (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom().isMuted(habbo))) {
-                if (!habbo.getHabboStats().allowTalk()) {
-                    habbo.unMute();
-                }
+        }
 
-                if (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom().isMuted(habbo)) {
-                    habbo.getHabboInfo().getCurrentRoom().muteHabbo(habbo, 1);
-                }
-
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_unmute").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
-            } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_unmute.not_muted").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
-                return true;
+        if (!habbo.getHabboStats().allowTalk() || (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom().isMuted(habbo))) {
+            if (!habbo.getHabboStats().allowTalk()) {
+                habbo.unMute();
             }
+
+            if (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getHabboInfo().getCurrentRoom().isMuted(habbo)) {
+                habbo.getHabboInfo().getCurrentRoom().muteHabbo(habbo, 1);
+            }
+
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_unmute"), params[1]), RoomChatMessageBubbles.ALERT);
+        } else {
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_unmute.not_muted"), params[1]), RoomChatMessageBubbles.ALERT);
+            return true;
         }
 
         return true;

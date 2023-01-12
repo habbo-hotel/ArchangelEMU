@@ -13,7 +13,7 @@ public class UpdateConfigCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getConfig().reload();
 
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_config"), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_update_config"), RoomChatMessageBubbles.ALERT);
 
         return true;
     }

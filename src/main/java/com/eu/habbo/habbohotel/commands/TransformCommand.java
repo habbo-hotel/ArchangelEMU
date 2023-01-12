@@ -21,11 +21,11 @@ public class TransformCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1) {
             StringBuilder petNames = new StringBuilder();
-            petNames.append(Emulator.getTexts().getValue("commands.generic.cmd_transform.title"));
+            petNames.append(getTextsValue("commands.generic.cmd_transform.title"));
             petNames.append("\r------------------------------------------------------------------------------\r");
             ArrayList<PetData> petData = new ArrayList<>(Emulator.getGameEnvironment().getPetManager().getPetData());
             Collections.sort(petData);
-            String line = Emulator.getTexts().getValue("commands.generic.cmd_transform.line");
+            String line = getTextsValue("commands.generic.cmd_transform.line");
             for (PetData p : petData) {
                 petNames.append(line.replace("%id%", p.getType() + "").replace("%name%", p.getName())).append("\r");
             }

@@ -16,50 +16,49 @@ public class GiveRankCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         Rank rank = null;
-        if (params.length == 1) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_give_rank.missing_username") + Emulator.getTexts().getValue("commands.description.cmd_give_rank"), RoomChatMessageBubbles.ALERT);
-            return true;
-        }
-
-        if (params.length == 2) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_give_rank.missing_rank") + Emulator.getTexts().getValue("commands.description.cmd_give_rank"), RoomChatMessageBubbles.ALERT);
-            return true;
-        }
-
-        if (params.length == 3) {
-            if (StringUtils.isNumeric(params[2])) {
-                int rankId = Integer.parseInt(params[2]);
-                if (Emulator.getGameEnvironment().getPermissionsManager().rankExists(rankId))
-                    rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(rankId);
-            } else {
-                rank = Emulator.getGameEnvironment().getPermissionsManager().getRankByName(params[2]);
+        switch (params.length) {
+            case 1 -> {
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_give_rank.missing_username") + getTextsValue("commands.description.cmd_give_rank"), RoomChatMessageBubbles.ALERT);
+                return true;
             }
-
-            if (rank != null) {
-                if (rank.getId() > gameClient.getHabbo().getHabboInfo().getRank().getId()) {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_give_rank.higher").replace("%username%", params[1]).replace("%id%", rank.getName()), RoomChatMessageBubbles.ALERT);
-                    return true;
+            case 2 -> {
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_give_rank.missing_rank") + getTextsValue("commands.description.cmd_give_rank"), RoomChatMessageBubbles.ALERT);
+                return true;
+            }
+            case 3 -> {
+                if (StringUtils.isNumeric(params[2])) {
+                    int rankId = Integer.parseInt(params[2]);
+                    if (Emulator.getGameEnvironment().getPermissionsManager().rankExists(rankId))
+                        rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(rankId);
+                } else {
+                    rank = Emulator.getGameEnvironment().getPermissionsManager().getRankByName(params[2]);
                 }
-
-                HabboInfo habbo = HabboManager.getOfflineHabboInfo(params[1]);
-
-                if (habbo != null) {
-                    if (habbo.getRank().getId() > gameClient.getHabbo().getHabboInfo().getRank().getId()) {
-                        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_give_rank.higher.other").replace("%username%", params[1]).replace("%id%", rank.getName()), RoomChatMessageBubbles.ALERT);
+                if (rank != null) {
+                    if (rank.getId() > gameClient.getHabbo().getHabboInfo().getRank().getId()) {
+                        gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_give_rank.higher"), params[1]).replace("%id%", rank.getName()), RoomChatMessageBubbles.ALERT);
                         return true;
                     }
 
-                    Emulator.getGameEnvironment().getHabboManager().setRank(habbo.getId(), rank.getId());
+                    HabboInfo habbo = HabboManager.getOfflineHabboInfo(params[1]);
 
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_give_rank.updated").replace("%id%", rank.getName()).replace("%username%", params[1]), RoomChatMessageBubbles.ALERT);
-                } else {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_give_rank.user_offline").replace("%id%", rank.getName()).replace("%username%", params[1]), RoomChatMessageBubbles.ALERT);
+                    if (habbo != null) {
+                        if (habbo.getRank().getId() > gameClient.getHabbo().getHabboInfo().getRank().getId()) {
+                            gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_give_rank.higher.other"), params[1]).replace("%id%", rank.getName()), RoomChatMessageBubbles.ALERT);
+                            return true;
+                        }
+
+                        Emulator.getGameEnvironment().getHabboManager().setRank(habbo.getId(), rank.getId());
+
+                        gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.succes.cmd_give_rank.updated"), params[1]).replace("%id%", rank.getName()), RoomChatMessageBubbles.ALERT);
+                    } else {
+                        gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_give_rank.user_offline"), params[1]).replace("%id%", rank.getName()), RoomChatMessageBubbles.ALERT);
+                    }
+                    return true;
                 }
-                return true;
             }
         }
 
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.errors.cmd_give_rank.not_found").replace("%id%", params[2]).replace("%username%", params[1]), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.errors.cmd_give_rank.not_found"), params[1]).replace("%id%", params[2]), RoomChatMessageBubbles.ALERT);
         return true;
     }
 }

@@ -14,6 +14,6 @@ public class CameraLoginComposer extends CameraOutgoingMessage {
     public void compose(Channel channel) {
         this.appendString(Emulator.getConfig().getValue("username").trim());
         this.appendString(Emulator.getConfig().getValue("password").trim());
-        this.appendString(Emulator.version);
+        this.appendString(Emulator.VERSION);
     }
 }

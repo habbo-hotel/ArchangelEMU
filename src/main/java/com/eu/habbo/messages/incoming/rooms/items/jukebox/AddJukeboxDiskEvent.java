@@ -18,8 +18,8 @@ public class AddJukeboxDiskEvent extends MessageHandler {
         if (habbo != null) {
             HabboItem item = habbo.getInventory().getItemsComponent().getHabboItem(itemId);
 
-            if (item instanceof InteractionMusicDisc && item.getRoomId() == 0) {
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().addSong((InteractionMusicDisc) item, habbo);
+            if (item instanceof InteractionMusicDisc interactionMusicDisc && item.getRoomId() == 0) {
+                this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().addSong(interactionMusicDisc, habbo);
             }
         }
     }

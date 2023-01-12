@@ -20,17 +20,17 @@ public class PromoteTargetOfferCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length <= 1) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_promote_offer.not_found"));
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_promote_offer.not_found"));
             return true;
         }
 
         String offerKey = params[1];
 
-        if (offerKey.equalsIgnoreCase(Emulator.getTexts().getValue("commands.cmd_promote_offer.info"))) {
+        if (offerKey.equalsIgnoreCase(getTextsValue("commands.cmd_promote_offer.info"))) {
             THashMap<Integer, TargetOffer> targetOffers = Emulator.getGameEnvironment().getCatalogManager().targetOffers;
-            String[] textConfig = Emulator.getTexts().getValue("commands.cmd_promote_offer.list").replace("%amount%", targetOffers.size() + "").split("<br>");
+            String[] textConfig = getTextsValue("commands.cmd_promote_offer.list").replace("%amount%", targetOffers.size() + "").split("<br>");
 
-            String entryConfig = Emulator.getTexts().getValue("commands.cmd_promote_offer.list.entry");
+            String entryConfig = getTextsValue("commands.cmd_promote_offer.list.entry");
             List<String> message = new ArrayList<>();
 
             for (String pair : textConfig) {
@@ -56,14 +56,13 @@ public class PromoteTargetOfferCommand extends Command {
 
                 if (offer != null) {
                     TargetOffer.ACTIVE_TARGET_OFFER_ID = offer.getId();
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_promote_offer").replace("%id%", offerKey).replace("%title%", offer.getTitle()));
+                    gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_promote_offer").replace("%id%", offerKey).replace("%title%", offer.getTitle()));
 
-                    for (Habbo habbo : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values()) {
-                        habbo.getClient().sendResponse(new TargetedOfferComposer(habbo, offer));
-                    }
+                    Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values()
+                            .forEach(habbo -> habbo.getClient().sendResponse(new TargetedOfferComposer(habbo, offer)));
                 }
             } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_promote_offer.not_found"));
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_promote_offer.not_found"));
                 return true;
             }
         }

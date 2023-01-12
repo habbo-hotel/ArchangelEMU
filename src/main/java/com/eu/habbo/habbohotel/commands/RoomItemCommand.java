@@ -20,11 +20,11 @@ public class RoomItemCommand extends Command {
                 itemId = Integer.parseInt(params[1]);
 
                 if (itemId < 0) {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_roomitem.positive"), RoomChatMessageBubbles.ALERT);
+                    gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_roomitem.positive"), RoomChatMessageBubbles.ALERT);
                     return true;
                 }
             } catch (Exception e) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_roomitem.no_item"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_roomitem.no_item"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
         }
@@ -35,9 +35,9 @@ public class RoomItemCommand extends Command {
         }
 
         if (itemId > 0) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_roomitem.given").replace("%item%", itemId + ""), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_roomitem.given").replace("%item%", itemId + ""), RoomChatMessageBubbles.ALERT);
         } else {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_roomitem.removed"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_roomitem.removed"), RoomChatMessageBubbles.ALERT);
         }
         return true;
     }

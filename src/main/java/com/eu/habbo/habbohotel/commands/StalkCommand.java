@@ -17,32 +17,31 @@ public class StalkCommand extends Command {
             return true;
 
         if (params.length >= 2) {
-            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[1]);
+            Habbo habbo = getHabbo(params[1]);
 
             if (habbo == null) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_stalk.not_found").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_stalk.not_found"), params[1]), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
             if (habbo.getHabboInfo().getCurrentRoom() == null) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_stalk.not_room").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_stalk.not_room"), params[1]), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
             if (gameClient.getHabbo().getHabboInfo().getUsername().equals(habbo.getHabboInfo().getUsername())) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.generic.cmd_stalk.self").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.generic.cmd_stalk.self"), params[1]), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
             if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == habbo.getHabboInfo().getCurrentRoom()) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.generic.cmd_stalk.same_room").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.generic.cmd_stalk.same_room"), params[1]), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
             gameClient.sendResponse(new GetGuestRoomResultComposer(habbo.getHabboInfo().getCurrentRoom(), gameClient.getHabbo(), true, false));
-            //gameClient.sendResponse(new ForwardToRoomComposer(habbo.getHabboInfo().getCurrentRoom().getId()));
         } else {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_stalk.forgot_username"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_stalk.forgot_username"), RoomChatMessageBubbles.ALERT);
         }
         return true;
     }

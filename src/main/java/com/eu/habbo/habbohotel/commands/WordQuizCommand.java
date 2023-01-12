@@ -15,7 +15,7 @@ public class WordQuizCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         if (!gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasActiveWordQuiz()) {
             if(params.length == 1) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.description.cmd_word_quiz"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.description.cmd_word_quiz"), RoomChatMessageBubbles.ALERT);
                 return  true;
             }
             StringBuilder question = new StringBuilder();

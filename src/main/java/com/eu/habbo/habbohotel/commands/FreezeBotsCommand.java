@@ -12,17 +12,19 @@ public class FreezeBotsCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            if (gameClient.getHabbo().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getCurrentRoom().getOwnerId() || gameClient.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
-                gameClient.getHabbo().getHabboInfo().getCurrentRoom().setAllowBotsWalk(!gameClient.getHabbo().getHabboInfo().getCurrentRoom().isAllowBotsWalk());
-                gameClient.getHabbo().whisper(gameClient.getHabbo().getHabboInfo().getCurrentRoom().isAllowBotsWalk() ? Emulator.getTexts().getValue("commands.succes.cmd_freeze_bots.unfrozen") : Emulator.getTexts().getValue("commands.succes.cmd_freeze_bots.frozen"), RoomChatMessageBubbles.ALERT);
-            } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.cannot_do_that"), RoomChatMessageBubbles.ALERT);
-            }
-
-            return true;
+        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null) {
+            return false;
         }
 
-        return false;
+        if (gameClient.getHabbo().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getCurrentRoom().getOwnerId()
+                || gameClient.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
+            gameClient.getHabbo().getHabboInfo().getCurrentRoom().setAllowBotsWalk(!gameClient.getHabbo().getHabboInfo().getCurrentRoom().isAllowBotsWalk());
+            gameClient.getHabbo().whisper(gameClient.getHabbo().getHabboInfo().getCurrentRoom().isAllowBotsWalk() ? getTextsValue("commands.succes.cmd_freeze_bots.unfrozen") : getTextsValue("commands.succes.cmd_freeze_bots.frozen"), RoomChatMessageBubbles.ALERT);
+        } else {
+            gameClient.getHabbo().whisper(getTextsValue("generic.cannot_do_that"), RoomChatMessageBubbles.ALERT);
+        }
+
+        return true;
+
     }
 }

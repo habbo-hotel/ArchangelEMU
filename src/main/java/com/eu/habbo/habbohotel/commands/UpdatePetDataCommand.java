@@ -13,7 +13,7 @@ public class UpdatePetDataCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameEnvironment().getPetManager().reloadPetData();
 
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_pet_data"), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_update_pet_data"), RoomChatMessageBubbles.ALERT);
 
         return true;
     }

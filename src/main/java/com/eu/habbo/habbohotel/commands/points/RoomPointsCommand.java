@@ -21,13 +21,13 @@ public class RoomPointsCommand extends BasePointsCommand {
 
                 type = Integer.parseInt(params[2]);
             } catch (Exception e) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_masspoints.invalid_type").replace("%types%", Emulator.getConfig().getValue("seasonal.types").replace(";", ", ")), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_masspoints.invalid_type").replace("%types%", Emulator.getConfig().getValue("seasonal.types").replace(";", ", ")), RoomChatMessageBubbles.ALERT);
                 return true;
             }
         } else if (params.length == 2) {
             amountString = params[1];
         } else {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_masspoints.invalid_amount"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_masspoints.invalid_amount"), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
@@ -40,7 +40,7 @@ public class RoomPointsCommand extends BasePointsCommand {
         }
 
         if (!found) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_masspoints.invalid_type").replace("%types%", Emulator.getConfig().getValue("seasonal.types").replace(";", ", ")), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_masspoints.invalid_type").replace("%types%", Emulator.getConfig().getValue("seasonal.types").replace(";", ", ")), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
@@ -49,12 +49,12 @@ public class RoomPointsCommand extends BasePointsCommand {
         try {
             amount = Integer.parseInt(amountString);
         } catch (Exception e) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_masspoints.invalid_amount"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_masspoints.invalid_amount"), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
         if (amount != 0) {
-            final String message = Emulator.getTexts().getValue("commands.generic.cmd_points.received").replace("%amount%", amount + "").replace("%type%", Emulator.getTexts().getValue("seasonal.name." + type));
+            final String message = replaceAmountAndType(getTextsValue("commands.generic.cmd_points.received"), amount + "", getTextsValue("seasonal.name." + type));
 
             for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
                 habbo.givePoints(type, amount);

@@ -17,9 +17,8 @@ public class HappyHourCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         Emulator.getGameServer().getGameClientManager().sendBroadcastResponse(new HabboBroadcastMessageComposer("Happy Hour!"));
 
-        for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-            AchievementManager.progressAchievement(set.getValue(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("HappyHour"));
-        }
+        Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values()
+                .forEach(habbo -> AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("HappyHour")));
 
         return true;
     }

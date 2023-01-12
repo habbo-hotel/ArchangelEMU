@@ -35,16 +35,14 @@ public final class Emulator {
 
     public static final int MAJOR = 4;
     public static final int MINOR = 0;
-    public static final int BUILD = 0;
+    public static final int REVISION = 0;
     public static final String PREVIEW = "Developer Preview";
-    public static final String version = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + BUILD + " " + PREVIEW;
+    public static final String VERSION = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + REVISION + " " + PREVIEW;
     public static String build = "";
     public static boolean isReady = false;
     public static boolean isShuttingDown = false;
     public static boolean stopped = false;
     public static boolean debugging = false;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Emulator.class);
     private static final String OS_NAME = (System.getProperty("os.name") != null ? System.getProperty("os.name") : "Unknown");
     private static final String CLASS_PATH = (System.getProperty("java.class.path") != null ? System.getProperty("java.class.path") : "Unknown");
 
@@ -87,9 +85,9 @@ public final class Emulator {
     }
 
     public static void promptEnterKey(){
-        System.out.println("\n");
-        System.out.println("This is a developer preview build. Your plugins for Arcturus Morningstar 3.x will NOT work on this build.");
-        System.out.println("Press \"ENTER\" if you agree to the terms stated above...");
+        log.info("\n");
+        log.info("This is a developer preview build. Your plugins for Arcturus Morningstar 3.x will NOT work on this build.");
+        log.info("Press \"ENTER\" if you agree to the terms stated above...");
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
     }
@@ -121,7 +119,7 @@ public final class Emulator {
             }
             log.info("eek. Has it really been a year?");
             log.info("This project is for educational purposes only. This Emulator is an open-source fork of Arcturus created by TheGeneral.");
-            log.info("Version: {}", version);
+            log.info("Version: {}", VERSION);
             log.info("Build: {}", build);
             log.info("Follow our development at https://git.krews.org/morningstar/Arcturus-Community");
 
@@ -238,7 +236,7 @@ public final class Emulator {
         Emulator.isShuttingDown = true;
         Emulator.isReady = false;
 
-        log.info("Stopping Arcturus Morningstar {}", version);
+        log.info("Stopping Arcturus Morningstar {}", VERSION);
 
         try {
             if (Emulator.getPluginManager() != null)
@@ -289,7 +287,7 @@ public final class Emulator {
         } catch (Exception ignored) {
         }
 
-        log.info("Stopped Arcturus Morningstar {}", version);
+        log.info("Stopped Arcturus Morningstar {}", VERSION);
 
         if (Emulator.database != null) {
             Emulator.getDatabase().dispose();

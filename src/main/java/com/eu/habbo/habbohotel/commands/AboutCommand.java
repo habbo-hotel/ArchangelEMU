@@ -13,7 +13,7 @@ public class AboutCommand extends Command {
     public AboutCommand() {
         super(null, new String[]{"about", "info", "online", "server"});
     }
-    public static final String credits = """
+    public static final String CREDITS = """
             Arcturus Morningstar is an opensource project based on Arcturus By TheGeneral\s
             The Following people have all contributed to this emulator:
              TheGeneral
@@ -58,7 +58,7 @@ public class AboutCommand extends Command {
         long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds) * 60);
         long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) * 60);
 
-        String message = "<b>" + Emulator.version + "</b>\r\n";
+        String message = "<b>" + Emulator.VERSION + "</b>\r\n";
 
         if (Emulator.getConfig().getBoolean("info.shown", true)) {
             message += "<b>Hotel Statistics</b>\r" +
@@ -79,7 +79,7 @@ public class AboutCommand extends Command {
                 "<b>Thanks for using Arcturus. Report issues on the forums. http://arcturus.wf \r\r" +
                 "    - The General";
         gameClient.getHabbo().alert(message);
-        gameClient.sendResponse(new MOTDNotificationComposer(Collections.singletonList(credits)));
+        gameClient.sendResponse(new MOTDNotificationComposer(Collections.singletonList(CREDITS)));
         return true;
     }
 }

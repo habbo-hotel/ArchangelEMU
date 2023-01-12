@@ -12,15 +12,14 @@ public class SitDownCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
+        gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos().forEach(habbo -> {
             if (habbo.getRoomUnit().isWalking()) {
                 habbo.getRoomUnit().stopWalking();
             } else if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.SIT)) {
-                continue;
+                return;
             }
-
             gameClient.getHabbo().getHabboInfo().getCurrentRoom().makeSit(habbo);
-        }
+        });
 
         return true;
     }

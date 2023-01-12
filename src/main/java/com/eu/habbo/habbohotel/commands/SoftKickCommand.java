@@ -15,23 +15,23 @@ public class SoftKickCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length != 2) return true;
-            final Habbo habbo = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[1]);
+        final Habbo habbo = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[1]);
 
-            if (habbo == null) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.keys.cmd_softkick_error").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
-                return true;
-            }
+        if (habbo == null) {
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.keys.cmd_softkick_error"), params[1]), RoomChatMessageBubbles.ALERT);
+            return true;
+        }
 
-            if (habbo == gameClient.getHabbo()) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.keys.cmd_softkick_error_self"), RoomChatMessageBubbles.ALERT);
-                return true;
-            }
+        if (habbo == gameClient.getHabbo()) {
+            gameClient.getHabbo().whisper(getTextsValue("commands.keys.cmd_softkick_error_self"), RoomChatMessageBubbles.ALERT);
+            return true;
+        }
 
-            final Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        final Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
 
-                if (room != null && (!(habbo.hasPermission(Permission.ACC_UNKICKABLE) || habbo.hasPermission(Permission.ACC_SUPPORTTOOL) || room.isOwner(habbo)))) {
-                    room.kickHabbo(habbo, false);
-                }
-                return true;
+        if (room != null && (!(habbo.hasPermission(Permission.ACC_UNKICKABLE) || habbo.hasPermission(Permission.ACC_SUPPORTTOOL) || room.isOwner(habbo)))) {
+            room.kickHabbo(habbo, false);
+        }
+        return true;
     }
 }

@@ -100,6 +100,9 @@ public class RoomUnit {
     @Getter
     private boolean fastWalk = false;
     private boolean statusUpdate = false;
+    @Getter
+    @Setter
+    @Accessors(chain = true)
     private boolean invisible = false;
     @Setter
     private boolean canLeaveRoomByDoor = true;
@@ -115,6 +118,8 @@ public class RoomUnit {
     @Setter
     @Accessors(chain = true)
     private RoomUnitType roomUnitType;
+    @Getter
+    @Setter
     private Deque<RoomTile> path = new LinkedList<>();
     private int handItem;
     private long handItemTimestamp;
@@ -126,7 +131,11 @@ public class RoomUnit {
     private int timeInRoom;
 
     private int idleTimer;
+    @Setter
+    @Getter
     private Room room;
+    @Getter
+    @Setter
     private RoomRightLevels rightsLevel = RoomRightLevels.NONE;
     private final THashSet<Integer> overridableTiles;
 
@@ -661,38 +670,6 @@ public class RoomUnit {
         if (Math.abs(rotation.getValue() - this.bodyRotation.getValue()) <= 1) {
             this.headRotation = rotation;
         }
-    }
-
-    public Deque<RoomTile> getPath() {
-        return this.path;
-    }
-
-    public void setPath(Deque<RoomTile> path) {
-        this.path = path;
-    }
-
-    public RoomRightLevels getRightsLevel() {
-        return this.rightsLevel;
-    }
-
-    public void setRightsLevel(RoomRightLevels rightsLevel) {
-        this.rightsLevel = rightsLevel;
-    }
-
-    public boolean isInvisible() {
-        return this.invisible;
-    }
-
-    public void setInvisible(boolean invisible) {
-        this.invisible = invisible;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
     }
 
     public boolean canOverrideTile(RoomTile tile) {

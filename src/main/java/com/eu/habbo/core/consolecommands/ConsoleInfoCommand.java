@@ -21,7 +21,7 @@ public class ConsoleInfoCommand extends ConsoleCommand {
         long minute = TimeUnit.SECONDS.toMinutes(seconds) - (TimeUnit.SECONDS.toHours(seconds) * 60);
         long second = TimeUnit.SECONDS.toSeconds(seconds) - (TimeUnit.SECONDS.toMinutes(seconds) * 60);
 
-        log.info("Emulator version: " + Emulator.version);
+        log.info("Emulator version: " + Emulator.VERSION);
         log.info("Emulator build: " + Emulator.build);
 
         log.info("");

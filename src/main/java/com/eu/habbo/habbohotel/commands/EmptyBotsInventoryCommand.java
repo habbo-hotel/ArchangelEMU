@@ -17,19 +17,19 @@ public class EmptyBotsInventoryCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (params.length == 1 || (params.length >= 2 && !params[1].equals(Emulator.getTexts().getValue("generic.yes")))) {
+        if (params.length == 1 || (params.length >= 2 && !params[1].equals(getTextsValue("generic.yes")))) {
             if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
                 if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getUserCount() > 10) {
-                    gameClient.getHabbo().alert(Emulator.getTexts().getValue("commands.succes.cmd_empty_bots.verify").replace("%generic.yes%", Emulator.getTexts().getValue("generic.yes")));
+                    gameClient.getHabbo().alert(getTextsValue("commands.succes.cmd_empty_bots.verify").replace("%generic.yes%", getTextsValue("generic.yes")));
                 } else {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_empty_bots.verify").replace("%generic.yes%", Emulator.getTexts().getValue("generic.yes")), RoomChatMessageBubbles.ALERT);
+                    gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_empty_bots.verify").replace("%generic.yes%", getTextsValue("generic.yes")), RoomChatMessageBubbles.ALERT);
                 }
             }
 
             return true;
         }
 
-        if (params.length >= 2 && params[1].equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes"))) {
+        if (params.length >= 2 && params[1].equalsIgnoreCase(getTextsValue("generic.yes"))) {
 
             Habbo habbo = (params.length == 3 && gameClient.getHabbo().hasPermission(Permission.ACC_EMPTY_OTHERS)) ? Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]) : gameClient.getHabbo();
 
@@ -45,9 +45,9 @@ public class EmptyBotsInventoryCommand extends Command {
                 habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                 habbo.getClient().sendResponse(new BotInventoryComposer(habbo));
 
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_empty_bots.cleared").replace("%username%", habbo.getHabboInfo().getUsername()), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.succes.cmd_empty_bots.cleared"), habbo.getHabboInfo().getUsername()), RoomChatMessageBubbles.ALERT);
             } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_empty_bots"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_empty_bots"), RoomChatMessageBubbles.ALERT);
             }
         }
 

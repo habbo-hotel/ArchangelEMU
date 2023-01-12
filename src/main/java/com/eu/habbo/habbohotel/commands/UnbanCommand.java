@@ -12,12 +12,12 @@ public class UnbanCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_unban.not_specified"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_unban.not_specified"), RoomChatMessageBubbles.ALERT);
         } else {
             if (Emulator.getGameEnvironment().getModToolManager().unban(params[1])) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_unban.success").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_unban.success"), params[1]), RoomChatMessageBubbles.ALERT);
             } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_unban.not_found").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_unban.not_found"), params[1]), RoomChatMessageBubbles.ALERT);
             }
         }
 

@@ -29,47 +29,44 @@ public class RedeemCommand extends Command {
         TIntIntMap points = new TIntIntHashMap();
 
         for (HabboItem item : gameClient.getHabbo().getInventory().getItemsComponent().getItemsAsValueCollection()) {
-            if (item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_")) {
-                if (item.getUserId() == gameClient.getHabbo().getHabboInfo().getId()) {
-                    items.add(item);
-                    if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_")) {
-                        try {
-                            credits += Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
-                        } catch (Exception ignored) {
-                        }
-
-                    } else if (item.getBaseItem().getName().startsWith("PF_")) {
-                        try {
-                            pixels += Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
-                        } catch (Exception ignored) {
-                        }
-                    } else if (item.getBaseItem().getName().startsWith("DF_")) {
-                        int pointsType;
-                        int pointsAmount;
-
-                        pointsType = Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
-                        pointsAmount = Integer.parseInt(item.getBaseItem().getName().split("_")[2]);
-
-                        points.adjustOrPutValue(pointsType, pointsAmount, pointsAmount);
+            if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_")) && item.getUserId() == gameClient.getHabbo().getHabboInfo().getId()) {
+                items.add(item);
+                if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_")) {
+                    try {
+                        credits += Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
+                    } catch (Exception ignored) {
                     }
-                    else if (item.getBaseItem().getName().startsWith("CF_diamond_")) {
-                        int pointsType;
-                        int pointsAmount;
 
-                        pointsType = 5;
-                        pointsAmount = Integer.parseInt(item.getBaseItem().getName().split("_")[2]);
-
-                        points.adjustOrPutValue(pointsType, pointsAmount, pointsAmount);
+                } else if (item.getBaseItem().getName().startsWith("PF_")) {
+                    try {
+                        pixels += Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
+                    } catch (Exception ignored) {
                     }
+                } else if (item.getBaseItem().getName().startsWith("DF_")) {
+                    int pointsType;
+                    int pointsAmount;
+
+                    pointsType = Integer.parseInt(item.getBaseItem().getName().split("_")[1]);
+                    pointsAmount = Integer.parseInt(item.getBaseItem().getName().split("_")[2]);
+
+                    points.adjustOrPutValue(pointsType, pointsAmount, pointsAmount);
+                } else if (item.getBaseItem().getName().startsWith("CF_diamond_")) {
+                    int pointsType;
+                    int pointsAmount;
+
+                    pointsType = 5;
+                    pointsAmount = Integer.parseInt(item.getBaseItem().getName().split("_")[2]);
+
+                    points.adjustOrPutValue(pointsType, pointsAmount, pointsAmount);
                 }
             }
         }
 
         TIntObjectHashMap<HabboItem> deleted = new TIntObjectHashMap<>();
-        for (HabboItem item : items) {
+        items.forEach(item -> {
             gameClient.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
             deleted.put(item.getId(), item);
-        }
+        });
 
         Emulator.getThreading().run(new QueryDeleteHabboItems(deleted));
 
@@ -77,20 +74,20 @@ public class RedeemCommand extends Command {
         gameClient.getHabbo().giveCredits(credits);
         gameClient.getHabbo().givePixels(pixels);
 
-        final String[] message = {Emulator.getTexts().getValue("generic.redeemed")};
+        final String[] message = {getTextsValue("generic.redeemed")};
 
-        message[0] += Emulator.getTexts().getValue("generic.credits");
+        message[0] += getTextsValue("generic.credits");
         message[0] += ": " + credits;
 
         if (pixels > 0) {
-            message[0] += ", " + Emulator.getTexts().getValue("generic.pixels");
-            message[0] += ": " + pixels + "";
+            message[0] += ", " + getTextsValue("generic.pixels");
+            message[0] += ": " + pixels;
         }
 
         if (!points.isEmpty()) {
             points.forEachEntry((a, b) -> {
                 gameClient.getHabbo().givePoints(a, b);
-                message[0] += " ," + Emulator.getTexts().getValue("seasonal.name." + a) + ": " + b;
+                message[0] += " ," + getTextsValue("seasonal.name." + a) + ": " + b;
                 return true;
             });
         }

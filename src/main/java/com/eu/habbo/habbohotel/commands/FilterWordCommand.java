@@ -20,7 +20,7 @@ public class FilterWordCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length < 2) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_filterword.missing_word"));
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_filterword.missing_word"));
             return true;
         }
 
@@ -39,11 +39,11 @@ public class FilterWordCommand extends Command {
             statement.execute();
         } catch (SQLException e) {
             log.error("Caught SQL exception", e);
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_filterword.error"));
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_filterword.error"));
             return true;
         }
 
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_filterword.added").replace("%word%", word).replace("%replacement%", replacement));
+        gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_filterword.added").replace("%word%", word).replace("%replacement%", replacement));
         Emulator.getGameEnvironment().getWordFilter().addWord(wordFilterWord);
 
         return true;

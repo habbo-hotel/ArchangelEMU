@@ -22,4 +22,7 @@ public abstract class MessageComposer {
         return this.composed;
     }
 
+    protected int booleanToInt(boolean value) {
+        return value ? 1 : 0;
+    }
 }

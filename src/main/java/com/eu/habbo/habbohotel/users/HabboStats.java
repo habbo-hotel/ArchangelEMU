@@ -770,7 +770,7 @@ public class HabboStats implements Runnable {
     }
 
     public boolean allowTrade() {
-        if (AchievementManager.TALENTTRACK_ENABLED && RoomTrade.TRADING_REQUIRES_PERK)
+        if (AchievementManager.TALENT_TRACK_ENABLED && RoomTrade.TRADING_REQUIRES_PERK)
             return this.perkTrade && this.allowTrade;
         else return this.allowTrade;
     }

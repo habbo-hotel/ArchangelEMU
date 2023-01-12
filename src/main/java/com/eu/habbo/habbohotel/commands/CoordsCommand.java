@@ -17,13 +17,13 @@ public class CoordsCommand extends Command {
             return false;
 
         if (params.length == 1) {
-            gameClient.getHabbo().alert(Emulator.getTexts().getValue("commands.generic.cmd_coords.title") + "\r\n" +
+            gameClient.getHabbo().alert(getTextsValue("commands.generic.cmd_coords.title") + "\r\n" +
                     "x: " + gameClient.getHabbo().getRoomUnit().getX() + "\r" +
                     "y: " + gameClient.getHabbo().getRoomUnit().getY() + "\r" +
                     "z: " + (gameClient.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.SIT) ? gameClient.getHabbo().getRoomUnit().getStatus(RoomUnitStatus.SIT) : gameClient.getHabbo().getRoomUnit().getZ()) + "\r" +
-                    Emulator.getTexts().getValue("generic.rotation.head") + ": " + gameClient.getHabbo().getRoomUnit().getHeadRotation() + "-" + gameClient.getHabbo().getRoomUnit().getHeadRotation().getValue() + "\r" +
-                    Emulator.getTexts().getValue("generic.rotation.body") + ": " + gameClient.getHabbo().getRoomUnit().getBodyRotation() + "-" + gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() + "\r" +
-                    Emulator.getTexts().getValue("generic.sitting") + ": " + (gameClient.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.SIT) ? Emulator.getTexts().getValue("generic.yes") : Emulator.getTexts().getValue("generic.no")) + "\r" +
+                    getTextsValue("generic.rotation.head") + ": " + gameClient.getHabbo().getRoomUnit().getHeadRotation() + "-" + gameClient.getHabbo().getRoomUnit().getHeadRotation().getValue() + "\r" +
+                    getTextsValue("generic.rotation.body") + ": " + gameClient.getHabbo().getRoomUnit().getBodyRotation() + "-" + gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() + "\r" +
+                    getTextsValue("generic.sitting") + ": " + (gameClient.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.SIT) ? getTextsValue("generic.yes") : getTextsValue("generic.no")) + "\r" +
                     "Tile State: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getX(), gameClient.getHabbo().getRoomUnit().getY()).getState().name() + "\r" +
                     "Tile Walkable: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getX(), gameClient.getHabbo().getRoomUnit().getY()).isWalkable() + "\r" +
                     "Tile relative height: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getX(), gameClient.getHabbo().getRoomUnit().getY()).relativeHeight() + "\r" +
@@ -33,7 +33,7 @@ public class CoordsCommand extends Command {
             RoomTile tile = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(Short.parseShort(params[1]), Short.parseShort(params[2]));
 
             if (tile != null) {
-                gameClient.getHabbo().alert(Emulator.getTexts().getValue("commands.generic.cmd_coords.title") + "\r\n" +
+                gameClient.getHabbo().alert(getTextsValue("commands.generic.cmd_coords.title") + "\r\n" +
                         "x: " + tile.getX() + "\r" +
                         "y: " + tile.getY() + "\r" +
                         "z: " + tile.getZ() + "\r" +
@@ -42,7 +42,7 @@ public class CoordsCommand extends Command {
                         "Tile Stack Height: " + tile.getStackHeight() + "\r" +
                         "Tile Walkable: " + (tile.isWalkable() ? "Yes" : "No") + "\r");
             } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.tile.not.exists"));
+                gameClient.getHabbo().whisper(getTextsValue("generic.tile.not.exists"));
             }
         }
         return true;

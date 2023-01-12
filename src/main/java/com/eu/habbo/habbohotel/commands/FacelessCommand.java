@@ -13,32 +13,34 @@ public class FacelessCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            try {
+        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null) {
+            return false;
+        }
 
-                String[] figureParts = gameClient.getHabbo().getHabboInfo().getLook().split("\\.");
+        try {
 
-                for (String part : figureParts) {
-                    if (part.startsWith("hd")) {
-                        String[] headParts = part.split("-");
+            String[] figureParts = gameClient.getHabbo().getHabboInfo().getLook().split("\\.");
 
-                        if (!headParts[1].equals("99999"))
-                            headParts[1] = "99999";
-                        else
-                            break;
+            for (String part : figureParts) {
+                if (part.startsWith("hd")) {
+                    String[] headParts = part.split("-");
 
-                        String newHead = "hd-" + headParts[1] + "-" + headParts[2];
+                    if (!headParts[1].equals("99999"))
+                        headParts[1] = "99999";
+                    else
+                        break;
 
-                        gameClient.getHabbo().getHabboInfo().setLook(gameClient.getHabbo().getHabboInfo().getLook().replace(part, newHead));
-                        gameClient.sendResponse(new FigureUpdateComposer(gameClient.getHabbo()));
-                        gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(gameClient.getHabbo()).compose());
-                        return true;
-                    }
+                    String newHead = "hd-" + headParts[1] + "-" + headParts[2];
+
+                    gameClient.getHabbo().getHabboInfo().setLook(gameClient.getHabbo().getHabboInfo().getLook().replace(part, newHead));
+                    gameClient.sendResponse(new FigureUpdateComposer(gameClient.getHabbo()));
+                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(gameClient.getHabbo()).compose());
+                    return true;
                 }
-
-            } catch (Exception ignored) {
-
             }
+
+        } catch (Exception ignored) {
+
         }
 
         return false;

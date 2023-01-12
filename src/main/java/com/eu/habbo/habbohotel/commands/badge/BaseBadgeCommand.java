@@ -20,18 +20,20 @@ public abstract class BaseBadgeCommand extends Command {
         THashMap<String, String> keys = new THashMap<>();
         keys.put("display", "BUBBLE");
         keys.put("image", "${image.library.url}album1584/" + badge + ".gif");
-        keys.put("message", Emulator.getTexts().getValue("commands.generic.cmd_badge.received"));
+        keys.put("message", getTextsValue("commands.generic.cmd_badge.received"));
         return new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.getKey(), keys).compose();
     }
 
     protected void sendBadgeToClient(String badge, ServerMessage message, Habbo habbo) {
-        if (habbo.isOnline()) {
-            if (habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && !habbo.getInventory().getBadgesComponent().hasBadge(badge)) {
-                HabboBadge b = BadgesComponent.createBadge(badge, habbo);
+        if (habbo.isOnline() && habbo.getInventory() != null && habbo.getInventory().getBadgesComponent() != null && !habbo.getInventory().getBadgesComponent().hasBadge(badge)) {
+            HabboBadge b = BadgesComponent.createBadge(badge, habbo);
 
-                habbo.getClient().sendResponse(new BadgeReceivedComposer(b));
-                habbo.getClient().sendResponse(message);
-            }
+            habbo.getClient().sendResponse(new BadgeReceivedComposer(b));
+            habbo.getClient().sendResponse(message);
         }
+    }
+
+    protected String replaceUserAndBadge(String input, String name, String badge) {
+        return replaceUser(input, name).replace("%badge%", badge);
     }
 }

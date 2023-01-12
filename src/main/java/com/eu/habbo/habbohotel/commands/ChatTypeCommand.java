@@ -19,7 +19,7 @@ public class ChatTypeCommand extends Command {
             try {
                 chatColor = Integer.parseInt(params[1]);
             } catch (Exception e) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_chatcolor.numbers"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_chatcolor.numbers"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
@@ -28,14 +28,14 @@ public class ChatTypeCommand extends Command {
             }
 
             if (chatColor < 0) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_chatcolor.numbers"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_chatcolor.numbers"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
             if (!gameClient.getHabbo().hasPermission(Permission.ACC_ANYCHATCOLOR)) {
                 for (String s : Emulator.getConfig().getValue("commands.cmd_chatcolor.banned_numbers").split(";")) {
                     if (Integer.parseInt(s) == chatColor) {
-                        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_chatcolor.banned"), RoomChatMessageBubbles.ALERT);
+                        gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_chatcolor.banned"), RoomChatMessageBubbles.ALERT);
                         return true;
                     }
                 }
@@ -43,10 +43,10 @@ public class ChatTypeCommand extends Command {
 
             gameClient.getHabbo().getHabboStats().setChatColor(RoomChatMessageBubbles.getBubble(chatColor));
             gameClient.sendResponse(new AccountPreferencesComposer(gameClient.getHabbo()));
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_chatcolor.set").replace("%chat%", RoomChatMessageBubbles.values()[chatColor].name().replace("_", " ").toLowerCase()), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_chatcolor.set").replace("%chat%", RoomChatMessageBubbles.values()[chatColor].name().replace("_", " ").toLowerCase()), RoomChatMessageBubbles.ALERT);
         } else {
             gameClient.getHabbo().getHabboStats().setChatColor(RoomChatMessageBubbles.NORMAL);
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_chatcolor.reset"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_chatcolor.reset"), RoomChatMessageBubbles.ALERT);
         }
         return true;
     }

@@ -5,11 +5,19 @@ import com.eu.habbo.core.CommandLog;
 import com.eu.habbo.habbohotel.commands.badge.BadgeCommand;
 import com.eu.habbo.habbohotel.commands.badge.MassBadgeCommand;
 import com.eu.habbo.habbohotel.commands.badge.RoomBadgeCommand;
+import com.eu.habbo.habbohotel.commands.badge.TakeBadgeCommand;
 import com.eu.habbo.habbohotel.commands.bans.BanCommand;
+import com.eu.habbo.habbohotel.commands.bans.IPBanCommand;
 import com.eu.habbo.habbohotel.commands.bans.MachineBanCommand;
 import com.eu.habbo.habbohotel.commands.bans.SuperbanCommand;
+import com.eu.habbo.habbohotel.commands.credits.CreditsCommand;
+import com.eu.habbo.habbohotel.commands.credits.MassCreditsCommand;
+import com.eu.habbo.habbohotel.commands.credits.RoomCreditsCommand;
 import com.eu.habbo.habbohotel.commands.gift.GiftCommand;
 import com.eu.habbo.habbohotel.commands.gift.MassGiftCommand;
+import com.eu.habbo.habbohotel.commands.pixels.MassPixelsCommand;
+import com.eu.habbo.habbohotel.commands.pixels.PixelCommand;
+import com.eu.habbo.habbohotel.commands.pixels.RoomPixelsCommand;
 import com.eu.habbo.habbohotel.commands.points.MassPointsCommand;
 import com.eu.habbo.habbohotel.commands.points.PointsCommand;
 import com.eu.habbo.habbohotel.commands.points.RoomPointsCommand;
@@ -36,7 +44,7 @@ import java.util.NoSuchElementException;
 
 @Slf4j
 public class CommandHandler {
-    private final static THashMap<String, Command> commands = new THashMap<>(5);
+    private static final THashMap<String, Command> commands = new THashMap<>(5);
     private static final Comparator<Command> ALPHABETICAL_ORDER = (c1, c2) -> {
         int res = String.CASE_INSENSITIVE_ORDER.compare(c1.permission, c2.permission);
         return (res != 0) ? res : c1.permission.compareTo(c2.permission);
@@ -59,7 +67,7 @@ public class CommandHandler {
     public static void addCommand(Class<? extends Command> command) {
         try {
             //command.getConstructor().setAccessible(true);
-            addCommand(command.newInstance());
+            addCommand(command.getDeclaredConstructor().newInstance());
             log.debug("Added command: {}", command.getName());
         } catch (Exception e) {
             log.error("Caught exception", e);
@@ -132,32 +140,30 @@ public class CommandHandler {
 
                         Pet pet = petIterator.value();
 
-                        if (pet != null) {
-                            if (pet.getName().equalsIgnoreCase(args[0])) {
-                                StringBuilder s = new StringBuilder();
+                        if (pet != null && pet.getName().equalsIgnoreCase(args[0])) {
+                            StringBuilder s = new StringBuilder();
 
-                                for (int i = 1; i < args.length; i++) {
-                                    s.append(args[i]).append(" ");
-                                }
+                            for (int i = 1; i < args.length; i++) {
+                                s.append(args[i]).append(" ");
+                            }
 
-                                s = new StringBuilder(s.substring(0, s.length() - 1));
+                            s = new StringBuilder(s.substring(0, s.length() - 1));
 
-                                for (PetCommand command : pet.getPetData().getPetCommands()) {
-                                    if (command.getKey().equalsIgnoreCase(s.toString())) {
-                                        if (pet instanceof RideablePet && ((RideablePet) pet).getRider() != null) {
-                                            if (((RideablePet) pet).getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
-                                                ((RideablePet) pet).getRider().getHabboInfo().dismountPet();
-                                            }
-                                            break;
+                            for (PetCommand command : pet.getPetData().getPetCommands()) {
+                                if (command.getKey().equalsIgnoreCase(s.toString())) {
+                                    if (pet instanceof RideablePet rideablePet && ((RideablePet) pet).getRider() != null) {
+                                        if (rideablePet.getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
+                                            rideablePet.getRider().getHabboInfo().dismountPet();
                                         }
-
-                                        if (command.getLevel() <= pet.getLevel())
-                                            pet.handleCommand(command, gameClient.getHabbo(), args);
-                                        else
-                                            pet.say(pet.getPetData().randomVocal(PetVocalsType.UNKNOWN_COMMAND));
-
                                         break;
                                     }
+
+                                    if (command.getLevel() <= pet.getLevel())
+                                        pet.handleCommand(command, gameClient.getHabbo(), args);
+                                    else
+                                        pet.say(pet.getPetData().randomVocal(PetVocalsType.UNKNOWN_COMMAND));
+
+                                    break;
                                 }
                             }
                         }

@@ -16,30 +16,31 @@ public class SuperPullCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (params.length == 2) {
-            Habbo habbo = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[1]);
-
-            if (habbo == null) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_pull.not_found").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
-                return true;
-            } else if (habbo == gameClient.getHabbo()) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_pull.pull_self"), RoomChatMessageBubbles.ALERT);
-                return true;
-            } else {
-                RoomTile tile = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(gameClient.getHabbo().getRoomUnit().getCurrentLocation(), gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue());
-
-                if (tile != null && tile.isWalkable()) {
-                    if (tile == gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getDoorTile()) {
-                        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_pull.invalid").replace("%username%", params[1]), RoomChatMessageBubbles.ALERT);
-                        return true;
-                    }
-                    habbo.getRoomUnit().setGoalLocation(tile);
-                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new ChatMessageComposer(new RoomChatMessage(Emulator.getTexts().getValue("commands.succes.cmd_pull.pull").replace("%user%", params[1]).replace("%gender_name%", (gameClient.getHabbo().getHabboInfo().getGender().equals(HabboGender.M) ? Emulator.getTexts().getValue("gender.him") : Emulator.getTexts().getValue("gender.her"))), gameClient.getHabbo(), gameClient.getHabbo(), RoomChatMessageBubbles.NORMAL)).compose());
-                }
-            }
+        if (params.length != 2) {
             return true;
         }
 
+        Habbo habbo = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[1]);
+
+        if (habbo == null) {
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_pull.not_found"), params[1]), RoomChatMessageBubbles.ALERT);
+            return true;
+        } else if (habbo == gameClient.getHabbo()) {
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_pull.pull_self"), RoomChatMessageBubbles.ALERT);
+            return true;
+        } else {
+            RoomTile tile = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(gameClient.getHabbo().getRoomUnit().getCurrentLocation(), gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue());
+
+            if (tile != null && tile.isWalkable()) {
+                if (tile == gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getDoorTile()) {
+                    gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_pull.invalid"), params[1]), RoomChatMessageBubbles.ALERT);
+                    return true;
+                }
+                habbo.getRoomUnit().setGoalLocation(tile);
+                gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new ChatMessageComposer(new RoomChatMessage(replaceUser(getTextsValue("commands.succes.cmd_pull.pull"), params[1]).replace("%gender_name%", (gameClient.getHabbo().getHabboInfo().getGender().equals(HabboGender.M) ? getTextsValue("gender.him") : getTextsValue("gender.her"))), gameClient.getHabbo(), gameClient.getHabbo(), RoomChatMessageBubbles.NORMAL)).compose());
+            }
+        }
         return true;
+
     }
 }

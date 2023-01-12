@@ -22,30 +22,30 @@ public class SummonRankCommand extends Command {
             try {
                 minRank = Integer.parseInt(params[1]);
             } catch (Exception e) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.generic.cmd_summonrank.error"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.generic.cmd_summonrank.error"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
-            for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-                if (set.getValue().getHabboInfo().getRank().getId() >= minRank) {
-                    if (set.getValue() == gameClient.getHabbo())
+            for (Habbo habbo : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values()) {
+                if (habbo.getHabboInfo().getRank().getId() >= minRank) {
+                    if (habbo == gameClient.getHabbo())
                         continue;
 
-                    if (set.getValue().getHabboInfo().getCurrentRoom() == gameClient.getHabbo().getHabboInfo().getCurrentRoom())
+                    if (habbo.getHabboInfo().getCurrentRoom() == gameClient.getHabbo().getHabboInfo().getCurrentRoom())
                         continue;
 
-                    Room room = set.getValue().getHabboInfo().getCurrentRoom();
+                    Room room = habbo.getHabboInfo().getCurrentRoom();
                     if (room != null) {
-                        Emulator.getGameEnvironment().getRoomManager().logExit(set.getValue());
+                        Emulator.getGameEnvironment().getRoomManager().logExit(habbo);
 
-                        room.removeHabbo(set.getValue(), true);
+                        room.removeHabbo(habbo, true);
 
-                        set.getValue().getHabboInfo().setCurrentRoom(null);
+                        habbo.getHabboInfo().setCurrentRoom(null);
                     }
 
-                    Emulator.getGameEnvironment().getRoomManager().enterRoom(set.getValue(), gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), "", true);
+                    Emulator.getGameEnvironment().getRoomManager().enterRoom(habbo, gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), "", true);
 
-                    set.getValue().getClient().sendResponse(new RoomForwardMessageComposer(gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId()));
+                    habbo.getClient().sendResponse(new RoomForwardMessageComposer(gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId()));
 
                 }
             }

@@ -38,7 +38,7 @@ public class MassBadgeCommand extends BaseBadgeCommand {
                 return true;
             }
         }
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_massbadge.no_badge"), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_massbadge.no_badge"), RoomChatMessageBubbles.ALERT);
         return true;
 
 

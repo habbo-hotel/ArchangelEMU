@@ -1,11 +1,12 @@
-package com.eu.habbo.habbohotel.commands;
+package com.eu.habbo.habbohotel.commands.credits;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 
-public class RoomCreditsCommand extends Command {
+public class RoomCreditsCommand extends BaseCreditsCommand {
     public RoomCreditsCommand() {
         super("cmd_roomcredits", Emulator.getTexts().getValue("commands.keys.cmd_roomcredits").split(";"));
     }
@@ -18,20 +19,20 @@ public class RoomCreditsCommand extends Command {
             try {
                 amount = Integer.parseInt(params[1]);
             } catch (Exception e) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_masscredits.invalid_amount"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_masscredits.invalid_amount"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
             if (amount != 0) {
-                final String message = Emulator.getTexts().getValue("commands.generic.cmd_credits.received").replace("%amount%", amount + "");
-                for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
+                final String message = replaceAmount(getTextsValue("commands.generic.cmd_credits.received"), amount + "");
+                gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos().forEach(habbo -> {
                     habbo.giveCredits(amount);
                     habbo.whisper(message, RoomChatMessageBubbles.ALERT);
-                }
+                });
             }
             return true;
         }
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_masscredits.invalid_amount"), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_masscredits.invalid_amount"), RoomChatMessageBubbles.ALERT);
         return true;
     }
 }

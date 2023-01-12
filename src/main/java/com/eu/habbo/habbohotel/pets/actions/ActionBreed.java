@@ -18,11 +18,9 @@ public class ActionBreed extends PetAction {
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         InteractionPetBreedingNest nest = null;
         for (HabboItem item : pet.getRoom().getRoomSpecialTypes().getItemsOfType(InteractionPetBreedingNest.class)) {
-            if (StringUtils.containsIgnoreCase(item.getBaseItem().getName(), pet.getPetData().getName())) {
-                if (!((InteractionPetBreedingNest) item).boxFull()) {
-                    nest = (InteractionPetBreedingNest) item;
-                    break;
-                }
+            if (StringUtils.containsIgnoreCase(item.getBaseItem().getName(), pet.getPetData().getName()) && !((InteractionPetBreedingNest) item).boxFull()) {
+                nest = (InteractionPetBreedingNest) item;
+                break;
             }
         }
 

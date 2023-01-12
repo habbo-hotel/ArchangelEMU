@@ -20,21 +20,21 @@ public class RoomDanceCommand extends Command {
             try {
                 danceId = Integer.parseInt(params[1]);
             } catch (Exception e) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_danceall.invalid_dance"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_danceall.invalid_dance"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
             if (danceId < 0 || danceId > 4) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_danceall.outside_bounds"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_danceall.outside_bounds"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
-            for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
+            gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos().forEach(habbo -> {
                 habbo.getRoomUnit().setDanceType(DanceType.values()[danceId]);
                 habbo.getHabboInfo().getCurrentRoom().sendComposer(new DanceMessageComposer(habbo.getRoomUnit()).compose());
-            }
+            });
         } else {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_danceall.no_dance"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_danceall.no_dance"), RoomChatMessageBubbles.ALERT);
         }
 
         return true;

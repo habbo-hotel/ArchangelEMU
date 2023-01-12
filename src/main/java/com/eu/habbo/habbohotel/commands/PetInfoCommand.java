@@ -12,37 +12,37 @@ public class PetInfoCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (params.length > 1) {
-            if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
-                return false;
-
-            String name = params[1];
-
-            gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentPets().forEachEntry((a, pet) -> {
-                if (pet.getName().equalsIgnoreCase(name)) {
-                    gameClient.getHabbo().alert("" +
-                            Emulator.getTexts().getValue("commands.generic.cmd_pet_info.title") + ": " + pet.getName() + "\r\n" +
-                            Emulator.getTexts().getValue("generic.pet.id") + ": " + pet.getId() + "\r" +
-                            Emulator.getTexts().getValue("generic.pet.name") + ": " + pet.getName() + "\r" +
-                            Emulator.getTexts().getValue("generic.pet.age") + ": " + pet.daysAlive() + " " + Emulator.getTexts().getValue("generic.pet.days.alive") + "\r" +
-                            Emulator.getTexts().getValue("generic.pet.level") + ": " + pet.getLevel() + "\r" +
-                            "\r" +
-                            Emulator.getTexts().getValue("commands.generic.cmd_pet_info.stats") + "\r\n" +
-                            Emulator.getTexts().getValue("generic.pet.scratches") + ": " + pet.getRespect() + "\r" +
-                            Emulator.getTexts().getValue("generic.pet.energy") + ": " + pet.getEnergy() + "/" + PetManager.maxEnergy(pet.getLevel()) + "\r" +
-                            Emulator.getTexts().getValue("generic.pet.happiness") + ": " + pet.getHappiness() + "\r" +
-                            Emulator.getTexts().getValue("generic.pet.level.thirst") + ": " + pet.levelThirst + "\r" +
-                            Emulator.getTexts().getValue("generic.pet.level.hunger") + ": " + pet.levelHunger + "\r" +
-                            Emulator.getTexts().getValue("generic.pet.current_action") + ": " + (pet.getTask() == null ? Emulator.getTexts().getValue("generic.nothing") : pet.getTask().name()) + "\r" +
-                            Emulator.getTexts().getValue("generic.can.walk") + ": " + (pet.getRoomUnit().canWalk() ? Emulator.getTexts().getValue("generic.yes") : Emulator.getTexts().getValue("generic.no")) + ""
-                    );
-                }
-
-                return true;
-            });
-        } else {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_pet_info.pet_not_found"), RoomChatMessageBubbles.ALERT);
+        if (params.length <= 1) {
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_pet_info.pet_not_found"), RoomChatMessageBubbles.ALERT);
+            return true;
         }
+        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
+            return false;
+
+        String name = params[1];
+
+        gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentPets().forEachEntry((a, pet) -> {
+            if (pet.getName().equalsIgnoreCase(name)) {
+                gameClient.getHabbo().alert("" +
+                        getTextsValue("commands.generic.cmd_pet_info.title") + ": " + pet.getName() + "\r\n" +
+                        getTextsValue("generic.pet.id") + ": " + pet.getId() + "\r" +
+                        getTextsValue("generic.pet.name") + ": " + pet.getName() + "\r" +
+                        getTextsValue("generic.pet.age") + ": " + pet.daysAlive() + " " + getTextsValue("generic.pet.days.alive") + "\r" +
+                        getTextsValue("generic.pet.level") + ": " + pet.getLevel() + "\r" +
+                        "\r" +
+                        getTextsValue("commands.generic.cmd_pet_info.stats") + "\r\n" +
+                        getTextsValue("generic.pet.scratches") + ": " + pet.getRespect() + "\r" +
+                        getTextsValue("generic.pet.energy") + ": " + pet.getEnergy() + "/" + PetManager.maxEnergy(pet.getLevel()) + "\r" +
+                        getTextsValue("generic.pet.happiness") + ": " + pet.getHappiness() + "\r" +
+                        getTextsValue("generic.pet.level.thirst") + ": " + pet.levelThirst + "\r" +
+                        getTextsValue("generic.pet.level.hunger") + ": " + pet.levelHunger + "\r" +
+                        getTextsValue("generic.pet.current_action") + ": " + (pet.getTask() == null ? getTextsValue("generic.nothing") : pet.getTask().name()) + "\r" +
+                        getTextsValue("generic.can.walk") + ": " + (pet.getRoomUnit().canWalk() ? getTextsValue("generic.yes") : getTextsValue("generic.no")) + ""
+                );
+            }
+
+            return true;
+        });
         return true;
     }
 }

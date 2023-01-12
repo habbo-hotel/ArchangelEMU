@@ -14,7 +14,7 @@ public class RoomEffectCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length < 2) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_roomeffect.no_effect"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_roomeffect.no_effect"), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
@@ -23,16 +23,14 @@ public class RoomEffectCommand extends Command {
 
             if (effectId >= 0) {
                 Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
-                for (Habbo habbo : room.getHabbos()) {
-                    room.giveEffect(habbo, effectId, -1);
-                }
+                room.getHabbos().forEach(habbo -> room.giveEffect(habbo, effectId, -1));
 
             } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_roomeffect.positive"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_roomeffect.positive"), RoomChatMessageBubbles.ALERT);
             }
             return true;
         } catch (Exception e) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_roomeffect.numbers_only"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_roomeffect.numbers_only"), RoomChatMessageBubbles.ALERT);
             return true;
         }
     }

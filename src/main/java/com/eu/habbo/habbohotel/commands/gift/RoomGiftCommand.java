@@ -24,11 +24,11 @@ public class RoomGiftCommand extends BaseGiftCommand {
 
             final String finalMessage = getFinalMessage(params);
 
-            for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
-                createGift(finalMessage, habbo, params);
-
-                habbo.getClient().sendResponse(new WiredRewardResultMessageComposer(WiredRewardResultMessageComposer.REWARD_RECEIVED_ITEM));
-            }
+            gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos().forEach(habbo -> {
+                        createGift(finalMessage, habbo, params);
+                        habbo.getClient().sendResponse(new WiredRewardResultMessageComposer(WiredRewardResultMessageComposer.REWARD_RECEIVED_ITEM));
+                    }
+            );
 
             return true;
         }

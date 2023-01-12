@@ -12,7 +12,7 @@ public class MuteBotsCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         gameClient.getHabbo().getHabboStats().setIgnoreBots(!gameClient.getHabbo().getHabboStats().isIgnoreBots());
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_mute_bots." + (gameClient.getHabbo().getHabboStats().isIgnoreBots() ? "ignored" : "unignored")), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_mute_bots." + (gameClient.getHabbo().getHabboStats().isIgnoreBots() ? "ignored" : "unignored")), RoomChatMessageBubbles.ALERT);
         return true;
     }
 }
