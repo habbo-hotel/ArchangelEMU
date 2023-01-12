@@ -32,7 +32,7 @@ public class ModeratorUserInfoComposer extends MessageComposer {
         try {
             int totalBans = 0;
 
-            totalBans = getTotalBansFromDB(totalBans);
+            totalBans = getTotalBansFromDB();
 
             this.response.appendInt(this.set.getInt(DatabaseConstants.USER_ID));
             this.response.appendString(this.set.getString("username"));

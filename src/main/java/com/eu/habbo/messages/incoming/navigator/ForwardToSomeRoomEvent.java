@@ -8,6 +8,7 @@ import com.eu.habbo.messages.outgoing.users.NavigatorSettingsComposer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ForwardToSomeRoomEvent extends MessageHandler {
     @Override
@@ -15,7 +16,7 @@ public class ForwardToSomeRoomEvent extends MessageHandler {
         String data = this.packet.readString();
 
         if (data.equals("random_friending_room")) {
-            ArrayList<Room> rooms = Emulator.getGameEnvironment().getRoomManager().getActiveRooms();
+            List<Room> rooms = Emulator.getGameEnvironment().getRoomManager().getActiveRooms();
             if (!rooms.isEmpty()) {
                 Collections.shuffle(rooms);
                 this.client.sendResponse(new RoomForwardMessageComposer(rooms.get(0).getId()));
