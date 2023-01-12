@@ -344,6 +344,7 @@ public class PacketManager {
         this.registerHandler(Incoming.navigatorRemoveCollapsedCategoryEvent, NavigatorRemoveCollapsedCategoryEvent.class);
         this.registerHandler(Incoming.navigatorAddSavedSearchEvent, NavigatorAddSavedSearchEvent.class);
         this.registerHandler(Incoming.navigatorDeleteSavedSearchEvent, NavigatorDeleteSavedSearchEvent.class);
+        this.registerHandler(Incoming.toggleStaffPickEvent, ToggleStaffPickEvent.class);
     }
 
     private void registerHotelview() throws Exception {

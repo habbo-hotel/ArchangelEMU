@@ -331,6 +331,7 @@ public class Incoming {
     public static final int throwDiceEvent = 1990;
     public static final int togglePetBreedingPermissionEvent = 3379;
     public static final int togglePetRidingPermissionEvent = 1472;
+    public static final int toggleStaffPickEvent = 1918;
     public static final int unacceptTradingEvent = 1444;
     public static final int unbanUserFromRoomEvent = 992;
     public static final int unignoreUserEvent = 2061;
@@ -462,8 +463,7 @@ public class Incoming {
     public static final int setPhoneNumberVerificationStatusEvent = 1379; 
     public static final int setRoomSessionTagsEvent = 3305; 
     public static final int shopTargetedOfferViewedEvent = 3483; 
-    public static final int startCampaignEvent = 1697; 
-    public static final int toggleStaffPickEvent = 1918; 
+    public static final int startCampaignEvent = 1697;
     public static final int tryPhoneNumberEvent = 790; 
     public static final int unblockGroupMemberEvent = 2864; 
     public static final int updateForumReadMarkerEvent = 1855; 
