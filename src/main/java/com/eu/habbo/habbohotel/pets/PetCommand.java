@@ -32,7 +32,7 @@ public class PetCommand implements Comparable<PetCommand> {
         this.level = set.getInt("required_level");
         this.xp = set.getInt("reward_xp");
         this.energyCost = set.getInt("cost_energy");
-        this.happinessCost = set.getInt("cost_happyness");
+        this.happinessCost = set.getInt("cost_happiness");
         this.action = action;
     }
 

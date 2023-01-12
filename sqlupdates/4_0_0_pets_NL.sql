@@ -63,12 +63,12 @@ CREATE TABLE IF NOT EXISTS `pet_commands_data` (
     `text` varchar(25) NOT NULL,
     `required_level` int(11) NOT NULL,
     `reward_xp` int(11) NOT NULL DEFAULT 5,
-    `cost_happyness` int(11) NOT NULL DEFAULT 0,
+    `cost_happiness` int(11) NOT NULL DEFAULT 0,
     `cost_energy` int(11) NOT NULL DEFAULT 0,
     PRIMARY KEY (`command_id`) USING BTREE
     ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
-INSERT INTO `pet_commands_data` (`command_id`, `text`, `required_level`, `reward_xp`, `cost_happyness`, `cost_energy`) VALUES
+INSERT INTO `pet_commands_data` (`command_id`, `text`, `required_level`, `reward_xp`, `cost_happiness`, `cost_energy`) VALUES
 	(0, 'Geen', 1, 0, 0, 0),
 	(1, 'Zit', 1, 10, 0, 0),
 	(2, 'Lig', 2, 10, 0, 0),
