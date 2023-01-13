@@ -12,12 +12,12 @@ public class CommandsCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        StringBuilder message = new StringBuilder(Emulator.getTexts().getValue("commands.generic.cmd_commands.text"));
+        StringBuilder message = new StringBuilder(getTextsValue("commands.generic.cmd_commands.text"));
         List<Command> commands = Emulator.getGameEnvironment().getCommandHandler().getCommandsForRank(gameClient.getHabbo().getHabboInfo().getRank().getId());
         message.append("(").append(commands.size()).append("):\r\n");
 
         for (Command c : commands) {
-            message.append(Emulator.getTexts().getValue("commands.description." + c.permission, "commands.description." + c.permission)).append("\r");
+            message.append(getTextsValue("commands.description." + c.permission, "commands.description." + c.permission)).append("\r");
         }
 
         gameClient.getHabbo().alert(new String[]{message.toString()});

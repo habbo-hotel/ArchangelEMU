@@ -21,12 +21,12 @@ public class SetMaxCommand extends Command {
 
             if (max > 0 && max < 9999) {
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().setUsersMax(max);
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.success.cmd_setmax").replace("%value%", max + ""), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.success.cmd_setmax").replace("%value%", max + ""), RoomChatMessageBubbles.ALERT);
             } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_setmax.invalid_number"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_setmax.invalid_number"), RoomChatMessageBubbles.ALERT);
             }
         } else {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_setmax.forgot_number"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_setmax.forgot_number"), RoomChatMessageBubbles.ALERT);
         }
         return true;
     }

@@ -48,17 +48,15 @@ public class AnswerPollEvent extends MessageHandler {
                 log.error("Caught SQL exception", e);
             }
 
-            if (poll.getLastQuestionId() == questionId) {
-                if (poll.getBadgeReward().length() > 0) {
-                    if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(poll.getBadgeReward())) {
-                        HabboBadge badge = new HabboBadge(0, poll.getBadgeReward(), 0, this.client.getHabbo());
-                        Emulator.getThreading().run(badge);
-                        this.client.getHabbo().getInventory().getBadgesComponent().addBadge(badge);
-                        this.client.sendResponse(new BadgeReceivedComposer(badge));
-                        this.client.sendResponse(new WiredRewardResultMessageComposer(WiredRewardResultMessageComposer.REWARD_RECEIVED_BADGE));
-                    } else {
-                        this.client.sendResponse(new WiredRewardResultMessageComposer(WiredRewardResultMessageComposer.REWARD_ALREADY_RECEIVED));
-                    }
+            if (poll.getLastQuestionId() == questionId && poll.getBadgeReward().length() > 0) {
+                if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(poll.getBadgeReward())) {
+                    HabboBadge badge = new HabboBadge(0, poll.getBadgeReward(), 0, this.client.getHabbo());
+                    Emulator.getThreading().run(badge);
+                    this.client.getHabbo().getInventory().getBadgesComponent().addBadge(badge);
+                    this.client.sendResponse(new BadgeReceivedComposer(badge));
+                    this.client.sendResponse(new WiredRewardResultMessageComposer(WiredRewardResultMessageComposer.REWARD_RECEIVED_BADGE));
+                } else {
+                    this.client.sendResponse(new WiredRewardResultMessageComposer(WiredRewardResultMessageComposer.REWARD_ALREADY_RECEIVED));
                 }
             }
         }

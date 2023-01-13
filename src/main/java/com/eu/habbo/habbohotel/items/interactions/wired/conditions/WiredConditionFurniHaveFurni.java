@@ -15,8 +15,9 @@ import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
     public static final WiredConditionType type = WiredConditionType.FURNI_HAS_FURNI;
@@ -38,17 +39,16 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         this.refresh();
 
-        if(this.items.isEmpty())
+        if (this.items.isEmpty())
             return true;
 
-        if(this.all) {
+        if (this.all) {
             return this.items.stream().allMatch(item -> {
                 double minZ = item.getZ() + Item.getCurrentHeight(item);
                 THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
                 return occupiedTiles.stream().anyMatch(tile -> room.getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
             });
-        }
-        else {
+        } else {
             return this.items.stream().anyMatch(item -> {
                 double minZ = item.getZ() + Item.getCurrentHeight(item);
                 THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
@@ -62,7 +62,7 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
         this.refresh();
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
                 this.all,
-                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+                this.items.stream().map(HabboItem::getId).toList()
         ));
     }
 
@@ -74,13 +74,7 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
             this.all = data.all;
 
-            for(int id : data.itemIds) {
-                HabboItem item = room.getHabboItem(id);
-
-                if (item != null) {
-                    this.items.add(item);
-                }
-            }
+            data.itemIds.stream().mapToInt(id -> id).mapToObj(room::getHabboItem).filter(Objects::nonNull).forEach(this.items::add);
 
         } else {
             String[] data = wiredData.split(":");
@@ -89,14 +83,8 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
                 this.all = (data[0].equals("1"));
 
                 if (data.length == 2) {
-                    String[] items = data[1].split(";");
-
-                    for (String s : items) {
-                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
-
-                        if (item != null)
-                            this.items.add(item);
-                    }
+                    String[] itemsSplit = data[1].split(";");
+                    Arrays.stream(itemsSplit).map(s -> room.getHabboItem(Integer.parseInt(s))).filter(Objects::nonNull).forEach(this.items::add);
                 }
             }
         }
@@ -137,7 +125,7 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
 
     @Override
     public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 1) return false;
+        if (settings.getIntParams().length < 1) return false;
 
         this.all = settings.getIntParams()[0] == 1;
 
@@ -162,21 +150,8 @@ public class WiredConditionFurniHaveFurni extends InteractionWiredCondition {
     }
 
     private void refresh() {
-        THashSet<HabboItem> items = new THashSet<>();
-
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
-        if (room == null) {
-            items.addAll(this.items);
-        } else {
-            for (HabboItem item : this.items) {
-                if (room.getHabboItem(item.getId()) == null)
-                    items.add(item);
-            }
-        }
-
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
+        this.items.removeIf(i -> room.getHabboItem(i.getId()) == null);
     }
 
     static class JsonData {

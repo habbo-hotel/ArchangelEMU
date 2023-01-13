@@ -8,6 +8,8 @@ import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.ModeratorMessageComposer;
 
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class HotelAlertCommand extends Command {
 
@@ -18,22 +20,15 @@ public class HotelAlertCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length > 1) {
-            StringBuilder message = new StringBuilder();
-            for (int i = 1; i < params.length; i++) {
-                message.append(params[i]).append(" ");
-            }
+            String message = IntStream.range(1, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
 
             ServerMessage msg = new ModeratorMessageComposer(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername(), "").compose();
 
-            for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-                Habbo habbo = set.getValue();
-                if (habbo.getHabboStats().isBlockStaffAlerts())
-                    continue;
-
-                habbo.getClient().sendResponse(msg);
-            }
+            Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values().stream()
+                    .filter(habbo -> !habbo.getHabboStats().isBlockStaffAlerts())
+                    .forEach(habbo -> habbo.getClient().sendResponse(msg));
         } else {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_ha.forgot_message"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_ha.forgot_message"), RoomChatMessageBubbles.ALERT);
         }
         return true;
     }

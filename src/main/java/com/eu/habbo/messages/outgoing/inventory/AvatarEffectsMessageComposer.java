@@ -33,7 +33,7 @@ public class AvatarEffectsMessageComposer extends MessageComposer {
                     AvatarEffectsMessageComposer.this.response.appendInt(effect.getEffect());
                     AvatarEffectsMessageComposer.this.response.appendInt(0);
                     AvatarEffectsMessageComposer.this.response.appendInt(effect.getDuration() > 0 ? effect.getDuration() : Integer.MAX_VALUE);
-                    AvatarEffectsMessageComposer.this.response.appendInt((effect.getDuration() > 0 ? (effect.getTotal() - (effect.isActivated() ? 1 : 0)) : 0));
+                    AvatarEffectsMessageComposer.this.response.appendInt((effect.getDuration() > 0 ? (effect.getTotal() - booleanToInt(effect.isActivated())) : 0));
 
                     if(!effect.isActivated() && effect.getDuration() > 0) {
                         AvatarEffectsMessageComposer.this.response.appendInt(0);

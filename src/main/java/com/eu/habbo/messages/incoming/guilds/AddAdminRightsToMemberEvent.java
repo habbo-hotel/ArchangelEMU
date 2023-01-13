@@ -18,30 +18,26 @@ public class AddAdminRightsToMemberEvent extends MessageHandler {
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if (guild != null) {
-            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)) {
-                Emulator.getGameEnvironment().getGuildManager().setAdmin(guild, userId);
+        if (guild != null && (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN))) {
+            Emulator.getGameEnvironment().getGuildManager().setAdmin(guild, userId);
 
-                Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
+            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
-                GuildGivenAdminEvent adminEvent = new GuildGivenAdminEvent(guild, userId, habbo, this.client.getHabbo());
-                Emulator.getPluginManager().fireEvent(adminEvent);
-                if (adminEvent.isCancelled())
-                    return;
+            GuildGivenAdminEvent adminEvent = new GuildGivenAdminEvent(guild, userId, habbo, this.client.getHabbo());
+            Emulator.getPluginManager().fireEvent(adminEvent);
+            if (adminEvent.isCancelled())
+                return;
 
-                if (habbo != null) {
-                    Room room = habbo.getHabboInfo().getCurrentRoom();
-                    if (room != null) {
-                        if (room.getGuildId() == guildId) {
-                            room.refreshRightsForHabbo(habbo);
-                        }
-                    }
+            if (habbo != null) {
+                Room room = habbo.getHabboInfo().getCurrentRoom();
+                if (room != null && room.getGuildId() == guildId) {
+                    room.refreshRightsForHabbo(habbo);
                 }
-
-                GuildMember guildMember = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, userId);
-
-                this.client.sendResponse(new GuildMembershipUpdatedMessageComposer(guild, guildMember));
             }
+
+            GuildMember guildMember = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, userId);
+
+            this.client.sendResponse(new GuildMembershipUpdatedMessageComposer(guild, guildMember));
         }
     }
 }

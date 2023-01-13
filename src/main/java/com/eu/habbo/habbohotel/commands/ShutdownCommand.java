@@ -34,9 +34,9 @@ public class ShutdownCommand extends Command {
 
         ServerMessage message;
         if (!reason.toString().equals("-")) {
-            message = new HabboBroadcastMessageComposer("<b>" + Emulator.getTexts().getValue("generic.warning") + "</b> \r\n" +
-                    Emulator.getTexts().getValue("generic.shutdown").replace("%minutes%", minutes + "") + "\r\n" +
-                    Emulator.getTexts().getValue("generic.reason.specified") + ": <b>" + reason + "</b>\r" +
+            message = new HabboBroadcastMessageComposer("<b>" + getTextsValue("generic.warning") + "</b> \r\n" +
+                    getTextsValue("generic.shutdown").replace("%minutes%", minutes + "") + "\r\n" +
+                    getTextsValue("generic.reason.specified") + ": <b>" + reason + "</b>\r" +
                     "\r" +
                     "- " + gameClient.getHabbo().getHabboInfo().getUsername()).compose();
         } else {

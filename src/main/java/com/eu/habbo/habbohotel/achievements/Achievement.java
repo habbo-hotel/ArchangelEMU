@@ -42,10 +42,8 @@ public class Achievement {
         if (progress > 0) {
             for (AchievementLevel level : this.levels.values()) {
                 if (progress >= level.getProgress()) {
-                    if (l != null) {
-                        if (l.getLevel() > level.getLevel()) {
-                            continue;
-                        }
+                    if (l != null && l.getLevel() > level.getLevel()) {
+                        continue;
                     }
 
                     l = level;
@@ -57,7 +55,6 @@ public class Achievement {
 
 
     public AchievementLevel getNextLevel(int currentLevel) {
-        AchievementLevel l = null;
 
         for (AchievementLevel level : this.levels.values()) {
             if (level.getLevel() == (currentLevel + 1))

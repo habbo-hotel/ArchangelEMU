@@ -10,6 +10,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 @Slf4j
 public class AddSpamWallPostItEvent extends MessageHandler {
@@ -25,10 +26,9 @@ public class AddSpamWallPostItEvent extends MessageHandler {
             if (this.client.getHabbo().hasPermission("cmd_multi")) {
                 String[] commands = this.packet.readString().split("\r");
 
-                for (String command : commands) {
-                    command = command.replace("<br>", "\r");
-                    CommandHandler.handleCommand(this.client, command);
-                }
+                Arrays.stream(commands)
+                        .map(command -> command.replace("<br>", "\r"))
+                        .forEach(command -> CommandHandler.handleCommand(this.client, command));
             } else {
                 log.info("Scripter Alert! " + this.client.getHabbo().getHabboInfo().getUsername() + " | " + this.packet.readString());
             }
@@ -38,23 +38,21 @@ public class AddSpamWallPostItEvent extends MessageHandler {
             Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
             HabboItem sticky = room.getHabboItem(itemId);
 
-            if (sticky != null) {
-                if (sticky.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
-                    sticky.setUserId(room.getOwnerId());
+            if (sticky != null && sticky.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
+                sticky.setUserId(room.getOwnerId());
 
-                    if (color.equalsIgnoreCase(PostItColor.YELLOW.hexColor)) {
-                        color = PostItColor.randomColorNotYellow().hexColor;
-                    }
-                    if (!InteractionPostIt.STICKYPOLE_PREFIX_TEXT.isEmpty()) {
-                        text = InteractionPostIt.STICKYPOLE_PREFIX_TEXT.replace("\\r", "\r").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%timestamp%", LocalDate.now().toString()) + text;
-                    }
-
-                    sticky.setUserId(room.getOwnerId());
-                    sticky.setExtradata(color + " " + text);
-                    sticky.needsUpdate(true);
-                    room.updateItem(sticky);
-                    Emulator.getThreading().run(sticky);
+                if (color.equalsIgnoreCase(PostItColor.YELLOW.hexColor)) {
+                    color = PostItColor.randomColorNotYellow().hexColor;
                 }
+                if (!InteractionPostIt.STICKYPOLE_PREFIX_TEXT.isEmpty()) {
+                    text = InteractionPostIt.STICKYPOLE_PREFIX_TEXT.replace("\\r", "\r").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%timestamp%", LocalDate.now().toString()) + text;
+                }
+
+                sticky.setUserId(room.getOwnerId());
+                sticky.setExtradata(color + " " + text);
+                sticky.needsUpdate(true);
+                room.updateItem(sticky);
+                Emulator.getThreading().run(sticky);
             }
         }
     }

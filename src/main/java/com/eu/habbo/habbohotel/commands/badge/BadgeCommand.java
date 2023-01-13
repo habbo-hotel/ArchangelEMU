@@ -24,22 +24,22 @@ public class BadgeCommand extends BaseBadgeCommand {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_badge.forgot_username"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_badge.forgot_username"), RoomChatMessageBubbles.ALERT);
             return true;
         }
         if (params.length == 2) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_badge.forgot_badge").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(replaceUserAndBadge(getTextsValue("commands.error.cmd_badge.forgot_badge"), params[1], ""), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
         if (params.length == 3) {
-            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[1]);
+            Habbo habbo = getHabbo(params[1]);
 
             if (habbo != null) {
                 if (habbo.addBadge(params[2])) {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_badge.given").replace("%user%", params[1]).replace("%badge%", params[2]), RoomChatMessageBubbles.ALERT);
+                    gameClient.getHabbo().whisper(replaceUserAndBadge(getTextsValue("commands.succes.cmd_badge.given"), params[1], params[2]), RoomChatMessageBubbles.ALERT);
                 } else {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_badge.already_owned").replace("%user%", params[1]).replace("%badge%", params[2]), RoomChatMessageBubbles.ALERT);
+                    gameClient.getHabbo().whisper(replaceUserAndBadge(getTextsValue("commands.error.cmd_badge.already_owned"), params[1], params[2]), RoomChatMessageBubbles.ALERT);
                 }
 
                 return true;
@@ -47,7 +47,7 @@ public class BadgeCommand extends BaseBadgeCommand {
                 HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(params[1]);
 
                 if (habboInfo == null) {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_badge.unknown_user"), RoomChatMessageBubbles.ALERT);
+                    gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_badge.unknown_user"), RoomChatMessageBubbles.ALERT);
                     return true;
                 }
 
@@ -63,7 +63,7 @@ public class BadgeCommand extends BaseBadgeCommand {
                     }
 
                     if (found) {
-                        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_badge.already_owns").replace("%user%", params[1]).replace("%badge%", params[2]), RoomChatMessageBubbles.ALERT);
+                        gameClient.getHabbo().whisper(replaceUserAndBadge(getTextsValue("commands.error.cmd_badge.already_owns"), params[1], params[2]), RoomChatMessageBubbles.ALERT);
                     } else {
                         try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_badges (`id`, `user_id`, `slot_id`, `badge_code`) VALUES (null, ?, 0, ?)")) {
                             statement.setInt(1, habboInfo.getId());
@@ -71,7 +71,7 @@ public class BadgeCommand extends BaseBadgeCommand {
                             statement.execute();
                         }
 
-                        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_badge.given").replace("%user%", params[1]).replace("%badge%", params[2]), RoomChatMessageBubbles.ALERT);
+                        gameClient.getHabbo().whisper(replaceUserAndBadge(getTextsValue("commands.succes.cmd_badge.given"), params[1], params[2]), RoomChatMessageBubbles.ALERT);
                     }
                     return true;
                 } catch (SQLException e) {

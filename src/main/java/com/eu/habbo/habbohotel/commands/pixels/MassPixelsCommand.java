@@ -1,13 +1,14 @@
-package com.eu.habbo.habbohotel.commands;
+package com.eu.habbo.habbohotel.commands.pixels;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.util.Map;
 
-public class MassPixelsCommand extends Command {
+public class MassPixelsCommand extends BasePixelsCommand {
     public MassPixelsCommand() {
         super("cmd_massduckets", Emulator.getTexts().getValue("commands.keys.cmd_massduckets").split(";"));
     }
@@ -20,7 +21,7 @@ public class MassPixelsCommand extends Command {
             try {
                 amount = Integer.parseInt(params[1]);
             } catch (Exception e) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_massduckets.invalid_amount"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_massduckets.invalid_amount"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
@@ -31,12 +32,12 @@ public class MassPixelsCommand extends Command {
                     habbo.givePixels(amount);
 
                     if (habbo.getHabboInfo().getCurrentRoom() != null)
-                        habbo.whisper(Emulator.getTexts().getValue("commands.generic.cmd_duckets.received").replace("%amount%", amount + ""), RoomChatMessageBubbles.ALERT);
+                        habbo.whisper(replaceAmount(getTextsValue("commands.generic.cmd_duckets.received"), amount + ""), RoomChatMessageBubbles.ALERT);
                 }
             }
             return true;
         }
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_massduckets.invalid_amount"), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_massduckets.invalid_amount"), RoomChatMessageBubbles.ALERT);
         return true;
     }
 }

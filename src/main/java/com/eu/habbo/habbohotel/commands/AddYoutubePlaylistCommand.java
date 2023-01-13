@@ -19,7 +19,7 @@ public class AddYoutubePlaylistCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         if (params.length < 3) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_add_youtube_playlist.usage"));
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_add_youtube_playlist.usage"));
             return true;
         }
 
@@ -28,19 +28,19 @@ public class AddYoutubePlaylistCommand extends Command {
         try {
             itemId = Integer.parseInt(params[1]);
         } catch (NumberFormatException e) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_add_youtube_playlist.no_base_item"));
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_add_youtube_playlist.no_base_item"));
             return true;
         }
 
         if (Emulator.getGameEnvironment().getItemManager().getItem(itemId) == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_add_youtube_playlist.no_base_item"));
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_add_youtube_playlist.no_base_item"));
             return true;
         }
 
         YoutubeManager.YoutubePlaylist playlist = Emulator.getGameEnvironment().getItemManager().getYoutubeManager().getPlaylistDataById(params[2]);
 
         if (playlist == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_add_youtube_playlist.failed_playlist"));
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_add_youtube_playlist.failed_playlist"));
             return true;
         }
 
@@ -55,7 +55,7 @@ public class AddYoutubePlaylistCommand extends Command {
             log.error("Caught SQL exception", e);
         }
 
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_add_youtube_playlist"));
+        gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_add_youtube_playlist"));
 
         return true;
     }

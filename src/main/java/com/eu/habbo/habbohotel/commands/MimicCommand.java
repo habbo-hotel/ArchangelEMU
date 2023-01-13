@@ -22,30 +22,34 @@ public class MimicCommand extends Command {
             Habbo habbo = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[1]);
 
             if (habbo == null) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mimic.not_found").replace("%user%", ""), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_mimic.not_found"), ""), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
             if (habbo == gameClient.getHabbo()) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mimic.not_self"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_mimic.not_self"), RoomChatMessageBubbles.ALERT);
                 return true;
             } else if (habbo.hasPermission(Permission.ACC_NOT_MIMICED) && !gameClient.getHabbo().hasPermission(Permission.ACC_NOT_MIMICED)) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mimic.blocked").replace("%user%", params[1]).replace("%gender_name%", (habbo.getHabboInfo().getGender().equals(HabboGender.M) ? Emulator.getTexts().getValue("gender.him") : Emulator.getTexts().getValue("gender.her"))), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_mimic.blocked"), params[1]).replace("%gender_name%", getGenderName(habbo)), RoomChatMessageBubbles.ALERT);
                 return true;
             } else if (!habbo.hasPermission("acc_mimic_unredeemed") && FigureUtil.hasBlacklistedClothing(habbo.getHabboInfo().getLook(), gameClient.getHabbo().getForbiddenClothing())) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mimic.forbidden_clothing"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_mimic.forbidden_clothing"), RoomChatMessageBubbles.ALERT);
                 return true;
             } else {
                 gameClient.getHabbo().getHabboInfo().setLook(ClothingValidationManager.VALIDATE_ON_MIMIC ? ClothingValidationManager.validateLook(gameClient.getHabbo(), habbo.getHabboInfo().getLook(), habbo.getHabboInfo().getGender().name()) : habbo.getHabboInfo().getLook());
                 gameClient.getHabbo().getHabboInfo().setGender(habbo.getHabboInfo().getGender());
                 gameClient.sendResponse(new UserObjectComposer(gameClient.getHabbo()));
                 gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(gameClient.getHabbo()).compose());
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_mimic.copied").replace("%user%", params[1]).replace("%gender_name%", (habbo.getHabboInfo().getGender().equals(HabboGender.M) ? Emulator.getTexts().getValue("gender.him") : Emulator.getTexts().getValue("gender.her"))), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_mimic.copied"), params[1]).replace("%gender_name%", getGenderName(habbo)), RoomChatMessageBubbles.ALERT);
                 return true;
             }
         } else {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mimic.not_found").replace("%user%", ""), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_mimic.not_found"), ""), RoomChatMessageBubbles.ALERT);
             return true;
         }
+    }
+
+    private String getGenderName(Habbo habbo) {
+        return habbo.getHabboInfo().getGender().equals(HabboGender.M) ? getTextsValue("gender.him") : getTextsValue("gender.her");
     }
 }

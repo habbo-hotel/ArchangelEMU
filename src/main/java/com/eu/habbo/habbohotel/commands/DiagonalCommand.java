@@ -11,18 +11,16 @@ public class DiagonalCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) {
-                gameClient.getHabbo().getHabboInfo().getCurrentRoom().moveDiagonally(!gameClient.getHabbo().getHabboInfo().getCurrentRoom().moveDiagonally());
+        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) {
+            gameClient.getHabbo().getHabboInfo().getCurrentRoom().moveDiagonally(!gameClient.getHabbo().getHabboInfo().getCurrentRoom().moveDiagonally());
 
-                if (!gameClient.getHabbo().getHabboInfo().getCurrentRoom().moveDiagonally()) {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_diagonal.disabled"), RoomChatMessageBubbles.ALERT);
-                } else {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_diagonal.enabled"), RoomChatMessageBubbles.ALERT);
-                }
-
-                return true;
+            if (!gameClient.getHabbo().getHabboInfo().getCurrentRoom().moveDiagonally()) {
+                gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_diagonal.disabled"), RoomChatMessageBubbles.ALERT);
+            } else {
+                gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_diagonal.enabled"), RoomChatMessageBubbles.ALERT);
             }
+
+            return true;
         }
 
         return false;

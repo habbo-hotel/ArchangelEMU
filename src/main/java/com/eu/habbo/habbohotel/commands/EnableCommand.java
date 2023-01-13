@@ -24,25 +24,24 @@ public class EnableCommand extends Command {
             }
             Habbo target = gameClient.getHabbo();
             if (params.length == 3) {
-                target = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[2]);
+                target = getHabbo(params[2]);
             }
 
-            if (target != null) {
-                if (target == gameClient.getHabbo() || gameClient.getHabbo().hasPermission(Permission.ACC_ENABLE_OTHERS)) {
-                    try {
-                        if (target.getHabboInfo().getCurrentRoom() != null) {
-                            if (target.getHabboInfo().getRiding() == null) {
-                                if (Emulator.getGameEnvironment().getPermissionsManager().isEffectBlocked(effectId, target.getHabboInfo().getRank().getId())) {
-                                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_enable.not_allowed"), RoomChatMessageBubbles.ALERT);
-                                    return true;
-                                }
-
-                                target.getHabboInfo().getCurrentRoom().giveEffect(target, effectId, -1);
-                            }
+            if (target == null) {
+                return true;
+            }
+            if (target == gameClient.getHabbo() || gameClient.getHabbo().hasPermission(Permission.ACC_ENABLE_OTHERS)) {
+                try {
+                    if (target.getHabboInfo().getCurrentRoom() != null && target.getHabboInfo().getRiding() == null) {
+                        if (Emulator.getGameEnvironment().getPermissionsManager().isEffectBlocked(effectId, target.getHabboInfo().getRank().getId())) {
+                            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_enable.not_allowed"), RoomChatMessageBubbles.ALERT);
+                            return true;
                         }
-                    } catch (Exception e) {
-                        log.error("Caught exception", e);
+
+                        target.getHabboInfo().getCurrentRoom().giveEffect(target, effectId, -1);
                     }
+                } catch (Exception e) {
+                    log.error("Caught exception", e);
                 }
             }
         }

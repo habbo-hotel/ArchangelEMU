@@ -143,7 +143,7 @@ public class PluginManager {
         WordFilter.DEFAULT_REPLACEMENT = Emulator.getConfig().getValue("hotel.wordfilter.replacement");
         CatalogManager.PURCHASE_COOLDOWN = Emulator.getConfig().getInt("hotel.catalog.purchase.cooldown");
         CatalogManager.SORT_USING_ORDERNUM = Emulator.getConfig().getBoolean("hotel.catalog.items.display.ordernum");
-        AchievementManager.TALENTTRACK_ENABLED = Emulator.getConfig().getBoolean("hotel.talenttrack.enabled");
+        AchievementManager.TALENT_TRACK_ENABLED = Emulator.getConfig().getBoolean("hotel.talenttrack.enabled");
         InteractionRoller.NO_RULES = Emulator.getConfig().getBoolean("hotel.room.rollers.norules");
         RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB = Emulator.getConfig().getBoolean("hotel.navigator.populartab.publics");
         ApproveNameEvent.PET_NAME_LENGTH_MINIMUM = Emulator.getConfig().getInt("hotel.pets.name.length.min");

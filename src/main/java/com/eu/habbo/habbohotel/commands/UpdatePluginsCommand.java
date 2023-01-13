@@ -14,7 +14,7 @@ public class UpdatePluginsCommand extends Command {
         Emulator.getPluginManager().reload();
 
         gameClient.getHabbo().whisper("This is an unsafe command and could possibly lead to memory leaks.\rIt is recommended to restart the emulator in order to reload plugins.");
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_plugins").replace("%count%", Emulator.getPluginManager().getPlugins().size() + ""), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_update_plugins").replace("%count%", Emulator.getPluginManager().getPlugins().size() + ""), RoomChatMessageBubbles.ALERT);
         return true;
     }
 }

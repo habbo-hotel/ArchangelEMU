@@ -7,7 +7,9 @@ import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class StaffOnlineCommand extends Command {
     public StaffOnlineCommand() {
@@ -23,39 +25,29 @@ public class StaffOnlineCommand extends Command {
                 int i = Integer.parseInt(params[1]);
 
                 if (i < 1) {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_staffonline.positive_only"), RoomChatMessageBubbles.ALERT);
+                    gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_staffonline.positive_only"), RoomChatMessageBubbles.ALERT);
                     return true;
                 } else {
                     minRank = i;
                 }
             } catch (Exception e) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_staffonline.numbers_only"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_staffonline.numbers_only"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
         }
 
         synchronized (Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos()) {
-            ArrayList<Habbo> staffs = new ArrayList<>();
+            int finalMinRank = minRank;
+            List<Habbo> staffs = Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values().stream()
+                    .filter(habbo -> habbo.getHabboInfo().getRank().getId() >= finalMinRank)
+                    .sorted(Comparator.comparingInt(o->o.getHabboInfo().getId()))
+                    .toList();
 
-            for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-                if (set.getValue().getHabboInfo().getRank().getId() >= minRank) {
-                    staffs.add(set.getValue());
-                }
-            }
+            String message = staffs.stream()
+                    .map(habbo -> habbo.getHabboInfo().getUsername() + ": " + habbo.getHabboInfo().getRank().getName() + "\r")
+                    .collect(Collectors.joining("", getTextsValue("commands.generic.cmd_staffonline.staffs") + "\r\n", ""));
 
-            staffs.sort(Comparator.comparingInt(o -> o.getHabboInfo().getId()));
-
-            StringBuilder message = new StringBuilder(Emulator.getTexts().getValue("commands.generic.cmd_staffonline.staffs"));
-            message.append("\r\n");
-
-            for (Habbo habbo : staffs) {
-                message.append(habbo.getHabboInfo().getUsername());
-                message.append(": ");
-                message.append(habbo.getHabboInfo().getRank().getName());
-                message.append("\r");
-            }
-
-            gameClient.getHabbo().alert(message.toString());
+            gameClient.getHabbo().alert(message);
         }
 
         return true;

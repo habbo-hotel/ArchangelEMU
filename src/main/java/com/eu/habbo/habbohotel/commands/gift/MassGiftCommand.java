@@ -23,7 +23,7 @@ public class MassGiftCommand extends BaseGiftCommand {
     @Override
     public boolean handle(final GameClient gameClient, String[] params) {
         if (params.length >= 2) {
-            if(!validateGiftCommand(gameClient, params)){
+            if (!validateGiftCommand(gameClient, params)) {
                 return true;
             }
 
@@ -32,17 +32,14 @@ public class MassGiftCommand extends BaseGiftCommand {
             THashMap<String, String> keys = new THashMap<>();
             keys.put("display", "BUBBLE");
             keys.put("image", "${image.library.url}notifications/gift.gif");
-            keys.put("message", Emulator.getTexts().getValue("generic.gift.received.anonymous"));
+            keys.put("message", getTextsValue("generic.gift.received.anonymous"));
             ServerMessage giftNotificationMessage = new NotificationDialogMessageComposer(BubbleAlertKeys.RECEIVED_BADGE.getKey(), keys).compose();
 
-            Emulator.getThreading().run(() -> {
-                for (Map.Entry<Integer, Habbo> set : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().entrySet()) {
-                    Habbo habbo = set.getValue();
-
-                    createGift(finalMessage, habbo, params);
-                    habbo.getClient().sendResponse(giftNotificationMessage);
-                }
-            });
+            Emulator.getThreading().run(() -> Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values().forEach(habbo -> {
+                        createGift(finalMessage, habbo, params);
+                        habbo.getClient().sendResponse(giftNotificationMessage);
+                    })
+            );
 
 
             return true;

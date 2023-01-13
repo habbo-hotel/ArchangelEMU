@@ -7,8 +7,12 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
 
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 
 public abstract class BaseBanCommand extends Command {
+    protected static final int TEN_YEARS = 315569260;
     protected HabboInfo habboInfo;
     protected String reason;
     protected int count;
@@ -25,22 +29,17 @@ public abstract class BaseBanCommand extends Command {
         return false;
     }
 
-    private String getReason(String[] params) {
-        StringBuilder reason = new StringBuilder();
-
+    protected String getReason(String[] params) {
         if (params.length > 2) {
-            for (int i = 2; i < params.length; i++) {
-                reason.append(params[i]);
-                reason.append(" ");
-            }
+            return IntStream.range(2, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
         }
 
-        return reason.toString();
+        return "";
     }
 
     protected HabboInfo getHabboInfo(String[] params) {
         if (params.length >= 2) {
-            Habbo h = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[1]);
+            Habbo h = getHabbo(params[1]);
 
             if (h != null) {
                 return h.getHabboInfo();

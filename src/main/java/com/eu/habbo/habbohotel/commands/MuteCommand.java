@@ -14,18 +14,18 @@ public class MuteCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mute.not_specified"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_mute.not_specified"), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[1]);
 
         if (habbo == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mute.not_found").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_mute.not_found"), params[1]), RoomChatMessageBubbles.ALERT);
             return true;
         } else {
             if (habbo == gameClient.getHabbo()) {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mute.self"), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_mute.self"), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
@@ -38,7 +38,7 @@ public class MuteCommand extends Command {
                     if (duration <= 0)
                         throw new Exception("");
                 } catch (Exception e) {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_mute.time"), RoomChatMessageBubbles.ALERT);
+                    gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_mute.time"), RoomChatMessageBubbles.ALERT);
                     return true;
                 }
             }
@@ -49,7 +49,7 @@ public class MuteCommand extends Command {
                 habbo.getHabboInfo().getCurrentRoom().sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.MUTED).compose()); //: RoomUserIgnoredComposer.UNIGNORED
             }
 
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_mute.muted").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_mute.muted"), params[1]), RoomChatMessageBubbles.ALERT);
         }
 
         return true;

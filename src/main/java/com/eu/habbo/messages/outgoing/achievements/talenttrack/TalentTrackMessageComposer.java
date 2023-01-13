@@ -12,7 +12,6 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -28,7 +27,7 @@ public class TalentTrackMessageComposer extends MessageComposer {
         this.response.init(Outgoing.talentTrackMessageComposer);
         this.response.appendString(this.type.name().toLowerCase());
 
-        LinkedHashMap<Integer, TalentTrackLevel> talentTrackLevels = Emulator.getGameEnvironment().getAchievementManager().getTalenTrackLevels(this.type);
+        Map<Integer, TalentTrackLevel> talentTrackLevels = Emulator.getGameEnvironment().getAchievementManager().getTalenTrackLevels(this.type);
         if (talentTrackLevels != null) {
             this.response.appendInt(talentTrackLevels.size()); //Count
             for (Map.Entry<Integer, TalentTrackLevel> set : talentTrackLevels.entrySet()) {

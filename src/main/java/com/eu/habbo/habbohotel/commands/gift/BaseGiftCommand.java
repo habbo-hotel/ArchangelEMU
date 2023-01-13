@@ -20,19 +20,19 @@ public abstract class BaseGiftCommand extends Command {
     protected boolean validateGiftCommand(GameClient gameClient, String[] params) {
         Integer itemId = getItemId(params);
         if (itemId == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_gift.not_a_number"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_gift.not_a_number"), RoomChatMessageBubbles.ALERT);
             return false;
         }
 
         if (itemId <= 0) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_gift.not_a_number"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_gift.not_a_number"), RoomChatMessageBubbles.ALERT);
             return false;
         }
 
         final Item baseItem = getBaseItem(itemId);
 
         if (baseItem == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_gift.not_found").replace("%itemid%", itemId + ""), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_gift.not_found").replace("%itemid%", itemId + ""), RoomChatMessageBubbles.ALERT);
             return false;
         }
 
@@ -40,13 +40,11 @@ public abstract class BaseGiftCommand extends Command {
     }
 
     protected String getFinalMessage(String[] params) {
-        String message = "";
-
         if (params.length > 2) {
-            message = IntStream.range(2, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
+            return IntStream.range(2, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
         }
 
-        return message;
+        return "";
     }
 
     protected void createGift(String finalMessage, Habbo habbo, String[] params) {
@@ -54,8 +52,7 @@ public abstract class BaseGiftCommand extends Command {
 
         Item giftItem = Emulator.getGameEnvironment().getItemManager().getItem((Integer) Emulator.getGameEnvironment().getCatalogManager().giftFurnis.values().toArray()[Emulator.getRandom().nextInt(Emulator.getGameEnvironment().getCatalogManager().giftFurnis.size())]);
 
-        String extraData = "1\t" + item.getId();
-        extraData += "\t0\t0\t0\t" + finalMessage + "\t0\t0";
+        String extraData = "1\t" + item.getId() + "\t0\t0\t0\t" + finalMessage + "\t0\t0";
 
         Emulator.getGameEnvironment().getItemManager().createGift(habbo.getHabboInfo().getUsername(), giftItem, extraData, 0, 0);
 

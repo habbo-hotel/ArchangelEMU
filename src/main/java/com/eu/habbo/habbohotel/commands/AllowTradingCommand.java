@@ -16,21 +16,21 @@ public class AllowTradingCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) throws Exception {
         if (params.length == 1) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_allow_trading.forgot_username"));
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_allow_trading.forgot_username"));
             return true;
         }
 
         if (params.length == 2) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_allow_trading.forgot_trade").replace("%username%", params[1]));
+            gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_allow_trading.forgot_trade"), params[1]));
             return true;
         }
 
         final String username = params[1];
         final String option = params[2];
 
-        if (option.equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes")) || option.equalsIgnoreCase(Emulator.getTexts().getValue("generic.no"))) {
-            final boolean enabled = option.equalsIgnoreCase(Emulator.getTexts().getValue("generic.yes"));
-            final Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
+        if (option.equalsIgnoreCase(getTextsValue("generic.yes")) || option.equalsIgnoreCase(getTextsValue("generic.no"))) {
+            final boolean enabled = option.equalsIgnoreCase(getTextsValue("generic.yes"));
+            final Habbo habbo = getHabbo(username);
 
             if (habbo != null) {
                 if (!enabled) {
@@ -41,28 +41,28 @@ public class AllowTradingCommand extends Command {
                     }
                 }
                 habbo.getHabboStats().setAllowTrade(enabled);
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_allow_trading." + (enabled ? "enabled" : "disabled")).replace("%username%", params[1]));
+                gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.succes.cmd_allow_trading." + (enabled ? "enabled" : "disabled")), params[1]));
                 habbo.getClient().sendResponse(new UserPerksComposer(habbo));
                 return true;
             } else {
                 boolean found;
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
                      PreparedStatement statement = connection.prepareStatement("UPDATE users_settings INNER JOIN users ON users.id = users_settings.user_id SET can_trade = ?, tradelock_amount = tradelock_amount + ? WHERE users.username LIKE ?")) {
-                    statement.setString(1, enabled ? "1" : "0");
-                    statement.setInt(2, enabled ? 0 : 1);
+                    statement.setString(1, booleanToIntString(enabled));
+                    statement.setInt(2, booleanToInt(enabled));
                     statement.setString(3, username);
                     found = statement.executeUpdate() > 0;
                 }
 
                 if (!found) {
-                    gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_allow_trading.user_not_found").replace("%username%", params[1]));
+                    gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_allow_trading.user_not_found"), params[1]));
                     return true;
                 }
 
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_allow_trading." + (enabled ? "enabled" : "disabled")).replace("%username%", params[1]));
+                gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.succes.cmd_allow_trading." + (enabled ? "enabled" : "disabled")), params[1]));
             }
         } else {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_allow_trading.incorrect_setting").replace("%enabled%", Emulator.getTexts().getValue("generic.yes")).replace("%disabled%", Emulator.getTexts().getValue("generic.no")));
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_allow_trading.incorrect_setting").replace("%enabled%", getTextsValue("generic.yes")).replace("%disabled%", getTextsValue("generic.no")));
         }
         return true;
     }

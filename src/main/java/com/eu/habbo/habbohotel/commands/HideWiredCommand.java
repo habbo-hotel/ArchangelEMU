@@ -12,14 +12,15 @@ public class HideWiredCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        if (room == null) {
+            return true;
+        }
 
-        if (room != null) {
-            if (room.isOwner(gameClient.getHabbo())) {
-                room.setHideWired(!room.isHideWired());
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_hidewired." + (room.isHideWired() ? "hidden" : "shown")));
-            } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.errors.cmd_hidewired.permission"));
-            }
+        if (room.isOwner(gameClient.getHabbo())) {
+            room.setHideWired(!room.isHideWired());
+            gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_hidewired." + (room.isHideWired() ? "hidden" : "shown")));
+        } else {
+            gameClient.getHabbo().whisper(getTextsValue("commands.errors.cmd_hidewired.permission"));
         }
 
         return true;

@@ -21,12 +21,12 @@ public class PushCommand extends Command {
         Habbo habbo = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[1]);
 
         if (habbo == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_push.not_found").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_push.not_found"), params[1]), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
         if (habbo == gameClient.getHabbo()) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_push.push_self"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_push.push_self"), RoomChatMessageBubbles.ALERT);
             return true;
         }
         RoomTile tFront = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(gameClient.getHabbo().getRoomUnit().getCurrentLocation(), gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue());
@@ -37,14 +37,19 @@ public class PushCommand extends Command {
 
                 if (tFrontTarget != null && tFrontTarget.isWalkable()) {
                     if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getDoorTile() == tFrontTarget) {
-                        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_push.invalid").replace("%username%", params[1]));
+                        gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_push.invalid"), params[1]));
                         return true;
                     }
                     habbo.getRoomUnit().setGoalLocation(tFrontTarget);
-                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new ChatMessageComposer(new RoomChatMessage(Emulator.getTexts().getValue("commands.succes.cmd_push.push").replace("%user%", params[1]).replace("%gender_name%", (gameClient.getHabbo().getHabboInfo().getGender().equals(HabboGender.M) ? Emulator.getTexts().getValue("gender.him") : Emulator.getTexts().getValue("gender.her"))), gameClient.getHabbo(), gameClient.getHabbo(), RoomChatMessageBubbles.NORMAL)).compose());
+                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(
+                            new ChatMessageComposer(
+                                    new RoomChatMessage(
+                                            replaceUser(getTextsValue("commands.succes.cmd_push.push"), params[1])
+                                                    .replace("%gender_name%", (gameClient.getHabbo().getHabboInfo().getGender().equals(HabboGender.M) ? getTextsValue("gender.him") : getTextsValue("gender.her"))), gameClient.getHabbo(), gameClient.getHabbo(), RoomChatMessageBubbles.NORMAL)).compose()
+                    );
                 }
             } else {
-                gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_push.cant_reach").replace("%user%", params[1]), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_push.cant_reach"), params[1]), RoomChatMessageBubbles.ALERT);
                 return true;
             }
         }

@@ -34,6 +34,7 @@ public class HabboInfo implements Runnable {
     @Setter
     private String motto;
     @Setter
+    @Accessors(chain = true)
     private String look;
     @Setter
     private HabboGender gender;

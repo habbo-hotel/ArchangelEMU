@@ -7,6 +7,8 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 
+import java.util.stream.IntStream;
+
 public class LayCommand extends Command {
     public LayCommand() {
         super(null, Emulator.getTexts().getValue("commands.keys.cmd_lay").split(";"));
@@ -27,11 +29,10 @@ public class LayCommand extends Command {
             return false;
         }
 
-        for (int i = 0; i < 3; i++) {
-            RoomTile t = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(tile, gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue(), i);
-            if (t == null || !t.isWalkable()) {
-                return false;
-            }
+        if (IntStream.range(0, 3)
+                .mapToObj(i -> gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(tile, gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue(), i))
+                .anyMatch(t -> t == null || !t.isWalkable())) {
+            return false;
         }
 
         gameClient.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.LAY, 0.5 + "");

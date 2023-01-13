@@ -18,14 +18,12 @@ public class UpdateItemsCommand extends Command {
         Emulator.getGameEnvironment().getItemManager().loadSoundTracks();
 
         synchronized (Emulator.getGameEnvironment().getRoomManager().getActiveRooms()) {
-            for (Room room : Emulator.getGameEnvironment().getRoomManager().getActiveRooms()) {
-                if (room.isLoaded() && room.getUserCount() > 0 && room.getLayout() != null) {
-                    room.sendComposer(new HeightMapComposer(room).compose());
-                }
-            }
+            Emulator.getGameEnvironment().getRoomManager().getActiveRooms().stream()
+                    .filter(room -> room.isLoaded() && room.getUserCount() > 0 && room.getLayout() != null)
+                    .forEach(room -> room.sendComposer(new HeightMapComposer(room).compose()));
         }
 
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_update_items"), RoomChatMessageBubbles.ALERT);
+        gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_update_items"), RoomChatMessageBubbles.ALERT);
 
         return true;
     }

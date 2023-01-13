@@ -21,16 +21,16 @@ public class ChangeNameCommand extends Command {
         }
 
         // check if the habbo exists or is online
-        Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(params[1]);
+        Habbo habbo = getHabbo(params[1]);
 
-        if ( habbo == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.error.cmd_changename.user_not_found").replace("%user%", params[1]));
+        if (habbo == null) {
+            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_changename.user_not_found"), params[1]));
             return true;
         }
 
         // this runs if params[1] is a valid habbo
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_changename.done").replace("%user%", params[1]));
-        habbo.alert(Emulator.getTexts().getValue("commands.succes.cmd_changename.received"));
+        gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_changename.done"), params[1]));
+        habbo.alert(getTextsValue("commands.succes.cmd_changename.received"));
         habbo.getHabboStats().setAllowNameChange(!habbo.getHabboStats().isAllowNameChange());
         habbo.getClient().sendResponse(new UserObjectComposer(habbo));
         return true;

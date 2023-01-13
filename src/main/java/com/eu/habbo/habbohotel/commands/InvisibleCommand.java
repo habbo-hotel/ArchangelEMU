@@ -25,8 +25,8 @@ public class InvisibleCommand extends Command {
 
             new RoomUnitTeleport(roomUnit, roomUnit.getRoom(), roomLayout.getDoorTile().getX(), roomLayout.getDoorTile().getY(), roomLayout.getDoorTile().getZ(), 0).run();
 
-            roomUnit.setInvisible(false);
-            roomUnit.setInRoom(true);
+            roomUnit.setInvisible(false)
+                    .setInRoom(true);
 
             roomUnit.getRoom().sendComposer(new RoomUsersComposer(gameClient.getHabbo()).compose());
             roomUnit.getRoom().sendComposer(new UserUpdateComposer(roomUnit).compose());
@@ -34,13 +34,13 @@ public class InvisibleCommand extends Command {
             WiredHandler.handle(WiredTriggerType.ENTER_ROOM, roomUnit, roomUnit.getRoom(), null);
             roomUnit.getRoom().habboEntered(gameClient.getHabbo());
 
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_invisible.updated.back"));
+            gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_invisible.updated.back"));
 
             return true;
         }
 
         roomUnit.setInvisible(true);
-        gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_invisible.updated"));
+        gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_invisible.updated"));
         gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserRemoveMessageComposer(roomUnit).compose());
 
         return true;
