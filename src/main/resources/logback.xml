@@ -62,6 +62,10 @@
         <level value="error"/>
     </logger>
 
+    <logger name="org.flywaydb.core.internal.sqlscript">
+        <level value="warn"/>
+    </logger>
+
     <root level="info">
         <appender-ref ref="Console" />
         <appender-ref ref="FileDebug" />
