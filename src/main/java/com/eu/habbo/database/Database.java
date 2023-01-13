@@ -6,8 +6,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import lombok.extern.slf4j.Slf4j;
-import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.output.MigrateResult;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,20 +42,6 @@ public class Database {
         }
 
         log.info("Database -> Connected! ({} MS)", System.currentTimeMillis() - millis);
-
-        Flyway flyway = Flyway.configure().placeholderReplacement(false).dataSource(dataSource).load();
-        MigrateResult migrateResult = flyway.migrate();
-
-        if (migrateResult.migrationsExecuted > 0) {
-            if (migrateResult.initialSchemaVersion != null)
-                log.info("Database -> {} Original Schema Version", migrateResult.initialSchemaVersion);
-            else
-                log.info("Database -> Initial migration completed");
-
-            log.info("Database -> Successfully migrated! ({} migrations executed)", migrateResult.migrationsExecuted);
-        }
-
-        log.info("Database -> Ready!");
     }
 
     public void dispose() {
