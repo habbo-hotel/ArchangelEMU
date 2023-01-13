@@ -176,12 +176,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>7.7.3</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.jupiter.version}</version>
@@ -222,12 +216,6 @@
             <version>${org.mockito.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!--        <dependency>-->
-<!--            <groupId>org.flywaydb</groupId>-->
-<!--            <artifactId>flyway-mysql</artifactId>-->
-<!--            <version>9.11.0</version>-->
-<!--        </dependency>-->
 
     </dependencies>
 </project>
