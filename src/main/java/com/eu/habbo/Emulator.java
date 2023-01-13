@@ -3,6 +3,8 @@ package com.eu.habbo;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.filter.Filter;
+import ch.qos.logback.core.spi.FilterReply;
 import com.eu.habbo.core.*;
 import com.eu.habbo.core.consolecommands.ConsoleCommand;
 import com.eu.habbo.database.Database;
@@ -17,6 +19,8 @@ import com.eu.habbo.plugin.events.emulator.EmulatorStartShutdownEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorStoppedEvent;
 import com.eu.habbo.threading.ThreadPooling;
 import com.eu.habbo.util.imager.badges.BadgeImager;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,33 +62,43 @@ public final class Emulator {
                     """;
 
 
-
+    @Getter
     private static int timeStarted = 0;
+    @Getter
     private static Runtime runtime;
+    @Getter
     private static ConfigurationManager config;
+    @Getter
     private static CryptoConfig crypto;
+    @Getter
     private static TextsManager texts;
+    @Getter
     private static GameServer gameServer;
+    @Getter
     private static RCONServer rconServer;
+    @Setter
+    @Getter
     private static CameraClient cameraClient;
+    @Getter
     private static Database database;
+    @Getter
     private static DatabaseLogger databaseLogger;
+    @Getter
     private static ThreadPooling threading;
+    @Getter
     private static GameEnvironment gameEnvironment;
+    @Getter
     private static PluginManager pluginManager;
+    @Getter
     private static BadgeImager badgeImager;
 
     static {
-        Thread hook = new Thread(new Runnable() {
-            public synchronized void run() {
-                Emulator.dispose();
-            }
-        });
+        Thread hook = new Thread(Emulator::dispose);
         hook.setPriority(10);
         Runtime.getRuntime().addShutdownHook(hook);
     }
 
-    public static void promptEnterKey(){
+    public static void promptEnterKey() {
         log.info("\n");
         log.info("This is a developer preview build. Your plugins for Arcturus Morningstar 3.x will NOT work on this build.");
         log.info("Press \"ENTER\" if you agree to the terms stated above...");
@@ -105,7 +119,7 @@ public final class Emulator {
                 appender.start();
             }
 
-            Locale.setDefault(new Locale("en"));
+            Locale.setDefault( Locale.ENGLISH);
             setBuild();
             Emulator.stopped = false;
             ConsoleCommand.load();
@@ -113,7 +127,7 @@ public final class Emulator {
             System.out.println(logo);
 
             // Checks if this is a BETA build before allowing them to continue.
-            if (PREVIEW.toLowerCase().contains("preview") ) {
+            if (PREVIEW.toLowerCase().contains("preview")) {
                 System.out.println();
                 promptEnterKey();
             }
@@ -215,7 +229,7 @@ public final class Emulator {
         try {
             String filepath = new File(Emulator.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
             MessageDigest md = MessageDigest.getInstance("MD5");// MD5
-            try(FileInputStream fis = new FileInputStream(filepath)) {
+            try (FileInputStream fis = new FileInputStream(filepath)) {
                 byte[] dataBytes = new byte[1024];
                 int nread;
                 while ((nread = fis.read(dataBytes)) != -1)
@@ -302,69 +316,9 @@ public final class Emulator {
         }
     }
 
-    public static ConfigurationManager getConfig() {
-        return config;
-    }
-
-    public static CryptoConfig getCrypto() {
-        return crypto;
-    }
-
-    public static TextsManager getTexts() {
-        return texts;
-    }
-
-    public static Database getDatabase() {
-        return database;
-    }
-
-    public static DatabaseLogger getDatabaseLogger() {
-        return databaseLogger;
-    }
-
-    public static Runtime getRuntime() {
-        return runtime;
-    }
-
-    public static GameServer getGameServer() {
-        return gameServer;
-    }
-
-    public static RCONServer getRconServer() {
-        return rconServer;
-    }
-
-
-    public static ThreadPooling getThreading() {
-        return threading;
-    }
-
-    public static GameEnvironment getGameEnvironment() {
-        return gameEnvironment;
-    }
-
-    public static PluginManager getPluginManager() {
-        return pluginManager;
-    }
 
     public static Random getRandom() {
         return ThreadLocalRandom.current();
-    }
-
-    public static BadgeImager getBadgeImager() {
-        return badgeImager;
-    }
-
-    public static synchronized CameraClient getCameraClient() {
-        return cameraClient;
-    }
-
-    public static synchronized void setCameraClient(CameraClient client) {
-        cameraClient = client;
-    }
-
-    public static int getTimeStarted() {
-        return timeStarted;
     }
 
     public static int getOnlineTime() {
@@ -379,7 +333,7 @@ public final class Emulator {
         int totalSeconds = 0;
 
         Matcher m = Pattern.compile("(([0-9]*) (second|minute|hour|day|week|month|year))").matcher(timeString);
-        Map<String,Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<>();
         map.put("second", 1);
         map.put("minute", 60);
         map.put("hour", 3600);
@@ -393,8 +347,8 @@ public final class Emulator {
                 int amount = Integer.parseInt(m.group(2));
                 String what = m.group(3);
                 totalSeconds += amount * map.get(what);
+            } catch (Exception ignored) {
             }
-            catch (Exception ignored) { }
         }
 
         return totalSeconds;
@@ -420,8 +374,8 @@ public final class Emulator {
                 int amount = Integer.parseInt(m.group(2));
                 String what = m.group(3);
                 c.add(map.get(what), amount);
+            } catch (Exception ignored) {
             }
-            catch (Exception ignored) { }
         }
 
         return c.getTime();
@@ -430,7 +384,7 @@ public final class Emulator {
     private static String dateToUnixTimestamp(Date date) {
         String res = "";
         Date aux = stringToDate("1970-01-01 00:00:00");
-        if(aux == null) return null;
+        if (aux == null) return null;
 
         Timestamp aux1 = dateToTimeStamp(aux);
         Timestamp aux2 = dateToTimeStamp(date);
