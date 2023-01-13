@@ -6,7 +6,6 @@ target/**
 TODO.txt
 packet.pkt
 plugins/**
-src/test/
 target/
 config.ini
 *.txt
