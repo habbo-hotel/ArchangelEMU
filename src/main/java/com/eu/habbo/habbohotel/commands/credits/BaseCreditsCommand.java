@@ -1,0 +1,17 @@
+package com.eu.habbo.habbohotel.commands.credits;
+
+import com.eu.habbo.habbohotel.commands.Command;
+
+public abstract class BaseCreditsCommand extends Command {
+    public BaseCreditsCommand(String permission, String[] keys) {
+        super(permission, keys);
+    }
+
+    protected String replaceAmount(String input, String amount) {
+        return input.replace("%amount%", amount);
+    }
+
+    protected String replaceUserAndAmount(String input, String user, String amount) {
+        return replaceAmount(replaceUser(input, user), amount);
+    }
+}
