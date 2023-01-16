@@ -3063,11 +3063,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public double getTopHeightAt(int x, int y) {
         HabboItem item = this.getTopItemAt(x, y);
-
-        if (item != null)
-            return (item.getZ() + Item.getCurrentHeight(item));
-        else
+        if (item != null) {
+            return (item.getZ() + Item.getCurrentHeight(item) - (item.getBaseItem().allowSit() ? 1 : 0));
+        } else {
             return this.layout.getHeightAtSquare(x, y);
+        }
     }
 
     public HabboItem getLowestChair(RoomTile tile) {
