@@ -159,7 +159,7 @@ public class NavigatorManager {
                 rooms = Emulator.getGameEnvironment().getRoomManager().getTopRatedRooms(25);
                 break;
             default:
-                return null;
+                return Collections.emptyList();
         }
 
         Collections.sort(rooms);

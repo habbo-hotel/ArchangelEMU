@@ -3,8 +3,6 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.RoomUserPetComposer;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
-import com.eu.habbo.habbohotel.bots.Bot;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.battlebanzai.BattleBanzaiGame;
 import com.eu.habbo.habbohotel.games.football.FootballGame;
@@ -19,7 +17,6 @@ import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.navigation.NavigatorFilterField;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetData;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.polls.Poll;
@@ -47,7 +44,6 @@ import com.eu.habbo.plugin.events.rooms.UserVoteRoomEvent;
 import com.eu.habbo.plugin.events.users.HabboAddedToRoomEvent;
 import com.eu.habbo.plugin.events.users.UserEnterRoomEvent;
 import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
-import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
@@ -225,8 +221,8 @@ public class RoomManager {
     }
 
     //TODO Move to HabboInfo class.
-    public List<Room> getRoomsForHabbo(Habbo habbo) {
-        List<Room> rooms = new ArrayList<>();
+    public ArrayList<Room> getRoomsForHabbo(Habbo habbo) {
+        ArrayList<Room> rooms = new ArrayList<>();
         for (Room room : this.activeRooms.values()) {
             if (room.getOwnerId() == habbo.getHabboInfo().getId())
                 rooms.add(room);
@@ -235,13 +231,13 @@ public class RoomManager {
         return rooms;
     }
 
-    public List<Room> getRoomsForHabbo(String username) {
+    public ArrayList<Room> getRoomsForHabbo(String username) {
         Habbo h = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
         if (h != null) {
             return this.getRoomsForHabbo(h);
         }
 
-        List<Room> rooms = new ArrayList<>();
+        ArrayList<Room> rooms = new ArrayList<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE owner_name = ? ORDER BY id DESC LIMIT 25")) {
             statement.setString(1, username);
@@ -947,16 +943,16 @@ public class RoomManager {
         return new TreeMap<>(tagCount).keySet();
     }
 
-    public List<Room> getPublicRooms() {
-        return this.activeRooms.values().stream().filter(Room::isPublicRoom).sorted(Room.SORT_ID).toList();
+    public ArrayList<Room> getPublicRooms() {
+        return this.activeRooms.values().stream().filter(Room::isPublicRoom).sorted(Room.SORT_ID) .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<Room> getPopularRooms(int count) {
+    public ArrayList<Room> getPopularRooms(int count) {
         return this.activeRooms.values().stream()
                 .filter(room -> room.getUserCount() > 0 && (!room.isPublicRoom() || RoomManager.SHOW_PUBLIC_IN_POPULAR_TAB))
                 .sorted()
                 .limit(count)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public List<Room> getPopularRooms(int count, int category) {
@@ -1127,7 +1123,7 @@ public class RoomManager {
         return rooms;
     }
 
-    public List<Room> getRoomsVisited(Habbo habbo, boolean includeSelf, int limit) {
+    public ArrayList<Room> getRoomsVisited(Habbo habbo, boolean includeSelf, int limit) {
         ArrayList<Room> rooms = new ArrayList<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT rooms.* FROM room_enter_log INNER JOIN rooms ON room_enter_log.room_id = rooms.id WHERE user_id = ? AND timestamp >= ? AND rooms.owner_id != ? GROUP BY rooms.id AND timestamp ORDER BY timestamp DESC LIMIT " + limit)) {
@@ -1156,7 +1152,7 @@ public class RoomManager {
         return rooms;
     }
 
-    public List<Room> getRoomsFavourite(Habbo habbo) {
+    public ArrayList<Room> getRoomsFavourite(Habbo habbo) {
         final ArrayList<Room> rooms = new ArrayList<>();
 
         habbo.getHabboStats().getFavoriteRooms().forEach(value -> {
@@ -1220,7 +1216,7 @@ public class RoomManager {
         return rooms;
     }
 
-    public List<Room> getRoomsWithFriendsIn(Habbo habbo, int limit) {
+    public ArrayList<Room> getRoomsWithFriendsIn(Habbo habbo, int limit) {
         final ArrayList<Room> rooms = new ArrayList<>();
 
         for (MessengerBuddy buddy : habbo.getMessenger().getFriends().values()) {
@@ -1239,7 +1235,7 @@ public class RoomManager {
         return rooms;
     }
 
-    public List<Room> getTopRatedRooms(int limit) {
+    public ArrayList<Room> getTopRatedRooms(int limit) {
         final ArrayList<Room> rooms = new ArrayList<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection();
@@ -1288,27 +1284,26 @@ public class RoomManager {
         return new ArrayList<>();
     }
 
-    public List<Room> getRoomsPromoted() {
-        return activeRooms.values().stream().filter(Room::isPromoted).toList();
+    public ArrayList<Room> getRoomsPromoted() {
+        return activeRooms.values().stream().filter(Room::isPromoted).collect(Collectors.toCollection(ArrayList::new));    }
+
+    public ArrayList<Room> getRoomsStaffPromoted() {
+        return activeRooms.values().stream().filter(Room::isStaffPromotedRoom).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<Room> getRoomsStaffPromoted() {
-        return activeRooms.values().stream().filter(Room::isStaffPromotedRoom).toList();
+    public ArrayList<Room> filterRoomsByOwner(List<Room> rooms, String filter) {
+        return rooms.stream().filter(r -> r.getOwnerName().equalsIgnoreCase(filter)).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<Room> filterRoomsByOwner(List<Room> rooms, String filter) {
-        return rooms.stream().filter(r -> r.getOwnerName().equalsIgnoreCase(filter)).toList();
+    public ArrayList<Room> filterRoomsByName(List<Room> rooms, String filter) {
+        return rooms.stream().filter(room -> room.getName().toLowerCase().contains(filter.toLowerCase())).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<Room> filterRoomsByName(List<Room> rooms, String filter) {
-        return rooms.stream().filter(room -> room.getName().toLowerCase().contains(filter.toLowerCase())).toList();
+    public ArrayList<Room> filterRoomsByNameAndDescription(List<Room> rooms, String filter) {
+        return rooms.stream().filter(room -> room.getName().toLowerCase().contains(filter.toLowerCase()) || room.getDescription().toLowerCase().contains(filter.toLowerCase())).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public List<Room> filterRoomsByNameAndDescription(List<Room> rooms, String filter) {
-        return rooms.stream().filter(room -> room.getName().toLowerCase().contains(filter.toLowerCase()) || room.getDescription().toLowerCase().contains(filter.toLowerCase())).toList();
-    }
-
-    public List<Room> filterRoomsByTag(List<Room> rooms, String filter) {
+    public ArrayList<Room> filterRoomsByTag(List<Room> rooms, String filter) {
         ArrayList<Room> r = new ArrayList<>();
 
         for (Room room : rooms) {
@@ -1324,10 +1319,10 @@ public class RoomManager {
         return r;
     }
 
-    public List<Room> filterRoomsByGroup(List<Room> rooms, String filter) {
+    public ArrayList<Room> filterRoomsByGroup(List<Room> rooms, String filter) {
         return rooms.stream().filter(room -> room.getGuildId() != 0)
                 .filter(room -> Emulator.getGameEnvironment().getGuildManager().getGuild(room.getGuildId()).getName().toLowerCase().contains(filter.toLowerCase()))
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public synchronized void dispose() {
