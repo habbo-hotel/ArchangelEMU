@@ -72,11 +72,13 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
             this.add(InteractionOneWayGate.class);
             this.add(InteractionPuzzleBox.class);
             this.add(InteractionRoller.class);
-            this.add(InteractionSwitch.class);
             this.add(InteractionTent.class);
             this.add(InteractionTrap.class);
             this.add(InteractionTrophy.class);
             this.add(InteractionWater.class);
+            this.add(InteractionCostumeHopper.class);
+            this.add(InteractionEffectGate.class);
+            this.add(InteractionVoteCounter.class);
         }
     };
 
