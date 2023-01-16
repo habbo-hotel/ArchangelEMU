@@ -9,6 +9,9 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Slf4j
 public class SaveRoomSettingsEvent extends MessageHandler {
 
@@ -55,6 +58,7 @@ public class SaveRoomSettingsEvent extends MessageHandler {
                 int usersMax = this.packet.readInt();
                 int categoryId = this.packet.readInt();
                 StringBuilder tags = new StringBuilder();
+                Set<String> uniqueTags = new HashSet<>();
                 int count = Math.min(this.packet.readInt(), 2);
                 for (int i = 0; i < count; i++) {
                     String tag = this.packet.readString();
@@ -63,7 +67,10 @@ public class SaveRoomSettingsEvent extends MessageHandler {
                         this.client.sendResponse(new RoomSettingsSaveErrorComposer(room.getId(), RoomSettingsSaveErrorComposer.TAGS_TOO_LONG, ""));
                         return;
                     }
-                    tags.append(tag).append(";");
+                    if(!uniqueTags.contains(tag)) {
+                        uniqueTags.add(tag);
+                        tags.append(tag).append(";");
+                    }
                 }
 
                 if (!Emulator.getGameEnvironment().getWordFilter().filter(tags.toString(), this.client.getHabbo()).equals(tags.toString())) {
@@ -128,7 +135,6 @@ public class SaveRoomSettingsEvent extends MessageHandler {
                 room.sendComposer(new RoomChatSettingsMessageComposer(room).compose());
                 room.sendComposer(new RoomInfoUpdatedComposer(room).compose());
                 this.client.sendResponse(new RoomSettingsSavedComposer(room));
-                //TODO Find packet for update room name.
             }
         }
     }
