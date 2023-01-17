@@ -130,10 +130,6 @@ public class PurchaseFromCatalogEvent extends PurchaseEvent {
                         }
                     });
 
-                    if (badgeFound[0]) {
-                        this.client.getHabbo().getClient().sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.ALREADY_HAVE_BADGE));
-                    }
-
                     return;
                 }
             }
