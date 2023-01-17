@@ -51,7 +51,6 @@ public class SetItemDataEvent extends MessageHandler {
         if (color.isEmpty())
             color = PostItColor.YELLOW.hexColor;
 
-        item.setUserId(room.getOwnerId());
         item.setExtradata(color + " " + text);
         item.needsUpdate(true);
         room.updateItem(item);
