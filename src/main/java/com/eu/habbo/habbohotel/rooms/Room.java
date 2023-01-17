@@ -3318,6 +3318,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         for (Habbo habbo : this.getHabbos()) {
+            if (habbo == null) { return ; }
             if (!habbo.getHabboStats().isIgnoreBots())
                 habbo.getClient().sendResponse(message);
         }
