@@ -612,6 +612,11 @@ public class RoomLayout {
                         }
                     }
                 }
+            } else if (rotation == 1 || rotation == 3 || rotation == 5 || rotation == 7) {
+                RoomTile t = this.getTile(tile.getX(), tile.getY());
+                if (t == null || t.getState() == RoomTileState.INVALID) {
+                    return false;
+                }
             }
         }
 
@@ -642,9 +647,13 @@ public class RoomLayout {
                         }
                     }
                 }
+            } else if (rotation == 1 || rotation == 3 || rotation == 5 || rotation == 7) {
+                RoomTile t = this.getTile(tile.getX(), tile.getY());
+                if (t != null) {
+                    pointList.add(t);
+                }
             }
         }
-
         return pointList;
     }
 }
