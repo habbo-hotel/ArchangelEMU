@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.ChangeUserNameResultMessageEvent;
+import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.messages.outgoing.rooms.users.UserNameChangedMessageComposer;
 import com.eu.habbo.messages.outgoing.users.CheckUserNameResultMessageComposer;
 import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
@@ -35,6 +36,7 @@ public class ChangeUserNameEvent extends MessageHandler {
             this.client.sendResponse(new ChangeUserNameResultMessageEvent(this.client.getHabbo()));
             this.client.sendResponse(new UserNameChangedMessageComposer(this.client.getHabbo()).compose());
             this.client.sendResponse(new UserObjectComposer(this.client.getHabbo()));
+            AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Name"));
             return;
         }
 
@@ -89,5 +91,6 @@ public class ChangeUserNameEvent extends MessageHandler {
                 this.client.sendResponse(new CheckUserNameResultMessageComposer(CheckUserNameResultMessageComposer.TAKEN_WITH_SUGGESTIONS, name, new ArrayList<>()));
             }
         }
+        AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("Name"));
     }
 }
