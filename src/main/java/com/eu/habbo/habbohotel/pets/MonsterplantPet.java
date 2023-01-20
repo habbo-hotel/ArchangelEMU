@@ -333,7 +333,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
             if (seedBase != null) {
                 HabboItem seed;
                 if (ownerOne != null) {
-                    AchievementManager.progressAchievement(ownerOne, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantBreeder"), 5);
+                    AchievementManager.progressAchievement(ownerOne, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantBreeder"), 1);
                     seed = Emulator.getGameEnvironment().getItemManager().createItem(ownerOne.getHabboInfo().getId(), seedBase, 0, 0, "");
                     ownerOne.getInventory().getItemsComponent().addItem(seed);
                     ownerOne.getClient().sendResponse(new UnseenItemsComposer(seed));
@@ -341,7 +341,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                 }
 
                 if (ownerTwo != null) {
-                    AchievementManager.progressAchievement(ownerTwo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantBreeder"), 5);
+                    AchievementManager.progressAchievement(ownerTwo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantBreeder"), 1);
                     seed = Emulator.getGameEnvironment().getItemManager().createItem(ownerTwo.getHabboInfo().getId(), seedBase, 0, 0, "");
                     ownerTwo.getInventory().getItemsComponent().addItem(seed);
                     ownerTwo.getClient().sendResponse(new UnseenItemsComposer(seed));
@@ -381,7 +381,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
     @Override
     public synchronized void scratched(Habbo habbo) {
         if (this.mayScratch()) {
-            AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantTreater"), 5);
+            AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantTreater"), 1);
             this.setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.TIME_TO_LIVE);
             this.addHappiness(10);
             this.addExperience(10);
