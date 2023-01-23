@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDice;
+import com.eu.habbo.habbohotel.items.interactions.InteractionSpinningBottle;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWired;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionMonsterPlantSeed;
 import com.eu.habbo.habbohotel.pets.MonsterplantPet;
@@ -36,7 +37,7 @@ public class UseFurnitureEvent extends MessageHandler {
 
             HabboItem item = room.getHabboItem(itemId);
 
-            if (item == null || item instanceof InteractionDice)
+            if (item == null || item instanceof InteractionDice || item instanceof InteractionSpinningBottle)
                 return;
 
             Event furnitureToggleEvent = new FurnitureToggleEvent(item, this.client.getHabbo(), state);

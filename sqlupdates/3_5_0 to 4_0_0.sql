@@ -13,3 +13,5 @@ UPDATE `emulator_texts` SET `key` = 'generic.pet.happiness', `value` = 'Happines
 ALTER TABLE `pet_commands_data` CHANGE `cost_happyness` `cost_happiness` int(11) NOT NULL DEFAULT '0';
 
 ALTER TABLE `users_pets` CHANGE `happyness` `happiness` int(11) NOT NULL DEFAULT '100';
+
+UPDATE `items_base` SET `interaction_type` = 'spinning_bottle', `interaction_modes_count` = '8' WHERE `item_name` = 'bottle';
