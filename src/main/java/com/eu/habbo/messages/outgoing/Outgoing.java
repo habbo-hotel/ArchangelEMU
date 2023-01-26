@@ -103,7 +103,7 @@ public class Outgoing {
     public static final int creditBalanceComposer = 3475;
     public static final int currentTimingCodeMessageComposer = 1745;
     public static final int customUserNotificationMessageComposer = 909;
-    public static final int danceMessageComposer = 2080;
+    public static final int danceMessageComposer = 2233;
     public static final int diceValueMessageComposer = 3431;
     public static final int directSMSClubBuyAvailableMessageComposer = 195; // todo?
     public static final int disconnectReasonComposer = 4000;
