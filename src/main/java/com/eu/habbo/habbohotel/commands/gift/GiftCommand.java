@@ -50,7 +50,7 @@ public class GiftCommand extends BaseGiftCommand {
             HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(username);
 
             if (habboInfo == null) {
-                gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_gift.user_not_found"), username), RoomChatMessageBubbles.ALERT);
+                gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_gift.user_not_found"), username), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
@@ -63,7 +63,7 @@ public class GiftCommand extends BaseGiftCommand {
 
             Emulator.getGameEnvironment().getItemManager().createGift(username, giftItem, extraData, 0, 0);
 
-            gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_gift"), username).replace("%itemname%", item.getBaseItem().getName()), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.succes.cmd_gift"), username).replace("%itemname%", item.getBaseItem().getName()), RoomChatMessageBubbles.ALERT);
 
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(habboInfo.getId());
 
