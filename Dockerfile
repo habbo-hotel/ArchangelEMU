@@ -5,8 +5,8 @@ COPY . .
 # Package it
 RUN mvn package && mv /target/Morningstar*-with-dependencies.jar /target/Morningstar.jar
 
-# Use openjdk 11 for running
-FROM openjdk:11 AS runner
+# Use Java 19 for running
+FROM eclipse-temurin:19 AS runner
 
 # Copy the generated source
 COPY --from=builder /target/Morningstar.jar /
