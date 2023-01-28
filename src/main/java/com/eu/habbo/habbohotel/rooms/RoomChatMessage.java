@@ -189,7 +189,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
             }
         }
 
-        if (Emulator.getConfig().getBoolean("hotel.wordfilter.enabled") && Emulator.getConfig().getBoolean("hotel.wordfilter.rooms")) {
+        if (Emulator.getConfig().getBoolean("hotel.wordfilter.enabled", true) && Emulator.getConfig().getBoolean("hotel.wordfilter.rooms")) {
             if (!this.habbo.hasPermission(Permission.ACC_CHAT_NO_FILTER)) {
                 if (!Emulator.getGameEnvironment().getWordFilter().autoReportCheck(this)) {
                     if (!Emulator.getGameEnvironment().getWordFilter().hideMessageCheck(this.message)) {

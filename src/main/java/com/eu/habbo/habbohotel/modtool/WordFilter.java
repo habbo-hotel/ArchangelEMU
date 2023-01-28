@@ -2,11 +2,11 @@ package com.eu.habbo.habbohotel.modtool;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Message;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.friends.NewConsoleMessageComposer;
 import com.eu.habbo.plugin.events.users.UserTriggerWordFilterEvent;
-import gnu.trove.iterator.hash.TObjectHashIterator;
 import gnu.trove.set.hash.THashSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +42,7 @@ public class WordFilter {
     }
 
     public synchronized void reload() {
-        if (!Emulator.getConfig().getBoolean("hotel.wordfilter.enabled"))
+        if (!Emulator.getConfig().getBoolean("hotel.wordfilter.enabled", true))
             return;
 
         this.autoReportWords.clear();
@@ -125,28 +125,22 @@ public class WordFilter {
 
     public String filter(String message, Habbo habbo) {
         String filteredMessage = message;
+        if (!Emulator.getConfig().getBoolean("hotel.wordfilter.enabled", true) || habbo.hasPermission(Permission.ACC_CHAT_NO_FILTER)) {
+            return message;
+        }
         if (Emulator.getConfig().getBoolean("hotel.wordfilter.normalise")) {
             filteredMessage = this.normalise(filteredMessage);
         }
-
-        TObjectHashIterator iterator = this.words.iterator();
-
         boolean foundShit = false;
 
-        while (iterator.hasNext()) {
-            WordFilterWord word = (WordFilterWord) iterator.next();
-
-            if (StringUtils.containsIgnoreCase(filteredMessage, word.getKey())) {
+        for (WordFilterWord word : this.words) {
+            if (StringUtils.containsIgnoreCase(message, word.getKey())) {
                 if (habbo != null) {
                     if (Emulator.getPluginManager().fireEvent(new UserTriggerWordFilterEvent(habbo, word)).isCancelled())
                         continue;
                 }
-                filteredMessage = filteredMessage.replace("(?i)" + word.getKey(), word.getReplacement());
+                filteredMessage = message.replaceAll("(?i)" + word.getKey(), word.getReplacement());
                 foundShit = true;
-
-                if (habbo != null && word.getMuteTime() > 0) {
-                    habbo.mute(word.getMuteTime(), false);
-                }
             }
         }
 
