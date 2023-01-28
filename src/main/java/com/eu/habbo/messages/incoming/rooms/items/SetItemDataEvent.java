@@ -18,7 +18,7 @@ public class SetItemDataEvent extends MessageHandler {
     public void handle() {
         int itemId = this.packet.readInt();
         String color = this.packet.readString();
-        String text = this.packet.readString().replace(((char) 9) + "", "");
+        String text = Emulator.getGameEnvironment().getWordFilter().filter(this.packet.readString().replace(((char) 9) + "", ""), this.client.getHabbo());
 
         if (text.length() > Emulator.getConfig().getInt("postit.charlimit")) {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.sticky.size").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%amount%", text.length() + "").replace("%limit%", Emulator.getConfig().getInt("postit.charlimit") + ""));

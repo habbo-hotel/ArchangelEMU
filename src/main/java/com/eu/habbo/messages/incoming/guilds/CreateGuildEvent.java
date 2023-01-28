@@ -20,8 +20,9 @@ public class CreateGuildEvent extends GuildBadgeEvent {
 
     @Override
     public void handle() {
-        String name = this.packet.readString();
-        String description = this.packet.readString();
+        String name = Emulator.getGameEnvironment().getWordFilter().filter(this.packet.readString(), this.client.getHabbo());
+        String description = Emulator.getGameEnvironment().getWordFilter().filter(this.packet.readString(), this.client.getHabbo());
+
 
         if(name.length() > 29 || description.length() > 254)
             return;

@@ -9,7 +9,9 @@ import com.eu.habbo.plugin.events.users.UserSavedMottoEvent;
 public class ChangeMottoEvent extends MessageHandler {
     @Override
     public void handle() {
-        String motto = this.packet.readString();
+
+        String motto = Emulator.getGameEnvironment().getWordFilter().filter(this.packet.readString(), this.client.getHabbo());
+
         UserSavedMottoEvent event = new UserSavedMottoEvent(this.client.getHabbo(), this.client.getHabbo().getHabboInfo().getMotto(), motto);
         Emulator.getPluginManager().fireEvent(event);
         motto = event.getNewMotto();

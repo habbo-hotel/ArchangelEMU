@@ -13,13 +13,15 @@ public class ApproveNameEvent extends MessageHandler {
     public void handle() {
         String petName = this.packet.readString();
 
-        if (petName.length() < PET_NAME_LENGTH_MINIMUM) {
+         if (Emulator.getConfig().getBoolean("hotel.wordfilter.enabled", true) && !Emulator.getGameEnvironment().getWordFilter().filter(petName, this.client.getHabbo()).equals(petName)){
+            this.client.sendResponse(new ApproveNameMessageComposer(ApproveNameMessageComposer.FORBIDDEN_WORDS, petName));
+        } else if (petName.length() < PET_NAME_LENGTH_MINIMUM) {
             this.client.sendResponse(new ApproveNameMessageComposer(ApproveNameMessageComposer.NAME_TO_SHORT, PET_NAME_LENGTH_MINIMUM + ""));
         } else if (petName.length() > PET_NAME_LENGTH_MAXIMUM) {
             this.client.sendResponse(new ApproveNameMessageComposer(ApproveNameMessageComposer.NAME_TO_LONG, PET_NAME_LENGTH_MAXIMUM + ""));
         } else if (!StringUtils.isAlphanumeric(petName)) {
             this.client.sendResponse(new ApproveNameMessageComposer(ApproveNameMessageComposer.FORBIDDEN_CHAR, petName));
-        } else {
+        }  else {
             this.client.sendResponse(new ApproveNameMessageComposer(ApproveNameMessageComposer.NAME_OK, petName));
         }
     }
