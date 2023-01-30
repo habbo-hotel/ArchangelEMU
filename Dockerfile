@@ -1,4 +1,4 @@
-FROM maven:latest AS builder
+FROM maven:3-eclipse-temurin-19 AS builder
 
 # Copy the Emulator sources to the container
 COPY . .
