@@ -71,7 +71,7 @@ public class CommandBotEvent extends MessageHandler {
                                 count++;
                             }
 
-                            String result = Emulator.getGameEnvironment().getWordFilter().filter(s, null);
+                            String result = Emulator.getGameEnvironment().getWordFilter().filter(s, this.client.getHabbo());
 
                             if (!result.isEmpty()) {
                                 if (!this.client.getHabbo().hasPermission(Permission.ACC_CHAT_NO_FILTER)) {
@@ -117,7 +117,7 @@ public class CommandBotEvent extends MessageHandler {
                     String name = this.packet.readString();
                     boolean invalidName = name.length() > BotManager.MAXIMUM_NAME_LENGTH || name.contains("<") || name.contains(">");
                     if (!invalidName) {
-                        String filteredName = Emulator.getGameEnvironment().getWordFilter().filter(name, null);
+                        String filteredName = Emulator.getGameEnvironment().getWordFilter().filter(name, this.client.getHabbo());
                         invalidName = !name.equalsIgnoreCase(filteredName);
                         if (!invalidName) {
                             BotSavedNameEvent nameEvent = new BotSavedNameEvent(bot, name);
