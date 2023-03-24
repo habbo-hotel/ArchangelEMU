@@ -1208,9 +1208,12 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         foundRightHolder[0] = habbo.getRoomUnit().getRightsLevel() != RoomRightLevels.NONE;
                     }
 
+                    /* Habbo doesn't remove the handitem anymore, checked on February 25 2023
                     if (habbo.getRoomUnit().getHandItem() > 0 && millis - habbo.getRoomUnit().getHandItemTimestamp() > (Room.HAND_ITEM_TIME * 1000L)) {
                         this.giveHandItem(habbo, 0);
                     }
+
+                     */
 
                     if (habbo.getRoomUnit().getEffectId() > 0 && millis / 1000 > habbo.getRoomUnit().getEffectEndTimestamp()) {
                         this.giveEffect(habbo, 0, -1);
