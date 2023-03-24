@@ -3607,9 +3607,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
         Habbo habbo = roomUnit.getRoom().getHabbo(roomUnit);
 
-        if (habbo == null) return;
-
-        if (!habbo.getHabboInfo().isInGame() || ignoreChecks) {
+        if (roomUnit.getRoomUnitType() == RoomUnitType.USER && (habbo == null || habbo.getHabboInfo().isInGame() && !ignoreChecks)) { return; }
             if (duration == -1 || duration == Integer.MAX_VALUE) {
                 duration = Integer.MAX_VALUE;
             } else {
@@ -3620,7 +3618,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 roomUnit.setEffectId(effectId, duration);
                 this.sendComposer(new AvatarEffectMessageComposer(roomUnit).compose());
             }
-        }
     }
 
     public void giveHandItem(Habbo habbo, int handItem) {
