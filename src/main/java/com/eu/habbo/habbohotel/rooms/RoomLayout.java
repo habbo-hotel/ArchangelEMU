@@ -7,9 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 
 @Slf4j
@@ -588,6 +586,30 @@ public class RoomLayout {
         }
 
         return availableTiles;
+    }
+
+    public RoomTile getRandomWalkableTilesAround(RoomUnit roomUnit, RoomTile tile, Room room, int radius) {
+         if(!this.tileExists(tile.getX(), tile.getY())) {
+             tile = this.getTile(roomUnit.getX(), roomUnit.getY());
+             room.getBot(roomUnit).needsUpdate(true);
+        }
+
+        List<RoomTile> newTiles = new ArrayList<>();
+
+        int minX = Math.max(0, tile.getX() - radius);
+        int minY = Math.max(0, tile.getY() - radius);
+        int maxX = Math.min(room.getLayout().getMapSizeX(), tile.getX() + radius);
+        int maxY = Math.min(room.getLayout().getMapSizeY(), tile.getY() + radius);
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                RoomTile tile2 = room.getLayout().getTile((short) x, (short) y);
+                if (tile2 != null && tile.getState() != RoomTileState.BLOCKED && tile.getState() != RoomTileState.INVALID)
+                    newTiles.add(tile2);
+            }
+        }
+        Collections.shuffle(newTiles);
+        return newTiles.get(0);
     }
 
     public boolean fitsOnMap(RoomTile tile, int width, int length, int rotation) {

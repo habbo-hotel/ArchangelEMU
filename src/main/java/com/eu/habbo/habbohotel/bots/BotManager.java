@@ -131,7 +131,7 @@ public class BotManager {
                 roomUnit.setCanWalk(room.isAllowBotsWalk());
                 bot.setRoomUnit(roomUnit);
                 bot.setRoom(room);
-                bot.needsUpdate(true);
+                bot.onPlaceUpdate();
                 room.addBot(bot);
                 Emulator.getThreading().run(bot);
                 room.sendComposer(new RoomUsersComposer(bot).compose());
