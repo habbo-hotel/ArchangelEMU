@@ -79,6 +79,9 @@ public class RoomUnit {
     @Getter
     private RoomTile startLocation;
     @Getter
+    @Setter
+    private RoomTile botStartLocation;
+    @Getter
     private RoomTile previousLocation;
     @Getter
     @Setter
@@ -501,6 +504,7 @@ public class RoomUnit {
             setPreviousLocation(location);
             setCurrentLocation(location);
             this.goalLocation = location;
+            this.botStartLocation = location;
         }
         return this;
     }

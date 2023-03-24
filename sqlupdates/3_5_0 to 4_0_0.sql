@@ -15,3 +15,7 @@ ALTER TABLE `pet_commands_data` CHANGE `cost_happyness` `cost_happiness` int(11)
 ALTER TABLE `users_pets` CHANGE `happyness` `happiness` int(11) NOT NULL DEFAULT '100';
 
 UPDATE `items_base` SET `interaction_type` = 'spinning_bottle', `interaction_modes_count` = '8' WHERE `item_name` = 'bottle';
+
+--New bot walking settings
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.bot.limit.walking.distance', '1');
+INSERT INTO `emulator_settings` (`key`, `value`) VALUES ('hotel.bot.limit.walking.distance.radius', '5');
