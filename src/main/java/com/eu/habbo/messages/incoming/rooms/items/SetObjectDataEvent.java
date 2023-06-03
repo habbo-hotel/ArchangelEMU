@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionCustomValues;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRoomAds;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -22,7 +23,7 @@ public class SetObjectDataEvent extends MessageHandler {
         if (item == null)
             return;
 
-        if (item instanceof InteractionRoomAds && !this.client.getHabbo().hasRight("acc_ads_background")) {
+        if (item instanceof InteractionRoomAds && !this.client.getHabbo().hasRight(Permission.ACC_ADS_BACKGROUND)) {
             this.client.getHabbo().alert(Emulator.getTexts().getValue("hotel.error.roomads.nopermission"));
             return;
         }

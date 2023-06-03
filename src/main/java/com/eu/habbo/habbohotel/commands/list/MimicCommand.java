@@ -32,7 +32,7 @@ public class MimicCommand extends Command {
             } else if (habbo.hasRight(Permission.ACC_NOT_MIMICED) && !gameClient.getHabbo().hasRight(Permission.ACC_NOT_MIMICED)) {
                 gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_mimic.blocked"), params[1]).replace("%gender_name%", getGenderName(habbo)), RoomChatMessageBubbles.ALERT);
                 return true;
-            } else if (!habbo.hasRight("acc_mimic_unredeemed") && FigureUtil.hasBlacklistedClothing(habbo.getHabboInfo().getLook(), gameClient.getHabbo().getForbiddenClothing())) {
+            } else if (!habbo.hasRight(Permission.ACC_MIMIC_UNREDEEMED) && FigureUtil.hasBlacklistedClothing(habbo.getHabboInfo().getLook(), gameClient.getHabbo().getForbiddenClothing())) {
                 gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_mimic.forbidden_clothing"), RoomChatMessageBubbles.ALERT);
                 return true;
             } else {

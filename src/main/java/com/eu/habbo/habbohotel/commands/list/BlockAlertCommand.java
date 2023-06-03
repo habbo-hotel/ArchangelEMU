@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 
 public class BlockAlertCommand extends Command {
     public BlockAlertCommand() {
-        super("cmd_blockalert");
+        super("cmd_block_alert");
     }
 
     @Override

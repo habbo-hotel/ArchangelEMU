@@ -49,8 +49,10 @@ public class Permission {
     public static final String ACC_HELPER_JUDGE_CHAT_REVIEWS = "acc_helper_judge_chat_reviews";
     public static final String ACC_FLOORPLAN_EDITOR = "acc_floorplan_editor";
     public static final String ACC_CAMERA = "acc_camera";
-
-    private final String key;
-    private final PermissionSetting setting;
-
+    public static final String ACC_INFINITE_FRIENDS = "acc_infinite_friends";
+    public static final String ACC_ADS_BACKGROUND = "acc_ads_background";
+    public static final String ACC_NO_MUTE = "acc_no_mute";
+    public static final String ACC_CAN_STALK = "acc_can_stalk";
+    public static final String ACC_MIMIC_UNREDEEMED = "acc_mimic_unredeemed";
+    public static final String ACC_CALENDAR_FORCE = "acc_calendar_force";
 }

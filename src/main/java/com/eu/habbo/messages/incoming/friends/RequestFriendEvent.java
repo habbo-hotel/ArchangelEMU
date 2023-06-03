@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.friends;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Messenger;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.friends.MessengerErrorComposer;
@@ -63,13 +64,13 @@ public class RequestFriendEvent extends MessageHandler {
         }
 
         // You can only have x friends
-        if (this.client.getHabbo().getMessenger().getFriends().values().size() >= this.client.getHabbo().getHabboStats().getMaxFriends() && !this.client.getHabbo().hasRight("acc_infinite_friends")) {
+        if (this.client.getHabbo().getMessenger().getFriends().values().size() >= this.client.getHabbo().getHabboStats().getMaxFriends() && !this.client.getHabbo().hasRight(Permission.ACC_INFINITE_FRIENDS)) {
             this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_OWN_FULL));
             return;
         }
 
         // Check if targets friendlist is full
-        if (targetHabbo.getMessenger().getFriends().values().size() >= targetHabbo.getHabboStats().getMaxFriends() && !targetHabbo.hasRight("acc_infinite_friends")) {
+        if (targetHabbo.getMessenger().getFriends().values().size() >= targetHabbo.getHabboStats().getMaxFriends() && !targetHabbo.hasRight(Permission.ACC_INFINITE_FRIENDS)) {
             this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_TARGET_FULL));
             return;
         }

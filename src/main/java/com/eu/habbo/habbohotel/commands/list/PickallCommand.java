@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 
 public class PickallCommand extends Command {
     public PickallCommand() {
-        super("cmd_pickall");
+        super("cmd_pick_all");
     }
 
     @Override
