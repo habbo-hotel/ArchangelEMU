@@ -1,6 +1,7 @@
 package com.eu.habbo.core.consolecommands;
 
-import com.eu.habbo.habbohotel.commands.ShutdownCommand;
+import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.commands.list.ShutdownCommand;
 
 public class ConsoleShutdownCommand extends ConsoleCommand {
     public ConsoleShutdownCommand() {
@@ -9,6 +10,6 @@ public class ConsoleShutdownCommand extends ConsoleCommand {
 
     @Override
     public void handle(String[] args) {
-        new ShutdownCommand().handle(null, args);
+        Emulator.getGameEnvironment().getCommandsManager().handleCommand(null, args.toString());
     }
 }

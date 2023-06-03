@@ -22,7 +22,7 @@ public class PresentOpenEvent extends MessageHandler {
         if (room == null)
             return;
 
-        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
             HabboItem item = room.getHabboItem(this.packet.readInt());
 
             if (item == null)

@@ -48,6 +48,7 @@ public class Permission {
     public static final String ACC_HELPER_GIVE_GUIDE_TOURS = "acc_helper_give_guide_tours";
     public static final String ACC_HELPER_JUDGE_CHAT_REVIEWS = "acc_helper_judge_chat_reviews";
     public static final String ACC_FLOORPLAN_EDITOR = "acc_floorplan_editor";
+    public static final String ACC_CAMERA = "acc_camera";
 
     private final String key;
     private final PermissionSetting setting;

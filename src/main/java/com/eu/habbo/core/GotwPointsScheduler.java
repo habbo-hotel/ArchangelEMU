@@ -61,7 +61,7 @@ public class GotwPointsScheduler extends Scheduler {
                     }
                     type = Emulator.getConfig().getInt("seasonal.currency." + GOTW_POINTS_NAME, -1);
                     if (found || type != -1) {
-                        habbo.givePoints(type, (int)(habbo.getHabboInfo().getRank().getGotwTimerAmount() * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
+                        habbo.givePoints(type, (int)(habbo.getHabboInfo().getPermissionGroup().getTimerAmount(type) * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
                     }
                 }
             } catch (Exception e) {

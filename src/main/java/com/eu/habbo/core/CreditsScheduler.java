@@ -51,7 +51,7 @@ public class CreditsScheduler extends Scheduler {
                     if (habbo.getRoomUnit().isIdle() && IGNORE_IDLED)
                         continue;
 
-                    habbo.giveCredits((int) (habbo.getHabboInfo().getRank().getCreditsTimerAmount() * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
+                    habbo.giveCredits((int) (habbo.getHabboInfo().getPermissionGroup().getTimerAmount(-1) * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
                 }
             } catch (Exception e) {
                 log.error("Caught exception", e);

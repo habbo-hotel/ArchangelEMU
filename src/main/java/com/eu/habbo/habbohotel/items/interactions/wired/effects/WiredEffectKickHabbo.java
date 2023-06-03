@@ -44,7 +44,7 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
         Habbo habbo = room.getHabbo(roomUnit);
 
         if (habbo != null) {
-            if (habbo.hasPermission(Permission.ACC_UNKICKABLE)) {
+            if (habbo.hasRight(Permission.ACC_UNKICKABLE)) {
                 habbo.whisper(Emulator.getTexts().getValue("hotel.wired.kickexception.unkickable"));
                 return true;
             }

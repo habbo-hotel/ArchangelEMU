@@ -43,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
 
@@ -618,7 +617,7 @@ public class CatalogManager {
         this.catalogPages.get(parentId).childPages.forEachValue(object -> {
 
             boolean isVisiblePage = object.visible;
-            boolean hasRightRank = object.getRank() <= habbo.getHabboInfo().getRank().getId();
+            boolean hasRightRank = object.getRank() <= habbo.getHabboInfo().getPermissionGroup().getId();
 
             boolean clubRightsOkay = !object.isClubOnly() || habbo.getHabboInfo().getHabboStats().hasActiveClub();
 
@@ -1051,12 +1050,12 @@ public class CatalogManager {
                 UserCatalogItemPurchasedEvent purchasedEvent = new UserCatalogItemPurchasedEvent(habbo, item, itemsList, totalCredits, totalPoints, badges);
                 Emulator.getPluginManager().fireEvent(purchasedEvent);
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS) && purchasedEvent.getTotalCredits() > 0) {
+                if (!free && !habbo.getClient().getHabbo().hasRight(Permission.ACC_INFINITE_CREDITS) && purchasedEvent.getTotalCredits() > 0) {
                     habbo.getClient().getHabbo().getHabboInfo().addCredits(-purchasedEvent.getTotalCredits());
                     habbo.getClient().sendResponse(new CreditBalanceComposer(habbo.getClient().getHabbo()));
                 }
 
-                if (!free && !habbo.getClient().getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS) && purchasedEvent.getTotalPoints() > 0) {
+                if (!free && !habbo.getClient().getHabbo().hasRight(Permission.ACC_INFINITE_POINTS) && purchasedEvent.getTotalPoints() > 0) {
                     habbo.getClient().getHabbo().getHabboInfo().addCurrencyAmount(item.getPointsType(), -purchasedEvent.getTotalPoints());
                     habbo.getClient().sendResponse(new HabboActivityPointNotificationMessageComposer(habbo.getClient().getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -purchasedEvent.getTotalPoints(), item.getPointsType()));
                 }

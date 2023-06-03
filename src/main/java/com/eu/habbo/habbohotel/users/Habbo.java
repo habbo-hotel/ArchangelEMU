@@ -187,14 +187,29 @@ public class Habbo implements Runnable {
         }
     }
 
+    public boolean canExecuteCommand(String key) {
+        return this.getHabboInfo().getPermissionGroup().canExecuteCommand(key, false);
+    }
 
-    public boolean hasPermission(String key) {
-        return this.hasPermission(key, false);
+    public boolean canExecuteCommand(String key, boolean hasRoomRights) {
+        return this.getHabboInfo().getPermissionGroup().canExecuteCommand(key, hasRoomRights);
+    }
+
+    public boolean hasCommand(String key) {
+        return this.hasCommand(key, false);
     }
 
 
-    public boolean hasPermission(String key, boolean hasRoomRights) {
-        return Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this, key, hasRoomRights);
+    public boolean hasCommand(String name, boolean hasRoomRights) {
+        return this.getHabboInfo().getPermissionGroup().hasCommand(name, hasRoomRights);
+    }
+
+    public boolean hasRight(String key) {
+        return this.hasRight(key, false);
+    }
+
+    public boolean hasRight(String key, boolean hasRoomRights) {
+        return this.getHabboInfo().getPermissionGroup().hasRight(key, hasRoomRights);
     }
 
 
@@ -390,7 +405,7 @@ public class Habbo implements Runnable {
             return;
         }
 
-        if (!this.hasPermission("acc_no_mute")) {
+        if (!this.hasRight("acc_no_mute")) {
             int remaining = this.habboStats.addMuteTime(seconds);
             this.client.sendResponse(new FloodControlMessageComposer(remaining));
             this.client.sendResponse(new RemainingMutePeriodComposer(remaining));

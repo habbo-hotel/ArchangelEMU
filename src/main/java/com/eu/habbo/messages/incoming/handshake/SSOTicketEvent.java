@@ -103,7 +103,7 @@ public class SSOTicketEvent extends MessageHandler {
                         return;
                     }
 
-                    if (this.client.getHabbo().getHabboInfo().getRank() == null) {
+                    if (this.client.getHabbo().getHabboInfo().getPermissionGroup() == null) {
                         throw new NullPointerException(habbo.getHabboInfo().getUsername() + " has a NON EXISTING RANK!");
                     }
 
@@ -217,7 +217,7 @@ public class SSOTicketEvent extends MessageHandler {
 
                 messages.add(new ScrSendUserInfoComposer(this.client.getHabbo(), SubscriptionHabboClub.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_LOGIN).compose());
 
-                if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
+                if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
                     messages.add(new ModeratorInitMessageComposer(this.client.getHabbo()).compose());
                 }
 

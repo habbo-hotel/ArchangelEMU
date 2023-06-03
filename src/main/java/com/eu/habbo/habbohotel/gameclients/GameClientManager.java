@@ -152,7 +152,7 @@ public class GameClientManager {
                 continue;
 
             if (client.getHabbo() != null) {
-                if (client.getHabbo().hasPermission(minPermission)) {
+                if (client.getHabbo().hasRight(minPermission)) {
                     client.sendResponse(message);
                 }
             }

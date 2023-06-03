@@ -51,7 +51,7 @@ public class PointsScheduler extends Scheduler {
                         continue;
 
                     //habbo.givePoints(POINTS);
-                    habbo.givePoints((int)(habbo.getHabboInfo().getRank().getDiamondsTimerAmount() * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
+                    habbo.givePoints((int)(habbo.getHabboInfo().getPermissionGroup().getTimerAmount(5) * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
                 }
             } catch (Exception e) {
                 log.error("Caught exception", e);

@@ -39,8 +39,8 @@ public class EffectsComponent {
         } catch (SQLException e) {
             log.error(CAUGHT_SQL_EXCEPTION, e);
         }
-        if(habbo.getHabboInfo().getRank().getRoomEffect() > 0)
-            this.createRankEffect(habbo.getHabboInfo().getRank().getRoomEffect());
+        if(habbo.getHabboInfo().getPermissionGroup().getRoomEffect() > 0)
+            this.createRankEffect(habbo.getHabboInfo().getPermissionGroup().getRoomEffect());
     }
 
     public HabboEffect createEffect(int effectId) {

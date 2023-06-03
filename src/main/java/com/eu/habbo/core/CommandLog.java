@@ -9,7 +9,6 @@ import java.sql.SQLException;
 
 @AllArgsConstructor
 public class CommandLog implements DatabaseLoggable {
-
     private static final String INSERT_QUERY = "INSERT INTO commandlogs (`user_id`, `timestamp`, `command`, `params`, `succes`) VALUES (?, ?, ?, ?, ?)";
 
     private final int userId;

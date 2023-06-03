@@ -39,7 +39,7 @@ public class PostMessageEvent extends MessageHandler {
             return;
         }
 
-        boolean isStaff = this.client.getHabbo().hasPermission(Permission.ACC_MODTOOL_TICKET_Q);
+        boolean isStaff = this.client.getHabbo().hasRight(Permission.ACC_MODTOOL_TICKET_Q);
 
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
 

@@ -722,8 +722,8 @@ public class HabboStats implements Runnable {
         final Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
         if (!Emulator.getConfig().getBoolean("hotel.allow.ignore.staffs")) {
-            final int ownRank = gameClient.getHabbo().getHabboInfo().getRank().getId();
-            final int targetRank = target.getHabboInfo().getRank().getId();
+            final int ownRank = gameClient.getHabbo().getHabboInfo().getPermissionGroup().getId();
+            final int targetRank = target.getHabboInfo().getPermissionGroup().getId();
 
             if (targetRank >= ownRank) {
                 gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.error.ignore_higher_rank"), RoomChatMessageBubbles.ALERT);

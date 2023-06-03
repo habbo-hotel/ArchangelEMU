@@ -9,7 +9,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.campaign.CalendarManager;
 import com.eu.habbo.habbohotel.catalog.CatalogManager;
-import com.eu.habbo.habbohotel.commands.CommandHandler;
+import com.eu.habbo.habbohotel.commands.CommandsManager;
 import com.eu.habbo.habbohotel.crafting.CraftingManager;
 import com.eu.habbo.habbohotel.guides.GuideManager;
 import com.eu.habbo.habbohotel.guilds.GuildManager;
@@ -37,7 +37,6 @@ public class GameEnvironment {
     private PointsScheduler pointsScheduler;
     private GotwPointsScheduler gotwPointsScheduler;
     private SubscriptionScheduler subscriptionScheduler;
-
     private HabboManager habboManager;
     private NavigatorManager navigatorManager;
     private GuildManager guildManager;
@@ -45,7 +44,7 @@ public class GameEnvironment {
     private CatalogManager catalogManager;
     private HotelViewManager hotelViewManager;
     private RoomManager roomManager;
-    private CommandHandler commandHandler;
+    private CommandsManager commandsManager;
     private PermissionsManager permissionsManager;
     private BotManager botManager;
     private ModToolManager modToolManager;
@@ -73,7 +72,7 @@ public class GameEnvironment {
         this.catalogManager = new CatalogManager();
         this.roomManager = new RoomManager();
         this.navigatorManager = new NavigatorManager();
-        this.commandHandler = new CommandHandler();
+        this.commandsManager = new CommandsManager();
         this.modToolManager = new ModToolManager();
         this.modToolSanctions = new ModToolSanctions();
         this.achievementManager = new AchievementManager();
@@ -112,7 +111,7 @@ public class GameEnvironment {
         this.gotwPointsScheduler.setDisposed(true);
         this.craftingManager.dispose();
         this.habboManager.dispose();
-        this.commandHandler.dispose();
+        this.commandsManager.dispose();
         this.guildManager.dispose();
         this.catalogManager.dispose();
         this.roomManager.dispose();

@@ -64,12 +64,12 @@ public class AcceptFriendEvent extends MessageHandler {
                 continue;
             }
 
-            if(this.client.getHabbo().getMessenger().getFriends().size() >= this.client.getHabbo().getHabboStats().getMaxFriends() && !this.client.getHabbo().hasPermission("acc_infinite_friends")) {
+            if(this.client.getHabbo().getMessenger().getFriends().size() >= this.client.getHabbo().getHabboStats().getMaxFriends() && !this.client.getHabbo().hasRight("acc_infinite_friends")) {
                 this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_OWN_FULL));
                 break;
             }
 
-            if(target.getMessenger().getFriends().size() >= target.getHabboStats().getMaxFriends() && !target.hasPermission("acc_infinite_friends")) {
+            if(target.getMessenger().getFriends().size() >= target.getHabboStats().getMaxFriends() && !target.hasRight("acc_infinite_friends")) {
                 this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_TARGET_FULL));
                 continue;
             }

@@ -19,7 +19,7 @@ public class RemoveAdminRightsFromMemberEvent extends MessageHandler {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
         if (guild != null) {
-            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)) {
+            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN)) {
                 int userId = this.packet.readInt();
 
                 Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());

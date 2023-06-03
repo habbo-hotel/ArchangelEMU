@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class GetCfhChatlogEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
             ModToolIssue issue = Emulator.getGameEnvironment().getModToolManager().getTicket(this.packet.readInt());
 
             if (issue != null) {

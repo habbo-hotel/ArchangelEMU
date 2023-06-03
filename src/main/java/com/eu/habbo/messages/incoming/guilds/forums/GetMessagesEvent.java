@@ -27,7 +27,7 @@ public class GetMessagesEvent extends MessageHandler {
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
         ForumThread thread = ForumThread.getById(threadId);
-        boolean hasStaffPermissions = this.client.getHabbo().hasPermission(Permission.ACC_MODTOOL_TICKET_Q);
+        boolean hasStaffPermissions = this.client.getHabbo().hasRight(Permission.ACC_MODTOOL_TICKET_Q);
         if (guild == null || thread == null) {
             this.client.sendResponse(new ErrorReportComposer(404));
             return;

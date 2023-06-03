@@ -46,7 +46,7 @@ public class PixelScheduler extends Scheduler {
                     if (habbo.getRoomUnit().isIdle() && IGNORE_IDLED)
                         continue;
 
-                    habbo.givePixels((int)(habbo.getHabboInfo().getRank().getPixelsTimerAmount() * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
+                    habbo.givePixels((int)(habbo.getHabboInfo().getPermissionGroup().getTimerAmount(0) * (habbo.getHabboStats().hasActiveClub() ? HC_MODIFIER : 1.0)));
                 }
             } catch (Exception e) {
                 log.error("Caught exception", e);

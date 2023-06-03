@@ -19,10 +19,10 @@ public abstract class PurchaseEvent extends MessageHandler {
             if (this.client.getHabbo().getHabboInfo().getCredits() < totalCredits)
                 return;
 
-            if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS))
+            if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_CREDITS))
                 this.client.getHabbo().giveCredits(-totalCredits);
 
-            if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS))
+            if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_POINTS))
                 this.client.getHabbo().givePoints(deal.getPointsType(), -totalDuckets);
 
 

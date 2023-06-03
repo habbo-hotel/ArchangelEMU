@@ -28,7 +28,7 @@ public class CreateFlatEvent extends MessageHandler {
 
         RoomCategory category = Emulator.getGameEnvironment().getRoomManager().getCategory(categoryId);
 
-        if (category == null || category.getMinRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
+        if (category == null || category.getMinRank() > this.client.getHabbo().getHabboInfo().getPermissionGroup().getId()) {
             log.error("[SCRIPTER] Incorrect rank or non existing category ID: \"" + categoryId + "\"." + this.client.getHabbo().getHabboInfo().getUsername());
             return;
         }

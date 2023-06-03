@@ -10,7 +10,7 @@ import com.eu.habbo.util.crypto.ZIP;
 public class RenderRoomThumbnailEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (!this.client.getHabbo().hasPermission("acc_camera")) {
+        if (!this.client.getHabbo().hasRight("acc_camera")) {
             this.client.getHabbo().alert(Emulator.getTexts().getValue("camera.permission"));
             return;
         }

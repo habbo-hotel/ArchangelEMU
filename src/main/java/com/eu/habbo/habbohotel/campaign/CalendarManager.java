@@ -121,7 +121,7 @@ public class CalendarManager {
 
         if (object == null) return;
         long daysBetween = ChronoUnit.DAYS.between(new Timestamp(campaign.getStartTimestamp() * 1000L).toInstant(), new Date().toInstant());
-        if (((daysBetween >= 0 && daysBetween <= campaign.getTotalDays()) && (((daysBetween - day <= 2 || !campaign.getLockExpired()) && daysBetween - day >= 0)) || (force && habbo.hasPermission("acc_calendar_force")))) {
+        if (((daysBetween >= 0 && daysBetween <= campaign.getTotalDays()) && (((daysBetween - day <= 2 || !campaign.getLockExpired()) && daysBetween - day >= 0)) || (force && habbo.hasRight("acc_calendar_force")))) {
             if (Emulator.getPluginManager().fireEvent(new UserClaimRewardEvent(habbo, campaign, day, object, force)).isCancelled()) {
                 return;
             }

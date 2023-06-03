@@ -13,7 +13,7 @@ public class GetFlatControllersEvent extends MessageHandler {
         if (room == null)
             return;
 
-        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
             this.client.sendResponse(new FlatControllersComposer(room));
         }
     }

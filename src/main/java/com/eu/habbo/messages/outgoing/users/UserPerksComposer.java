@@ -1,6 +1,5 @@
 package com.eu.habbo.messages.outgoing.users;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
@@ -18,15 +17,16 @@ public class UserPerksComposer extends MessageComposer {
 
         this.response.appendString("USE_GUIDE_TOOL");
         this.response.appendString("requirement.unfulfilled.helper_level_4");
-        this.response.appendBoolean(Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this.habbo, Permission.ACC_HELPER_USE_GUIDE_TOOL));
+        this.response.appendBoolean(this.habbo.getHabboInfo().getPermissionGroup().hasRight(Permission.ACC_HELPER_USE_GUIDE_TOOL, false));
+
 
         this.response.appendString("GIVE_GUIDE_TOURS");
         this.response.appendString("");
-        this.response.appendBoolean(Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this.habbo, "acc_helper_give_guide_tours"));
+        this.response.appendBoolean(this.habbo.getHabboInfo().getPermissionGroup().hasRight(Permission.ACC_HELPER_GIVE_GUIDE_TOURS, false));
 
         this.response.appendString("JUDGE_CHAT_REVIEWS");
         this.response.appendString("requirement.unfulfilled.helper_level_6");
-        this.response.appendBoolean(Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this.habbo, "acc_helper_judge_chat_reviews"));
+        this.response.appendBoolean(this.habbo.getHabboInfo().getPermissionGroup().hasRight(Permission.ACC_HELPER_JUDGE_CHAT_REVIEWS, false));
 
         this.response.appendString("VOTE_IN_COMPETITIONS");
         this.response.appendString("requirement.unfulfilled.helper_level_2");
@@ -46,7 +46,7 @@ public class UserPerksComposer extends MessageComposer {
 
         this.response.appendString("HEIGHTMAP_EDITOR_BETA");
         this.response.appendString("requirement.unfulfilled.feature_disabled");
-        this.response.appendBoolean(Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this.habbo, Permission.ACC_FLOORPLAN_EDITOR));
+        this.response.appendBoolean(this.habbo.getHabboInfo().getPermissionGroup().hasRight(Permission.ACC_FLOORPLAN_EDITOR, false));
 
         this.response.appendString("BUILDER_AT_WORK");
         this.response.appendString("");
@@ -58,7 +58,7 @@ public class UserPerksComposer extends MessageComposer {
 
         this.response.appendString("CAMERA");
         this.response.appendString("");
-        this.response.appendBoolean(Emulator.getGameEnvironment().getPermissionsManager().hasPermission(this.habbo, "acc_camera"));
+        this.response.appendBoolean(this.habbo.getHabboInfo().getPermissionGroup().hasRight(Permission.ACC_CAMERA, false));
 
         this.response.appendString("NAVIGATOR_PHASE_TWO_2014");
         this.response.appendString("");

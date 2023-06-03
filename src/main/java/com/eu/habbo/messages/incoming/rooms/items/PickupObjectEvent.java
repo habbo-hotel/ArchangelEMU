@@ -29,7 +29,7 @@ public class PickupObjectEvent extends MessageHandler {
             room.pickUpItem(item, this.client.getHabbo());
         } else {
             if (room.hasRights(this.client.getHabbo())) {
-                if (this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
+                if (this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
                     item.setUserId(this.client.getHabbo().getHabboInfo().getId());
                 } else if (this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId() && item.getUserId() == room.getOwnerId()) {
                     return;
