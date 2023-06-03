@@ -30,7 +30,6 @@ public class PermissionGroup {
     @Getter
     private final String prefixColor;
     private final Map<PermissionCommand, PermissionSetting> commands;
-    @Getter
     private final Map<PermissionRight, PermissionSetting> rights;
 
     @Getter final Map<Integer, PermissionCurrencyTimer> timers;
@@ -148,6 +147,10 @@ public class PermissionGroup {
         Set<PermissionCommand> commands = this.commands.keySet();
 
         return Stream.concat(fixedCommands.stream(), commands.stream()).collect(Collectors.toList());
+    }
+
+    public Set<PermissionRight> getRights() {
+        return this.rights.keySet();
     }
 
     public boolean hasPrefix() {

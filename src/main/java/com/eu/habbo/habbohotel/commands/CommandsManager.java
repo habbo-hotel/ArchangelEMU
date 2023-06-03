@@ -233,6 +233,7 @@ public class CommandsManager {
         addCommand(new PushCommand());
         addCommand(new RedeemCommand());
         addCommand(new ReloadRoomCommand());
+        addCommand(new RightsCommand());
         addCommand(new RoomAlertCommand());
         addCommand(new RoomBundleCommand());
         addCommand(new RoomCreditsCommand());
