@@ -1,64 +1,100 @@
 package com.eu.habbo.habbohotel.permissions;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.plugin.HabboPlugin;
-import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntIntHashMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @Slf4j
 public class PermissionsManager {
-    private final TIntObjectHashMap<Rank> ranks;
-    private final TIntIntHashMap enables;
-    private final THashMap<String, List<Rank>> badges;
+    private final Map<Integer, PermissionGroup> permissionGroups;
+    private final Map<String, PermissionCommand> permissionCommands;
+    private final Map<String, PermissionCommand> fixedCommands;
+    private final Map<String, PermissionRight> permissionRights;
+    private final TIntIntHashMap specialEnables;
 
     public PermissionsManager() {
         long millis = System.currentTimeMillis();
-        this.ranks = new TIntObjectHashMap<>();
-        this.enables = new TIntIntHashMap();
-        this.badges = new THashMap<>();
-
+        this.permissionGroups = new HashMap<>();
+        this.permissionCommands = new HashMap<>();
+        this.fixedCommands = new HashMap<>();
+        this.permissionRights = new HashMap<>();
+        this.specialEnables = new TIntIntHashMap();
         this.reload();
-
         log.info("Permissions Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
     }
 
     public void reload() {
-        this.loadPermissions();
+        this.loadPermissionCommands();
+        this.loadPermissionRights();
+        this.loadPermissionGroups();
         this.loadEnables();
+        log.info(this.permissionGroups.size() + " ranks, " + this.permissionCommands.size() + " commands " + this.permissionRights.size() + " rights -> Loaded!");
     }
 
-    private void loadPermissions() {
-        this.badges.clear();
-
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permissions ORDER BY id ASC")) {
+    private void loadPermissionGroups() {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permission_groups ORDER BY id ASC")) {
             while (set.next()) {
-                Rank rank;
-                if (!this.ranks.containsKey(set.getInt("id"))) {
-                    rank = new Rank(set);
-                    this.ranks.put(set.getInt("id"), rank);
-                } else {
-                    rank = this.ranks.get(set.getInt("id"));
-                    rank.load(set);
-                }
+                PermissionGroup permissionGroup = new PermissionGroup(set, this.permissionCommands);
+                this.permissionGroups.put(permissionGroup.getId(), permissionGroup);
+            }
+        } catch (SQLException e) {
+            log.error("Caught SQL exception", e);
+        }
+    }
 
-                if (!rank.getBadge().isEmpty()) {
-                    if (!this.badges.containsKey(rank.getBadge())) {
-                        this.badges.put(rank.getBadge(), new ArrayList<>());
-                    }
+    private void loadPermissionCommands() {
+        this.loadFixedCommands();
 
-                    this.badges.get(rank.getBadge()).add(rank);
-                }
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permission_commands")) {
+            while (set.next()) {
+                PermissionCommand permissionCommand = new PermissionCommand(set);
+                this.permissionCommands.put(permissionCommand.getName(), permissionCommand);
+            }
+        } catch (SQLException e) {
+            log.error("Caught SQL exception", e);
+        }
+    }
+
+    private void loadFixedCommands() {
+        String[] fixedCommandNames = {
+                "cmd_about",
+                "cmd_arcturus",
+                "cmd_commands",
+                "cmd_habnam",
+                "cmd_lay",
+                "cmd_mute_bots",
+                "cmd_mute_pets",
+                "cmd_plugins",
+                "cmd_sit",
+                "cmd_stand"
+        };
+
+        for(String command : fixedCommandNames) {
+            String description = Emulator.getTexts().getValue("commands.description." + command, "commands.description." + command);
+            String[] keys = Emulator.getTexts().getValue("commands.keys." + command).split(";");
+
+            this.fixedCommands.put(command, new PermissionCommand(command, description, keys));
+        }
+    }
+
+    public void addFixedCommand(PermissionCommand fixedCommand) {
+        this.fixedCommands.put(fixedCommand.getName(), fixedCommand);
+    }
+
+    private void loadPermissionRights() {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permission_rights")) {
+            while (set.next()) {
+                PermissionRight permissionRight = new PermissionRight(set);
+                this.permissionRights.put(permissionRight.getName(), permissionRight);
             }
         } catch (SQLException e) {
             log.error("Caught SQL exception", e);
@@ -66,12 +102,12 @@ public class PermissionsManager {
     }
 
     private void loadEnables() {
-        synchronized (this.enables) {
-            this.enables.clear();
+        synchronized (this.specialEnables) {
+            this.specialEnables.clear();
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM special_enables")) {
                 while (set.next()) {
-                    this.enables.put(set.getInt("effect_id"), set.getInt("min_rank"));
+                    this.specialEnables.put(set.getInt("effect_id"), set.getInt("min_rank"));
                 }
             } catch (SQLException e) {
                 log.error("Caught SQL exception", e);
@@ -80,64 +116,43 @@ public class PermissionsManager {
     }
 
 
-    public boolean rankExists(int rankId) {
-        return this.ranks.containsKey(rankId);
+    public boolean groupExists(int groupId) {
+        return this.permissionGroups.containsKey(groupId);
     }
 
 
-    public Rank getRank(int rankId) {
-        return this.ranks.get(rankId);
+    public PermissionGroup getGroup(int groupId) {
+        return this.permissionGroups.get(groupId);
     }
 
-
-    public Rank getRankByName(String rankName) {
-        for (Rank rank : this.ranks.valueCollection()) {
-            if (rank.getName().equalsIgnoreCase(rankName))
-                return rank;
-        }
-
-        return null;
+    public PermissionGroup getGroupByName(String name) {
+        return this.permissionGroups.values().stream().filter(group -> group.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
 
-
-    public boolean isEffectBlocked(int effectId, int rank) {
-        return this.enables.contains(effectId) && this.enables.get(effectId) > rank;
+    public PermissionCommand getCommand(String name) {
+        return this.fixedCommands.getOrDefault(name, this.permissionCommands.get(name));
     }
 
-
-    public boolean hasPermission(Habbo habbo, String permission) {
-        return this.hasPermission(habbo, permission, false);
+    public PermissionCommand getCommandByKey(String key) {
+        return Stream.concat(this.fixedCommands.values().stream(), this.permissionCommands.values().stream())
+                .filter(command -> command.hasKey(key))
+                .findFirst()
+                .orElseGet(() -> null);
     }
 
-
-    public boolean hasPermission(Habbo habbo, String permission, boolean withRoomRights) {
-        if (!this.hasPermission(habbo.getHabboInfo().getRank(), permission, withRoomRights)) {
-            for (HabboPlugin plugin : Emulator.getPluginManager().getPlugins()) {
-                if (plugin.hasPermission(habbo, permission)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        return true;
+    public Collection<PermissionCommand> getFixedCommands() {
+        return this.fixedCommands.values();
     }
 
-
-    public boolean hasPermission(Rank rank, String permission, boolean withRoomRights) {
-        return rank.hasPermission(permission, withRoomRights);
+    public boolean isFixedCommand(String name) {
+        return this.fixedCommands.containsKey(name);
     }
 
-    public Set<String> getStaffBadges() {
-        return this.badges.keySet();
+    public PermissionRight getRight(String name) {
+        return this.permissionRights.get(name);
     }
 
-    public List<Rank> getRanksByBadgeCode(String code) {
-        return this.badges.get(code);
-    }
-
-    public List<Rank> getAllRanks() {
-        return new ArrayList<>(this.ranks.valueCollection());
+    public boolean isEffectBlocked(int effectId, int groupId) {
+        return this.specialEnables.contains(effectId) && this.specialEnables.get(effectId) > groupId;
     }
 }

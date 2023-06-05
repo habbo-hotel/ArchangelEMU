@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.rcon;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.commands.CommandHandler;
+import com.eu.habbo.habbohotel.commands.CommandsManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class ExecuteCommand extends RCONMessage<ExecuteCommand.JSONExecuteComman
             }
 
 
-            CommandHandler.handleCommand(habbo.getClient(), json.command);
+            Emulator.getGameEnvironment().getCommandsManager().handleCommand(habbo.getClient(), json.command);
         } catch (Exception e) {
             this.status = STATUS_ERROR;
             log.error("Caught exception", e);

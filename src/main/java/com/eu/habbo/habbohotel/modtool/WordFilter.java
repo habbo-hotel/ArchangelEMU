@@ -125,7 +125,7 @@ public class WordFilter {
 
     public String filter(String message, Habbo habbo) {
         String filteredMessage = message;
-        if (!Emulator.getConfig().getBoolean("hotel.wordfilter.enabled", true) || (habbo != null && habbo.hasPermission(Permission.ACC_CHAT_NO_FILTER))) {
+        if (!Emulator.getConfig().getBoolean("hotel.wordfilter.enabled", true) || (habbo != null && habbo.hasRight(Permission.ACC_CHAT_NO_FILTER))) {
             return message;
         }
         if (Emulator.getConfig().getBoolean("hotel.wordfilter.normalise")) {

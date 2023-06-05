@@ -126,7 +126,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if (client.getHabbo().hasPermission(Permission.ACC_SUPERWIRED)) {
+        if (client.getHabbo().hasRight(Permission.ACC_SUPERWIRED)) {
             client.getHabbo().whisper(Emulator.getTexts().getValue("hotel.wired.superwired.info"), RoomChatMessageBubbles.BOT);
         }
     }
@@ -172,7 +172,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
 
     @Override
     public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if (gameClient.getHabbo().hasPermission(Permission.ACC_SUPERWIRED)) {
+        if (gameClient.getHabbo().hasRight(Permission.ACC_SUPERWIRED)) {
             if (settings.getIntParams().length < 4) throw new WiredSaveException("Invalid data");
             this.rewardTime = settings.getIntParams()[0];
             this.uniqueRewards = settings.getIntParams()[1] == 1;

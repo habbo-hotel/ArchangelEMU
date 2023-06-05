@@ -10,15 +10,12 @@ import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInventory;
-import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
-import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseNotAllowedMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.HotelWillCloseInMinutesComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
-import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
 import com.eu.habbo.messages.outgoing.users.ActivityPointsMessageComposer;
 import com.eu.habbo.messages.outgoing.users.BadgeReceivedComposer;
@@ -68,7 +65,7 @@ public class PurchaseFromCatalogEvent extends PurchaseEvent {
                     if(page != null) {
                         if (page.getCatalogItem(itemId).getOfferId() <= 0) {
                             page = null;
-                        } else if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
+                        } else if (page.getRank() > this.client.getHabbo().getHabboInfo().getPermissionGroup().getId()) {
                             page = null;
                         } else if (page.getLayout() != null && page.getLayout().equalsIgnoreCase(CatalogPageLayouts.club_gift.name())) {
                             page = null;
@@ -103,11 +100,11 @@ public class PurchaseFromCatalogEvent extends PurchaseEvent {
                        return;
                     }
                         ((RoomBundleLayout) page).buyRoom(this.client.getHabbo());
-                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) { //if the player has this perm disabled
+                        if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_CREDITS)) { //if the player has this perm disabled
                             this.client.getHabbo().getHabboInfo().addCredits(-roomBundleItem.getCredits()); // takes their credits away
                             this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo())); // Sends the updated currency composer window
                         }
-                        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_POINTS)) { //if the player has this perm disabled
+                        if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_POINTS)) { //if the player has this perm disabled
                             this.client.getHabbo().getHabboInfo().addCurrencyAmount(roomBundleItem.getPointsType(), -roomBundleItem.getPoints()); // takes their points away
                             this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo())); // Sends the updated currency composer window
                         }
@@ -139,7 +136,7 @@ public class PurchaseFromCatalogEvent extends PurchaseEvent {
                 return;
             }
 
-            if (page.getRank() > this.client.getHabbo().getHabboInfo().getRank().getId()) {
+            if (page.getRank() > this.client.getHabbo().getHabboInfo().getPermissionGroup().getId()) {
                 this.client.sendResponse(new PurchaseNotAllowedMessageComposer(PurchaseNotAllowedMessageComposer.ILLEGAL));
                 return;
             }
@@ -175,13 +172,13 @@ public class PurchaseFromCatalogEvent extends PurchaseEvent {
                 item = page.getCatalogItem(itemId);
             // temp patch, can a dev with better knowledge than me look into this asap pls.
             if (page instanceof  BotsLayout) {
-                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
+                if (!this.client.getHabbo().hasRight(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
                     this.client.getHabbo().alert(Emulator.getTexts().getValue("error.bots.max.inventory").replace("%amount%", BotManager.MAXIMUM_BOT_INVENTORY_SIZE + ""));
                     return;
                 }
             }
             if (page instanceof PetsLayout) { // checks it's the petlayout
-                if (!this.client.getHabbo().hasPermission(Permission.ACC_UNLIMITED_PETS) && this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= PetManager.MAXIMUM_PET_INVENTORY_SIZE) {
+                if (!this.client.getHabbo().hasRight(Permission.ACC_UNLIMITED_PETS) && this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= PetManager.MAXIMUM_PET_INVENTORY_SIZE) {
                     this.client.getHabbo().alert(Emulator.getTexts().getValue("error.pets.max.inventory").replace("%amount%", PetManager.MAXIMUM_PET_INVENTORY_SIZE + ""));
                     return;
                 }

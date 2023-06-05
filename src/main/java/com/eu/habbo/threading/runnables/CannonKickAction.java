@@ -38,7 +38,7 @@ public class CannonKickAction implements Runnable {
 
         for (RoomTile t : tiles) {
             for (Habbo habbo : this.room.getHabbosAt(t.getX(), t.getY())) {
-                if (!habbo.hasPermission(Permission.ACC_UNKICKABLE) && !this.room.isOwner(habbo)) {
+                if (!habbo.hasRight(Permission.ACC_UNKICKABLE) && !this.room.isOwner(habbo)) {
                     Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room);
                     habbo.getClient().sendResponse(message); //kicked composer
                 }

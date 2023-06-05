@@ -192,7 +192,7 @@ public class RoomManager {
     public List<RoomCategory> roomCategoriesForHabbo(Habbo habbo) {
         List<RoomCategory> categories = new ArrayList<>();
         for (RoomCategory category : this.roomCategories.values()) {
-            if (category.getMinRank() <= habbo.getHabboInfo().getRank().getId())
+            if (category.getMinRank() <= habbo.getHabboInfo().getPermissionGroup().getId())
                 categories.add(category);
         }
 
@@ -202,7 +202,7 @@ public class RoomManager {
     }
 
     public boolean hasCategory(int categoryId, Habbo habbo) {
-        return roomCategories.values().stream().anyMatch(c -> c.getId() == categoryId && c.getMinRank() <= habbo.getHabboInfo().getRank().getId());
+        return roomCategories.values().stream().anyMatch(c -> c.getId() == categoryId && c.getMinRank() <= habbo.getHabboInfo().getPermissionGroup().getId());
     }
 
     public List<Room> getRoomsByScore() {
@@ -479,7 +479,7 @@ public class RoomManager {
             return;
         }
 
-        if (room.isBanned(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER) && !habbo.hasPermission(Permission.ACC_ENTERANYROOM)) {
+        if (room.isBanned(habbo) && !habbo.hasRight(Permission.ACC_ANYROOMOWNER) && !habbo.hasRight(Permission.ACC_ENTERANYROOM)) {
             habbo.getClient().sendResponse(new CantConnectMessageComposer(CantConnectMessageComposer.ROOM_ERROR_BANNED));
             return;
         }
@@ -495,8 +495,8 @@ public class RoomManager {
         if (overrideChecks ||
                 room.isOwner(habbo) ||
                 room.getState() == RoomState.OPEN ||
-                habbo.hasPermission(Permission.ACC_ANYROOMOWNER) ||
-                habbo.hasPermission(Permission.ACC_ENTERANYROOM) ||
+                habbo.hasRight(Permission.ACC_ANYROOMOWNER) ||
+                habbo.hasRight(Permission.ACC_ENTERANYROOM) ||
                 room.hasRights(habbo) ||
                 (room.getState().equals(RoomState.INVISIBLE) && room.hasRights(habbo)) ||
                 (room.hasGuild() && room.getGuildRightLevel(habbo).isGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
@@ -593,7 +593,7 @@ public class RoomManager {
             return;
         }
 
-        if (room.getUserCount() >= room.getUsersMax() && !habbo.hasPermission(Permission.ACC_FULLROOMS) && !room.hasRights(habbo)) {
+        if (room.getUserCount() >= room.getUsersMax() && !habbo.hasRight(Permission.ACC_FULLROOMS) && !room.hasRights(habbo)) {
             habbo.getClient().sendResponse(new CantConnectMessageComposer(CantConnectMessageComposer.ROOM_ERROR_GUESTROOM_FULL));
             return;
         }
@@ -633,7 +633,7 @@ public class RoomManager {
 
         habbo.getClient().sendResponse(new RoomRatingComposer(room.getScore(), !this.hasVotedForRoom(habbo, room)));
 
-        habbo.getRoomUnit().setFastWalk(habbo.getRoomUnit().isFastWalk() && habbo.hasPermission("cmd_fastwalk", room.hasRights(habbo)));
+        habbo.getRoomUnit().setFastWalk(habbo.getRoomUnit().isFastWalk() && habbo.hasCommand("cmd_fastwalk", room.hasRights(habbo)));
 
         if (room.isPromoted()) {
             habbo.getClient().sendResponse(new RoomEventComposer(room, room.getPromotion()));
@@ -1370,7 +1370,7 @@ public class RoomManager {
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
         if (habbo != null) {
-            if (habbo.hasPermission(Permission.ACC_UNKICKABLE)) {
+            if (habbo.hasRight(Permission.ACC_UNKICKABLE)) {
                 return;
             }
 
@@ -1379,7 +1379,7 @@ public class RoomManager {
             HabboInfo info = HabboManager.getOfflineHabboInfo(userId);
 
             if (info != null) {
-                if (info.getRank().hasPermission(Permission.ACC_UNKICKABLE, false)) {
+                if (info.getPermissionGroup().hasRight(Permission.ACC_UNKICKABLE, false)) {
                     return;
                 }
                 name = info.getUsername();

@@ -19,7 +19,7 @@ public class NavigatorHotelFilter extends NavigatorFilter {
 
     @Override
     public List<SearchResultList> getResult(Habbo habbo) {
-        boolean showInvisible = habbo.hasPermission(Permission.ACC_ENTERANYROOM) || habbo.hasPermission(Permission.ACC_ANYROOMOWNER);
+        boolean showInvisible = habbo.hasRight(Permission.ACC_ENTERANYROOM) || habbo.hasRight(Permission.ACC_ANYROOMOWNER);
         List<SearchResultList> resultLists = new ArrayList<>();
 
         int i = 0;
@@ -41,7 +41,7 @@ public class NavigatorHotelFilter extends NavigatorFilter {
 
     @Override
     public List<SearchResultList> getResult(Habbo habbo, NavigatorFilterField filterField, String value, int roomCategory) {
-        boolean showInvisible = habbo.hasPermission(Permission.ACC_ENTERANYROOM) || habbo.hasPermission(Permission.ACC_ANYROOMOWNER);
+        boolean showInvisible = habbo.hasRight(Permission.ACC_ENTERANYROOM) || habbo.hasRight(Permission.ACC_ANYROOMOWNER);
         if (!filterField.getDatabaseQuery().isEmpty()) {
             List<SearchResultList> resultLists = new ArrayList<>();
             int i = 0;

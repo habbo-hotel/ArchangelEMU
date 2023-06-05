@@ -104,8 +104,8 @@ public class BotManager {
             return;
 
         if (room != null && bot != null && habbo != null) {
-            if (room.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasPermission(Permission.ACC_ANYROOMOWNER) || habbo.hasPermission(Permission.ACC_PLACEFURNI)) {
-                if (room.getCurrentBots().size() >= Room.MAXIMUM_BOTS && !habbo.hasPermission(Permission.ACC_UNLIMITED_BOTS)) {
+            if (room.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasRight(Permission.ACC_ANYROOMOWNER) || habbo.hasRight(Permission.ACC_PLACEFURNI)) {
+                if (room.getCurrentBots().size() >= Room.MAXIMUM_BOTS && !habbo.hasRight(Permission.ACC_UNLIMITED_BOTS)) {
                     habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_MAX_BOTS));
                     return;
                 }
@@ -173,8 +173,8 @@ public class BotManager {
             if (pickedUpEvent.isCancelled())
                 return;
 
-            if (habbo == null || (bot.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasPermission(Permission.ACC_ANYROOMOWNER))) {
-                if (habbo != null && !habbo.hasPermission(Permission.ACC_UNLIMITED_BOTS) && habbo.getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
+            if (habbo == null || (bot.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasRight(Permission.ACC_ANYROOMOWNER))) {
+                if (habbo != null && !habbo.hasRight(Permission.ACC_UNLIMITED_BOTS) && habbo.getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
                     habbo.alert(Emulator.getTexts().getValue("error.bots.max.inventory").replace("%amount%", BotManager.MAXIMUM_BOT_INVENTORY_SIZE + ""));
                     return;
                 }

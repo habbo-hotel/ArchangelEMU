@@ -18,7 +18,7 @@ public class AddAdminRightsToMemberEvent extends MessageHandler {
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if (guild != null && (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN))) {
+        if (guild != null && (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN))) {
             Emulator.getGameEnvironment().getGuildManager().setAdmin(guild, userId);
 
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);

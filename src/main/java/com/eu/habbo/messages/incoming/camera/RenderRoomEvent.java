@@ -1,6 +1,7 @@
 package com.eu.habbo.messages.incoming.camera;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.networking.camera.CameraClient;
 import com.eu.habbo.networking.camera.messages.outgoing.CameraRenderImageComposer;
@@ -9,7 +10,7 @@ import com.eu.habbo.util.crypto.ZIP;
 public class RenderRoomEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (!this.client.getHabbo().hasPermission("acc_camera")) {
+        if (!this.client.getHabbo().hasRight(Permission.ACC_CAMERA)) {
             this.client.getHabbo().alert(Emulator.getTexts().getValue("camera.permission"));
             return;
         }

@@ -1,7 +1,7 @@
 package com.eu.habbo.habbohotel.users.inventory;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.permissions.Rank;
+import com.eu.habbo.habbohotel.permissions.PermissionGroup;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import gnu.trove.set.hash.THashSet;
@@ -28,7 +28,7 @@ public class BadgesComponent {
 
     private static THashSet<HabboBadge> loadBadges(Habbo habbo) {
         THashSet<HabboBadge> badgesList = new THashSet<>();
-        Set<String> staffBadges = Emulator.getGameEnvironment().getPermissionsManager().getStaffBadges();
+
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users_badges WHERE user_id = ?")) {
             statement.setInt(1, habbo.getHabboInfo().getId());
 
@@ -36,20 +36,9 @@ public class BadgesComponent {
                 while (set.next()) {
                     HabboBadge badge = new HabboBadge(set, habbo);
 
-                    if (staffBadges.contains(badge.getCode())) {
-                        boolean delete = true;
-
-                        for (Rank rank : Emulator.getGameEnvironment().getPermissionsManager().getRanksByBadgeCode(badge.getCode())) {
-                            if (rank.getId() == habbo.getHabboInfo().getRank().getId()) {
-                                delete = false;
-                                break;
-                            }
-                        }
-
-                        if (delete) {
-                            deleteBadge(habbo.getHabboInfo().getId(), badge.getCode());
-                            continue;
-                        }
+                    if(!(habbo.getHabboInfo().getPermissionGroup().hasBadge() && habbo.getHabboInfo().getPermissionGroup().getBadge() == badge.getCode())) {
+                        deleteBadge(habbo.getHabboInfo().getId(), badge.getCode());
+                        continue;
                     }
 
                     badgesList.add(badge);

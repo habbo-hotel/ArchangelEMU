@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildCreatedMessageComposer;
@@ -32,7 +31,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
             return;
         }
 
-        if (!this.client.getHabbo().hasPermission(Permission.ACC_INFINITE_CREDITS)) {
+        if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_CREDITS)) {
             int guildPrice = Emulator.getConfig().getInt("catalog.guild.price");
             if (this.client.getHabbo().getHabboInfo().getCredits() >= guildPrice) {
                 this.client.getHabbo().giveCredits(-guildPrice);

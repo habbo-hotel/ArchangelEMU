@@ -2,6 +2,7 @@ package com.eu.habbo.messages.incoming.friends;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -29,7 +30,7 @@ public class VisitUserEvent extends MessageHandler {
             return;
         }
 
-        if (habbo.getHabboStats().isBlockFollowing() && !this.client.getHabbo().hasPermission("acc_can_stalk")) {
+        if (habbo.getHabboStats().isBlockFollowing() && !this.client.getHabbo().hasRight(Permission.ACC_CAN_STALK)) {
             this.client.sendResponse(new FollowFriendFailedComposer(FollowFriendFailedComposer.FRIEND_BLOCKED_STALKING));
             return;
         }

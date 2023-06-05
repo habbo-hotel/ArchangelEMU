@@ -20,7 +20,7 @@ public class ModMuteEvent extends MessageHandler {
         String message = this.packet.readString();
         int cfhTopic = this.packet.readInt();
 
-        if (!this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) return;
+        if (!this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) return;
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
         if (habbo == null) {

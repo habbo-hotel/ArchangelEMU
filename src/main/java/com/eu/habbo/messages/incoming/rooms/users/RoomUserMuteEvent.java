@@ -18,7 +18,7 @@ public class RoomUserMuteEvent extends MessageHandler {
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
 
         if (room != null) {
-            if (room.hasRights(this.client.getHabbo()) || this.client.getHabbo().hasPermission("cmd_mute") || this.client.getHabbo().hasPermission(Permission.ACC_AMBASSADOR)) {
+            if (room.hasRights(this.client.getHabbo()) || this.client.getHabbo().hasCommand("cmd_mute") || this.client.getHabbo().hasRight(Permission.ACC_AMBASSADOR)) {
                 Habbo habbo = room.getHabbo(userId);
 
                 if (habbo != null) {

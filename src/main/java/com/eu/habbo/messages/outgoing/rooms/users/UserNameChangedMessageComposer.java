@@ -21,7 +21,7 @@ public class UserNameChangedMessageComposer extends MessageComposer {
     public UserNameChangedMessageComposer(Habbo habbo, boolean includePrefix) {
         this.userId = habbo.getHabboInfo().getId();
         this.roomId = habbo.getRoomUnit().getId();
-        this.name = (includePrefix ? Room.PREFIX_FORMAT.replace("%color%", habbo.getHabboInfo().getRank().getPrefixColor()).replace("%prefix%", habbo.getHabboInfo().getRank().getPrefix()) : "") + habbo.getHabboInfo().getUsername();
+        this.name = (includePrefix ? Room.PREFIX_FORMAT.replace("%color%", habbo.getHabboInfo().getPermissionGroup().getPrefixColor()).replace("%prefix%", habbo.getHabboInfo().getPermissionGroup().getPrefix()) : "") + habbo.getHabboInfo().getUsername();
     }
 
     @Override

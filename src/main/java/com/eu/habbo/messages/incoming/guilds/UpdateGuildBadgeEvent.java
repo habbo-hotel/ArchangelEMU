@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.guilds.GuildChangedBadgeEvent;
 
 public class UpdateGuildBadgeEvent extends GuildBadgeEvent {
@@ -14,7 +13,7 @@ public class UpdateGuildBadgeEvent extends GuildBadgeEvent {
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
         if (guild != null) {
-            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_GUILD_ADMIN)) {
+            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN)) {
                 Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
 
                 if (room == null || room.getId() != guild.getRoomId())

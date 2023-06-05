@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.users;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolBan;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.permissions.Rank;
+import com.eu.habbo.habbohotel.permissions.PermissionGroup;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigurationComposer;
@@ -179,7 +179,7 @@ public class HabboManager {
     public void sendPacketToHabbosWithPermission(ServerMessage message, String perm) {
         synchronized (this.onlineHabbos) {
             for (Habbo habbo : this.onlineHabbos.values()) {
-                if (habbo.hasPermission(perm)) {
+                if (habbo.hasRight(perm)) {
                     habbo.getClient().sendResponse(message);
                 }
             }
@@ -238,33 +238,33 @@ public class HabboManager {
     public void setRank(int userId, int rankId) throws Exception {
         Habbo habbo = this.getHabbo(userId);
 
-        if (!Emulator.getGameEnvironment().getPermissionsManager().rankExists(rankId)) {
+        if (!Emulator.getGameEnvironment().getPermissionsManager().groupExists(rankId)) {
             throw new Exception("Rank ID (" + rankId + ") does not exist");
         }
-        Rank newRank = Emulator.getGameEnvironment().getPermissionsManager().getRank(rankId);
+        PermissionGroup newPermissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(rankId);
         if (habbo != null && habbo.getHabboStats() != null) {
-            Rank oldRank = habbo.getHabboInfo().getRank();
-            if (!oldRank.getBadge().isEmpty()) {
-                habbo.deleteBadge(habbo.getInventory().getBadgesComponent().getBadge(oldRank.getBadge()));
+            PermissionGroup oldPermissionGroup = habbo.getHabboInfo().getPermissionGroup();
+            if (!oldPermissionGroup.getBadge().isEmpty()) {
+                habbo.deleteBadge(habbo.getInventory().getBadgesComponent().getBadge(oldPermissionGroup.getBadge()));
             }
-            if(oldRank.getRoomEffect() > 0) {
-                habbo.getInventory().getEffectsComponent().getEffects().remove(oldRank.getRoomEffect());
-            }
-
-            habbo.getHabboInfo().setRank(newRank);
-
-            if (!newRank.getBadge().isEmpty()) {
-                habbo.addBadge(newRank.getBadge());
+            if(oldPermissionGroup.getRoomEffect() > 0) {
+                habbo.getInventory().getEffectsComponent().getEffects().remove(oldPermissionGroup.getRoomEffect());
             }
 
-            if(newRank.getRoomEffect() > 0) {
-                habbo.getInventory().getEffectsComponent().createRankEffect(habbo.getHabboInfo().getRank().getRoomEffect());
+            habbo.getHabboInfo().setPermissionGroup(newPermissionGroup);
+
+            if (!newPermissionGroup.getBadge().isEmpty()) {
+                habbo.addBadge(newPermissionGroup.getBadge());
+            }
+
+            if(newPermissionGroup.getRoomEffect() > 0) {
+                habbo.getInventory().getEffectsComponent().createRankEffect(habbo.getHabboInfo().getPermissionGroup().getRoomEffect());
             }
 
             habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
             habbo.getClient().sendResponse(new UserPerksComposer(habbo));
 
-            if (habbo.hasPermission(Permission.ACC_SUPPORTTOOL)) {
+            if (habbo.hasRight(Permission.ACC_SUPPORTTOOL)) {
                 habbo.getClient().sendResponse(new ModeratorInitMessageComposer(habbo));
             }
             habbo.getHabboInfo().run();
@@ -275,7 +275,7 @@ public class HabboManager {
             habbo.getClient().sendResponse(new MarketplaceConfigurationComposer());
             habbo.getClient().sendResponse(new GiftWrappingConfigurationComposer());
             habbo.getClient().sendResponse(new RecyclerPrizesComposer());
-            habbo.alert(Emulator.getTexts().getValue("commands.generic.cmd_give_rank.new_rank").replace("id", newRank.getName()));
+            habbo.alert(Emulator.getTexts().getValue("commands.generic.cmd_give_rank.new_rank").replace("id", newPermissionGroup.getName()));
         } else {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users SET `rank` = ? WHERE id = ? LIMIT 1")) {
                 statement.setInt(1, rankId);

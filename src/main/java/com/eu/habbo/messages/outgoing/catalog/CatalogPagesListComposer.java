@@ -21,7 +21,7 @@ public class CatalogPagesListComposer extends MessageComposer {
     public CatalogPagesListComposer(Habbo habbo, String mode) {
         this.habbo = habbo;
         this.mode = mode;
-        this.hasPermission = this.habbo.hasPermission(Permission.ACC_CATALOG_IDS);
+        this.hasPermission = this.habbo.hasRight(Permission.ACC_CATALOG_IDS);
     }
 
     @Override

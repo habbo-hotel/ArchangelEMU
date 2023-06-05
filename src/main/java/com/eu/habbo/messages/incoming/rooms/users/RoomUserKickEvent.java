@@ -26,7 +26,7 @@ public class RoomUserKickEvent extends MessageHandler {
         if (target == null)
             return;
 
-        if (target.hasPermission(Permission.ACC_UNKICKABLE)) {
+        if (target.hasRight(Permission.ACC_UNKICKABLE)) {
             this.client.sendResponse(new WhisperMessageComposer(new RoomChatMessage(Emulator.getTexts().getValue("commands.error.cmd_kick.unkickable").replace("%username%", target.getHabboInfo().getUsername()), this.client.getHabbo(), this.client.getHabbo(), RoomChatMessageBubbles.ALERT)));
             return;
         }
@@ -41,8 +41,8 @@ public class RoomUserKickEvent extends MessageHandler {
         if (event.isCancelled())
             return;
 
-        if (room.hasRights(this.client.getHabbo()) || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermission(Permission.ACC_AMBASSADOR)) {
-            if (target.hasPermission(Permission.ACC_UNKICKABLE)) return;
+        if (room.hasRights(this.client.getHabbo()) || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasRight(Permission.ACC_AMBASSADOR)) {
+            if (target.hasRight(Permission.ACC_UNKICKABLE)) return;
 
             room.kickHabbo(target, true);
             AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModKickSeen"));

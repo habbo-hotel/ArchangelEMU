@@ -2,6 +2,7 @@ package com.eu.habbo.messages.outgoing.friends;
 
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.messenger.MessengerCategory;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -18,7 +19,7 @@ public class MessengerInitComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
 
         this.response.init(Outgoing.messengerInitComposer);
-        if (this.habbo.hasPermission("acc_infinite_friends")) {
+        if (this.habbo.hasRight(Permission.ACC_INFINITE_FRIENDS)) {
             this.response.appendInt(Integer.MAX_VALUE);
             this.response.appendInt(1337);
             this.response.appendInt(Integer.MAX_VALUE);

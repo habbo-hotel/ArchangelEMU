@@ -21,7 +21,7 @@ public class OpenTradingEvent extends MessageHandler {
                 if (userId >= 0 && userId != this.client.getHabbo().getRoomUnit().getId()) {
                     Habbo targetUser = room.getHabboByRoomUnitId(userId);
 
-                    boolean tradeAnywhere = this.client.getHabbo().hasPermission(Permission.ACC_TRADE_ANYWHERE);
+                    boolean tradeAnywhere = this.client.getHabbo().hasRight(Permission.ACC_TRADE_ANYWHERE);
 
                     if (!RoomTrade.TRADING_ENABLED && !tradeAnywhere) {
                         this.client.sendResponse(new TradingOpenFailedComposer(TradingOpenFailedComposer.HOTEL_TRADING_NOT_ALLOWED));

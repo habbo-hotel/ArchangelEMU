@@ -17,7 +17,7 @@ public class GetCatalogPageEvent extends MessageHandler {
         CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().catalogPages.get(catalogPageId);
 
         if (catalogPageId > 0 && page != null) {
-            if (page.getRank() <= this.client.getHabbo().getHabboInfo().getRank().getId() && page.isEnabled()) {
+            if (page.getRank() <= this.client.getHabbo().getHabboInfo().getPermissionGroup().getId() && page.isEnabled()) {
                 this.client.sendResponse(new CatalogPageMessageComposer(page, this.client.getHabbo(), offerId, mode));
             } else {
                 if (!page.isVisible()) {

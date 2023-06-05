@@ -20,8 +20,8 @@ public class UserRightsMessageComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.userRightsMessageComposer);
         this.response.appendInt(this.clubLevel);
-        this.response.appendInt(this.habbo.getHabboInfo().getRank().getLevel());
-        this.response.appendBoolean(this.habbo.hasPermission(Permission.ACC_AMBASSADOR));
+        this.response.appendInt(this.habbo.getHabboInfo().getPermissionGroup().getLevel());
+        this.response.appendBoolean(this.habbo.hasRight(Permission.ACC_AMBASSADOR));
         return this.response;
     }
 }

@@ -11,7 +11,7 @@ import com.eu.habbo.messages.outgoing.modtool.RoomChatlogComposer;
 public class ModToolRequestRoomUserChatlogEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasPermission(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
             int userId = this.packet.readInt();
 
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);

@@ -23,7 +23,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
 
     @Override
     public void handle() {
-        if (!this.client.getHabbo().hasPermission(Permission.ACC_FLOORPLAN_EDITOR)) {
+        if (!this.client.getHabbo().hasRight(Permission.ACC_FLOORPLAN_EDITOR)) {
             this.client.sendResponse(new HabboBroadcastMessageComposer(Emulator.getTexts().getValue("floorplan.permission")));
             return;
         }
@@ -33,7 +33,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
         if (room == null)
             return;
 
-        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
             StringJoiner errors = new StringJoiner("<br />");
             String map = this.packet.readString();
             map = map.replace("X", "x");

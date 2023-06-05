@@ -17,7 +17,7 @@ public abstract class YoutubeEvent extends MessageHandler {
         if (room == null) {
             return false;
         }
-        if (!room.isOwner(habbo) && !habbo.hasPermission(Permission.ACC_ANYROOMOWNER)) {
+        if (!room.isOwner(habbo) && !habbo.hasRight(Permission.ACC_ANYROOMOWNER)) {
             return false;
         }
 

@@ -17,7 +17,7 @@ public class RemoveAllRightsEvent extends MessageHandler {
         if (room == null || room.getId() != this.packet.readInt())
             return;
 
-        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermission(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
             room.getRights().forEach(value -> {
                 Habbo habbo = room.getHabbo(value);
 

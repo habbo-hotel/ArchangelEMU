@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.messenger.MessengerCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
-import com.eu.habbo.habbohotel.permissions.Rank;
+import com.eu.habbo.habbohotel.permissions.PermissionGroup;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
@@ -50,7 +50,7 @@ public class HabboInfo implements Runnable {
     @Setter
     private int accountCreated;
     @Setter
-    private Rank rank;
+    private PermissionGroup permissionGroup;
     private int credits;
     @Setter
     private int lastOnline;
@@ -98,12 +98,12 @@ public class HabboInfo implements Runnable {
             this.sso = set.getString("auth_ticket");
             this.ipRegister = set.getString("ip_register");
             this.ipLogin = set.getString("ip_current");
-            this.rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(set.getInt("rank"));
+            this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(set.getInt("rank"));
 
-            if (this.rank == null) {
+            if (this.permissionGroup == null) {
                 log.error("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
                 log.warn(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
-                this.rank = Emulator.getGameEnvironment().getPermissionsManager().getRank(1);
+                this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(1);
             }
 
             this.accountCreated = set.getInt("account_created");
@@ -361,7 +361,7 @@ public class HabboInfo implements Runnable {
             statement.setInt(6, Emulator.getIntUnixTimestamp());
             statement.setInt(8, this.homeRoom);
             statement.setString(9, this.ipLogin);
-            statement.setInt(10, this.rank != null ? this.rank.getId() : 1);
+            statement.setInt(10, this.permissionGroup != null ? this.permissionGroup.getId() : 1);
             statement.setString(11, this.machineID);
             statement.setString(12, this.username);
             statement.setInt(13, this.id);
