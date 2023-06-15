@@ -39,7 +39,7 @@ public class WiredConditionHabboHasEffect extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
@@ -51,34 +51,14 @@ public class WiredConditionHabboHasEffect extends InteractionWiredCondition {
     }
 
     @Override
-    public void onPickUp() {
-        this.effectId = 0;
-    }
-
-    @Override
     public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(true);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.effectId + "");
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(0);
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 1) return false;
-        this.effectId = settings.getIntParams()[0];
+    public boolean saveData() {
+        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
+        this.effectId = this.getWiredSettings().getIntegerParams()[0];
 
         return true;
     }

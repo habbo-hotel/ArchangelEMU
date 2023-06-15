@@ -38,55 +38,24 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.botName);
-        message.appendInt(1);
-        message.appendInt(this.itemId);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
+    public boolean saveData() throws WiredSaveException {
+        if(this.getWiredSettings().getIntegerParams().length < 1) throw new WiredSaveException("Missing item id");
 
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if(settings.getIntParams().length < 1) throw new WiredSaveException("Missing item id");
-
-        int itemId = settings.getIntParams()[0];
+        int itemId = this.getWiredSettings().getIntegerParams()[0];
 
         if(itemId < 0)
             itemId = 0;
 
-        String botName = settings.getStringParam();
+        String botName = this.getWiredSettings().getStringParam();
 
-        int delay = settings.getDelay();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
 
         this.itemId = itemId;
         this.botName = botName.substring(0, Math.min(botName.length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
-        this.setDelay(delay);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }
@@ -130,16 +99,16 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.itemId, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.itemId, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.itemId = data.item_id;
             this.botName = data.bot_name;
         }
@@ -147,20 +116,13 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
             String[] data = wiredData.split(((char) 9) + "");
 
             if (data.length == 3) {
-                this.setDelay(Integer.parseInt(data[0]));
+                this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
                 this.itemId = Integer.parseInt(data[1]);
                 this.botName = data[2];
             }
 
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.botName = "";
-        this.itemId = 0;
-        this.setDelay(0);
     }
 
     @Override

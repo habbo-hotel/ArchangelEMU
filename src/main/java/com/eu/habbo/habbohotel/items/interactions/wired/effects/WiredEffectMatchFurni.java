@@ -28,28 +28,28 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
 
     private static final WiredEffectType type = WiredEffectType.MATCH_SSHOT;
     private final boolean checkForWiredResetPermission = true;
-    private final THashSet<WiredMatchFurniSetting> settings;
+    private final THashSet<WiredMatchFurniSetting> wiredMatchSettings;
     private boolean state = false;
     private boolean direction = false;
     private boolean position = false;
 
     public WiredEffectMatchFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.settings = new THashSet<>(0);
+        this.wiredMatchSettings = new THashSet<>(0);
     }
 
     public WiredEffectMatchFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.settings = new THashSet<>(0);
+        this.wiredMatchSettings = new THashSet<>(0);
     }
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
 
-        if(this.settings.isEmpty())
+        if(this.wiredMatchSettings.isEmpty())
             return true;
 
-        for (WiredMatchFurniSetting setting : this.settings) {
+        for (WiredMatchFurniSetting setting : this.wiredMatchSettings) {
             HabboItem item = room.getHabboItem(setting.getItem_id());
             if (item != null) {
                 if (this.state && (this.checkForWiredResetPermission && item.allowWiredResetState())) {
@@ -90,21 +90,21 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
     @Override
     public String getWiredData() {
         this.refresh();
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.state, this.direction, this.position, new ArrayList<>(this.settings), this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.state, this.direction, this.position, new ArrayList<>(this.wiredMatchSettings), this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.state = data.state;
             this.direction = data.direction;
             this.position = data.position;
-            this.settings.clear();
-            this.settings.addAll(data.items);
+            this.wiredMatchSettings.clear();
+            this.wiredMatchSettings.addAll(data.items);
         }
         else {
             String[] data = set.getString("wired_data").split(":");
@@ -119,7 +119,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
                     String[] stuff = item.split(Pattern.quote("-"));
 
                     if (stuff.length >= 5) {
-                        this.settings.add(new WiredMatchFurniSetting(Integer.parseInt(stuff[0]), stuff[1], Integer.parseInt(stuff[2]), Integer.parseInt(stuff[3]), Integer.parseInt(stuff[4])));
+                        this.wiredMatchSettings.add(new WiredMatchFurniSetting(Integer.parseInt(stuff[0]), stuff[1], Integer.parseInt(stuff[2]), Integer.parseInt(stuff[3]), Integer.parseInt(stuff[4])));
                     }
 
                 } catch (Exception e) {
@@ -130,18 +130,9 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
             this.state = data[2].equals("1");
             this.direction = data[3].equals("1");
             this.position = data[4].equals("1");
-            this.setDelay(Integer.parseInt(data[5]));
+            this.getWiredSettings().setDelay(Integer.parseInt(data[5]));
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.settings.clear();
-        this.state = false;
-        this.direction = false;
-        this.position = false;
-        this.setDelay(0);
     }
 
     @Override
@@ -150,42 +141,18 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        this.refresh();
-
-        message.appendBoolean(false);
-        message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        message.appendInt(this.settings.size());
-
-        for (WiredMatchFurniSetting item : this.settings)
-            message.appendInt(item.getItem_id());
-
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(3);
-        message.appendInt(this.state ? 1 : 0);
-        message.appendInt(this.direction ? 1 : 0);
-        message.appendInt(this.position ? 1 : 0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if(settings.getIntParams().length < 3) throw new WiredSaveException("Invalid data");
-        boolean setState = settings.getIntParams()[0] == 1;
-        boolean setDirection = settings.getIntParams()[1] == 1;
-        boolean setPosition = settings.getIntParams()[2] == 1;
+    public boolean saveData() throws WiredSaveException {
+        if(this.getWiredSettings().getIntegerParams().length < 3) throw new WiredSaveException("Invalid data");
+        boolean setState = this.getWiredSettings().getIntegerParams()[0] == 1;
+        boolean setDirection = this.getWiredSettings().getIntegerParams()[1] == 1;
+        boolean setPosition = this.getWiredSettings().getIntegerParams()[2] == 1;
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
         if (room == null)
             throw new WiredSaveException("Trying to save wired in unloaded room");
 
-        int itemsCount = settings.getFurniIds().length;
+        int itemsCount = this.getWiredSettings().getItems().length;
 
         if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
             throw new WiredSaveException("Too many furni selected");
@@ -194,7 +161,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
         List<WiredMatchFurniSetting> newSettings = new ArrayList<>();
 
         for (int i = 0; i < itemsCount; i++) {
-            int itemId = settings.getFurniIds()[i];
+            int itemId = this.getWiredSettings().getItems()[i];
             HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
 
             if(it == null)
@@ -203,7 +170,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
             newSettings.add(new WiredMatchFurniSetting(it.getId(), this.checkForWiredResetPermission && it.allowWiredResetState() ? it.getExtradata() : " ", it.getRotation(), it.getX(), it.getY()));
         }
 
-        int delay = settings.getDelay();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
@@ -211,9 +178,9 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
         this.state = setState;
         this.direction = setDirection;
         this.position = setPosition;
-        this.settings.clear();
-        this.settings.addAll(newSettings);
-        this.setDelay(delay);
+        this.wiredMatchSettings.clear();
+        this.wiredMatchSettings.addAll(newSettings);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }
@@ -224,7 +191,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
         if (room != null && room.isLoaded()) {
             THashSet<WiredMatchFurniSetting> remove = new THashSet<>();
 
-            for (WiredMatchFurniSetting setting : this.settings) {
+            for (WiredMatchFurniSetting setting : this.wiredMatchSettings) {
                 HabboItem item = room.getHabboItem(setting.getItem_id());
                 if (item == null) {
                     remove.add(setting);
@@ -232,7 +199,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
             }
 
             for (WiredMatchFurniSetting setting : remove) {
-                this.settings.remove(setting);
+                this.wiredMatchSettings.remove(setting);
             }
 
         }
@@ -240,7 +207,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
 
     @Override
     public THashSet<WiredMatchFurniSetting> getMatchFurniSettings() {
-        return this.settings;
+        return this.wiredMatchSettings;
     }
 
     @Override

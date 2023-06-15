@@ -69,16 +69,16 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.message, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.message, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.message = data.message;
         }
         else {
@@ -86,7 +86,7 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
                 String[] data = set.getString("wired_data").split("\t");
 
                 if (data.length >= 1) {
-                    this.setDelay(Integer.parseInt(data[0]));
+                    this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
 
                     if (data.length >= 2) {
                         this.message = data[1];
@@ -94,17 +94,11 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
                 }
             } catch (Exception e) {
                 this.message = "";
-                this.setDelay(0);
+                this.getWiredSettings().setDelay(0);
             }
 
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.message = "";
-        this.setDelay(0);
     }
 
     @Override
@@ -113,45 +107,15 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.message);
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        String message = settings.getStringParam();
-        int delay = settings.getDelay();
+    public boolean saveData() throws WiredSaveException {
+        String message = this.getWiredSettings().getStringParam();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
 
         this.message = message.substring(0, Math.min(message.length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
-        this.setDelay(delay);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }

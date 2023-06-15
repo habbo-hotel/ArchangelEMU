@@ -19,20 +19,22 @@ public class UpdateActionEvent extends MessageHandler {
 
         if (room != null) {
             if (room.hasRights(this.client.getHabbo()) || room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasRight(Permission.ACC_MOVEROTATE)) {
+                //TODO Check SUPER WIRED PERMISSIONS TOO
+
                 InteractionWiredEffect effect = room.getRoomSpecialTypes().getEffect(itemId);
 
                 try {
-                    if (effect == null)
+                    if (effect == null) {
                         throw new WiredSaveException(String.format("Wired effect with item id %s not found in room", itemId));
+                    }
 
-                    WiredSettings settings = InteractionWired.readSettings(this.packet, true);
-                    if (effect.saveData(settings, this.client)) {
+                    effect.loadWiredSettings(this.packet, true);
+
+                    if (effect.saveData()) {
                         this.client.sendResponse(new WiredSavedComposer());
                         effect.needsUpdate(true);
                         Emulator.getThreading().run(effect);
                     }
-
-
                 }
                 catch (WiredSaveException e) {
                     this.client.sendResponse(new WiredValidationErrorComposer(e.getMessage()));

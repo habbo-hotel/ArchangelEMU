@@ -34,29 +34,13 @@ public class WiredEffectMuteHabbo extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.message);
-        message.appendInt(1);
-        message.appendInt(this.length);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-        message.appendInt(0);
-    }
+    public boolean saveData() throws WiredSaveException {
+        if(this.getWiredSettings().getIntegerParams().length < 1) throw new WiredSaveException("invalid data");
 
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if(settings.getIntParams().length < 1) throw new WiredSaveException("invalid data");
+        this.length = this.getWiredSettings().getIntegerParams()[0];
+        this.message = this.getWiredSettings().getStringParam();
 
-        this.length = settings.getIntParams()[0];
-        this.message = settings.getStringParam();
-
-        this.setDelay(settings.getDelay());
+        this.getWiredSettings().setDelay(this.getWiredSettings().getDelay());
 
         return true;
     }
@@ -83,19 +67,19 @@ public class WiredEffectMuteHabbo extends InteractionWiredEffect {
     @Override
     public String getWiredData() {
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.getDelay(),
+                this.getWiredSettings().getDelay(),
                 this.length,
                 this.message
         ));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.length = data.length;
             this.message = data.message;
         } else {
@@ -103,20 +87,13 @@ public class WiredEffectMuteHabbo extends InteractionWiredEffect {
 
             if (data.length >= 3) {
                 try {
-                    this.setDelay(Integer.parseInt(data[0]));
+                    this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
                     this.length = Integer.parseInt(data[1]);
                     this.message = data[2];
                 } catch (Exception ignored) {
                 }
             }
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.setDelay(0);
-        this.message = "";
-        this.length = 0;
     }
 
     @Override

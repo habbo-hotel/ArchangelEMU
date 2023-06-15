@@ -45,7 +45,7 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICy
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
@@ -63,50 +63,14 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICy
     }
 
     @Override
-    public void onPickUp() {
-        this.repeatTime = DEFAULT_DELAY;
-        this.counter = 0;
-    }
-
-    @Override
     public WiredTriggerType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(1);
-        message.appendInt(this.repeatTime / 500);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-
-        if (!this.isTriggeredByRoomUnit()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getEffects(this.getX(), this.getY()).forEach(object -> {
-                if (object.requiresTriggeringUser()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 1) return false;
-        this.repeatTime = settings.getIntParams()[0] * 500;
+    public boolean saveData() {
+        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
+        this.repeatTime = this.getWiredSettings().getIntegerParams()[0] * 500;
         this.counter = 0;
 
         if (this.repeatTime < 500) {

@@ -44,62 +44,15 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        THashSet<HabboItem> items = new THashSet<>();
-
-        if (Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()) == null) {
-            items.addAll(this.items);
-        } else {
-            for (HabboItem item : this.items) {
-                if (Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                    items.add(item);
-            }
-        }
-
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
-
-        message.appendBoolean(false);
-        message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        message.appendInt(this.items.size());
-        for (HabboItem item : this.items) {
-            message.appendInt(item.getId());
-        }
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.botName);
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(WiredTriggerType.BOT_REACHED_STF.getCode());
-
-        if (!this.isTriggeredByRoomUnit()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getEffects(this.getX(), this.getY()).forEach(object -> {
-                if (object.requiresTriggeringUser()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        this.botName = settings.getStringParam();
+    public boolean saveData() {
+        this.botName = this.getWiredSettings().getStringParam();
 
         this.items.clear();
 
-        int count = settings.getFurniIds().length;
+        int count = this.getWiredSettings().getItems().length;
 
         for (int i = 0; i < count; i++) {
-            this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(settings.getFurniIds()[i]));
+            this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(this.getWiredSettings().getItems()[i]));
         }
 
         return true;
@@ -124,7 +77,7 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         this.items.clear();
         String wiredData = set.getString("wired_data");
 
@@ -159,12 +112,6 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
                 }
             }
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.items.clear();
-        this.botName = "";
     }
 
     static class JsonData {

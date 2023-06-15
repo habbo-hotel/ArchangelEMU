@@ -62,7 +62,7 @@ public class WiredTriggerFurniStateToggled extends InteractionWiredTrigger {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         this.items = new THashSet<>();
         String wiredData = set.getString("wired_data");
 
@@ -76,7 +76,7 @@ public class WiredTriggerFurniStateToggled extends InteractionWiredTrigger {
             }
         } else {
             if (wiredData.split(":").length >= 3) {
-                super.setDelay(Integer.parseInt(wiredData.split(":")[0]));
+//                this.getWiredSettings().setDelay(Integer.parseInt(wiredData.split(":")[0])); TODO Trigger has delay???
 
                 if (!wiredData.split(":")[2].equals("\t")) {
                     for (String s : wiredData.split(":")[2].split(";")) {
@@ -91,57 +91,18 @@ public class WiredTriggerFurniStateToggled extends InteractionWiredTrigger {
     }
 
     @Override
-    public void onPickUp() {
-        this.items.clear();
-    }
-
-    @Override
     public WiredTriggerType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        THashSet<HabboItem> items = new THashSet<>();
-
-        for (HabboItem item : this.items) {
-            if (item.getRoomId() != this.getRoomId()) {
-                items.add(item);
-                continue;
-            }
-
-            if (room.getHabboItem(item.getId()) == null) {
-                items.add(item);
-            }
-        }
-
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
-
-        message.appendBoolean(false);
-        message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        message.appendInt(this.items.size());
-        for (HabboItem item : this.items) {
-            message.appendInt(item.getId());
-        }
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
+    public boolean saveData() {
         this.items.clear();
 
-        int count = settings.getFurniIds().length;
+        int count = this.getWiredSettings().getItems().length;
 
         for (int i = 0; i < count; i++) {
-            this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(settings.getFurniIds()[i]));
+            this.items.add(Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(this.getWiredSettings().getItems()[i]));
         }
 
         return true;

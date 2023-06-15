@@ -30,14 +30,12 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
     public final static int LIMIT_N_DAY = 1;
     public final static int LIMIT_N_HOURS = 2;
     public final static int LIMIT_N_MINUTES = 3;
-
     private final static WiredEffectType type = WiredEffectType.GIVE_REWARD;
     private int limit;
     private int limitationInterval;
     private int given;
     private int rewardTime;
     private boolean uniqueRewards;
-
     private final THashSet<WiredGiveRewardItem> rewardItems = new THashSet<>();
 
     public WiredEffectGiveReward(ResultSet set, Item baseItem) throws SQLException {
@@ -57,18 +55,17 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-
         ArrayList<WiredGiveRewardItem> rewards = new ArrayList<>(this.rewardItems);
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.limit, this.given, this.rewardTime, this.uniqueRewards, this.limitationInterval, rewards, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.limit, this.given, this.rewardTime, this.uniqueRewards, this.limitationInterval, rewards, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.limit = data.limit;
             this.given = data.given;
             this.rewardTime = data.reward_time;
@@ -84,7 +81,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
                 this.rewardTime = Integer.parseInt(data[2]);
                 this.uniqueRewards = data[3].equals("1");
                 this.limitationInterval = Integer.parseInt(data[4]);
-                this.setDelay(Integer.parseInt(data[5]));
+                this.getWiredSettings().setDelay(Integer.parseInt(data[5]));
 
                 if (data.length > 6) {
                     if (!data[6].equalsIgnoreCase("\t")) {
@@ -107,17 +104,6 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
     }
 
     @Override
-    public void onPickUp() {
-        this.limit = 0;
-        this.limitationInterval = 0;
-        this.given = 0;
-        this.rewardTime = 0;
-        this.uniqueRewards = false;
-        this.rewardItems.clear();
-        this.setDelay(0);
-    }
-
-    @Override
     public WiredEffectType getType() {
         return type;
     }
@@ -132,55 +118,15 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(this.rewardItems.size());
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        StringBuilder s = new StringBuilder();
-
-        for (WiredGiveRewardItem item : this.rewardItems) {
-            s.append(item.wiredString()).append(";");
-        }
-        message.appendString(s.toString());
-        message.appendInt(4);
-        message.appendInt(this.rewardTime);
-        message.appendInt(this.uniqueRewards);
-        message.appendInt(this.limit);
-        message.appendInt(this.limitationInterval);
-        message.appendInt(this.limit > 0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if (gameClient.getHabbo().hasRight(Permission.ACC_SUPERWIRED)) {
-            if (settings.getIntParams().length < 4) throw new WiredSaveException("Invalid data");
-            this.rewardTime = settings.getIntParams()[0];
-            this.uniqueRewards = settings.getIntParams()[1] == 1;
-            this.limit = settings.getIntParams()[2];
-            this.limitationInterval = settings.getIntParams()[3];
+    public boolean saveData() throws WiredSaveException {
+            if (this.getWiredSettings().getIntegerParams().length < 4) throw new WiredSaveException("Invalid data");
+            this.rewardTime = this.getWiredSettings().getIntegerParams()[0];
+            this.uniqueRewards = this.getWiredSettings().getIntegerParams()[1] == 1;
+            this.limit = this.getWiredSettings().getIntegerParams()[2];
+            this.limitationInterval = this.getWiredSettings().getIntegerParams()[3];
             this.given = 0;
 
-            String data = settings.getStringParam();
+            String data = this.getWiredSettings().getStringParam();
 
             String[] items = data.split(";");
 
@@ -197,18 +143,15 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
                     }
                 }
 
-                gameClient.sendResponse(new WiredValidationErrorComposer(Emulator.getTexts().getValue("alert.superwired.invalid")));
+                //TODO THROW ERROR
+//                gameClient.sendResponse(new WiredValidationErrorComposer(Emulator.getTexts().getValue("alert.superwired.invalid")));
                 return false;
             }
 
-            this.setDelay(settings.getDelay());
+            this.getWiredSettings().setDelay(this.getWiredSettings().getDelay());
 
             WiredHandler.dropRewards(this.getId());
             return true;
-        }
-
-        gameClient.getHabbo().whisper("U cannot do this.", RoomChatMessageBubbles.ALERT);
-        return false;
     }
 
     @Override
@@ -244,6 +187,4 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
             this.delay = delay;
         }
     }
-
-
 }

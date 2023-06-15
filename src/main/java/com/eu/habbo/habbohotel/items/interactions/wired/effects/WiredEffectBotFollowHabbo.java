@@ -34,56 +34,25 @@ public class WiredEffectBotFollowHabbo extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.botName);
-        message.appendInt(1);
-        message.appendInt(this.mode);
-        message.appendInt(1);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
+    public boolean saveData() throws WiredSaveException {
+        if(this.getWiredSettings().getIntegerParams().length < 1) throw new WiredSaveException("Mode is invalid");
 
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if(settings.getIntParams().length < 1) throw new WiredSaveException("Mode is invalid");
-
-        int mode = settings.getIntParams()[0];
+        int mode = this.getWiredSettings().getIntegerParams()[0];
 
         if(mode != 0 && mode != 1)
             throw new WiredSaveException("Mode is invalid");
 
-        String botName = settings.getStringParam().replace("\t", "");
+        String botName = this.getWiredSettings().getStringParam().replace("\t", "");
         botName = botName.substring(0, Math.min(botName.length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
 
-        int delay = settings.getDelay();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
 
         this.botName = botName;
         this.mode = mode;
-        this.setDelay(delay);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }
@@ -116,16 +85,16 @@ public class WiredEffectBotFollowHabbo extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.mode, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.mode, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.mode = data.mode;
             this.botName = data.bot_name;
         }
@@ -133,20 +102,13 @@ public class WiredEffectBotFollowHabbo extends InteractionWiredEffect {
             String[] data = wiredData.split(((char) 9) + "");
 
             if (data.length == 3) {
-                this.setDelay(Integer.parseInt(data[0]));
+                this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
                 this.mode = (data[1].equalsIgnoreCase("1") ? 1 : 0);
                 this.botName = data[2];
             }
 
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.botName = "";
-        this.mode = 0;
-        this.setDelay(0);
     }
 
     @Override

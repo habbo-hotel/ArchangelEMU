@@ -33,24 +33,9 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.botName + ((char) 9) + "" + this.botLook);
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        String dataString = settings.getStringParam();
-        int delay = settings.getDelay();
+    public boolean saveData() throws WiredSaveException {
+        String dataString = this.getWiredSettings().getStringParam();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
@@ -66,7 +51,7 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
 
         this.botName = data[0].substring(0, Math.min(data[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
         this.botLook = data[1];
-        this.setDelay(delay);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }
@@ -90,16 +75,16 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.botLook, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.botLook, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.botName = data.bot_name;
             this.botLook = data.look;
         }
@@ -107,36 +92,13 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
             String[] data = wiredData.split(((char) 9) + "");
 
             if (data.length >= 3) {
-                this.setDelay(Integer.parseInt(data[0]));
+                this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
                 this.botName = data[1];
                 this.botLook = data[2];
             }
 
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.botLook = "";
-        this.botName = "";
-        this.setDelay(0);
-    }
-
-    public String getBotName() {
-        return this.botName;
-    }
-
-    public void setBotName(String botName) {
-        this.botName = botName;
-    }
-
-    public String getBotLook() {
-        return this.botLook;
-    }
-
-    public void setBotLook(String botLook) {
-        this.botLook = botLook;
     }
 
     static class JsonData {

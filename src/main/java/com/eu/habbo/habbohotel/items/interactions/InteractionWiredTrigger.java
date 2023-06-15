@@ -3,16 +3,24 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredTriggerInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.outgoing.wired.WiredTriggerDataComposer;
+import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class InteractionWiredTrigger extends InteractionWired {
-    private int delay;
+public abstract class InteractionWiredTrigger extends InteractionWired implements IWiredTriggerInteraction {
+    @Getter
+    @Setter
+    private List<Integer> blockedEffects;
 
     protected InteractionWiredTrigger(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -22,14 +30,17 @@ public abstract class InteractionWiredTrigger extends InteractionWired {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
-    @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        return true;
-    }
+    public List<Integer> getBlockedEffects(Room room) {
+        List<Integer> blockedEffects = new ArrayList<>();
+        THashSet<InteractionWiredEffect> effects = room.getRoomSpecialTypes().getEffects(this.getX(), this.getY());
 
-    @Override
-    public boolean isWalkable() {
-        return true;
+        for(InteractionWiredEffect effect : effects) {
+            if (!effect.requiresTriggeringUser()) {
+                blockedEffects.add(effect.getBaseItem().getSpriteId());
+            }
+        }
+
+        return blockedEffects;
     }
 
     @Override
@@ -43,16 +54,6 @@ public abstract class InteractionWiredTrigger extends InteractionWired {
     }
 
     public abstract WiredTriggerType getType();
-
-    public abstract boolean saveData(WiredSettings settings);
-
-    protected int getDelay() {
-        return this.delay;
-    }
-
-    protected void setDelay(int value) {
-        this.delay = value;
-    }
 
     public boolean isTriggeredByRoomUnit() {
         return false;

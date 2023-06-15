@@ -96,18 +96,18 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.score, this.count, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.score, this.count, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
             this.score = data.score;
             this.count = data.count;
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
         }
         else {
             String[] data = wiredData.split(";");
@@ -115,18 +115,11 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
             if (data.length == 3) {
                 this.score = Integer.parseInt(data[0]);
                 this.count = Integer.parseInt(data[1]);
-                this.setDelay(Integer.parseInt(data[2]));
+                this.getWiredSettings().setDelay(Integer.parseInt(data[2]));
             }
 
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.score = 0;
-        this.count = 0;
-        this.setDelay(0);
     }
 
     @Override
@@ -135,59 +128,27 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(2);
-        message.appendInt(this.score);
-        message.appendInt(this.count);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
+    public boolean saveData() throws WiredSaveException {
+        if(this.getWiredSettings().getIntegerParams().length < 2) throw new WiredSaveException("Invalid data");
 
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if(settings.getIntParams().length < 2) throw new WiredSaveException("Invalid data");
-
-        int score = settings.getIntParams()[0];
+        int score = this.getWiredSettings().getIntegerParams()[0];
 
         if(score < 1 || score > 100)
             throw new WiredSaveException("Score is invalid");
 
-        int timesPerGame = settings.getIntParams()[1];
+        int timesPerGame = this.getWiredSettings().getIntegerParams()[1];
 
         if(timesPerGame < 1 || timesPerGame > 10)
             throw new WiredSaveException("Times per game is invalid");
 
-        int delay = settings.getDelay();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
 
         this.score = score;
         this.count = timesPerGame;
-        this.setDelay(delay);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }

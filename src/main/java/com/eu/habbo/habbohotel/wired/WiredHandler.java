@@ -243,7 +243,7 @@ public class WiredHandler {
 
                         effect.activateBox(room, roomUnit, millis);
                     }
-                }, effect.getDelay() * 500L);
+                }, effect.getWiredSettings().getDelay() * 500L);
             }
         }
 

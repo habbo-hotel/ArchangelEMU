@@ -37,45 +37,14 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.botName + "" + ((char) 9) + "" + this.message);
-        message.appendInt(1);
-        message.appendInt(this.mode);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if(settings.getIntParams().length < 1) throw new WiredSaveException("Missing mode");
-        int mode = settings.getIntParams()[0];
+    public boolean saveData() throws WiredSaveException {
+        if(this.getWiredSettings().getIntegerParams().length < 1) throw new WiredSaveException("Missing mode");
+        int mode = this.getWiredSettings().getIntegerParams()[0];
 
         if(mode != 0 && mode != 1)
             throw new WiredSaveException("Mode is invalid");
 
-        String dataString = settings.getStringParam();
+        String dataString = this.getWiredSettings().getStringParam();
         String splitBy = "\t";
         if(!dataString.contains(splitBy))
             throw new WiredSaveException("Malformed data string");
@@ -85,7 +54,7 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
         if (data.length != 2)
             throw new WiredSaveException("Malformed data string. Invalid data length");
 
-        int delay = settings.getDelay();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
@@ -93,7 +62,7 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
         this.botName = data[0].substring(0, Math.min(data[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
         this.message = data[1].substring(0, Math.min(data[1].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
         this.mode = mode;
-        this.setDelay(delay);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }
@@ -143,16 +112,16 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.mode, this.message, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.mode, this.message, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.mode = data.mode;
             this.botName = data.bot_name;
             this.message = data.message;
@@ -161,7 +130,7 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
             String[] data = wiredData.split(((char) 9) + "");
 
             if (data.length == 4) {
-                this.setDelay(Integer.parseInt(data[0]));
+                this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
                 this.mode = data[1].equalsIgnoreCase("1") ? 1 : 0;
                 this.botName = data[2];
                 this.message = data[3];
@@ -169,14 +138,6 @@ public class WiredEffectBotTalkToHabbo extends InteractionWiredEffect {
 
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.botName = "";
-        this.message = "";
-        this.mode = 0;
-        this.setDelay(0);
     }
 
     @Override

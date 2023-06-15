@@ -97,19 +97,19 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
                 this.direction,
                 this.rotation,
-                this.getDelay(),
+                this.getWiredSettings().getDelay(),
                 this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
         ));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         this.items.clear();
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.direction = data.direction;
             this.rotation = data.rotation;
             for (Integer id: data.itemIds) {
@@ -125,7 +125,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
                 try {
                     this.direction = Integer.parseInt(data[0]);
                     this.rotation = Integer.parseInt(data[1]);
-                    this.setDelay(Integer.parseInt(data[2]));
+                    this.getWiredSettings().setDelay(Integer.parseInt(data[2]));
                 } catch (Exception e) {
                     System.out.println(e);
                 }
@@ -141,69 +141,31 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
     }
 
     @Override
-    public void onPickUp() {
-        this.direction = 0;
-        this.rotation = 0;
-        this.items.clear();
-        this.setDelay(0);
-    }
-
-    @Override
     public WiredEffectType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        THashSet<HabboItem> items = new THashSet<>();
-
-        for (HabboItem item : this.items) {
-            if (item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                items.add(item);
-        }
-
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
-
-        message.appendBoolean(false);
-        message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        message.appendInt(this.items.size());
-        for (HabboItem item : this.items)
-            message.appendInt(item.getId());
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(2);
-        message.appendInt(this.direction);
-        message.appendInt(this.rotation);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
+    public boolean saveData() throws WiredSaveException {
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
         if (room == null)
             return false;
 
-        if(settings.getIntParams().length < 2) throw new WiredSaveException("invalid data");
+        if(this.getWiredSettings().getIntegerParams().length < 2) throw new WiredSaveException("invalid data");
 
-        this.direction = settings.getIntParams()[0];
-        this.rotation = settings.getIntParams()[1];
+        this.direction = this.getWiredSettings().getIntegerParams()[0];
+        this.rotation = this.getWiredSettings().getIntegerParams()[1];
 
-        int count = settings.getFurniIds().length;
+        int count = this.getWiredSettings().getItems().length;
         if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count", 5)) return false;
 
         this.items.clear();
         for (int i = 0; i < count; i++) {
-            this.items.add(room.getHabboItem(settings.getFurniIds()[i]));
+            this.items.add(room.getHabboItem(this.getWiredSettings().getItems()[i]));
         }
 
-        this.setDelay(settings.getDelay());
+        this.getWiredSettings().setDelay(this.getWiredSettings().getDelay());
 
         return true;
     }

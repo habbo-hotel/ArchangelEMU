@@ -42,7 +42,7 @@ public class WiredConditionNotHabboCount extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
@@ -57,38 +57,15 @@ public class WiredConditionNotHabboCount extends InteractionWiredCondition {
     }
 
     @Override
-    public void onPickUp() {
-        this.upperLimit = 0;
-        this.lowerLimit = 20;
-    }
-
-    @Override
     public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(2);
-        message.appendInt(this.lowerLimit);
-        message.appendInt(this.upperLimit);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(0);
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 2) return false;
-        this.lowerLimit = settings.getIntParams()[0];
-        this.upperLimit = settings.getIntParams()[1];
+    public boolean saveData() {
+        if(this.getWiredSettings().getIntegerParams().length < 2) return false;
+        this.lowerLimit = this.getWiredSettings().getIntegerParams()[0];
+        this.upperLimit = this.getWiredSettings().getIntegerParams()[1];
 
         return true;
     }

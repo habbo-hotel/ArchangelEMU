@@ -3,12 +3,19 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
+import com.eu.habbo.habbohotel.items.interactions.wired.effects.WiredEffectWhisper;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
-import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.OneWayDoorStatusMessageComposer;
 import gnu.trove.map.hash.TLongLongHashMap;
+import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -17,27 +24,41 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Slf4j
-public abstract class InteractionWired extends InteractionDefault {
+public abstract class InteractionWired extends InteractionDefault implements IWiredInteraction {
+    @Getter
+    @Setter
+    private THashSet<HabboItem> items;
+
+    @Getter
+    @Setter
+    private String wiredData;
+
+    @Getter
+    @Setter
+    private WiredSettings wiredSettings;
+
     private long cooldown;
     private final TLongLongHashMap userExecutionCache = new TLongLongHashMap(3);
 
     InteractionWired(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
+        this.items = new THashSet<>();
+        this.wiredData = "";
+        this.wiredSettings = new WiredSettings();
         this.setExtradata("0");
     }
 
     InteractionWired(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.items = new THashSet<>();
+        this.wiredData = "";
+        this.wiredSettings = new WiredSettings();
         this.setExtradata("0");
     }
 
     public abstract boolean execute(RoomUnit roomUnit, Room room, Object[] stuff);
 
-    public abstract String getWiredData();
-
-    public abstract void serializeWiredData(ServerMessage message, Room room);
-
-    public abstract void loadWiredData(ResultSet set, Room room) throws SQLException;
+    public abstract boolean saveData() throws WiredSaveException;
 
     @Override
     public void run() {
@@ -65,10 +86,8 @@ public abstract class InteractionWired extends InteractionDefault {
 
     @Override
     public void onPickUp(Room room) {
-        this.onPickUp();
+        this.items.clear();
     }
-
-    public abstract void onPickUp();
 
     public void activateBox(Room room) {
         this.activateBox(room, null, 0L);
@@ -124,17 +143,21 @@ public abstract class InteractionWired extends InteractionDefault {
         this.userExecutionCache.put(roomUnitId, timestamp);
     }
 
-    public static WiredSettings readSettings(ClientMessage packet, boolean isEffect)
-    {
+    public WiredSettings loadWiredSettings(ClientMessage packet, boolean isWiredEffect) {
+        WiredSettings settings = new WiredSettings();
+
         int intParamCount = packet.readInt();
-        int[] intParams = new int[intParamCount];
+        int[] integerParams = new int[intParamCount];
 
         for(int i = 0; i < intParamCount; i++)
         {
-            intParams[i] = packet.readInt();
+            integerParams[i] = packet.readInt();
         }
 
-        String stringParam = packet.readString();
+        settings.setIntegerParams(integerParams);
+        settings.setStringParam(packet.readString());
+
+        System.out.println(settings.getStringParam());
 
         int itemCount = packet.readInt();
         int[] itemIds = new int[itemCount];
@@ -144,15 +167,39 @@ public abstract class InteractionWired extends InteractionDefault {
             itemIds[i] = packet.readInt();
         }
 
-        WiredSettings settings = new WiredSettings(intParams, stringParam, itemIds, -1);
+        settings.setItems(itemIds);
 
-        if(isEffect)
+        if(isWiredEffect)
         {
             settings.setDelay(packet.readInt());
         }
 
-        settings.setStuffTypeSelectionCode(packet.readInt());
-        return settings;
+        settings.setSelectionType(packet.readInt());
+
+        this.wiredSettings = settings;
+
+        return this.wiredSettings;
     }
 
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
+        WiredSettings settings = new WiredSettings();
+
+        String wiredData = set.getString("wired_data");
+
+//        if(wiredData.startsWith("{")) {
+//            WiredEffectWhisper.JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredEffectWhisper.JsonData.class);
+//            this.getWiredSettings().setDelay(data.delay);
+//            this.message = data.message;
+//        }
+//        else {
+//            this.message = "";
+//
+//            if (wiredData.split("\t").length >= 2) {
+//                super.setDelay(Integer.parseInt(wiredData.split("\t")[0]));
+//                this.message = wiredData.split("\t")[1];
+//            }
+//
+//            this.needsUpdate(true);
+//        }
+    }
 }

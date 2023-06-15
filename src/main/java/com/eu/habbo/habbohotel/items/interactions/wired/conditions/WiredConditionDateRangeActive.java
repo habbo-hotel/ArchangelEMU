@@ -56,37 +56,14 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
     }
 
     /**
-     * Sends information about this wired condition to the client.
-     * @param message the message to send data with
-     * @param room the room this wired condition is in
-     */
-    @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(2);
-        message.appendInt(this.startDate);
-        message.appendInt(this.endDate);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.startDate);
-        message.appendInt(this.endDate);
-    }
-
-    /**
      * Saves the given {@link WiredSettings} object to this wired condition.
-     * @param settings the settings to save
      * @return {@code true} if the settings were saved successfully, {@code false} otherwise
      * */
     @Override
-    public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 2) return false;
-        this.startDate = settings.getIntParams()[0];
-        this.endDate = settings.getIntParams()[1];
+    public boolean saveData() {
+        if(this.getWiredSettings().getIntegerParams().length < 2) return false;
+        this.startDate = this.getWiredSettings().getIntegerParams()[0];
+        this.endDate = this.getWiredSettings().getIntegerParams()[1];
         return true;
     }
 
@@ -123,7 +100,7 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
      * @throws SQLException if an error occurs while getting data from the ResultSet object
      */
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
@@ -141,15 +118,6 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
                 }
             }
         }
-    }
-
-    /**
-     * Called when this item is picked up. Resets the startDate and endDate member variables to 0.
-     */
-    @Override
-    public void onPickUp() {
-        this.startDate = 0;
-        this.endDate = 0;
     }
 
     /**

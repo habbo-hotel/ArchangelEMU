@@ -38,38 +38,9 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        THashSet<HabboItem> items = new THashSet<>();
-
-        for (HabboItem item : this.items) {
-            if (item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                items.add(item);
-        }
-
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
-
-        message.appendBoolean(false);
-        message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        message.appendInt(this.items.size());
-        for (HabboItem item : this.items)
-            message.appendInt(item.getId());
-
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.botName);
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        String botName = settings.getStringParam();
-        int itemsCount = settings.getFurniIds().length;
+    public boolean saveData() throws WiredSaveException {
+        String botName = this.getWiredSettings().getStringParam();
+        int itemsCount = this.getWiredSettings().getItems().length;
 
         if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
             throw new WiredSaveException("Too many furni selected");
@@ -78,7 +49,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
         List<HabboItem> newItems = new ArrayList<>();
 
         for (int i = 0; i < itemsCount; i++) {
-            int itemId = settings.getFurniIds()[i];
+            int itemId = this.getWiredSettings().getItems()[i];
             HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
 
             if(it == null)
@@ -87,7 +58,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
             newItems.add(it);
         }
 
-        int delay = settings.getDelay();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
@@ -95,7 +66,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
         this.items.clear();
         this.items.addAll(newItems);
         this.botName = botName.substring(0, Math.min(botName.length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
-        this.setDelay(delay);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }
@@ -145,18 +116,18 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
             }
         }
 
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, itemIds, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, itemIds, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         this.items = new ArrayList<>();
 
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.botName = data.bot_name;
 
             for(int itemId : data.items) {
@@ -170,7 +141,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
             String[] wiredDataSplit = set.getString("wired_data").split("\t");
 
             if (wiredDataSplit.length >= 2) {
-                this.setDelay(Integer.parseInt(wiredDataSplit[0]));
+                this.getWiredSettings().setDelay(Integer.parseInt(wiredDataSplit[0]));
                 String[] data = wiredDataSplit[1].split(";");
 
                 if (data.length > 1) {
@@ -187,13 +158,6 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
 
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.items.clear();
-        this.botName = "";
-        this.setDelay(0);
     }
 
     static class JsonData {

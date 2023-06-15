@@ -39,14 +39,7 @@ public class WiredConditionNotInGroup extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) {
-
-    }
-
-    @Override
-    public void onPickUp() {
-
-    }
+    public void loadWiredSettings(ResultSet set, Room room) {}
 
     @Override
     public WiredConditionType getType() {
@@ -54,22 +47,7 @@ public class WiredConditionNotInGroup extends InteractionWiredCondition {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(0);
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
+    public boolean saveData() {
         return true;
     }
 }

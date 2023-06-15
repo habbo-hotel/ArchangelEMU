@@ -3,34 +3,45 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredEffectInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.wired.WiredEffectDataComposer;
+import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class InteractionWiredEffect extends InteractionWired {
-    private int delay;
+public abstract class InteractionWiredEffect extends InteractionWired implements IWiredEffectInteraction {
+    @Getter
+    @Setter
+    private List<Integer> blockedTriggers;
 
     public InteractionWiredEffect(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionWiredEffect(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionWiredEffect(int id, int userId, Item item, String extraData, int limitedStack, int limitedSells) {
+        super(id, userId, item, extraData, limitedStack, limitedSells);
     }
 
-    @Override
-    public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        return true;
-    }
+    public List<Integer> getBlockedTriggers(Room room) {
+        List<Integer> blockedTriggers = new ArrayList<>();
+        THashSet<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY());
 
-    @Override
-    public boolean isWalkable() {
-        return true;
+        for(InteractionWiredTrigger trigger : triggers) {
+            if(!trigger.isTriggeredByRoomUnit()) {
+                blockedTriggers.add(trigger.getBaseItem().getSpriteId());
+            }
+        }
+
+        return blockedTriggers;
     }
 
     @Override
@@ -43,18 +54,7 @@ public abstract class InteractionWiredEffect extends InteractionWired {
         }
     }
 
-    public abstract boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException;
-
-    public int getDelay() {
-        return this.delay;
-    }
-
-    protected void setDelay(int value) {
-        this.delay = value;
-    }
-
     public abstract WiredEffectType getType();
-
 
     public boolean requiresTriggeringUser() {
         return false;

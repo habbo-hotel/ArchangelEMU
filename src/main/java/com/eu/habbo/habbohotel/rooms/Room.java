@@ -498,7 +498,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         HabboItem item = this.getHabboItem(set.getInt("id"));
 
                         if (item instanceof InteractionWired interactionWired) {
-                            interactionWired.loadWiredData(set, this);
+                            interactionWired.loadWiredSettings(set, this);
                         }
                     } catch (SQLException e) {
                         log.error(CAUGHT_SQL_EXCEPTION, e);

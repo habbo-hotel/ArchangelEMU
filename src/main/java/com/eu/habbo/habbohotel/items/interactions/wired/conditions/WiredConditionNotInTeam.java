@@ -46,7 +46,7 @@ public class WiredConditionNotInTeam extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) {
+    public void loadWiredSettings(ResultSet set, Room room) {
         try {
             String wiredData = set.getString("wired_data");
 
@@ -63,35 +63,14 @@ public class WiredConditionNotInTeam extends InteractionWiredCondition {
     }
 
     @Override
-    public void onPickUp() {
-        this.teamColor = GameTeamColors.RED;
-    }
-
-    @Override
     public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(1);
-        message.appendInt(this.teamColor.type);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(0);
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 1) return false;
-        this.teamColor = GameTeamColors.values()[settings.getIntParams()[0]];
+    public boolean saveData() {
+        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
+        this.teamColor = GameTeamColors.values()[this.getWiredSettings().getIntegerParams()[0]];
 
         return true;
     }

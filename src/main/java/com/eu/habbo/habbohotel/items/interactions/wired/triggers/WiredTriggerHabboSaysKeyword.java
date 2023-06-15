@@ -49,7 +49,7 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
@@ -67,36 +67,15 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
     }
 
     @Override
-    public void onPickUp() {
-        this.ownerOnly = false;
-        this.key = "";
-    }
-
-    @Override
     public WiredTriggerType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.key);
-        message.appendInt(0);
-        message.appendInt(1);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(0);
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 1) return false;
-        this.ownerOnly = settings.getIntParams()[0] == 1;
-        this.key = settings.getStringParam();
+    public boolean saveData() {
+        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
+        this.ownerOnly = this.getWiredSettings().getIntegerParams()[0] == 1;
+        this.key = this.getWiredSettings().getStringParam();
 
         return true;
     }

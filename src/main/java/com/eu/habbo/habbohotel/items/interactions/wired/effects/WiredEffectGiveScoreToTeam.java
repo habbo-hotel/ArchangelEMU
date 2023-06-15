@@ -60,11 +60,11 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.points, this.count, this.teamColor, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.points, this.count, this.teamColor, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
@@ -72,7 +72,7 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
             this.points = data.score;
             this.count = data.count;
             this.teamColor = data.team;
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
         }
         else {
             String[] data = set.getString("wired_data").split(";");
@@ -81,20 +81,11 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
                 this.points = Integer.parseInt(data[0]);
                 this.count = Integer.parseInt(data[1]);
                 this.teamColor = GameTeamColors.values()[Integer.parseInt(data[2])];
-                this.setDelay(Integer.parseInt(data[3]));
+                this.getWiredSettings().setDelay(Integer.parseInt(data[3]));
             }
 
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.startTimes.clear();
-        this.points = 0;
-        this.count = 0;
-        this.teamColor = GameTeamColors.RED;
-        this.setDelay(0);
     }
 
     @Override
@@ -103,43 +94,25 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(3);
-        message.appendInt(this.points);
-        message.appendInt(this.count);
-        message.appendInt(this.teamColor.type);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-        message.appendInt(0);
-    }
+    public boolean saveData() throws WiredSaveException {
+        if(this.getWiredSettings().getIntegerParams().length < 3) throw  new WiredSaveException("Invalid data");
 
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if(settings.getIntParams().length < 3) throw  new WiredSaveException("Invalid data");
-
-        int points = settings.getIntParams()[0];
+        int points = this.getWiredSettings().getIntegerParams()[0];
 
         if(points < 1 || points > 100)
             throw new WiredSaveException("Points is invalid");
 
-        int timesPerGame = settings.getIntParams()[1];
+        int timesPerGame = this.getWiredSettings().getIntegerParams()[1];
 
         if(timesPerGame < 1 || timesPerGame > 10)
             throw new WiredSaveException("Times per game is invalid");
 
-        int team = settings.getIntParams()[2];
+        int team = this.getWiredSettings().getIntegerParams()[2];
 
         if(team < 1 || team > 4)
             throw new WiredSaveException("Team is invalid");
 
-        int delay = settings.getDelay();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
@@ -147,7 +120,7 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
         this.points = points;
         this.count = timesPerGame;
         this.teamColor = GameTeamColors.values()[team];
-        this.setDelay(delay);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }

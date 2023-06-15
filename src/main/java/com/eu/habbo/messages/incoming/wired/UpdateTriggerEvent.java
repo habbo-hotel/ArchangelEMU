@@ -21,18 +21,21 @@ public class UpdateTriggerEvent extends MessageHandler {
             if (room.hasRights(this.client.getHabbo()) || room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasRight(Permission.ACC_MOVEROTATE)) {
                 InteractionWiredTrigger trigger = room.getRoomSpecialTypes().getTrigger(itemId);
 
-                if (trigger != null) {
-                    WiredSettings settings = InteractionWired.readSettings(this.packet, false);
-
-                    if (trigger.saveData(settings)) {
-                        this.client.sendResponse(new WiredSavedComposer());
-
-                                trigger.needsUpdate(true);
-
-                        Emulator.getThreading().run(trigger);
-                    } else {
-                        this.client.sendResponse(new WiredValidationErrorComposer("There was an error while saving that trigger"));
+                try {
+                    if (trigger == null) {
+                        throw new WiredSaveException(String.format("Wired trigger with item id %s not found in room", itemId));
                     }
+
+                    trigger.loadWiredSettings(this.packet, false);
+
+                    if (trigger.saveData()) {
+                        this.client.sendResponse(new WiredSavedComposer());
+                        trigger.needsUpdate(true);
+                        Emulator.getThreading().run(trigger);
+                    }
+                }
+                catch (WiredSaveException e) {
+                    this.client.sendResponse(new WiredValidationErrorComposer(e.getMessage()));
                 }
             }
         }

@@ -59,23 +59,23 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.teamColor, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.teamColor, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             this.teamColor = data.team;
         }
         else {
             String[] data = set.getString("wired_data").split("\t");
 
             if (data.length >= 1) {
-                this.setDelay(Integer.parseInt(data[0]));
+                this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
 
                 if (data.length >= 2) {
                     this.teamColor = GameTeamColors.values()[Integer.parseInt(data[1])];
@@ -87,63 +87,26 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
     }
 
     @Override
-    public void onPickUp() {
-        this.teamColor = GameTeamColors.RED;
-        this.setDelay(0);
-    }
-
-    @Override
     public WiredEffectType getType() {
         return type;
     }
-
+    
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(1);
-        message.appendInt(this.teamColor.type);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
+    public boolean saveData() throws WiredSaveException {
+        if(this.getWiredSettings().getIntegerParams().length < 1) throw new WiredSaveException("invalid data");
 
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        if(settings.getIntParams().length < 1) throw new WiredSaveException("invalid data");
-
-        int team = settings.getIntParams()[0];
+        int team = this.getWiredSettings().getIntegerParams()[0];
 
         if(team < 1 || team > 4)
             throw new WiredSaveException("Team is invalid");
 
-        int delay = settings.getDelay();
+        int delay = this.getWiredSettings().getDelay();
 
         if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
             throw new WiredSaveException("Delay too long");
 
         this.teamColor = GameTeamColors.values()[team];
-        this.setDelay(delay);
+        this.getWiredSettings().setDelay(delay);
 
         return true;
     }

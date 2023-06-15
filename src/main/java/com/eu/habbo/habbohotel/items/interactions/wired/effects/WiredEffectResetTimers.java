@@ -33,39 +33,8 @@ public class WiredEffectResetTimers extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(1);
-        message.appendInt(this.getDelay());
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) {
-        this.setDelay(settings.getDelay());
+    public boolean saveData() {
+        this.getWiredSettings().setDelay(this.getWiredSettings().getDelay());
         return true;
     }
 
@@ -84,7 +53,7 @@ public class WiredEffectResetTimers extends InteractionWiredEffect {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
@@ -99,13 +68,7 @@ public class WiredEffectResetTimers extends InteractionWiredEffect {
             }
         }
 
-        this.setDelay(this.delay);
-    }
-
-    @Override
-    public void onPickUp() {
-        this.delay = 0;
-        this.setDelay(0);
+        this.getWiredSettings().setDelay(this.delay);
     }
 
     @Override

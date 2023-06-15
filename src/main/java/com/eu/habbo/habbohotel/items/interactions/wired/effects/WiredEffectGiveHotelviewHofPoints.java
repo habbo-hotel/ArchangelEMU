@@ -31,44 +31,14 @@ public class WiredEffectGiveHotelviewHofPoints extends InteractionWiredEffect {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.amount + "");
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(type.getCode());
-        message.appendInt(this.getDelay());
-
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) {
+    public boolean saveData() {
         try {
-            this.amount = Integer.parseInt(settings.getStringParam());
+            this.amount = Integer.parseInt(this.getWiredSettings().getStringParam());
         } catch (Exception e) {
             return false;
         }
 
-        this.setDelay(settings.getDelay());
+        this.getWiredSettings().setDelay(this.getWiredSettings().getDelay());
 
         return true;
     }
@@ -95,23 +65,23 @@ public class WiredEffectGiveHotelviewHofPoints extends InteractionWiredEffect {
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.amount, this.getDelay()));
+        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.amount, this.getWiredSettings().getDelay()));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if(wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
             this.amount = data.amount;
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
         }
         else {
             this.amount = 0;
 
             if (wiredData.split("\t").length >= 2) {
-                super.setDelay(Integer.parseInt(wiredData.split("\t")[0]));
+                this.getWiredSettings().setDelay(Integer.parseInt(wiredData.split("\t")[0]));
 
                 try {
                     this.amount = Integer.parseInt(this.getWiredData().split("\t")[1]);
@@ -121,12 +91,6 @@ public class WiredEffectGiveHotelviewHofPoints extends InteractionWiredEffect {
 
             this.needsUpdate(true);
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.amount = 0;
-        this.setDelay(0);
     }
 
     @Override

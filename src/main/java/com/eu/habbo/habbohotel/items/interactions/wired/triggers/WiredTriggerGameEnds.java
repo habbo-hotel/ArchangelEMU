@@ -35,13 +35,7 @@ public class WiredTriggerGameEnds extends InteractionWiredTrigger {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) {
-    }
-
-    @Override
-    public void onPickUp() {
-
-    }
+    public void loadWiredSettings(ResultSet set, Room room) {}
 
     @Override
     public WiredTriggerType getType() {
@@ -49,36 +43,7 @@ public class WiredTriggerGameEnds extends InteractionWiredTrigger {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-
-        if (!this.isTriggeredByRoomUnit()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getEffects(this.getX(), this.getY()).forEach(object -> {
-                if (object.requiresTriggeringUser()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
+    public boolean saveData() {
         return true;
     }
 }

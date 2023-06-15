@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,8 +38,6 @@ import java.util.stream.Collectors;
 public class WiredEffectToggleFurni extends InteractionWiredEffect {
 
     public static final WiredEffectType type = WiredEffectType.TOGGLE_STATE;
-
-    private final THashSet<HabboItem> items;
 
     private static final List<Class<? extends HabboItem>> FORBIDDEN_TYPES = new ArrayList<>() {
         {
@@ -84,86 +83,41 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
 
     public WiredEffectToggleFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.items = new THashSet<>();
+        this.setItems(new THashSet<>());
     }
 
-    public WiredEffectToggleFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.items = new THashSet<>();
-    }
-
-    @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        THashSet<HabboItem> items = new THashSet<>();
-
-        for (HabboItem item : this.items) {
-            if (item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                items.add(item);
-        }
-
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
-
-        message.appendBoolean(false);
-        message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        message.appendInt(this.items.size());
-        for (HabboItem item : this.items) {
-            message.appendInt(item.getId());
-        }
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-
-        if (this.requiresTriggeringUser()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY()).forEach(object -> {
-                if (!object.isTriggeredByRoomUnit()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
+    public WiredEffectToggleFurni(int id, int userId, Item item, String extraData, int limitedStack, int limitedSells) {
+        super(id, userId, item, extraData, limitedStack, limitedSells);
+        this.setItems(new THashSet<>());
     }
 
     @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
-        int itemsCount = settings.getFurniIds().length;
+    public boolean saveData() throws WiredSaveException {
+        int itemsCount = this.getWiredSettings().getItems().length;
 
         if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
             throw new WiredSaveException("Too many furni selected");
         }
 
-        List<HabboItem> newItems = new ArrayList<>();
+        THashSet<HabboItem> newItems = new THashSet<>();
 
         for (int i = 0; i < itemsCount; i++) {
-            int itemId = settings.getFurniIds()[i];
+            int itemId = this.getWiredSettings().getItems()[i];
             HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
 
-            if(it == null)
+            if(it == null) {
                 throw new WiredSaveException(String.format("Item %s not found", itemId));
+            }
 
             newItems.add(it);
         }
 
-        int delay = settings.getDelay();
-
-        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
+        if(this.getWiredSettings().getDelay() > Emulator.getConfig().getInt("hotel.wired.max_delay", 20)) {
             throw new WiredSaveException("Delay too long");
+        }
 
-        this.items.clear();
-        this.items.addAll(newItems);
-        this.setDelay(delay);
+        this.setItems(newItems);
+        this.getWiredSettings().setDelay(this.getWiredSettings().getDelay());
 
         return true;
     }
@@ -173,7 +127,7 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
         Habbo habbo = room.getHabbo(roomUnit);
 
         THashSet<HabboItem> itemsToRemove = new THashSet<>();
-        for (HabboItem item : this.items) {
+        for (HabboItem item : this.getItems()) {
             if (item == null || item.getRoomId() == 0 || FORBIDDEN_TYPES.stream().anyMatch(a -> a.isAssignableFrom(item.getClass()))) {
                 itemsToRemove.add(item);
                 continue;
@@ -196,7 +150,7 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
             }
         }
 
-        this.items.removeAll(itemsToRemove);
+        this.getItems().removeAll(itemsToRemove);
 
         return true;
     }
@@ -204,19 +158,19 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
     @Override
     public String getWiredData() {
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.getDelay(),
-                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
+                this.getWiredSettings().getDelay(),
+                this.getItems().stream().map(HabboItem::getId).collect(Collectors.toList())
         ));
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        this.items.clear();
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
+        this.getItems().clear();
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
             for (Integer id: data.itemIds) {
                 HabboItem item = room.getHabboItem(id);
 
@@ -225,14 +179,14 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
                 }
 
                 if (item != null) {
-                    this.items.add(item);
+                    this.getItems().add(item);
                 }
             }
         } else {
             String[] wiredDataOld = wiredData.split("\t");
 
             if (wiredDataOld.length >= 1) {
-                this.setDelay(Integer.parseInt(wiredDataOld[0]));
+                this.getWiredSettings().setDelay(Integer.parseInt(wiredDataOld[0]));
             }
             if (wiredDataOld.length == 2) {
                 if (wiredDataOld[1].contains(";")) {
@@ -243,17 +197,11 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
                             continue;
 
                         if (item != null)
-                            this.items.add(item);
+                            this.getItems().add(item);
                     }
                 }
             }
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.items.clear();
-        this.setDelay(0);
     }
 
     @Override

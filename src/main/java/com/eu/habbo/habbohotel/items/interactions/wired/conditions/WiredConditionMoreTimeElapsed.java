@@ -3,18 +3,18 @@ package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredConditionMoreTimeElapsed extends InteractionWiredCondition {
     private static final WiredConditionType type = WiredConditionType.TIME_MORE_THAN;
+    private static final int PARAM_CYCLE = 0;
 
     private int cycles;
 
@@ -39,7 +39,7 @@ public class WiredConditionMoreTimeElapsed extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         try {
@@ -55,35 +55,13 @@ public class WiredConditionMoreTimeElapsed extends InteractionWiredCondition {
     }
 
     @Override
-    public void onPickUp() {
-        this.cycles = 0;
-    }
-
-    @Override
     public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(1);
-        message.appendInt(this.cycles);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(0);
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 1) return false;
-        this.cycles = settings.getIntParams()[0];
+    public boolean saveData() throws WiredSaveException {
+        this.cycles = this.getWiredSettings().getIntegerParams()[PARAM_CYCLE];
         return true;
     }
 

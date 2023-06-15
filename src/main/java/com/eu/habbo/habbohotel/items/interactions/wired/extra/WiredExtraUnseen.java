@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import lombok.Getter;
 
 import java.sql.ResultSet;
@@ -37,18 +38,13 @@ public class WiredExtraUnseen extends InteractionWiredExtra {
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
+    public void loadWiredSettings(ResultSet set, Room room) {
 
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) {
-
-    }
-
-    @Override
-    public void onPickUp() {
-        this.seenList.clear();
+    public boolean saveData() throws WiredSaveException {
+        return false;
     }
 
     @Override

@@ -48,7 +48,7 @@ public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         String wiredData = set.getString("wired_data");
 
         if (wiredData.startsWith("{")) {
@@ -60,33 +60,13 @@ public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger {
     }
 
     @Override
-    public void onPickUp() {
-        this.username = "";
-    }
-
-    @Override
     public WiredTriggerType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString(this.username);
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(0);
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        this.username = settings.getStringParam();
+    public boolean saveData() {
+        this.username = this.getWiredSettings().getStringParam();
 
         return true;
     }

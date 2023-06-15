@@ -58,7 +58,7 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         this.items.clear();
         String wiredData = set.getString("wired_data");
 
@@ -86,39 +86,13 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
     }
 
     @Override
-    public void onPickUp() {
-        this.items.clear();
-    }
-
-    @Override
     public WiredConditionType getType() {
         return type;
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        this.refresh();
-
-        message.appendBoolean(false);
-        message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        message.appendInt(this.items.size());
-
-        for (HabboItem item : this.items)
-            message.appendInt(item.getId());
-
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(0);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(0);
-        message.appendInt(0);
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        int count = settings.getFurniIds().length;
+    public boolean saveData() {
+        int count = this.getWiredSettings().getItems().length;
         if (count > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) return false;
 
         this.items.clear();
@@ -127,7 +101,7 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
 
         if (room != null) {
             for (int i = 0; i < count; i++) {
-                HabboItem item = room.getHabboItem(settings.getFurniIds()[i]);
+                HabboItem item = room.getHabboItem(this.getWiredSettings().getItems()[i]);
 
                 if (item != null) {
                     this.items.add(item);

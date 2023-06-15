@@ -40,7 +40,7 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData(WiredSettings settings, GameClient gameClient) throws WiredSaveException {
+    public boolean saveData() throws WiredSaveException {
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
 
         if (room == null)
@@ -49,16 +49,16 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
         this.items.clear();
         this.indexOffset.clear();
 
-        if(settings.getIntParams().length < 2) throw new WiredSaveException("invalid data");
-        this.direction = settings.getIntParams()[0];
-        this.spacing = settings.getIntParams()[1];
+        if(this.getWiredSettings().getIntegerParams().length < 2) throw new WiredSaveException("invalid data");
+        this.direction = this.getWiredSettings().getIntegerParams()[0];
+        this.spacing = this.getWiredSettings().getIntegerParams()[1];
 
-        int count = settings.getFurniIds().length;
+        int count = this.getWiredSettings().getItems().length;
         for (int i = 0; i < count; i++) {
-            this.items.add(room.getHabboItem(settings.getFurniIds()[i]));
+            this.items.add(room.getHabboItem(this.getWiredSettings().getItems()[i]));
         }
 
-        this.setDelay(settings.getDelay());
+        this.getWiredSettings().setDelay(this.getWiredSettings().getDelay());
 
         return true;
     }
@@ -137,43 +137,13 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
         return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
                 this.direction,
                 this.spacing,
-                this.getDelay(),
+                this.getWiredSettings().getDelay(),
                 this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
         ));
     }
 
     @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        THashSet<HabboItem> items = new THashSet<>();
-
-        for (HabboItem item : this.items) {
-            if (item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                items.add(item);
-        }
-
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
-
-        message.appendBoolean(false);
-        message.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        message.appendInt(this.items.size());
-        for (HabboItem item : this.items)
-            message.appendInt(item.getId());
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(2);
-        message.appendInt(this.direction);
-        message.appendInt(this.spacing);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-        message.appendInt(this.getDelay());
-        message.appendInt(0);
-    }
-
-    @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
+    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
         this.items.clear();
         String wiredData = set.getString("wired_data");
 
@@ -181,7 +151,7 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
             JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
             this.direction = data.direction;
             this.spacing = data.spacing;
-            this.setDelay(data.delay);
+            this.getWiredSettings().setDelay(data.delay);
 
             for (Integer id: data.itemIds) {
                 HabboItem item = room.getHabboItem(id);
@@ -196,7 +166,7 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
                 try {
                     this.direction = Integer.parseInt(data[0]);
                     this.spacing = Integer.parseInt(data[1]);
-                    this.setDelay(Integer.parseInt(data[2]));
+                    this.getWiredSettings().setDelay(Integer.parseInt(data[2]));
                 } catch (Exception ignored) {
                 }
 
@@ -208,15 +178,6 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
                 }
             }
         }
-    }
-
-    @Override
-    public void onPickUp() {
-        this.setDelay(0);
-        this.items.clear();
-        this.direction = 0;
-        this.spacing = 0;
-        this.indexOffset.clear();
     }
 
     @Override
