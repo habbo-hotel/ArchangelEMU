@@ -21,7 +21,7 @@ public class WiredEffectGiveEffect extends WiredEffectWhisper {
         int effectId;
 
         try {
-            effectId = Integer.parseInt(this.message);
+            effectId = Integer.parseInt(this.getWiredSettings().getStringParam());
         } catch (Exception e) {
             return false;
         }

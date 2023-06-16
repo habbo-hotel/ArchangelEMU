@@ -20,7 +20,7 @@ public class WiredEffectGiveHandItem extends WiredEffectWhisper {
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         try {
-            int itemId = Integer.parseInt(this.message);
+            int itemId = Integer.parseInt(this.getWiredSettings().getStringParam());
 
             Habbo habbo = room.getHabbo(roomUnit);
 

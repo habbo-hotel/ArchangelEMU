@@ -16,54 +16,37 @@ import java.sql.SQLException;
 public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
     private static final WiredTriggerType type = WiredTriggerType.SAY_SOMETHING;
 
-    private boolean ownerOnly = false;
-    private String key = "";
+    private static int PARAM_OWNER_ONLY = 0;
 
     public WiredTriggerHabboSaysKeyword(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredTriggerHabboSaysKeyword(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredTriggerHabboSaysKeyword(int id, int userId, Item item, String extraData, int limitedStack, int limitedSells) {
+        super(id, userId, item, extraData, limitedStack, limitedSells);
     }
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (this.key.length() > 0) {
-            if (stuff[0] instanceof String) {
-                if (((String) stuff[0]).toLowerCase().contains(this.key.toLowerCase())) {
-                    Habbo habbo = room.getHabbo(roomUnit);
-                    return !this.ownerOnly || (habbo != null && room.getOwnerId() == habbo.getHabboInfo().getId());
-                }
+        if (this.getWiredSettings().getStringParam().isEmpty()) {
+            return false;
+        }
+
+        boolean ownerOnly = this.getWiredSettings().getIntegerParams()[PARAM_OWNER_ONLY] == 1;
+
+        if (stuff[0] instanceof String) {
+            if (((String) stuff[0]).toLowerCase().contains(this.getWiredSettings().getStringParam().toLowerCase())) {
+                Habbo habbo = room.getHabbo(roomUnit);
+                return !ownerOnly || (habbo != null && room.getOwnerId() == habbo.getHabboInfo().getId());
             }
         }
+
         return false;
     }
 
     @Override
     public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-            this.ownerOnly,
-            this.key
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.ownerOnly = data.ownerOnly;
-            this.key = data.key;
-        } else {
-            String[] data = wiredData.split("\t");
-
-            if (data.length == 2) {
-                this.ownerOnly = data[0].equalsIgnoreCase("1");
-                this.key = data[1];
-            }
-        }
+        return "";
     }
 
     @Override
@@ -73,25 +56,11 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
 
     @Override
     public boolean saveData() {
-        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
-        this.ownerOnly = this.getWiredSettings().getIntegerParams()[0] == 1;
-        this.key = this.getWiredSettings().getStringParam();
-
         return true;
     }
 
     @Override
     public boolean isTriggeredByRoomUnit() {
         return true;
-    }
-
-    static class JsonData {
-        boolean ownerOnly;
-        String key;
-
-        public JsonData(boolean ownerOnly, String key) {
-            this.ownerOnly = ownerOnly;
-            this.key = key;
-        }
     }
 }

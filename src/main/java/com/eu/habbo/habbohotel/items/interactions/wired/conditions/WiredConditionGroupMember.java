@@ -39,9 +39,6 @@ public class WiredConditionGroupMember extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadWiredSettings(ResultSet set, Room room) {}
-
-    @Override
     public WiredConditionType getType() {
         return type;
     }

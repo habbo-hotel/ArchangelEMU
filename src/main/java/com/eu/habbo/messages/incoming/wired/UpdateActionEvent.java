@@ -29,12 +29,9 @@ public class UpdateActionEvent extends MessageHandler {
                     }
 
                     effect.loadWiredSettings(this.packet, true);
-
-                    if (effect.saveData()) {
-                        this.client.sendResponse(new WiredSavedComposer());
-                        effect.needsUpdate(true);
-                        Emulator.getThreading().run(effect);
-                    }
+                    this.client.sendResponse(new WiredSavedComposer());
+                    effect.needsUpdate(true);
+                    Emulator.getThreading().run(effect);
                 }
                 catch (WiredSaveException e) {
                     this.client.sendResponse(new WiredValidationErrorComposer(e.getMessage()));

@@ -23,7 +23,7 @@ public class WiredEffectAlert extends WiredEffectWhisper {
         Habbo habbo = room.getHabbo(roomUnit);
 
         if (habbo != null) {
-            habbo.alert(this.message
+            habbo.alert(this.getWiredSettings().getStringParam()
                     .replace("%online%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "")
                     .replace("%username%", habbo.getHabboInfo().getUsername())
                     .replace("%roomsloaded%", Emulator.getGameEnvironment().getRoomManager().loadedRoomsCount() + ""));

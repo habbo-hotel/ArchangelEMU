@@ -27,12 +27,9 @@ public class UpdateTriggerEvent extends MessageHandler {
                     }
 
                     trigger.loadWiredSettings(this.packet, false);
-
-                    if (trigger.saveData()) {
-                        this.client.sendResponse(new WiredSavedComposer());
-                        trigger.needsUpdate(true);
-                        Emulator.getThreading().run(trigger);
-                    }
+                    this.client.sendResponse(new WiredSavedComposer());
+                    trigger.needsUpdate(true);
+                    Emulator.getThreading().run(trigger);
                 }
                 catch (WiredSaveException e) {
                     this.client.sendResponse(new WiredValidationErrorComposer(e.getMessage()));

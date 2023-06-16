@@ -3,11 +3,11 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
-import com.eu.habbo.habbohotel.items.interactions.wired.effects.WiredEffectWhisper;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.wired.WiredExclusionStrategy;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
@@ -40,7 +40,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     private long cooldown;
     private final TLongLongHashMap userExecutionCache = new TLongLongHashMap(3);
 
-    InteractionWired(ResultSet set, Item baseItem) throws SQLException {
+    public InteractionWired(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.items = new THashSet<>();
         this.wiredData = "";
@@ -57,17 +57,14 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     }
 
     public abstract boolean execute(RoomUnit roomUnit, Room room, Object[] stuff);
-
     public abstract boolean saveData() throws WiredSaveException;
 
     @Override
     public void run() {
         if (this.needsUpdate()) {
-            String wiredData = this.getWiredData();
+            WiredExclusionStrategy exclusionStrategy = new WiredExclusionStrategy(this.wiredSettings);
 
-            if (wiredData == null) {
-                wiredData = "";
-            }
+            String wiredData = WiredHandler.getGsonBuilder().setExclusionStrategies(exclusionStrategy).create().toJson(this.wiredSettings);
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE items SET wired_data = ? WHERE id = ?")) {
                 if (this.getRoomId() != 0) {
@@ -104,7 +101,6 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     protected long requiredCooldown() {
         return 50L;
     }
-
 
     public boolean canExecute(long newMillis) {
         return newMillis - this.cooldown >= this.requiredCooldown();
@@ -143,7 +139,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         this.userExecutionCache.put(roomUnitId, timestamp);
     }
 
-    public WiredSettings loadWiredSettings(ClientMessage packet, boolean isWiredEffect) {
+    public void loadWiredSettings(ClientMessage packet, boolean isWiredEffect) {
         WiredSettings settings = new WiredSettings();
 
         int intParamCount = packet.readInt();
@@ -156,8 +152,6 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
 
         settings.setIntegerParams(integerParams);
         settings.setStringParam(packet.readString());
-
-        System.out.println(settings.getStringParam());
 
         int itemCount = packet.readInt();
         int[] itemIds = new int[itemCount];
@@ -177,29 +171,17 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         settings.setSelectionType(packet.readInt());
 
         this.wiredSettings = settings;
-
-        return this.wiredSettings;
     }
 
     public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        WiredSettings settings = new WiredSettings();
-
         String wiredData = set.getString("wired_data");
 
-//        if(wiredData.startsWith("{")) {
-//            WiredEffectWhisper.JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredEffectWhisper.JsonData.class);
-//            this.getWiredSettings().setDelay(data.delay);
-//            this.message = data.message;
-//        }
-//        else {
-//            this.message = "";
-//
-//            if (wiredData.split("\t").length >= 2) {
-//                super.setDelay(Integer.parseInt(wiredData.split("\t")[0]));
-//                this.message = wiredData.split("\t")[1];
-//            }
-//
-//            this.needsUpdate(true);
-//        }
+        WiredSettings settings = new WiredSettings();
+
+        if(wiredData.startsWith("{")) {
+            settings = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredSettings.class);
+        }
+
+        this.wiredSettings = settings;
     }
 }

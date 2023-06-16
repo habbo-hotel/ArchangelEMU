@@ -27,12 +27,9 @@ public class UpdateConditionEvent extends MessageHandler {
                     }
 
                     condition.loadWiredSettings(this.packet, true);
-
-                    if (condition.saveData()) {
-                        this.client.sendResponse(new WiredSavedComposer());
-                        condition.needsUpdate(true);
-                        Emulator.getThreading().run(condition);
-                    }
+                    this.client.sendResponse(new WiredSavedComposer());
+                    condition.needsUpdate(true);
+                    Emulator.getThreading().run(condition);
                 }
                 catch (WiredSaveException e) {
                     this.client.sendResponse(new WiredValidationErrorComposer(e.getMessage()));

@@ -1,9 +1,10 @@
 package com.eu.habbo.habbohotel.items.interactions.wired;
 
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredSettings;
 import lombok.Getter;
 import lombok.Setter;
 
-public class WiredSettings {
+public class WiredSettings implements IWiredSettings {
     @Getter
     @Setter
     private int[] integerParams;
