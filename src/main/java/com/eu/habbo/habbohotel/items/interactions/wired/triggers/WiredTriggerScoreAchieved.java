@@ -36,6 +36,13 @@ public class WiredTriggerScoreAchieved extends InteractionWiredTrigger {
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().size() == 0) {
+            this.getWiredSettings().getIntegerParams().add(1);
+        }
+    }
+
+    @Override
     public WiredTriggerType getType() {
         return WiredTriggerType.SCORE_ACHIEVED;
     }

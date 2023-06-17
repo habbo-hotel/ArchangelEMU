@@ -16,6 +16,7 @@ import java.sql.SQLException;
 
 public class WiredConditionTeamMember extends InteractionWiredCondition {
     public final int PARAM_TEAM = 0;
+    private final GameTeamColors DEFAULT_TEAM = GameTeamColors.RED;
 
     public WiredConditionTeamMember(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -44,6 +45,15 @@ public class WiredConditionTeamMember extends InteractionWiredCondition {
         }
 
         return false;
+    }
+
+    @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(1);
+            this.getWiredSettings().getIntegerParams().add(1);
+            this.getWiredSettings().getIntegerParams().add(DEFAULT_TEAM.type);
+        }
     }
 
     @Override

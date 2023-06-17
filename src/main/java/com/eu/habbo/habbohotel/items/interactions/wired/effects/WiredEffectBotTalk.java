@@ -70,6 +70,13 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().size() == 0) {
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
+    }
+
+    @Override
     public WiredEffectType getType() {
         return WiredEffectType.BOT_TALK;
     }

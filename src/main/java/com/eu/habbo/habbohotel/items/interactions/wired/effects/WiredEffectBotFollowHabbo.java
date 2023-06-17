@@ -51,6 +51,13 @@ public class WiredEffectBotFollowHabbo extends InteractionWiredEffect {
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
+    }
+
+    @Override
     public WiredEffectType getType() {
         return WiredEffectType.BOT_FOLLOW_AVATAR;
     }

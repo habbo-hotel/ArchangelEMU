@@ -59,6 +59,14 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
         return startDate < time && endDate >= time;
     }
 
+    @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(0);
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
+    }
+
     /**
      * Returns the {@link WiredConditionType} of this object.
      * @return the type of this wired condition

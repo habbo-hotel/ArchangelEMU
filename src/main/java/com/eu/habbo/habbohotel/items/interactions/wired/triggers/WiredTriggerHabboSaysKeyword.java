@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
-    private static int PARAM_OWNER_ONLY = 0;
+    public int PARAM_OWNER_ONLY = 0;
 
     public WiredTriggerHabboSaysKeyword(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -22,13 +22,6 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
 
     public WiredTriggerHabboSaysKeyword(int id, int userId, Item item, String extraData, int limitedStack, int limitedSells) {
         super(id, userId, item, extraData, limitedStack, limitedSells);
-    }
-
-    @Override
-    public void loadDefaultParams() {
-        if(this.getWiredSettings().getIntegerParams().size() == 0) {
-            this.getWiredSettings().getIntegerParams().add(0);
-        }
     }
 
     @Override
@@ -47,6 +40,13 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
         }
 
         return false;
+    }
+
+    @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().size() == 0) {
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
     }
 
     @Override

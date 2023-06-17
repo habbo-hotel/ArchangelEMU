@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredConditionMoreTimeElapsed extends InteractionWiredCondition {
-    private static final int PARAM_CYCLE = 0;
+    public final int PARAM_CYCLE = 0;
 
     public WiredConditionMoreTimeElapsed(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -28,6 +28,14 @@ public class WiredConditionMoreTimeElapsed extends InteractionWiredCondition {
         int cycles = this.getWiredSettings().getIntegerParams().get(PARAM_CYCLE);
         return (Emulator.getIntUnixTimestamp() - room.getLastTimerReset()) / 0.5 > cycles;
     }
+
+    @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
+    }
+
     @Override
     public WiredConditionType getType() {
         return WiredConditionType.TIME_MORE_THAN;

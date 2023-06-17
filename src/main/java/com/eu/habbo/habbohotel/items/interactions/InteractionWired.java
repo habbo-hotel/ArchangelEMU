@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.wired.WiredExclusionStrategy;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -15,6 +14,7 @@ import com.eu.habbo.messages.outgoing.rooms.items.OneWayDoorStatusMessageCompose
 import com.eu.habbo.messages.outgoing.wired.WiredConditionDataComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredEffectDataComposer;
 import com.eu.habbo.messages.outgoing.wired.WiredTriggerDataComposer;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gnu.trove.map.hash.TLongLongHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +32,6 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     @Getter
     @Setter
     private WiredSettings wiredSettings;
-
     private long cooldown;
     private final TLongLongHashMap userExecutionCache = new TLongLongHashMap(3);
 
@@ -64,13 +63,11 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         if(wiredData.startsWith("{")) {
             this.wiredSettings = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredSettings.class);
         }
-
-        this.loadDefaultParams();
     }
 
     /**
      *
-     * When double clicking into the wired, verify items first and load its default parameters
+     * When double-clicking into the wired, verify items first and load its default parameters
      * then create a composer based on it's Wired Settings
      *
      * @param client
@@ -81,9 +78,6 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         this.wiredSettings.getItems(room);
-
-        //TODO Im not sure about this, the function is optional on its children maybe later just make it abstract
-        this.loadDefaultParams();
 
         if (client != null) {
             if (room.hasRights(client.getHabbo())) {
@@ -148,10 +142,15 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         if (this.needsUpdate()) {
             //TODO HERE IS WERE WIRED_SAVE_EXCEPTION WILL BE THROWN
             //EXAMPLE: if StringParam should be number, throw error here, maybe activating a flag in wiredSettings that string params are numbers
+            this.loadDefaultParams();
 
-            WiredExclusionStrategy exclusionStrategy = new WiredExclusionStrategy(this.wiredSettings);
+            String wiredData = "";
 
-            String wiredData = WiredHandler.getGsonBuilder().setExclusionStrategies(exclusionStrategy).create().toJson(this.wiredSettings);
+            try {
+                wiredData = WiredHandler.getObjectMapper().writeValueAsString(this.wiredSettings);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
 
             if(wiredData.equalsIgnoreCase("{}")) {
                 wiredData = "";

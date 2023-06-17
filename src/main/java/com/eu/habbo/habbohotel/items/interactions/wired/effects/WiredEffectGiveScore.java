@@ -98,6 +98,14 @@ public class WiredEffectGiveScore extends InteractionWiredEffect {
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(1);
+            this.getWiredSettings().getIntegerParams().add(1);
+        }
+    }
+
+    @Override
     public WiredEffectType getType() {
         return WiredEffectType.GIVE_SCORE;
     }

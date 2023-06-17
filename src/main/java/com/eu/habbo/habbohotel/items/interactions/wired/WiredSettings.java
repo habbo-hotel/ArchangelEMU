@@ -2,9 +2,9 @@ package com.eu.habbo.habbohotel.items.interactions.wired;
 
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
-import gnu.trove.map.hash.THashMap;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,22 +15,27 @@ import java.util.List;
 public class WiredSettings implements IWiredSettings {
     @Getter
     @Setter
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Integer> integerParams;
 
     @Getter
     @Setter
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String stringParam;
 
     @Getter
     @Setter
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Integer> itemIds;
     @Getter
     @Setter
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int delay;
 
     @Getter
     @Setter
-    private transient int selectionType;
+    @JsonIgnore
+    private int selectionType;
 
     public WiredSettings() {
         this.itemIds = new ArrayList<>();

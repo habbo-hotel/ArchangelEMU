@@ -108,6 +108,14 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
         return false;
     }
 
+    @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(0);
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
+    }
+
     private RoomUserRotation nextRotation(RoomUserRotation currentRotation) {
         return switch (this.getWiredSettings().getIntegerParams().get(PARAM_BLOCKED_ACTION)) {
             case ACTION_TURN_BACK -> RoomUserRotation.fromValue(currentRotation.getValue()).getOpposite();

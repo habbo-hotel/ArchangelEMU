@@ -34,6 +34,14 @@ public class WiredConditionHabboCount extends InteractionWiredCondition {
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(0);
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
+    }
+
+    @Override
     public WiredConditionType getType() {
         return WiredConditionType.USER_COUNT;
     }

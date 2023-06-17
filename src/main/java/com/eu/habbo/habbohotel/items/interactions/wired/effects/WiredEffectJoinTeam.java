@@ -23,6 +23,7 @@ import java.util.List;
 
 public class WiredEffectJoinTeam extends InteractionWiredEffect {
     public final int PARAM_TEAM = 0;
+    private GameTeamColors DEFAULT_TEAM = GameTeamColors.RED;
 
     public WiredEffectJoinTeam(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -60,6 +61,13 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
         }
 
         return false;
+    }
+
+    @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(DEFAULT_TEAM.type);
+        }
     }
 
     @Override

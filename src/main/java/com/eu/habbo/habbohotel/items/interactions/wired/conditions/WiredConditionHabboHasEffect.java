@@ -35,6 +35,13 @@ public class WiredConditionHabboHasEffect extends InteractionWiredCondition {
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
+    }
+
+    @Override
     public WiredConditionType getType() {
         return WiredConditionType.ACTOR_WEARS_EFFECT;
     }

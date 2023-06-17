@@ -33,11 +33,6 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
     }
 
     @Override
-    public WiredConditionType getType() {
-        return WiredConditionType.MATCH_SSHOT;
-    }
-
-    @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         if(this.getWiredSettings().getItemIds().isEmpty()) {
             return true;
@@ -75,6 +70,15 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(0);
+            this.getWiredSettings().getIntegerParams().add(0);
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
+    }
+
+    @Override
     public boolean shouldMatchState() {
         return this.getWiredSettings().getIntegerParams().get(PARAM_STATE) == 1;
     }
@@ -87,5 +91,10 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
     @Override
     public boolean shouldMatchPosition() {
         return this.getWiredSettings().getIntegerParams().get(PARAM_POSITION) == 1;
+    }
+
+    @Override
+    public WiredConditionType getType() {
+        return WiredConditionType.MATCH_SSHOT;
     }
 }

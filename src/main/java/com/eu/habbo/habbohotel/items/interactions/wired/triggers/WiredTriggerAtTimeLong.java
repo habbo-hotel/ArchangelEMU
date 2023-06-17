@@ -33,6 +33,13 @@ public class WiredTriggerAtTimeLong extends InteractionWiredTrigger implements W
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().size() == 0) {
+            this.getWiredSettings().getIntegerParams().add(1);
+        }
+    }
+
+    @Override
     public void resetTimer() {
         this.taskId++;
         Emulator.getThreading().run(new WiredExecuteTask(this, Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId())), this.getWiredSettings().getIntegerParams().get(PARAM_EXECUTE_TIME));

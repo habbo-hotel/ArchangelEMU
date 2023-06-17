@@ -27,6 +27,7 @@ import com.eu.habbo.plugin.events.furniture.wired.WiredConditionFailedEvent;
 import com.eu.habbo.plugin.events.furniture.wired.WiredStackExecutedEvent;
 import com.eu.habbo.plugin.events.furniture.wired.WiredStackTriggeredEvent;
 import com.eu.habbo.plugin.events.users.UserWiredRewardReceivedEvent;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.GsonBuilder;
 import gnu.trove.set.hash.THashSet;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,8 @@ public class WiredHandler {
     public static int TELEPORT_DELAY = 500;
 
     private static GsonBuilder gsonBuilder = null;
+
+    private static ObjectMapper objectMapper = null;
 
     public static boolean handle(WiredTriggerType triggerType, RoomUnit roomUnit, Room room, Object[] stuff) {
         if (triggerType == WiredTriggerType.CUSTOM) return false;
@@ -255,6 +258,14 @@ public class WiredHandler {
             gsonBuilder = new GsonBuilder();
         }
         return gsonBuilder;
+    }
+
+    public static ObjectMapper getObjectMapper() {
+        if(objectMapper == null) {
+            objectMapper = new ObjectMapper();
+        }
+
+        return objectMapper;
     }
 
     public static boolean executeEffectsAtTiles(THashSet<RoomTile> tiles, final RoomUnit roomUnit, final Room room, final Object[] stuff) {

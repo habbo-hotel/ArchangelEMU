@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements ICycleable, WiredTriggerReset {
-    private static final int PARAM_REPEAT_TIME = 0;
+    public final int PARAM_REPEAT_TIME = 0;
     private int counter = 0;
 
     public WiredTriggerRepeaterLong(ResultSet set, Item baseItem) throws SQLException {

@@ -33,6 +33,13 @@ public class WiredTriggerAtSetTime extends InteractionWiredTrigger implements Wi
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().size() == 0) {
+            this.getWiredSettings().getIntegerParams().add(1);
+        }
+    }
+
+    @Override
     public void resetTimer() {
         this.taskId++;
 

@@ -23,6 +23,8 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
     public final int PARAM_TEAM = 2;
     private final TIntIntHashMap startTimes = new TIntIntHashMap();
 
+    private final GameTeamColors DEFAULT_TEAM = GameTeamColors.RED;
+
     public WiredEffectGiveScoreToTeam(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
@@ -67,6 +69,15 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
         }
 
         return true;
+    }
+
+    @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().isEmpty()) {
+            this.getWiredSettings().getIntegerParams().add(1);
+            this.getWiredSettings().getIntegerParams().add(1);
+            this.getWiredSettings().getIntegerParams().add(DEFAULT_TEAM.type);
+        }
     }
 
     @Override
