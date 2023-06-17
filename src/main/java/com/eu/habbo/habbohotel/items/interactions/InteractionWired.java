@@ -62,6 +62,8 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
 
         if(wiredData.startsWith("{")) {
             this.wiredSettings = WiredHandler.getObjectMapper().readValue(wiredData, WiredSettings.class);
+        } else {
+            //TODO READ OLD DATA SAVING
         }
     }
 
