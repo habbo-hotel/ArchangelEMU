@@ -19,16 +19,6 @@ public abstract class InteractionWiredCondition extends InteractionWired {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
 
-    @Override
-    public void onClick(GameClient client, Room room, Object[] objects) {
-        if (client != null) {
-            if (room.hasRights(client.getHabbo())) {
-                client.sendResponse(new WiredConditionDataComposer(this, room));
-                this.activateBox(room);
-            }
-        }
-    }
-
     public abstract WiredConditionType getType();
 
     public WiredConditionOperator operator() {

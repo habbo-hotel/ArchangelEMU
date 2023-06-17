@@ -1,9 +1,7 @@
 package com.eu.habbo.messages.incoming.wired;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWired;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -26,7 +24,7 @@ public class UpdateConditionEvent extends MessageHandler {
                         throw new WiredSaveException(String.format("Wired condition with item id %s not found in room", itemId));
                     }
 
-                    condition.loadWiredSettings(this.packet, true);
+                    condition.saveWiredSettings(this.packet);
                     this.client.sendResponse(new WiredSavedComposer());
                     condition.needsUpdate(true);
                     Emulator.getThreading().run(condition);

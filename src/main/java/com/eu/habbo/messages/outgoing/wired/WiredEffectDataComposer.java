@@ -17,8 +17,6 @@ public class WiredEffectDataComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.wiredEffectDataComposer);
 
-//        this.effect.serializeWiredData(this.response, this.room); @DEPRECATED
-
         this.response.appendBoolean(false);
         this.response.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
         this.response.appendInt(this.effect.getWiredSettings().getItemIds().size());

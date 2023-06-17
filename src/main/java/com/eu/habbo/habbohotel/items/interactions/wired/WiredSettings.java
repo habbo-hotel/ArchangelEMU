@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.items.interactions.wired;
 
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -29,7 +30,7 @@ public class WiredSettings implements IWiredSettings {
 
     @Getter
     @Setter
-    private int selectionType;
+    private transient int selectionType;
 
     public WiredSettings() {
         this.itemIds = new ArrayList<>();
@@ -42,11 +43,15 @@ public class WiredSettings implements IWiredSettings {
     public THashSet<HabboItem> getItems(Room room) {
         THashSet<HabboItem> items = new THashSet<>();
 
-        for(int itemId : this.itemIds) {
-            HabboItem item = room.getHabboItem(itemId);
+        if(this.itemIds.size() == 0) {
+            return items;
+        }
+
+        for(int i = 0; i < this.itemIds.size(); i++) {
+            HabboItem item = room.getHabboItem(this.itemIds.get(i));
 
             if(item == null || item.getRoomId() == 0) {
-                this.itemIds.remove(itemId);
+                this.itemIds.remove(i);
                 continue;
             }
 
@@ -54,5 +59,13 @@ public class WiredSettings implements IWiredSettings {
         }
 
         return items;
+    }
+
+    public void dispose() {
+        this.integerParams.clear();
+        this.itemIds.clear();
+        this.stringParam = "";
+        this.delay = 0;
+        this.selectionType = 0;
     }
 }

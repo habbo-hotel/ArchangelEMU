@@ -14,9 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements ICycleable, WiredTriggerReset {
-    public static final int DEFAULT_DELAY = 10 * 5000;
     private static final int PARAM_REPEAT_TIME = 0;
-    private int repeatTime = DEFAULT_DELAY;
     private int counter = 0;
 
     public WiredTriggerRepeaterLong(ResultSet set, Item baseItem) throws SQLException {
@@ -30,6 +28,13 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         return true;
+    }
+
+    @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().size() == 0) {
+            this.getWiredSettings().getIntegerParams().add(1);
+        }
     }
 
     @Override

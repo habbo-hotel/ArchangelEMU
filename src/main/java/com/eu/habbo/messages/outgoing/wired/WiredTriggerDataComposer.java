@@ -16,7 +16,6 @@ public class WiredTriggerDataComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.wiredTriggerDataComposer);
-//        this.trigger.serializeWiredData(this.response, this.room); @DEPRECATED
 
         this.response.appendBoolean(false);
         this.response.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);

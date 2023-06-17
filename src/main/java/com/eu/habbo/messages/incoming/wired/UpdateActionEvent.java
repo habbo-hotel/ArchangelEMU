@@ -1,9 +1,7 @@
 package com.eu.habbo.messages.incoming.wired;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWired;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -28,7 +26,7 @@ public class UpdateActionEvent extends MessageHandler {
                         throw new WiredSaveException(String.format("Wired effect with item id %s not found in room", itemId));
                     }
 
-                    effect.loadWiredSettings(this.packet, true);
+                    effect.saveWiredSettings(this.packet);
                     this.client.sendResponse(new WiredSavedComposer());
                     effect.needsUpdate(true);
                     Emulator.getThreading().run(effect);

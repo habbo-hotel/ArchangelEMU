@@ -16,7 +16,6 @@ public class WiredConditionDataComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.wiredConditionDataComposer);
-//        this.condition.serializeWiredData(this.response, this.room); @DEPRECATED
 
         this.response.appendBoolean(false);
         this.response.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);

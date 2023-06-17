@@ -33,6 +33,14 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
     }
 
     @Override
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().size() == 0) {
+            this.getWiredSettings().getIntegerParams().add(0);
+            this.getWiredSettings().getIntegerParams().add(0);
+        }
+    }
+
+    @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         if(this.getWiredSettings().getItemIds().isEmpty()) {
             return false;

@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredInteraction;
@@ -9,8 +10,11 @@ import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredExclusionStrategy;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
+import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.OneWayDoorStatusMessageComposer;
+import com.eu.habbo.messages.outgoing.wired.WiredConditionDataComposer;
+import com.eu.habbo.messages.outgoing.wired.WiredEffectDataComposer;
+import com.eu.habbo.messages.outgoing.wired.WiredTriggerDataComposer;
 import gnu.trove.map.hash.TLongLongHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,10 +31,6 @@ import java.util.List;
 public abstract class InteractionWired extends InteractionDefault implements IWiredInteraction {
     @Getter
     @Setter
-    private String wiredData;
-
-    @Getter
-    @Setter
     private WiredSettings wiredSettings;
 
     private long cooldown;
@@ -38,20 +38,111 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
 
     public InteractionWired(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.wiredData = "";
         this.wiredSettings = new WiredSettings();
         this.setExtradata("0");
     }
 
     InteractionWired(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.wiredData = "";
         this.wiredSettings = new WiredSettings();
         this.setExtradata("0");
     }
 
     public abstract boolean execute(RoomUnit roomUnit, Room room, Object[] stuff);
 
+    /**
+     * On Room Loading run this, get Wired Data from Database and save it into the item
+     *
+     * @param set
+     * @throws SQLException
+     */
+    public void loadWiredSettings(ResultSet set) throws SQLException {
+        String wiredData = set.getString("wired_data");
+
+        this.wiredSettings = new WiredSettings();
+
+        if(wiredData.startsWith("{")) {
+            this.wiredSettings = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredSettings.class);
+        }
+
+        this.loadDefaultParams();
+    }
+
+    /**
+     *
+     * When double clicking into the wired, verify items first and load its default parameters
+     * then create a composer based on it's Wired Settings
+     *
+     * @param client
+     * @param room
+     * @param objects
+     * @throws Exception
+     */
+    @Override
+    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
+        this.wiredSettings.getItems(room);
+
+        //TODO Im not sure about this, the function is optional on its children maybe later just make it abstract
+        this.loadDefaultParams();
+
+        if (client != null) {
+            if (room.hasRights(client.getHabbo())) {
+                MessageComposer composer = null;
+                if(this instanceof InteractionWiredEffect) {
+                    composer = new WiredEffectDataComposer((InteractionWiredEffect) this, room);
+                } else if(this instanceof  InteractionWiredCondition) {
+                    composer = new WiredConditionDataComposer((InteractionWiredCondition) this, room);
+                } else if(this instanceof  InteractionWiredTrigger) {
+                    composer = new WiredTriggerDataComposer((InteractionWiredTrigger) this, room);
+                }
+
+                client.sendResponse(composer);
+                this.activateBox(room);
+            }
+        }
+    }
+
+    /**
+     * When click save changes on the wired this executes, reads all the packet
+     * And updates wired current Wired Settings
+     *
+     * @param packet
+     */
+    public void saveWiredSettings(ClientMessage packet) {
+        int intParamCount = packet.readInt();
+        List<Integer> integerParams = new ArrayList<>();
+
+        for(int i = 0; i < intParamCount; i++)
+        {
+            integerParams.add(packet.readInt());
+        }
+
+        this.wiredSettings.setIntegerParams(integerParams);
+        this.wiredSettings.setStringParam(packet.readString());
+
+        int itemCount = packet.readInt();
+        List<Integer> itemIds = new ArrayList<>();
+
+        for(int i = 0; i < itemCount; i++)
+        {
+            itemIds.add(packet.readInt());
+        }
+
+        this.wiredSettings.setItemIds(itemIds);
+
+        if(this instanceof InteractionWiredEffect) {
+            this.wiredSettings.setDelay(packet.readInt());
+        }
+
+        this.wiredSettings.setSelectionType(packet.readInt());
+    }
+
+    /**
+     * This is executed on 3 different situations
+     * When finishing executing: `saveWiredSettings`, when placing this item on floor, and when picking it up.
+     * This what it does is converts Wired Settings into a JSON string
+     * and updates wired_data in the database
+     */
     @Override
     public void run() {
         if (this.needsUpdate()) {
@@ -61,6 +152,10 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
             WiredExclusionStrategy exclusionStrategy = new WiredExclusionStrategy(this.wiredSettings);
 
             String wiredData = WiredHandler.getGsonBuilder().setExclusionStrategies(exclusionStrategy).create().toJson(this.wiredSettings);
+
+            if(wiredData.equalsIgnoreCase("{}")) {
+                wiredData = "";
+            }
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE items SET wired_data = ? WHERE id = ?")) {
                 if (this.getRoomId() != 0) {
@@ -77,11 +172,17 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         super.run();
     }
 
+    /**
+     * When picking up the wired, all its settings are erased and updated in database
+     *
+     * @param room
+     */
     @Override
     public void onPickUp(Room room) {
-        this.wiredSettings = null;
-        //TODO not sure about this
+        this.wiredSettings.dispose();
     }
+
+    public void loadDefaultParams() {}
 
     public void activateBox(Room room) {
         this.activateBox(room, null, 0L);
@@ -123,7 +224,6 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
                 long lastTimestamp = this.userExecutionCache.get(roomUnitId);
                 return timestamp - lastTimestamp >= 100L;
             }
-
         }
         return true;
     }
@@ -134,51 +234,5 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
 
     public void addUserExecutionCache(int roomUnitId, long timestamp) {
         this.userExecutionCache.put(roomUnitId, timestamp);
-    }
-
-    public void loadWiredSettings(ClientMessage packet, boolean isWiredEffect) {
-        WiredSettings settings = new WiredSettings();
-
-        int intParamCount = packet.readInt();
-        List<Integer> integerParams = new ArrayList<>();
-
-        for(int i = 0; i < intParamCount; i++)
-        {
-            integerParams.add(packet.readInt());
-        }
-
-        settings.setIntegerParams(integerParams);
-        settings.setStringParam(packet.readString());
-
-        int itemCount = packet.readInt();
-        List<Integer> itemIds = new ArrayList<>();
-
-        for(int i = 0; i < itemCount; i++)
-        {
-            itemIds.add(packet.readInt());
-        }
-
-        settings.setItemIds(itemIds);
-
-        if(isWiredEffect)
-        {
-            settings.setDelay(packet.readInt());
-        }
-
-        settings.setSelectionType(packet.readInt());
-
-        this.wiredSettings = settings;
-    }
-
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        WiredSettings settings = new WiredSettings();
-
-        if(wiredData.startsWith("{")) {
-            settings = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredSettings.class);
-        }
-
-        this.wiredSettings = settings;
     }
 }

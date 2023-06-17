@@ -48,16 +48,6 @@ public abstract class InteractionWiredEffect extends InteractionWired implements
         return blockedTriggers;
     }
 
-    @Override
-    public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        if (client != null) {
-            if (room.hasRights(client.getHabbo())) {
-                client.sendResponse(new WiredEffectDataComposer(this, room));
-                this.activateBox(room);
-            }
-        }
-    }
-
     public boolean requiresTriggeringUser() {
         return false;
     }

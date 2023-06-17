@@ -32,23 +32,14 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICy
     }
 
     @Override
-    public void cycle(Room room) {
-        if(this.getWiredSettings() == null) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-                try (PreparedStatement statement = connection.prepareStatement("SELECT id, wired_data FROM items WHERE room_id = ? AND wired_data<>''")) {
-                    statement.setInt(1, room.getId());
-
-                    try (ResultSet set = statement.executeQuery()) {
-                        while (set.next()) {
-                            this.loadWiredSettings(set, room);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+    public void loadDefaultParams() {
+        if(this.getWiredSettings().getIntegerParams().size() == 0) {
+            this.getWiredSettings().getIntegerParams().add(1);
         }
+    }
 
+    @Override
+    public void cycle(Room room) {
         this.counter += 500;
         if (this.counter >= this.getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME) * 500) {
             this.counter = 0;
