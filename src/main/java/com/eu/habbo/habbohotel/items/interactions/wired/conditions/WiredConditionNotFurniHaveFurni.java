@@ -53,7 +53,7 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
     }
 
     @Override
-    public void loadDefaultParams() {
+    public void loadDefaultIntegerParams() {
         if(this.getWiredSettings().getIntegerParams().isEmpty()) {
             this.getWiredSettings().getIntegerParams().add(0);
         }

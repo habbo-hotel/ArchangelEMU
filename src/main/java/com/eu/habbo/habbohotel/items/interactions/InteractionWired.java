@@ -55,13 +55,13 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
      * @param set
      * @throws SQLException
      */
-    public void loadWiredSettings(ResultSet set) throws SQLException {
+    public void loadWiredSettings(ResultSet set) throws SQLException, JsonProcessingException {
         String wiredData = set.getString("wired_data");
 
         this.wiredSettings = new WiredSettings();
 
         if(wiredData.startsWith("{")) {
-            this.wiredSettings = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredSettings.class);
+            this.wiredSettings = WiredHandler.getObjectMapper().readValue(wiredData, WiredSettings.class);
         }
     }
 
@@ -140,9 +140,9 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     @Override
     public void run() {
         if (this.needsUpdate()) {
-            //TODO HERE IS WERE WIRED_SAVE_EXCEPTION WILL BE THROWN
+            //TODO HERE IS WHERE WIRED_SAVE_EXCEPTION WILL BE THROWN
             //EXAMPLE: if StringParam should be number, throw error here, maybe activating a flag in wiredSettings that string params are numbers
-            this.loadDefaultParams();
+            this.loadDefaultIntegerParams();
 
             String wiredData = "";
 
@@ -181,7 +181,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         this.wiredSettings.dispose();
     }
 
-    public void loadDefaultParams() {}
+    public void loadDefaultIntegerParams() {}
 
     public void activateBox(Room room) {
         this.activateBox(room, null, 0L);

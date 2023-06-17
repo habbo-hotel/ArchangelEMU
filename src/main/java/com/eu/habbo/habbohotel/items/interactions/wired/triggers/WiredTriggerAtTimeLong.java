@@ -33,7 +33,7 @@ public class WiredTriggerAtTimeLong extends InteractionWiredTrigger implements W
     }
 
     @Override
-    public void loadDefaultParams() {
+    public void loadDefaultIntegerParams() {
         if(this.getWiredSettings().getIntegerParams().size() == 0) {
             this.getWiredSettings().getIntegerParams().add(1);
         }

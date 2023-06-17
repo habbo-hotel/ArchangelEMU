@@ -32,7 +32,7 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICy
     }
 
     @Override
-    public void loadDefaultParams() {
+    public void loadDefaultIntegerParams() {
         if(this.getWiredSettings().getIntegerParams().size() == 0) {
             this.getWiredSettings().getIntegerParams().add(1);
         }

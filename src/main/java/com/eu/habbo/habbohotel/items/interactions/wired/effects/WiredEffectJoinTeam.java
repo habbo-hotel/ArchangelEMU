@@ -64,7 +64,7 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
     }
 
     @Override
-    public void loadDefaultParams() {
+    public void loadDefaultIntegerParams() {
         if(this.getWiredSettings().getIntegerParams().isEmpty()) {
             this.getWiredSettings().getIntegerParams().add(DEFAULT_TEAM.type);
         }

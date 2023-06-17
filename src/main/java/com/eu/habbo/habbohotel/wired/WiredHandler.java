@@ -7,11 +7,11 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredExtra;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
-import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerReset;
 import com.eu.habbo.habbohotel.items.interactions.wired.effects.WiredEffectGiveReward;
 import com.eu.habbo.habbohotel.items.interactions.wired.effects.WiredEffectTriggerStacks;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraRandom;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraUnseen;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
@@ -28,7 +28,6 @@ import com.eu.habbo.plugin.events.furniture.wired.WiredStackExecutedEvent;
 import com.eu.habbo.plugin.events.furniture.wired.WiredStackTriggeredEvent;
 import com.eu.habbo.plugin.events.users.UserWiredRewardReceivedEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.GsonBuilder;
 import gnu.trove.set.hash.THashSet;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,12 +41,8 @@ import java.util.List;
 
 @Slf4j
 public class WiredHandler {
-
-    //Configuration. Loaded from database & updated accordingly.
     public static int MAXIMUM_FURNI_SELECTION = 5;
     public static int TELEPORT_DELAY = 500;
-
-    private static GsonBuilder gsonBuilder = null;
 
     private static ObjectMapper objectMapper = null;
 
@@ -251,13 +246,6 @@ public class WiredHandler {
         }
 
         return executed;
-    }
-
-    public static GsonBuilder getGsonBuilder() {
-        if(gsonBuilder == null) {
-            gsonBuilder = new GsonBuilder();
-        }
-        return gsonBuilder;
     }
 
     public static ObjectMapper getObjectMapper() {

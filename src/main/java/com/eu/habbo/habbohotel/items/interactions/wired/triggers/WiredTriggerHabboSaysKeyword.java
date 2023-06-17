@@ -43,7 +43,7 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
     }
 
     @Override
-    public void loadDefaultParams() {
+    public void loadDefaultIntegerParams() {
         if(this.getWiredSettings().getIntegerParams().size() == 0) {
             this.getWiredSettings().getIntegerParams().add(0);
         }

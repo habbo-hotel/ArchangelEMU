@@ -500,8 +500,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         if (item instanceof InteractionWired interactionWired) {
                             interactionWired.loadWiredSettings(set);
                         }
-                    } catch (SQLException e) {
-                        log.error(CAUGHT_SQL_EXCEPTION, e);
+                    } catch (Exception e) {
+                        log.error(CAUGHT_EXCEPTION, e);
                     }
                 }
             }

@@ -81,7 +81,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
     }
 
     @Override
-    public void loadDefaultParams() {
+    public void loadDefaultIntegerParams() {
         if(this.getWiredSettings().getIntegerParams().isEmpty()) {
             this.getWiredSettings().getIntegerParams().add(0);
             this.getWiredSettings().getIntegerParams().add(0);
