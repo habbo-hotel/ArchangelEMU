@@ -24,10 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WiredEffectKickHabbo extends InteractionWiredEffect {
-    public static final WiredEffectType type = WiredEffectType.KICK_USER;
-
-    private String message = "";
-
     public WiredEffectKickHabbo(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -56,8 +52,9 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
 
             room.giveEffect(habbo, 4, 2);
 
-            if (!this.message.isEmpty())
-                habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(this.message, habbo, habbo, RoomChatMessageBubbles.ALERT)));
+            if (!this.getWiredSettings().getStringParam().isEmpty()) {
+                habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(this.getWiredSettings().getStringParam(), habbo, habbo, RoomChatMessageBubbles.ALERT)));
+            }
 
             Emulator.getThreading().run(new RoomUnitKick(habbo, room, true), 2000);
 
@@ -68,70 +65,7 @@ public class WiredEffectKickHabbo extends InteractionWiredEffect {
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.message, this.getWiredSettings().getDelay()));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if(wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.getWiredSettings().setDelay(data.delay);
-            this.message = data.message;
-        }
-        else {
-            try {
-                String[] data = set.getString("wired_data").split("\t");
-
-                if (data.length >= 1) {
-                    this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
-
-                    if (data.length >= 2) {
-                        this.message = data[1];
-                    }
-                }
-            } catch (Exception e) {
-                this.message = "";
-                this.getWiredSettings().setDelay(0);
-            }
-
-            this.needsUpdate(true);
-        }
-    }
-
-    @Override
     public WiredEffectType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() throws WiredSaveException {
-        String message = this.getWiredSettings().getStringParam();
-        int delay = this.getWiredSettings().getDelay();
-
-        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
-            throw new WiredSaveException("Delay too long");
-
-        this.message = message.substring(0, Math.min(message.length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
-        this.getWiredSettings().setDelay(delay);
-
-        return true;
-    }
-
-    @Override
-    public boolean requiresTriggeringUser() {
-        return true;
-    }
-
-    static class JsonData {
-        String message;
-        int delay;
-
-        public JsonData(String message, int delay) {
-            this.message = message;
-            this.delay = delay;
-        }
+        return WiredEffectType.KICK_USER;
     }
 }

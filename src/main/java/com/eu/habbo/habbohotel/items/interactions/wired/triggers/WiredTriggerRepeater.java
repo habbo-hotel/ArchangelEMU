@@ -4,26 +4,20 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredTriggerReset;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.ServerMessage;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICycleable, WiredTriggerReset {
-    public static final WiredTriggerType type = WiredTriggerType.PERIODICALLY;
-    public static final int DEFAULT_DELAY = 10 * 500;
-
-    protected int repeatTime = DEFAULT_DELAY;
+    public final int PARAM_REPEAT_TIME = 0;
     protected int counter = 0;
-
     public WiredTriggerRepeater(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -38,52 +32,25 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICy
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-            this.repeatTime
-        ));
-    }
+    public void cycle(Room room) {
+        if(this.getWiredSettings() == null) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement("SELECT id, wired_data FROM items WHERE room_id = ? AND wired_data<>''")) {
+                    statement.setInt(1, room.getId());
 
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.repeatTime = data.repeatTime;
-        } else {
-            if (wiredData.length() >= 1) {
-                this.repeatTime = (Integer.parseInt(wiredData));
+                    try (ResultSet set = statement.executeQuery()) {
+                        while (set.next()) {
+                            this.loadWiredSettings(set, room);
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
         }
 
-        if (this.repeatTime < 500) {
-            this.repeatTime = 20 * 500;
-        }
-    }
-
-    @Override
-    public WiredTriggerType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
-        this.repeatTime = this.getWiredSettings().getIntegerParams()[0] * 500;
-        this.counter = 0;
-
-        if (this.repeatTime < 500) {
-            this.repeatTime = 500;
-        }
-
-        return true;
-    }
-
-    @Override
-    public void cycle(Room room) {
         this.counter += 500;
-        if (this.counter >= this.repeatTime) {
+        if (this.counter >= this.getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME) * 500) {
             this.counter = 0;
             if (this.getRoomId() != 0) {
                 if (room.isLoaded()) {
@@ -104,11 +71,8 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements ICy
         }
     }
 
-    static class JsonData {
-        int repeatTime;
-
-        public JsonData(int repeatTime) {
-            this.repeatTime = repeatTime;
-        }
+    @Override
+    public WiredTriggerType getType() {
+        return WiredTriggerType.PERIODICALLY;
     }
 }

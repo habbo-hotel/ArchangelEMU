@@ -23,6 +23,10 @@ public abstract class InteractionWiredEffect extends InteractionWired implements
     @Setter
     private List<Integer> blockedTriggers;
 
+    @Getter
+    @Setter
+    private WiredEffectType type;
+
     public InteractionWiredEffect(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -53,8 +57,6 @@ public abstract class InteractionWiredEffect extends InteractionWired implements
             }
         }
     }
-
-    public abstract WiredEffectType getType();
 
     public boolean requiresTriggeringUser() {
         return false;

@@ -13,8 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredTriggerScoreAchieved extends InteractionWiredTrigger {
-    private static final WiredTriggerType type = WiredTriggerType.SCORE_ACHIEVED;
-    private int score = 0;
+    public final int PARAM_SCORE = 0;
 
     public WiredTriggerScoreAchieved(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -30,56 +29,14 @@ public class WiredTriggerScoreAchieved extends InteractionWiredTrigger {
             int points = (Integer) stuff[0];
             int amountAdded = (Integer) stuff[1];
 
-            return points - amountAdded < this.score && points >= this.score;
+            return points - amountAdded < this.getWiredSettings().getIntegerParams().get(PARAM_SCORE) && points >= this.getWiredSettings().getIntegerParams().get(PARAM_SCORE);
         }
 
         return false;
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-            this.score
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.score = data.score;
-        } else {
-            try {
-                this.score = Integer.parseInt(wiredData);
-            } catch (Exception ignored) {
-            }
-        }
-    }
-
-    @Override
     public WiredTriggerType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
-        this.score = this.getWiredSettings().getIntegerParams()[0];
-        return true;
-    }
-
-    @Override
-    public boolean isTriggeredByRoomUnit() {
-        return true;
-    }
-
-    static class JsonData {
-        int score;
-
-        public JsonData(int score) {
-            this.score = score;
-        }
+        return WiredTriggerType.SCORE_ACHIEVED;
     }
 }

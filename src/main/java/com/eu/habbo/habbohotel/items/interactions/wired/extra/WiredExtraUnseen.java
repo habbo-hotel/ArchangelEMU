@@ -33,26 +33,6 @@ public class WiredExtraUnseen extends InteractionWiredExtra {
     }
 
     @Override
-    public String getWiredData() {
-        return null;
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) {
-
-    }
-
-    @Override
-    public boolean saveData() throws WiredSaveException {
-        return false;
-    }
-
-    @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
-
-    }
-
-    @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         super.onMove(room, oldLocation, newLocation);
         this.seenList.clear();

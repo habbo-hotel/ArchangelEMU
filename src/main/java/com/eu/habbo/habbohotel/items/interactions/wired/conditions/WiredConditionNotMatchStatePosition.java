@@ -9,8 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredConditionNotMatchStatePosition extends WiredConditionMatchStatePosition {
-    public static final WiredConditionType type = WiredConditionType.NOT_MATCH_SSHOT;
-
     public WiredConditionNotMatchStatePosition(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -26,6 +24,6 @@ public class WiredConditionNotMatchStatePosition extends WiredConditionMatchStat
 
     @Override
     public WiredConditionType getType() {
-        return type;
+        return WiredConditionType.NOT_MATCH_SSHOT;
     }
 }

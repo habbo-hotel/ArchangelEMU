@@ -2,7 +2,6 @@ package com.eu.habbo.messages.outgoing.wired;
 
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -21,16 +20,16 @@ public class WiredTriggerDataComposer extends MessageComposer {
 
         this.response.appendBoolean(false);
         this.response.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        this.response.appendInt(this.trigger.getItems().size());
+        this.response.appendInt(this.trigger.getWiredSettings().getItemIds().size());
 
-        for (HabboItem item : this.trigger.getItems()) {
-            this.response.appendInt(item.getId());
+        for (int itemId : this.trigger.getWiredSettings().getItemIds()) {
+            this.response.appendInt(itemId);
         }
 
         this.response.appendInt(this.trigger.getBaseItem().getSpriteId());
         this.response.appendInt(this.trigger.getId());
         this.response.appendString(this.trigger.getWiredSettings().getStringParam());
-        this.response.appendInt(this.trigger.getWiredSettings().getIntegerParams().length);
+        this.response.appendInt(this.trigger.getWiredSettings().getIntegerParams().size());
 
         for (int param : this.trigger.getWiredSettings().getIntegerParams()) {
             this.response.appendInt(param);

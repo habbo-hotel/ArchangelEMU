@@ -14,8 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
-    private static final WiredTriggerType type = WiredTriggerType.SAY_SOMETHING;
-
     private static int PARAM_OWNER_ONLY = 0;
 
     public WiredTriggerHabboSaysKeyword(ResultSet set, Item baseItem) throws SQLException {
@@ -32,7 +30,7 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
             return false;
         }
 
-        boolean ownerOnly = this.getWiredSettings().getIntegerParams()[PARAM_OWNER_ONLY] == 1;
+        boolean ownerOnly = this.getWiredSettings().getIntegerParams().get(PARAM_OWNER_ONLY) == 1;
 
         if (stuff[0] instanceof String) {
             if (((String) stuff[0]).toLowerCase().contains(this.getWiredSettings().getStringParam().toLowerCase())) {
@@ -45,22 +43,7 @@ public class WiredTriggerHabboSaysKeyword extends InteractionWiredTrigger {
     }
 
     @Override
-    public String getWiredData() {
-        return "";
-    }
-
-    @Override
     public WiredTriggerType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        return true;
-    }
-
-    @Override
-    public boolean isTriggeredByRoomUnit() {
-        return true;
+        return WiredTriggerType.SAY_SOMETHING;
     }
 }

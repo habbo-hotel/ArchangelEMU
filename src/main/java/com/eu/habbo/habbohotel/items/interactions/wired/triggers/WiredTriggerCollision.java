@@ -30,25 +30,7 @@ public class WiredTriggerCollision extends InteractionWiredTrigger {
     }
 
     @Override
-    public String getWiredData() {
-        return "";
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) {}
-
-    @Override
     public WiredTriggerType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        return true;
-    }
-
-    @Override
-    public boolean isTriggeredByRoomUnit() {
-        return true;
+        return WiredTriggerType.COLLISION;
     }
 }

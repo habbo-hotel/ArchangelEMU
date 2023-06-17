@@ -17,11 +17,11 @@ public class WiredExclusionStrategy implements ExclusionStrategy {
             case "stringParam":
                 return this.wiredSettings.getStringParam().isEmpty();
             case "integerParams":
-                return this.wiredSettings.getIntegerParams().length == 0;
+                return this.wiredSettings.getIntegerParams().size() == 0;
             case "delay":
                 return this.wiredSettings.getDelay() == 0;
-            case "items":
-                return this.wiredSettings.getItems().length == 0;
+            case "itemIds":
+                return this.wiredSettings.getItemIds().size() == 0;
             case "selectionType":
             default:
                 return true;

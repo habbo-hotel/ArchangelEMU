@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WiredTriggerGameEnds extends InteractionWiredTrigger {
-    private static final WiredTriggerType type = WiredTriggerType.GAME_ENDS;
-
     public WiredTriggerGameEnds(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -30,20 +28,7 @@ public class WiredTriggerGameEnds extends InteractionWiredTrigger {
     }
 
     @Override
-    public String getWiredData() {
-        return "";
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) {}
-
-    @Override
     public WiredTriggerType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        return true;
+        return WiredTriggerType.GAME_ENDS;
     }
 }

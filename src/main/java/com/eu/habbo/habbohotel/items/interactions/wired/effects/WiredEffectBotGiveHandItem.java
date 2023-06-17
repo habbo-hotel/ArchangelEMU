@@ -24,11 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
-    public static final WiredEffectType type = WiredEffectType.BOT_GIVE_HANDITEM;
-
-    private String botName = "";
-    private int itemId;
-
+    public final int PARAM_ITEM_ID = 0;
     public WiredEffectBotGiveHandItem(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -38,43 +34,16 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData() throws WiredSaveException {
-        if(this.getWiredSettings().getIntegerParams().length < 1) throw new WiredSaveException("Missing item id");
-
-        int itemId = this.getWiredSettings().getIntegerParams()[0];
-
-        if(itemId < 0)
-            itemId = 0;
-
-        String botName = this.getWiredSettings().getStringParam();
-
-        int delay = this.getWiredSettings().getDelay();
-
-        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
-            throw new WiredSaveException("Delay too long");
-
-        this.itemId = itemId;
-        this.botName = botName.substring(0, Math.min(botName.length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
-        this.getWiredSettings().setDelay(delay);
-
-        return true;
-    }
-
-    @Override
-    public WiredEffectType getType() {
-        return type;
-    }
-
-    @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         Habbo habbo = room.getHabbo(roomUnit);
-        List<Bot> bots = room.getBots(this.botName);
+        List<Bot> bots = room.getBots(this.getWiredSettings().getStringParam());
+        int itemId = this.getWiredSettings().getIntegerParams().get(PARAM_ITEM_ID);
 
         if (habbo != null && bots.size() == 1) {
             Bot bot = bots.get(0);
 
             List<Runnable> tasks = new ArrayList<>();
-            tasks.add(new RoomUnitGiveHanditem(roomUnit, room, this.itemId));
+            tasks.add(new RoomUnitGiveHanditem(roomUnit, room, itemId));
             tasks.add(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, 0));
             tasks.add(() -> {
                 if(roomUnit.getRoom() != null && roomUnit.getRoom().getId() == room.getId() && roomUnit.getCurrentLocation().distance(bot.getRoomUnit().getCurrentLocation()) < 2) {
@@ -88,7 +57,7 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
                 bot.getRoomUnit().setGoalLocation(tile);
             }
 
-            Emulator.getThreading().run(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, this.itemId));
+            Emulator.getThreading().run(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, itemId));
             Emulator.getThreading().run(new RoomUnitWalkToLocation(bot.getRoomUnit(), tile, room, tasks, tasks));
 
             return true;
@@ -98,47 +67,7 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.itemId, this.getWiredSettings().getDelay()));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if(wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.getWiredSettings().setDelay(data.delay);
-            this.itemId = data.item_id;
-            this.botName = data.bot_name;
-        }
-        else {
-            String[] data = wiredData.split(((char) 9) + "");
-
-            if (data.length == 3) {
-                this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
-                this.itemId = Integer.parseInt(data[1]);
-                this.botName = data[2];
-            }
-
-            this.needsUpdate(true);
-        }
-    }
-
-    @Override
-    public boolean requiresTriggeringUser() {
-        return true;
-    }
-
-    static class JsonData {
-        String bot_name;
-        int item_id;
-        int delay;
-
-        public JsonData(String bot_name, int item_id, int delay) {
-            this.bot_name = bot_name;
-            this.item_id = item_id;
-            this.delay = delay;
-        }
+    public WiredEffectType getType() {
+        return WiredEffectType.BOT_GIVE_HANDITEM;
     }
 }

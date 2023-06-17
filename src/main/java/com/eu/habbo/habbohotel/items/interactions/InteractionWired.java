@@ -6,14 +6,12 @@ import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredExclusionStrategy;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.OneWayDoorStatusMessageComposer;
 import gnu.trove.map.hash.TLongLongHashMap;
-import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +20,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public abstract class InteractionWired extends InteractionDefault implements IWiredInteraction {
-    @Getter
-    @Setter
-    private THashSet<HabboItem> items;
-
     @Getter
     @Setter
     private String wiredData;
@@ -42,7 +38,6 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
 
     public InteractionWired(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.items = new THashSet<>();
         this.wiredData = "";
         this.wiredSettings = new WiredSettings();
         this.setExtradata("0");
@@ -50,18 +45,19 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
 
     InteractionWired(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.items = new THashSet<>();
         this.wiredData = "";
         this.wiredSettings = new WiredSettings();
         this.setExtradata("0");
     }
 
     public abstract boolean execute(RoomUnit roomUnit, Room room, Object[] stuff);
-    public abstract boolean saveData() throws WiredSaveException;
 
     @Override
     public void run() {
         if (this.needsUpdate()) {
+            //TODO HERE IS WERE WIRED_SAVE_EXCEPTION WILL BE THROWN
+            //EXAMPLE: if StringParam should be number, throw error here, maybe activating a flag in wiredSettings that string params are numbers
+
             WiredExclusionStrategy exclusionStrategy = new WiredExclusionStrategy(this.wiredSettings);
 
             String wiredData = WiredHandler.getGsonBuilder().setExclusionStrategies(exclusionStrategy).create().toJson(this.wiredSettings);
@@ -83,7 +79,8 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
 
     @Override
     public void onPickUp(Room room) {
-        this.items.clear();
+        this.wiredSettings = null;
+        //TODO not sure about this
     }
 
     public void activateBox(Room room) {
@@ -143,25 +140,25 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         WiredSettings settings = new WiredSettings();
 
         int intParamCount = packet.readInt();
-        int[] integerParams = new int[intParamCount];
+        List<Integer> integerParams = new ArrayList<>();
 
         for(int i = 0; i < intParamCount; i++)
         {
-            integerParams[i] = packet.readInt();
+            integerParams.add(packet.readInt());
         }
 
         settings.setIntegerParams(integerParams);
         settings.setStringParam(packet.readString());
 
         int itemCount = packet.readInt();
-        int[] itemIds = new int[itemCount];
+        List<Integer> itemIds = new ArrayList<>();
 
         for(int i = 0; i < itemCount; i++)
         {
-            itemIds[i] = packet.readInt();
+            itemIds.add(packet.readInt());
         }
 
-        settings.setItems(itemIds);
+        settings.setItemIds(itemIds);
 
         if(isWiredEffect)
         {

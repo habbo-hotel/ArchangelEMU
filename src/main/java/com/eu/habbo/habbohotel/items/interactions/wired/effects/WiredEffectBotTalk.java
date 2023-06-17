@@ -21,11 +21,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class WiredEffectBotTalk extends InteractionWiredEffect {
-    public static final WiredEffectType type = WiredEffectType.BOT_TALK;
-
-    private int mode;
-    private String botName = "";
-    private String message = "";
+    public final int PARAM_MODE = 0;
 
     public WiredEffectBotTalk(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -36,45 +32,11 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData() throws WiredSaveException {
-        if(this.getWiredSettings().getIntegerParams().length < 1) throw new WiredSaveException("Mode is invalid");
-        int mode = this.getWiredSettings().getIntegerParams()[0];
-
-        if(mode != 0 && mode != 1)
-            throw new WiredSaveException("Mode is invalid");
-
-        String dataString = this.getWiredSettings().getStringParam();
-
-        String splitBy = "\t";
-        if(!dataString.contains(splitBy))
-            throw new WiredSaveException("Malformed data string");
-
-        String[] data = dataString.split(Pattern.quote(splitBy));
-
-        if (data.length != 2)
-            throw new WiredSaveException("Malformed data string. Invalid data length");
-
-        int delay = this.getWiredSettings().getDelay();
-
-        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
-            throw new WiredSaveException("Delay too long");
-
-        this.getWiredSettings().setDelay(delay);
-        this.botName = data[0].substring(0, Math.min(data[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
-        this.message = data[1].substring(0, Math.min(data[1].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
-        this.mode = mode;
-
-        return true;
-    }
-
-    @Override
-    public WiredEffectType getType() {
-        return type;
-    }
-
-    @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        String message = this.message;
+        String[] stringParams = this.getWiredSettings().getStringParam().split("\t");
+
+        String botName = stringParams[0].substring(0, Math.min(stringParams[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
+        String message = stringParams[1].substring(0, Math.min(stringParams[1].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
 
         Habbo habbo = room.getHabbo(roomUnit);
 
@@ -85,18 +47,18 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
                     .replace(Emulator.getTexts().getValue("wired.variable.points", "%points%"), habbo.getHabboInfo().getCurrencyAmount(Emulator.getConfig().getInt("seasonal.primary.type")) + "")
                     .replace(Emulator.getTexts().getValue("wired.variable.owner", "%owner%"), room.getOwnerName())
                     .replace(Emulator.getTexts().getValue("wired.variable.item_count", "%item_count%"), room.itemCount() + "")
-                    .replace(Emulator.getTexts().getValue("wired.variable.name", "%name%"), this.botName)
+                    .replace(Emulator.getTexts().getValue("wired.variable.name", "%name%"), botName)
                     .replace(Emulator.getTexts().getValue("wired.variable.roomname", "%roomname%"), room.getName())
                     .replace(Emulator.getTexts().getValue("wired.variable.user_count", "%user_count%"), room.getUserCount() + "");
         }
 
-        List<Bot> bots = room.getBots(this.botName);
+        List<Bot> bots = room.getBots(botName);
 
         if (bots.size() == 1) {
             Bot bot = bots.get(0);
 
             if(!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, bot.getRoomUnit(), room, new Object[]{ message })) {
-                if (this.mode == 1) {
+                if (this.getWiredSettings().getIntegerParams().get(PARAM_MODE) == 1) {
                     bot.shout(message);
                 } else {
                     bot.talk(message);
@@ -108,51 +70,12 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.botName, this.mode, this.message, this.getWiredSettings().getDelay()));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if(wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.getWiredSettings().setDelay(data.delay);
-            this.mode = data.mode;
-            this.botName = data.bot_name;
-            this.message = data.message;
-        }
-        else {
-            String[] data = wiredData.split(((char) 9) + "");
-
-            if (data.length == 4) {
-                this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
-                this.mode = data[1].equalsIgnoreCase("1") ? 1 : 0;
-                this.botName = data[2];
-                this.message = data[3];
-            }
-
-            this.needsUpdate(true);
-        }
+    public WiredEffectType getType() {
+        return WiredEffectType.BOT_TALK;
     }
 
     @Override
     protected long requiredCooldown() {
         return 500;
-    }
-
-    static class JsonData {
-        String bot_name;
-        int mode;
-        String message;
-        int delay;
-
-        public JsonData(String bot_name, int mode, String message, int delay) {
-            this.bot_name = bot_name;
-            this.mode = mode;
-            this.message = message;
-            this.delay = delay;
-        }
     }
 }

@@ -1,15 +1,12 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import com.eu.habbo.threading.runnables.WiredCollissionRunnable;
@@ -30,21 +27,15 @@ import java.util.stream.Collectors;
  * @author Beny.
  */
 public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
-    public static final WiredEffectType type = WiredEffectType.CHASE;
-
-    private THashSet<HabboItem> items;
-
     private THashMap<Integer, RoomUserRotation> lastDirections;
     
     public WiredEffectMoveFurniTowards(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.items = new THashSet<>();
         this.lastDirections = new THashMap<>();
     }
 
     public WiredEffectMoveFurniTowards(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.items = new THashSet<>();
         this.lastDirections = new THashMap<>();
     }
 
@@ -82,23 +73,11 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-
-        THashSet<HabboItem> items = new THashSet<>();
-
-        for (HabboItem item : this.items) {
-            if (Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(item.getId()) == null)
-                items.add(item);
+        if(this.getWiredSettings().getItemIds().isEmpty()) {
+            return false;
         }
 
-        for (HabboItem item : items) {
-            this.items.remove(item);
-        }
-
-        for (HabboItem item : this.items) {
-
-            if (item == null)
-                continue;
-
+        for (HabboItem item : this.getWiredSettings().getItems(room)) {
             // direction the furni will move in
             RoomUserRotation moveDirection = null;
             RoomUserRotation lastDirection = lastDirections.get(item.getId());
@@ -231,96 +210,12 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.getWiredSettings().getDelay(),
-                this.items.stream().map(HabboItem::getId).collect(Collectors.toList())
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        this.items = new THashSet<>();
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.getWiredSettings().setDelay(data.delay);
-
-            for (Integer id: data.itemIds) {
-                HabboItem item = room.getHabboItem(id);
-                if (item != null) {
-                    this.items.add(item);
-                }
-            }
-        } else {
-            String[] wiredDataOld = wiredData.split("\t");
-
-            if (wiredDataOld.length >= 1) {
-                this.getWiredSettings().setDelay(Integer.parseInt(wiredDataOld[0]));
-            }
-            if (wiredDataOld.length == 2) {
-                if (wiredDataOld[1].contains(";")) {
-                    for (String s : wiredDataOld[1].split(";")) {
-                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
-
-                        if (item != null)
-                            this.items.add(item);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public WiredEffectType getType() {
-        return type;
-    }
-    
-    @Override
-    public boolean saveData() throws WiredSaveException {
-        int itemsCount = this.getWiredSettings().getItems().length;
-
-        if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
-            throw new WiredSaveException("Too many furni selected");
-        }
-
-        List<HabboItem> newItems = new ArrayList<>();
-
-        for (int i = 0; i < itemsCount; i++) {
-            int itemId = this.getWiredSettings().getItems()[i];
-            HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
-
-            if(it == null)
-                throw new WiredSaveException(String.format("Item %s not found", itemId));
-
-            newItems.add(it);
-        }
-
-        int delay = this.getWiredSettings().getDelay();
-
-        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
-            throw new WiredSaveException("Delay too long");
-
-        this.items.clear();
-        this.items.addAll(newItems);
-        this.getWiredSettings().setDelay(delay);
-
-        return true;
-    }
-
-    @Override
     protected long requiredCooldown() {
         return 495;
     }
 
-    static class JsonData {
-        int delay;
-        List<Integer> itemIds;
-
-        public JsonData(int delay, List<Integer> itemIds) {
-            this.delay = delay;
-            this.itemIds = itemIds;
-        }
+    @Override
+    public WiredEffectType getType() {
+        return WiredEffectType.CHASE;
     }
 }

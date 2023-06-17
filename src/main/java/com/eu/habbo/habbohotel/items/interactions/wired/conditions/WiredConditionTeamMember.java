@@ -15,9 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredConditionTeamMember extends InteractionWiredCondition {
-    public static final WiredConditionType type = WiredConditionType.ACTOR_IN_TEAM;
-
-    private GameTeamColors teamColor = GameTeamColors.RED;
+    public final int PARAM_TEAM = 0;
 
     public WiredConditionTeamMember(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -29,11 +27,19 @@ public class WiredConditionTeamMember extends InteractionWiredCondition {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        int teamValue = this.getWiredSettings().getIntegerParams().get(PARAM_TEAM);
+
+        if(teamValue < 1 || teamValue > 4) {
+            return false;
+        }
+
+        GameTeamColors teamColor = GameTeamColors.values()[teamValue];
+
         Habbo habbo = room.getHabbo(roomUnit);
 
         if (habbo != null) {
             if (habbo.getHabboInfo().getGamePlayer() != null) {
-                return habbo.getHabboInfo().getGamePlayer().getTeamColor().equals(this.teamColor);
+                return habbo.getHabboInfo().getGamePlayer().getTeamColor().equals(teamColor);
             }
         }
 
@@ -41,46 +47,7 @@ public class WiredConditionTeamMember extends InteractionWiredCondition {
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.teamColor
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) {
-        try {
-            String wiredData = set.getString("wired_data");
-
-            if (wiredData.startsWith("{")) {
-                JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-                this.teamColor = data.teamColor;
-            } else {
-                if (!wiredData.equals(""))
-                    this.teamColor = GameTeamColors.values()[Integer.parseInt(wiredData)];
-            }
-        } catch (Exception e) {
-            this.teamColor = GameTeamColors.RED;
-        }
-    }
-
-    @Override
     public WiredConditionType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
-        this.teamColor = GameTeamColors.values()[this.getWiredSettings().getIntegerParams()[0]];
-        return true;
-    }
-
-    static class JsonData {
-        GameTeamColors teamColor;
-
-        public JsonData(GameTeamColors teamColor) {
-            this.teamColor = teamColor;
-        }
+        return WiredConditionType.ACTOR_IN_TEAM;
     }
 }

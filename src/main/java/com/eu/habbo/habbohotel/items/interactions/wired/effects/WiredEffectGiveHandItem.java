@@ -19,6 +19,10 @@ public class WiredEffectGiveHandItem extends WiredEffectWhisper {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if(this.getWiredSettings().getStringParam().isEmpty()) {
+            return false;
+        }
+
         try {
             int itemId = Integer.parseInt(this.getWiredSettings().getStringParam());
 

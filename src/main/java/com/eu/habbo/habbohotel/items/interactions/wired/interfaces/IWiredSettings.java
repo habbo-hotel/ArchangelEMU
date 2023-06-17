@@ -3,13 +3,15 @@ package com.eu.habbo.habbohotel.items.interactions.wired.interfaces;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 public interface IWiredSettings {
-    int[] getIntegerParams();
-    void setIntegerParams(int[] value);
+    List<Integer> getIntegerParams();
+    void setIntegerParams(List<Integer> value);
     String getStringParam();
     void setStringParam(String value);
-    int[] getItems();
-    void setItems(int[] value);
+    List<Integer> getItemIds();
+    void setItemIds(List<Integer> value);
     int getDelay();
     void setDelay(int value);
     int getSelectionType();

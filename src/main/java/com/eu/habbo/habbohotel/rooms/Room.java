@@ -1086,8 +1086,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         synchronized (this.loadLock) {
             if (this.loaded) {
                 try {
-                    Emulator.getThreading().run(
-                            Room.this::cycle);
+                    Emulator.getThreading().run(Room.this::cycle);
                 } catch (Exception e) {
                     log.error(CAUGHT_EXCEPTION, e);
                 }

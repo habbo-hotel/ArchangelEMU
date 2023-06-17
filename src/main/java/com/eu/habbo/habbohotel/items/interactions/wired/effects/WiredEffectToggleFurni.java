@@ -1,7 +1,5 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
-import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
@@ -15,14 +13,11 @@ import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreeze
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
 import com.eu.habbo.habbohotel.items.interactions.pets.*;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.set.hash.THashSet;
 import lombok.extern.slf4j.Slf4j;
@@ -30,15 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class WiredEffectToggleFurni extends InteractionWiredEffect {
-
-    public static final WiredEffectType type = WiredEffectType.TOGGLE_STATE;
-
     private static final List<Class<? extends HabboItem>> FORBIDDEN_TYPES = new ArrayList<>() {
         {
             this.add(InteractionWired.class);
@@ -83,139 +73,54 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
 
     public WiredEffectToggleFurni(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setItems(new THashSet<>());
     }
 
     public WiredEffectToggleFurni(int id, int userId, Item item, String extraData, int limitedStack, int limitedSells) {
         super(id, userId, item, extraData, limitedStack, limitedSells);
-        this.setItems(new THashSet<>());
-    }
-
-    @Override
-    public boolean saveData() throws WiredSaveException {
-        int itemsCount = this.getWiredSettings().getItems().length;
-
-        if(itemsCount > Emulator.getConfig().getInt("hotel.wired.furni.selection.count")) {
-            throw new WiredSaveException("Too many furni selected");
-        }
-
-        THashSet<HabboItem> newItems = new THashSet<>();
-
-        for (int i = 0; i < itemsCount; i++) {
-            int itemId = this.getWiredSettings().getItems()[i];
-            HabboItem it = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId()).getHabboItem(itemId);
-
-            if(it == null) {
-                throw new WiredSaveException(String.format("Item %s not found", itemId));
-            }
-
-            newItems.add(it);
-        }
-
-        if(this.getWiredSettings().getDelay() > Emulator.getConfig().getInt("hotel.wired.max_delay", 20)) {
-            throw new WiredSaveException("Delay too long");
-        }
-
-        this.setItems(newItems);
-        this.getWiredSettings().setDelay(this.getWiredSettings().getDelay());
-
-        return true;
     }
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if(this.getWiredSettings().getItemIds().isEmpty()) {
+            return false;
+        }
+
         Habbo habbo = room.getHabbo(roomUnit);
 
-        THashSet<HabboItem> itemsToRemove = new THashSet<>();
-        for (HabboItem item : this.getItems()) {
+        for (HabboItem item : this.getWiredSettings().getItems(room)) {
+
             if (item == null || item.getRoomId() == 0 || FORBIDDEN_TYPES.stream().anyMatch(a -> a.isAssignableFrom(item.getClass()))) {
-                itemsToRemove.add(item);
                 continue;
             }
 
-            try {
-                if (item.getBaseItem().getStateCount() > 1 || item instanceof InteractionGameTimer) {
-                    int state = 0;
-                    if (!item.getExtradata().isEmpty()) {
-                        try {
-                            state = Integer.parseInt(item.getExtradata()); // assumes that extradata is state, could be something else for trophies etc.
-                        } catch (NumberFormatException ignored) {
+            if (item instanceof InteractionFreezeBlock || item instanceof InteractionFreezeTile || item instanceof InteractionCrackable) {
+                continue;
+            }
 
-                        }
+            if (item.getBaseItem().getStateCount() > 1 || item instanceof InteractionGameTimer) {
+                int state = 0;
+
+                if (!item.getExtradata().isEmpty()) {
+                    try {
+                        state = Integer.parseInt(item.getExtradata()); // assumes that extradata is state, could be something else for trophies etc.
+                    } catch (NumberFormatException ignored) {
+
                     }
-                    item.onClick(habbo != null && !(item instanceof InteractionGameTimer) ? habbo.getClient() : null, room, new Object[]{state, this.getType()});
                 }
-            } catch (Exception e) {
-                log.error("Caught exception", e);
+
+                try {
+                    item.onClick(habbo != null && !(item instanceof InteractionGameTimer) ? habbo.getClient() : null, room, new Object[]{state, this.getType()});
+                } catch (Exception e) {
+                    log.error("Caught exception", e);
+                }
             }
         }
-
-        this.getItems().removeAll(itemsToRemove);
 
         return true;
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.getWiredSettings().getDelay(),
-                this.getItems().stream().map(HabboItem::getId).collect(Collectors.toList())
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        this.getItems().clear();
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.getWiredSettings().setDelay(data.delay);
-            for (Integer id: data.itemIds) {
-                HabboItem item = room.getHabboItem(id);
-
-                if (item instanceof InteractionFreezeBlock || item instanceof InteractionFreezeTile || item instanceof InteractionCrackable) {
-                    continue;
-                }
-
-                if (item != null) {
-                    this.getItems().add(item);
-                }
-            }
-        } else {
-            String[] wiredDataOld = wiredData.split("\t");
-
-            if (wiredDataOld.length >= 1) {
-                this.getWiredSettings().setDelay(Integer.parseInt(wiredDataOld[0]));
-            }
-            if (wiredDataOld.length == 2) {
-                if (wiredDataOld[1].contains(";")) {
-                    for (String s : wiredDataOld[1].split(";")) {
-                        HabboItem item = room.getHabboItem(Integer.parseInt(s));
-
-                        if (item instanceof InteractionFreezeBlock || item instanceof InteractionFreezeTile || item instanceof InteractionCrackable)
-                            continue;
-
-                        if (item != null)
-                            this.getItems().add(item);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
     public WiredEffectType getType() {
-        return type;
-    }
-
-    static class JsonData {
-        int delay;
-        List<Integer> itemIds;
-
-        public JsonData(int delay, List<Integer> itemIds) {
-            this.delay = delay;
-            this.itemIds = itemIds;
-        }
+        return WiredEffectType.TOGGLE_STATE;
     }
 }

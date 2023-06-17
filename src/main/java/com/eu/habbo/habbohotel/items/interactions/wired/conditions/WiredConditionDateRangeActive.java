@@ -3,12 +3,9 @@ package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,10 +15,8 @@ import java.sql.SQLException;
  * a given range.
  */
 public class WiredConditionDateRangeActive extends InteractionWiredCondition {
-    public static final WiredConditionType type = WiredConditionType.DATE_RANGE;
-
-    private int startDate; // the start of the date range
-    private int endDate; // the end of the date range
+    public final int PARAM_START_DATE = 0;
+    public final int PARAM_END_DATE = 1;
 
     /**
      * Creates a new instance of this class.
@@ -47,27 +42,6 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
     }
 
     /**
-     * Returns the {@link WiredConditionType} of this object.
-     * @return the type of this wired condition
-     */
-    @Override
-    public WiredConditionType getType() {
-        return type;
-    }
-
-    /**
-     * Saves the given {@link WiredSettings} object to this wired condition.
-     * @return {@code true} if the settings were saved successfully, {@code false} otherwise
-     * */
-    @Override
-    public boolean saveData() {
-        if(this.getWiredSettings().getIntegerParams().length < 2) return false;
-        this.startDate = this.getWiredSettings().getIntegerParams()[0];
-        this.endDate = this.getWiredSettings().getIntegerParams()[1];
-        return true;
-    }
-
-    /**
      * Determines if the wired condition is met.
      * @param roomUnit the room unit that triggered the condition
      * @param room the room that the condition is in
@@ -78,63 +52,19 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         int time = Emulator.getIntUnixTimestamp();
-        return this.startDate < time && this.endDate >= time;
+
+        int startDate = this.getWiredSettings().getIntegerParams().get(PARAM_START_DATE);
+        int endDate = this.getWiredSettings().getIntegerParams().get(PARAM_END_DATE);
+
+        return startDate < time && endDate >= time;
     }
 
     /**
-     * Gets the wired data for this wired condition in JSON format.
-     * @return the wired data in JSON format
+     * Returns the {@link WiredConditionType} of this object.
+     * @return the type of this wired condition
      */
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.startDate,
-                this.endDate
-        ));
-    }
-
-    /**
-     * Loads the wired data for this wired condition from a database.
-     * @param set the ResultSet object to get data from
-     * @param room the room that this wired condition is in
-     * @throws SQLException if an error occurs while getting data from the ResultSet object
-     */
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.startDate = data.startDate;
-            this.endDate = data.endDate;
-        } else {
-            String[] data = wiredData.split("\t");
-
-            if (data.length == 2) {
-                try {
-                    this.startDate = Integer.parseInt(data[0]);
-                    this.endDate = Integer.parseInt(data[1]);
-                } catch (Exception ignored) {
-                }
-            }
-        }
-    }
-
-    /**
-     * A nested class for storing the wired data for this wired condition in JSON format.
-     */
-    static class JsonData {
-        int startDate;
-        int endDate;
-
-        /**
-         * Creates a new instance of this class.
-         * @param startDate the start of the date range
-         * @param endDate the end of the date range
-         */
-        public JsonData(int startDate, int endDate) {
-            this.startDate = startDate;
-            this.endDate = endDate;
-        }
+    public WiredConditionType getType() {
+        return WiredConditionType.DATE_RANGE;
     }
 }

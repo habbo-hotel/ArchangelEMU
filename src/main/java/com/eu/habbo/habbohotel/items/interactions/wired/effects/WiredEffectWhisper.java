@@ -11,15 +11,12 @@ import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.users.WhisperMessageComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredEffectWhisper extends InteractionWiredEffect {
-    public static final WiredEffectType type = WiredEffectType.SHOW_MESSAGE;
-
     public WiredEffectWhisper(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -29,44 +26,37 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
     }
 
     @Override
-    public boolean saveData() {
-        return true;
-    }
-
-    @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (this.getWiredSettings().getStringParam().length() > 0) {
-            if (roomUnit != null) {
-                Habbo habbo = room.getHabbo(roomUnit);
+        if(this.getWiredSettings().getStringParam().isEmpty()) {
+            return false;
+        }
 
-                if (habbo != null) {
-                    String msg = this.getWiredSettings().getStringParam().replace("%user%", habbo.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + "");
-                    habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(msg, habbo, habbo, RoomChatMessageBubbles.WIRED)));
-                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, roomUnit, room, new Object[]{ msg }));
+        if (roomUnit != null) {
+            Habbo habbo = room.getHabbo(roomUnit);
 
-                    if (habbo.getRoomUnit().isIdle()) {
-                        habbo.getRoomUnit().getRoom().unIdle(habbo);
-                    }
-                    return true;
+            if (habbo != null) {
+                String msg = this.getWiredSettings().getStringParam().replace("%user%", habbo.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + "");
+                habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(msg, habbo, habbo, RoomChatMessageBubbles.WIRED)));
+                Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, roomUnit, room, new Object[]{ msg }));
+
+                if (habbo.getRoomUnit().isIdle()) {
+                    habbo.getRoomUnit().getRoom().unIdle(habbo);
                 }
-            } else {
-                for (Habbo h : room.getHabbos()) {
-                    h.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(this.getWiredSettings().getStringParam().replace("%user%", h.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + ""), h, h, RoomChatMessageBubbles.WIRED)));
-                }
-
                 return true;
             }
+        } else {
+            for (Habbo h : room.getHabbos()) {
+                h.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(this.getWiredSettings().getStringParam().replace("%user%", h.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + ""), h, h, RoomChatMessageBubbles.WIRED)));
+            }
+
+            return true;
         }
+
         return false;
     }
 
     @Override
     public WiredEffectType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean requiresTriggeringUser() {
-        return true;
+        return WiredEffectType.SHOW_MESSAGE;
     }
 }

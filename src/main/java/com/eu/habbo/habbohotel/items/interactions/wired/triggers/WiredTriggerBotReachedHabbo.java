@@ -13,10 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredTriggerBotReachedHabbo extends InteractionWiredTrigger {
-    public final static WiredTriggerType type = WiredTriggerType.BOT_REACHED_AVTR;
-
-    private String botName = "";
-
     public WiredTriggerBotReachedHabbo(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -26,50 +22,12 @@ public class WiredTriggerBotReachedHabbo extends InteractionWiredTrigger {
     }
 
     @Override
-    public WiredTriggerType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        this.botName = this.getWiredSettings().getStringParam();
-        return true;
-    }
-
-    @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        return room.getBots(this.botName).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
+        return room.getBots(this.getWiredSettings().getStringParam()).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-            this.botName
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.botName = data.botName;
-        } else {
-            this.botName = wiredData;
-        }
-    }
-
-    @Override
-    public boolean isTriggeredByRoomUnit() {
-        return true;
-    }
-
-    static class JsonData {
-        String botName;
-
-        public JsonData(String botName) {
-            this.botName = botName;
-        }
+    public WiredTriggerType getType() {
+        return WiredTriggerType.BOT_REACHED_AVTR;
     }
 }

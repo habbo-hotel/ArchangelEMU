@@ -4,22 +4,18 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredTriggerReset;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements ICycleable, WiredTriggerReset {
     public static final int DEFAULT_DELAY = 10 * 5000;
-    private static final WiredTriggerType type = WiredTriggerType.PERIODICALLY_LONG;
+    private static final int PARAM_REPEAT_TIME = 0;
     private int repeatTime = DEFAULT_DELAY;
     private int counter = 0;
 
@@ -37,48 +33,9 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-            this.repeatTime
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.repeatTime = data.repeatTime;
-        } else {
-            if (wiredData.length() >= 1) {
-                this.repeatTime = (Integer.parseInt(wiredData));
-            }
-        }
-
-        if (this.repeatTime < 5000) {
-            this.repeatTime = 20 * 5000;
-        }
-    }
-
-    @Override
-    public WiredTriggerType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
-        this.repeatTime = this.getWiredSettings().getIntegerParams()[0] * 5000;
-        this.counter = 0;
-        return true;
-    }
-
-
-    @Override
     public void cycle(Room room) {
         this.counter += 500;
-        if (this.counter >= this.repeatTime) {
+        if (this.counter >= this.getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME)) {
             this.counter = 0;
             if (this.getRoomId() != 0) {
                 if (room.isLoaded()) {
@@ -99,11 +56,8 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
         }
     }
 
-    static class JsonData {
-        int repeatTime;
-
-        public JsonData(int repeatTime) {
-            this.repeatTime = repeatTime;
-        }
+    @Override
+    public WiredTriggerType getType() {
+        return WiredTriggerType.PERIODICALLY_LONG;
     }
 }

@@ -21,15 +21,7 @@ public class WiredConditionNotTriggerOnFurni extends WiredConditionTriggerOnFurn
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (roomUnit == null)
-            return false;
-
-        this.refresh();
-
-        if (this.items.isEmpty())
-            return true;
-
-        return !triggerOnFurni(roomUnit, room);
+        return !super.execute(roomUnit, room, stuff);
     }
 
     @Override

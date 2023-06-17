@@ -12,12 +12,7 @@ import com.eu.habbo.messages.ServerMessage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredConditionNotHabboCount extends InteractionWiredCondition {
-    public static final WiredConditionType type = WiredConditionType.NOT_USER_COUNT;
-
-    private int lowerLimit = 10;
-    private int upperLimit = 20;
-
+public class WiredConditionNotHabboCount extends WiredConditionHabboCount {
     public WiredConditionNotHabboCount(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -28,55 +23,11 @@ public class WiredConditionNotHabboCount extends InteractionWiredCondition {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        int count = room.getUserCount();
-
-        return count < this.lowerLimit || count > this.upperLimit;
-    }
-
-    @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.lowerLimit,
-                this.upperLimit
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            WiredConditionHabboCount.JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, WiredConditionHabboCount.JsonData.class);
-            this.lowerLimit = data.lowerLimit;
-            this.upperLimit = data.upperLimit;
-        } else {
-            String[] data = wiredData.split(":");
-            this.lowerLimit = Integer.parseInt(data[0]);
-            this.upperLimit = Integer.parseInt(data[1]);
-        }
+        return !super.execute(roomUnit, room, stuff);
     }
 
     @Override
     public WiredConditionType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        if(this.getWiredSettings().getIntegerParams().length < 2) return false;
-        this.lowerLimit = this.getWiredSettings().getIntegerParams()[0];
-        this.upperLimit = this.getWiredSettings().getIntegerParams()[1];
-
-        return true;
-    }
-
-    static class JsonData {
-        int lowerLimit;
-        int upperLimit;
-
-        public JsonData(int lowerLimit, int upperLimit) {
-            this.lowerLimit = lowerLimit;
-            this.upperLimit = upperLimit;
-        }
+        return WiredConditionType.NOT_USER_COUNT;
     }
 }

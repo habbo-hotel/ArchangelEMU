@@ -13,8 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredConditionGroupMember extends InteractionWiredCondition {
-    public static final WiredConditionType type = WiredConditionType.ACTOR_IN_GROUP;
-
     public WiredConditionGroupMember(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -25,8 +23,9 @@ public class WiredConditionGroupMember extends InteractionWiredCondition {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (room.getGuildId() == 0)
+        if (room.getGuildId() == 0) {
             return false;
+        }
 
         Habbo habbo = room.getHabbo(roomUnit);
 
@@ -34,17 +33,7 @@ public class WiredConditionGroupMember extends InteractionWiredCondition {
     }
 
     @Override
-    public String getWiredData() {
-        return "";
-    }
-
-    @Override
     public WiredConditionType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        return true;
+        return WiredConditionType.ACTOR_IN_GROUP;
     }
 }

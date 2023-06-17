@@ -23,22 +23,4 @@ public class WiredExtraRandom extends InteractionWiredExtra {
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         return false;
     }
-
-    @Override
-    public String getWiredData() {
-        return null;
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) {}
-
-    @Override
-    public boolean saveData() throws WiredSaveException {
-        return true;
-    }
-
-    @Override
-    public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
-
-    }
 }

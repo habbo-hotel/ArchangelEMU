@@ -14,9 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredConditionLessTimeElapsed extends InteractionWiredCondition {
-    public static final WiredConditionType type = WiredConditionType.TIME_LESS_THAN;
-
-    private int cycles;
+    public final int PARAM_CYCLE = 0;
 
     public WiredConditionLessTimeElapsed(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -28,49 +26,12 @@ public class WiredConditionLessTimeElapsed extends InteractionWiredCondition {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        return (Emulator.getIntUnixTimestamp() - room.getLastTimerReset()) / 0.5 < this.cycles;
-    }
-
-    @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-                this.cycles
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        try {
-            if (wiredData.startsWith("{")) {
-                JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-                this.cycles = data.cycles;
-            } else {
-                if (!wiredData.equals(""))
-                    this.cycles = Integer.parseInt(wiredData);
-            }
-        } catch (Exception ignored) {
-        }
+        int cycles = this.getWiredSettings().getIntegerParams().get(PARAM_CYCLE);
+        return (Emulator.getIntUnixTimestamp() - room.getLastTimerReset()) / 0.5 < cycles;
     }
 
     @Override
     public WiredConditionType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        if(this.getWiredSettings().getIntegerParams().length < 1) return false;
-        this.cycles = this.getWiredSettings().getIntegerParams()[0];
-        return true;
-    }
-
-    static class JsonData {
-        int cycles;
-
-        public JsonData(int cycles) {
-            this.cycles = cycles;
-        }
+        return WiredConditionType.TIME_LESS_THAN;
     }
 }

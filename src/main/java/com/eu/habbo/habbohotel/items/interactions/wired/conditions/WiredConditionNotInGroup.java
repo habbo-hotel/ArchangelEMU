@@ -13,8 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredConditionNotInGroup extends InteractionWiredCondition {
-    public static final WiredConditionType type = WiredConditionType.NOT_ACTOR_IN_GROUP;
-
     public WiredConditionNotInGroup(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -34,20 +32,7 @@ public class WiredConditionNotInGroup extends InteractionWiredCondition {
     }
 
     @Override
-    public String getWiredData() {
-        return "";
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) {}
-
-    @Override
     public WiredConditionType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        return true;
+        return WiredConditionType.NOT_ACTOR_IN_GROUP;
     }
 }

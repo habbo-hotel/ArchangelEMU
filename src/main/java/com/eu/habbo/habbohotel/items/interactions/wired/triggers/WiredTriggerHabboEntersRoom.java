@@ -14,10 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger {
-    public static final WiredTriggerType type = WiredTriggerType.ENTER_ROOM;
-
-    private String username = "";
-
     public WiredTriggerHabboEntersRoom(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -28,59 +24,21 @@ public class WiredTriggerHabboEntersRoom extends InteractionWiredTrigger {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if(this.getWiredSettings().getStringParam().isEmpty()) {
+            return true;
+        }
+
         Habbo habbo = room.getHabbo(roomUnit);
 
         if (habbo != null) {
-            if (this.username.length() > 0) {
-                return habbo.getHabboInfo().getUsername().equalsIgnoreCase(this.username);
-            }
-
-            return true;
+            return habbo.getHabboInfo().getUsername().equalsIgnoreCase(this.getWiredSettings().getStringParam());
         }
+
         return false;
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-            this.username
-        ));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.username = data.username;
-        } else {
-            this.username = wiredData;
-        }
-    }
-
-    @Override
     public WiredTriggerType getType() {
-        return type;
-    }
-
-    @Override
-    public boolean saveData() {
-        this.username = this.getWiredSettings().getStringParam();
-
-        return true;
-    }
-
-    @Override
-    public boolean isTriggeredByRoomUnit() {
-        return true;
-    }
-
-    static class JsonData {
-        String username;
-
-        public JsonData(String username) {
-            this.username = username;
-        }
+        return WiredTriggerType.ENTER_ROOM;
     }
 }

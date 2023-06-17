@@ -19,10 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WiredEffectGiveRespect extends InteractionWiredEffect {
-    public static final WiredEffectType type = WiredEffectType.SHOW_MESSAGE;
-
-    private int respects = 0;
-
     public WiredEffectGiveRespect(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -30,81 +26,34 @@ public class WiredEffectGiveRespect extends InteractionWiredEffect {
     public WiredEffectGiveRespect(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
-
-    @Override
-    public boolean saveData() {
-        try {
-            this.respects = Integer.parseInt(this.getWiredSettings().getStringParam());
-        } catch (Exception e) {
-            return false;
-        }
-
-        this.getWiredSettings().setDelay(this.getWiredSettings().getDelay());
-
-        return true;
-    }
-
     @Override
     public WiredEffectType getType() {
-        return type;
+        return WiredEffectType.SHOW_MESSAGE;
     }
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
+        if(this.getWiredSettings().getStringParam().isEmpty()) {
+            return false;
+        }
+
+        int respects;
+
+        try {
+            respects = Integer.parseInt(this.getWiredSettings().getStringParam());
+        } catch (Exception e) {
+            return false;
+        }
+
         Habbo habbo = room.getHabbo(roomUnit);
 
-        if (habbo == null)
+        if (habbo == null) {
             return false;
+        }
 
         habbo.getHabboStats().increaseRespectPointsReceived(respects);
-        AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RespectEarned"), this.respects);
+        AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RespectEarned"), respects);
 
         return true;
-    }
-
-    @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.respects, this.getWiredSettings().getDelay()));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if(wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.respects = data.amount;
-            this.getWiredSettings().setDelay(data.delay);
-        }
-        else {
-            String[] data = wiredData.split("\t");
-            this.respects = 0;
-
-            if (data.length >= 2) {
-                this.getWiredSettings().setDelay(Integer.parseInt(data[0]));
-
-                try {
-                    this.respects = Integer.parseInt(data[1]);
-                } catch (Exception ignored) {
-                }
-            }
-
-            this.needsUpdate(true);
-        }
-    }
-
-    @Override
-    public boolean requiresTriggeringUser() {
-        return true;
-    }
-
-    static class JsonData {
-        int amount;
-        int delay;
-
-        public JsonData(int amount, int delay) {
-            this.amount = amount;
-            this.delay = delay;
-        }
     }
 }

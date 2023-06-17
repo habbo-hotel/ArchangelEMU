@@ -2,7 +2,6 @@ package com.eu.habbo.messages.outgoing.wired;
 
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -22,16 +21,16 @@ public class WiredEffectDataComposer extends MessageComposer {
 
         this.response.appendBoolean(false);
         this.response.appendInt(WiredHandler.MAXIMUM_FURNI_SELECTION);
-        this.response.appendInt(this.effect.getItems().size());
+        this.response.appendInt(this.effect.getWiredSettings().getItemIds().size());
 
-        for (HabboItem item : this.effect.getItems()) {
-            this.response.appendInt(item.getId());
+        for (int itemId : this.effect.getWiredSettings().getItemIds()) {
+            this.response.appendInt(itemId);
         }
 
         this.response.appendInt(this.effect.getBaseItem().getSpriteId());
         this.response.appendInt(this.effect.getId());
         this.response.appendString(this.effect.getWiredSettings().getStringParam());
-        this.response.appendInt(this.effect.getWiredSettings().getIntegerParams().length);
+        this.response.appendInt(this.effect.getWiredSettings().getIntegerParams().size());
 
         for (int param : this.effect.getWiredSettings().getIntegerParams()) {
             this.response.appendInt(param);

@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WiredEffectLeaveTeam extends InteractionWiredEffect {
-    public static final WiredEffectType type = WiredEffectType.LEAVE_TEAM;
-
     public WiredEffectLeaveTeam(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -53,44 +51,7 @@ public class WiredEffectLeaveTeam extends InteractionWiredEffect {
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(this.getWiredSettings().getDelay()));
-    }
-
-    @Override
-    public void loadWiredSettings(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if(wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.getWiredSettings().setDelay(data.delay);
-        }
-        else {
-            this.getWiredSettings().setDelay(Integer.parseInt(wiredData));
-        }
-    }
-
-    @Override
     public WiredEffectType getType() {
-        return type;
-    }
-    
-    @Override
-    public boolean saveData() throws WiredSaveException {
-        int delay = this.getWiredSettings().getDelay();
-
-        if(delay > Emulator.getConfig().getInt("hotel.wired.max_delay", 20))
-            throw new WiredSaveException("Delay too long");
-
-        this.getWiredSettings().setDelay(delay);
-        return true;
-    }
-
-    static class JsonData {
-        int delay;
-
-        public JsonData(int delay) {
-            this.delay = delay;
-        }
+        return WiredEffectType.LEAVE_TEAM;
     }
 }
