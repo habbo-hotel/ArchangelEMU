@@ -9,17 +9,15 @@ import com.eu.habbo.habbohotel.wired.WiredChangeDirectionSetting;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
-import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
+import java.util.HashMap;
 
 public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
-    public final int PARAM_START_ROTATION = 0;
+    public final int PARAM_START_DIRECTION = 0;
     public final int PARAM_BLOCKED_ACTION = 1;
     public static final int ACTION_WAIT = 0;
     public static final int ACTION_TURN_RIGHT_45 = 1;
@@ -29,12 +27,21 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
     public static final int ACTION_TURN_BACK = 5;
     public static final int ACTION_TURN_RANDOM = 6;
 
+    private int defaultDirectionValue;
+
+    private int defaultBlockActionValue;
+
+    private boolean requiresUpdate = false;
+    private final HashMap<HabboItem, WiredChangeDirectionSetting> itemsSettings;
+
     public WiredEffectChangeFurniDirection(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
+        this.itemsSettings = new HashMap<>();
     }
 
     public WiredEffectChangeFurniDirection(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
+        this.itemsSettings = new HashMap<>();
     }
 
     @Override
@@ -43,10 +50,10 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
             return false;
         }
 
-        int startRotationValue = this.getWiredSettings().getIntegerParams().get(PARAM_START_ROTATION);
+        int startDirectionValue = this.getWiredSettings().getIntegerParams().get(PARAM_START_DIRECTION);
         int blockActionValue = this.getWiredSettings().getIntegerParams().get(PARAM_BLOCKED_ACTION);
 
-        if(startRotationValue < 0 || startRotationValue > 7 || (startRotationValue % 2) != 0) {
+        if(startDirectionValue < 0 || startDirectionValue > 7 || (startDirectionValue % 2) != 0) {
             return false;
         }
 
@@ -54,14 +61,36 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
             return false;
         }
 
-        RoomUserRotation startRotation = RoomUserRotation.fromValue(startRotationValue);
+        if(this.defaultDirectionValue != startDirectionValue) {
+            this.defaultDirectionValue = startDirectionValue;
+            this.requiresUpdate = true;
+        }
+
+        RoomUserRotation startDirection = RoomUserRotation.fromValue(startDirectionValue);
+
+        if(this.requiresUpdate) {
+            for (WiredChangeDirectionSetting setting : this.itemsSettings.values()) {
+                setting.setDirection(startDirection);
+            }
+            this.requiresUpdate = false;
+        }
 
         for(HabboItem item : this.getWiredSettings().getItems(room)) {
-            WiredChangeDirectionSetting setting = new WiredChangeDirectionSetting(item.getId(), item.getRotation(), startRotation);
+            WiredChangeDirectionSetting setting = null;
+            if(!this.itemsSettings.containsKey(item)) {
+                this.itemsSettings.put(item, new WiredChangeDirectionSetting(item.getId(), item.getRotation(), startDirection));
+            } else {
+                setting = this.itemsSettings.get(item);
+            }
+
+            if(setting == null) {
+                continue;
+            }
+
             RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), setting.getDirection().getValue());
             int count = 1;
-            while ((targetTile == null || targetTile.getState() == RoomTileState.INVALID || room.furnitureFitsAt(targetTile, item, item.getRotation(), false) != FurnitureMovementError.NONE) && count < 8) {
-                setting.setDirection(this.nextRotation(setting.getDirection()));
+            while ((targetTile == null || targetTile.getState() == RoomTileState.INVALID || !room.tileWalkable(targetTile) || room.furnitureFitsAt(targetTile, item, item.getRotation(), false) != FurnitureMovementError.NONE) && count < 8) {
+                setting.setDirection(this.nextDirection(setting.getDirection()));
 
                 RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), setting.getDirection().getValue());
                 if (tile != null && tile.getState() != RoomTileState.INVALID) {
@@ -83,6 +112,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
             }
 
             boolean hasRoomUnits = false;
+
             THashSet<RoomTile> newOccupiedTiles = room.getLayout().getTilesAt(newTargetTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
             for(RoomTile tile : newOccupiedTiles) {
                 for (RoomUnit _roomUnit : room.getRoomUnits(tile)) {
@@ -116,16 +146,16 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
         }
     }
 
-    private RoomUserRotation nextRotation(RoomUserRotation currentRotation) {
+    private RoomUserRotation nextDirection(RoomUserRotation currentDirection) {
         return switch (this.getWiredSettings().getIntegerParams().get(PARAM_BLOCKED_ACTION)) {
-            case ACTION_TURN_BACK -> RoomUserRotation.fromValue(currentRotation.getValue()).getOpposite();
-            case ACTION_TURN_LEFT_45 -> RoomUserRotation.counterClockwise(currentRotation);
-            case ACTION_TURN_LEFT_90 -> RoomUserRotation.counterClockwise(RoomUserRotation.counterClockwise(currentRotation));
-            case ACTION_TURN_RIGHT_45 -> RoomUserRotation.clockwise(currentRotation);
-            case ACTION_TURN_RIGHT_90 -> RoomUserRotation.clockwise(RoomUserRotation.clockwise(currentRotation));
+            case ACTION_TURN_BACK -> RoomUserRotation.fromValue(currentDirection.getValue()).getOpposite();
+            case ACTION_TURN_LEFT_45 -> RoomUserRotation.counterClockwise(currentDirection);
+            case ACTION_TURN_LEFT_90 -> RoomUserRotation.counterClockwise(RoomUserRotation.counterClockwise(currentDirection));
+            case ACTION_TURN_RIGHT_45 -> RoomUserRotation.clockwise(currentDirection);
+            case ACTION_TURN_RIGHT_90 -> RoomUserRotation.clockwise(RoomUserRotation.clockwise(currentDirection));
             case ACTION_TURN_RANDOM -> RoomUserRotation.fromValue(Emulator.getRandom().nextInt(8));
-            case ACTION_WAIT -> currentRotation;
-            default -> currentRotation;
+            case ACTION_WAIT -> currentDirection;
+            default -> currentDirection;
         };
     }
 

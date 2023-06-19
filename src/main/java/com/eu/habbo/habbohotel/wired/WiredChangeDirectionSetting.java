@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class WiredChangeDirectionSetting {
-    private final int item_id;
+    private final int itemId;
     private int rotation;
     @Setter private RoomUserRotation direction;
 

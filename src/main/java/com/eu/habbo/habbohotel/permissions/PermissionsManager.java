@@ -43,7 +43,7 @@ public class PermissionsManager {
     private void loadPermissionGroups() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permission_groups ORDER BY id ASC")) {
             while (set.next()) {
-                PermissionGroup permissionGroup = new PermissionGroup(set, this.permissionCommands);
+                PermissionGroup permissionGroup = new PermissionGroup(set, this.permissionCommands, this.permissionRights);
                 this.permissionGroups.put(permissionGroup.getId(), permissionGroup);
             }
         } catch (SQLException e) {

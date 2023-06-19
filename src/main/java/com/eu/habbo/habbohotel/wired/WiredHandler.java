@@ -47,44 +47,36 @@ public class WiredHandler {
     private static ObjectMapper objectMapper = null;
 
     public static boolean handle(WiredTriggerType triggerType, RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (triggerType == WiredTriggerType.CUSTOM) return false;
-
-        boolean talked = false;
-
-        if (!Emulator.isReady)
+        if (triggerType == WiredTriggerType.CUSTOM || !Emulator.isReady || room == null || !room.isLoaded() || room.getRoomSpecialTypes() == null) {
             return false;
-
-        if (room == null)
-            return false;
-
-        if (!room.isLoaded())
-            return false;
-
-        if (room.getRoomSpecialTypes() == null)
-            return false;
+        }
 
         THashSet<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(triggerType);
 
-        if (triggers == null || triggers.isEmpty())
+        if (triggers == null || triggers.isEmpty()) {
             return false;
+        }
 
+        boolean talked = false;
         long millis = System.currentTimeMillis();
         THashSet<InteractionWiredEffect> effectsToExecute = new THashSet<>();
-
         List<RoomTile> triggeredTiles = new ArrayList<>();
+
         for (InteractionWiredTrigger trigger : triggers) {
             RoomTile tile = room.getLayout().getTile(trigger.getX(), trigger.getY());
 
-            if (triggeredTiles.contains(tile))
+            if (triggeredTiles.contains(tile)) {
                 continue;
+            }
 
             THashSet<InteractionWiredEffect> tEffectsToExecute = new THashSet<>();
 
             if (handle(trigger, roomUnit, room, stuff, tEffectsToExecute)) {
                 effectsToExecute.addAll(tEffectsToExecute);
 
-                if (triggerType.equals(WiredTriggerType.SAY_SOMETHING))
+                if (triggerType.equals(WiredTriggerType.SAY_SOMETHING)) {
                     talked = true;
+                }
 
                 triggeredTiles.add(tile);
             }

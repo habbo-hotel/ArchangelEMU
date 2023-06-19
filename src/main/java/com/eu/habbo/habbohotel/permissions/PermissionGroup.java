@@ -34,7 +34,7 @@ public class PermissionGroup {
 
     @Getter final Map<Integer, PermissionCurrencyTimer> timers;
 
-    public PermissionGroup(ResultSet set, Map<String, PermissionCommand> commandsAvailable) throws SQLException {
+    public PermissionGroup(ResultSet set, Map<String, PermissionCommand> commandsAvailable, Map<String, PermissionRight> rightsAvailable) throws SQLException {
         this.id = set.getInt("id");
         this.name = set.getString("name");
         this.description = set.getString("description");
@@ -50,7 +50,7 @@ public class PermissionGroup {
         this.timers = new HashMap<>();
 
         this.loadCommands(commandsAvailable);
-        this.loadRights();
+        this.loadRights(rightsAvailable);
         this.loadTimers();
 
         log.info("Loaded " + this.name + " rank with " + this.commands.size() + " commands and " + this.rights.size() + " rights!");
@@ -71,12 +71,13 @@ public class PermissionGroup {
         }
     }
 
-    private void loadRights() {
+    private void loadRights(Map<String, PermissionRight> rightsAvailable) {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM permission_group_rights WHERE group_id = ?")) {
             statement.setInt(1, this.id);
             try(ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    PermissionRight right = Emulator.getGameEnvironment().getPermissionsManager().getRight(set.getString("name"));
+                    String rightName = set.getString("right_name");
+                    PermissionRight right = rightsAvailable.values().stream().filter(rightAvailable -> rightAvailable.getName().equalsIgnoreCase(rightName)).findFirst().orElse(null);
                     this.rights.put(right, PermissionSetting.fromString(set.getString("setting_type")));
                 }
             }

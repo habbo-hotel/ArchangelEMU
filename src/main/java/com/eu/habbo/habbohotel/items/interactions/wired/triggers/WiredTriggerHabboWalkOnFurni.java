@@ -15,8 +15,8 @@ public class WiredTriggerHabboWalkOnFurni extends InteractionWiredTrigger {
         super(set, baseItem);
     }
 
-    public WiredTriggerHabboWalkOnFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredTriggerHabboWalkOnFurni(int id, int userId, Item item, String extraData, int limitedStack, int limitedSells) {
+        super(id, userId, item, extraData, limitedStack, limitedSells);
     }
 
     @Override
