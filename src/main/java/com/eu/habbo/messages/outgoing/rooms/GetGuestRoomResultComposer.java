@@ -29,7 +29,7 @@ public class GetGuestRoomResultComposer extends MessageComposer {
             this.response.appendInt(this.room.getOwnerId());
             this.response.appendString(this.room.getOwnerName());
         }
-        this.response.appendInt(this.room.getState().getState());
+        this.response.appendInt(this.room.getState().ordinal());
         this.response.appendInt(this.room.getUserCount());
         this.response.appendInt(this.room.getUsersMax());
         this.response.appendString(this.room.getDescription());

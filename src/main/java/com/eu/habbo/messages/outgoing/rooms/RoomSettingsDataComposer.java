@@ -15,7 +15,7 @@ public class RoomSettingsDataComposer extends MessageComposer {
         this.response.appendInt(this.room.getId());
         this.response.appendString(this.room.getName());
         this.response.appendString(this.room.getDescription());
-        this.response.appendInt(this.room.getState().getState());
+        this.response.appendInt(this.room.getState().ordinal());
         this.response.appendInt(this.room.getCategory());
         this.response.appendInt(this.room.getUsersMax());
         this.response.appendInt(this.room.getUsersMax());

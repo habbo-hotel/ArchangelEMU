@@ -292,6 +292,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private RoomSpecialTypes roomSpecialTypes;
     @Getter
     private TraxManager traxManager;
+    @Getter
+    private HashMap<String, InteractionWiredTrigger> triggersOnRoom;
     private boolean cycleOdd;
     @Getter
     private long cycleTimestamp;
@@ -381,6 +383,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.activeTrades = new THashSet<>(0);
         this.rights = new TIntArrayList();
         this.userVotes = new ArrayList<>();
+        this.triggersOnRoom = new HashMap<>();
     }
 
     public synchronized void loadData() {
@@ -407,7 +410,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.loadBots(connection);
                 this.loadPets(connection);
                 this.loadWordFilter(connection);
-                this.loadWiredData(connection);
+//                this.loadWiredData(connection);
 
                 this.idleCycles = 0;
                 this.loaded = true;
@@ -1027,7 +1030,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             message.appendInt(this.ownerId);
             message.appendString(this.ownerName);
         }
-        message.appendInt(this.state.getState());
+        message.appendInt(this.state.ordinal());
         message.appendInt(this.getUserCount());
         message.appendInt(this.usersMax);
         message.appendString(this.description);

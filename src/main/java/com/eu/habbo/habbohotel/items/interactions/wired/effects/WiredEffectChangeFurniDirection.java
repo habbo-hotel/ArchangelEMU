@@ -76,16 +76,9 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
         }
 
         for(HabboItem item : this.getWiredSettings().getItems(room)) {
-            WiredChangeDirectionSetting setting = null;
-            if(!this.itemsSettings.containsKey(item)) {
-                this.itemsSettings.put(item, new WiredChangeDirectionSetting(item.getId(), item.getRotation(), startDirection));
-            } else {
-                setting = this.itemsSettings.get(item);
-            }
-
-            if(setting == null) {
-                continue;
-            }
+            WiredChangeDirectionSetting setting = this.itemsSettings.computeIfAbsent(item, k ->
+                    new WiredChangeDirectionSetting(item.getId(), item.getRotation(), startDirection)
+            );
 
             RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), setting.getDirection().getValue());
             int count = 1;

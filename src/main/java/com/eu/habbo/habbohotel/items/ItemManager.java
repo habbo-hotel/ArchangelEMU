@@ -685,7 +685,13 @@ public class ItemManager {
                 Constructor<? extends HabboItem> c = itemClass.getConstructor(ResultSet.class, Item.class);
                 c.setAccessible(true);
 
-                return (HabboItem) c.newInstance(set, baseItem);
+                HabboItem item = (HabboItem) c.newInstance(set, baseItem);
+
+                if (item instanceof InteractionWired interactionWired) {
+                    interactionWired.loadWiredSettings(set);
+                }
+
+                return item;
             } catch (Exception e) {
                 log.error("Caught exception", e);
             }
