@@ -24,7 +24,7 @@ public class UpdateConditionEvent extends MessageHandler {
                         throw new WiredSaveException(String.format("Wired condition with item id %s not found in room", itemId));
                     }
 
-                    condition.saveWiredSettings(this.packet);
+                    condition.saveWiredSettings(this.packet, room);
                     this.client.sendResponse(new WiredSavedComposer());
                     condition.needsUpdate(true);
                     Emulator.getThreading().run(condition);

@@ -1,10 +1,11 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.interfaces;
 
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
-import gnu.trove.set.hash.THashSet;
+
+import java.util.List;
 
 public interface InteractionWiredMatchFurniSettings {
-    THashSet<WiredMatchFurniSetting> getMatchFurniSettings();
+    List<WiredMatchFurniSetting> getMatchSettings();
     boolean shouldMatchState();
     boolean shouldMatchRotation();
     boolean shouldMatchPosition();

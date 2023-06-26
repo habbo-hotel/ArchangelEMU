@@ -26,7 +26,7 @@ public class UpdateActionEvent extends MessageHandler {
                         throw new WiredSaveException(String.format("Wired effect with item id %s not found in room", itemId));
                     }
 
-                    effect.saveWiredSettings(this.packet);
+                    effect.saveWiredSettings(this.packet, room);
                     this.client.sendResponse(new WiredSavedComposer());
                     effect.needsUpdate(true);
                     Emulator.getThreading().run(effect);

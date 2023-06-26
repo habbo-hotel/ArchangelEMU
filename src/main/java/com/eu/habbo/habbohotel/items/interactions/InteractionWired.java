@@ -57,17 +57,8 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
      */
     public void loadWiredSettings(ResultSet set) throws SQLException, JsonProcessingException {
         String wiredData = set.getString("wired_data");
-
         this.wiredSettings = new WiredSettings();
-
-        if(wiredData.startsWith("{")) {
-            //TODO CHECK IF WIRED_DATA IS MS4_DATA
-            this.wiredSettings = WiredHandler.getObjectMapper().readValue(wiredData, WiredSettings.class);
-
-            //TODO CHECK IF WIRED_DATA IS MS3_DATA AND READ IT
-        } else {
-            //TODO READ MS1-MS2_DATA
-        }
+        this.wiredSettings = WiredHandler.getObjectMapper().readValue(wiredData, WiredSettings.class);
     }
 
     /**
@@ -107,7 +98,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
      *
      * @param packet
      */
-    public void saveWiredSettings(ClientMessage packet) {
+    public void saveWiredSettings(ClientMessage packet, Room room) {
         int intParamCount = packet.readInt();
         List<Integer> integerParams = new ArrayList<>();
 
@@ -134,6 +125,8 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         }
 
         this.wiredSettings.setSelectionType(packet.readInt());
+
+        saveAdditionalData(room);
     }
 
     /**
@@ -149,7 +142,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
             //EXAMPLE: if StringParam should be number, throw error here, maybe activating a flag in wiredSettings that string params are numbers
             this.loadDefaultIntegerParams();
 
-            String wiredData = "";
+            String wiredData;
 
             try {
                 wiredData = WiredHandler.getObjectMapper().writeValueAsString(this.wiredSettings);
@@ -187,6 +180,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     }
 
     public void loadDefaultIntegerParams() {}
+    public void saveAdditionalData(Room room) {}
 
     public void activateBox(Room room) {
         this.activateBox(room, null, 0L);

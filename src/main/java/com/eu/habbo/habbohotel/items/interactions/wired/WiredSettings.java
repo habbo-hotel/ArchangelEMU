@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions.wired;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import gnu.trove.set.hash.THashSet;
@@ -27,10 +28,16 @@ public class WiredSettings implements IWiredSettings {
     @Setter
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<Integer> itemIds;
+
     @Getter
     @Setter
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private int delay;
+
+    @Getter
+    @Setter
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<WiredMatchFurniSetting> matchParams;
 
     @Getter
     @Setter
@@ -42,6 +49,7 @@ public class WiredSettings implements IWiredSettings {
         this.integerParams = new ArrayList<>();
         this.stringParam = "";
         this.delay = 0;
+        this.matchParams = new ArrayList<>();
         this.selectionType = 0;
     }
 
@@ -71,6 +79,7 @@ public class WiredSettings implements IWiredSettings {
         this.itemIds.clear();
         this.stringParam = "";
         this.delay = 0;
+        this.matchParams.clear();
         this.selectionType = 0;
     }
 }

@@ -24,7 +24,7 @@ public class UpdateTriggerEvent extends MessageHandler {
                         throw new WiredSaveException(String.format("Wired trigger with item id %s not found in room", itemId));
                     }
 
-                    trigger.saveWiredSettings(this.packet);
+                    trigger.saveWiredSettings(this.packet, room);
                     this.client.sendResponse(new WiredSavedComposer());
                     trigger.needsUpdate(true);
                     Emulator.getThreading().run(trigger);

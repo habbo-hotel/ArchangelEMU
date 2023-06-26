@@ -1,14 +1,9 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredEffectInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
-import com.eu.habbo.messages.outgoing.wired.WiredEffectDataComposer;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;

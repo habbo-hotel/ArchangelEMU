@@ -61,7 +61,7 @@ public class ApplySnapshotEvent extends MessageHandler {
         if (wiredItem instanceof InteractionWiredMatchFurniSettings wired) {
 
             // Try to apply the set settings to each item
-            wired.getMatchFurniSettings().forEach(setting -> {
+            wired.getMatchSettings().forEach(setting -> {
                 HabboItem matchItem = room.getHabboItem(setting.getItem_id());
 
                 // Match state
