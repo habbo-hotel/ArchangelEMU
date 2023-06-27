@@ -4399,23 +4399,15 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     return;
                 }
 
-                if(((IWiredPeriodical) trigger).isTriggerTileUpdated()) {
-                    if(this.triggersOnRoom.containsKey(((IWiredPeriodical) trigger).getOldTile())) {
-                        if(this.triggersOnRoom.get(((IWiredPeriodical) trigger).getOldTile()).getId() == trigger.getId() || this.triggersOnRoom.get(((IWiredPeriodical) trigger).getOldTile()) == null) {
-                            this.triggersOnRoom.remove(((IWiredPeriodical) trigger).getOldTile());
-                        }
-                    }
-                    ((IWiredPeriodical) trigger).setTriggerTileUpdated(false);
-                    ((IWiredPeriodical) trigger).setOldTile(null);
-                }
-
                 RoomTile triggerTile = this.layout.getTile(trigger.getX(), trigger.getY());
 
                 if (this.triggersOnRoom.containsKey(triggerTile)) {
-                    if (this.triggersOnRoom.get(triggerTile) == null || (this.triggersOnRoom.get(triggerTile).getId() != trigger.getId() && ((IWiredPeriodical) trigger).getInterval() <= ((IWiredPeriodical) this.triggersOnRoom.get(triggerTile)).getInterval())) {
-                        this.triggersOnRoom.put(triggerTile, trigger);
-                    } else if (this.triggersOnRoom.get(triggerTile).getId() != trigger.getId() && ((IWiredPeriodical) this.triggersOnRoom.get(triggerTile)).getInterval() <= ((IWiredPeriodical) trigger).getInterval()) {
-                        return;
+                    if(this.triggersOnRoom.get(triggerTile).getId() != trigger.getId()) {
+                        if(((IWiredPeriodical) this.triggersOnRoom.get(triggerTile)).getInterval() <= ((IWiredPeriodical) trigger).getInterval()) {
+                            return;
+                        } else {
+                            this.triggersOnRoom.put(triggerTile, trigger);
+                        }
                     }
                 } else {
                     this.triggersOnRoom.put(triggerTile, trigger);

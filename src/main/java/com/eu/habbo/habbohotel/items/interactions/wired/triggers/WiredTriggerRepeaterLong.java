@@ -20,12 +20,6 @@ import java.sql.SQLException;
 public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements IWiredPeriodical, WiredTriggerReset {
     public final int PARAM_REPEAT_TIME = 0;
     protected int counter = 0;
-    @Getter
-    @Setter
-    private boolean triggerTileUpdated;
-    @Getter
-    @Setter
-    private RoomTile oldTile;
     @Setter
     private int interval;
     public WiredTriggerRepeaterLong(ResultSet set, Item baseItem) throws SQLException {
@@ -50,20 +44,30 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
 
     @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
-        this.triggerTileUpdated = true;
-        this.oldTile = oldLocation;
+        if(room.getTriggersOnRoom().containsKey(oldLocation)) {
+            if(room.getTriggersOnRoom().get(oldLocation).getId() == this.getId()) {
+                room.getTriggersOnRoom().remove(oldLocation);
+            }
+        }
+
         super.onMove(room, oldLocation, newLocation);
     }
 
     @Override
     public void onPickUp(Room room) {
-        this.triggerTileUpdated = true;
-        this.oldTile = room.getLayout().getTile(this.getX(), this.getY());
+        RoomTile oldLocation = room.getLayout().getTile(this.getX(), this.getY());
+
+        if(room.getTriggersOnRoom().containsKey(oldLocation)) {
+            if(room.getTriggersOnRoom().get(oldLocation).getId() == this.getId()) {
+                room.getTriggersOnRoom().remove(oldLocation);
+            }
+        }
+
         super.onPickUp(room);
     }
 
     public int getInterval() {
-        return this.getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME) * 500;
+        return this.getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME) * 5000;
     }
 
     @Override
