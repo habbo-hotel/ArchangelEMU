@@ -51,7 +51,7 @@ public class WiredHandler {
             return false;
         }
 
-        THashSet<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(triggerType);
+        List<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(triggerType);
 
         if (triggers == null || triggers.isEmpty()) {
             return false;
@@ -102,7 +102,7 @@ public class WiredHandler {
         if (room.getRoomSpecialTypes() == null)
             return false;
 
-        THashSet<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(WiredTriggerType.CUSTOM);
+        List<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(WiredTriggerType.CUSTOM);
 
         if (triggers == null || triggers.isEmpty())
             return false;

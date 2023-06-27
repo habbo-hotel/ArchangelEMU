@@ -27,10 +27,8 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class RoomSpecialTypes {
     private final THashMap<Integer, InteractionBattleBanzaiTeleporter> banzaiTeleporters;
@@ -40,7 +38,7 @@ public class RoomSpecialTypes {
     private final THashMap<Integer, InteractionPetToy> petToys;
     private final THashMap<Integer, InteractionRoller> rollers;
 
-    private final THashMap<WiredTriggerType, THashSet<InteractionWiredTrigger>> wiredTriggers;
+    private final HashMap<WiredTriggerType, List<InteractionWiredTrigger>> wiredTriggers;
     private final THashMap<WiredEffectType, THashSet<InteractionWiredEffect>> wiredEffects;
     private final THashMap<WiredConditionType, THashSet<InteractionWiredCondition>> wiredConditions;
     private final THashMap<Integer, InteractionWiredExtra> wiredExtras;
@@ -61,7 +59,7 @@ public class RoomSpecialTypes {
         this.petToys = new THashMap<>(0);
         this.rollers = new THashMap<>(0);
 
-        this.wiredTriggers = new THashMap<>(0);
+        this.wiredTriggers = new HashMap<>(0);
         this.wiredEffects = new THashMap<>(0);
         this.wiredConditions = new THashMap<>(0);
         this.wiredExtras = new THashMap<>(0);
@@ -229,7 +227,7 @@ public class RoomSpecialTypes {
 
     public InteractionWiredTrigger getTrigger(int itemId) {
         synchronized (this.wiredTriggers) {
-            for (Map.Entry<WiredTriggerType, THashSet<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
+            for (Map.Entry<WiredTriggerType, List<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
                 for (InteractionWiredTrigger trigger : map.getValue()) {
                     if (trigger.getId() == itemId)
                         return trigger;
@@ -244,7 +242,7 @@ public class RoomSpecialTypes {
         synchronized (this.wiredTriggers) {
             THashSet<InteractionWiredTrigger> triggers = new THashSet<>();
 
-            for (Map.Entry<WiredTriggerType, THashSet<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
+            for (Map.Entry<WiredTriggerType, List<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
                 triggers.addAll(map.getValue());
             }
 
@@ -252,7 +250,7 @@ public class RoomSpecialTypes {
         }
     }
 
-    public THashSet<InteractionWiredTrigger> getTriggers(WiredTriggerType type) {
+    public List<InteractionWiredTrigger> getTriggers(WiredTriggerType type) {
         return this.wiredTriggers.get(type);
     }
 
@@ -260,7 +258,7 @@ public class RoomSpecialTypes {
         synchronized (this.wiredTriggers) {
             THashSet<InteractionWiredTrigger> triggers = new THashSet<>();
 
-            for (Map.Entry<WiredTriggerType, THashSet<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
+            for (Map.Entry<WiredTriggerType, List<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
                 for (InteractionWiredTrigger trigger : map.getValue()) {
                     if (trigger.getX() == x && trigger.getY() == y)
                         triggers.add(trigger);
@@ -274,7 +272,7 @@ public class RoomSpecialTypes {
     public void addTrigger(InteractionWiredTrigger trigger) {
         synchronized (this.wiredTriggers) {
             if (!this.wiredTriggers.containsKey(trigger.getType()))
-                this.wiredTriggers.put(trigger.getType(), new THashSet<>());
+                this.wiredTriggers.put(trigger.getType(), new ArrayList<>());
 
             this.wiredTriggers.get(trigger.getType()).add(trigger);
         }
@@ -353,7 +351,6 @@ public class RoomSpecialTypes {
             }
         }
     }
-
 
     public InteractionWiredCondition getCondition(int itemId) {
         synchronized (this.wiredConditions) {

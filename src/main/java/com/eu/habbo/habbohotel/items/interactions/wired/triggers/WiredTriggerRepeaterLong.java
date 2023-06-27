@@ -4,20 +4,30 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredPeriodical;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements ICycleable, WiredTriggerReset {
+public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements IWiredPeriodical, WiredTriggerReset {
     public final int PARAM_REPEAT_TIME = 0;
-    private int counter = 0;
-
+    protected int counter = 0;
+    @Getter
+    @Setter
+    private boolean triggerTileUpdated;
+    @Getter
+    @Setter
+    private RoomTile oldTile;
+    @Setter
+    private int interval;
     public WiredTriggerRepeaterLong(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -40,44 +50,20 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
 
     @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
-        if(room.getTriggersOnRoom().containsValue(this)) {
-            room.getTriggersOnRoom().remove(oldLocation.getX() + ";" + oldLocation.getY());
-        }
-
+        this.triggerTileUpdated = true;
+        this.oldTile = oldLocation;
         super.onMove(room, oldLocation, newLocation);
     }
 
     @Override
     public void onPickUp(Room room) {
-        if(room.getTriggersOnRoom().containsValue(this)) {
-            room.getTriggersOnRoom().remove(this.getX() + ";" + this.getY());
-        }
-
+        this.triggerTileUpdated = true;
+        this.oldTile = room.getLayout().getTile(this.getX(), this.getY());
         super.onPickUp(room);
     }
 
-    @Override
-    public void cycle(Room room) {
-        String key = this.getX() + ";" + this.getY();
-
-        if(room.getTriggersOnRoom().containsKey(key)) {
-            if(room.getTriggersOnRoom().get(key).getId() != this.getId()) {
-                if(room.getTriggersOnRoom().get(key).getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME) <= this.getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME)) {
-                    return;
-                }
-            }
-        }
-        room.getTriggersOnRoom().put(key, this);
-
-        this.counter += 500;
-        if (this.counter >= this.getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME) * 5000) {
-            this.counter = 0;
-            if (this.getRoomId() != 0) {
-                if (room.isLoaded()) {
-                    WiredHandler.handle(this, null, room, new Object[]{this});
-                }
-            }
-        }
+    public int getInterval() {
+        return this.getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME) * 500;
     }
 
     @Override

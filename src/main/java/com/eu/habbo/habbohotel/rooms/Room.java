@@ -22,6 +22,8 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
 import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredPeriodical;
+import com.eu.habbo.habbohotel.items.interactions.wired.triggers.WiredTriggerRepeaterLong;
 import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
@@ -292,11 +294,18 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private RoomSpecialTypes roomSpecialTypes;
     @Getter
     private TraxManager traxManager;
-    @Getter
-    private HashMap<String, InteractionWiredTrigger> triggersOnRoom;
     private boolean cycleOdd;
     @Getter
     private long cycleTimestamp;
+    @Getter
+    @Setter
+    private ScheduledFuture wiredPeriodicalCycle;
+    @Getter
+    @Setter
+    final HashMap<RoomTile, InteractionWiredTrigger> triggersOnRoom;
+    @Getter
+    @Setter
+    private int periodicalTick;
 
     public Room(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
@@ -383,7 +392,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.activeTrades = new THashSet<>(0);
         this.rights = new TIntArrayList();
         this.userVotes = new ArrayList<>();
+
         this.triggersOnRoom = new HashMap<>();
+        this.periodicalTick = 0;
     }
 
     public synchronized void loadData() {
@@ -410,7 +421,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.loadBots(connection);
                 this.loadPets(connection);
                 this.loadWordFilter(connection);
-//                this.loadWiredData(connection);
+                this.startPeriodicalCycle();
 
                 this.idleCycles = 0;
                 this.loaded = true;
@@ -907,6 +918,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
             if (Emulator.getPluginManager().fireEvent(new RoomUnloadingEvent(this)).isCancelled())
                 return;
+
+            if(this.wiredPeriodicalCycle != null) {
+                this.wiredPeriodicalCycle.cancel(true);
+            }
 
             if (this.loaded) {
                 try {
@@ -4355,5 +4370,65 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public Collection<RoomUnit> getRoomUnitsAt(RoomTile tile) {
         THashSet<RoomUnit> roomUnits = getRoomUnits();
         return roomUnits.stream().filter(unit -> unit.getCurrentLocation() == tile).collect(Collectors.toSet());
+    }
+
+    private void startPeriodicalCycle() {
+        this.wiredPeriodicalCycle = Emulator.getThreading().run(() -> {
+            if(Emulator.isShuttingDown) {
+                return;
+            }
+
+            this.startPeriodicalCycle();
+
+            List<InteractionWiredTrigger> periodicals = new ArrayList<>();
+
+            if(this.getRoomSpecialTypes().getTriggers(WiredTriggerType.PERIODICALLY) != null) {
+                periodicals.addAll(this.getRoomSpecialTypes().getTriggers(WiredTriggerType.PERIODICALLY));
+            }
+            
+            if(this.getRoomSpecialTypes().getTriggers(WiredTriggerType.PERIODICALLY_LONG) != null) {
+                periodicals.addAll(this.getRoomSpecialTypes().getTriggers(WiredTriggerType.PERIODICALLY_LONG));
+            }
+
+            if(periodicals.isEmpty()) {
+                return;
+            }
+
+            periodicals.parallelStream().forEach(trigger -> {
+                if(!(trigger instanceof IWiredPeriodical)) {
+                    return;
+                }
+
+                if(((IWiredPeriodical) trigger).isTriggerTileUpdated()) {
+                    if(this.triggersOnRoom.containsKey(((IWiredPeriodical) trigger).getOldTile())) {
+                        if(this.triggersOnRoom.get(((IWiredPeriodical) trigger).getOldTile()).getId() == trigger.getId() || this.triggersOnRoom.get(((IWiredPeriodical) trigger).getOldTile()) == null) {
+                            this.triggersOnRoom.remove(((IWiredPeriodical) trigger).getOldTile());
+                        }
+                    }
+                    ((IWiredPeriodical) trigger).setTriggerTileUpdated(false);
+                    ((IWiredPeriodical) trigger).setOldTile(null);
+                }
+
+                RoomTile triggerTile = this.layout.getTile(trigger.getX(), trigger.getY());
+
+                if (this.triggersOnRoom.containsKey(triggerTile)) {
+                    if (this.triggersOnRoom.get(triggerTile) == null || (this.triggersOnRoom.get(triggerTile).getId() != trigger.getId() && ((IWiredPeriodical) trigger).getInterval() <= ((IWiredPeriodical) this.triggersOnRoom.get(triggerTile)).getInterval())) {
+                        this.triggersOnRoom.put(triggerTile, trigger);
+                    } else if (this.triggersOnRoom.get(triggerTile).getId() != trigger.getId() && ((IWiredPeriodical) this.triggersOnRoom.get(triggerTile)).getInterval() <= ((IWiredPeriodical) trigger).getInterval()) {
+                        return;
+                    }
+                } else {
+                    this.triggersOnRoom.put(triggerTile, trigger);
+                }
+
+                if(this.periodicalTick % (((IWiredPeriodical) trigger).getInterval() / 500) != 0) {
+                    return;
+                }
+
+                WiredHandler.handle(trigger, null, this, new Object[]{trigger});
+            });
+
+            ++this.periodicalTick;
+        }, 500L);
     }
 }
