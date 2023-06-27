@@ -56,10 +56,6 @@ public class UseFurnitureEvent extends MessageHandler {
             }
 
             item.onClick(this.client, room, new Object[]{state});
-
-            if (item instanceof InteractionWired) {
-                this.client.getHabbo().getRoomUnit().setGoalLocation(this.client.getHabbo().getRoomUnit().getCurrentLocation());
-            }
         } catch (Exception e) {
             log.error("Caught exception", e);
         }
