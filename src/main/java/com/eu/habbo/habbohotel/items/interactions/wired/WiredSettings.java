@@ -6,11 +6,11 @@ import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class WiredSettings implements IWiredSettings {
@@ -53,8 +53,8 @@ public class WiredSettings implements IWiredSettings {
         this.selectionType = 0;
     }
 
-    public THashSet<HabboItem> getItems(Room room) {
-        THashSet<HabboItem> items = new THashSet<>();
+    public HashSet<HabboItem> getItems(Room room) {
+        HashSet<HabboItem> items = new HashSet<>();
 
         if(this.itemIds.size() == 0) {
             return items;
@@ -65,6 +65,9 @@ public class WiredSettings implements IWiredSettings {
 
             if(item == null || item.getRoomId() == 0) {
                 this.itemIds.remove(i);
+                if(!matchParams.isEmpty()) {
+                    this.matchParams.removeIf(setting -> setting.getItem_id() == item.getId());
+                }
                 continue;
             }
 

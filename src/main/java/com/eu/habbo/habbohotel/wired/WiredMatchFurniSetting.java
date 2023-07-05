@@ -1,17 +1,19 @@
 package com.eu.habbo.habbohotel.wired;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class WiredMatchFurniSetting {
-    private final int item_id;
-    private final String state;
-    private final int rotation;
-    private final int x;
-    private final int y;
+    private int item_id;
+    private String state;
+    private int rotation;
+    private int x;
+    private int y;
 
-    public WiredMatchFurniSetting(int itemId, String state, int rotation, int x, int y) {
-        this.item_id = itemId;
+    public WiredMatchFurniSetting(int item_id, String state, int rotation, int x, int y) {
+        this.item_id = item_id;
         this.state = state.replace("\t\t\t", " ");
         this.rotation = rotation;
         this.x = x;
