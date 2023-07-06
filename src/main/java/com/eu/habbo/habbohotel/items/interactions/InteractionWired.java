@@ -58,7 +58,10 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     public void loadWiredSettings(ResultSet set) throws SQLException, JsonProcessingException {
         String wiredData = set.getString("wired_data");
         this.wiredSettings = new WiredSettings();
-        this.wiredSettings = WiredHandler.getObjectMapper().readValue(wiredData, WiredSettings.class);
+
+        if(wiredData.startsWith("{")) {
+            this.wiredSettings = WiredHandler.getObjectMapper().readValue(wiredData, WiredSettings.class);
+        }
     }
 
     /**
