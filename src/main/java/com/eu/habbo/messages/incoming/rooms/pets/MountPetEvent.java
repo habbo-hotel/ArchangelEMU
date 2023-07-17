@@ -30,7 +30,13 @@ public class MountPetEvent extends MessageHandler {
 
         //dismount
         if (habbo.getHabboInfo().getRiding() != null) {
+            boolean mountAgain = petId != habbo.getHabboInfo().getRiding().getId();
+
             habbo.getHabboInfo().dismountPet(room);
+
+            if(!mountAgain) {
+                return;
+            }
         }
 
         // someone is already on it
