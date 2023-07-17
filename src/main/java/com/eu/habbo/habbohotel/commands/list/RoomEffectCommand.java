@@ -21,8 +21,8 @@ public class RoomEffectCommand extends Command {
             int effectId = Integer.parseInt(params[1]);
 
             if (effectId >= 0) {
-                Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
-                room.getHabbos().forEach(habbo -> room.giveEffect(habbo, effectId, -1));
+                Room room = gameClient.getHabbo().getRoomUnit().getRoom();
+                room.getRoomUnitManager().getRoomHabbos().forEach(habbo -> room.giveEffect(habbo, effectId, -1));
 
             } else {
                 gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_roomeffect.positive"), RoomChatMessageBubbles.ALERT);

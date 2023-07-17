@@ -1,7 +1,7 @@
 package com.eu.habbo.plugin.events.furniture;
 
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 
 public class FurnitureRedeemedEvent extends FurnitureUserEvent {
     public static final int CREDITS = -1;
@@ -11,7 +11,7 @@ public class FurnitureRedeemedEvent extends FurnitureUserEvent {
     public final int amount;
     public final int currencyID;
 
-    public FurnitureRedeemedEvent(HabboItem furniture, Habbo habbo, int amount, int currencyID) {
+    public FurnitureRedeemedEvent(RoomItem furniture, Habbo habbo, int amount, int currencyID) {
         super(furniture, habbo);
 
         this.amount = amount;

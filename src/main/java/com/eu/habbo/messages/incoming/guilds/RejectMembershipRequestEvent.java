@@ -33,9 +33,9 @@ public class RejectMembershipRequestEvent extends MessageHandler {
                 Emulator.getPluginManager().fireEvent(new GuildDeclinedMembershipEvent(guild, userId, habbo, this.client.getHabbo()));
 
                 if (habbo != null) {
-                    Room room = habbo.getHabboInfo().getCurrentRoom();
+                    Room room = habbo.getRoomUnit().getRoom();
                     if (room != null) {
-                        if (room.getGuildId() == guildId) {
+                        if (room.getRoomInfo().getGuild().getId() == guildId) {
                             habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
                         }
                     }

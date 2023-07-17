@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.crafting.CraftingAltar;
 import com.eu.habbo.habbohotel.crafting.CraftingRecipe;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.LimitedEditionSoldOutComposer;
 import com.eu.habbo.messages.outgoing.crafting.CraftingResultComposer;
@@ -21,7 +21,7 @@ public class CraftEvent extends MessageHandler {
     @Override
     public void handle() {
         int craftingTable = this.packet.readInt();
-        HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(craftingTable);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(craftingTable);
         CraftingAltar altar = Emulator.getGameEnvironment().getCraftingManager().getAltar(item.getBaseItem());
         CraftingRecipe recipe = altar.getRecipe(this.packet.readString());
 
@@ -31,20 +31,20 @@ public class CraftEvent extends MessageHandler {
                 return;
             }
 
-            TIntObjectHashMap<HabboItem> toRemove = new TIntObjectHashMap<>();
+            TIntObjectHashMap<RoomItem> toRemove = new TIntObjectHashMap<>();
             for (Map.Entry<Item, Integer> set : recipe.getIngredients().entrySet()) {
                 for (int i = 0; i < set.getValue(); i++) {
-                    HabboItem habboItem = this.client.getHabbo().getInventory().getItemsComponent().getAndRemoveHabboItem(set.getKey());
+                    RoomItem roomItem = this.client.getHabbo().getInventory().getItemsComponent().getAndRemoveHabboItem(set.getKey());
 
-                    if (habboItem == null) {
+                    if (roomItem == null) {
                         return;
                     }
 
-                    toRemove.put(habboItem.getId(), habboItem);
+                    toRemove.put(roomItem.getId(), roomItem);
                 }
             }
 
-            HabboItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(this.client.getHabbo().getHabboInfo().getId(), recipe.getReward(), 0, 0, "");
+            RoomItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(this.client.getHabbo().getHabboInfo().getId(), recipe.getReward(), 0, 0, "");
 
             if (rewardItem != null) {
                 if (recipe.isLimited()) {

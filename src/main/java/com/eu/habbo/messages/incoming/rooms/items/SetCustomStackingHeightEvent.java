@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 import com.eu.habbo.habbohotel.items.interactions.InteractionStackHelper;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.UpdateStackHeightTileHeightComposer;
@@ -14,14 +14,14 @@ public class SetCustomStackingHeightEvent extends MessageHandler {
     public void handle() {
         int itemId = this.packet.readInt();
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (this.client.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
-        if (this.client.getHabbo().getHabboInfo().getId() == this.client.getHabbo().getHabboInfo().getCurrentRoom().getOwnerId() || this.client.getHabbo().getHabboInfo().getCurrentRoom().hasRights(this.client.getHabbo())) {
-            HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
+        if (this.client.getHabbo().getHabboInfo().getId() == this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getOwnerInfo().getId() || this.client.getHabbo().getRoomUnit().getRoom().hasRights(this.client.getHabbo())) {
+            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
 
             if (item instanceof InteractionStackHelper) {
-                Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+                Room room = this.client.getHabbo().getRoomUnit().getRoom();
                 RoomTile itemTile = room.getLayout().getTile(item.getX(), item.getY());
                 double stackerHeight = this.packet.readInt();
 
@@ -49,10 +49,10 @@ public class SetCustomStackingHeightEvent extends MessageHandler {
                 item.setZ(height);
                 item.setExtradata((int) (height * 100) + "");
                 item.needsUpdate(true);
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().updateItem(item);
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().updateTiles(tiles);
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new HeightMapUpdateMessageComposer (room, tiles).compose());
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UpdateStackHeightTileHeightComposer(item, (int) ((height) * 100)).compose());
+                this.client.getHabbo().getRoomUnit().getRoom().updateItem(item);
+                this.client.getHabbo().getRoomUnit().getRoom().updateTiles(tiles);
+                this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new HeightMapUpdateMessageComposer (room, tiles).compose());
+                this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new UpdateStackHeightTileHeightComposer(item, (int) ((height) * 100)).compose());
             }
         }
     }

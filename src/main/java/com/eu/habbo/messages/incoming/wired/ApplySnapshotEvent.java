@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
@@ -35,19 +35,19 @@ public class ApplySnapshotEvent extends MessageHandler {
             return;
         }
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         // Executing Habbo should be able to edit wireds
-        if (room == null || (!room.hasRights(this.client.getHabbo()) && !room.isOwner(this.client.getHabbo()))) {
+        if (room == null || (!room.hasRights(this.client.getHabbo()) && !room.getRoomInfo().isRoomOwner(this.client.getHabbo()))) {
             return;
         }
 
-        List<HabboItem> wireds = new ArrayList<>();
+        List<RoomItem> wireds = new ArrayList<>();
         wireds.addAll(room.getRoomSpecialTypes().getConditions());
         wireds.addAll(room.getRoomSpecialTypes().getEffects());
 
         // Find the item with the given ID in the room
-        Optional<HabboItem> item = wireds.stream()
+        Optional<RoomItem> item = wireds.stream()
                 .filter(wired -> wired.getId() == itemId)
                 .findFirst();
 
@@ -56,13 +56,13 @@ public class ApplySnapshotEvent extends MessageHandler {
             return;
         }
 
-        HabboItem wiredItem = item.get();
+        RoomItem wiredItem = item.get();
         // The item should have settings to match furni state, position and rotation
         if (wiredItem instanceof InteractionWiredMatchFurniSettings wired) {
 
             // Try to apply the set settings to each item
             wired.getMatchSettings().forEach(setting -> {
-                HabboItem matchItem = room.getHabboItem(setting.getItem_id());
+                RoomItem matchItem = room.getHabboItem(setting.getItem_id());
 
                 // Match state
                 if (wired.shouldMatchState() && matchItem.allowWiredResetState() && !setting.getState().equals(" ") && !matchItem.getExtradata().equals(setting.getState())) {

@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -18,7 +18,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
     // THIS IS WRONG SlideObjectBundleMessageComposer
     private static final Logger LOGGER = LoggerFactory.getLogger(RoomUnitOnRollerComposer.class);
     private final RoomUnit roomUnit;
-    private final HabboItem roller;
+    private final RoomItem roller;
     private final RoomTile oldLocation;
     private final double oldZ;
     private final RoomTile newLocation;
@@ -26,9 +26,9 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
     private final Room room;
     private int x;
     private int y;
-    private final HabboItem oldTopItem;
+    private final RoomItem oldTopItem;
 
-    public RoomUnitOnRollerComposer(RoomUnit roomUnit, HabboItem roller, RoomTile oldLocation, double oldZ, RoomTile newLocation, double newZ, Room room) {
+    public RoomUnitOnRollerComposer(RoomUnit roomUnit, RoomItem roller, RoomTile oldLocation, double oldZ, RoomTile newLocation, double newZ, Room room) {
         this.roomUnit = roomUnit;
         this.roller = roller;
         this.oldLocation = oldLocation;
@@ -42,8 +42,8 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
     public RoomUnitOnRollerComposer(RoomUnit roomUnit, RoomTile newLocation, Room room) {
         this.roomUnit = roomUnit;
         this.roller = null;
-        this.oldLocation = this.roomUnit.getCurrentLocation();
-        this.oldZ = this.roomUnit.getZ();
+        this.oldLocation = this.roomUnit.getCurrentPosition();
+        this.oldZ = this.roomUnit.getCurrentZ();
         this.newLocation = newLocation;
         this.newZ = this.newLocation.getStackHeight();
         this.room = room;
@@ -63,15 +63,15 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         this.response.appendInt(0);
         this.response.appendInt(this.roller == null ? 0 : this.roller.getId());
         this.response.appendInt(2);
-        this.response.appendInt(this.roomUnit.getId());
+        this.response.appendInt(this.roomUnit.getVirtualId());
         this.response.appendString(this.oldZ + "");
         this.response.appendString(this.newZ + "");
 
         if (this.roller != null && room.getLayout() != null) {
             Emulator.getThreading().run(() -> {
-                if(!this.roomUnit.isWalking() && this.roomUnit.getCurrentLocation() == this.oldLocation) {
-                    HabboItem topItem = this.room.getTopItemAt(this.oldLocation.getX(), this.oldLocation.getY());
-                    HabboItem topItemNewLocation = this.room.getTopItemAt(this.newLocation.getX(), this.newLocation.getY());
+                if(!this.roomUnit.isWalking() && this.roomUnit.getCurrentPosition() == this.oldLocation) {
+                    RoomItem topItem = this.room.getTopItemAt(this.oldLocation.getX(), this.oldLocation.getY());
+                    RoomItem topItemNewLocation = this.room.getTopItemAt(this.newLocation.getX(), this.newLocation.getY());
 
                     if (topItem != null && (oldTopItem == null || oldTopItem != topItemNewLocation)) {
                         try {
@@ -82,7 +82,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
                     }
 
                     this.roomUnit.setLocation(this.newLocation);
-                    this.roomUnit.setZ(this.newLocation.getStackHeight());
+                    this.roomUnit.setCurrentZ(this.newLocation.getStackHeight());
                     this.roomUnit.setPreviousLocationZ(this.newLocation.getStackHeight());
 
                     if (topItemNewLocation != null && topItemNewLocation != roller && oldTopItem != topItemNewLocation) {
@@ -93,7 +93,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
                         }
                     }
                 }
-            }, this.room.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
+            }, this.room.getRoomInfo().getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
             /*
             RoomTile rollerTile = room.getLayout().getTile(this.roller.getX(), this.roller.getY());
             Emulator.getThreading().run(() -> {
@@ -117,7 +117,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
              */
         } else {
             this.roomUnit.setLocation(this.newLocation);
-            this.roomUnit.setZ(this.newZ);
+            this.roomUnit.setCurrentZ(this.newZ);
         }
 
         return this.response;

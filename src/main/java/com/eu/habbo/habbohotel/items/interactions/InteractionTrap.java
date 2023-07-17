@@ -3,8 +3,8 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 
@@ -35,7 +35,7 @@ public class InteractionTrap extends InteractionDefault {
         }
 
         if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
-            if (roomUnit.getRoomUnitType().equals(RoomUnitType.USER)) {
+            if (roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
 
                 if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
                     room.giveEffect(habbo, this.getBaseItem().getEffectM(), -1);

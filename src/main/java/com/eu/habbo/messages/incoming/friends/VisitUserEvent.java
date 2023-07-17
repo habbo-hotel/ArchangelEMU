@@ -35,13 +35,13 @@ public class VisitUserEvent extends MessageHandler {
             return;
         }
 
-        if (habbo.getHabboInfo().getCurrentRoom() == null) {
+        if (habbo.getRoomUnit().getRoom() == null) {
             this.client.sendResponse(new FollowFriendFailedComposer(FollowFriendFailedComposer.FRIEND_NOT_IN_ROOM));
             return;
         }
 
-        if (habbo.getHabboInfo().getCurrentRoom() != this.client.getHabbo().getHabboInfo().getCurrentRoom()) {
-            this.client.sendResponse(new RoomForwardMessageComposer(habbo.getHabboInfo().getCurrentRoom().getId()));
+        if (habbo.getRoomUnit().getRoom() != this.client.getHabbo().getRoomUnit().getRoom()) {
+            this.client.sendResponse(new RoomForwardMessageComposer(habbo.getRoomUnit().getRoom().getRoomInfo().getId()));
         } else {
             this.client.sendResponse(new WhisperMessageComposer(new RoomChatMessage(Emulator.getTexts().getValue("stalk.failed.same.room").replace("%user%", habbo.getHabboInfo().getUsername()), this.client.getHabbo(), this.client.getHabbo(), RoomChatMessageBubbles.ALERT)));
         }

@@ -4,21 +4,19 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import com.eu.habbo.threading.runnables.WiredCollissionRunnable;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Wired effect: move to closest user
@@ -27,7 +25,7 @@ import java.util.stream.Collectors;
  * @author Beny.
  */
 public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
-    private THashMap<Integer, RoomUserRotation> lastDirections;
+    private THashMap<Integer, RoomRotation> lastDirections;
     
     public WiredEffectMoveFurniTowards(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
@@ -39,15 +37,15 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
         this.lastDirections = new THashMap<>();
     }
 
-    public List<RoomUserRotation> getAvailableDirections(HabboItem item, Room room) {
-        List<RoomUserRotation> availableDirections = new ArrayList<>();
+    public List<RoomRotation> getAvailableDirections(RoomItem item, Room room) {
+        List<RoomRotation> availableDirections = new ArrayList<>();
         RoomLayout layout = room.getLayout();
 
         RoomTile currentTile = layout.getTile(item.getX(), item.getY());
 
-        RoomUserRotation[] rotations = new RoomUserRotation[]{RoomUserRotation.NORTH, RoomUserRotation.EAST, RoomUserRotation.SOUTH, RoomUserRotation.WEST};
+        RoomRotation[] rotations = new RoomRotation[]{RoomRotation.NORTH, RoomRotation.EAST, RoomRotation.SOUTH, RoomRotation.WEST};
 
-        for (RoomUserRotation rot : rotations) {
+        for (RoomRotation rot : rotations) {
             RoomTile tile = layout.getTileInFront(currentTile, rot.getValue());
 
             if (tile == null || tile.getState() == RoomTileState.BLOCKED || tile.getState() == RoomTileState.INVALID)
@@ -59,7 +57,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
             if (room.furnitureFitsAt(tile, item, item.getRotation()) == FurnitureMovementError.INVALID_MOVE)
                 continue;
 
-            HabboItem topItem = room.getTopItemAt(tile.getX(), tile.getY());
+            RoomItem topItem = room.getTopItemAt(tile.getX(), tile.getY());
             if (topItem != null && !topItem.getBaseItem().allowStack())
                 continue;
 
@@ -77,10 +75,10 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
             return false;
         }
 
-        for (HabboItem item : this.getWiredSettings().getItems(room)) {
+        for (RoomItem item : this.getWiredSettings().getItems(room)) {
             // direction the furni will move in
-            RoomUserRotation moveDirection = null;
-            RoomUserRotation lastDirection = lastDirections.get(item.getId());
+            RoomRotation moveDirection = null;
+            RoomRotation lastDirection = lastDirections.get(item.getId());
 
             // 1. Check if any user is within 3 tiles from the item
             RoomUnit target = null; // closest found user
@@ -95,9 +93,9 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                 if (target != null)
                     break;
 
-                RoomUserRotation[] rotations = new RoomUserRotation[]{RoomUserRotation.NORTH, RoomUserRotation.EAST, RoomUserRotation.SOUTH, RoomUserRotation.WEST};
+                RoomRotation[] rotations = new RoomRotation[]{RoomRotation.NORTH, RoomRotation.EAST, RoomRotation.SOUTH, RoomRotation.WEST};
 
-                for (RoomUserRotation rot : rotations) {
+                for (RoomRotation rot : rotations) {
                     RoomTile startTile = layout.getTile(item.getX(), item.getY());
 
                     for (int ii = 0; ii <= i; ii++) {
@@ -108,7 +106,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                     }
 
                     if (startTile != null && layout.tileExists(startTile.getX(), startTile.getY())) {
-                        Collection<RoomUnit> roomUnitsAtTile = room.getRoomUnitsAt(startTile);
+                        Collection<RoomUnit> roomUnitsAtTile = room.getRoomUnitManager().getRoomUnitsAt(startTile);
                         if (roomUnitsAtTile.size() > 0) {
                             target = roomUnitsAtTile.iterator().next();
                             if (i == 0) { // i = 0 means right next to it
@@ -125,26 +123,30 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                 continue;
 
             if (target != null) {
-                if (target.getX() == item.getX()) {
-                    if (item.getY() < target.getY())
-                        moveDirection = RoomUserRotation.SOUTH;
+                if (target.getCurrentPosition().getX() == item.getX()) {
+                    if (item.getY() < target.getCurrentPosition().getY())
+                        moveDirection = RoomRotation.SOUTH;
                     else
-                        moveDirection = RoomUserRotation.NORTH;
-                } else if (target.getY() == item.getY()) {
-                    if (item.getX() < target.getX())
-                        moveDirection = RoomUserRotation.EAST;
-                    else
-                        moveDirection = RoomUserRotation.WEST;
-                } else if (target.getX() - item.getX() > target.getY() - item.getY()) {
-                    if (target.getX() - item.getX() > 0)
-                        moveDirection = RoomUserRotation.EAST;
-                    else
-                        moveDirection = RoomUserRotation.WEST;
+                        moveDirection = RoomRotation.NORTH;
                 } else {
-                    if (target.getY() - item.getY() > 0)
-                        moveDirection = RoomUserRotation.SOUTH;
-                    else
-                        moveDirection = RoomUserRotation.NORTH;
+                    if (target.getCurrentPosition().getY() == item.getY()) {
+                        if (item.getX() < target.getCurrentPosition().getX())
+                            moveDirection = RoomRotation.EAST;
+                        else
+                            moveDirection = RoomRotation.WEST;
+                    } else {
+                        if (target.getCurrentPosition().getX() - item.getX() > target.getCurrentPosition().getY() - item.getY()) {
+                            if (target.getCurrentPosition().getX() - item.getX() > 0)
+                                moveDirection = RoomRotation.EAST;
+                            else
+                                moveDirection = RoomRotation.WEST;
+                        } else {
+                            if (target.getCurrentPosition().getY() - item.getY() > 0)
+                                moveDirection = RoomRotation.SOUTH;
+                            else
+                                moveDirection = RoomRotation.NORTH;
+                        }
+                    }
                 }
             }
 
@@ -160,7 +162,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                 3+ available - move in random direction, but never the opposite
              */
 
-            List<RoomUserRotation> availableDirections = this.getAvailableDirections(item, room);
+            List<RoomRotation> availableDirections = this.getAvailableDirections(item, room);
 
             if (moveDirection != null && !availableDirections.contains(moveDirection))
                 moveDirection = null;
@@ -174,7 +176,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                     if (lastDirection == null) {
                         moveDirection = availableDirections.get(Emulator.getRandom().nextInt(availableDirections.size()));
                     } else {
-                        RoomUserRotation oppositeLast = lastDirection.getOpposite();
+                        RoomRotation oppositeLast = lastDirection.getOpposite();
 
                         if (availableDirections.get(0) == oppositeLast) {
                             moveDirection = availableDirections.get(1);
@@ -184,7 +186,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                     }
                 } else {
                     if (lastDirection != null) {
-                        RoomUserRotation opposite = lastDirection.getOpposite();
+                        RoomRotation opposite = lastDirection.getOpposite();
                         availableDirections.remove(opposite);
                     }
                     moveDirection = availableDirections.get(Emulator.getRandom().nextInt(availableDirections.size()));

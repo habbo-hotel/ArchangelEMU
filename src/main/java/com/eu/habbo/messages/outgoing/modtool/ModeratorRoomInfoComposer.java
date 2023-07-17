@@ -13,17 +13,17 @@ public class ModeratorRoomInfoComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.moderatorRoomInfoComposer);
-        this.response.appendInt(this.room.getId());
-        this.response.appendInt(this.room.getCurrentHabbos().size());
-        this.response.appendBoolean(this.room.getHabbo(this.room.getOwnerId()) != null);
-        this.response.appendInt(this.room.getOwnerId());
-        this.response.appendString(this.room.getOwnerName());
+        this.response.appendInt(this.room.getRoomInfo().getId());
+        this.response.appendInt(this.room.getRoomUnitManager().getCurrentRoomHabbos().size());
+        this.response.appendBoolean(this.room.getRoomUnitManager().getRoomHabboById(this.room.getRoomInfo().getOwnerInfo().getId()) != null);
+        this.response.appendInt(this.room.getRoomInfo().getOwnerInfo().getId());
+        this.response.appendString(this.room.getRoomInfo().getOwnerInfo().getUsername());
         this.response.appendBoolean(true);
-        this.response.appendString(this.room.getName());
-        this.response.appendString(this.room.getDescription());
-        this.response.appendInt(this.room.getTags().split(";").length);
-        for (int i = 0; i < this.room.getTags().split(";").length; i++) {
-            this.response.appendString(this.room.getTags().split(";")[i]);
+        this.response.appendString(this.room.getRoomInfo().getName());
+        this.response.appendString(this.room.getRoomInfo().getDescription());
+        this.response.appendInt(this.room.getRoomInfo().getTags().split(";").length);
+        for (int i = 0; i < this.room.getRoomInfo().getTags().split(";").length; i++) {
+            this.response.appendString(this.room.getRoomInfo().getTags().split(";")[i]);
         }
         return this.response;
     }

@@ -13,11 +13,11 @@ public class RoomChatSettingsMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.roomChatSettingsMessageComposer);
-        this.response.appendInt(this.room.getChatMode());
-        this.response.appendInt(this.room.getChatWeight());
-        this.response.appendInt(this.room.getChatSpeed());
-        this.response.appendInt(this.room.getChatDistance());
-        this.response.appendInt(this.room.getChatProtection());
+        this.response.appendInt(this.room.getRoomInfo().getChatMode());
+        this.response.appendInt(this.room.getRoomInfo().getChatWeight());
+        this.response.appendInt(this.room.getRoomInfo().getChatSpeed());
+        this.response.appendInt(this.room.getRoomInfo().getChatDistance());
+        this.response.appendInt(this.room.getRoomInfo().getChatProtection());
         return this.response;
     }
 }

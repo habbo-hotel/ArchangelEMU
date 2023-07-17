@@ -46,8 +46,8 @@ public class MuteCommand extends Command {
 
             habbo.mute(duration, false);
 
-            if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.MUTED).compose()); //: RoomUserIgnoredComposer.UNIGNORED
+            if (habbo.getRoomUnit().getRoom() != null) {
+                habbo.getRoomUnit().getRoom().sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.MUTED).compose()); //: RoomUserIgnoredComposer.UNIGNORED
             }
 
             gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_mute.muted"), params[1]), RoomChatMessageBubbles.ALERT);

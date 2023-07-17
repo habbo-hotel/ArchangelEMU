@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.HorsePet;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
@@ -23,8 +23,9 @@ public class RemoveSaddleFromPetEvent extends MessageHandler {
 
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-        Pet pet = room.getPet(this.packet.readInt());
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
+        int petId = this.packet.readInt();
+        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
 
         if (!(pet instanceof HorsePet horse) || pet.getUserId() != this.client.getHabbo().getHabboInfo().getId()) return;
 
@@ -54,9 +55,9 @@ public class RemoveSaddleFromPetEvent extends MessageHandler {
         horse.hasSaddle(false);
         horse.setNeedsUpdate(true);
         Emulator.getThreading().run(pet);
-        this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new PetFigureUpdateComposer(horse).compose());
+        this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new PetFigureUpdateComposer(horse).compose());
 
-        HabboItem saddle = Emulator.getGameEnvironment().getItemManager().createItem(this.client.getHabbo().getHabboInfo().getId(), saddleItem, 0, 0, "");
+        RoomItem saddle = Emulator.getGameEnvironment().getItemManager().createItem(this.client.getHabbo().getHabboInfo().getId(), saddleItem, 0, 0, "");
 
         this.client.getHabbo().getInventory().getItemsComponent().addItem(saddle);
 

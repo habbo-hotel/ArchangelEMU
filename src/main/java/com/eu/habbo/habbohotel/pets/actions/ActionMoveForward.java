@@ -13,7 +13,7 @@ public class ActionMoveForward extends PetAction {
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
 
-        pet.getRoomUnit().setGoalLocation(pet.getRoom().getLayout().getTileInFront(pet.getRoomUnit().getCurrentLocation(), pet.getRoomUnit().getBodyRotation().getValue()));
+        pet.getRoomUnit().setGoalLocation(pet.getRoom().getLayout().getTileInFront(pet.getRoomUnit().getCurrentPosition(), pet.getRoomUnit().getBodyRotation().getValue()));
         pet.getRoomUnit().setCanWalk(true);
 
         pet.say(pet.getPetData().randomVocal(PetVocalsType.GENERIC_NEUTRAL));

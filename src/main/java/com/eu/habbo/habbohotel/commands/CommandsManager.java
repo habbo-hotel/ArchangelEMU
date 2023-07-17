@@ -3,12 +3,25 @@ package com.eu.habbo.habbohotel.commands;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.CommandLog;
 import com.eu.habbo.habbohotel.commands.list.*;
-import com.eu.habbo.habbohotel.commands.list.badge.*;
-import com.eu.habbo.habbohotel.commands.list.bans.*;
-import com.eu.habbo.habbohotel.commands.list.credits.*;
-import com.eu.habbo.habbohotel.commands.list.gift.*;
-import com.eu.habbo.habbohotel.commands.list.pixels.*;
-import com.eu.habbo.habbohotel.commands.list.points.*;
+import com.eu.habbo.habbohotel.commands.list.badge.BadgeCommand;
+import com.eu.habbo.habbohotel.commands.list.badge.MassBadgeCommand;
+import com.eu.habbo.habbohotel.commands.list.badge.RoomBadgeCommand;
+import com.eu.habbo.habbohotel.commands.list.badge.TakeBadgeCommand;
+import com.eu.habbo.habbohotel.commands.list.bans.BanCommand;
+import com.eu.habbo.habbohotel.commands.list.bans.IPBanCommand;
+import com.eu.habbo.habbohotel.commands.list.bans.MachineBanCommand;
+import com.eu.habbo.habbohotel.commands.list.bans.SuperbanCommand;
+import com.eu.habbo.habbohotel.commands.list.credits.CreditsCommand;
+import com.eu.habbo.habbohotel.commands.list.credits.MassCreditsCommand;
+import com.eu.habbo.habbohotel.commands.list.credits.RoomCreditsCommand;
+import com.eu.habbo.habbohotel.commands.list.gift.GiftCommand;
+import com.eu.habbo.habbohotel.commands.list.gift.MassGiftCommand;
+import com.eu.habbo.habbohotel.commands.list.pixels.MassPixelsCommand;
+import com.eu.habbo.habbohotel.commands.list.pixels.PixelCommand;
+import com.eu.habbo.habbohotel.commands.list.pixels.RoomPixelsCommand;
+import com.eu.habbo.habbohotel.commands.list.points.MassPointsCommand;
+import com.eu.habbo.habbohotel.commands.list.points.PointsCommand;
+import com.eu.habbo.habbohotel.commands.list.points.RoomPointsCommand;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.permissions.PermissionCommand;
@@ -73,11 +86,11 @@ public class CommandsManager {
         }
 
         String commandKey = parts[0];
-        Room currentRoom = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        Room currentRoom = gameClient.getHabbo().getRoomUnit().getRoom();
         boolean hasRights = currentRoom != null &&
                 (currentRoom.hasRights(gameClient.getHabbo())) ||
                 gameClient.getHabbo().hasRight(Permission.ACC_PLACEFURNI) ||
-                currentRoom.getGuildId() > 0 && currentRoom.getGuildRightLevel(gameClient.getHabbo()).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS);
+                currentRoom.getRoomInfo().getGuild().getId() > 0 && currentRoom.getGuildRightLevel(gameClient.getHabbo()).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS);
 
 
         if (!gameClient.getHabbo().canExecuteCommand(commandKey, hasRights)) {
@@ -127,17 +140,17 @@ public class CommandsManager {
     private boolean handlePetCommand(GameClient gameClient, String commandLine) {
         String[] args = commandLine.split(" ");
 
-        if (args.length <= 1 || gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null) {
+        if (args.length <= 1 || gameClient.getHabbo().getRoomUnit().getRoom() == null) {
             return false;
         }
 
-        Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
-        if (room.getCurrentPets().isEmpty()) {
+        if (room.getRoomUnitManager().getCurrentRoomPets().isEmpty()) {
             return false;
         }
 
-        for(Pet pet : room.getCurrentPets().valueCollection()) {
+        for(Pet pet : room.getRoomUnitManager().getCurrentRoomPets().values()) {
             if (pet != null && pet.getName().equalsIgnoreCase(args[0])) {
                 StringBuilder commandBuilder = new StringBuilder();
 
@@ -150,7 +163,7 @@ public class CommandsManager {
                 for (PetCommand command : pet.getPetData().getPetCommands()) {
                     if (command.getKey().equalsIgnoreCase(commandKey)) {
                         if (pet instanceof RideablePet rideablePet && rideablePet.getRider() != null && rideablePet.getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
-                            rideablePet.getRider().getHabboInfo().dismountPet();
+                            rideablePet.getRider().getHabboInfo().dismountPet(room);
                             break;
                         }
 

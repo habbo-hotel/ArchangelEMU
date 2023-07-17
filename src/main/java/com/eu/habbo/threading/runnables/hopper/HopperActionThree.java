@@ -6,15 +6,15 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.interactions.InteractionCostumeHopper;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 class HopperActionThree implements Runnable {
-    private final HabboItem teleportOne;
+    private final RoomItem teleportOne;
     private final Room room;
     private final GameClient client;
     private final int targetRoomId;
@@ -23,13 +23,13 @@ class HopperActionThree implements Runnable {
 
     @Override
     public void run() {
-        HabboItem targetTeleport;
+        RoomItem targetTeleport;
         Room targetRoom = this.room;
 
         if (this.teleportOne.getRoomId() != this.targetRoomId) {
             Emulator.getGameEnvironment().getRoomManager().leaveRoom(this.client.getHabbo(), this.room, false);
-            targetRoom = Emulator.getGameEnvironment().getRoomManager().loadRoom(this.targetRoomId);
-            Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), targetRoom.getId(), "", false);
+            targetRoom = Emulator.getGameEnvironment().getRoomManager().getRoom(this.targetRoomId);
+            Emulator.getGameEnvironment().getRoomManager().enterRoom(this.client.getHabbo(), targetRoom.getRoomInfo().getId(), "", false);
         }
 
         targetTeleport = targetRoom.getHabboItem(this.targetItemId);
@@ -44,8 +44,8 @@ class HopperActionThree implements Runnable {
         targetRoom.updateItem(targetTeleport);
         this.client.getHabbo().getRoomUnit().setLocation(this.room.getLayout().getTile(targetTeleport.getX(), targetTeleport.getY()));
         this.client.getHabbo().getRoomUnit().setPreviousLocationZ(targetTeleport.getZ());
-        this.client.getHabbo().getRoomUnit().setZ(targetTeleport.getZ());
-        this.client.getHabbo().getRoomUnit().setRotation(RoomUserRotation.values()[targetTeleport.getRotation() % 8]);
+        this.client.getHabbo().getRoomUnit().setCurrentZ(targetTeleport.getZ());
+        this.client.getHabbo().getRoomUnit().setRotation(RoomRotation.values()[targetTeleport.getRotation() % 8]);
         this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
         targetRoom.sendComposer(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
 

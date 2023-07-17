@@ -8,6 +8,6 @@ public class RemoveOwnRoomRightsRoomEvent extends MessageHandler {
     public void handle() {
         int roomId = this.packet.readInt();
 
-        Emulator.getGameEnvironment().getRoomManager().getRoom(roomId).removeRights(this.client.getHabbo().getHabboInfo().getId());
+        Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId).removeRights(this.client.getHabbo().getHabboInfo().getId());
     }
 }

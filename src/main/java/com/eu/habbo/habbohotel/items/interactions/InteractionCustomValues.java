@@ -3,8 +3,8 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.map.hash.THashMap;
 
@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-public abstract class InteractionCustomValues extends HabboItem {
+public abstract class InteractionCustomValues extends RoomItem {
     public final THashMap<String, String> values = new THashMap<>();
 
     public InteractionCustomValues(ResultSet set, Item baseItem, THashMap<String, String> defaultValues) throws SQLException {

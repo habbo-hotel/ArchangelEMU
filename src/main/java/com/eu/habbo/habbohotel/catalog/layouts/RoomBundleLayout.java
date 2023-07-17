@@ -6,8 +6,8 @@ import com.eu.habbo.habbohotel.catalog.CatalogItem;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.navigator.CanCreateRoomComposer;
@@ -40,7 +40,7 @@ public class RoomBundleLayout extends SingleBundle {
 
         if (this.room == null) {
             if (this.roomId > 0) {
-                this.room = Emulator.getGameEnvironment().getRoomManager().loadRoom(this.roomId);
+                this.room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.roomId);
 
                 if (this.room != null)
                     this.room.preventUnloading = true;
@@ -73,7 +73,7 @@ public class RoomBundleLayout extends SingleBundle {
 
             THashMap<Item, Integer> items = new THashMap<>();
 
-            for (HabboItem i : this.room.getFloorItems()) {
+            for (RoomItem i : this.room.getFloorItems()) {
                 if (!items.contains(i.getBaseItem())) {
                     items.put(i.getBaseItem(), 0);
                 }
@@ -81,7 +81,7 @@ public class RoomBundleLayout extends SingleBundle {
                 items.put(i.getBaseItem(), items.get(i.getBaseItem()) + 1);
             }
 
-            for (HabboItem i : this.room.getWallItems()) {
+            for (RoomItem i : this.room.getWallItems()) {
                 if (!items.contains(i.getBaseItem())) {
                     items.put(i.getBaseItem(), 0);
                 }
@@ -123,7 +123,7 @@ public class RoomBundleLayout extends SingleBundle {
 
     public void buyRoom(Habbo habbo, int userId, String userName) {
         if (!this.loaded) {
-            this.loadItems(Emulator.getGameEnvironment().getRoomManager().loadRoom(this.roomId));
+            this.loadItems(Emulator.getGameEnvironment().getRoomManager().getRoom(this.roomId));
         }
 
         if (habbo != null) {
@@ -141,11 +141,11 @@ public class RoomBundleLayout extends SingleBundle {
 
         this.room.save();
 
-        for (HabboItem item : this.room.getFloorItems()) {
+        for (RoomItem item : this.room.getFloorItems()) {
             item.run();
         }
 
-        for (HabboItem item : this.room.getWallItems()) {
+        for (RoomItem item : this.room.getWallItems()) {
             item.run();
         }
 
@@ -156,7 +156,7 @@ public class RoomBundleLayout extends SingleBundle {
             try (PreparedStatement statement = connection.prepareStatement("INSERT INTO rooms (owner_id, owner_name, name, description, model, password, state, users_max, category, paper_floor, paper_wall, paper_landscape, thickness_wall, thickness_floor, moodlight_data, override_model)  (SELECT ?, ?, name, description, model, password, state, users_max, category, paper_floor, paper_wall, paper_landscape, thickness_wall, thickness_floor, moodlight_data, override_model FROM rooms WHERE id = ?)", Statement.RETURN_GENERATED_KEYS)) {
                 statement.setInt(1, userId);
                 statement.setString(2, userName);
-                statement.setInt(3, this.room.getId());
+                statement.setInt(3, this.room.getRoomInfo().getId());
                 statement.execute();
                 try (ResultSet set = statement.getGeneratedKeys()) {
                     if (set.next()) {
@@ -173,15 +173,15 @@ public class RoomBundleLayout extends SingleBundle {
                 statement.setInt(2, roomId);
                 statement.setString(3, "0:0");
                 statement.setInt(4, 0);
-                statement.setInt(5, this.room.getId());
+                statement.setInt(5, this.room.getRoomInfo().getId());
                 statement.execute();
             }
 
-            if (this.room.hasCustomLayout()) {
+            if (this.room.getRoomInfo().isModelOverridden()) {
                 try (PreparedStatement statement = connection.prepareStatement("INSERT INTO room_models_custom (id, name, door_x, door_y, door_dir, heightmap) (SELECT ?, ?, door_x, door_y, door_dir, heightmap FROM room_models_custom WHERE id = ? LIMIT 1)", Statement.RETURN_GENERATED_KEYS)) {
                     statement.setInt(1, roomId);
                     statement.setString(2, "custom_" + roomId);
-                    statement.setInt(3, this.room.getId());
+                    statement.setInt(3, this.room.getRoomInfo().getId());
                     statement.execute();
                 } catch (SQLException e) {
                     log.error("Caught SQL exception", e);
@@ -190,17 +190,17 @@ public class RoomBundleLayout extends SingleBundle {
 
             if (Emulator.getConfig().getBoolean("bundle.bots.enabled")) {
                 try (PreparedStatement statement = connection.prepareStatement("INSERT INTO bots (user_id, room_id, name, motto, figure, gender, x, y, z, chat_lines, chat_auto, chat_random, chat_delay, dance, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-                    synchronized (this.room.getCurrentBots()) {
+                    synchronized (this.room.getRoomUnitManager().getCurrentRoomBots()) {
                         statement.setInt(1, userId);
                         statement.setInt(2, roomId);
-                        for (Bot bot : this.room.getCurrentBots().valueCollection()) {
+                        for (Bot bot : this.room.getRoomUnitManager().getCurrentRoomBots().values()) {
                             statement.setString(3, bot.getName());
                             statement.setString(4, bot.getMotto());
                             statement.setString(5, bot.getFigure());
                             statement.setString(6, bot.getGender().name());
-                            statement.setInt(7, bot.getRoomUnit().getX());
-                            statement.setInt(8, bot.getRoomUnit().getY());
-                            statement.setDouble(9, bot.getRoomUnit().getZ());
+                            statement.setInt(7, bot.getRoomUnit().getCurrentPosition().getX());
+                            statement.setInt(8, bot.getRoomUnit().getCurrentPosition().getY());
+                            statement.setDouble(9, bot.getRoomUnit().getCurrentZ());
                             StringBuilder text = new StringBuilder();
                             for (String s : bot.getChatLines()) {
                                 text.append(s).append("\r");
@@ -221,17 +221,17 @@ public class RoomBundleLayout extends SingleBundle {
             log.error("Caught SQL exception", e);
         }
 
-        Room r = Emulator.getGameEnvironment().getRoomManager().loadRoom(roomId);
-        r.setWallHeight(this.room.getWallHeight());
-        r.setFloorSize(this.room.getFloorSize());
-        r.setWallPaint(this.room.getWallPaint());
-        r.setFloorPaint(this.room.getFloorPaint());
-        r.setScore(0);
+        Room r = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+        r.getRoomInfo().setWallHeight(this.room.getRoomInfo().getWallHeight());
+        r.getRoomInfo().setFloorThickness(this.room.getRoomInfo().getFloorThickness());
+        r.getRoomInfo().setWallPaint(this.room.getRoomInfo().getWallPaint());
+        r.getRoomInfo().setFloorPaint(this.room.getRoomInfo().getFloorPaint());
+        r.getRoomInfo().setScore(0);
         r.setNeedsUpdate(true);
         THashMap<String, String> keys = new THashMap<>();
-        keys.put("ROOMNAME", r.getName());
-        keys.put("ROOMID", r.getId() + "");
-        keys.put("OWNER", r.getOwnerName());
+        keys.put("ROOMNAME", r.getRoomInfo().getName());
+        keys.put("ROOMID", r.getRoomInfo().getId() + "");
+        keys.put("OWNER", r.getRoomInfo().getOwnerInfo().getUsername());
         keys.put("image", "${image.library.url}/notifications/room_bundle_" + this.getId() + ".png");
 
         if (habbo != null) {

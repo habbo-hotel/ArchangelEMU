@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
@@ -14,7 +14,7 @@ import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionMannequin extends HabboItem {
+public class InteractionMannequin extends RoomItem {
     public InteractionMannequin(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }

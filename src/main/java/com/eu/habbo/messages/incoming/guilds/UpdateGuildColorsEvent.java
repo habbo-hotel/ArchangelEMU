@@ -26,12 +26,14 @@ public class UpdateGuildColorsEvent extends MessageHandler {
                     guild.setColorOne(colorsEvent.getColorOne());
                     guild.setColorTwo(colorsEvent.getColorTwo());
 
-                    Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
+                    Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(guild.getRoomId());
 
-                    if (room != null && room.getUserCount() > 0) {
-                        room.refreshGuild(guild);
+                    if (room != null) {
+                        if (room.getRoomUnitManager().getRoomHabbosCount() > 0) {
+                            room.refreshGuild(guild);
 
-                        room.refreshGuildColors(guild);
+                            room.refreshGuildColors(guild);
+                        }
                     }
                     guild.needsUpdate = true;
                     Emulator.getThreading().run(guild);

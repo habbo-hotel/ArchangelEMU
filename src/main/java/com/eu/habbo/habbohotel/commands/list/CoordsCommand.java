@@ -12,24 +12,24 @@ public class CoordsCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getRoomUnit() == null || gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (gameClient.getHabbo().getRoomUnit() == null || gameClient.getHabbo().getRoomUnit().getRoom() == null)
             return false;
 
         if (params.length == 1) {
             gameClient.getHabbo().alert(getTextsValue("commands.generic.cmd_coords.title") + "\r\n" +
-                    "x: " + gameClient.getHabbo().getRoomUnit().getX() + "\r" +
-                    "y: " + gameClient.getHabbo().getRoomUnit().getY() + "\r" +
-                    "z: " + (gameClient.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.SIT) ? gameClient.getHabbo().getRoomUnit().getStatus(RoomUnitStatus.SIT) : gameClient.getHabbo().getRoomUnit().getZ()) + "\r" +
+                    "x: " + gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX() + "\r" +
+                    "y: " + gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY() + "\r" +
+                    "z: " + (gameClient.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.SIT) ? gameClient.getHabbo().getRoomUnit().getStatus(RoomUnitStatus.SIT) : gameClient.getHabbo().getRoomUnit().getCurrentZ()) + "\r" +
                     getTextsValue("generic.rotation.head") + ": " + gameClient.getHabbo().getRoomUnit().getHeadRotation() + "-" + gameClient.getHabbo().getRoomUnit().getHeadRotation().getValue() + "\r" +
                     getTextsValue("generic.rotation.body") + ": " + gameClient.getHabbo().getRoomUnit().getBodyRotation() + "-" + gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() + "\r" +
                     getTextsValue("generic.sitting") + ": " + (gameClient.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.SIT) ? getTextsValue("generic.yes") : getTextsValue("generic.no")) + "\r" +
-                    "Tile State: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getX(), gameClient.getHabbo().getRoomUnit().getY()).getState().name() + "\r" +
-                    "Tile Walkable: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getX(), gameClient.getHabbo().getRoomUnit().getY()).isWalkable() + "\r" +
-                    "Tile relative height: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getX(), gameClient.getHabbo().getRoomUnit().getY()).relativeHeight() + "\r" +
-                    "Tile stack height: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getX(), gameClient.getHabbo().getRoomUnit().getY()).getStackHeight());
+                    "Tile State: " + gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX(), gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY()).getState().name() + "\r" +
+                    "Tile Walkable: " + gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX(), gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY()).isWalkable() + "\r" +
+                    "Tile relative height: " + gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX(), gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY()).relativeHeight() + "\r" +
+                    "Tile stack height: " + gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX(), gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY()).getStackHeight());
 
         } else {
-            RoomTile tile = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(Short.parseShort(params[1]), Short.parseShort(params[2]));
+            RoomTile tile = gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(Short.parseShort(params[1]), Short.parseShort(params[2]));
 
             if (tile != null) {
                 gameClient.getHabbo().alert(getTextsValue("commands.generic.cmd_coords.title") + "\r\n" +

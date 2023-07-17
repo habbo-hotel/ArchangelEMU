@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +25,13 @@ public class InteractionPyramid extends InteractionGate {
             this.setExtradata("0");
 
         if (room != null) {
-            if (room.getHabbosAt(this.getX(), this.getY()).isEmpty()) {
+            RoomTile tile = room.getLayout().getTile(this.getX(), this.getY());
+
+            if(tile == null) {
+                return;
+            }
+
+            if (!room.getRoomUnitManager().hasHabbosAt(tile)) {
                 int state = Integer.parseInt(this.getExtradata());
                 state = Math.abs(state - 1);
 

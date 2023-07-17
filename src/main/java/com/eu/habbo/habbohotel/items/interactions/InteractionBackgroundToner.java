@@ -5,15 +5,15 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.BackgroundAnimation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionBackgroundToner extends HabboItem {
+public class InteractionBackgroundToner extends RoomItem {
     public InteractionBackgroundToner(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -65,13 +65,13 @@ public class InteractionBackgroundToner extends HabboItem {
                 ScripterManager.scripterDetected(
                         client,
                         Emulator.getTexts().getValue("scripter.warning.item.bgtoner.permission").replace("%username%", client.getHabbo().getHabboInfo().getUsername())
-                                .replace("%room%", room.getName())
-                                .replace("%owner%", room.getOwnerName())
+                                .replace("%room%", room.getRoomInfo().getName())
+                                .replace("%owner%", room.getRoomInfo().getOwnerInfo().getUsername())
                 );
                 return;
             }
             
-            if (client.getHabbo().getRoomUnit().isCmdSit() && client.getHabbo().getRoomUnit().getEffectId() == 1337) {
+            if (client.getHabbo().getRoomUnit().isCmdSitEnabled() && client.getHabbo().getRoomUnit().getEffectId() == 1337) {
                 new BackgroundAnimation(this, room).run();
                 return;
             }

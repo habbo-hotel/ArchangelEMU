@@ -14,7 +14,8 @@ public class RoomUnitKick implements Runnable {
     @Override
     public void run() {
         if (this.removeEffect) {
-            this.habbo.getRoomUnit().setEffectId(0, 0);
+            this.habbo.getRoomUnit().setEffectId(0);
+            this.habbo.getRoomUnit().setEffectEndTimestamp(0);
         }
 
         Emulator.getGameEnvironment().getRoomManager().leaveRoom(this.habbo, this.room);

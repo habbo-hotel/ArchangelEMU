@@ -11,10 +11,10 @@ public class TogglePetRidingPermissionEvent extends MessageHandler {
     public void handle() {
         int petId = this.packet.readInt();
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (this.client.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
-        Pet pet = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(petId);
+        Pet pet = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetById(petId);
 
         if (pet == null || pet.getUserId() != this.client.getHabbo().getHabboInfo().getId() || !(pet instanceof RideablePet rideablePet))
             return;
@@ -23,7 +23,7 @@ public class TogglePetRidingPermissionEvent extends MessageHandler {
         rideablePet.setNeedsUpdate(true);
 
         if (!rideablePet.anyoneCanRide() && rideablePet.getRider() != null && rideablePet.getRider().getHabboInfo().getId() != this.client.getHabbo().getHabboInfo().getId()) {
-            rideablePet.getRider().getHabboInfo().dismountPet();
+            rideablePet.getRider().getHabboInfo().dismountPet(this.client.getHabbo().getRoomUnit().getRoom());
         }
 
         if (pet instanceof HorsePet) {

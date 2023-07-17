@@ -2,10 +2,16 @@ package com.eu.habbo.habbohotel.bots;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
@@ -21,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.Map;
+
 @Slf4j
 public class BotManager {
 
@@ -98,41 +105,44 @@ public class BotManager {
 
     public void placeBot(Bot bot, Habbo habbo, Room room, RoomTile location) {
         BotPlacedEvent event = new BotPlacedEvent(bot, location, habbo);
+
         Emulator.getPluginManager().fireEvent(event);
 
         if (event.isCancelled())
             return;
 
         if (room != null && bot != null && habbo != null) {
-            if (room.getOwnerId() == habbo.getHabboInfo().getId() || habbo.hasRight(Permission.ACC_ANYROOMOWNER) || habbo.hasRight(Permission.ACC_PLACEFURNI)) {
-                if (room.getCurrentBots().size() >= Room.MAXIMUM_BOTS && !habbo.hasRight(Permission.ACC_UNLIMITED_BOTS)) {
+            if (room.getRoomInfo().isRoomOwner(habbo) || habbo.hasRight(Permission.ACC_ANYROOMOWNER) || habbo.hasRight(Permission.ACC_PLACEFURNI)) {
+                if (room.getRoomUnitManager().getCurrentRoomBots().size() >= Room.MAXIMUM_BOTS && !habbo.hasRight(Permission.ACC_UNLIMITED_BOTS)) {
                     habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_MAX_BOTS));
                     return;
                 }
 
-                if (room.hasHabbosAt(location.getX(), location.getY()) || (!location.isWalkable() && location.getState() != RoomTileState.SIT && location.getState() != RoomTileState.LAY))
+                if (room.getRoomUnitManager().hasHabbosAt(location) || (!location.isWalkable() && location.getState() != RoomTileState.SIT && location.getState() != RoomTileState.LAY))
                     return;
 
-                if (room.hasBotsAt(location.getX(), location.getY())) {
+                if (!room.getRoomUnitManager().getBotsAt(location).isEmpty()) {
                     habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_BOTS_SELECTED_TILE_NOT_FREE));
                     return;
                 }
 
-                RoomUnit roomUnit = new RoomUnit();
-                roomUnit.setRotation(RoomUserRotation.SOUTH);
-                roomUnit.setLocation(location);
+                bot.setRoomUnit(new RoomBot());
 
+                RoomBot roomBot = bot.getRoomUnit();
+                roomBot.setRotation(RoomRotation.SOUTH);
+                roomBot.setLocation(location);
                 double stackHeight = room.getTopHeightAt(location.getX(), location.getY());
-                roomUnit.setPreviousLocationZ(stackHeight);
-                roomUnit.setZ(stackHeight);
+                roomBot.setPreviousLocationZ(stackHeight);
+                roomBot.setCurrentZ(stackHeight);
+                roomBot.setRoom(room);
+                roomBot.setRoomUnitType(RoomUnitType.BOT);
+                roomBot.setCanWalk(room.isAllowBotsWalk());
 
-                roomUnit.setPathFinderRoom(room);
-                roomUnit.setRoomUnitType(RoomUnitType.BOT);
-                roomUnit.setCanWalk(room.isAllowBotsWalk());
-                bot.setRoomUnit(roomUnit);
                 bot.setRoom(room);
+
                 bot.onPlaceUpdate();
-                room.addBot(bot);
+
+                room.getRoomUnitManager().addRoomUnit(bot);
                 Emulator.getThreading().run(bot);
                 room.sendComposer(new RoomUsersComposer(bot).compose());
                 room.sendComposer(new UserUpdateComposer(bot.getRoomUnit()).compose());
@@ -140,7 +150,7 @@ public class BotManager {
                 habbo.getClient().sendResponse(new BotRemovedFromInventoryComposer(bot));
                 bot.onPlace(habbo, room);
 
-                HabboItem topItem = room.getTopItemAt(location.getX(), location.getY());
+                RoomItem topItem = room.getTopItemAt(location.getX(), location.getY());
 
                 if (topItem != null) {
                     try {
@@ -157,14 +167,15 @@ public class BotManager {
         }
     }
 
-    public void pickUpBot(int botId, Habbo habbo) {
-        if (habbo.getHabboInfo().getCurrentRoom() != null) {
-            this.pickUpBot(habbo.getHabboInfo().getCurrentRoom().getBot(Math.abs(botId)), habbo);
+    public void pickUpBot(int botId, Habbo habbo, Room room) {
+        if (habbo.getRoomUnit().getRoom() != null) {
+            this.pickUpBot(habbo.getRoomUnit().getRoom().getRoomUnitManager().getRoomBotById(Math.abs(botId)), habbo, room);
         }
     }
 
-    public void pickUpBot(Bot bot, Habbo habbo) {
-        HabboInfo receiverInfo = habbo == null ? Emulator.getGameEnvironment().getHabboManager().getHabboInfo(bot.getOwnerId()) : habbo.getHabboInfo();
+    public void pickUpBot(Bot bot, Habbo habbo, Room room) {
+        HabboInfo botOwnerInfo = habbo == null ? Emulator.getGameEnvironment().getHabboManager().getHabboInfo(bot.getOwnerId()) : habbo.getHabboInfo();
+
 
         if (bot != null) {
             BotPickUpEvent pickedUpEvent = new BotPickUpEvent(bot, habbo);
@@ -179,15 +190,15 @@ public class BotManager {
                     return;
                 }
 
-                bot.onPickUp(habbo, receiverInfo.getCurrentRoom());
-                receiverInfo.getCurrentRoom().removeBot(bot);
+                bot.onPickUp(habbo, room);
+                room.getRoomUnitManager().removeBot(bot);
                 bot.stopFollowingHabbo();
-                bot.setOwnerId(receiverInfo.getId());
-                bot.setOwnerName(receiverInfo.getUsername());
+                bot.setOwnerId(botOwnerInfo.getId());
+                bot.setOwnerName(botOwnerInfo.getUsername());
                 bot.needsUpdate(true);
                 Emulator.getThreading().run(bot);
 
-                Habbo receiver = habbo == null ? Emulator.getGameEnvironment().getHabboManager().getHabbo(receiverInfo.getId()) : habbo;
+                Habbo receiver = habbo == null ? Emulator.getGameEnvironment().getHabboManager().getHabbo(botOwnerInfo.getId()) : habbo;
                 if (receiver != null) {
                     receiver.getInventory().getBotsComponent().addBot(bot);
                     receiver.getClient().sendResponse(new BotAddedToInventoryComposer(bot));

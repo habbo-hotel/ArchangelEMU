@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -39,9 +39,9 @@ public class InteractionTotemPlanet extends InteractionDefault {
         InteractionTotemLegs legs = null;
         InteractionTotemHead head = null;
 
-        THashSet<HabboItem> items = room.getItemsAt(room.getLayout().getTile(this.getX(), this.getY()));
+        THashSet<RoomItem> items = room.getItemsAt(room.getLayout().getTile(this.getX(), this.getY()));
 
-        for(HabboItem item : items) {
+        for(RoomItem item : items) {
             if(item instanceof InteractionTotemLegs && item.getZ() < this.getZ())
                 legs = (InteractionTotemLegs)item;
         }
@@ -51,7 +51,7 @@ public class InteractionTotemPlanet extends InteractionDefault {
             return;
         }
 
-        for(HabboItem item : items) {
+        for(RoomItem item : items) {
             if(item instanceof InteractionTotemHead && item.getZ() > legs.getZ())
                 head = (InteractionTotemHead)item;
         }

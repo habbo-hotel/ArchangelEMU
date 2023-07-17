@@ -50,7 +50,7 @@ public class RoomPromotion {
                 statement.setString(1, this.title);
                 statement.setString(2, this.description);
                 statement.setInt(3, this.category);
-                statement.setInt(4, this.room.getId());
+                statement.setInt(4, this.room.getRoomInfo().getId());
                 statement.executeUpdate();
             } catch (SQLException e) {
                 log.error("Caught SQL exception", e);

@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.DatabaseLoggable;
 import com.eu.habbo.habbohotel.permissions.Permission;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
@@ -48,7 +49,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
     public RoomChatMessage(MessageHandler message) {
         if (message.packet.getMessageId() == Incoming.whisperEvent) {
             String data = message.packet.readString();
-            this.targetHabbo = message.client.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(data.split(" ")[0]);
+            this.targetHabbo = message.client.getHabbo().getRoomUnit().getRoom().getHabbo(data.split(" ")[0]);
             this.message = data.substring(data.split(" ")[0].length() + 1);
         } else {
             this.message = message.packet.readString();
@@ -69,7 +70,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         }
 
         this.habbo = message.client.getHabbo();
-        this.roomUnitId = this.habbo.getRoomUnit().getId();
+        this.roomUnitId = this.habbo.getRoomUnit().getVirtualId();
         this.unfilteredMessage = this.message;
         this.timestamp = Emulator.getIntUnixTimestamp();
 
@@ -93,7 +94,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         this.unfilteredMessage = message;
         this.habbo = null;
         this.bubble = bubble;
-        this.roomUnitId = roomUnit.getId();
+        this.roomUnitId = roomUnit.getVirtualId();
     }
 
     public RoomChatMessage(String message, Habbo habbo, RoomChatMessageBubbles bubble) {
@@ -102,7 +103,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         this.habbo = habbo;
         this.bubble = bubble;
         this.checkEmotion();
-        this.roomUnitId = habbo.getRoomUnit().getId();
+        this.roomUnitId = habbo.getRoomUnit().getVirtualId();
         this.message = this.message.replace("\r", "").replace("\n", "");
 
         if (this.bubble.isOverridable() && this.getHabbo().getHabboStats().getChatColor() != RoomChatMessageBubbles.NORMAL)
@@ -116,7 +117,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         this.targetHabbo = targetHabbo;
         this.bubble = bubble;
         this.checkEmotion();
-        this.roomUnitId = this.habbo.getRoomUnit().getId();
+        this.roomUnitId = this.habbo.getRoomUnit().getVirtualId();
         this.message = this.message.replace("\r", "").replace("\n", "");
 
         if (this.bubble.isOverridable() && this.getHabbo().getHabboStats().getChatColor() != RoomChatMessageBubbles.NORMAL)
@@ -227,8 +228,8 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         statement.setString(3, this.unfilteredMessage);
         statement.setInt(4, this.timestamp);
 
-        if (this.habbo.getHabboInfo().getCurrentRoom() != null) {
-            statement.setInt(5, this.habbo.getHabboInfo().getCurrentRoom().getId());
+        if (this.habbo.getRoomUnit().getRoom() != null) {
+            statement.setInt(5, this.habbo.getRoomUnit().getRoom().getRoomInfo().getId());
         } else {
             statement.setInt(5, 0);
         }

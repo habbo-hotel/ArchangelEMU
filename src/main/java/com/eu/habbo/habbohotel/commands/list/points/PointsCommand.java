@@ -48,7 +48,7 @@ public class PointsCommand extends BasePointsCommand {
             if (amount != 0) {
                 habbo.givePoints(type, amount);
 
-                if (habbo.getHabboInfo().getCurrentRoom() != null)
+                if (habbo.getRoomUnit().getRoom() != null)
                     habbo.whisper(replaceAmountAndType(getTextsValue("commands.generic.cmd_points.received"), amount + "", getTextsValue("seasonal.name." + type)), RoomChatMessageBubbles.ALERT);
                 else
                     habbo.alert(replaceAmountAndType(getTextsValue("commands.generic.cmd_points.received"), amount + "", getTextsValue("seasonal.name." + type)));

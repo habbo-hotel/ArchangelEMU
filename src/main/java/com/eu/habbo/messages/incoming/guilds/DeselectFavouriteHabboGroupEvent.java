@@ -21,8 +21,8 @@ public class DeselectFavouriteHabboGroupEvent extends MessageHandler {
 
             this.client.getHabbo().getHabboStats().setGuild(0);
 
-            if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null && guild != null) {
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(this.client.getHabbo().getRoomUnit(), null).compose());
+            if (this.client.getHabbo().getRoomUnit().getRoom() != null && guild != null) {
+                this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(this.client.getHabbo().getRoomUnit(), null).compose());
             }
 
             this.client.sendResponse(new ExtendedProfileMessageComposer(this.client.getHabbo(), this.client));

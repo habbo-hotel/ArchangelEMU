@@ -6,9 +6,9 @@ import com.eu.habbo.messages.outgoing.floorplaneditor.RoomOccupiedTilesMessageCo
 public class GetOccupiedTilesEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (this.client.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
-        this.client.sendResponse(new RoomOccupiedTilesMessageComposer(this.client.getHabbo().getHabboInfo().getCurrentRoom()));
+        this.client.sendResponse(new RoomOccupiedTilesMessageComposer(this.client.getHabbo().getRoomUnit().getRoom()));
     }
 }

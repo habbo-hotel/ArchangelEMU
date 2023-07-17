@@ -13,9 +13,9 @@ public class RoomVisualizationSettingsComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.roomVisualizationSettingsComposer);
-        this.response.appendBoolean(this.room.isHideWall());
-        this.response.appendInt(this.room.getWallSize());
-        this.response.appendInt(this.room.getFloorSize());
+        this.response.appendBoolean(this.room.getRoomInfo().isHideWalls());
+        this.response.appendInt(this.room.getRoomInfo().getWallThickness());
+        this.response.appendInt(this.room.getRoomInfo().getFloorThickness());
         return this.response;
     }
 }

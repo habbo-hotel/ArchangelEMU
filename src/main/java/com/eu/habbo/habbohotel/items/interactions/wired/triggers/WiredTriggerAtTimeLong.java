@@ -5,8 +5,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.threading.runnables.WiredExecuteTask;
 
@@ -28,7 +27,7 @@ public class WiredTriggerAtTimeLong extends InteractionWiredTrigger implements W
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
         this.taskId = 1;
-        Emulator.getThreading().run(new WiredExecuteTask(this, Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId())), this.getWiredSettings().getIntegerParams().get(PARAM_EXECUTE_TIME));
+        Emulator.getThreading().run(new WiredExecuteTask(this, Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId())), this.getWiredSettings().getIntegerParams().get(PARAM_EXECUTE_TIME));
         return true;
     }
 
@@ -42,7 +41,7 @@ public class WiredTriggerAtTimeLong extends InteractionWiredTrigger implements W
     @Override
     public void resetTimer() {
         this.taskId++;
-        Emulator.getThreading().run(new WiredExecuteTask(this, Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId())), this.getWiredSettings().getIntegerParams().get(PARAM_EXECUTE_TIME));
+        Emulator.getThreading().run(new WiredExecuteTask(this, Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId())), this.getWiredSettings().getIntegerParams().get(PARAM_EXECUTE_TIME));
     }
 
     @Override

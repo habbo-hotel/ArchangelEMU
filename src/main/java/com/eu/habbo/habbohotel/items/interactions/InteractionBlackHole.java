@@ -24,7 +24,7 @@ public class InteractionBlackHole extends InteractionGate {
         Achievement holeCountAchievement = Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHoleFurniCount");
 
         int holesCountProgress = 0;
-        Habbo owner = room.getHabbo(this.getUserId());
+        Habbo owner = room.getRoomUnitManager().getRoomHabboById(this.getUserId());
 
         if (owner == null) {
             holesCountProgress = AchievementManager.getAchievementProgressForHabbo(this.getUserId(), holeCountAchievement);

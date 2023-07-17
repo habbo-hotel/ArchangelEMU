@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.sql.ResultSet;
@@ -37,7 +37,7 @@ public class InteractionTeleportTile extends InteractionTeleport {
                     return;
 
                 if (!habbo.getRoomUnit().isTeleporting()) {
-                    habbo.getRoomUnit().setGoalLocation(habbo.getRoomUnit().getCurrentLocation());
+                    habbo.getRoomUnit().setGoalLocation(habbo.getRoomUnit().getCurrentPosition());
                     this.startTeleport(room, habbo, 1000);
                 }
             }

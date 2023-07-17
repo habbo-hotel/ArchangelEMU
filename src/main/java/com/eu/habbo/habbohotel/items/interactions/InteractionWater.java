@@ -3,9 +3,14 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomLayout;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.util.Pair;
 
@@ -78,7 +83,7 @@ public class InteractionWater extends InteractionDefault {
         if(roomUnit == null) return;
         roomUnit.setSwimming(true);
 
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet == null)
             return;
@@ -95,7 +100,7 @@ public class InteractionWater extends InteractionDefault {
         super.onWalkOff(roomUnit, room, objects);
 
         if ( roomUnit.getRoomUnitType() != RoomUnitType.PET) return;
-            Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
             if (pet == null) return;
 
@@ -113,9 +118,9 @@ public class InteractionWater extends InteractionDefault {
     }
 
     @Override
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation) {
-        for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation) {
-            for (HabboItem item : set.getValue()) {
+    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
+        for (Pair<RoomTile, THashSet<RoomItem>> set : itemsAtLocation) {
+            for (RoomItem item : set.getValue()) {
                 if(item != this)
                 return false;
             }
@@ -128,7 +133,7 @@ public class InteractionWater extends InteractionDefault {
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         if (!super.canWalkOn(roomUnit, room, objects)) return false;
 
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         return pet == null || pet.getPetData().isCanSwim();
     }
@@ -151,7 +156,7 @@ public class InteractionWater extends InteractionDefault {
         }
 
         // Update neighbouring water.
-        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWater.class)) {
+        for (RoomItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWater.class)) {
             // We already updated ourself.
             if (item == this) {
                 continue;
@@ -168,7 +173,7 @@ public class InteractionWater extends InteractionDefault {
 
         // Update water items we might have missed in the old location.
         if (targetOld != null) {
-            for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWaterItem.class)) {
+            for (RoomItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWaterItem.class)) {
                 if (targetOld.intersects(item.getRectangle())) {
                     ((InteractionWaterItem) item).update();
                 }
@@ -180,7 +185,7 @@ public class InteractionWater extends InteractionDefault {
         Rectangle target = this.getRectangle();
 
         // Only update water item furnis that are intersecting with us.
-        for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWaterItem.class)) {
+        for (RoomItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionWaterItem.class)) {
             if (target.intersects(item.getRectangle())) {
                 ((InteractionWaterItem) item).update();
             }
@@ -280,7 +285,7 @@ public class InteractionWater extends InteractionDefault {
     }
 
     private boolean isValidForMask(Room room, int x, int y, double z, boolean corner) {
-        for (HabboItem item : room.getItemsAt(x, y, z)) {
+        for (RoomItem item : room.getItemsAt(x, y, z)) {
             if (item instanceof InteractionWater water) {
 
                 // Take out picked up water from the recalculation.

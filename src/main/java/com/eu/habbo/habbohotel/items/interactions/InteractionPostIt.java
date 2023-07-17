@@ -2,14 +2,14 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionPostIt extends HabboItem {
+public class InteractionPostIt extends RoomItem {
     public static String STICKYPOLE_PREFIX_TEXT = "";
 
     public InteractionPostIt(ResultSet set, Item baseItem) throws SQLException {

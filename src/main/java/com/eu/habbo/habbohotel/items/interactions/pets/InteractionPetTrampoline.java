@@ -6,7 +6,11 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
 import java.sql.ResultSet;
@@ -31,7 +35,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
         this.setExtradata("0");
         room.updateItem(this);
 
-        for (Pet pet : room.getPetsAt(oldLocation)) {
+        for (Pet pet : room.getRoomUnitManager().getPetsAt(oldLocation)) {
             pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
             pet.setPacketUpdate(true);
         }
@@ -51,7 +55,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoalLocation())) {
             if (pet.getEnergy() <= 35) {
@@ -78,7 +82,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null) {
             this.setExtradata("0");
@@ -90,7 +94,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
         return roomUnit.getRoomUnitType() == RoomUnitType.PET && pet != null && pet.getPetData().haveToyItem(this.getBaseItem());
     }
 

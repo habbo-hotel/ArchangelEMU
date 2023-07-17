@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetToy;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
@@ -93,7 +93,7 @@ public class PetData implements Comparable<PetData> {
     }
 
 
-    public boolean haveNest(HabboItem nest) {
+    public boolean haveNest(RoomItem nest) {
         return this.haveNest(nest.getBaseItem());
     }
 
@@ -103,8 +103,8 @@ public class PetData implements Comparable<PetData> {
     }
 
 
-    public HabboItem randomNest(THashSet<InteractionNest> items) {
-        List<HabboItem> nestList = new ArrayList<>();
+    public RoomItem randomNest(THashSet<InteractionNest> items) {
+        List<RoomItem> nestList = new ArrayList<>();
 
         for (InteractionNest nest : items) {
             if (this.haveNest(nest)) {
@@ -132,7 +132,7 @@ public class PetData implements Comparable<PetData> {
     }
 
 
-    public boolean haveFoodItem(HabboItem food) {
+    public boolean haveFoodItem(RoomItem food) {
         return this.haveFoodItem(food.getBaseItem());
     }
 
@@ -142,8 +142,8 @@ public class PetData implements Comparable<PetData> {
     }
 
 
-    public HabboItem randomFoodItem(THashSet<InteractionPetFood> items) {
-        List<HabboItem> foodList = new ArrayList<>();
+    public RoomItem randomFoodItem(THashSet<InteractionPetFood> items) {
+        List<RoomItem> foodList = new ArrayList<>();
 
         for (InteractionPetFood food : items) {
             if (this.haveFoodItem(food)) {
@@ -170,7 +170,7 @@ public class PetData implements Comparable<PetData> {
     }
 
 
-    public boolean haveDrinkItem(HabboItem item) {
+    public boolean haveDrinkItem(RoomItem item) {
         return this.haveDrinkItem(item.getBaseItem());
     }
 
@@ -180,8 +180,8 @@ public class PetData implements Comparable<PetData> {
     }
 
 
-    public HabboItem randomDrinkItem(THashSet<InteractionPetDrink> items) {
-        List<HabboItem> drinkList = new ArrayList<>();
+    public RoomItem randomDrinkItem(THashSet<InteractionPetDrink> items) {
+        List<RoomItem> drinkList = new ArrayList<>();
 
         for (InteractionPetDrink drink : items) {
             if (this.haveDrinkItem(drink)) {
@@ -208,7 +208,7 @@ public class PetData implements Comparable<PetData> {
     }
 
 
-    public boolean haveToyItem(HabboItem toy) {
+    public boolean haveToyItem(RoomItem toy) {
         return this.haveToyItem(toy.getBaseItem());
     }
 
@@ -218,8 +218,8 @@ public class PetData implements Comparable<PetData> {
     }
 
 
-    public HabboItem randomToyItem(THashSet<InteractionPetToy> toys) {
-        List<HabboItem> toyList = new ArrayList<>();
+    public RoomItem randomToyItem(THashSet<InteractionPetToy> toys) {
+        List<RoomItem> toyList = new ArrayList<>();
 
         for (InteractionPetToy toy : toys) {
             if (this.haveToyItem(toy)) {
@@ -235,10 +235,10 @@ public class PetData implements Comparable<PetData> {
         return null;
     }
 
-    public HabboItem randomToyHabboItem(THashSet<HabboItem> items) {
-        List<HabboItem> itemList = new ArrayList<>();
+    public RoomItem randomToyHabboItem(THashSet<RoomItem> items) {
+        List<RoomItem> itemList = new ArrayList<>();
 
-        for (HabboItem item : items) {
+        for (RoomItem item : items) {
             if (this.haveToyItem(item)) {
                 itemList.add(item);
             }

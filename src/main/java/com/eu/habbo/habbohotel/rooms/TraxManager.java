@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.SoundTrack;
 import com.eu.habbo.habbohotel.items.interactions.InteractionJukeBox;
 import com.eu.habbo.habbohotel.items.interactions.InteractionMusicDisc;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
@@ -55,7 +55,7 @@ public class TraxManager implements Disposable {
 
         if (this.jukeBox == null) {
             //Check again if there's a jukebox on room but has not been saved on DB before
-            for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionJukeBox.class)) {
+            for (RoomItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionJukeBox.class)) {
                 this.jukeBox = (InteractionJukeBox) item;
             }
 
@@ -71,10 +71,10 @@ public class TraxManager implements Disposable {
 
     public InteractionJukeBox loadRoomJukebox() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM room_trax WHERE room_id = ?")) {
-            statement.setInt(1, this.room.getId());
+            statement.setInt(1, this.room.getRoomInfo().getId());
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {
-                    HabboItem jukebox = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set.getInt("trax_item_id"));
+                    RoomItem jukebox = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set.getInt("trax_item_id"));
                     if (jukebox != null) {
                         if (!(jukebox instanceof InteractionJukeBox)) {
                             return null;
@@ -100,7 +100,7 @@ public class TraxManager implements Disposable {
             statement.setInt(1, this.jukeBox.getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    HabboItem musicDisc = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set.getInt("item_id"));
+                    RoomItem musicDisc = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set.getInt("item_id"));
                     if (musicDisc != null) {
                         if (!(musicDisc instanceof InteractionMusicDisc) || musicDisc.getRoomId() != -1) {
                             deleteSongFromPlaylist(this.jukeBox.getId(), musicDisc.getId());
@@ -135,7 +135,7 @@ public class TraxManager implements Disposable {
         if (this.jukeBox != null) return;
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement_1 = connection.prepareStatement("INSERT INTO room_trax (room_id, trax_item_id) VALUES (?, ?)")) {
-            statement_1.setInt(1, this.room.getId());
+            statement_1.setInt(1, this.room.getRoomInfo().getId());
             statement_1.setInt(2, jukeBox.getId());
             statement_1.execute();
         }
@@ -153,7 +153,7 @@ public class TraxManager implements Disposable {
         if (this.jukeBox.getId() != jukeBox.getId()) return;
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement_1 = connection.prepareStatement("DELETE FROM room_trax WHERE room_id = ?")) {
-            statement_1.setInt(1, this.room.getId());
+            statement_1.setInt(1, this.room.getRoomInfo().getId());
             statement_1.execute();
         }
         catch (SQLException e) {
@@ -195,7 +195,8 @@ public class TraxManager implements Disposable {
             this.currentlyPlaying = this.songs.get(index);
 
             if (this.currentlyPlaying != null) {
-                this.room.setJukeBoxActive(true);
+                this.room.getRoomInfo().setJukeboxEnabled(true);
+                this.room.setNeedsUpdate(true);
                 this.startedTimestamp = Emulator.getIntUnixTimestamp();
                 this.playingIndex = index;
 
@@ -217,7 +218,8 @@ public class TraxManager implements Disposable {
             AchievementManager.progressAchievement(this.starter, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MusicPlayer"), (Emulator.getIntUnixTimestamp() - cycleStartedTimestamp) / 60);
         }
 
-        this.room.setJukeBoxActive(false);
+        this.room.getRoomInfo().setJukeboxEnabled(false);
+        this.room.setNeedsUpdate(true);
         this.currentlyPlaying = null;
         this.startedTimestamp = 0;
         this.cycleStartedTimestamp = 0;
@@ -317,7 +319,7 @@ public class TraxManager implements Disposable {
             statement.setInt(1, jukebox.getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    HabboItem musicDisc = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set.getInt("item_id"));
+                    RoomItem musicDisc = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set.getInt("item_id"));
                     deleteSongFromPlaylist(jukebox.getId(), set.getInt("item_id"));
 
                     if (musicDisc != null) {
@@ -393,7 +395,7 @@ public class TraxManager implements Disposable {
     }
 
     public void sendUpdatedSongList() {
-        this.room.getHabbos().forEach(h -> {
+        this.room.getRoomUnitManager().getRoomHabbos().forEach(h -> {
             GameClient client = h.getClient();
 
             if (client != null) {

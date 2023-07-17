@@ -2,12 +2,10 @@ package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
-import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,13 +21,13 @@ public class WiredConditionGroupMember extends InteractionWiredCondition {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        if (room.getGuildId() == 0) {
+        if (room.getRoomInfo().getGuild().getId() == 0) {
             return false;
         }
 
         Habbo habbo = room.getHabbo(roomUnit);
 
-        return habbo != null && habbo.getHabboStats().hasGuild(room.getGuildId());
+        return habbo != null && habbo.getHabboStats().hasGuild(room.getRoomInfo().getGuild().getId());
     }
 
     @Override

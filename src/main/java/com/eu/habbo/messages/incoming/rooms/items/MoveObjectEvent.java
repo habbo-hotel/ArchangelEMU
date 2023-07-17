@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
@@ -12,13 +12,13 @@ import com.eu.habbo.messages.outgoing.rooms.items.ObjectUpdateMessageComposer;
 public class MoveObjectEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
         int furniId = this.packet.readInt();
-        HabboItem item = room.getHabboItem(furniId);
+        RoomItem item = room.getHabboItem(furniId);
         if (item == null) return;
 
         int x = this.packet.readInt();

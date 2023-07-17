@@ -9,8 +9,8 @@ public class GetUserTagsEvent extends MessageHandler {
     public void handle() {
         int roomUnitId = this.packet.readInt();
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            Habbo habbo = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboByRoomUnitId(roomUnitId);
+        if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
+            Habbo habbo = this.client.getHabbo().getRoomUnit().getRoom().getHabboByRoomUnitId(roomUnitId);
 
             if (habbo != null) {
                 this.client.sendResponse(new UserTagsMessageComposer(habbo));

@@ -11,9 +11,9 @@ public class FastwalkCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() != null) {
             //TODO Make this an event plugin which fires that can be cancelled
-            if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboInfo().getRiding() != null)
+            if (gameClient.getHabbo().getRoomUnit().getRoom() != null && gameClient.getHabbo().getHabboInfo().getRiding() != null)
                 return true;
 
             Habbo habbo = gameClient.getHabbo();
@@ -26,7 +26,7 @@ public class FastwalkCommand extends Command {
                 if (habbo == null)
                     return false;
             }
-            habbo.getRoomUnit().setFastWalk(!habbo.getRoomUnit().isFastWalk());
+            habbo.getRoomUnit().setFastWalkEnabled(!habbo.getRoomUnit().isFastWalkEnabled());
 
             return true;
         }

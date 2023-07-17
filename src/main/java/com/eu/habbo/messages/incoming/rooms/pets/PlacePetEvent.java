@@ -3,7 +3,12 @@ package com.eu.habbo.messages.incoming.rooms.pets;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.PetPlacingErrorComposer;
 import com.eu.habbo.messages.outgoing.inventory.PetRemovedFromInventoryComposer;
@@ -12,14 +17,16 @@ import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 public class PlacePetEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
-        if (this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId() && !room.isAllowPets() && !(this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasRight(Permission.ACC_PLACEFURNI))) {
-            this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_PETS_FORBIDDEN_IN_FLAT));
-            return;
+        if (this.client.getHabbo().getHabboInfo().getId() != room.getRoomInfo().getOwnerInfo().getId()) {
+            if (!room.getRoomInfo().isAllowPets() && !(this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasRight(Permission.ACC_PLACEFURNI))) {
+                this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_PETS_FORBIDDEN_IN_FLAT));
+                return;
+            }
         }
 
         int petId = this.packet.readInt();
@@ -29,7 +36,7 @@ public class PlacePetEvent extends MessageHandler {
         if (pet == null) {
             return;
         }
-        if (room.getCurrentPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasRight(Permission.ACC_UNLIMITED_PETS)) {
+        if (room.getRoomUnitManager().getCurrentRoomPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasRight(Permission.ACC_UNLIMITED_PETS)) {
             this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_MAX_PETS));
             return;
         }
@@ -38,11 +45,11 @@ public class PlacePetEvent extends MessageHandler {
         int y = this.packet.readInt();
 
         RoomTile tile;
-        RoomTile playerTile = this.client.getHabbo().getRoomUnit().getCurrentLocation();
+        RoomTile playerTile = this.client.getHabbo().getRoomUnit().getCurrentPosition();
 
-        if ((x == 0 && y == 0) || !room.isOwner(this.client.getHabbo())) {
+        if ((x == 0 && y == 0) || !room.getRoomInfo().isRoomOwner(this.client.getHabbo())) {
             //Place the pet in front of the player.
-            tile = room.getLayout().getTileInFront(this.client.getHabbo().getRoomUnit().getCurrentLocation(), this.client.getHabbo().getRoomUnit().getBodyRotation().getValue());
+            tile = room.getLayout().getTileInFront(this.client.getHabbo().getRoomUnit().getCurrentPosition(), this.client.getHabbo().getRoomUnit().getBodyRotation().getValue());
 
             if (tile == null || !tile.isWalkable()) {
                 this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_PETS_NO_FREE_TILES));
@@ -70,20 +77,20 @@ public class PlacePetEvent extends MessageHandler {
         RoomUnit roomUnit = pet.getRoomUnit();
 
         if (roomUnit == null) {
-            roomUnit = new RoomUnit();
+            roomUnit = new RoomPet();
         }
 
-        roomUnit.setPathFinderRoom(room);
+        roomUnit.setRoom(room);
 
         roomUnit.setLocation(tile);
-        roomUnit.setZ(tile.getStackHeight());
+        roomUnit.setCurrentZ(tile.getStackHeight());
         roomUnit.setStatus(RoomUnitStatus.SIT, "0");
         roomUnit.setRoomUnitType(RoomUnitType.PET);
         if (playerTile != null) {
             roomUnit.lookAtPoint(playerTile);
         }
         pet.setRoomUnit(roomUnit);
-        room.addPet(pet);
+        room.getRoomUnitManager().addRoomUnit(pet);
         pet.setNeedsUpdate(true);
         Emulator.getThreading().run(pet);
         room.sendComposer(new RoomPetComposer(pet).compose());

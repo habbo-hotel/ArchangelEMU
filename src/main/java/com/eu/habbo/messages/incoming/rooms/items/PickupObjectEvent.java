@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPostIt;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class PickupObjectEvent extends MessageHandler {
@@ -12,12 +12,12 @@ public class PickupObjectEvent extends MessageHandler {
         int category = this.packet.readInt(); //10 = floorItem and 20 = wallItem
         int itemId = this.packet.readInt();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
-        HabboItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getHabboItem(itemId);
 
         if (item == null)
             return;
@@ -31,8 +31,12 @@ public class PickupObjectEvent extends MessageHandler {
             if (room.hasRights(this.client.getHabbo())) {
                 if (this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
                     item.setUserId(this.client.getHabbo().getHabboInfo().getId());
-                } else if (this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId() && item.getUserId() == room.getOwnerId()) {
-                    return;
+                } else {
+                    if (this.client.getHabbo().getHabboInfo().getId() != room.getRoomInfo().getOwnerInfo().getId()) {
+                        if (item.getUserId() == room.getRoomInfo().getOwnerInfo().getId()) {
+                            return;
+                        }
+                    }
                 }
 
                 room.ejectUserItem(item);

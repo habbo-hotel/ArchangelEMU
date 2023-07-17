@@ -6,16 +6,16 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionNest extends HabboItem {
+public class InteractionNest extends RoomItem {
     public InteractionNest(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -56,7 +56,7 @@ public class InteractionNest extends HabboItem {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet == null)
             return;
@@ -72,7 +72,7 @@ public class InteractionNest extends HabboItem {
 
         pet.setTask(PetTasks.NEST);
         pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getX(), this.getY()));
-        pet.getRoomUnit().clearStatus();
+        pet.getRoomUnit().clearStatuses();
         pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
         pet.getRoomUnit().setStatus(RoomUnitStatus.LAY, room.getStackHeight(this.getX(), this.getY(), false) + "");
         room.sendComposer(new UserUpdateComposer(roomUnit).compose());

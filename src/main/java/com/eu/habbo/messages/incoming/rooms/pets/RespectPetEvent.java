@@ -3,11 +3,11 @@ package com.eu.habbo.messages.incoming.rooms.pets;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.pets.MonsterplantPet;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.messages.incoming.MessageHandler;
+import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +21,10 @@ public class RespectPetEvent extends MessageHandler {
         final Habbo habbo = this.client.getHabbo();
         if (habbo == null) { return; }
 
-        final Room room = habbo.getHabboInfo().getCurrentRoom();
+        final Room room = habbo.getRoomUnit().getRoom();
         if (room == null) { return; }
 
-        final Pet pet = room.getPet(petId);
+        final Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
         if (pet == null) { return; }
 
         if (habbo.getHabboStats().getPetRespectPointsToGive() > 0 || pet instanceof MonsterplantPet) {
@@ -35,7 +35,7 @@ public class RespectPetEvent extends MessageHandler {
                 Emulator.getThreading().run(pet);
             });
 
-            RoomTile tile = habbo.getRoomUnit().getClosestAdjacentTile(pet.getRoomUnit().getX(), pet.getRoomUnit().getY(), true);
+            RoomTile tile = habbo.getRoomUnit().getClosestAdjacentTile(pet.getRoomUnit().getCurrentPosition().getX(), pet.getRoomUnit().getCurrentPosition().getY(), true);
             if(tile != null) {
                 habbo.getRoomUnit().setGoalLocation(tile);
             }

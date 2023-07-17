@@ -5,22 +5,23 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionMoodLight;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomMoodlightData;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
+import gnu.trove.map.TIntObjectMap;
 
 public class RoomDimmerChangeStateEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if ((room.getGuildId() > 0 && room.getGuildRightLevel(this.client.getHabbo()).isLessThan(RoomRightLevels.GUILD_RIGHTS)) && !room.hasRights(this.client.getHabbo()))
+        if ((room.getRoomInfo().getGuild().getId() > 0 && room.getGuildRightLevel(this.client.getHabbo()).isLessThan(RoomRightLevels.GUILD_RIGHTS)) && !room.hasRights(this.client.getHabbo()))
             return;
 
-        for (HabboItem moodLight : room.getRoomSpecialTypes().getItemsOfType(InteractionMoodLight.class)) {
+        for (RoomItem moodLight : room.getRoomSpecialTypes().getItemsOfType(InteractionMoodLight.class)) {
             // enabled ? 2 : 1, preset id, background only ? 2 : 1, color, intensity
 
             String extradata = "2,1,2,#FF00FF,255";
-            for (RoomMoodlightData data : room.getMoodlightData().valueCollection()) {
+            for (RoomMoodlightData data : ((TIntObjectMap<RoomMoodlightData>) room.getRoomInfo().getMoodLightData()).valueCollection()) {
                 if (data.isEnabled()) {
                     extradata = data.toString();
                     break;

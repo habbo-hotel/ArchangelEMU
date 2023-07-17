@@ -1,22 +1,17 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class WiredEffectTriggerStacks extends InteractionWiredEffect {
     public WiredEffectTriggerStacks(ResultSet set, Item baseItem) throws SQLException {
@@ -41,7 +36,7 @@ public class WiredEffectTriggerStacks extends InteractionWiredEffect {
 
         boolean found;
 
-        for (HabboItem item : this.getWiredSettings().getItems(room)) {
+        for (RoomItem item : this.getWiredSettings().getItems(room)) {
             //if(item instanceof InteractionWiredTrigger)
             {
                 found = false;

@@ -15,8 +15,8 @@ public class FollowFriendEvent extends MessageHandler {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(username);
 
             if (habbo != null) {
-                if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                    this.client.sendResponse(new RoomForwardMessageComposer(habbo.getHabboInfo().getCurrentRoom().getId()));
+                if (habbo.getRoomUnit().getRoom() != null) {
+                    this.client.sendResponse(new RoomForwardMessageComposer(habbo.getRoomUnit().getRoom().getRoomInfo().getId()));
                 }
             }
         }

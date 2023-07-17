@@ -2,20 +2,20 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class SetMannequinFigureEvent extends MessageHandler {
     @Override
     public void handle() {
         Habbo habbo = this.client.getHabbo();
-        Room room = habbo.getHabboInfo().getCurrentRoom();
+        Room room = habbo.getRoomUnit().getRoom();
 
-        if (room == null || !room.isOwner(habbo))
+        if (room == null || !room.getRoomInfo().isRoomOwner(habbo))
             return;
 
-        HabboItem item = room.getHabboItem(this.packet.readInt());
+        RoomItem item = room.getHabboItem(this.packet.readInt());
         if (item == null)
             return;
 

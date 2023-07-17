@@ -13,7 +13,7 @@ public class UserTagsMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.userTagsMessageComposer);
-        this.response.appendInt(this.habbo.getRoomUnit().getId());
+        this.response.appendInt(this.habbo.getRoomUnit().getVirtualId());
         this.response.appendInt(this.habbo.getHabboStats().getTags().length);
 
         for (String tag : this.habbo.getHabboStats().getTags()) {

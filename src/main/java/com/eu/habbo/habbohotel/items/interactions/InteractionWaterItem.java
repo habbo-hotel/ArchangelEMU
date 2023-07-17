@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import gnu.trove.set.hash.THashSet;
 
 import java.awt.*;
@@ -46,7 +46,7 @@ public class InteractionWaterItem extends InteractionMultiHeight {
     }
 
     public void update() {
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
 
         if (room == null) {
             return;
@@ -60,9 +60,9 @@ public class InteractionWaterItem extends InteractionMultiHeight {
         for (short x = (short) rectangle.x; x < rectangle.getWidth() + rectangle.x && foundWater; x++) {
             for (short y = (short) rectangle.y; y < rectangle.getHeight() + rectangle.y && foundWater; y++) {
                 boolean tile = false;
-                THashSet<HabboItem> items = room.getItemsAt(room.getLayout().getTile(x, y));
+                THashSet<RoomItem> items = room.getItemsAt(room.getLayout().getTile(x, y));
 
-                for (HabboItem item : items) {
+                for (RoomItem item : items) {
                     if (item instanceof InteractionWater) {
                         tile = true;
                         break;

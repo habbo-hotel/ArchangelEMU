@@ -1,8 +1,8 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
@@ -54,7 +54,7 @@ public class RoomTrade {
         this.sendMessageToUsers(new TradingOpenComposer(this));
     }
 
-    public void offerItem(Habbo habbo, HabboItem item) {
+    public void offerItem(Habbo habbo, RoomItem item) {
         RoomTradeUser user = this.getRoomTradeUserForHabbo(habbo);
 
         if (user.getItems().contains(item))
@@ -67,10 +67,10 @@ public class RoomTrade {
         this.updateWindow();
     }
 
-    public void offerMultipleItems(Habbo habbo, THashSet<HabboItem> items) {
+    public void offerMultipleItems(Habbo habbo, THashSet<RoomItem> items) {
         RoomTradeUser user = this.getRoomTradeUserForHabbo(habbo);
 
-        for (HabboItem item : items) {
+        for (RoomItem item : items) {
             if (!user.getItems().contains(item)) {
                 habbo.getInventory().getItemsComponent().removeHabboItem(item);
                 user.getItems().add(item);
@@ -81,7 +81,7 @@ public class RoomTrade {
         this.updateWindow();
     }
 
-    public void removeItem(Habbo habbo, HabboItem item) {
+    public void removeItem(Habbo habbo, RoomItem item) {
         RoomTradeUser user = this.getRoomTradeUserForHabbo(habbo);
 
         if (!user.getItems().contains(item))
@@ -137,9 +137,9 @@ public class RoomTrade {
 
     boolean tradeItems() {
         for (RoomTradeUser roomTradeUser : this.users) {
-            for (HabboItem item : roomTradeUser.getItems()) {
+            for (RoomItem item : roomTradeUser.getItems()) {
                 if (roomTradeUser.getHabbo().getInventory().getItemsComponent().getHabboItem(item.getId()) != null) {
-                    this.sendMessageToUsers(new TradingCloseComposer(roomTradeUser.getHabbo().getRoomUnit().getId(), TradingCloseComposer.ITEMS_NOT_FOUND));
+                    this.sendMessageToUsers(new TradingCloseComposer(roomTradeUser.getHabbo().getRoomUnit().getVirtualId(), TradingCloseComposer.ITEMS_NOT_FOUND));
                     return false;
                 }
             }
@@ -182,7 +182,7 @@ public class RoomTrade {
 
             try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ? WHERE id = ? LIMIT 1")) {
                 try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO room_trade_log_items (id, item_id, user_id) VALUES (?, ?, ?)")) {
-                    for (HabboItem item : userOne.getItems()) {
+                    for (RoomItem item : userOne.getItems()) {
                         item.setUserId(userTwoId);
                         statement.setInt(1, userTwoId);
                         statement.setInt(2, item.getId());
@@ -196,7 +196,7 @@ public class RoomTrade {
                         }
                     }
 
-                    for (HabboItem item : userTwo.getItems()) {
+                    for (RoomItem item : userTwo.getItems()) {
                         item.setUserId(userOneId);
                         statement.setInt(1, userOneId);
                         statement.setInt(2, item.getId());
@@ -221,15 +221,15 @@ public class RoomTrade {
             log.error("Caught SQL exception", e);
         }
 
-        THashSet<HabboItem> itemsUserOne = new THashSet<>(userOne.getItems());
-        THashSet<HabboItem> itemsUserTwo = new THashSet<>(userTwo.getItems());
+        THashSet<RoomItem> itemsUserOne = new THashSet<>(userOne.getItems());
+        THashSet<RoomItem> itemsUserTwo = new THashSet<>(userTwo.getItems());
 
         userOne.clearItems();
         userTwo.clearItems();
 
         int creditsForUserTwo = 0;
-        THashSet<HabboItem> creditFurniUserOne = new THashSet<>();
-        for (HabboItem item : itemsUserOne) {
+        THashSet<RoomItem> creditFurniUserOne = new THashSet<>();
+        for (RoomItem item : itemsUserOne) {
             int worth = RoomTrade.getCreditsByItem(item);
             if (worth > 0) {
                 creditsForUserTwo += worth;
@@ -240,8 +240,8 @@ public class RoomTrade {
         itemsUserOne.removeAll(creditFurniUserOne);
 
         int creditsForUserOne = 0;
-        THashSet<HabboItem> creditFurniUserTwo = new THashSet<>();
-        for (HabboItem item : itemsUserTwo) {
+        THashSet<RoomItem> creditFurniUserTwo = new THashSet<>();
+        for (RoomItem item : itemsUserTwo) {
             int worth = RoomTrade.getCreditsByItem(item);
             if (worth > 0) {
                 creditsForUserOne += worth;
@@ -328,7 +328,7 @@ public class RoomTrade {
         return this.users;
     }
 
-    public static int getCreditsByItem(HabboItem item) {
+    public static int getCreditsByItem(RoomItem item) {
         if (!Emulator.getConfig().getBoolean("redeem.currency.trade")) return 0;
 
         if (!item.getBaseItem().getName().startsWith("CF_") && !item.getBaseItem().getName().startsWith("CFC_")) return 0;

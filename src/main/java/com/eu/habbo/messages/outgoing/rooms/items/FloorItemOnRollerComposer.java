@@ -2,7 +2,7 @@ package com.eu.habbo.messages.outgoing.rooms.items;
 
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -12,8 +12,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class FloorItemOnRollerComposer extends MessageComposer {
     // THIS IS WRONG SlideObjectBundleMessageComposer
-    private final HabboItem item;
-    private final HabboItem roller;
+    private final RoomItem item;
+    private final RoomItem roller;
     private final RoomTile oldLocation;
     private final double oldZ;
     private final RoomTile newLocation;
@@ -21,7 +21,7 @@ public class FloorItemOnRollerComposer extends MessageComposer {
     private final double heightOffset;
     private final Room room;
 
-    public FloorItemOnRollerComposer(HabboItem item, HabboItem roller, RoomTile newLocation, double heightOffset, Room room) {
+    public FloorItemOnRollerComposer(RoomItem item, RoomItem roller, RoomTile newLocation, double heightOffset, Room room) {
         this.item = item;
         this.roller = roller;
         this.newLocation = newLocation;

@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
@@ -40,12 +40,12 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
         int spacing = this.getWiredSettings().getIntegerParams().get(PARAM_SPACING);
 
         for (Object object : stuff) {
-            if (object instanceof HabboItem) {
+            if (object instanceof RoomItem) {
                 int randomItemIndex = Emulator.getRandom().nextInt(this.getWiredSettings().getItemIds().size());
 
-                HabboItem[] items = this.getWiredSettings().getItems(room).toArray(new HabboItem[this.getWiredSettings().getItemIds().size()]);
+                RoomItem[] items = this.getWiredSettings().getItems(room).toArray(new RoomItem[this.getWiredSettings().getItemIds().size()]);
 
-                HabboItem randomItem = items[randomItemIndex];
+                RoomItem randomItem = items[randomItemIndex];
 
                 if (randomItem != null) {
                     int indexOffset = 0;
@@ -53,7 +53,7 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
                     RoomTile objectTile = room.getLayout().getTile(randomItem.getX(), randomItem.getY());
 
                     if (objectTile != null) {
-                        THashSet<RoomTile> refreshTiles = room.getLayout().getTilesAt(room.getLayout().getTile(((HabboItem) object).getX(), ((HabboItem) object).getY()), ((HabboItem) object).getBaseItem().getWidth(), ((HabboItem) object).getBaseItem().getLength(), ((HabboItem) object).getRotation());
+                        THashSet<RoomTile> refreshTiles = room.getLayout().getTilesAt(room.getLayout().getTile(((RoomItem) object).getX(), ((RoomItem) object).getY()), ((RoomItem) object).getBaseItem().getWidth(), ((RoomItem) object).getBaseItem().getLength(), ((RoomItem) object).getRotation());
 
                         RoomTile tile = room.getLayout().getTileInFront(objectTile, direction, indexOffset);
                         if (tile == null || !tile.getAllowStack()) {
@@ -61,8 +61,8 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
                             tile = room.getLayout().getTileInFront(objectTile, direction, indexOffset);
                         }
 
-                        room.sendComposer(new FloorItemOnRollerComposer((HabboItem) object, null, tile, tile.getStackHeight() - ((HabboItem) object).getZ(), room).compose());
-                        refreshTiles.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(((HabboItem) object).getX(), ((HabboItem) object).getY()), ((HabboItem) object).getBaseItem().getWidth(), ((HabboItem) object).getBaseItem().getLength(), ((HabboItem) object).getRotation()));
+                        room.sendComposer(new FloorItemOnRollerComposer((RoomItem) object, null, tile, tile.getStackHeight() - ((RoomItem) object).getZ(), room).compose());
+                        refreshTiles.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(((RoomItem) object).getX(), ((RoomItem) object).getY()), ((RoomItem) object).getBaseItem().getWidth(), ((RoomItem) object).getBaseItem().getLength(), ((RoomItem) object).getRotation()));
                         room.updateTiles(refreshTiles);
                     }
                 }

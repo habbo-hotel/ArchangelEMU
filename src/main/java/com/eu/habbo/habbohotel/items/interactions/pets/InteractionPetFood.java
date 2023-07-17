@@ -6,9 +6,9 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.threading.runnables.PetEatAction;
 
@@ -31,15 +31,15 @@ public class InteractionPetFood extends InteractionDefault {
         if (this.getExtradata().length() == 0)
             this.setExtradata("0");
 
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null) {
             if (pet.getPetData().haveFoodItem(this)) {
                 if (pet.levelHunger >= 35) {
                     pet.setTask(PetTasks.EAT);
                     pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getX(), this.getY()));
-                    pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
-                    pet.getRoomUnit().clearStatus();
+                    pet.getRoomUnit().setRotation(RoomRotation.values()[this.getRotation()]);
+                    pet.getRoomUnit().clearStatuses();
                     pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
                     pet.getRoomUnit().setStatus(RoomUnitStatus.EAT, "0");
                     room.sendComposer(new UserUpdateComposer(roomUnit).compose());

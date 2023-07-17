@@ -2,17 +2,17 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class SetMannequinNameEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-        if (room == null || !room.isOwner(this.client.getHabbo()))
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
+        if (room == null || !room.getRoomInfo().isRoomOwner(this.client.getHabbo()))
             return;
 
-        HabboItem item = room.getHabboItem(this.packet.readInt());
+        RoomItem item = room.getHabboItem(this.packet.readInt());
         if (item == null)
             return;
 

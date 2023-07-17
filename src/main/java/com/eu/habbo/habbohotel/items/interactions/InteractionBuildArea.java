@@ -6,9 +6,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
@@ -78,8 +78,8 @@ public class InteractionBuildArea extends InteractionCustomValues {
 
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : this.tiles) {
-                THashSet<HabboItem> tileItems = room.getItemsAt(tile);
-                for (HabboItem tileItem : tileItems) {
+                THashSet<RoomItem> tileItems = room.getItemsAt(tile);
+                for (RoomItem tileItem : tileItems) {
                     if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
                         room.pickUpItem(tileItem, null);
                     }
@@ -127,9 +127,9 @@ public class InteractionBuildArea extends InteractionCustomValues {
 
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : this.tiles) {
-                THashSet<HabboItem> tileItems = room.getItemsAt(tile);
+                THashSet<RoomItem> tileItems = room.getItemsAt(tile);
                 if (newTiles.contains(tile)) continue;
-                for (HabboItem tileItem : tileItems) {
+                for (RoomItem tileItem : tileItems) {
                     if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
                         room.pickUpItem(tileItem, null);
                     }
@@ -140,7 +140,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
     }
 
     public boolean inSquare(RoomTile location) {
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
 
         if (room != null && this.tiles.size() == 0) {
             regenAffectedTiles(room);
@@ -202,8 +202,8 @@ public class InteractionBuildArea extends InteractionCustomValues {
         }
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : oldTiles) {
-                THashSet<HabboItem> tileItems = room.getItemsAt(tile);
-                for (HabboItem tileItem : tileItems) {
+                THashSet<RoomItem> tileItems = room.getItemsAt(tile);
+                for (RoomItem tileItem : tileItems) {
                     if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
                         room.pickUpItem(tileItem, null);
                     }
@@ -217,12 +217,12 @@ public class InteractionBuildArea extends InteractionCustomValues {
         if (effectItem != null) {
             TIntObjectMap<String> ownerNames = TCollections.synchronizedMap(new TIntObjectHashMap<>(0));
             ownerNames.put(-1, "System");
-            THashSet<HabboItem> items = new THashSet<>();
+            THashSet<RoomItem> items = new THashSet<>();
 
             int id = 0;
             for (RoomTile tile : this.tiles) {
                 id--;
-                HabboItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
+                RoomItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
                 item.setX(tile.getX());
                 item.setY(tile.getY());
                 item.setZ(tile.relativeHeight());
@@ -231,7 +231,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
 
             client.sendResponse(new ObjectsMessageComposer(ownerNames, items));
             Emulator.getThreading().run(() -> {
-                for (HabboItem item : items) {
+                for (RoomItem item : items) {
                     client.sendResponse(new RemoveFloorItemComposer(item, true));
                 }
             }, 3000);

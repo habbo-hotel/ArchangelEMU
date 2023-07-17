@@ -13,7 +13,7 @@ public class StalkCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (gameClient.getHabbo().getRoomUnit().getRoom() == null)
             return true;
 
         if (params.length >= 2) {
@@ -24,7 +24,7 @@ public class StalkCommand extends Command {
                 return true;
             }
 
-            if (habbo.getHabboInfo().getCurrentRoom() == null) {
+            if (habbo.getRoomUnit().getRoom() == null) {
                 gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_stalk.not_room"), params[1]), RoomChatMessageBubbles.ALERT);
                 return true;
             }
@@ -34,12 +34,12 @@ public class StalkCommand extends Command {
                 return true;
             }
 
-            if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == habbo.getHabboInfo().getCurrentRoom()) {
+            if (gameClient.getHabbo().getRoomUnit().getRoom() == habbo.getRoomUnit().getRoom()) {
                 gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.generic.cmd_stalk.same_room"), params[1]), RoomChatMessageBubbles.ALERT);
                 return true;
             }
 
-            gameClient.sendResponse(new GetGuestRoomResultComposer(habbo.getHabboInfo().getCurrentRoom(), gameClient.getHabbo(), true, false));
+            gameClient.sendResponse(new GetGuestRoomResultComposer(habbo.getRoomUnit().getRoom(), gameClient.getHabbo(), true, false));
         } else {
             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_stalk.forgot_username"), RoomChatMessageBubbles.ALERT);
         }

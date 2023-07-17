@@ -32,7 +32,7 @@ public class MassCreditsCommand extends BaseCreditsCommand {
                     habbo.giveCredits(amount);
                     habbo.getClient().sendResponse(new CreditBalanceComposer(habbo));
 
-                    if (habbo.getHabboInfo().getCurrentRoom() != null)
+                    if (habbo.getRoomUnit().getRoom() != null)
                         habbo.whisper(replaceAmount(getTextsValue("commands.generic.cmd_credits.received"), amount + ""), RoomChatMessageBubbles.ALERT);
                 }
             }

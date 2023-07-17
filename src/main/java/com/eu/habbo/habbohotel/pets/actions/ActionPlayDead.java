@@ -18,7 +18,7 @@ public class ActionPlayDead extends PetAction {
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         pet.clearPosture();
 
-        pet.getRoomUnit().setStatus(RoomUnitStatus.DEAD, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+        pet.getRoomUnit().setStatus(RoomUnitStatus.DEAD, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
 
         if (pet.getHappiness() > 50)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));

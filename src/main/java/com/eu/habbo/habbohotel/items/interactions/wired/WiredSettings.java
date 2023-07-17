@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.items.interactions.wired;
 
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -53,15 +53,15 @@ public class WiredSettings implements IWiredSettings {
         this.selectionType = 0;
     }
 
-    public HashSet<HabboItem> getItems(Room room) {
-        HashSet<HabboItem> items = new HashSet<>();
+    public HashSet<RoomItem> getItems(Room room) {
+        HashSet<RoomItem> items = new HashSet<>();
 
         if(this.itemIds.size() == 0) {
             return items;
         }
 
         for(int i = 0; i < this.itemIds.size(); i++) {
-            HabboItem item = room.getHabboItem(this.itemIds.get(i));
+            RoomItem item = room.getHabboItem(this.itemIds.get(i));
 
             if(item == null || item.getRoomId() == 0) {
                 this.itemIds.remove(i);

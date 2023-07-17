@@ -5,15 +5,15 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.hopper.HopperActionOne;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionHopper extends HabboItem {
+public class InteractionHopper extends RoomItem {
     public InteractionHopper(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
@@ -52,7 +52,7 @@ public class InteractionHopper extends HabboItem {
         super.onClick(client, room, objects);
 
         if (room != null) {
-            RoomTile loc = HabboItem.getSquareInFront(room.getLayout(), this);
+            RoomTile loc = RoomItem.getSquareInFront(room.getLayout(), this);
             if (loc != null) {
                 if (this.canUseTeleport(client, loc, room)) {
                     client.getHabbo().getRoomUnit().setTeleporting(true);
@@ -77,7 +77,7 @@ public class InteractionHopper extends HabboItem {
         if (!this.getExtradata().equals("0")) {
             this.setExtradata("0");
 
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
             if (room != null) {
                 room.updateItemState(this);
             }
@@ -86,16 +86,22 @@ public class InteractionHopper extends HabboItem {
     }
 
     protected boolean canUseTeleport(GameClient client, RoomTile front, Room room) {
-        if (client.getHabbo().getRoomUnit().getX() != front.getX())
+        if (client.getHabbo().getRoomUnit().getCurrentPosition().getX() != front.getX())
             return false;
 
-        if (client.getHabbo().getRoomUnit().getY() != front.getY())
+        if (client.getHabbo().getRoomUnit().getCurrentPosition().getY() != front.getY())
             return false;
 
         if (client.getHabbo().getRoomUnit().isTeleporting())
             return false;
 
-        if (!room.getHabbosAt(this.getX(), this.getY()).isEmpty())
+        RoomTile tile = room.getLayout().getTile(this.getX(), this.getY());
+
+        if(tile == null) {
+            return false;
+        }
+
+        if (room.getRoomUnitManager().hasHabbosAt(tile))
             return false;
 
         return this.getExtradata().equals("0");

@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.wired.highscores;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredHighscore;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import gnu.trove.set.hash.THashSet;
 
 import java.time.LocalDateTime;
@@ -19,8 +19,8 @@ public class WiredHighscoreMidnightUpdater implements Runnable {
         for (Room room : rooms) {
             if (room == null || room.getRoomSpecialTypes() == null) continue;
 
-            THashSet<HabboItem> items = room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class);
-            for (HabboItem item : items) {
+            THashSet<RoomItem> items = room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class);
+            for (RoomItem item : items) {
                 ((InteractionWiredHighscore) item).reloadData();
                 room.updateItem(item);
             }

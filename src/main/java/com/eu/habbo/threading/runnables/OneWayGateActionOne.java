@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import lombok.AllArgsConstructor;
 
@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 public class OneWayGateActionOne implements Runnable {
     private final GameClient client;
     private final Room room;
-    private final HabboItem oneWayGate;
+    private final RoomItem oneWayGate;
 
 
     @Override
@@ -26,7 +26,7 @@ public class OneWayGateActionOne implements Runnable {
         }
 
         if (t.isWalkable()) {
-            if (this.room.tileWalkable(t) && this.client.getHabbo().getRoomUnit().getX() == this.oneWayGate.getX() && this.client.getHabbo().getRoomUnit().getY() == this.oneWayGate.getY()) {
+            if (this.room.tileWalkable(t) && this.client.getHabbo().getRoomUnit().getCurrentPosition().getX() == this.oneWayGate.getX() && this.client.getHabbo().getRoomUnit().getCurrentPosition().getY() == this.oneWayGate.getY()) {
                 this.client.getHabbo().getRoomUnit().setGoalLocation(t);
 
                 if (!this.oneWayGate.getExtradata().equals("0")) {

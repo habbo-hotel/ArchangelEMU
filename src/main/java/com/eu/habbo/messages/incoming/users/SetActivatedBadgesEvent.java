@@ -35,8 +35,8 @@ public class SetActivatedBadgesEvent extends MessageHandler {
             }
         }
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserBadgesComposer(updatedBadges, this.client.getHabbo().getHabboInfo().getId()).compose());
+        if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
+            this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new UserBadgesComposer(updatedBadges, this.client.getHabbo().getHabboInfo().getId()).compose());
         } else {
             this.client.sendResponse(new UserBadgesComposer(updatedBadges, this.client.getHabbo().getHabboInfo().getId()));
         }

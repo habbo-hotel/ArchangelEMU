@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -21,8 +21,8 @@ public class InteractionEffectVendingMachineNoSides extends InteractionVendingMa
     }
 
     @Override
-    public void giveVendingMachineItem(Room room, RoomUnit unit) {
-        room.giveEffect(unit, this.getBaseItem().getRandomVendingItem(), 30);
+    public void giveVendingMachineItem(Room room, RoomAvatar roomAvatar) {
+        room.giveEffect(roomAvatar, this.getBaseItem().getRandomVendingItem(), 30);
     }
 
     @Override

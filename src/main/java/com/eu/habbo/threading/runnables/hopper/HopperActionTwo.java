@@ -3,7 +3,7 @@ package com.eu.habbo.threading.runnables.hopper;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +16,7 @@ import java.sql.SQLException;
 @AllArgsConstructor
 class HopperActionTwo implements Runnable {
 
-    private final HabboItem teleportOne;
+    private final RoomItem teleportOne;
     private final Room room;
     private final GameClient client;
     

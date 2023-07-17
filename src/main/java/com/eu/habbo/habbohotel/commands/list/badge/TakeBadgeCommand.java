@@ -41,8 +41,8 @@ public class TakeBadgeCommand extends BaseBadgeCommand {
                 }
 
                 habbo.getClient().sendResponse(new BadgesComposer(habbo));
-                if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                    habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserBadgesComposer(habbo.getInventory().getBadgesComponent().getWearingBadges(), habbo.getHabboInfo().getId()).compose());
+                if (habbo.getRoomUnit().getRoom() != null) {
+                    habbo.getRoomUnit().getRoom().sendComposer(new UserBadgesComposer(habbo.getInventory().getBadgesComponent().getWearingBadges(), habbo.getHabboInfo().getId()).compose());
                 }
             }
 

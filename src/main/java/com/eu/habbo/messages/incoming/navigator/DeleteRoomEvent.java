@@ -27,11 +27,11 @@ public class DeleteRoomEvent extends MessageHandler {
     public void handle() {
         int roomId = this.packet.readInt();
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
         if (room != null) {
-            if (room.isOwner(this.client.getHabbo())) {
-                if (room.getId() == this.client.getHabbo().getHabboInfo().getHomeRoom()) {
+            if (room.getRoomInfo().isRoomOwner(this.client.getHabbo())) {
+                if (room.getRoomInfo().getId() == this.client.getHabbo().getHabboInfo().getHomeRoom()) {
                     return;
                 }
 
@@ -40,18 +40,18 @@ public class DeleteRoomEvent extends MessageHandler {
                 }
 
                 room.ejectAll();
-                room.ejectUserFurni(room.getOwnerId());
+                room.ejectUserFurni(room.getRoomInfo().getOwnerInfo().getId());
 
-                List<Bot> bots = new ArrayList<>(room.getCurrentBots().valueCollection());
+                List<Bot> bots = new ArrayList<>(room.getRoomUnitManager().getCurrentRoomBots().values());
                 for (Bot bot : bots) {
-                    Emulator.getGameEnvironment().getBotManager().pickUpBot(bot, null);
+                    Emulator.getGameEnvironment().getBotManager().pickUpBot(bot, null, room);
                 }
 
-                List<Pet> pets = new ArrayList<>(room.getCurrentPets().valueCollection());
+                List<Pet> pets = new ArrayList<>(room.getRoomUnitManager().getCurrentRoomPets().values());
                 for (Pet pet : pets) {
                     if (pet instanceof RideablePet rideablePet) {
                         if (rideablePet.getRider() != null) {
-                            rideablePet.getRider().getHabboInfo().dismountPet(true);
+                            rideablePet.getRider().getHabboInfo().dismountPet(true, room);
                         }
                     }
 
@@ -66,8 +66,8 @@ public class DeleteRoomEvent extends MessageHandler {
                     }
                 }
 
-                if (room.getGuildId() > 0) {
-                    Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(room.getGuildId());
+                if (room.getRoomInfo().getGuild().getId() > 0) {
+                    Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(room.getRoomInfo().getGuild().getId());
 
                     if (guild != null) {
                         Emulator.getGameEnvironment().getGuildManager().deleteGuild(guild);
@@ -84,7 +84,7 @@ public class DeleteRoomEvent extends MessageHandler {
                         statement.execute();
                     }
 
-                    if (room.hasCustomLayout()) {
+                    if (room.getRoomInfo().isModelOverridden()) {
                         try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM room_models_custom WHERE id = ? LIMIT 1")) {
                             stmt.setInt(1, roomId);
                             stmt.execute();
@@ -111,7 +111,7 @@ public class DeleteRoomEvent extends MessageHandler {
                     log.error("Caught SQL exception", e);
                 }
             } else {
-                String message = Emulator.getTexts().getValue("scripter.warning.room.delete").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", room.getName()).replace("%roomowner%", room.getOwnerName());
+                String message = Emulator.getTexts().getValue("scripter.warning.room.delete").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", room.getRoomInfo().getName()).replace("%roomowner%", room.getRoomInfo().getOwnerInfo().getUsername());
                 ScripterManager.scripterDetected(this.client, message);
                 log.info(message);
             }

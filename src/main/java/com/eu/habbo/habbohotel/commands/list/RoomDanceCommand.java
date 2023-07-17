@@ -28,9 +28,9 @@ public class RoomDanceCommand extends Command {
                 return true;
             }
 
-            gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos().forEach(habbo -> {
+            gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos().forEach(habbo -> {
                 habbo.getRoomUnit().setDanceType(DanceType.values()[danceId]);
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new DanceMessageComposer(habbo.getRoomUnit()).compose());
+                habbo.getRoomUnit().getRoom().sendComposer(new DanceMessageComposer(habbo.getRoomUnit()).compose());
             });
         } else {
             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_danceall.no_dance"), RoomChatMessageBubbles.ALERT);

@@ -17,9 +17,9 @@ public class EditEventEvent extends MessageHandler {
         String promotionName = this.packet.readString();
         String promotionDescription = this.packet.readString();
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(id);
+        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(id);
 
-        if (room == null || room.getOwnerId() != this.client.getHabbo().getHabboInfo().getId() || !this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+        if (room == null || room.getRoomInfo().getOwnerInfo().getId() != this.client.getHabbo().getHabboInfo().getId() || !this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
             return;
         }
 

@@ -2,7 +2,7 @@ package com.eu.habbo.messages.outgoing.inventory;
 
 import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGift;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -16,11 +16,11 @@ import java.util.List;
 
 @Slf4j
 @AllArgsConstructor
-public class FurniListComposer extends MessageComposer implements TIntObjectProcedure<HabboItem> {
+public class FurniListComposer extends MessageComposer implements TIntObjectProcedure<RoomItem> {
 
     private final int fragmentNumber;
     private final int totalFragments;
-    private final TIntObjectMap<HabboItem> items;
+    private final TIntObjectMap<RoomItem> items;
 
 
     @Override
@@ -41,14 +41,14 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
     }
 
     @Override
-    public boolean execute(int a, HabboItem habboItem) {
-        this.response.appendInt(habboItem.getGiftAdjustedId());
-        this.response.appendString(habboItem.getBaseItem().getType().code);
-        this.response.appendInt(habboItem.getId());
-        this.response.appendInt(habboItem.getBaseItem().getSpriteId());
+    public boolean execute(int a, RoomItem roomItem) {
+        this.response.appendInt(roomItem.getGiftAdjustedId());
+        this.response.appendString(roomItem.getBaseItem().getType().code);
+        this.response.appendInt(roomItem.getId());
+        this.response.appendInt(roomItem.getBaseItem().getSpriteId());
 
-        if (habboItem.getBaseItem().getName().equals("floor") || habboItem.getBaseItem().getName().equals("song_disk") || habboItem.getBaseItem().getName().equals("landscape") || habboItem.getBaseItem().getName().equals("wallpaper") || habboItem.getBaseItem().getName().equals("poster")) {
-            switch (habboItem.getBaseItem().getName()) {
+        if (roomItem.getBaseItem().getName().equals("floor") || roomItem.getBaseItem().getName().equals("song_disk") || roomItem.getBaseItem().getName().equals("landscape") || roomItem.getBaseItem().getName().equals("wallpaper") || roomItem.getBaseItem().getName().equals("poster")) {
+            switch (roomItem.getBaseItem().getName()) {
                 case "landscape" -> this.response.appendInt(4);
                 case "floor" -> this.response.appendInt(3);
                 case "wallpaper" -> this.response.appendInt(2);
@@ -57,39 +57,39 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
             }
 
             this.response.appendInt(0);
-            this.response.appendString(habboItem.getExtradata());
+            this.response.appendString(roomItem.getExtradata());
         } else {
-            if (habboItem.getBaseItem().getName().equals("gnome_box"))
+            if (roomItem.getBaseItem().getName().equals("gnome_box"))
                 this.response.appendInt(13);
             else
-                this.response.appendInt(habboItem instanceof InteractionGift ? ((((InteractionGift) habboItem).getColorId() * 1000) + ((InteractionGift) habboItem).getRibbonId()) : 1);
+                this.response.appendInt(roomItem instanceof InteractionGift ? ((((InteractionGift) roomItem).getColorId() * 1000) + ((InteractionGift) roomItem).getRibbonId()) : 1);
 
-            habboItem.serializeExtradata(this.response);
+            roomItem.serializeExtradata(this.response);
         }
-        this.response.appendBoolean(habboItem.getBaseItem().allowRecyle());
-        this.response.appendBoolean(habboItem.getBaseItem().allowTrade());
-        this.response.appendBoolean(!habboItem.isLimited() && habboItem.getBaseItem().allowInventoryStack());
-        this.response.appendBoolean(habboItem.getBaseItem().allowMarketplace());
+        this.response.appendBoolean(roomItem.getBaseItem().allowRecyle());
+        this.response.appendBoolean(roomItem.getBaseItem().allowTrade());
+        this.response.appendBoolean(!roomItem.isLimited() && roomItem.getBaseItem().allowInventoryStack());
+        this.response.appendBoolean(roomItem.getBaseItem().allowMarketplace());
         this.response.appendInt(-1);
         this.response.appendBoolean(true);
         this.response.appendInt(-1);
 
-        if (habboItem.getBaseItem().getType() == FurnitureType.FLOOR) {
+        if (roomItem.getBaseItem().getType() == FurnitureType.FLOOR) {
             this.response.appendString("");
-            if(habboItem.getBaseItem().getName().equals("song_disk")) {
-                List<String> extraDataAsList = Arrays.asList(habboItem.getExtradata().split("\n"));
+            if(roomItem.getBaseItem().getName().equals("song_disk")) {
+                List<String> extraDataAsList = Arrays.asList(roomItem.getExtradata().split("\n"));
                 this.response.appendInt(Integer.valueOf(extraDataAsList.get(extraDataAsList.size() - 1)));
                 return true;
             }
-            this.response.appendInt(habboItem instanceof InteractionGift ? ((((InteractionGift) habboItem).getColorId() * 1000) + ((InteractionGift) habboItem).getRibbonId()) : 1);
+            this.response.appendInt(roomItem instanceof InteractionGift ? ((((InteractionGift) roomItem).getColorId() * 1000) + ((InteractionGift) roomItem).getRibbonId()) : 1);
         }
 
         return true;
     }
 
-    public void addExtraDataToResponse(HabboItem habboItem) {
+    public void addExtraDataToResponse(RoomItem roomItem) {
         this.response.appendInt(0);
-        this.response.appendString(habboItem.getExtradata());
+        this.response.appendString(roomItem.getExtradata());
     }
 
 }

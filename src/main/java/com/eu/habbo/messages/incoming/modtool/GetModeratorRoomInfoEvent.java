@@ -13,7 +13,7 @@ public class GetModeratorRoomInfoEvent extends MessageHandler {
         if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
             int roomId = this.packet.readInt();
 
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
             if (room != null) {
                 this.client.sendResponse(new ModeratorRoomInfoComposer(room));

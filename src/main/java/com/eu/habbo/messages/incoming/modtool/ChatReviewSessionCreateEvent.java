@@ -26,10 +26,10 @@ public class ChatReviewSessionCreateEvent extends MessageHandler {
             return;
         }
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
         if (room != null) {
-            Habbo habbo = room.getHabbo(userId);
+            Habbo habbo = room.getRoomUnitManager().getRoomHabboById(userId);
 
             if (habbo != null) {
                 GuardianTicket ticket = Emulator.getGameEnvironment().getGuideManager().getOpenReportedHabboTicket(habbo);

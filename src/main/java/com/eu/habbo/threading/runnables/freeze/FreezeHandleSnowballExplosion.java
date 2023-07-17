@@ -7,8 +7,8 @@ import com.eu.habbo.habbohotel.games.freeze.FreezeGamePlayer;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeBlock;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeTile;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,9 +52,9 @@ class FreezeHandleSnowballExplosion implements Runnable {
             THashSet<InteractionFreezeTile> freezeTiles = new THashSet<>();
 
             for (RoomTile roomTile : tiles) {
-                THashSet<HabboItem> items = this.thrownData.room.getItemsAt(roomTile);
+                THashSet<RoomItem> items = this.thrownData.room.getItemsAt(roomTile);
 
-                for (HabboItem freezeTile : items) {
+                for (RoomItem freezeTile : items) {
                     if (freezeTile instanceof InteractionFreezeTile || freezeTile instanceof InteractionFreezeBlock) {
                         int distance = 0;
                         if (freezeTile.getX() != this.thrownData.targetTile.getX() && freezeTile.getY() != this.thrownData.targetTile.getY()) {
@@ -70,7 +70,8 @@ class FreezeHandleSnowballExplosion implements Runnable {
 
 
                             THashSet<Habbo> habbos = new THashSet<>();
-                            habbos.addAll(this.thrownData.room.getHabbosAt(freezeTile.getX(), freezeTile.getY()));
+                            RoomTile tile = this.thrownData.room.getLayout().getTile(freezeTile.getX(), freezeTile.getY());
+                            habbos.addAll(this.thrownData.room.getRoomUnitManager().getHabbosAt(tile));
 
                             for (Habbo habbo : habbos) {
                                 if (habbo.getHabboInfo().getGamePlayer() != null && habbo.getHabboInfo().getGamePlayer() instanceof FreezeGamePlayer hPlayer) {

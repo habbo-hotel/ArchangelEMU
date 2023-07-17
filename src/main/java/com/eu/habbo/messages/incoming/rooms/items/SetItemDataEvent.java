@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.items.PostItColor;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPostIt;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 import java.util.Arrays;
@@ -29,12 +29,12 @@ public class SetItemDataEvent extends MessageHandler {
             return;
         }
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
-        HabboItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getHabboItem(itemId);
 
         if (!(item instanceof InteractionPostIt))
             return;

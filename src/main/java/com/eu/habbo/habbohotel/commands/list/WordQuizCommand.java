@@ -13,7 +13,7 @@ public class WordQuizCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (!gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasActiveWordQuiz()) {
+        if (!gameClient.getHabbo().getRoomUnit().getRoom().hasActiveWordQuiz()) {
             if(params.length == 1) {
                 gameClient.getHabbo().whisper(getTextsValue("commands.description.cmd_word_quiz"), RoomChatMessageBubbles.ALERT);
                 return  true;
@@ -31,7 +31,7 @@ public class WordQuizCommand extends Command {
                 question.append(" ").append(params[i]);
             }
 
-            gameClient.getHabbo().getHabboInfo().getCurrentRoom().startWordQuiz(question.toString(), duration * 1000);
+            gameClient.getHabbo().getRoomUnit().getRoom().startWordQuiz(question.toString(), duration * 1000);
         }
         return true;
     }

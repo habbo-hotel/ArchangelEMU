@@ -10,12 +10,12 @@ public class GetPetInfoEvent extends MessageHandler {
     public void handle() {
         int petId = this.packet.readInt();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
-        Pet pet = room.getPet(petId);
+        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
 
         if (pet != null) {
             this.client.sendResponse(new PetInfoMessageComposer(pet, room, this.client.getHabbo()));

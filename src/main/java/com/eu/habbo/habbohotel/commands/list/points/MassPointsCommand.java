@@ -58,7 +58,7 @@ public class MassPointsCommand extends BasePointsCommand {
             for (Habbo habbo : Emulator.getGameEnvironment().getHabboManager().getOnlineHabbos().values()) {
                 habbo.givePoints(type, amount);
 
-                if (habbo.getHabboInfo().getCurrentRoom() != null)
+                if (habbo.getRoomUnit().getRoom() != null)
                     habbo.whisper(message, RoomChatMessageBubbles.ALERT);
                 else
                     habbo.alert(message);

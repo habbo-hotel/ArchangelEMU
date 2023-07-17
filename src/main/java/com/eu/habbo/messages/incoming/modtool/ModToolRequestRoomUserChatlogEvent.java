@@ -17,10 +17,10 @@ public class ModToolRequestRoomUserChatlogEvent extends MessageHandler {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
             if (habbo != null) {
-                Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+                Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
                 if (room != null) {
-                    this.client.sendResponse(new RoomChatlogComposer(room, Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(room.getId())));
+                    this.client.sendResponse(new RoomChatlogComposer(room, Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(room.getRoomInfo().getId())));
                 }
             }
         } else {

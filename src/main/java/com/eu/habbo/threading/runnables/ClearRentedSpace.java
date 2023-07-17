@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionRentableSpace;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
@@ -17,10 +17,10 @@ public class ClearRentedSpace implements Runnable {
 
     @Override
     public void run() {
-        THashSet<HabboItem> items = new THashSet<>();
+        THashSet<RoomItem> items = new THashSet<>();
 
         for (RoomTile t : this.room.getLayout().getTilesAt(this.room.getLayout().getTile(this.item.getX(), this.item.getY()), this.item.getBaseItem().getWidth(), this.item.getBaseItem().getLength(), this.item.getRotation())) {
-            for (HabboItem i : this.room.getItemsAt(t)) {
+            for (RoomItem i : this.room.getItemsAt(t)) {
                 if (i.getUserId() == this.item.getRenterId()) {
                     items.add(i);
                     i.setRoomId(0);
@@ -36,7 +36,7 @@ public class ClearRentedSpace implements Runnable {
             owner.getHabboStats().setRentedItemId(0);
             owner.getHabboStats().setRentedTimeEnd(0);
         } else {
-            for (HabboItem i : items) {
+            for (RoomItem i : items) {
                 i.run();
             }
         }

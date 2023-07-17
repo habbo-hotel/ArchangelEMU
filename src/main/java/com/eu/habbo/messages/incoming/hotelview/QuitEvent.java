@@ -2,20 +2,23 @@ package com.eu.habbo.messages.incoming.hotelview;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 
 public class QuitEvent extends MessageHandler {
     @Override
     public void handle() {
-        this.client.getHabbo().getHabboInfo().setLoadingRoom(0);
+        RoomHabbo roomHabbo = this.client.getHabbo().getRoomUnit();
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            Emulator.getGameEnvironment().getRoomManager().leaveRoom(this.client.getHabbo(), this.client.getHabbo().getHabboInfo().getCurrentRoom());
+        roomHabbo.setLoadingRoom(null);
+
+        if (roomHabbo.getRoom() != null) {
+            Emulator.getGameEnvironment().getRoomManager().leaveRoom(this.client.getHabbo(), roomHabbo.getRoom());
         }
 
         if (this.client.getHabbo().getHabboInfo().getRoomQueueId() != 0) {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.client.getHabbo().getHabboInfo().getRoomQueueId());
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.client.getHabbo().getHabboInfo().getRoomQueueId());
 
             if (room != null) {
                 room.removeFromQueue(this.client.getHabbo());
@@ -25,9 +28,9 @@ public class QuitEvent extends MessageHandler {
             this.client.sendResponse(new CloseConnectionMessageComposer());
         }
 
-        if (this.client.getHabbo().getRoomUnit() != null) {
-            this.client.getHabbo().getRoomUnit().clearWalking();
-            this.client.getHabbo().getRoomUnit().setInRoom(false);
+        if (roomHabbo != null) {
+            roomHabbo.clearWalking();
+            roomHabbo.setInRoom(false);
         }
     }
 }

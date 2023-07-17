@@ -16,13 +16,13 @@ public class UpdateRoomFilterEvent extends MessageHandler {
         }
 
         // Get current room of user.
-        final Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-        if (room == null || room.getId() != roomId) {
+        final Room room = this.client.getHabbo().getRoomUnit().getRoom();
+        if (room == null || room.getRoomInfo().getId() != roomId) {
             return;
         }
 
         // Check if owner.
-        if (!room.isOwner(this.client.getHabbo())) {
+        if (!room.getRoomInfo().isRoomOwner(this.client.getHabbo())) {
             ScripterManager.scripterDetected(this.client, String.format("User (%s) tried to change wordfilter for a not owned room.", this.client.getHabbo().getHabboInfo().getUsername()));
             return;
         }

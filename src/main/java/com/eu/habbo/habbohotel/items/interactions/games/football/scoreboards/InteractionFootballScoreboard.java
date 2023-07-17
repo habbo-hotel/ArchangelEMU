@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameScoreboard;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 
 import java.sql.ResultSet;
@@ -61,7 +61,7 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard {
         this.setExtradata(this.score + "");
         this.needsUpdate(true);
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
         if (room != null) {
             room.updateItem(this);
         }
@@ -87,7 +87,7 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard {
         this.setExtradata(this.score + "");
         this.needsUpdate(true);
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
         if (room != null) {
             room.updateItem(this);
         }

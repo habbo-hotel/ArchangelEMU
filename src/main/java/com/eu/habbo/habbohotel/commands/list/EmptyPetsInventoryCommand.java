@@ -19,8 +19,8 @@ public class EmptyPetsInventoryCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1 || (params.length >= 2 && !params[1].equals(getTextsValue("generic.yes")))) {
-            if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-                if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getUserCount() > 10) {
+            if (gameClient.getHabbo().getRoomUnit().getRoom() != null) {
+                if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbosCount() > 10) {
                     gameClient.getHabbo().alert(getTextsValue("commands.succes.cmd_empty_pets.verify").replace("%generic.yes%", getTextsValue("generic.yes")));
                 } else {
                     gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_empty_pets.verify").replace("%generic.yes%", getTextsValue("generic.yes")), RoomChatMessageBubbles.ALERT);

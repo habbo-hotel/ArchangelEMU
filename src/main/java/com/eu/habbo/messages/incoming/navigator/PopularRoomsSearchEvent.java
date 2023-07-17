@@ -7,6 +7,6 @@ import com.eu.habbo.messages.outgoing.navigator.GuestRoomSearchResultComposer;
 public class PopularRoomsSearchEvent extends MessageHandler {
     @Override
     public void handle() {
-        this.client.sendResponse(new GuestRoomSearchResultComposer(Emulator.getGameEnvironment().getRoomManager().getActiveRooms(-1)));
+        this.client.sendResponse(new GuestRoomSearchResultComposer(Emulator.getGameEnvironment().getRoomManager().getActiveRoomsByCategoryId(-1)));
     }
 }

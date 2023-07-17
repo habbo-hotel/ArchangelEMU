@@ -21,12 +21,12 @@ public class RenderRoomEvent extends MessageHandler {
             byte[] data = this.packet.getBuffer().readBytes(this.packet.getBuffer().readableBytes()).array();
 
             String content = new String(ZIP.inflate(data));
-            CameraRenderImageComposer composer = new CameraRenderImageComposer(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getCurrentRoom().getBackgroundTonerColor().getRGB(), 320, 320, content);
+            CameraRenderImageComposer composer = new CameraRenderImageComposer(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getRoomUnit().getRoom().getBackgroundTonerColor().getRGB(), 320, 320, content);
             this.client.getHabbo().getHabboInfo().setPhotoJSON(Emulator.getConfig().getValue("camera.extradata").replace("%timestamp%", composer.timestamp + ""));
             this.client.getHabbo().getHabboInfo().setPhotoTimestamp(composer.timestamp);
 
-            if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-                this.client.getHabbo().getHabboInfo().setPhotoRoomId(this.client.getHabbo().getHabboInfo().getCurrentRoom().getId());
+            if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
+                this.client.getHabbo().getHabboInfo().setPhotoRoomId(this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId());
             }
 
             Emulator.getCameraClient().sendMessage(composer);

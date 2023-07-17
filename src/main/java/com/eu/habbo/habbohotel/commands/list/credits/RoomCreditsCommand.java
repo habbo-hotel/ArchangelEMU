@@ -22,7 +22,7 @@ public class RoomCreditsCommand extends BaseCreditsCommand {
 
             if (amount != 0) {
                 final String message = replaceAmount(getTextsValue("commands.generic.cmd_credits.received"), amount + "");
-                gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos().forEach(habbo -> {
+                gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos().forEach(habbo -> {
                     habbo.giveCredits(amount);
                     habbo.whisper(message, RoomChatMessageBubbles.ALERT);
                 });

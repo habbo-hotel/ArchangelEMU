@@ -5,17 +5,16 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.YoutubeManager;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayVideoMessageComposer;
-import com.eu.habbo.threading.runnables.YoutubeAdvanceVideo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ScheduledFuture;
 
-public class InteractionYoutubeTV extends HabboItem {
+public class InteractionYoutubeTV extends RoomItem {
     public YoutubeManager.YoutubePlaylist currentPlaylist = null;
     public YoutubeManager.YoutubeVideo currentVideo = null;
     public int startedWatchingAt = 0;

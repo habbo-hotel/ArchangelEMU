@@ -16,7 +16,7 @@ public class PetExperienceComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.petExperienceComposer);
         this.response.appendInt(this.pet.getId());
-        this.response.appendInt(this.pet.getRoomUnit().getId());
+        this.response.appendInt(this.pet.getRoomUnit().getVirtualId());
         this.response.appendInt(this.amount);
         return this.response;
     }

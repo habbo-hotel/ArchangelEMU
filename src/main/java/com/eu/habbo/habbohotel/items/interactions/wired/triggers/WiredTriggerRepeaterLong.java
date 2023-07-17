@@ -1,17 +1,15 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.triggers;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredPeriodical;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.ResultSet;
@@ -74,7 +72,7 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
     public void resetTimer() {
         this.counter = 0;
         if (this.getRoomId() != 0) {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
             if (room != null && room.isLoaded()) {
                 WiredHandler.handle(this, null, room, new Object[]{this});
             }

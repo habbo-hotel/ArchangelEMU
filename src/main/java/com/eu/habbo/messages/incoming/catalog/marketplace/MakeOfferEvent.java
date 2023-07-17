@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.catalog.marketplace;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.marketplace.MarketPlace;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceMakeOfferResult;
@@ -24,7 +24,7 @@ public class MakeOfferEvent extends MessageHandler {
         int unknown = this.packet.readInt();
         int itemId = this.packet.readInt();
 
-        HabboItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
+        RoomItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
         if (item != null) {
             if (!item.getBaseItem().allowMarketplace()) {
                 String message = Emulator.getTexts().getValue("scripter.warning.marketplace.forbidden").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%itemname%", item.getBaseItem().getName()).replace("%credits%", credits + "");

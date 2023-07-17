@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
@@ -18,10 +18,10 @@ public class OpenPetPackageEvent extends MessageHandler {
         int itemId = this.packet.readInt();
         String name = this.packet.readString();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
-            HabboItem item = room.getHabboItem(itemId);
+            RoomItem item = room.getHabboItem(itemId);
             if (item != null && item.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
                 if (!name.matches("^[a-zA-Z0-9]*$")) {
                     this.client.sendResponse(new PerkAllowancesComposer(itemId, PerkAllowancesComposer.CONTAINS_INVALID_CHARS, name.replaceAll("^[a-zA-Z0-9]*$", "")));
@@ -55,11 +55,11 @@ public class OpenPetPackageEvent extends MessageHandler {
                 }
 
                 if (pet != null) {
-                    room.placePet(pet, item.getX(), item.getY(), item.getZ());
+                    room.getRoomUnitManager().placePet(pet, room, item.getX(), item.getY(), item.getZ());
                     pet.setUserId(this.client.getHabbo().getHabboInfo().getId());
                     pet.setNeedsUpdate(true);
                     pet.getRoomUnit().setLocation(room.getLayout().getTile(item.getX(), item.getY()));
-                    pet.getRoomUnit().setZ(item.getZ());
+                    pet.getRoomUnit().setCurrentZ(item.getZ());
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                     room.removeHabboItem(item);
                     room.sendComposer(new RemoveFloorItemComposer(item).compose());

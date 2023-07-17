@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import lombok.Getter;
@@ -52,7 +52,7 @@ public class NewUserGift implements ISerialize {
                 Item item = Emulator.getGameEnvironment().getItemManager().getItem(set.getKey());
 
                 if (item != null) {
-                    HabboItem createdItem = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), item, 0, 0, "");
+                    RoomItem createdItem = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), item, 0, 0, "");
 
                     if (createdItem != null) {
                         habbo.addFurniture(createdItem);

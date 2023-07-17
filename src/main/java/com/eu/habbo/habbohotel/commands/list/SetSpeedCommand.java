@@ -13,10 +13,10 @@ public class SetSpeedCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo())) {
-            Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        if (gameClient.getHabbo().getRoomUnit().getRoom() != null && gameClient.getHabbo().getRoomUnit().getRoom().hasRights(gameClient.getHabbo())) {
+            Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
-            int oldSpeed = room.getRollerSpeed();
+            int oldSpeed = room.getRoomInfo().getRollerSpeed();
             int newSpeed;
 
             try {

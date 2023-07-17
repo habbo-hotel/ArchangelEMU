@@ -10,7 +10,7 @@ public class AddFavouriteRoomEvent extends MessageHandler {
     public void handle() {
         int roomId = this.packet.readInt();
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
         boolean added = true;
         if (room != null) {

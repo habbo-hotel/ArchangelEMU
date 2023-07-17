@@ -8,7 +8,7 @@ public class UnacceptTradingEvent extends MessageHandler {
     @Override
     public void handle() {
         Habbo habbo = this.client.getHabbo();
-        RoomTrade trade = habbo.getHabboInfo().getCurrentRoom().getActiveTradeForHabbo(habbo);
+        RoomTrade trade = habbo.getRoomUnit().getRoom().getActiveTradeForHabbo(habbo);
 
         if (trade == null)
             return;

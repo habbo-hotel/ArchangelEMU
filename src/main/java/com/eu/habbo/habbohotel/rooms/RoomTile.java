@@ -1,11 +1,13 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.habbohotel.items.Item;
-import gnu.trove.set.hash.THashSet;
+import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class RoomTile {
@@ -15,7 +17,7 @@ public class RoomTile {
     private final short y;
     @Getter
     private final short z;
-    private final THashSet<RoomUnit> units;
+    private final HashSet<RoomEntity> units;
     @Setter
     @Getter
     private RoomTileState state;
@@ -37,7 +39,7 @@ public class RoomTile {
         this.stackHeight = z;
         this.state = state;
         this.setAllowStack(allowStack);
-        this.units = new THashSet<>();
+        this.units = new HashSet<>();
     }
 
     public RoomTile(RoomTile tile) {
@@ -173,23 +175,23 @@ public class RoomTile {
         return this.x == x && this.y == y;
     }
 
-    public List<RoomUnit> getUnits() {
+    public List<RoomEntity> getEntities() {
         synchronized (this.units) {
             return new ArrayList<>(this.units);
         }
     }
 
-    public void addUnit(RoomUnit unit) {
+    public void addUnit(RoomEntity entity) {
         synchronized (this.units) {
-            if (!this.units.contains(unit)) {
-                this.units.add(unit);
+            if (!this.units.contains(entity)) {
+                this.units.add(entity);
             }
         }
     }
 
-    public void removeUnit(RoomUnit unit) {
+    public void removeUnit(RoomEntity entity) {
         synchronized (this.units) {
-            this.units.remove(unit);
+            this.units.remove(entity);
         }
     }
 
@@ -200,6 +202,9 @@ public class RoomTile {
     }
 
     public boolean unitIsOnFurniOnTile(RoomUnit unit, Item item) {
-        return (unit.getX() >= this.x && unit.getX() < this.x + item.getLength()) && (unit.getY() >= this.y && unit.getY() < this.y + item.getWidth());
+        if ((unit.getCurrentPosition().getX() < this.x || unit.getCurrentPosition().getX() >= this.x + item.getLength()))
+            return false;
+        if (unit.getCurrentPosition().getY() < this.y) return false;
+        return unit.getCurrentPosition().getY() < this.y + item.getWidth();
     }
 }

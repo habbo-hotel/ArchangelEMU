@@ -10,7 +10,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.IgnoreResultMessageComposer;
 public class IgnoreUserEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
             String username = this.packet.readString();

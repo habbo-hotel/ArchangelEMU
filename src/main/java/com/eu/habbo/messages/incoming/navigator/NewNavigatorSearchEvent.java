@@ -124,7 +124,7 @@ public class NewNavigatorSearchEvent extends MessageHandler {
 
         for (SearchResultList li : resultLists) {
             for (Room room : li.getRooms()) {
-                searchRooms.put(room.getId(), room);
+                searchRooms.put(room.getRoomInfo().getId(), room);
             }
         }
 

@@ -9,10 +9,10 @@ public class GetPetCommandsEvent extends MessageHandler {
     public void handle() {
         int petId = this.packet.readInt();
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (this.client.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
-        Pet pet = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(petId);
+        Pet pet = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetById(petId);
 
         if (pet != null)
             this.client.sendResponse(new PetTrainingPanelComposer(pet));

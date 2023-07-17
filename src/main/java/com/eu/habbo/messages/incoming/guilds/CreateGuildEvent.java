@@ -43,16 +43,16 @@ public class CreateGuildEvent extends GuildBadgeEvent {
 
         int roomId = this.packet.readInt();
 
-        Room r = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+        Room r = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
         if (r != null) {
-            if (r.hasGuild()) {
+            if (r.getRoomInfo().hasGuild()) {
                 this.client.sendResponse(new GuildEditFailedMessageComposer(GuildEditFailedMessageComposer.ROOM_ALREADY_IN_USE));
                 return;
             }
 
-            if (r.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
-                if (r.getGuildId() == 0) {
+            if (r.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId()) {
+                if (r.getRoomInfo().getGuild().getId() == 0) {
                     int colorOne = this.packet.readInt();
                     int colorTwo = this.packet.readInt();
 
@@ -60,9 +60,9 @@ public class CreateGuildEvent extends GuildBadgeEvent {
 
                     StringBuilder badge = createBadge(count);
 
-                    Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), roomId, r.getName(), name, description, badge.toString(), colorOne, colorTwo);
+                    Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), roomId, r.getRoomInfo().getName(), name, description, badge.toString(), colorOne, colorTwo);
 
-                    r.setGuildId(guild.getId());
+                    r.getRoomInfo().setGuild(guild);
                     r.removeAllRights();
                     r.setNeedsUpdate(true);
 
@@ -72,7 +72,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
 
                     this.client.sendResponse(new PurchaseOKMessageComposer());
                     this.client.sendResponse(new GuildCreatedMessageComposer(guild));
-                    for (Habbo habbo : r.getHabbos()) {
+                    for (Habbo habbo : r.getRoomUnitManager().getRoomHabbos()) {
                         habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
                     }
                     r.refreshGuild(guild);
@@ -82,7 +82,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
                     Emulator.getGameEnvironment().getGuildManager().addGuild(guild);
                 }
             } else {
-                String message = Emulator.getTexts().getValue("scripter.warning.guild.buy.owner").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", r.getName().replace("%owner%", r.getOwnerName()));
+                String message = Emulator.getTexts().getValue("scripter.warning.guild.buy.owner").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%roomname%", r.getRoomInfo().getName().replace("%owner%", r.getRoomInfo().getOwnerInfo().getUsername()));
                 ScripterManager.scripterDetected(this.client, message);
                 log.info(message);
             }

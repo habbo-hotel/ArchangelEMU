@@ -11,7 +11,7 @@ public class GuideSessionGetRequesterRoomEvent extends MessageHandler {
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByHelper(this.client.getHabbo());
 
         if (tour != null) {
-            this.client.sendResponse(new GuideSessionRequesterRoomMessageComposer(tour.getNoob().getHabboInfo().getCurrentRoom()));
+            this.client.sendResponse(new GuideSessionRequesterRoomMessageComposer(tour.getNoob().getRoomUnit().getRoom()));
         }
     }
 }

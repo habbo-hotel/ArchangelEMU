@@ -12,7 +12,7 @@ public class ControlCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() != null) {
             if (params.length == 2) {
                 Habbo target = getHabbo(params[1]);
 

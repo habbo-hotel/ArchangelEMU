@@ -52,7 +52,7 @@ public class FreezeGamePlayer extends GamePlayer {
     public void addLife() {
         if (this.lives < FreezeGame.MAX_LIVES) {
             this.lives++;
-            super.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new GamePlayerValueMessageComposer(this).compose());
+            super.getHabbo().getRoomUnit().getRoom().sendComposer(new GamePlayerValueMessageComposer(this).compose());
         }
     }
 
@@ -61,13 +61,13 @@ public class FreezeGamePlayer extends GamePlayer {
         if (this.lives == 0) {
             this.dead = true;
 
-            FreezeGame game = (FreezeGame) super.getHabbo().getHabboInfo().getCurrentRoom().getGame(FreezeGame.class);
+            FreezeGame game = (FreezeGame) super.getHabbo().getRoomUnit().getRoom().getGame(FreezeGame.class);
 
             if (game != null) {
                 game.playerDies(this);
             }
         } else {
-            super.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new GamePlayerValueMessageComposer(this).compose());
+            super.getHabbo().getRoomUnit().getRoom().sendComposer(new GamePlayerValueMessageComposer(this).compose());
         }
     }
 
@@ -208,6 +208,6 @@ public class FreezeGamePlayer extends GamePlayer {
         if (this.dead)
             return;
 
-        super.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(super.getHabbo(), this.correctEffectId(), -1, true);
+        super.getHabbo().getRoomUnit().getRoom().giveEffect(super.getHabbo(), this.correctEffectId(), -1, true);
     }
 }

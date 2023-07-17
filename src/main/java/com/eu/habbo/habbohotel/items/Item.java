@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionMultiHeight;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.list.array.TIntArrayList;
@@ -66,7 +66,7 @@ public class Item implements ISerialize {
         return item.getName().toLowerCase().startsWith("a0 pet");
     }
 
-    public static double getCurrentHeight(HabboItem item) {
+    public static double getCurrentHeight(RoomItem item) {
         if (item instanceof InteractionMultiHeight && item.getBaseItem().getMultiHeights().length > 0) {
             if (item.getExtradata().isEmpty()) {
                 item.setExtradata("0");

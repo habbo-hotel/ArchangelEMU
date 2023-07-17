@@ -3,10 +3,11 @@ package com.eu.habbo.habbohotel.games.wired;
 import com.eu.habbo.habbohotel.games.*;
 import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
 
 public class WiredGame extends Game {
     public GameState state = GameState.RUNNING;
@@ -31,9 +32,9 @@ public class WiredGame extends Game {
 
     @Override
     public boolean addHabbo(Habbo habbo, GameTeamColors teamColor) {
-        RoomUnit roomUnit = habbo.getRoomUnit();
-        if (roomUnit.getEffectId() > 0)
-            roomUnit.setPreviousEffectId(roomUnit.getEffectId(), roomUnit.getPreviousEffectEndTimestamp());
+        RoomHabbo roomHabbo = habbo.getRoomUnit();
+        if (roomHabbo.getEffectId() > 0)
+            roomHabbo.setPreviousEffectId(roomHabbo.getEffectId(), roomHabbo.getPreviousEffectEndTimestamp());
         this.room.giveEffect(habbo, FreezeGame.effectId + teamColor.type, -1, true);
         return super.addHabbo(habbo, teamColor);
     }
@@ -45,7 +46,7 @@ public class WiredGame extends Game {
         Room room = this.room;
         if (room == null) return;
 
-        HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().getX(), roomUnit.getCurrentLocation().getY());
+        RoomItem topItem = room.getTopItemAt(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
         int nextEffectM = 0;
         int nextEffectF = 0;
         int nextEffectDuration = -1;

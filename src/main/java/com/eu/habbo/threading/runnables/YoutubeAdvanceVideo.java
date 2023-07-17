@@ -14,7 +14,7 @@ public class YoutubeAdvanceVideo implements Runnable {
     public void run() {
         if (this.tv.autoAdvance == null) return;
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.tv.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.tv.getRoomId());
 
         if (room == null) return;
 

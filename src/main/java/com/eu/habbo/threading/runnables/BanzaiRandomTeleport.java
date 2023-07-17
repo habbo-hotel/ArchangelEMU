@@ -3,24 +3,24 @@ package com.eu.habbo.threading.runnables;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import lombok.AllArgsConstructor;
 import org.slf4j.LoggerFactory;
 
 @AllArgsConstructor
 public class BanzaiRandomTeleport implements Runnable {
-    private final HabboItem item;
-    private final HabboItem toItem;
+    private final RoomItem item;
+    private final RoomItem toItem;
     private final RoomUnit habbo;
     private final Room room;
 
 
     @Override
     public void run() {
-        HabboItem topItemNow = this.room.getTopItemAt(this.habbo.getX(), this.habbo.getY());
-        RoomTile lastLocation = this.habbo.getCurrentLocation();
+        RoomItem topItemNow = this.room.getTopItemAt(this.habbo.getCurrentPosition().getX(), this.habbo.getCurrentPosition().getY());
+        RoomTile lastLocation = this.habbo.getCurrentPosition();
         RoomTile newLocation = this.room.getLayout().getTile(toItem.getX(), toItem.getY());
 
         if(topItemNow != null) {
@@ -45,7 +45,7 @@ public class BanzaiRandomTeleport implements Runnable {
 
         Emulator.getThreading().run(() -> {
             this.habbo.setCanWalk(true);
-            HabboItem topItemNext = this.room.getTopItemAt(this.habbo.getX(), this.habbo.getY());
+            RoomItem topItemNext = this.room.getTopItemAt(this.habbo.getCurrentPosition().getX(), this.habbo.getCurrentPosition().getY());
 
             if(topItemNext != null) {
                 try {
@@ -62,7 +62,7 @@ public class BanzaiRandomTeleport implements Runnable {
         }, 750);
 
         Emulator.getThreading().run(() -> {
-            this.habbo.setRotation(RoomUserRotation.fromValue(Emulator.getRandom().nextInt(8)));
+            this.habbo.setRotation(RoomRotation.fromValue(Emulator.getRandom().nextInt(8)));
             this.room.teleportRoomUnitToLocation(this.habbo, newLocation.getX(), newLocation.getY(), newLocation.getStackHeight());
         }, 250);
 

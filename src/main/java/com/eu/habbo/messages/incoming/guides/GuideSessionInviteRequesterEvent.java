@@ -12,7 +12,7 @@ public class GuideSessionInviteRequesterEvent extends MessageHandler {
         GuideTour tour = Emulator.getGameEnvironment().getGuideManager().getGuideTourByHelper(this.client.getHabbo());
 
         if (tour != null) {
-            ServerMessage message = new GuideSessionInvitedToGuideRoomMessageComposer(this.client.getHabbo().getHabboInfo().getCurrentRoom()).compose();
+            ServerMessage message = new GuideSessionInvitedToGuideRoomMessageComposer(this.client.getHabbo().getRoomUnit().getRoom()).compose();
             tour.getNoob().getClient().sendResponse(message);
             tour.getHelper().getClient().sendResponse(message);
         }

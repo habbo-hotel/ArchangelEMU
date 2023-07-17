@@ -6,9 +6,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.lovelock.FriendFurniStartConfirmationMessageComposer;
 
@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-public class InteractionLoveLock extends HabboItem {
+public class InteractionLoveLock extends RoomItem {
     public int userOneId;
     public int userTwoId;
 
@@ -77,13 +77,13 @@ public class InteractionLoveLock extends HabboItem {
         if (client == null)
             return;
 
-        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentLocation(), room.getLayout().getTile(this.getX(), this.getY()))) {
+        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getX(), this.getY()))) {
             if (this.userOneId == 0) {
                 this.userOneId = client.getHabbo().getHabboInfo().getId();
                 client.sendResponse(new FriendFurniStartConfirmationMessageComposer(this));
             } else {
                 if (this.userOneId != client.getHabbo().getHabboInfo().getId()) {
-                    Habbo habbo = room.getHabbo(this.userOneId);
+                    Habbo habbo = room.getRoomUnitManager().getRoomHabboById(this.userOneId);
 
                     if (habbo != null) {
                         this.userTwoId = client.getHabbo().getHabboInfo().getId();
@@ -96,7 +96,7 @@ public class InteractionLoveLock extends HabboItem {
 
     public boolean lock(Habbo userOne, Habbo userTwo, Room room) {
         RoomTile tile = room.getLayout().getTile(this.getX(), this.getY());
-        if (RoomLayout.tilesAdjecent(userOne.getRoomUnit().getCurrentLocation(), tile) && RoomLayout.tilesAdjecent(userTwo.getRoomUnit().getCurrentLocation(), tile)) {
+        if (RoomLayout.tilesAdjecent(userOne.getRoomUnit().getCurrentPosition(), tile) && RoomLayout.tilesAdjecent(userTwo.getRoomUnit().getCurrentPosition(), tile)) {
             String data = "1";
             data += "\t";
             data += userOne.getHabboInfo().getUsername();

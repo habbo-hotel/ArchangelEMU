@@ -13,7 +13,7 @@ public class RoomMuteCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
             room.setMuted(!room.isMuted());

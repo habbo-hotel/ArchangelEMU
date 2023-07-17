@@ -3,8 +3,12 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -25,13 +29,13 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        for (HabboItem item : this.getWiredSettings().getItems(room)) {
+        for (RoomItem item : this.getWiredSettings().getItems(room)) {
             RoomTile t = room.getLayout().getTile(item.getX(), item.getY());
 
-            RoomUnit target = room.getRoomUnits().stream().min(Comparator.comparingDouble(a -> a.getCurrentLocation().distance(t))).orElse(null);
+            RoomUnit target = room.getRoomUnitManager().getCurrentRoomUnits().values().stream().min(Comparator.comparingDouble(a -> a.getCurrentPosition().distance(t))).orElse(null);
 
             if (target != null) {
-                if (target.getCurrentLocation().distance(t) <= 1) {
+                if (target.getCurrentPosition().distance(t) <= 1) {
                     Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.COLLISION, target, room, new Object[]{item}), 500);
                     continue;
                 }
@@ -39,26 +43,30 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
                 int x = 0;
                 int y = 0;
 
-                if (target.getX() == item.getX()) {
-                    if (item.getY() < target.getY())
+                if (target.getCurrentPosition().getX() == item.getX()) {
+                    if (item.getY() < target.getCurrentPosition().getY())
                         y--;
                     else
                         y++;
-                } else if (target.getY() == item.getY()) {
-                    if (item.getX() < target.getX())
-                        x--;
-                    else
-                        x++;
-                } else if (target.getX() - item.getX() > target.getY() - item.getY()) {
-                    if (target.getX() - item.getX() > 0)
-                        x--;
-                    else
-                        x++;
                 } else {
-                    if (target.getY() - item.getY() > 0)
-                        y--;
-                    else
-                        y++;
+                    if (target.getCurrentPosition().getY() == item.getY()) {
+                        if (item.getX() < target.getCurrentPosition().getX())
+                            x--;
+                        else
+                            x++;
+                    } else {
+                        if (target.getCurrentPosition().getX() - item.getX() > target.getCurrentPosition().getY() - item.getY()) {
+                            if (target.getCurrentPosition().getX() - item.getX() > 0)
+                                x--;
+                            else
+                                x++;
+                        } else {
+                            if (target.getCurrentPosition().getY() - item.getY() > 0)
+                                y--;
+                            else
+                                y++;
+                        }
+                    }
                 }
 
                 RoomTile newLocation = room.getLayout().getTile((short) (item.getX() + x), (short) (item.getY() + y));

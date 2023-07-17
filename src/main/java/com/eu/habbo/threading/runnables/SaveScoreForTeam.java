@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.games.GameTeam;
+import com.eu.habbo.habbohotel.rooms.Room;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,7 +24,8 @@ public class SaveScoreForTeam implements Runnable {
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_game_scores (room_id, game_start_timestamp, game_name, user_id, team_id, score, team_score) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             for (GamePlayer player : this.team.getMembers()) {
-                statement.setInt(1, this.game.getRoom().getId());
+                Room room = this.game.getRoom();
+                statement.setInt(1, room.getRoomInfo().getId());
                 statement.setInt(2, this.game.getStartTime());
                 statement.setString(3, this.game.getClass().getName());
                 statement.setInt(4, player.getHabbo().getHabboInfo().getId());

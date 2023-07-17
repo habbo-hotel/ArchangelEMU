@@ -7,7 +7,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 
 public abstract class TradingEvent extends MessageHandler {
     protected void stopTrade(Habbo habbo) {
-        Room room = habbo.getHabboInfo().getCurrentRoom();
+        Room room = habbo.getRoomUnit().getRoom();
 
         if (room == null)
             return;

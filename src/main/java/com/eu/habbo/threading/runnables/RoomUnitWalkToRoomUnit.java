@@ -3,7 +3,7 @@ package com.eu.habbo.threading.runnables;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class RoomUnitWalkToRoomUnit implements Runnable {
         }
 
         if (this.walker.getGoalLocation().equals(this.goalTile)) { // check that the action hasn't been cancelled by changing the goal
-            if (this.walker.getCurrentLocation().distance(this.goalTile) <= this.minDistance) {
+            if (this.walker.getCurrentPosition().distance(this.goalTile) <= this.minDistance) {
                 for (Runnable r : this.targetReached) {
                     Emulator.getThreading().run(r);
 
@@ -52,7 +52,7 @@ public class RoomUnitWalkToRoomUnit implements Runnable {
     }
 
     private void findNewLocation() {
-        this.goalTile = this.walker.getClosestAdjacentTile(this.target.getCurrentLocation().getX(), this.target.getCurrentLocation().getY(), true);
+        this.goalTile = this.walker.getClosestAdjacentTile(this.target.getCurrentPosition().getX(), this.target.getCurrentPosition().getY(), true);
 
         if (this.goalTile == null) {
             if (this.failedReached != null) {

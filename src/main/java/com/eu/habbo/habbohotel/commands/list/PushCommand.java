@@ -18,7 +18,7 @@ public class PushCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length != 2) return true;
 
-        Habbo habbo = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(params[1]);
+        Habbo habbo = gameClient.getHabbo().getRoomUnit().getRoom().getHabbo(params[1]);
 
         if (habbo == null) {
             gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_push.not_found"), params[1]), RoomChatMessageBubbles.ALERT);
@@ -29,19 +29,19 @@ public class PushCommand extends Command {
             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_push.push_self"), RoomChatMessageBubbles.ALERT);
             return true;
         }
-        RoomTile tFront = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(gameClient.getHabbo().getRoomUnit().getCurrentLocation(), gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue());
+        RoomTile tFront = gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTileInFront(gameClient.getHabbo().getRoomUnit().getCurrentPosition(), gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue());
 
         if (tFront != null && tFront.isWalkable()) {
-            if (tFront.getX() == habbo.getRoomUnit().getX() && tFront.getY() == habbo.getRoomUnit().getY()) {
-                RoomTile tFrontTarget = gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(habbo.getRoomUnit().getCurrentLocation(), gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue());
+            if (tFront.getX() == habbo.getRoomUnit().getCurrentPosition().getX() && tFront.getY() == habbo.getRoomUnit().getCurrentPosition().getY()) {
+                RoomTile tFrontTarget = gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTileInFront(habbo.getRoomUnit().getCurrentPosition(), gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue());
 
                 if (tFrontTarget != null && tFrontTarget.isWalkable()) {
-                    if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getDoorTile() == tFrontTarget) {
+                    if (gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getDoorTile() == tFrontTarget) {
                         gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_push.invalid"), params[1]));
                         return true;
                     }
                     habbo.getRoomUnit().setGoalLocation(tFrontTarget);
-                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(
+                    gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(
                             new ChatMessageComposer(
                                     new RoomChatMessage(
                                             replaceUser(getTextsValue("commands.succes.cmd_push.push"), params[1])

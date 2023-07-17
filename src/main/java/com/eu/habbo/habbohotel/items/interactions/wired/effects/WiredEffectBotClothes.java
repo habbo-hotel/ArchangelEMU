@@ -2,21 +2,15 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class WiredEffectBotClothes extends InteractionWiredEffect {
     public WiredEffectBotClothes(ResultSet set, Item baseItem) throws SQLException {
@@ -34,7 +28,7 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
         String botName = stringParams[0].substring(0, Math.min(stringParams[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
         String botLook = stringParams[1];
 
-        List<Bot> bots = room.getBots(botName);
+        List<Bot> bots = room.getRoomUnitManager().getBotsByName(botName);
 
         if(bots.size() == 0) {
             return false;

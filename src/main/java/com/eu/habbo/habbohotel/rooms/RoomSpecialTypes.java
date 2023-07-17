@@ -19,7 +19,7 @@ import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetToy;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -48,7 +48,7 @@ public class RoomSpecialTypes {
     private final THashMap<Integer, InteractionGameTimer> gameTimers;
 
     private final THashMap<Integer, InteractionFreezeExitTile> freezeExitTile;
-    private final THashMap<Integer, HabboItem> undefined;
+    private final THashMap<Integer, RoomItem> undefined;
     private final THashSet<ICycleable> cycleTasks;
 
     public RoomSpecialTypes() {
@@ -652,22 +652,22 @@ public class RoomSpecialTypes {
         return !this.freezeExitTile.isEmpty();
     }
 
-    public void addUndefined(HabboItem item) {
+    public void addUndefined(RoomItem item) {
         synchronized (this.undefined) {
             this.undefined.put(item.getId(), item);
         }
     }
 
-    public void removeUndefined(HabboItem item) {
+    public void removeUndefined(RoomItem item) {
         synchronized (this.undefined) {
             this.undefined.remove(item.getId());
         }
     }
 
-    public THashSet<HabboItem> getItemsOfType(Class<? extends HabboItem> type) {
-        THashSet<HabboItem> items = new THashSet<>();
+    public THashSet<RoomItem> getItemsOfType(Class<? extends RoomItem> type) {
+        THashSet<RoomItem> items = new THashSet<>();
         synchronized (this.undefined) {
-            for (HabboItem item : this.undefined.values()) {
+            for (RoomItem item : this.undefined.values()) {
                 if (item.getClass() == type)
                     items.add(item);
             }
@@ -676,10 +676,10 @@ public class RoomSpecialTypes {
         return items;
     }
 
-    public HabboItem getLowestItemsOfType(Class<? extends HabboItem> type) {
-        HabboItem i = null;
+    public RoomItem getLowestItemsOfType(Class<? extends RoomItem> type) {
+        RoomItem i = null;
         synchronized (this.undefined) {
-            for (HabboItem item : this.undefined.values()) {
+            for (RoomItem item : this.undefined.values()) {
                 if (i == null || item.getZ() < i.getZ()) {
                     if (item.getClass().isAssignableFrom(type)) {
                         i = item;
@@ -724,7 +724,7 @@ public class RoomSpecialTypes {
     }
 
     public Rectangle tentAt(RoomTile location) {
-        for (HabboItem item : this.getItemsOfType(InteractionTent.class)) {
+        for (RoomItem item : this.getItemsOfType(InteractionTent.class)) {
             Rectangle rectangle = RoomLayout.getRectangle(item.getX(), item.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
             if (RoomLayout.tileInSquare(rectangle, location)) {
                 return rectangle;

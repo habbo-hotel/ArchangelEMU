@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.outgoing.rooms.items;
 
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -42,10 +42,10 @@ public class ItemsComposer extends MessageComposer {
             this.response.appendString(set.getValue());
         }
 
-        List<HabboItem> items = this.room.getWallItems();
+        List<RoomItem> items = this.room.getWallItems();
 
         this.response.appendInt(items.size());
-        for (HabboItem item : items) {
+        for (RoomItem item : items) {
             item.serializeWallData(this.response);
         }
         return this.response;

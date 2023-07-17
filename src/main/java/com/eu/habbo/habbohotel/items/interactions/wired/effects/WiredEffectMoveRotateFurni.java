@@ -5,10 +5,10 @@ import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implements ICycleable {
@@ -49,17 +47,17 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
         int direction = this.getWiredSettings().getIntegerParams().get(PARAM_DIRECTION);
         int rotation = this.getWiredSettings().getIntegerParams().get(PARAM_ROTATION);
 
-        for (HabboItem item : this.getWiredSettings().getItems(room)) {
+        for (RoomItem item : this.getWiredSettings().getItems(room)) {
             int newRotation = rotation > 0 ? this.getNewRotation(item, rotation) : item.getRotation();
             RoomTile newLocation = room.getLayout().getTile(item.getX(), item.getY());
             RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
             double oldZ = item.getZ();
 
             if(direction > 0) {
-                RoomUserRotation moveDirection = this.getMovementDirection(direction);
+                RoomRotation moveDirection = this.getMovementDirection(direction);
                 newLocation = room.getLayout().getTile(
-                    (short) (item.getX() + ((moveDirection == RoomUserRotation.WEST || moveDirection == RoomUserRotation.NORTH_WEST || moveDirection == RoomUserRotation.SOUTH_WEST) ? -1 : (((moveDirection == RoomUserRotation.EAST || moveDirection == RoomUserRotation.SOUTH_EAST || moveDirection == RoomUserRotation.NORTH_EAST) ? 1 : 0)))),
-                    (short) (item.getY() + ((moveDirection == RoomUserRotation.NORTH || moveDirection == RoomUserRotation.NORTH_EAST || moveDirection == RoomUserRotation.NORTH_WEST) ? 1 : ((moveDirection == RoomUserRotation.SOUTH || moveDirection == RoomUserRotation.SOUTH_EAST || moveDirection == RoomUserRotation.SOUTH_WEST) ? -1 : 0)))
+                    (short) (item.getX() + ((moveDirection == RoomRotation.WEST || moveDirection == RoomRotation.NORTH_WEST || moveDirection == RoomRotation.SOUTH_WEST) ? -1 : (((moveDirection == RoomRotation.EAST || moveDirection == RoomRotation.SOUTH_EAST || moveDirection == RoomRotation.NORTH_EAST) ? 1 : 0)))),
+                    (short) (item.getY() + ((moveDirection == RoomRotation.NORTH || moveDirection == RoomRotation.NORTH_EAST || moveDirection == RoomRotation.NORTH_WEST) ? 1 : ((moveDirection == RoomRotation.SOUTH || moveDirection == RoomRotation.SOUTH_EAST || moveDirection == RoomRotation.SOUTH_WEST) ? -1 : 0)))
                 );
             }
 
@@ -84,7 +82,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
      * @param item HabboItem
      * @return new rotation
      */
-    private int getNewRotation(HabboItem item, int rotation) {
+    private int getNewRotation(RoomItem item, int rotation) {
 
         if(item.getMaximumRotations() == 2) {
             return item.getRotation() == 0 ? 4 : 0;
@@ -153,26 +151,26 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
      *
      * @return direction
      */
-    private RoomUserRotation getMovementDirection(int direction) {
-        RoomUserRotation movemementDirection = RoomUserRotation.NORTH;
+    private RoomRotation getMovementDirection(int direction) {
+        RoomRotation movemementDirection = RoomRotation.NORTH;
         if (direction == 1) {
-            movemementDirection = RoomUserRotation.values()[Emulator.getRandom().nextInt(RoomUserRotation.values().length / 2) * 2];
+            movemementDirection = RoomRotation.values()[Emulator.getRandom().nextInt(RoomRotation.values().length / 2) * 2];
         } else if (direction == 2) {
             if (Emulator.getRandom().nextInt(2) == 1) {
-                movemementDirection = RoomUserRotation.EAST;
+                movemementDirection = RoomRotation.EAST;
             } else {
-                movemementDirection = RoomUserRotation.WEST;
+                movemementDirection = RoomRotation.WEST;
             }
         } else if (direction == 3) {
             if (Emulator.getRandom().nextInt(2) != 1) {
-                movemementDirection = RoomUserRotation.SOUTH;
+                movemementDirection = RoomRotation.SOUTH;
             }
         } else if (direction == 4) {
-            movemementDirection = RoomUserRotation.SOUTH;
+            movemementDirection = RoomRotation.SOUTH;
         } else if (direction == 5) {
-            movemementDirection = RoomUserRotation.EAST;
+            movemementDirection = RoomRotation.EAST;
         } else if (direction == 7) {
-            movemementDirection = RoomUserRotation.WEST;
+            movemementDirection = RoomRotation.WEST;
         }
         return movemementDirection;
     }

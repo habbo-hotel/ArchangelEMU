@@ -27,17 +27,17 @@ public class DeactivateGuildEvent extends MessageHandler {
                 for (GuildMember member : members) {
                     Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(member.getUserId());
                     if (habbo != null)
-                        if (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getRoomUnit() != null)
-                            habbo.getHabboInfo().getCurrentRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(habbo.getRoomUnit(), null).compose());
+                        if (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit() != null)
+                            habbo.getRoomUnit().getRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(habbo.getRoomUnit(), null).compose());
                 }
 
                 Emulator.getGameEnvironment().getGuildManager().deleteGuild(guild);
                 Emulator.getPluginManager().fireEvent(new GuildDeletedEvent(guild, this.client.getHabbo()));
-                Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId()).sendComposer(new HabboGroupDeactivatedMessageComposer(guildId).compose());
+                Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(guild.getRoomId()).sendComposer(new HabboGroupDeactivatedMessageComposer(guildId).compose());
 
-                if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-                    if (guild.getRoomId() == this.client.getHabbo().getHabboInfo().getCurrentRoom().getId()) {
-                        this.client.sendResponse(new GetGuestRoomResultComposer(this.client.getHabbo().getHabboInfo().getCurrentRoom(), this.client.getHabbo(), false, false));
+                if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
+                    if (guild.getRoomId() == this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId()) {
+                        this.client.sendResponse(new GetGuestRoomResultComposer(this.client.getHabbo().getRoomUnit().getRoom(), this.client.getHabbo(), false, false));
                     }
                 }
             }

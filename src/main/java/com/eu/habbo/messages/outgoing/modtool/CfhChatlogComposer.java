@@ -73,8 +73,8 @@ public class CfhChatlogComposer extends MessageComposer {
             this.response.appendInt(this.issue.roomId);
 
             ModToolChatRecordDataContext.GROUP_ID.append(this.response);
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.issue.roomId);
-            this.response.appendInt(room == null ? 0 : room.getGuildId());
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.issue.roomId);
+            this.response.appendInt(room == null ? 0 : room.getRoomInfo().getGuild().getId());
         }
 
         this.response.appendShort(this.chatlog.size());

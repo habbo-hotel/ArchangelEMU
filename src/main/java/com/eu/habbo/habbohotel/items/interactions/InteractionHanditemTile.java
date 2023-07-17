@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +21,7 @@ public class InteractionHanditemTile extends InteractionHanditem {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         InteractionHanditemTile instance = this;
         Emulator.getThreading().run(() -> {
-            if (roomUnit.getCurrentLocation().getX() == instance.getX() && roomUnit.getCurrentLocation().getY() == instance.getY()) {
+            if (roomUnit.getCurrentPosition().getX() == instance.getX() && roomUnit.getCurrentPosition().getY() == instance.getY()) {
                 instance.handle(room, roomUnit);
             }
         }, 3000);

@@ -3,9 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions.wired.extra;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredExtra;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -4,14 +4,15 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomMoodlightData;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
+import gnu.trove.map.TIntObjectMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionMoodLight extends HabboItem {
+public class InteractionMoodLight extends RoomItem {
     public InteractionMoodLight(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -46,7 +47,7 @@ public class InteractionMoodLight extends HabboItem {
     @Override
     public void onPlace(Room room) {
         if (room != null) {
-            for (RoomMoodlightData data : room.getMoodlightData().valueCollection()) {
+            for (RoomMoodlightData data : ((TIntObjectMap<RoomMoodlightData>) room.getRoomInfo().getMoodLightData()).valueCollection()) {
                 if (data.isEnabled()) {
                     this.setExtradata(data.toString());
                     this.needsUpdate(true);

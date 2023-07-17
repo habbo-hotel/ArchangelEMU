@@ -4,8 +4,8 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.InteractionWiredMatchFurniSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import lombok.Getter;
@@ -41,7 +41,7 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
         boolean rotation = this.getWiredSettings().getIntegerParams().get(PARAM_ROTATION) == 1;
         this.matchSettings = this.getWiredSettings().getMatchParams();
 
-        for(HabboItem item : this.getWiredSettings().getItems(room)) {
+        for(RoomItem item : this.getWiredSettings().getItems(room)) {
             WiredMatchFurniSetting furniSettings = this.matchSettings.stream().filter(settings -> settings.getItem_id() == item.getId()).findAny().orElse(null);
 
             if(furniSettings == null) {
@@ -83,7 +83,7 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
     public void saveAdditionalData(Room room) {
         List<WiredMatchFurniSetting> matchSettings = new ArrayList<>();
 
-        for (HabboItem item : this.getWiredSettings().getItems(room)) {
+        for (RoomItem item : this.getWiredSettings().getItems(room)) {
             WiredMatchFurniSetting settings = new WiredMatchFurniSetting(item.getId(), item.getExtradata(), item.getRotation(), item.getX(), item.getY());
             matchSettings.add(settings);
         }

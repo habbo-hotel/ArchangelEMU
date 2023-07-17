@@ -3,10 +3,10 @@ package com.eu.habbo.habbohotel.items.interactions.games.football;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
@@ -20,7 +20,7 @@ import com.eu.habbo.util.figure.FigureUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionFootballGate extends HabboItem {
+public class InteractionFootballGate extends RoomItem {
     private static final String CACHE_KEY = "fball_gate_look";
     private String figureM;
     private String figureF;
@@ -67,8 +67,8 @@ public class InteractionFootballGate extends HabboItem {
             habbo.getHabboInfo().setLook((String) habbo.getHabboStats().getCache().get(CACHE_KEY));
             habbo.getHabboStats().getCache().remove(CACHE_KEY);
             habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
-            if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
+            if (habbo.getRoomUnit().getRoom() != null) {
+                habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
             }
         }
     }

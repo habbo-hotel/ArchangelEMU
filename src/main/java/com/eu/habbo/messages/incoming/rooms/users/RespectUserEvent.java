@@ -14,7 +14,7 @@ public class RespectUserEvent extends MessageHandler {
             return;
         }
         if (this.client.getHabbo().getHabboStats().getRespectPointsToGive() > 0) {
-            Habbo target = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(userId);
+            Habbo target = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboById(userId);
 
             if (Emulator.getPluginManager().isRegistered(UserRespectedEvent.class, false)) {
                 if (Emulator.getPluginManager().fireEvent(new UserRespectedEvent(target, this.client.getHabbo())).isCancelled())

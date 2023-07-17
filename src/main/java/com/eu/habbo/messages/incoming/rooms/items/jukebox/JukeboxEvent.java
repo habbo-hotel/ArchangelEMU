@@ -7,9 +7,9 @@ import com.eu.habbo.messages.outgoing.rooms.items.jukebox.UserSongDisksInventory
 
 public abstract class JukeboxEvent  extends MessageHandler {
     protected void updateHabboWithCurrentPlaying() {
-        TraxManager traxManager = this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager();
+        TraxManager traxManager = this.client.getHabbo().getRoomUnit().getRoom().getTraxManager();
         this.client.sendResponse(new JukeboxSongDisksMessageComposer(traxManager.getSongs(), traxManager.totalLength()));
         this.client.sendResponse(new UserSongDisksInventoryMessageComposer(traxManager.myList(this.client.getHabbo())));
-        this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().updateCurrentPlayingSong(this.client.getHabbo());
+        this.client.getHabbo().getRoomUnit().getRoom().getTraxManager().updateCurrentPlayingSong(this.client.getHabbo());
     }
 }

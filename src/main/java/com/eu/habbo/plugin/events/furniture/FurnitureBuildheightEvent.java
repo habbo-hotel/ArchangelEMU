@@ -1,7 +1,7 @@
 package com.eu.habbo.plugin.events.furniture;
 
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 
 public class FurnitureBuildheightEvent extends FurnitureUserEvent {
 
@@ -12,7 +12,7 @@ public class FurnitureBuildheightEvent extends FurnitureUserEvent {
 
     private boolean changedHeight = false;
 
-    public FurnitureBuildheightEvent(HabboItem furniture, Habbo habbo, double oldHeight, double newHeight) {
+    public FurnitureBuildheightEvent(RoomItem furniture, Habbo habbo, double oldHeight, double newHeight) {
         super(furniture, habbo);
 
         this.oldHeight = oldHeight;

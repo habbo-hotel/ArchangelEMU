@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
@@ -51,14 +51,14 @@ public class InteractionEffectTile extends InteractionPressurePlate {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        if (roomUnit.getRoomUnitType() == RoomUnitType.USER) {
+        if (roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
             Habbo habbo = room.getHabbo(roomUnit);
 
             if (habbo != null) {
                 this.giveEffect(room, roomUnit, habbo.getHabboInfo().getGender());
             }
         } else if (roomUnit.getRoomUnitType() == RoomUnitType.BOT) {
-            Bot bot = room.getBot(roomUnit);
+            Bot bot = room.getRoomUnitManager().getRoomBotById(roomUnit.getVirtualId());
 
             if (bot != null) {
                 this.giveEffect(room, roomUnit, bot.getGender());

@@ -1,14 +1,14 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import gnu.trove.set.hash.THashSet;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @Slf4j
 public class RoomLayout {
@@ -304,7 +304,7 @@ public class RoomLayout {
                     continue;
                 }
 
-                if (currentAdj.hasUnits() && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
+                if (currentAdj.hasUnits() && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
                     closedList.add(currentAdj);
                     openList.remove(currentAdj);
                     continue;
@@ -322,7 +322,7 @@ public class RoomLayout {
             }
         }
 
-        if (this.room.isAllowWalkthrough() && !isWalktroughRetry) {
+        if (this.room.getRoomInfo().isAllowWalkthrough() && !isWalktroughRetry) {
             return this.findPath(oldTile, newTile, goalLocation, roomUnit, true);
         }
 
@@ -590,8 +590,8 @@ public class RoomLayout {
 
     public RoomTile getRandomWalkableTilesAround(RoomUnit roomUnit, RoomTile tile, Room room, int radius) {
          if(!this.tileExists(tile.getX(), tile.getY())) {
-             tile = this.getTile(roomUnit.getX(), roomUnit.getY());
-             room.getBot(roomUnit).needsUpdate(true);
+             tile = this.getTile(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
+             room.getRoomUnitManager().getRoomBotById(roomUnit.getVirtualId()).needsUpdate(true);
         }
 
         List<RoomTile> newTiles = new ArrayList<>();

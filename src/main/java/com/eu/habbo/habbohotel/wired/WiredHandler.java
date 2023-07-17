@@ -14,10 +14,10 @@ import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraUnseen;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseOKMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
@@ -153,7 +153,7 @@ public class WiredHandler {
         }
 
         long millis = System.currentTimeMillis();
-        int roomUnitId = roomUnit != null ? roomUnit.getId() : -1;
+        int roomUnitId = roomUnit != null ? roomUnit.getVirtualId() : -1;
         if (((Emulator.getConfig().getBoolean("wired.custom.enabled", false) && (trigger.canExecute(millis) || roomUnitId > -1) && trigger.userCanExecute(roomUnitId, millis)) || (!Emulator.getConfig().getBoolean("wired.custom.enabled", false) && trigger.canExecute(millis))) && trigger.execute(roomUnit, room, stuff)) {
             //DUNNO IF YOU HAVE TO SET EXTRADATA TO 1 IN HERE (In case of Repeaters)
             trigger.activateBox(room, roomUnit, millis);
@@ -224,7 +224,7 @@ public class WiredHandler {
 
     private static boolean triggerEffect(InteractionWiredEffect effect, RoomUnit roomUnit, Room room, Object[] stuff, long millis) {
         boolean executed = false;
-        if (effect != null && (effect.canExecute(millis) || (roomUnit != null && effect.requiresTriggeringUser() && Emulator.getConfig().getBoolean("wired.custom.enabled", false) && effect.userCanExecute(roomUnit.getId(), millis)))) {
+        if (effect != null && (effect.canExecute(millis) || (roomUnit != null && effect.requiresTriggeringUser() && Emulator.getConfig().getBoolean("wired.custom.enabled", false) && effect.userCanExecute(roomUnit.getVirtualId(), millis)))) {
             executed = true;
             if (!effect.requiresTriggeringUser() || (roomUnit != null && effect.requiresTriggeringUser())) {
                 Emulator.getThreading().run(() -> {
@@ -256,10 +256,10 @@ public class WiredHandler {
     public static boolean executeEffectsAtTiles(THashSet<RoomTile> tiles, final RoomUnit roomUnit, final Room room, final Object[] stuff) {
         for (RoomTile tile : tiles) {
             if (room != null) {
-                THashSet<HabboItem> items = room.getItemsAt(tile);
+                THashSet<RoomItem> items = room.getItemsAt(tile);
 
                 long millis = room.getCycleTimestamp();
-                for (final HabboItem item : items) {
+                for (final RoomItem item : items) {
                     if (item instanceof InteractionWiredEffect && !(item instanceof WiredEffectTriggerStacks)) {
                         triggerEffect((InteractionWiredEffect) item, roomUnit, room, stuff, millis);
                         ((InteractionWiredEffect) item).setCooldown(millis);
@@ -340,7 +340,7 @@ public class WiredHandler {
                 } else if (rewardReceived.getType().equalsIgnoreCase("furni")) {
                     Item baseItem = Emulator.getGameEnvironment().getItemManager().getItem(Integer.parseInt(rewardReceived.getValue()));
                     if (baseItem != null) {
-                        HabboItem item = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), baseItem, 0, 0, "");
+                        RoomItem item = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), baseItem, 0, 0, "");
 
                         if (item != null) {
                             habbo.getClient().sendResponse(new UnseenItemsComposer(item));

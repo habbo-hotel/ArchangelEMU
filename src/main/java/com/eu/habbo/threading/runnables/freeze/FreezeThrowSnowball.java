@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.games.freeze.FreezeGamePlayer;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeTile;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 
 public class FreezeThrowSnowball implements Runnable {
@@ -14,7 +14,7 @@ public class FreezeThrowSnowball implements Runnable {
     public final Room room;
     public final int radius;
 
-    public FreezeThrowSnowball(Habbo habbo, HabboItem targetTile, Room room) {
+    public FreezeThrowSnowball(Habbo habbo, RoomItem targetTile, Room room) {
         this.habbo = habbo;
         this.targetTile = (InteractionFreezeTile) targetTile;
         this.room = room;

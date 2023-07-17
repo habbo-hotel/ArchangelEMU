@@ -16,12 +16,12 @@ public class TeleportCommand extends Command {
             return true;
         }
         
-        if (gameClient.getHabbo().getRoomUnit().isCmdTeleport()) {
-            gameClient.getHabbo().getRoomUnit().setCmdTeleport(false);
+        if (gameClient.getHabbo().getRoomUnit().isCmdTeleportEnabled()) {
+            gameClient.getHabbo().getRoomUnit().setCmdTeleportEnabled(false);
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_teleport.disabled"), RoomChatMessageBubbles.ALERT);
             return true;
         } else {
-            gameClient.getHabbo().getRoomUnit().setCmdTeleport(true);
+            gameClient.getHabbo().getRoomUnit().setCmdTeleportEnabled(true);
             gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.succes.cmd_teleport.enabled"), RoomChatMessageBubbles.ALERT);
             return true;
         }

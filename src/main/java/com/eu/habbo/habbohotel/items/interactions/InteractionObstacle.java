@@ -5,9 +5,15 @@ import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.HorsePet;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 
@@ -15,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
-public class InteractionObstacle extends HabboItem implements ICycleable {
+public class InteractionObstacle extends RoomItem implements ICycleable {
 
     private final THashSet<RoomTile> middleTiles;
 
@@ -91,21 +97,21 @@ public class InteractionObstacle extends HabboItem implements ICycleable {
         Habbo habbo = room.getHabbo(roomUnit);
 
         if (habbo == null) {
-            Pet pet = room.getPet(roomUnit);
+            Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
             if (pet instanceof HorsePet && ((HorsePet) pet).getRider() != null) {
                 if (roomUnit.getBodyRotation().getValue() % 2 == 0) {
                     if (this.getRotation() == 2) {
-                        if (roomUnit.getBodyRotation().equals(RoomUserRotation.WEST)) {
-                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile((short) (roomUnit.getX() - 3), roomUnit.getY()));
-                        } else if (roomUnit.getBodyRotation().equals(RoomUserRotation.EAST)) {
-                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile((short) (roomUnit.getX() + 3), roomUnit.getY()));
+                        if (roomUnit.getBodyRotation().equals(RoomRotation.WEST)) {
+                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile((short) (roomUnit.getCurrentPosition().getX() - 3), roomUnit.getCurrentPosition().getY()));
+                        } else if (roomUnit.getBodyRotation().equals(RoomRotation.EAST)) {
+                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile((short) (roomUnit.getCurrentPosition().getX() + 3), roomUnit.getCurrentPosition().getY()));
                         }
                     } else if (this.getRotation() == 4) {
-                        if (roomUnit.getBodyRotation().equals(RoomUserRotation.NORTH)) {
-                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile(roomUnit.getX(), (short) (roomUnit.getY() - 3)));
-                        } else if (roomUnit.getBodyRotation().equals(RoomUserRotation.SOUTH)) {
-                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile(roomUnit.getX(), (short) (roomUnit.getY() + 3)));
+                        if (roomUnit.getBodyRotation().equals(RoomRotation.NORTH)) {
+                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile(roomUnit.getCurrentPosition().getX(), (short) (roomUnit.getCurrentPosition().getY() - 3)));
+                        } else if (roomUnit.getBodyRotation().equals(RoomRotation.SOUTH)) {
+                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile(roomUnit.getCurrentPosition().getX(), (short) (roomUnit.getCurrentPosition().getY() + 3)));
                         }
                     }
                 }
@@ -120,7 +126,7 @@ public class InteractionObstacle extends HabboItem implements ICycleable {
         Habbo habbo = room.getHabbo(roomUnit);
 
         if (habbo == null) {
-            Pet pet = room.getPet(roomUnit);
+            Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
             if (pet instanceof HorsePet && ((HorsePet) pet).getRider() != null) {
                 pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);
@@ -174,18 +180,24 @@ public class InteractionObstacle extends HabboItem implements ICycleable {
         }
 
         for(RoomTile tile : this.middleTiles) {
-            for(RoomUnit unit : tile.getUnits()) {
+            for(RoomEntity entity : tile.getEntities()) {
+                if(!(entity instanceof RoomUnit)) {
+                    continue;
+                }
+
+                RoomUnit unit = (RoomUnit) entity;
+
                 if(unit.getPath().size() == 0 && !unit.hasStatus(RoomUnitStatus.MOVE)) {
                     if(unit.getBodyRotation().getValue() != this.getRotation() && Objects.requireNonNull(unit.getBodyRotation().getOpposite()).getValue() != this.getRotation())
                         continue;
 
-                    RoomTile tileInfront = room.getLayout().getTileInFront(unit.getCurrentLocation(), unit.getBodyRotation().getValue());
-                    if(tileInfront.getState() != RoomTileState.INVALID && tileInfront.getState() != RoomTileState.BLOCKED && room.getRoomUnitsAt(tileInfront).size() == 0) {
+                    RoomTile tileInfront = room.getLayout().getTileInFront(unit.getCurrentPosition(), unit.getBodyRotation().getValue());
+                    if(tileInfront.getState() != RoomTileState.INVALID && tileInfront.getState() != RoomTileState.BLOCKED && room.getRoomUnitManager().getRoomUnitsAt(tileInfront).size() == 0) {
                         unit.setGoalLocation(tileInfront);
                     }
                     else {
-                        RoomTile tileBehind = room.getLayout().getTileInFront(unit.getCurrentLocation(), Objects.requireNonNull(unit.getBodyRotation().getOpposite()).getValue());
-                        if(tileBehind.getState() != RoomTileState.INVALID && tileBehind.getState() != RoomTileState.BLOCKED && room.getRoomUnitsAt(tileBehind).size() == 0) {
+                        RoomTile tileBehind = room.getLayout().getTileInFront(unit.getCurrentPosition(), Objects.requireNonNull(unit.getBodyRotation().getOpposite()).getValue());
+                        if(tileBehind.getState() != RoomTileState.INVALID && tileBehind.getState() != RoomTileState.BLOCKED && room.getRoomUnitManager().getRoomUnitsAt(tileBehind).size() == 0) {
                             unit.setGoalLocation(tileBehind);
                         }
                     }

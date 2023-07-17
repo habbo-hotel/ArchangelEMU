@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
@@ -55,7 +55,7 @@ public class InteractionFXBox extends InteractionDefault {
             this.setExtradata("1");
             room.updateItemState(this);
             room.removeHabboItem(this);
-            HabboItem item = this;
+            RoomItem item = this;
             Emulator.getThreading().run(() -> {
                 new QueryDeleteHabboItem(item.getId()).run();
                 room.sendComposer(new RemoveFloorItemComposer(item).compose());

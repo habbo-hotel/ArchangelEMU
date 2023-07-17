@@ -2,13 +2,16 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
-import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +30,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        return this.roomUnitId == -1 && super.canWalkOn(roomUnit, room, objects) && (roomUnit.getRoomUnitType().equals(RoomUnitType.USER) || roomUnit.getRoomUnitType().equals(RoomUnitType.BOT));
+        return this.roomUnitId == -1 && super.canWalkOn(roomUnit, room, objects) && (roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO) || roomUnit.getRoomUnitType().equals(RoomUnitType.BOT));
     }
 
     @Override
@@ -40,12 +43,12 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
         super.onWalkOn(roomUnit, room, objects);
 
         if (this.forceRotation()) {
-            roomUnit.setRotation(RoomUserRotation.fromValue(this.getRotation()));
+            roomUnit.setRotation(RoomRotation.fromValue(this.getRotation()));
             roomUnit.setCanRotate(false);
         }
-        this.roomUnitId = roomUnit.getId();
+        this.roomUnitId = roomUnit.getVirtualId();
 
-        if (roomUnit.getRoomUnitType() == RoomUnitType.USER) {
+        if (roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
             Habbo habbo = room.getHabbo(roomUnit);
 
             if (habbo != null) {
@@ -64,7 +67,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
 
         if (roomUnit != null) {
             Habbo habbo = room.getHabbo(roomUnit);
-            HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().getX(), roomUnit.getCurrentLocation().getY());
+            RoomItem topItem = room.getTopItemAt(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
             int nextEffectM = 0;
             int nextEffectF = 0;
             int nextEffectDuration = -1;
@@ -126,12 +129,12 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
         super.setRotation(rotation);
 
         if (this.forceRotation() && this.roomUnitId != -1) {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
             if (room != null) {
                 RoomUnit roomUnit = this.getCurrentRoomUnit(room);
 
                 if (roomUnit != null) {
-                    roomUnit.setRotation(RoomUserRotation.fromValue(rotation));
+                    roomUnit.setRotation(RoomRotation.fromValue(rotation));
                     room.updateRoomUnit(roomUnit);
                 }
             }
@@ -172,16 +175,6 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
     }
 
     private RoomUnit getCurrentRoomUnit(Room room) {
-        Habbo habbo = room.getHabboByRoomUnitId(this.roomUnitId);
-        if (habbo != null) {
-            return habbo.getRoomUnit();
-        } else {
-            Bot bot = room.getBotByRoomUnitId(this.roomUnitId);
-            if (bot != null) {
-                return bot.getRoomUnit();
-            }
-        }
-
-        return null;
+        return room.getRoomUnitManager().getCurrentRoomUnits().get(this.roomUnitId);
     }
 }

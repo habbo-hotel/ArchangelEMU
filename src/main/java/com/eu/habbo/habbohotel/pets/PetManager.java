@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.pets.actions.*;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.THashMap;
@@ -443,8 +443,8 @@ public class PetManager {
 
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
-        pet.setRoomUnit(new RoomUnit());
-        pet.getRoomUnit().setPathFinderRoom(room);
+        pet.setRoomUnit(new RoomPet());
+        pet.getRoomUnit().setRoom(room);
         pet.setNeedsUpdate(true);
         pet.run();
         return pet;
@@ -462,8 +462,8 @@ public class PetManager {
 
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
-        pet.setRoomUnit(new RoomUnit());
-        pet.getRoomUnit().setPathFinderRoom(room);
+        pet.setRoomUnit(new RoomPet());
+        pet.getRoomUnit().setRoom(room);
         pet.setNeedsUpdate(true);
         pet.run();
 
@@ -482,8 +482,8 @@ public class PetManager {
 
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
-        pet.setRoomUnit(new RoomUnit());
-        pet.getRoomUnit().setPathFinderRoom(room);
+        pet.setRoomUnit(new RoomPet());
+        pet.getRoomUnit().setRoom(room);
         pet.setNeedsUpdate(true);
         pet.run();
 

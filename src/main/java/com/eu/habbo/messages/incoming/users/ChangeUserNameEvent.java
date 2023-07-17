@@ -1,12 +1,12 @@
 package com.eu.habbo.messages.incoming.users;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.ChangeUserNameResultMessageEvent;
-import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.messages.outgoing.rooms.users.UserNameChangedMessageComposer;
 import com.eu.habbo.messages.outgoing.users.CheckUserNameResultMessageComposer;
 import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
@@ -58,7 +58,6 @@ public class ChangeUserNameEvent extends MessageHandler {
 
                 Emulator.getPluginManager().fireEvent(new UserNameChangedEvent(this.client.getHabbo(), oldName));
                 for (Room room : Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo())) {
-                    room.setOwnerName(name);
                     room.setNeedsUpdate(true);
                     room.save();
                 }
@@ -69,13 +68,13 @@ public class ChangeUserNameEvent extends MessageHandler {
 
                 this.client.sendResponse(new ChangeUserNameResultMessageEvent(this.client.getHabbo()));
 
-                if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-                    this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserNameChangedMessageComposer(this.client.getHabbo()).compose());
+                if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
+                    this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new UserNameChangedMessageComposer(this.client.getHabbo()).compose());
                 } else {
                     this.client.sendResponse(new UserNameChangedMessageComposer(this.client.getHabbo()).compose());
                 }
 
-                this.client.getHabbo().getMessenger().connectionChanged(this.client.getHabbo(), true, this.client.getHabbo().getHabboInfo().getCurrentRoom() != null);
+                this.client.getHabbo().getMessenger().connectionChanged(this.client.getHabbo(), true, this.client.getHabbo().getRoomUnit().getRoom() != null);
                 this.client.getHabbo().getClient().sendResponse(new UserObjectComposer(this.client.getHabbo()));
 
                 try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO namechange_log (user_id, old_name, new_name, timestamp) VALUES (?, ?, ?, ?) ")) {

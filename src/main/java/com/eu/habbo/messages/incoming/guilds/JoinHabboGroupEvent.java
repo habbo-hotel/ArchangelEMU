@@ -29,9 +29,9 @@ public class JoinHabboGroupEvent extends MessageHandler {
         Emulator.getGameEnvironment().getGuildManager().joinGuild(guild, this.client, 0, false);
         this.client.sendResponse(new HabboGroupDetailsMessageComposer(guild, this.client, false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo())));
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if (room == null || room.getGuildId() != guildId)
+        if (room == null || room.getRoomInfo().getGuild().getId() != guildId)
             return;
 
         room.refreshRightsForHabbo(this.client.getHabbo());

@@ -6,10 +6,10 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.CrackableReward;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.CrackableExplode;
@@ -18,7 +18,7 @@ import com.eu.habbo.util.pathfinding.Rotation;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionCrackable extends HabboItem {
+public class InteractionCrackable extends RoomItem {
     private final Object lock = new Object();
     public boolean cracked = false;
     protected int ticks = 0;
@@ -69,8 +69,8 @@ public class InteractionCrackable extends HabboItem {
             if (this.cracked)
                 return;
 
-            if (this.userRequiredToBeAdjacent() && client.getHabbo().getRoomUnit().getCurrentLocation().distance(room.getLayout().getTile(this.getX(), this.getY())) > 1.5) {
-                client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), Rotation.Calculate(client.getHabbo().getRoomUnit().getX(), client.getHabbo().getRoomUnit().getY(), this.getX(), this.getY())));
+            if (this.userRequiredToBeAdjacent() && client.getHabbo().getRoomUnit().getCurrentPosition().distance(room.getLayout().getTile(this.getX(), this.getY())) > 1.5) {
+                client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), Rotation.Calculate(client.getHabbo().getRoomUnit().getCurrentPosition().getX(), client.getHabbo().getRoomUnit().getCurrentPosition().getY(), this.getX(), this.getY())));
                 return;
             }
 

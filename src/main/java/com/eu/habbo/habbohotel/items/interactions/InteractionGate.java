@@ -4,15 +4,15 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionGate extends HabboItem {
+public class InteractionGate extends RoomItem {
     public InteractionGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -46,7 +46,7 @@ public class InteractionGate extends HabboItem {
 
         // If a Habbo is standing on a tile occupied by the gate, the gate shouldn't open/close
         for (RoomTile tile : room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))
-            if (room.hasHabbosAt(tile.getX(), tile.getY()))
+            if (room.getRoomUnitManager().hasHabbosAt(tile))
                 return;
 
         // Gate closed = 0, open = 1

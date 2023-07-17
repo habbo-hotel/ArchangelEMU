@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.catalog.marketplace.GetMarketplaceOffersEvent;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceBuyOfferResultComposer;
@@ -97,7 +97,7 @@ public class MarketPlace {
                                         selectItem.setInt(1, offer.getSoldItemId());
                                         try (ResultSet set = selectItem.executeQuery()) {
                                             while (set.next()) {
-                                                HabboItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set);
+                                                RoomItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set);
                                                 habbo.getInventory().getItemsComponent().addItem(item);
                                                 habbo.getClient().sendResponse(new MarketplaceCancelOfferResultComposer(offer, true));
                                                 habbo.getClient().sendResponse(new UnseenItemsComposer(item));
@@ -273,7 +273,7 @@ public class MarketPlace {
                                     updateOffer.execute();
                                 }
                                 Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(set.getInt(DatabaseConstants.USER_ID));
-                                HabboItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(itemSet);
+                                RoomItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(itemSet);
 
                                 MarketPlaceItemSoldEvent event = new MarketPlaceItemSoldEvent(habbo, client.getHabbo(), item, set.getInt("price"));
                                 if (Emulator.getPluginManager().fireEvent(event).isCancelled()) {
@@ -340,7 +340,7 @@ public class MarketPlace {
     }
 
 
-    public static boolean sellItem(GameClient client, HabboItem item, int price) {
+    public static boolean sellItem(GameClient client, RoomItem item, int price) {
         if (item == null || client == null)
             return false;
 

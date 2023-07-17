@@ -1,19 +1,14 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.conditions;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
-import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class WiredConditionFurniTypeMatch extends InteractionWiredCondition {
     public WiredConditionFurniTypeMatch(ResultSet set, Item baseItem) throws SQLException {
@@ -34,7 +29,7 @@ public class WiredConditionFurniTypeMatch extends InteractionWiredCondition {
             return true;
         }
 
-        if (stuff[0] instanceof HabboItem triggeringItem) {
+        if (stuff[0] instanceof RoomItem triggeringItem) {
             return this.getWiredSettings().getItems(room).stream().anyMatch(item -> item == triggeringItem);
         }
 

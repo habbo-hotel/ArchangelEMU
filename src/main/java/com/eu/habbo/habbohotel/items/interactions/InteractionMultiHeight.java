@@ -2,10 +2,14 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
@@ -14,7 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 
-public class InteractionMultiHeight extends HabboItem {
+public class InteractionMultiHeight extends RoomItem {
     public InteractionMultiHeight(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
@@ -53,7 +57,7 @@ public class InteractionMultiHeight extends HabboItem {
         }
 
         if (objects[0] instanceof Integer && room != null) {
-            HabboItem topItem = room.getTopItemAt(this.getX(), this.getY());
+            RoomItem topItem = room.getTopItemAt(this.getX(), this.getY());
             if (topItem != null && !topItem.equals(this)) { // multiheight items cannot change height even if there is a stackable item on top - no items allowed on top
                 return;
             }
@@ -76,7 +80,7 @@ public class InteractionMultiHeight extends HabboItem {
         THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
 
         for(RoomTile tile : occupiedTiles) {
-            Collection<RoomUnit> unitsOnItem = room.getRoomUnitsAt(room.getLayout().getTile(tile.getX(), tile.getY()));
+            Collection<RoomUnit> unitsOnItem = room.getRoomUnitManager().getRoomUnitsAt(room.getLayout().getTile(tile.getX(), tile.getY()));
 
             for (RoomUnit unit : unitsOnItem) {
                 if (unit.hasStatus(RoomUnitStatus.MOVE) && unit.getGoalLocation() != tile)
@@ -84,11 +88,11 @@ public class InteractionMultiHeight extends HabboItem {
 
                 if (this.getBaseItem().allowSit() || unit.hasStatus(RoomUnitStatus.SIT)) {
                     unit.setSitUpdate(true);
-                    unit.statusUpdate(true);
+                    unit.setStatusUpdateNeeded(true);
                 } else {
-                    unit.setZ(unit.getCurrentLocation().getStackHeight());
-                    unit.setPreviousLocationZ(unit.getZ());
-                    unit.statusUpdate(true);
+                    unit.setCurrentZ(unit.getCurrentPosition().getStackHeight());
+                    unit.setPreviousLocationZ(unit.getCurrentZ());
+                    unit.setStatusUpdateNeeded(true);
                 }
             }
         }
@@ -105,7 +109,7 @@ public class InteractionMultiHeight extends HabboItem {
 
         if (roomUnit != null
                 && (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
-                && roomUnit.getRoomUnitType().equals(RoomUnitType.USER)) {
+                && roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
             Habbo habbo = room.getHabbo(roomUnit);
 
             if (habbo != null) {
@@ -127,7 +131,7 @@ public class InteractionMultiHeight extends HabboItem {
 
         if (roomUnit != null
                 && (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
-                && roomUnit.getRoomUnitType().equals(RoomUnitType.USER)) {
+                && roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
             Habbo habbo = room.getHabbo(roomUnit);
 
             if (habbo != null) {

@@ -1,6 +1,6 @@
 package com.eu.habbo.messages.outgoing.rooms.users;
 
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -13,7 +13,7 @@ public class UserRemoveMessageComposer extends MessageComposer {
      @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.userRemoveMessageComposer);
-        this.response.appendString(this.roomUnit.getId() + "");
+        this.response.appendString(this.roomUnit.getVirtualId() + "");
         return this.response;
     }
 }

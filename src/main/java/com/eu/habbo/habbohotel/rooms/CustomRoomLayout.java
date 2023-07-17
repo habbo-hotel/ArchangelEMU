@@ -17,7 +17,7 @@ public class CustomRoomLayout extends RoomLayout implements Runnable {
     public CustomRoomLayout(ResultSet set, Room room) {
         super(set, room);
 
-        this.roomId = room.getId();
+        this.roomId = room.getRoomInfo().getId();
     }
 
     @Override

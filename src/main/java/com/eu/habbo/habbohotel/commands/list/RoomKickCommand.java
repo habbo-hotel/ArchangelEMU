@@ -17,15 +17,15 @@ public class RoomKickCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        final Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        final Room room = gameClient.getHabbo().getRoomUnit().getRoom();
         if (room != null) {
             if (params.length > 1) {
                 String message = IntStream.range(1, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
                 room.sendComposer(new HabboBroadcastMessageComposer(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername()).compose());
             }
 
-            for (Habbo habbo : room.getHabbos()) {
-                if (!(habbo.hasRight(Permission.ACC_UNKICKABLE) || habbo.hasRight(Permission.ACC_SUPPORTTOOL) || room.isOwner(habbo))) {
+            for (Habbo habbo : room.getRoomUnitManager().getRoomHabbos()) {
+                if (!(habbo.hasRight(Permission.ACC_UNKICKABLE) || habbo.hasRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo))) {
                     room.kickHabbo(habbo, true);
                 }
             }

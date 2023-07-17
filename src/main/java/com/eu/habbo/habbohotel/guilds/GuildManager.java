@@ -152,10 +152,10 @@ public class GuildManager {
                 statement.execute();
             }
 
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(guild.getRoomId());
 
             if (room != null) {
-                room.setGuildId(0);
+                room.getRoomInfo().setGuild(null);
             }
         } catch (SQLException e) {
             log.error("Caught SQL exception", e);

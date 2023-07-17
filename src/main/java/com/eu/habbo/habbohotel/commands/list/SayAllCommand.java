@@ -21,7 +21,7 @@ public class SayAllCommand extends Command {
 
         String message = IntStream.range(1, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
 
-        gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos().forEach(habbo -> habbo.talk(message));
+        gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos().forEach(habbo -> habbo.talk(message));
 
         return true;
     }

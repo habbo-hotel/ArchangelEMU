@@ -2,15 +2,19 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionPuzzleBox extends HabboItem {
+public class InteractionPuzzleBox extends RoomItem {
     public InteractionPuzzleBox(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -22,19 +26,23 @@ public class InteractionPuzzleBox extends HabboItem {
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         RoomTile boxLocation = room.getLayout().getTile(this.getX(), this.getY());
-        RoomUserRotation rotation = null;
+        RoomRotation rotation = null;
 
-        if (this.getX() == client.getHabbo().getRoomUnit().getX()) {
-            if (this.getY() == client.getHabbo().getRoomUnit().getY() + 1) {
-                rotation = RoomUserRotation.SOUTH;
-            } else if (this.getY() == client.getHabbo().getRoomUnit().getY() - 1) {
-                rotation = RoomUserRotation.NORTH;
+        if (this.getX() == client.getHabbo().getRoomUnit().getCurrentPosition().getX()) {
+            if (this.getY() == client.getHabbo().getRoomUnit().getCurrentPosition().getY() + 1) {
+                rotation = RoomRotation.SOUTH;
+            } else {
+                if (this.getY() == client.getHabbo().getRoomUnit().getCurrentPosition().getY() - 1) {
+                    rotation = RoomRotation.NORTH;
+                }
             }
-        } else if (this.getY() == client.getHabbo().getRoomUnit().getY()) {
-            if (this.getX() == client.getHabbo().getRoomUnit().getX() + 1) {
-                rotation = RoomUserRotation.EAST;
-            } else if (this.getX() == client.getHabbo().getRoomUnit().getX() - 1) {
-                rotation = RoomUserRotation.WEST;
+        } else {
+            if (this.getY() == client.getHabbo().getRoomUnit().getCurrentPosition().getY()) {
+                if (this.getX() == client.getHabbo().getRoomUnit().getCurrentPosition().getX() + 1) {
+                    rotation = RoomRotation.EAST;
+                } else if (this.getX() == client.getHabbo().getRoomUnit().getCurrentPosition().getX() - 1) {
+                    rotation = RoomRotation.WEST;
+                }
             }
         }
 
@@ -49,14 +57,14 @@ public class InteractionPuzzleBox extends HabboItem {
 
         RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), rotation.getValue());
 
-        if (tile == null || tile.getState() == RoomTileState.INVALID || room.hasHabbosAt(tile.getX(), tile.getY())) {
+        if (tile == null || tile.getState() == RoomTileState.INVALID || room.getRoomUnitManager().hasHabbosAt(tile)) {
             return;
         }
 
-        if (!boxLocation.equals(room.getLayout().getTileInFront(client.getHabbo().getRoomUnit().getCurrentLocation(), rotation.getValue())))
+        if (!boxLocation.equals(room.getLayout().getTileInFront(client.getHabbo().getRoomUnit().getCurrentPosition(), rotation.getValue())))
             return;
 
-        HabboItem item = room.getTopItemAt(tile.getX(), tile.getY());
+        RoomItem item = room.getTopItemAt(tile.getX(), tile.getY());
 
         if (item != null && !room.getTopItemAt(tile.getX(), tile.getY()).getBaseItem().allowStack()) return;
 

@@ -8,16 +8,16 @@ import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.games.freeze.FreezeGamePlayer;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionFreezeBlock extends HabboItem {
+public class InteractionFreezeBlock extends RoomItem {
     public InteractionFreezeBlock(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
@@ -33,10 +33,10 @@ public class InteractionFreezeBlock extends HabboItem {
         if (client == null)
             return;
 
-        HabboItem item = null;
-        THashSet<HabboItem> items = room.getItemsAt(room.getLayout().getTile(this.getX(), this.getY()));
+        RoomItem item = null;
+        THashSet<RoomItem> items = room.getItemsAt(room.getLayout().getTile(this.getX(), this.getY()));
 
-        for (HabboItem i : items) {
+        for (RoomItem i : items) {
             if (i instanceof InteractionFreezeTile) {
                 if (item == null || i.getZ() <= item.getZ()) {
                     item = i;

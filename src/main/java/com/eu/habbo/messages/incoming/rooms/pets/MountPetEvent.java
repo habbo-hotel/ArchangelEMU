@@ -16,20 +16,21 @@ public class MountPetEvent extends MessageHandler {
     public void handle() {
         int petId = this.packet.readInt();
         Habbo habbo = this.client.getHabbo();
-        Room room = habbo.getHabboInfo().getCurrentRoom();
+        Room room = habbo.getRoomUnit().getRoom();
 
-        if (room == null)
+        if (room == null) {
             return;
+        }
 
-        Pet pet = room.getPet(petId);
+        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
 
-        if (!(pet instanceof RideablePet rideablePet))
+        if (!(pet instanceof RideablePet rideablePet)) {
             return;
+        }
 
         //dismount
         if (habbo.getHabboInfo().getRiding() != null) {
-            habbo.getHabboInfo().dismountPet();
-            return;
+            habbo.getHabboInfo().dismountPet(room);
         }
 
         // someone is already on it
@@ -40,7 +41,7 @@ public class MountPetEvent extends MessageHandler {
         if (!rideablePet.anyoneCanRide() && habbo.getHabboInfo().getId() != rideablePet.getUserId())
             return;
 
-        List<RoomTile> availableTiles = room.getLayout().getWalkableTilesAround(pet.getRoomUnit().getCurrentLocation());
+        List<RoomTile> availableTiles = room.getLayout().getWalkableTilesAround(pet.getRoomUnit().getCurrentPosition());
 
         // if cant reach it then cancel
         if (availableTiles.isEmpty())

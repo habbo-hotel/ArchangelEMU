@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPushable;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 
 
@@ -16,11 +16,11 @@ public class KickBallAction implements Runnable {
     private final RoomUnit kicker; //The Habbo which initiated the move of the item
     private final int totalSteps; //The total number of steps in the move sequence
     public boolean dead = false; //When true the run() function will not execute. Used when another user kicks the ball whilst it is arleady moving.
-    private RoomUserRotation currentDirection; //The current direction the item is moving in
+    private RoomRotation currentDirection; //The current direction the item is moving in
     private int currentStep; //The current step of the move sequence
     public final boolean isDrag;
 
-    public KickBallAction(InteractionPushable ball, Room room, RoomUnit kicker, RoomUserRotation direction, int steps, boolean isDrag) {
+    public KickBallAction(InteractionPushable ball, Room room, RoomUnit kicker, RoomRotation direction, int steps, boolean isDrag) {
         this.ball = ball;
         this.room = room;
         this.kicker = kicker;
@@ -40,7 +40,7 @@ public class KickBallAction implements Runnable {
             RoomTile next = this.room.getLayout().getTileInFront(currentTile, this.currentDirection.getValue());
 
             if (next == null || !this.ball.validMove(this.room, this.room.getLayout().getTile(this.ball.getX(), this.ball.getY()), next)) {
-                RoomUserRotation oldDirection = this.currentDirection;
+                RoomRotation oldDirection = this.currentDirection;
 
                 if(!this.isDrag) {
                     this.currentDirection = this.ball.getBounceDirection(this.room, this.currentDirection);

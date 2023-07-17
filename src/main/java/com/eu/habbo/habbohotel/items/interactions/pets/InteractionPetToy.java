@@ -6,8 +6,13 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
-import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 
 import java.sql.ResultSet;
@@ -31,8 +36,8 @@ public class InteractionPetToy extends InteractionDefault {
         this.setExtradata("0");
         room.updateItem(this);
 
-        for (Pet pet : room.getPetsAt(oldLocation)) {
-            pet.getRoomUnit().clearStatus();
+        for (Pet pet : room.getRoomUnitManager().getPetsAt(oldLocation)) {
+            pet.getRoomUnit().clearStatuses();
             pet.setPacketUpdate(true);
         }
     }
@@ -41,7 +46,7 @@ public class InteractionPetToy extends InteractionDefault {
         this.setExtradata("0");
 
         for (Pet pet : room.getPetsOnItem(this)) {
-            pet.getRoomUnit().clearStatus();
+            pet.getRoomUnit().clearStatuses();
             pet.setPacketUpdate(true);
         }
     }
@@ -50,7 +55,7 @@ public class InteractionPetToy extends InteractionDefault {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null && pet.getPetData().haveToyItem(this.getBaseItem()) && this.getOccupyingTiles(room.getLayout()).contains(pet.getRoomUnit().getGoalLocation())) {
             if (pet.getEnergy() <= 35) {
@@ -59,16 +64,16 @@ public class InteractionPetToy extends InteractionDefault {
 
             pet.setTask(PetTasks.PLAY);
             pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getX(), this.getY()));
-            pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
-            pet.getRoomUnit().clearStatus();
-            pet.getRoomUnit().setStatus(RoomUnitStatus.PLAY, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+            pet.getRoomUnit().setRotation(RoomRotation.values()[this.getRotation()]);
+            pet.getRoomUnit().clearStatuses();
+            pet.getRoomUnit().setStatus(RoomUnitStatus.PLAY, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
             pet.setPacketUpdate(true);
-            HabboItem item = this;
+            RoomItem item = this;
             Emulator.getThreading().run(() -> {
                 pet.addHappiness(25);
                 item.setExtradata("0");
                 room.updateItem(item);
-                pet.getRoomUnit().clearStatus();
+                pet.getRoomUnit().clearStatuses();
                 new PetClearPosture(pet, RoomUnitStatus.PLAY, null, true).run();
                 pet.setPacketUpdate(true);
             }, ((long)(Emulator.getRandom().nextInt(20) * 500) + 2500));
@@ -81,19 +86,19 @@ public class InteractionPetToy extends InteractionDefault {
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null) {
             this.setExtradata("0");
             room.updateItem(this);
-            pet.getRoomUnit().clearStatus();
+            pet.getRoomUnit().clearStatuses();
             pet.setPacketUpdate(true);
         }
     }
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
         return roomUnit.getRoomUnitType() == RoomUnitType.PET && pet != null && pet.getPetData().haveToyItem(this.getBaseItem());
     }
 

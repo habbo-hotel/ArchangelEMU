@@ -6,8 +6,10 @@ import com.eu.habbo.habbohotel.games.battlebanzai.BattleBanzaiGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPushable;
 import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +29,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
     }
 
     @Override
-    public RoomUserRotation getWalkOnDirection(RoomUnit roomUnit, Room room) {
+    public RoomRotation getWalkOnDirection(RoomUnit roomUnit, Room room) {
         return roomUnit.getBodyRotation();
     }
 
@@ -37,7 +39,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
     }
 
     @Override
-    public RoomUserRotation getWalkOffDirection(RoomUnit roomUnit, Room room) {
+    public RoomRotation getWalkOffDirection(RoomUnit roomUnit, Room room) {
         return roomUnit.getBodyRotation();
     }
 
@@ -47,7 +49,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
     }
 
     @Override
-    public RoomUserRotation getDragDirection(RoomUnit roomUnit, Room room) {
+    public RoomRotation getDragDirection(RoomUnit roomUnit, Room room) {
         return roomUnit.getBodyRotation();
     }
 
@@ -57,7 +59,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
     }
 
     @Override
-    public RoomUserRotation getTackleDirection(RoomUnit roomUnit, Room room) {
+    public RoomRotation getTackleDirection(RoomUnit roomUnit, Room room) {
         return roomUnit.getBodyRotation();
     }
 
@@ -67,52 +69,52 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
     }
 
     @Override
-    public RoomUserRotation getBounceDirection(Room room, RoomUserRotation currentDirection) {
+    public RoomRotation getBounceDirection(Room room, RoomRotation currentDirection) {
         switch (currentDirection) {
             default:
             case NORTH:
-                return RoomUserRotation.SOUTH;
+                return RoomRotation.SOUTH;
 
             case NORTH_EAST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.NORTH_WEST.getValue())))
-                    return RoomUserRotation.NORTH_WEST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.SOUTH_EAST.getValue())))
-                    return RoomUserRotation.SOUTH_EAST;
+                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_WEST.getValue())))
+                    return RoomRotation.NORTH_WEST;
+                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_EAST.getValue())))
+                    return RoomRotation.SOUTH_EAST;
                 else
-                    return RoomUserRotation.SOUTH_WEST;
+                    return RoomRotation.SOUTH_WEST;
 
             case EAST:
-                return RoomUserRotation.WEST;
+                return RoomRotation.WEST;
 
             case SOUTH_EAST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.SOUTH_WEST.getValue())))
-                    return RoomUserRotation.SOUTH_WEST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.NORTH_EAST.getValue())))
-                    return RoomUserRotation.NORTH_EAST;
+                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_WEST.getValue())))
+                    return RoomRotation.SOUTH_WEST;
+                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_EAST.getValue())))
+                    return RoomRotation.NORTH_EAST;
                 else
-                    return RoomUserRotation.NORTH_WEST;
+                    return RoomRotation.NORTH_WEST;
 
             case SOUTH:
-                return RoomUserRotation.NORTH;
+                return RoomRotation.NORTH;
 
             case SOUTH_WEST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.SOUTH_EAST.getValue())))
-                    return RoomUserRotation.SOUTH_EAST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.NORTH_WEST.getValue())))
-                    return RoomUserRotation.NORTH_WEST;
+                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_EAST.getValue())))
+                    return RoomRotation.SOUTH_EAST;
+                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_WEST.getValue())))
+                    return RoomRotation.NORTH_WEST;
                 else
-                    return RoomUserRotation.NORTH_EAST;
+                    return RoomRotation.NORTH_EAST;
 
             case WEST:
-                return RoomUserRotation.EAST;
+                return RoomRotation.EAST;
 
             case NORTH_WEST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.NORTH_EAST.getValue())))
-                    return RoomUserRotation.NORTH_EAST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomUserRotation.SOUTH_WEST.getValue())))
-                    return RoomUserRotation.SOUTH_WEST;
+                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_EAST.getValue())))
+                    return RoomRotation.NORTH_EAST;
+                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_WEST.getValue())))
+                    return RoomRotation.SOUTH_WEST;
                 else
-                    return RoomUserRotation.SOUTH_EAST;
+                    return RoomRotation.SOUTH_EAST;
         }
     }
 
@@ -124,29 +126,29 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
     @Override
     public boolean validMove(Room room, RoomTile from, RoomTile to) {
        if (to == null) return false;
-       HabboItem topItem = room.getTopItemAt(to.getX(), to.getY(), this);
+       RoomItem topItem = room.getTopItemAt(to.getX(), to.getY(), this);
        return !(!room.getLayout().tileWalkable(to.getX(), to.getY()) || (topItem != null && (!topItem.getBaseItem().allowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
        
         //return !(!room.getLayout().tileWalkable(to.x, to.y) || (topItem != null && (!topItem.getBaseItem().setAllowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
     }
 
     @Override
-    public void onDrag(Room room, RoomUnit roomUnit, int velocity, RoomUserRotation direction) {
+    public void onDrag(Room room, RoomUnit roomUnit, int velocity, RoomRotation direction) {
 
     }
 
     @Override
-    public void onKick(Room room, RoomUnit roomUnit, int velocity, RoomUserRotation direction) {
+    public void onKick(Room room, RoomUnit roomUnit, int velocity, RoomRotation direction) {
 
     }
 
     @Override
-    public void onTackle(Room room, RoomUnit roomUnit, int velocity, RoomUserRotation direction) {
+    public void onTackle(Room room, RoomUnit roomUnit, int velocity, RoomRotation direction) {
 
     }
 
     @Override
-    public void onMove(Room room, RoomTile from, RoomTile to, RoomUserRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
+    public void onMove(Room room, RoomTile from, RoomTile to, RoomRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
         Habbo habbo = room.getHabbo(kicker);
 
         if (habbo != null) {
@@ -154,7 +156,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
             if (game != null) {
                 GameTeam team = game.getTeamForHabbo(habbo);
                 if (team != null) {
-                    HabboItem item = room.getTopItemAt(to.getX(), to.getY());
+                    RoomItem item = room.getTopItemAt(to.getX(), to.getY());
                         try {
                             item.onWalkOn(kicker, room, null);
                         } catch (Exception e) {
@@ -169,7 +171,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
     }
 
     @Override
-    public void onBounce(Room room, RoomUserRotation oldDirection, RoomUserRotation newDirection, RoomUnit kicker) {
+    public void onBounce(Room room, RoomRotation oldDirection, RoomRotation newDirection, RoomUnit kicker) {
 
     }
 
@@ -179,7 +181,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
     }
 
     @Override
-    public boolean canStillMove(Room room, RoomTile from, RoomTile to, RoomUserRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
+    public boolean canStillMove(Room room, RoomTile from, RoomTile to, RoomRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
         return to.getState() == RoomTileState.OPEN && to.isWalkable();
     }
 }

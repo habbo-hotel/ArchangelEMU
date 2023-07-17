@@ -6,7 +6,12 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomLayout;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
@@ -32,7 +37,7 @@ public class InteractionPetDrink extends InteractionDefault {
 
     @Override
     public boolean canToggle(Habbo habbo, Room room) {
-        return RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getX(), this.getY()), habbo.getRoomUnit().getCurrentLocation());
+        return RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getX(), this.getY()), habbo.getRoomUnit().getCurrentPosition());
     }
 
     @Override
@@ -43,12 +48,12 @@ public class InteractionPetDrink extends InteractionDefault {
         if (!this.canToggle(client.getHabbo(), room)) {
             RoomTile closestTile = null;
             for (RoomTile tile : room.getLayout().getTilesAround(room.getLayout().getTile(this.getX(), this.getY()))) {
-                if (tile.isWalkable() && (closestTile == null || closestTile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()) > tile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()))) {
+                if (tile.isWalkable() && (closestTile == null || closestTile.distance(client.getHabbo().getRoomUnit().getCurrentPosition()) > tile.distance(client.getHabbo().getRoomUnit().getCurrentPosition()))) {
                     closestTile = tile;
                 }
             }
 
-            if (closestTile != null && !closestTile.equals(client.getHabbo().getRoomUnit().getCurrentLocation())) {
+            if (closestTile != null && !closestTile.equals(client.getHabbo().getRoomUnit().getCurrentPosition())) {
                 List<Runnable> onSuccess = new ArrayList<>();
                 onSuccess.add(() -> this.change(room, this.getBaseItem().getStateCount() - 1));
 
@@ -66,20 +71,20 @@ public class InteractionPetDrink extends InteractionDefault {
         if (this.getExtradata() == null || this.getExtradata().isEmpty())
             this.setExtradata("0");
 
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null && pet.getPetData().haveDrinkItem(this) && pet.levelThirst >= 35) {
             pet.clearPosture();
             pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getX(), this.getY()));
-            pet.getRoomUnit().setRotation(RoomUserRotation.values()[this.getRotation()]);
-            pet.getRoomUnit().clearStatus();
-            pet.getRoomUnit().setStatus(RoomUnitStatus.EAT, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+            pet.getRoomUnit().setRotation(RoomRotation.values()[this.getRotation()]);
+            pet.getRoomUnit().clearStatuses();
+            pet.getRoomUnit().setStatus(RoomUnitStatus.EAT, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
             pet.setPacketUpdate(true);
 
             Emulator.getThreading().run(() -> {
                 pet.addThirst(-75);
                 this.change(room, -1);
-                pet.getRoomUnit().clearStatus();
+                pet.getRoomUnit().clearStatuses();
                 new PetClearPosture(pet, RoomUnitStatus.EAT, null, true);
                 pet.setPacketUpdate(true);
             }, 1000);

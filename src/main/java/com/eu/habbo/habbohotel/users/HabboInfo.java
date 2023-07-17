@@ -12,7 +12,7 @@ import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import lombok.Getter;
@@ -58,11 +58,6 @@ public class HabboInfo implements Runnable {
     private int homeRoom;
     @Setter
     private boolean online;
-    @Setter
-    @Accessors(chain = true)
-    private int loadingRoom;
-    @Setter
-    private Room currentRoom;
     @Setter
     private int roomQueueId;
     @Setter
@@ -112,7 +107,6 @@ public class HabboInfo implements Runnable {
             this.lastOnline = set.getInt("last_online");
             this.machineID = set.getString("machine_id");
             this.online = false;
-            this.currentRoom = null;
         } catch (SQLException e) {
             log.error("Caught SQL exception", e);
         }
@@ -304,15 +298,16 @@ public class HabboInfo implements Runnable {
         this.run();
     }
 
-    public void dismountPet() {
-        this.dismountPet(false);
+    public void dismountPet(Room room) {
+        this.dismountPet(false, room);
     }
 
-    public void dismountPet(boolean isRemoving) {
+    public void dismountPet(boolean isRemoving, Room room) {
         if (this.getRiding() == null)
             return;
 
-        Habbo habbo = this.getCurrentRoom().getHabbo(this.getId());
+        Habbo habbo = room.getRoomUnitManager().getRoomHabboById(this.getId());
+
         if (habbo == null)
             return;
 
@@ -322,7 +317,6 @@ public class HabboInfo implements Runnable {
         riding.setTask(PetTasks.FREE);
         this.setRiding(null);
 
-        Room room = this.getCurrentRoom();
         if (room != null)
             room.giveEffect(habbo, 0, -1);
 
@@ -330,17 +324,17 @@ public class HabboInfo implements Runnable {
         if (roomUnit == null)
             return;
 
-        roomUnit.setZ(riding.getRoomUnit().getZ());
-        roomUnit.setPreviousLocationZ(riding.getRoomUnit().getZ());
+        roomUnit.setCurrentZ(riding.getRoomUnit().getCurrentZ());
+        roomUnit.setPreviousLocationZ(riding.getRoomUnit().getCurrentZ());
         roomUnit.stopWalking();
         if (room != null)
             room.sendComposer(new UserUpdateComposer(roomUnit).compose());
 
-        List<RoomTile> availableTiles = isRemoving ? new ArrayList<>() : this.getCurrentRoom().getLayout().getWalkableTilesAround(roomUnit.getCurrentLocation());
+        List<RoomTile> availableTiles = isRemoving ? new ArrayList<>() : room.getLayout().getWalkableTilesAround(roomUnit.getCurrentPosition());
 
-        RoomTile tile = availableTiles.isEmpty() ? roomUnit.getCurrentLocation() : availableTiles.get(0);
+        RoomTile tile = availableTiles.isEmpty() ? roomUnit.getCurrentPosition() : availableTiles.get(0);
         roomUnit.setGoalLocation(tile);
-        roomUnit.statusUpdate(true);
+        roomUnit.setStatusUpdateNeeded(true);
     }
 
     public boolean isInGame() {

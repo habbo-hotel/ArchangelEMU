@@ -18,14 +18,14 @@ public class EventCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null || params.length < 2) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() == null || params.length < 2) {
             return false;
         }
         String message = IntStream.range(1, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
 
         THashMap<String, String> codes = new THashMap<>();
-        codes.put("ROOMNAME", gameClient.getHabbo().getHabboInfo().getCurrentRoom().getName());
-        codes.put("ROOMID", gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId() + "");
+        codes.put("ROOMNAME", gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getName());
+        codes.put("ROOMID", gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId() + "");
         codes.put("USERNAME", gameClient.getHabbo().getHabboInfo().getUsername());
         codes.put("LOOK", gameClient.getHabbo().getHabboInfo().getLook());
         codes.put("TIME", Emulator.getDate().toString());

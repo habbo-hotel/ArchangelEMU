@@ -16,7 +16,7 @@ public class RenderRoomThumbnailEvent extends MessageHandler {
             return;
         }
 
-        if (!this.client.getHabbo().getHabboInfo().getCurrentRoom().isOwner(this.client.getHabbo()))
+        if (!this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().isRoomOwner(this.client.getHabbo()))
             return;
 
         if (CameraClient.isLoggedIn) {
@@ -24,7 +24,7 @@ public class RenderRoomThumbnailEvent extends MessageHandler {
             byte[] data = this.packet.getBuffer().readBytes(this.packet.getBuffer().readableBytes()).array();
             String content = new String(ZIP.inflate(data));
 
-            CameraRenderImageComposer composer = new CameraRenderImageComposer(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getCurrentRoom().getBackgroundTonerColor().getRGB(), 110, 110, content);
+            CameraRenderImageComposer composer = new CameraRenderImageComposer(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getRoomUnit().getRoom().getBackgroundTonerColor().getRGB(), 110, 110, content);
 
             this.client.getHabbo().getHabboInfo().setPhotoJSON(Emulator.getConfig().getValue("camera.extradata").replace("%timestamp%", composer.timestamp + ""));
             this.client.getHabbo().getHabboInfo().setPhotoTimestamp(composer.timestamp);

@@ -7,7 +7,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.CarryObjectMessageComposer;
 public class DropCarryItemEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
         this.client.getHabbo().getRoomUnit().setHandItem(0);
         if (room != null) {
             room.unIdle(this.client.getHabbo());

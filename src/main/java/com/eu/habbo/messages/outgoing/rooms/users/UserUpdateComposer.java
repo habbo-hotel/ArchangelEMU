@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.outgoing.rooms.users;
 
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -40,7 +40,7 @@ public class UserUpdateComposer extends MessageComposer {
         if (this.roomUnits != null) {
             this.response.appendInt(this.roomUnits.size());
             for (RoomUnit roomUnit : this.roomUnits) {
-                this.response.appendInt(roomUnit.getId());
+                this.response.appendInt(roomUnit.getVirtualId());
                 this.response.appendInt(roomUnit.getPreviousLocation().getX());
                 this.response.appendInt(roomUnit.getPreviousLocation().getY());
                 this.response.appendString((this.overrideZ != -1 ? this.overrideZ : roomUnit.getPreviousLocationZ()) + "");
@@ -50,18 +50,18 @@ public class UserUpdateComposer extends MessageComposer {
                 this.response.appendInt(roomUnit.getBodyRotation().getValue());
 
                 StringBuilder status = new StringBuilder("/");
-                for (Map.Entry<RoomUnitStatus, String> entry : roomUnit.getStatus().entrySet()) {
+                for (Map.Entry<RoomUnitStatus, String> entry : roomUnit.getStatuses().entrySet()) {
                     status.append(entry.getKey()).append(" ").append(entry.getValue()).append("/");
                 }
 
                 this.response.appendString(status.toString());
-                roomUnit.setPreviousLocation(roomUnit.getCurrentLocation());
+                roomUnit.setPreviousLocation(roomUnit.getCurrentPosition());
             }
         } else {
             synchronized (this.habbos) {
                 this.response.appendInt(this.habbos.size());
                 for (Habbo habbo : this.habbos) {
-                    this.response.appendInt(habbo.getRoomUnit().getId());
+                    this.response.appendInt(habbo.getRoomUnit().getVirtualId());
                     this.response.appendInt(habbo.getRoomUnit().getPreviousLocation().getX());
                     this.response.appendInt(habbo.getRoomUnit().getPreviousLocation().getY());
                     this.response.appendString(habbo.getRoomUnit().getPreviousLocationZ() + "");
@@ -72,11 +72,11 @@ public class UserUpdateComposer extends MessageComposer {
 
                     StringBuilder status = new StringBuilder("/");
 
-                    for (Map.Entry<RoomUnitStatus, String> entry : habbo.getRoomUnit().getStatus().entrySet()) {
+                    for (Map.Entry<RoomUnitStatus, String> entry : habbo.getRoomUnit().getStatuses().entrySet()) {
                         status.append(entry.getKey()).append(" ").append(entry.getValue()).append("/");
                     }
                     this.response.appendString(status.toString());
-                    habbo.getRoomUnit().setPreviousLocation(habbo.getRoomUnit().getCurrentLocation());
+                    habbo.getRoomUnit().setPreviousLocation(habbo.getRoomUnit().getCurrentPosition());
                 }
             }
         }

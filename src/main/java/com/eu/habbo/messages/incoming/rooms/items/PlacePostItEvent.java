@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionPostIt;
 import com.eu.habbo.habbohotel.items.interactions.InteractionStickyPole;
 import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
@@ -19,17 +19,17 @@ public class PlacePostItEvent extends MessageHandler {
         int itemId = this.packet.readInt();
         String location = this.packet.readString();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
             if (room.hasRights(this.client.getHabbo()) || !room.getRoomSpecialTypes().getItemsOfType(InteractionStickyPole.class).isEmpty()) {
-                HabboItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
+                RoomItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
 
                 if (item instanceof InteractionPostIt) {
                     if (room.getPostItNotes().size() < Room.MAXIMUM_POSTITNOTES) {
                         room.addHabboItem(item);
                         item.setExtradata("FFFF33");
-                        item.setRoomId(this.client.getHabbo().getHabboInfo().getCurrentRoom().getId());
+                        item.setRoomId(this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId());
                         item.setWallPosition(location);
                         item.setUserId(this.client.getHabbo().getHabboInfo().getId());
                         item.needsUpdate(true);
@@ -39,8 +39,8 @@ public class PlacePostItEvent extends MessageHandler {
                         item.setFromGift(false);
                         Emulator.getThreading().run(item);
 
-                        if (room.getOwnerId() != this.client.getHabbo().getHabboInfo().getId()) {
-                            AchievementManager.progressAchievement(room.getOwnerId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("NotesReceived"));
+                        if (room.getRoomInfo().getOwnerInfo().getId() != this.client.getHabbo().getHabboInfo().getId()) {
+                            AchievementManager.progressAchievement(room.getRoomInfo().getOwnerInfo().getId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("NotesReceived"));
                             AchievementManager.progressAchievement(this.client.getHabbo().getHabboInfo().getId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("NotesLeft"));
                         }
 

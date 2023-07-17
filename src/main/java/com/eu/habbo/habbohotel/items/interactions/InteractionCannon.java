@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.CannonKickAction;
 import com.eu.habbo.threading.runnables.CannonResetCooldownAction;
@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class InteractionCannon extends HabboItem {
+public class InteractionCannon extends RoomItem {
     public boolean cooldown = false;
 
     public InteractionCannon(ResultSet set, Item baseItem) throws SQLException {
@@ -61,12 +61,12 @@ public class InteractionCannon extends HabboItem {
         tiles.remove(room.getLayout().getTileInFront(tile, (this.getRotation() + (this.getRotation() >= 4 ? -1 : 0)) % 8));
         tiles.remove(room.getLayout().getTileInFront(tile, (this.getRotation() + (this.getRotation() >= 4 ? 5 : 4)) % 8));
 
-        if ((client == null || (tiles.contains(client.getHabbo().getRoomUnit().getCurrentLocation())) && client.getHabbo().getRoomUnit().canWalk()) && !this.cooldown) {
+        if ((client == null || (tiles.contains(client.getHabbo().getRoomUnit().getCurrentPosition())) && client.getHabbo().getRoomUnit().isCanWalk()) && !this.cooldown) {
             if (client != null) {
                 client.getHabbo().getRoomUnit().setCanWalk(false);
-                client.getHabbo().getRoomUnit().setGoalLocation(client.getHabbo().getRoomUnit().getCurrentLocation());
+                client.getHabbo().getRoomUnit().setGoalLocation(client.getHabbo().getRoomUnit().getCurrentPosition());
                 client.getHabbo().getRoomUnit().lookAtPoint(fuseTile);
-                client.getHabbo().getRoomUnit().statusUpdate(true);
+                client.getHabbo().getRoomUnit().setStatusUpdateNeeded(true);
             }
 
             this.cooldown = true;

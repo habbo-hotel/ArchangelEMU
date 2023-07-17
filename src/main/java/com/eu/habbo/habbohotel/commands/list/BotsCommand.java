@@ -12,12 +12,12 @@ public class BotsCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null || !gameClient.getHabbo().getHabboInfo().getCurrentRoom().hasRights(gameClient.getHabbo()))
+        if (gameClient.getHabbo().getRoomUnit().getRoom() == null || !gameClient.getHabbo().getRoomUnit().getRoom().hasRights(gameClient.getHabbo()))
             return false;
 
-        StringBuilder data = new StringBuilder(getTextsValue("total") + ": " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentBots().values().length);
+        StringBuilder data = new StringBuilder(getTextsValue("total") + ": " + gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentRoomBots().values().size());
 
-        for (Bot bot : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentBots().valueCollection()) {
+        for (Bot bot : gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentRoomBots().values()) {
             data.append("\r");
             data.append("<b>");
             data.append(Emulator.getTexts().getValue("generic.bot.name"));

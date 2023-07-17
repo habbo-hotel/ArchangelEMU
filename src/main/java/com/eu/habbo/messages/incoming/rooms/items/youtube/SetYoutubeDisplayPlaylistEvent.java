@@ -3,11 +3,9 @@ package com.eu.habbo.messages.incoming.rooms.items.youtube;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.YoutubeManager;
 import com.eu.habbo.habbohotel.items.interactions.InteractionYoutubeTV;
-import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayVideoMessageComposer;
 import com.eu.habbo.threading.runnables.YoutubeAdvanceVideo;
 
@@ -23,10 +21,10 @@ public class SetYoutubeDisplayPlaylistEvent extends YoutubeEvent {
 
         if (!validate(habbo)) return;
 
-        Room room = habbo.getHabboInfo().getCurrentRoom();
+        Room room = habbo.getRoomUnit().getRoom();
 
 
-        HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
 
         if (!(item instanceof InteractionYoutubeTV)) return;
 

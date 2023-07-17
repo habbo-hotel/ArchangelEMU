@@ -33,7 +33,7 @@ public class InteractionMonsterCrackable extends InteractionCrackable implements
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        if (room.isPublicRoom()) this.respawn = true;
+        if (room.getRoomInfo().isPublicRoom()) this.respawn = true;
 
         super.onClick(client, room, objects);
     }

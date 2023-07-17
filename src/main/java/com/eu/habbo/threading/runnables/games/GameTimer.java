@@ -20,7 +20,7 @@ public class GameTimer implements Runnable {
             return;
         }
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(timer.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(timer.getRoomId());
 
         if (room == null || !timer.isRunning() || timer.isPaused()) {
             timer.setThreadActive(false);

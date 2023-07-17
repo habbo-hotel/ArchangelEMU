@@ -61,11 +61,11 @@ public class GetCfhChatlogEvent extends MessageHandler {
                     }
                 }
 
-                Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(issue.roomId);
+                Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(issue.roomId);
                 String roomName = "";
 
                 if (room != null) {
-                    roomName = room.getName();
+                    roomName = room.getRoomInfo().getName();
                 }
                 this.client.sendResponse(new CfhChatlogComposer(issue, chatlog, roomName, chatlogType));
             }

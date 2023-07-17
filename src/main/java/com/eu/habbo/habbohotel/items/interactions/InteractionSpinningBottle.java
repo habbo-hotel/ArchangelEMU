@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.plugin.events.furniture.FurnitureDiceRolledEvent;
 import com.eu.habbo.threading.runnables.RandomSpinningBottleNumber;
@@ -14,7 +14,7 @@ import com.eu.habbo.threading.runnables.RandomSpinningBottleNumber;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionSpinningBottle extends HabboItem {
+public class InteractionSpinningBottle extends RoomItem {
     public InteractionSpinningBottle(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
         super(id, userId, item, extradata, limitedStack, limitedSells);
     }
@@ -46,7 +46,7 @@ public class InteractionSpinningBottle extends HabboItem {
         super.onClick(client, room, objects);
 
         if (client != null) {
-            if (RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getX(), this.getY()), client.getHabbo().getRoomUnit().getCurrentLocation())) {
+            if (RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getX(), this.getY()), client.getHabbo().getRoomUnit().getCurrentPosition())) {
                 if (!this.getExtradata().equalsIgnoreCase("-1")) {
                     FurnitureDiceRolledEvent event = Emulator.getPluginManager().fireEvent(new FurnitureDiceRolledEvent(this, client.getHabbo(), -1));
 

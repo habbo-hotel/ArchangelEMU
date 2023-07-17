@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectDataUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
@@ -73,7 +73,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
     }
 
     public boolean inSquare(RoomTile location) {
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
 
         if(!this.values.get("state").equals("1"))
             return false;
@@ -124,12 +124,12 @@ public class InteractionMuteArea extends InteractionCustomValues {
         if(effectItem != null) {
             TIntObjectMap<String> ownerNames = TCollections.synchronizedMap(new TIntObjectHashMap<>(0));
             ownerNames.put(-1, "System");
-            THashSet<HabboItem> items = new THashSet<>();
+            THashSet<RoomItem> items = new THashSet<>();
 
             int id = 0;
             for(RoomTile tile : this.tiles) {
                 id--;
-                HabboItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
+                RoomItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
                 item.setX(tile.getX());
                 item.setY(tile.getY());
                 item.setZ(tile.relativeHeight());
@@ -138,7 +138,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
 
             client.sendResponse(new ObjectsMessageComposer(ownerNames, items));
             Emulator.getThreading().run(() -> {
-                for(HabboItem item : items) {
+                for(RoomItem item : items) {
                     client.sendResponse(new RemoveFloorItemComposer(item, true));
                 }
             }, 3000);

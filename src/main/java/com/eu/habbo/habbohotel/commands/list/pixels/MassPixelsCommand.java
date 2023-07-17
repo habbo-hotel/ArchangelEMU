@@ -30,7 +30,7 @@ public class MassPixelsCommand extends BasePixelsCommand {
 
                     habbo.givePixels(amount);
 
-                    if (habbo.getHabboInfo().getCurrentRoom() != null)
+                    if (habbo.getRoomUnit().getRoom() != null)
                         habbo.whisper(replaceAmount(getTextsValue("commands.generic.cmd_duckets.received"), amount + ""), RoomChatMessageBubbles.ALERT);
                 }
             }

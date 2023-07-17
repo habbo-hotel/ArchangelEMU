@@ -86,7 +86,7 @@ public class YouAreAPirate implements Runnable {
 
     @Override
     public void run() {
-        if (this.room == this.habbo.getHabboInfo().getCurrentRoom()) {
+        if (this.room == this.habbo.getRoomUnit().getRoom()) {
             if (!iamapirate[this.index].isEmpty()) {
                 this.room.talk(this.habbo, new RoomChatMessage(iamapirate[this.index], this.habbo, RoomChatMessageBubbles.PIRATE), RoomChatType.SHOUT);
             }

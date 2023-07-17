@@ -10,12 +10,12 @@ public class MoonwalkCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null && gameClient.getHabbo().getHabboStats().hasActiveClub()) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() != null && gameClient.getHabbo().getHabboStats().hasActiveClub()) {
             int effect = 136;
             if (gameClient.getHabbo().getRoomUnit().getEffectId() == 136)
                 effect = 0;
 
-            gameClient.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(gameClient.getHabbo(), effect, -1);
+            gameClient.getHabbo().getRoomUnit().getRoom().giveEffect(gameClient.getHabbo(), effect, -1);
 
             return true;
         }

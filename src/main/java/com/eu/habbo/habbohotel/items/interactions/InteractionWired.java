@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -193,7 +193,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         this.setExtradata(this.getExtradata().equals("1") ? "0" : "1");
         room.sendComposer(new OneWayDoorStatusMessageComposer(this).compose());
         if (roomUnit != null) {
-            this.addUserExecutionCache(roomUnit.getId(), millis);
+            this.addUserExecutionCache(roomUnit.getVirtualId(), millis);
         }
     }
 

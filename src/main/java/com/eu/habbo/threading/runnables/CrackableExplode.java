@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionCrackable;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectAddMessageComposer;
@@ -40,7 +40,7 @@ public class CrackableExplode implements Runnable {
         Item rewardItem = Emulator.getGameEnvironment().getItemManager().getCrackableReward(this.habboItem.getBaseItem().getId());
 
         if (rewardItem != null) {
-            HabboItem newItem = Emulator.getGameEnvironment().getItemManager().createItem(this.habboItem.allowAnyone() ? this.habbo.getHabboInfo().getId() : this.habboItem.getUserId(), rewardItem, 0, 0, "");
+            RoomItem newItem = Emulator.getGameEnvironment().getItemManager().createItem(this.habboItem.allowAnyone() ? this.habbo.getHabboInfo().getId() : this.habboItem.getUserId(), rewardItem, 0, 0, "");
 
             if (newItem != null) {
                 //Add to inventory in case if isn't possible place the item or in case is wall item
@@ -52,7 +52,7 @@ public class CrackableExplode implements Runnable {
                     newItem.setX(this.x);
                     newItem.setY(this.y);
                     newItem.setZ(this.room.getStackHeight(this.x, this.y, false));
-                    newItem.setRoomId(this.room.getId());
+                    newItem.setRoomId(this.room.getRoomInfo().getId());
                     newItem.needsUpdate(true);
                     this.room.addHabboItem(newItem);
                     this.room.updateItem(newItem);

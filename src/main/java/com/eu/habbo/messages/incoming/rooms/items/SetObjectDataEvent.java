@@ -5,21 +5,21 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionCustomValues;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRoomAds;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import gnu.trove.map.hash.THashMap;
 
 public class SetObjectDataEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
         if (room == null)
             return;
 
         if (!room.hasRights(this.client.getHabbo()))
             return;
 
-        HabboItem item = room.getHabboItem(this.packet.readInt());
+        RoomItem item = room.getHabboItem(this.packet.readInt());
         if (item == null)
             return;
 

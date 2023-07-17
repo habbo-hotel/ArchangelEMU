@@ -12,11 +12,13 @@ public class EjectAllCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
-        if (room != null && (room.isOwner(gameClient.getHabbo())
-                || (room.hasGuild() && room.getGuildRightLevel(gameClient.getHabbo()).equals(RoomRightLevels.GUILD_ADMIN)))) {
-            room.ejectAll(gameClient.getHabbo());
+        if (room != null) {
+            if (room.getRoomInfo().isRoomOwner(gameClient.getHabbo())
+                    || (room.getRoomInfo().hasGuild() && room.getGuildRightLevel(gameClient.getHabbo()).equals(RoomRightLevels.GUILD_ADMIN))) {
+                room.ejectAll(gameClient.getHabbo());
+            }
         }
 
         return true;

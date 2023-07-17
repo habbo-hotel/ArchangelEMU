@@ -36,9 +36,9 @@ public class PurchaseRoomAdEvent extends MessageHandler {
         CatalogItem item = page.getCatalogItem(itemId);
         if (item != null) {
             if (this.client.getHabbo().getHabboInfo().canBuy(item)) {
-                Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+                Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
-                if (!(room.isOwner(this.client.getHabbo()) || room.hasRights(this.client.getHabbo()) || room.getGuildRightLevel(this.client.getHabbo()).equals(RoomRightLevels.GUILD_ADMIN))) {
+                if (!(room.getRoomInfo().isRoomOwner(this.client.getHabbo()) || room.hasRights(this.client.getHabbo()) || room.getGuildRightLevel(this.client.getHabbo()).equals(RoomRightLevels.GUILD_ADMIN))) {
                     return;
                 }
 

@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Slf4j
-public class InteractionGift extends HabboItem {
+public class InteractionGift extends RoomItem {
     public boolean explode = false;
     private int[] itemId;
     @Getter
@@ -121,8 +121,8 @@ public class InteractionGift extends HabboItem {
         }
     }
 
-    public THashSet<HabboItem> loadItems() {
-        THashSet<HabboItem> items = new THashSet<>();
+    public THashSet<RoomItem> loadItems() {
+        THashSet<RoomItem> items = new THashSet<>();
         for (int anItemId : this.itemId) {
             if (anItemId == 0)
                 continue;

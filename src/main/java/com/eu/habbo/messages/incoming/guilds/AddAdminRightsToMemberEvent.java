@@ -29,9 +29,11 @@ public class AddAdminRightsToMemberEvent extends MessageHandler {
                 return;
 
             if (habbo != null) {
-                Room room = habbo.getHabboInfo().getCurrentRoom();
-                if (room != null && room.getGuildId() == guildId) {
-                    room.refreshRightsForHabbo(habbo);
+                Room room = habbo.getRoomUnit().getRoom();
+                if (room != null) {
+                    if (room.getRoomInfo().getGuild().getId() == guildId) {
+                        room.refreshRightsForHabbo(habbo);
+                    }
                 }
             }
 

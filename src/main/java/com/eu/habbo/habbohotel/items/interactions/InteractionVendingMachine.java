@@ -3,9 +3,15 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
@@ -17,7 +23,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InteractionVendingMachine extends HabboItem {
+public class InteractionVendingMachine extends RoomItem {
     public InteractionVendingMachine(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.setExtradata("0");
@@ -56,7 +62,7 @@ public class InteractionVendingMachine extends HabboItem {
         boolean inActivatorSpace = false;
 
         for(RoomTile ignored : activatorTiles) {
-            if(unit.getCurrentLocation().is(unit.getX(), unit.getY())) {
+            if(unit.getCurrentPosition().is(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY())) {
                 inActivatorSpace = true;
             }
         }
@@ -67,6 +73,10 @@ public class InteractionVendingMachine extends HabboItem {
     }
 
     private void useVendingMachine(GameClient client, Room room, RoomUnit unit) {
+        if(!(unit instanceof RoomAvatar roomAvatar)) {
+            return;
+        }
+
         this.setExtradata("1");
         room.updateItem(this);
 
@@ -76,13 +86,13 @@ public class InteractionVendingMachine extends HabboItem {
             e.printStackTrace();
         }
 
-        if(!unit.isWalking() && !unit.hasStatus(RoomUnitStatus.SIT) && !unit.hasStatus(RoomUnitStatus.LAY)) {
-            this.rotateToMachine(unit);
+        if(!roomAvatar.isWalking() && !roomAvatar.hasStatus(RoomUnitStatus.SIT) && !roomAvatar.hasStatus(RoomUnitStatus.LAY)) {
+            this.rotateToMachine(roomAvatar);
         }
 
         Emulator.getThreading().run(() -> {
 
-            giveVendingMachineItem(room, unit);
+            giveVendingMachineItem(room, roomAvatar);
 
             if (this.getBaseItem().getEffectM() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.M)
                 room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectM(), -1);
@@ -93,8 +103,8 @@ public class InteractionVendingMachine extends HabboItem {
         }, 1500);
     }
 
-    public void giveVendingMachineItem(Room room, RoomUnit unit) {
-        Emulator.getThreading().run(new RoomUnitGiveHanditem(unit, room, this.getBaseItem().getRandomVendingItem()));
+    public void giveVendingMachineItem(Room room, RoomAvatar roomAvatar) {
+        Emulator.getThreading().run(new RoomUnitGiveHanditem(roomAvatar, room, this.getBaseItem().getRandomVendingItem()));
     }
 
     @Override
@@ -113,7 +123,7 @@ public class InteractionVendingMachine extends HabboItem {
         boolean inActivatorSpace = false;
 
         for(RoomTile tile : activatorTiles) {
-            if(unit.getCurrentLocation().is(tile.getX(), tile.getY())) {
+            if(unit.getCurrentPosition().is(tile.getX(), tile.getY())) {
                 inActivatorSpace = true;
             }
         }
@@ -121,7 +131,7 @@ public class InteractionVendingMachine extends HabboItem {
         if(!inActivatorSpace) {
             RoomTile tileToWalkTo = null;
             for(RoomTile tile : activatorTiles) {
-                if((tile.getState() == RoomTileState.OPEN || tile.getState() == RoomTileState.SIT) && (tileToWalkTo == null || tileToWalkTo.distance(unit.getCurrentLocation()) > tile.distance(unit.getCurrentLocation()))) {
+                if((tile.getState() == RoomTileState.OPEN || tile.getState() == RoomTileState.SIT) && (tileToWalkTo == null || tileToWalkTo.distance(unit.getCurrentPosition()) > tile.distance(unit.getCurrentPosition()))) {
                     tileToWalkTo = tile;
                 }
             }
@@ -151,7 +161,7 @@ public class InteractionVendingMachine extends HabboItem {
         super.run();
         if (this.getExtradata().equals("1")) {
             this.setExtradata("0");
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
             if (room != null) {
                 room.updateItem(this);
             }
@@ -174,11 +184,11 @@ public class InteractionVendingMachine extends HabboItem {
     }
 
     private void rotateToMachine(RoomUnit unit) {
-        RoomUserRotation rotation = RoomUserRotation.values()[Rotation.Calculate(unit.getX(), unit.getY(), this.getX(), this.getY())];
+        RoomRotation rotation = RoomRotation.values()[Rotation.Calculate(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY(), this.getX(), this.getY())];
 
         if(Math.abs(unit.getBodyRotation().getValue() - rotation.getValue()) > 1) {
             unit.setRotation(rotation);
-            unit.statusUpdate(true);
+            unit.setStatusUpdateNeeded(true);
         }
     }
 }

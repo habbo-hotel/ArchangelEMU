@@ -2,19 +2,16 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.ServerMessage;
-import com.eu.habbo.messages.incoming.wired.WiredSaveException;
 import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 
@@ -35,23 +32,29 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        Habbo habbo = room.getHabbo(roomUnit);
-        List<Bot> bots = room.getBots(this.getWiredSettings().getStringParam());
+        if(!(roomUnit instanceof RoomAvatar roomAvatar)) {
+            return false;
+        }
+
+        Habbo habbo = room.getHabbo(roomAvatar);
+        List<Bot> bots = room.getRoomUnitManager().getBotsByName(this.getWiredSettings().getStringParam());
         int itemId = this.getWiredSettings().getIntegerParams().get(PARAM_ITEM_ID);
 
         if (habbo != null && bots.size() == 1) {
             Bot bot = bots.get(0);
 
             List<Runnable> tasks = new ArrayList<>();
-            tasks.add(new RoomUnitGiveHanditem(roomUnit, room, itemId));
+            tasks.add(new RoomUnitGiveHanditem(roomAvatar, room, itemId));
             tasks.add(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, 0));
             tasks.add(() -> {
-                if(roomUnit.getRoom() != null && roomUnit.getRoom().getId() == room.getId() && roomUnit.getCurrentLocation().distance(bot.getRoomUnit().getCurrentLocation()) < 2) {
-                    WiredHandler.handle(WiredTriggerType.BOT_REACHED_AVTR, bot.getRoomUnit(), room, new Object[]{});
+                if(roomAvatar.getRoom() != null) {
+                    if (roomAvatar.getRoom().getRoomInfo().getId() == room.getRoomInfo().getId() && roomAvatar.getCurrentPosition().distance(bot.getRoomUnit().getCurrentPosition()) < 2) {
+                        WiredHandler.handle(WiredTriggerType.BOT_REACHED_AVTR, bot.getRoomUnit(), room, new Object[]{});
+                    }
                 }
             });
 
-            RoomTile tile = bot.getRoomUnit().getClosestAdjacentTile(roomUnit.getX(), roomUnit.getY(), true);
+            RoomTile tile = bot.getRoomUnit().getClosestAdjacentTile(roomAvatar.getCurrentPosition().getX(), roomAvatar.getCurrentPosition().getY(), true);
 
             if(tile != null) {
                 bot.getRoomUnit().setGoalLocation(tile);

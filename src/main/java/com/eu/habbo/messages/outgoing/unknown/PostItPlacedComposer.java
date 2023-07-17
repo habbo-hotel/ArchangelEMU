@@ -1,6 +1,6 @@
 package com.eu.habbo.messages.outgoing.unknown;
 
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class PostItPlacedComposer extends MessageComposer {
-    private final HabboItem item;
+    private final RoomItem item;
     private final int unknownInt;
 
     @Override

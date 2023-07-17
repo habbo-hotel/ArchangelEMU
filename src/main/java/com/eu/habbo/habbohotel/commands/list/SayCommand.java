@@ -28,7 +28,7 @@ public class SayCommand extends Command {
             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_say.user_not_found"), RoomChatMessageBubbles.ALERT);
             return true;
         } else {
-            if (target.getHabboInfo().getCurrentRoom() == null) {
+            if (target.getRoomUnit().getRoom() == null) {
                 gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_say.hotel_view"), params[1]), RoomChatMessageBubbles.ALERT);
                 return true;
             }
@@ -39,7 +39,7 @@ public class SayCommand extends Command {
             message = IntStream.range(2, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
         }
 
-        target.getHabboInfo().getCurrentRoom().sendComposer(new ChatMessageComposer(new RoomChatMessage(message, target, RoomChatMessageBubbles.NORMAL)).compose());
+        target.getRoomUnit().getRoom().sendComposer(new ChatMessageComposer(new RoomChatMessage(message, target, RoomChatMessageBubbles.NORMAL)).compose());
         gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_say"), params[1]).replace("%message%", message), RoomChatMessageBubbles.ALERT);
         return true;
     }

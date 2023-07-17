@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionGift;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.inventory.FurniListAddOrUpdateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
@@ -23,17 +23,17 @@ import java.util.Map;
 @AllArgsConstructor
 public class OpenGift implements Runnable {
 
-    private final HabboItem item;
+    private final RoomItem item;
     private final Habbo habbo;
     private final Room room;
 
     @Override
     public void run() {
         try {
-            HabboItem inside = null;
+            RoomItem inside = null;
 
-            THashSet<HabboItem> items = ((InteractionGift) this.item).loadItems();
-            for (HabboItem i : items) {
+            THashSet<RoomItem> items = ((InteractionGift) this.item).loadItems();
+            for (RoomItem i : items) {
                 if (inside == null)
                     inside = i;
 
@@ -58,7 +58,7 @@ public class OpenGift implements Runnable {
 
             Map<UnseenItemsComposer.AddHabboItemCategory, List<Integer>> unseenItems = new HashMap<>();
 
-            for (HabboItem item : items) {
+            for (RoomItem item : items) {
                 switch (item.getBaseItem().getType()) {
                     case WALL, FLOOR -> {
                         if (!unseenItems.containsKey(UnseenItemsComposer.AddHabboItemCategory.OWNED_FURNI))

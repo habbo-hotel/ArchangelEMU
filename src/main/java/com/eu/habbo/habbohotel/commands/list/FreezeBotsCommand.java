@@ -12,14 +12,14 @@ public class FreezeBotsCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() == null) {
             return false;
         }
 
-        if (gameClient.getHabbo().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getCurrentRoom().getOwnerId()
+        if (gameClient.getHabbo().getHabboInfo().getId() == gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getOwnerInfo().getId()
                 || gameClient.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
-            gameClient.getHabbo().getHabboInfo().getCurrentRoom().setAllowBotsWalk(!gameClient.getHabbo().getHabboInfo().getCurrentRoom().isAllowBotsWalk());
-            gameClient.getHabbo().whisper(gameClient.getHabbo().getHabboInfo().getCurrentRoom().isAllowBotsWalk() ? getTextsValue("commands.succes.cmd_freeze_bots.unfrozen") : getTextsValue("commands.succes.cmd_freeze_bots.frozen"), RoomChatMessageBubbles.ALERT);
+            gameClient.getHabbo().getRoomUnit().getRoom().setAllowBotsWalk(!gameClient.getHabbo().getRoomUnit().getRoom().isAllowBotsWalk());
+            gameClient.getHabbo().whisper(gameClient.getHabbo().getRoomUnit().getRoom().isAllowBotsWalk() ? getTextsValue("commands.succes.cmd_freeze_bots.unfrozen") : getTextsValue("commands.succes.cmd_freeze_bots.frozen"), RoomChatMessageBubbles.ALERT);
         } else {
             gameClient.getHabbo().whisper(getTextsValue("generic.cannot_do_that"), RoomChatMessageBubbles.ALERT);
         }

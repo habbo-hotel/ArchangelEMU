@@ -2,7 +2,7 @@ package com.eu.habbo.messages.outgoing.rooms.items;
 
 import com.eu.habbo.habbohotel.items.interactions.InteractionGift;
 import com.eu.habbo.habbohotel.items.interactions.InteractionMusicDisc;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class ObjectUpdateMessageComposer extends MessageComposer {
-    private final HabboItem item;
+    private final RoomItem item;
 
 
     @Override

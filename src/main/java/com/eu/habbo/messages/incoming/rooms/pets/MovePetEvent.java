@@ -3,17 +3,18 @@ package com.eu.habbo.messages.incoming.rooms.pets;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 
 public class MovePetEvent extends MessageHandler {
     @Override
     public void handle() {
-        Pet pet = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(this.packet.readInt());
+        int petId = this.packet.readInt();
+        Pet pet = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetById(petId);
 
         if (pet != null) {
-            Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+            Room room = this.client.getHabbo().getRoomUnit().getRoom();
             if (room != null && room.hasRights(this.client.getHabbo())) {
                 if (pet.getRoomUnit() != null) {
                     int x = this.packet.readInt();
@@ -24,9 +25,9 @@ public class MovePetEvent extends MessageHandler {
                     if (tile != null) {
                         pet.getRoomUnit().setLocation(tile);
                         pet.getRoomUnit().setPreviousLocation(tile);
-                        pet.getRoomUnit().setZ(tile.getZ());
-                        pet.getRoomUnit().setRotation(RoomUserRotation.fromValue(this.packet.readInt()));
-                        pet.getRoomUnit().setPreviousLocationZ(pet.getRoomUnit().getZ());
+                        pet.getRoomUnit().setCurrentZ(tile.getZ());
+                        pet.getRoomUnit().setRotation(RoomRotation.fromValue(this.packet.readInt()));
+                        pet.getRoomUnit().setPreviousLocationZ(pet.getRoomUnit().getCurrentZ());
                         room.sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
                         pet.setNeedsUpdate(true);
                     }

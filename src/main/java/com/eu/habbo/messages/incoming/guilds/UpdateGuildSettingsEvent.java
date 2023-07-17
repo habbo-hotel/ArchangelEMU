@@ -26,7 +26,7 @@ public class UpdateGuildSettingsEvent extends MessageHandler {
                 guild.setState(GuildState.valueOf(settingsEvent.getState()));
                 guild.setRights(settingsEvent.isRights());
 
-                Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
+                Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(guild.getRoomId());
                 if(room != null) {
                     room.refreshGuild(guild);
                 }

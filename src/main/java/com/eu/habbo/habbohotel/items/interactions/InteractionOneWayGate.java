@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InteractionOneWayGate extends HabboItem {
+public class InteractionOneWayGate extends RoomItem {
     private boolean walkable = false;
 
     public InteractionOneWayGate(ResultSet set, Item baseItem) throws SQLException {
@@ -76,48 +76,50 @@ public class InteractionOneWayGate extends HabboItem {
             if (unit == null)
                 return;
 
-            if (tileInfront.getX() == unit.getX() && tileInfront.getY() == unit.getY()) {
-                if (!currentLocation.hasUnits()) {
-                    List<Runnable> onSuccess = new ArrayList<>();
-                    List<Runnable> onFail = new ArrayList<>();
+            if (tileInfront.getX() == unit.getCurrentPosition().getX()) {
+                if (tileInfront.getY() == unit.getCurrentPosition().getY()) {
+                    if (!currentLocation.hasUnits()) {
+                        List<Runnable> onSuccess = new ArrayList<>();
+                        List<Runnable> onFail = new ArrayList<>();
 
-                    onSuccess.add(() -> {
-                        unit.setCanLeaveRoomByDoor(false);
-                        walkable = this.getBaseItem().allowWalk();
-                        RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation() + 4);
-                        unit.setGoalLocation(tile);
-                        Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
+                        onSuccess.add(() -> {
+                            unit.setCanLeaveRoomByDoor(false);
+                            walkable = this.getBaseItem().allowWalk();
+                            RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation() + 4);
+                            unit.setGoalLocation(tile);
+                            Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
 
-                        Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, unit, room, new Object[]{this}), 500);
-                    });
+                            Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, unit, room, new Object[]{this}), 500);
+                        });
 
-                    onFail.add(() -> {
-                        unit.setCanLeaveRoomByDoor(true);
-                        walkable = this.getBaseItem().allowWalk();
+                        onFail.add(() -> {
+                            unit.setCanLeaveRoomByDoor(true);
+                            walkable = this.getBaseItem().allowWalk();
+                            room.updateTile(currentLocation);
+                            room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
+                            unit.removeOverrideTile(currentLocation);
+                        });
+
+                        walkable = true;
                         room.updateTile(currentLocation);
-                        room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
-                        unit.removeOverrideTile(currentLocation);
-                    });
+                        unit.addOverrideTile(currentLocation);
+                        unit.setGoalLocation(currentLocation);
+                        Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
+                        room.sendComposer(new DiceValueMessageComposer(this.getId(), 1).compose());
 
-                    walkable = true;
-                    room.updateTile(currentLocation);
-                    unit.addOverrideTile(currentLocation);
-                    unit.setGoalLocation(currentLocation);
-                    Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
-                    room.sendComposer(new DiceValueMessageComposer(this.getId(), 1).compose());
-
-                    /*
-                    room.scheduledTasks.add(new Runnable()
-                    {
-                        @Override
-                        public void run()
+                        /*
+                        room.scheduledTasks.add(new Runnable()
                         {
-                            gate.roomUnitID = client.getHabbo().getRoomUnit().getId();
-                            room.updateTile(gatePosition);
-                            client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(InteractionOneWayGate.this.getX(), InteractionOneWayGate.this.getY()), InteractionOneWayGate.this.getRotation() + 4));
-                        }
-                    });
-                    */
+                            @Override
+                            public void run()
+                            {
+                                gate.roomUnitID = client.getHabbo().getRoomUnit().getId();
+                                room.updateTile(gatePosition);
+                                client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(InteractionOneWayGate.this.getX(), InteractionOneWayGate.this.getY()), InteractionOneWayGate.this.getRotation() + 4));
+                            }
+                        });
+                        */
+                    }
                 }
             }
         }

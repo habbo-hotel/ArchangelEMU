@@ -29,9 +29,9 @@ public class RoomItemCommand extends Command {
             }
         }
 
-        for (Habbo habbo : gameClient.getHabbo().getHabboInfo().getCurrentRoom().getHabbos()) {
+        for (Habbo habbo : gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos()) {
             habbo.getRoomUnit().setHandItem(itemId);
-            habbo.getHabboInfo().getCurrentRoom().sendComposer(new CarryObjectMessageComposer(habbo.getRoomUnit()).compose());
+            habbo.getRoomUnit().getRoom().sendComposer(new CarryObjectMessageComposer(habbo.getRoomUnit()).compose());
         }
 
         if (itemId > 0) {

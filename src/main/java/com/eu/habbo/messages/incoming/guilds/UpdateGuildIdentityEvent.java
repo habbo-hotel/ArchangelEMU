@@ -33,10 +33,12 @@ public class UpdateGuildIdentityEvent extends MessageHandler {
                 guild.needsUpdate = true;
                 guild.run();
 
-                Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
+                Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(guild.getRoomId());
 
-                if (room != null && !room.getCurrentHabbos().isEmpty()) {
-                    room.refreshGuild(guild);
+                if (room != null) {
+                    if (!room.getRoomUnitManager().getCurrentRoomHabbos().isEmpty()) {
+                        room.refreshGuild(guild);
+                    }
                 }
             }
         }

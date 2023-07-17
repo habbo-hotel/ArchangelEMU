@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.PostItColor;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPostIt;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,11 +34,11 @@ public class AddSpamWallPostItEvent extends MessageHandler {
         } else {
             String text = this.packet.readString();
 
-            Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-            HabboItem sticky = room.getHabboItem(itemId);
+            Room room = this.client.getHabbo().getRoomUnit().getRoom();
+            RoomItem sticky = room.getHabboItem(itemId);
 
             if (sticky != null && sticky.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
-                sticky.setUserId(room.getOwnerId());
+                sticky.setUserId(room.getRoomInfo().getOwnerInfo().getId());
 
                 if (color.equalsIgnoreCase(PostItColor.YELLOW.hexColor)) {
                     color = PostItColor.randomColorNotYellow().hexColor;
@@ -47,7 +47,7 @@ public class AddSpamWallPostItEvent extends MessageHandler {
                     text = InteractionPostIt.STICKYPOLE_PREFIX_TEXT.replace("\\r", "\r").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%timestamp%", LocalDate.now().toString()) + text;
                 }
 
-                sticky.setUserId(room.getOwnerId());
+                sticky.setUserId(room.getRoomInfo().getOwnerInfo().getId());
                 sticky.setExtradata(color + " " + text);
                 sticky.needsUpdate(true);
                 room.updateItem(sticky);

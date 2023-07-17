@@ -32,7 +32,7 @@ public class CreditsCommand extends BaseCreditsCommand {
                 if (habbo != null) {
                     if (credits != 0) {
                         habbo.giveCredits(credits);
-                        if (habbo.getHabboInfo().getCurrentRoom() != null)
+                        if (habbo.getRoomUnit().getRoom() != null)
                             habbo.whisper(replaceAmount(getTextsValue("commands.generic.cmd_credits.received"), params[2]), RoomChatMessageBubbles.ALERT);
                         else
                             habbo.alert(replaceAmount(getTextsValue("commands.generic.cmd_credits.received"), params[2]));

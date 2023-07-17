@@ -14,14 +14,14 @@ import com.eu.habbo.plugin.events.users.UserKickEvent;
 public class RoomUserKickEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
         int userId = this.packet.readInt();
 
-        Habbo target = room.getHabbo(userId);
+        Habbo target = room.getRoomUnitManager().getRoomHabboById(userId);
 
         if (target == null)
             return;
@@ -31,7 +31,7 @@ public class RoomUserKickEvent extends MessageHandler {
             return;
         }
 
-        if (room.isOwner(target)) {
+        if (room.getRoomInfo().isRoomOwner(target)) {
             return;
         }
 

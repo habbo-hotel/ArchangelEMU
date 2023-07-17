@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
@@ -27,22 +27,22 @@ public class PlaceObjectEvent extends MessageHandler {
             return;
         }
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
         if (room == null) {
             return;
         }
 
-        HabboItem rentSpace = null;
+        RoomItem rentSpace = null;
         if (this.client.getHabbo().getHabboStats().isRentingSpace()) {
             rentSpace = room.getHabboItem(this.client.getHabbo().getHabboStats().getRentedItemId());
         }
 
-        HabboItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
+        RoomItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
 
         if (item == null || item.getBaseItem().getInteractionType().getType() == InteractionPostIt.class)
             return;
 
-        if (room.getId() != item.getRoomId() && item.getRoomId() != 0)
+        if (room.getRoomInfo().getId() != item.getRoomId() && item.getRoomId() != 0)
             return;
 
         //TODO move this to canStackAt() though find a way to handle the different bubble alert keys
@@ -65,13 +65,13 @@ public class PlaceObjectEvent extends MessageHandler {
             if(tile == null)
             {
                 String userName  = this.client.getHabbo().getHabboInfo().getUsername();
-                int roomId = room.getId();
+                int roomId = room.getRoomInfo().getId();
                 ScripterManager.scripterDetected(this.client, "User [" + userName + "] tried to place a furni with itemId [" + itemId + "] at a tile which is not existing in room [" + roomId + "], tile: [" + x + "," + y + "]");
                 return;
             }
 
-            HabboItem buildArea = null;
-            for (HabboItem area : room.getRoomSpecialTypes().getItemsOfType(InteractionBuildArea.class)) {
+            RoomItem buildArea = null;
+            for (RoomItem area : room.getRoomSpecialTypes().getItemsOfType(InteractionBuildArea.class)) {
                 if (((InteractionBuildArea) area).inSquare(tile)) {
                     buildArea = area;
                 }

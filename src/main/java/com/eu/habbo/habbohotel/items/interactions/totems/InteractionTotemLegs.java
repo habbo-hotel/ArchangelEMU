@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 
 import java.sql.ResultSet;
@@ -41,7 +41,7 @@ public class InteractionTotemLegs extends InteractionDefault {
     }
 
     private void updateHead(Room room, RoomTile tile) {
-        for(HabboItem item : room.getItemsAt(tile)) {
+        for(RoomItem item : room.getItemsAt(tile)) {
             if(item instanceof InteractionTotemHead && item.getZ() > this.getZ())
                 ((InteractionTotemHead)item).updateTotemState(room);
         }

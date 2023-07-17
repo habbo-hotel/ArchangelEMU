@@ -2,17 +2,17 @@ package com.eu.habbo.plugin.events.users;
 
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 
 public class UserRolledEvent extends UserEvent {
 
-    public final HabboItem roller;
+    public final RoomItem roller;
 
 
     public final RoomTile location;
 
 
-    public UserRolledEvent(Habbo habbo, HabboItem roller, RoomTile location) {
+    public UserRolledEvent(Habbo habbo, RoomItem roller, RoomTile location) {
         super(habbo);
 
         this.roller = roller;

@@ -320,7 +320,7 @@ public class ModToolManager {
                 "DESC LIMIT ?) x " +
                 (groupUser ? "GROUP BY user_id" : "") +
                 ";")) {
-            statement.setInt(1, room.getId());
+            statement.setInt(1, room.getRoomInfo().getId());
 
             if (fromTimestamp > 0)
                 statement.setInt(2, fromTimestamp);
@@ -402,8 +402,8 @@ public class ModToolManager {
 
     public void kick(Habbo moderator, Habbo target, String message) {
         if (moderator.hasRight(Permission.ACC_SUPPORTTOOL) && !target.hasRight(Permission.ACC_UNKICKABLE)) {
-            if (target.getHabboInfo().getCurrentRoom() != null) {
-                Emulator.getGameEnvironment().getRoomManager().leaveRoom(target, target.getHabboInfo().getCurrentRoom());
+            if (target.getRoomUnit().getRoom() != null) {
+                Emulator.getGameEnvironment().getRoomManager().leaveRoom(target, target.getRoomUnit().getRoom());
             }
             this.alert(moderator, target, message, SupportUserAlertedReason.KICKED);
         }
@@ -472,18 +472,19 @@ public class ModToolManager {
         Emulator.getPluginManager().fireEvent(roomActionEvent);
 
         if (roomActionEvent.isChangeTitle()) {
-            room.setName(Emulator.getTexts().getValue("hotel.room.inappropriate.title"));
+            String name = Emulator.getTexts().getValue("hotel.room.inappropriate.title");
+            room.getRoomInfo().setName(name);
             room.setNeedsUpdate(true);
         }
 
         if (roomActionEvent.isLockDoor()) {
-            room.setState(RoomState.LOCKED);
+            room.getRoomInfo().setState(RoomState.LOCKED);
             room.setNeedsUpdate(true);
         }
 
         if (roomActionEvent.isKickUsers()) {
-            for (Habbo habbo : room.getHabbos()) {
-                if (!(habbo.hasRight(Permission.ACC_UNKICKABLE) || habbo.hasRight(Permission.ACC_SUPPORTTOOL) || room.isOwner(habbo))) {
+            for (Habbo habbo : room.getRoomUnitManager().getRoomHabbos()) {
+                if (!(habbo.hasRight(Permission.ACC_UNKICKABLE) || habbo.hasRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo))) {
                     room.kickHabbo(habbo, false);
                 }
             }

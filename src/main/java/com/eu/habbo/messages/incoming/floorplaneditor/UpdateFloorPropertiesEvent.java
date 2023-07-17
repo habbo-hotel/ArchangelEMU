@@ -28,12 +28,12 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
             return;
         }
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
-        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
             StringJoiner errors = new StringJoiner("<br />");
             String map = this.packet.readString();
             map = map.replace("X", "x");
@@ -165,18 +165,18 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
             }
 
             if (layout != null) {
-                room.setHasCustomLayout(true);
+                room.getRoomInfo().setModelOverridden(true);
                 room.setNeedsUpdate(true);
                 room.setLayout(layout);
-                room.setWallSize(wallSize);
-                room.setFloorSize(floorSize);
-                room.setWallHeight(wallHeight);
+                room.getRoomInfo().setWallThickness(wallSize);
+                room.getRoomInfo().setFloorThickness(floorSize);
+                room.getRoomInfo().setWallHeight(wallHeight);
                 room.save();
-                Collection<Habbo> habbos = new ArrayList<>(room.getUserCount());
-                habbos.addAll(room.getHabbos());
+                Collection<Habbo> habbos = new ArrayList<>(room.getRoomUnitManager().getRoomHabbosCount());
+                habbos.addAll(room.getRoomUnitManager().getRoomHabbos());
                 Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
-                room = Emulator.getGameEnvironment().getRoomManager().loadRoom(room.getId());
-                ServerMessage message = new RoomForwardMessageComposer(room.getId()).compose();
+                room = Emulator.getGameEnvironment().getRoomManager().getRoom(room.getRoomInfo().getId());
+                ServerMessage message = new RoomForwardMessageComposer(room.getRoomInfo().getId()).compose();
                 for (Habbo habbo : habbos) {
                     habbo.getClient().sendResponse(message);
                 }

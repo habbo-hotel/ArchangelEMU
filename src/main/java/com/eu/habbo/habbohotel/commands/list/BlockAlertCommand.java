@@ -11,7 +11,7 @@ public class BlockAlertCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() != null) {
             gameClient.getHabbo().getHabboStats().setBlockStaffAlerts(!gameClient.getHabbo().getHabboStats().isBlockStaffAlerts());
             gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_blockalert").replace("%state%", (gameClient.getHabbo().getHabboStats().isBlockStaffAlerts() ? getTextsValue("generic.on") : getTextsValue("generic.off"))), RoomChatMessageBubbles.ALERT);
 

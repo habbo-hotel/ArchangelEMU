@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 
 import java.util.stream.Collectors;
@@ -49,7 +49,7 @@ public abstract class BaseGiftCommand extends Command {
     }
 
     protected void createGift(String finalMessage, Habbo habbo, String[] params) {
-        HabboItem item = Emulator.getGameEnvironment().getItemManager().createItem(0, getBaseItem(params), 0, 0, "");
+        RoomItem item = Emulator.getGameEnvironment().getItemManager().createItem(0, getBaseItem(params), 0, 0, "");
 
         Item giftItem = Emulator.getGameEnvironment().getItemManager().getItem((Integer) Emulator.getGameEnvironment().getCatalogManager().giftFurnis.values().toArray()[Emulator.getRandom().nextInt(Emulator.getGameEnvironment().getCatalogManager().giftFurnis.size())]);
 

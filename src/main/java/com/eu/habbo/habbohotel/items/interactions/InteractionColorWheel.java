@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemUpdateMessageComposer;
 import com.eu.habbo.threading.runnables.RandomDiceNumber;
@@ -13,7 +13,7 @@ import com.eu.habbo.threading.runnables.RandomDiceNumber;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionColorWheel extends HabboItem {
+public class InteractionColorWheel extends RoomItem {
     private Runnable rollTaks;
 
     public InteractionColorWheel(ResultSet set, Item baseItem) throws SQLException {

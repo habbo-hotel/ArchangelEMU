@@ -19,7 +19,7 @@ public class AmbassadorAlertEvent extends MessageHandler {
 
         int userId = this.packet.readInt();
 
-        Habbo habbo = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(userId);
+        Habbo habbo = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboById(userId);
 
         if (habbo == null)
             return;

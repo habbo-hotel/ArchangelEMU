@@ -1,20 +1,15 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.triggers;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import gnu.trove.set.hash.THashSet;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
@@ -32,8 +27,8 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
             return false;
         }
 
-        if (stuff[0] instanceof HabboItem) {
-            return this.getWiredSettings().getItems(room).contains(stuff[0]) && room.getBots(this.getWiredSettings().getStringParam()).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
+        if (stuff[0] instanceof RoomItem) {
+            return this.getWiredSettings().getItems(room).contains(stuff[0]) && room.getRoomUnitManager().getBotsByName(this.getWiredSettings().getStringParam()).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
         }
 
         return false;
