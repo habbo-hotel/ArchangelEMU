@@ -1265,7 +1265,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         update = true;
                     }
                 } else if (thisTile.getState() == RoomTileState.SIT && (!unit.hasStatus(RoomUnitStatus.SIT) || unit.isSitUpdate())) {
-                    this.dance(unit, DanceType.NONE);
+                    if(unit instanceof RoomAvatar roomAvatar) {
+                        roomAvatar.setDance(DanceType.NONE);
+                    }
                     unit.setStatus(RoomUnitStatus.SIT, (Item.getCurrentHeight(topItem)) + "");
                     unit.setCurrentZ(topItem.getZ());
                     unit.setRotation(RoomRotation.values()[topItem.getRotation()]);
@@ -2852,7 +2854,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return;
         }
 
-        this.dance(habbo, DanceType.NONE);
+        habbo.getRoomUnit().setDance(DanceType.NONE);
         habbo.getRoomUnit().setCmdSitEnabled(true);
         habbo.getRoomUnit().setBodyRotation(RoomRotation.values()[habbo.getRoomUnit().getBodyRotation().getValue() - habbo.getRoomUnit().getBodyRotation().getValue() % 2]);
         habbo.getRoomUnit().setStatus(RoomUnitStatus.SIT, 0.5 + "");
@@ -3082,7 +3084,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         habbo.getRoomUnit().setIdle();
 
         if (habbo.getRoomUnit().getDanceType() != DanceType.NONE) {
-            this.dance(habbo, DanceType.NONE);
+            habbo.getRoomUnit().setDance(DanceType.NONE);
         }
 
         this.sendComposer(new SleepMessageComposer(habbo.getRoomUnit()).compose());
@@ -3094,24 +3096,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         habbo.getRoomUnit().resetIdleTimer();
         this.sendComposer(new SleepMessageComposer(habbo.getRoomUnit()).compose());
         WiredHandler.handle(WiredTriggerType.UNIDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
-    }
-
-    public void dance(Habbo habbo, DanceType danceType) {
-        this.dance(habbo.getRoomUnit(), danceType);
-    }
-
-    public void dance(RoomUnit unit, DanceType danceType) {
-        if (unit.getDanceType() != danceType) {
-            boolean isDancing = !unit.getDanceType().equals(DanceType.NONE);
-            unit.setDanceType(danceType);
-            this.sendComposer(new DanceMessageComposer(unit).compose());
-
-            if (danceType.equals(DanceType.NONE) && isDancing) {
-                WiredHandler.handle(WiredTriggerType.STOPS_DANCING, unit, this, new Object[]{unit});
-            } else if (!danceType.equals(DanceType.NONE) && !isDancing) {
-                WiredHandler.handle(WiredTriggerType.STARTS_DANCING, unit, this, new Object[]{unit});
-            }
-        }
     }
 
     public void addToWordFilter(String word) {

@@ -11,6 +11,9 @@ import com.eu.habbo.habbohotel.rooms.entities.items.types.RoomFloorItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.users.UserIdleEvent;
@@ -273,6 +276,20 @@ public class RoomAvatar extends RoomUnit {
             log.error("Caught exception", e);
             this.setStatusUpdateNeeded(false);
             return false;
+        }
+    }
+    
+    public void setDance(DanceType danceType) {
+        if (this.danceType != danceType) {
+            boolean isDancing = !this.danceType.equals(DanceType.NONE);
+            this.danceType = danceType;
+            this.getRoom().sendComposer(new DanceMessageComposer(this).compose());
+
+            if (danceType.equals(DanceType.NONE) && isDancing) {
+                WiredHandler.handle(WiredTriggerType.STOPS_DANCING, this, this.getRoom(), new Object[]{this});
+            } else if (!danceType.equals(DanceType.NONE) && !isDancing) {
+                WiredHandler.handle(WiredTriggerType.STARTS_DANCING, this, this.getRoom(), new Object[]{this});
+            }
         }
     }
 

@@ -16,6 +16,7 @@ import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
@@ -263,9 +264,11 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
 
         WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, roomUnit, room, new Object[]{this});
 
-        if ((this.getBaseItem().allowSit() || this.getBaseItem().allowLay()) && !roomUnit.getDanceType().equals(DanceType.NONE)) {
-            roomUnit.setDanceType(DanceType.NONE);
-            room.sendComposer(new DanceMessageComposer(roomUnit).compose());
+        if(roomUnit instanceof RoomAvatar roomAvatar) {
+            if ((this.getBaseItem().allowSit() || this.getBaseItem().allowLay()) && !roomAvatar.getDanceType().equals(DanceType.NONE)) {
+                roomAvatar.setDanceType(DanceType.NONE);
+                room.sendComposer(new DanceMessageComposer(roomAvatar).compose());
+            }
         }
 
         if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousLocation() != roomUnit.getGoalLocation() && roomUnit.getGoalLocation() == room.getLayout().getTile(this.x, this.y)) {

@@ -11,7 +11,6 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
-import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitSetGoalEvent;
@@ -103,9 +102,6 @@ public abstract class RoomUnit extends RoomEntity {
     private boolean invisible = false;
     @Setter
     private boolean canLeaveRoomByDoor = true;
-    @Getter
-    @Setter
-    private DanceType danceType;
     private int walkTimeOut;
     private int previousEffectId;
     private int previousEffectEndTimestamp;
@@ -135,7 +131,6 @@ public abstract class RoomUnit extends RoomEntity {
         this.timeInRoom = 0;
 
         //RoomAvatar
-        this.danceType = DanceType.NONE;
         this.previousEffectId = 0;
         this.previousEffectEndTimestamp = -1;
 
@@ -425,7 +420,6 @@ public abstract class RoomUnit extends RoomEntity {
         this.fastWalkEnabled = false;
         this.cmdTeleportEnabled = false;
         this.clearStatuses();
-        this.danceType = DanceType.NONE;
         this.previousEffectId = 0;
         this.previousEffectEndTimestamp = -1;
         this.isKicked = false;
