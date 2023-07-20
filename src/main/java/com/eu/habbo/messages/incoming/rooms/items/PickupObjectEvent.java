@@ -14,16 +14,15 @@ public class PickupObjectEvent extends MessageHandler {
 
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if (room == null)
+        if (room == null) {
             return;
+        }
 
         RoomItem item = room.getHabboItem(itemId);
 
-        if (item == null)
+        if (item == null || item instanceof InteractionPostIt) {
             return;
-
-        if (item instanceof InteractionPostIt)
-            return;
+        }
 
         if (item.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
             room.getRoomItemManager().pickUpItem(item, this.client.getHabbo());
@@ -32,14 +31,14 @@ public class PickupObjectEvent extends MessageHandler {
                 if (this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
                     item.setUserId(this.client.getHabbo().getHabboInfo().getId());
                 } else {
-                    if (this.client.getHabbo().getHabboInfo().getId() != room.getRoomInfo().getOwnerInfo().getId()) {
+                    if (!room.getRoomInfo().isRoomOwner(this.client.getHabbo())) {
                         if (item.getUserId() == room.getRoomInfo().getOwnerInfo().getId()) {
                             return;
                         }
                     }
                 }
 
-                room.ejectUserItem(item);
+                room.getRoomItemManager().ejectUserItem(item);
             }
         }
     }

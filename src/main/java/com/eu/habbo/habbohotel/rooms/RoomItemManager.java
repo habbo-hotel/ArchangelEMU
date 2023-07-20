@@ -574,6 +574,10 @@ public class RoomItemManager {
         Emulator.getThreading().run(item);
     }
 
+    public void ejectUserItem(RoomItem item) {
+        this.pickUpItem(item, null);
+    }
+
     public FurnitureMovementError furnitureFitsAt(RoomTile tile, RoomItem item, int rotation, boolean checkForUnits) {
         if (!this.room.getLayout().fitsOnMap(tile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))
             return FurnitureMovementError.INVALID_MOVE;

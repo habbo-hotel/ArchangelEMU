@@ -801,7 +801,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                      */
 
                     if (habbo.getRoomUnit().getEffectId() > 0 && millis / 1000 > habbo.getRoomUnit().getEffectEndTimestamp()) {
-                        habbo.getRoomUnit().giveEffect(0, -1)
+                        habbo.getRoomUnit().giveEffect(0, -1);
                     }
 
                     if (habbo.getRoomUnit().isKicked()) {
@@ -2890,10 +2890,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         for (RoomItem i : items) {
             this.getRoomItemManager().pickUpItem(i, null);
         }
-    }
-
-    public void ejectUserItem(RoomItem item) {
-        this.getRoomItemManager().pickUpItem(item, null);
     }
 
     public void ejectAll() {
