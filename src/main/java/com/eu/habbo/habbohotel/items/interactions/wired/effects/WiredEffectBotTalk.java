@@ -41,7 +41,7 @@ public class WiredEffectBotTalk extends InteractionWiredEffect {
                     .replace(Emulator.getTexts().getValue("wired.variable.pixels", "%pixels%"), habbo.getHabboInfo().getPixels() + "")
                     .replace(Emulator.getTexts().getValue("wired.variable.points", "%points%"), habbo.getHabboInfo().getCurrencyAmount(Emulator.getConfig().getInt("seasonal.primary.type")) + "")
                     .replace(Emulator.getTexts().getValue("wired.variable.owner", "%owner%"), room.getRoomInfo().getOwnerInfo().getUsername())
-                    .replace(Emulator.getTexts().getValue("wired.variable.item_count", "%item_count%"), room.itemCount() + "")
+                    .replace(Emulator.getTexts().getValue("wired.variable.item_count", "%item_count%"), room.getRoomItemManager().getCurrentItems().size() + "")
                     .replace(Emulator.getTexts().getValue("wired.variable.name", "%name%"), botName)
                     .replace(Emulator.getTexts().getValue("wired.variable.roomname", "%roomname%"), room.getRoomInfo().getName())
                     .replace(Emulator.getTexts().getValue("wired.variable.user_count", "%user_count%"), room.getRoomUnitManager().getRoomHabbosCount() + "");

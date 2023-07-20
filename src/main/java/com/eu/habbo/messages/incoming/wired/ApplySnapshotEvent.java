@@ -75,18 +75,19 @@ public class ApplySnapshotEvent extends MessageHandler {
 
                 // Match Position & Rotation
                 if (wired.shouldMatchRotation() && !wired.shouldMatchPosition()) {
-                    if (matchItem.getRotation() != setting.getRotation() && room.furnitureFitsAt(oldLocation, matchItem, setting.getRotation(), false) == FurnitureMovementError.NONE) {
-                        room.moveFurniTo(matchItem, oldLocation, setting.getRotation(), null, true);
+                    if (matchItem.getRotation() != setting.getRotation() && room.getRoomItemManager().furnitureFitsAt(oldLocation, matchItem, setting.getRotation(), false) == FurnitureMovementError.NONE) {
+                        room.getRoomItemManager().moveFurniTo(matchItem, oldLocation, setting.getRotation(), null, true, true);
                     }
                 } else if (wired.shouldMatchPosition()) {
                     boolean slideAnimation = !wired.shouldMatchRotation() || matchItem.getRotation() == setting.getRotation();
                     RoomTile newLocation = room.getLayout().getTile((short) setting.getX(), (short) setting.getY());
                     int newRotation = wired.shouldMatchRotation() ? setting.getRotation() : matchItem.getRotation();
 
-                    if (newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != matchItem.getRotation())
-                            && room.furnitureFitsAt(newLocation, matchItem, newRotation, true) == FurnitureMovementError.NONE
-                            && room.moveFurniTo(matchItem, newLocation, newRotation, null, !slideAnimation) == FurnitureMovementError.NONE && slideAnimation) {
-                        room.sendComposer(new FloorItemOnRollerComposer(matchItem, null, oldLocation, oldZ, newLocation, matchItem.getZ(), 0, room).compose());
+                    if (newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != matchItem.getRotation()) && room.getRoomItemManager().furnitureFitsAt(newLocation, matchItem, newRotation, true) == FurnitureMovementError.NONE) {
+                        boolean sendUpdates = !slideAnimation;
+                        if (room.getRoomItemManager().moveFurniTo(matchItem, newLocation, newRotation, null, sendUpdates, true) == FurnitureMovementError.NONE && slideAnimation) {
+                            room.sendComposer(new FloorItemOnRollerComposer(matchItem, null, oldLocation, oldZ, newLocation, matchItem.getZ(), 0, room).compose());
+                        }
                     }
                 }
             });

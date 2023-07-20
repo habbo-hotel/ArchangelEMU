@@ -43,7 +43,7 @@ public class WiredEffectKickRoom extends InteractionWiredEffect {
                 return true;
             }
 
-            room.giveEffect(habbo, 4, 2);
+            habbo.getRoomUnit().giveEffect(4, 2);
 
             if (!this.getWiredSettings().getStringParam().isEmpty()) {
                 habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(this.getWiredSettings().getStringParam(), habbo, habbo, RoomChatMessageBubbles.ALERT)));

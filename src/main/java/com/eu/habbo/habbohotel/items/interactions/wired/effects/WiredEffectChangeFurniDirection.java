@@ -87,7 +87,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
 
             RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), setting.getDirection().getValue());
             int count = 1;
-            while ((targetTile == null || targetTile.getState() == RoomTileState.INVALID || !room.tileWalkable(targetTile) || room.furnitureFitsAt(targetTile, item, item.getRotation(), false) != FurnitureMovementError.NONE) && count < 8) {
+            while ((targetTile == null || targetTile.getState() == RoomTileState.INVALID || !room.tileWalkable(targetTile) || room.getRoomItemManager().furnitureFitsAt(targetTile, item, item.getRotation(), false) != FurnitureMovementError.NONE) && count < 8) {
                 setting.setDirection(this.nextDirection(setting.getDirection()));
 
                 RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), setting.getDirection().getValue());
@@ -103,10 +103,10 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
             RoomTile newTargetTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), newDirectionValue);
 
             if(item.getRotation() != setting.getRotation()) {
-                if(room.furnitureFitsAt(newTargetTile, item, setting.getRotation(), false) != FurnitureMovementError.NONE)
+                if(room.getRoomItemManager().furnitureFitsAt(newTargetTile, item, setting.getRotation(), false) != FurnitureMovementError.NONE)
                     continue;
 
-                room.moveFurniTo(item, newTargetTile, setting.getRotation(), null, true);
+                room.getRoomItemManager().moveFurniTo(item, newTargetTile, setting.getRotation(), null, true, true);
             }
 
             boolean hasRoomUnits = false;
@@ -122,11 +122,11 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 }
             }
 
-            if (newTargetTile != null && newTargetTile.getState() != RoomTileState.INVALID && room.furnitureFitsAt(targetTile, item, item.getRotation(), false) == FurnitureMovementError.NONE) {
+            if (newTargetTile != null && newTargetTile.getState() != RoomTileState.INVALID && room.getRoomItemManager().furnitureFitsAt(targetTile, item, item.getRotation(), false) == FurnitureMovementError.NONE) {
                 if (!hasRoomUnits) {
                     RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
                     double oldZ = item.getZ();
-                    if(room.moveFurniTo(item, newTargetTile, item.getRotation(), null, false) == FurnitureMovementError.NONE) {
+                    if (room.getRoomItemManager().moveFurniTo(item, newTargetTile, item.getRotation(), null, false, true) == FurnitureMovementError.NONE) {
                         room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, targetTile, item.getZ(), 0, room).compose());
                     }
                 }

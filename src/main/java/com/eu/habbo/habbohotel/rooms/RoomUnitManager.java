@@ -85,7 +85,9 @@ public class RoomUnitManager {
                         bot.getRoomUnit().setRoomUnitType(RoomUnitType.BOT);
                         bot.getRoomUnit().setDanceType(DanceType.values()[set.getInt("dance")]);
                         bot.getRoomUnit().setInRoom(true);
-                        this.room.giveEffect(bot.getRoomUnit(), set.getInt("effect"), Integer.MAX_VALUE);
+
+                        bot.getRoomUnit().giveEffect(set.getInt("effect"), Integer.MAX_VALUE, false);
+
                         this.addRoomUnit(bot);
                     }
                 }

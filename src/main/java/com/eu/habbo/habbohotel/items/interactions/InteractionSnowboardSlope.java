@@ -28,7 +28,9 @@ public class InteractionSnowboardSlope extends InteractionMultiHeight {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        room.giveEffect(roomUnit, 97, -1);
+        if(roomUnit instanceof RoomAvatar roomAvatar) {
+            roomAvatar.giveEffect(97, -1);
+        }
     }
 
     @Override
@@ -36,7 +38,7 @@ public class InteractionSnowboardSlope extends InteractionMultiHeight {
         super.onWalkOff(roomUnit, room, objects);
 
         if (roomUnit instanceof RoomAvatar roomAvatar && roomAvatar.getEffectId() == 97) {
-            room.giveEffect(roomAvatar, 0, -1);
+            roomAvatar.giveEffect(0, -1);
         }
     }
 
@@ -70,7 +72,7 @@ public class InteractionSnowboardSlope extends InteractionMultiHeight {
     public void onPickUp(Room room) {
         for (Habbo habbo : room.getHabbosOnItem(this)) {
             if (habbo.getRoomUnit().getEffectId() == 97) {
-                room.giveEffect(habbo, 0, -1);
+                habbo.getRoomUnit().giveEffect(0, -1);
             }
         }
     }
@@ -81,7 +83,7 @@ public class InteractionSnowboardSlope extends InteractionMultiHeight {
 
         for (Habbo habbo : room.getHabbosOnItem(this)) {
             if (habbo.getRoomUnit().getEffectId() == 97 && !newRect.contains(habbo.getRoomUnit().getCurrentPosition().getX(), habbo.getRoomUnit().getCurrentPosition().getY())) {
-                room.giveEffect(habbo, 0, -1);
+                habbo.getRoomUnit().giveEffect(0, -1);
             }
         }
     }

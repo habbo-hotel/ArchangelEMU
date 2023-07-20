@@ -290,8 +290,7 @@ public class HabboInfo implements Runnable {
         riding.setTask(PetTasks.FREE);
         this.setRiding(null);
 
-        if (room != null)
-            room.giveEffect(habbo, 0, -1);
+        habbo.getRoomUnit().giveEffect(0, -1);
 
         RoomUnit roomUnit = habbo.getRoomUnit();
         if (roomUnit == null)
@@ -300,8 +299,8 @@ public class HabboInfo implements Runnable {
         roomUnit.setCurrentZ(riding.getRoomUnit().getCurrentZ());
         roomUnit.setPreviousLocationZ(riding.getRoomUnit().getCurrentZ());
         roomUnit.stopWalking();
-        if (room != null)
-            room.sendComposer(new UserUpdateComposer(roomUnit).compose());
+
+        room.sendComposer(new UserUpdateComposer(roomUnit).compose());
 
         List<RoomTile> availableTiles = isRemoving ? new ArrayList<>() : room.getLayout().getWalkableTilesAround(roomUnit.getCurrentPosition());
 

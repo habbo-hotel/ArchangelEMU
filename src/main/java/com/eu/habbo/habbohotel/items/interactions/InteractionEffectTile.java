@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
@@ -67,10 +68,12 @@ public class InteractionEffectTile extends InteractionPressurePlate {
     }
 
     private void giveEffect(Room room, RoomUnit roomUnit, HabboGender gender) {
-        if (gender.equals(HabboGender.M)) {
-            room.giveEffect(roomUnit, this.getBaseItem().getEffectM(), -1);
-        } else {
-            room.giveEffect(roomUnit, this.getBaseItem().getEffectF(), -1);
+        if(roomUnit instanceof RoomAvatar roomAvatar) {
+            if (gender.equals(HabboGender.M)) {
+                roomAvatar.giveEffect(this.getBaseItem().getEffectM(), -1);
+            } else {
+                roomAvatar.giveEffect(this.getBaseItem().getEffectF(), -1);
+            }
         }
     }
 

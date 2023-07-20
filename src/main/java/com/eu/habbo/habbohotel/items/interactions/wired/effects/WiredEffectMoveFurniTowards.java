@@ -54,7 +54,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
             if (!layout.tileExists(tile.getX(), tile.getY()))
                 continue;
 
-            if (room.furnitureFitsAt(tile, item, item.getRotation()) == FurnitureMovementError.INVALID_MOVE)
+            if (room.getRoomItemManager().furnitureFitsAt(tile, item, item.getRotation(), true) == FurnitureMovementError.INVALID_MOVE)
                 continue;
 
             RoomItem topItem = room.getTopItemAt(tile.getX(), tile.getY());
@@ -200,8 +200,8 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
 
             if(newTile != null) {
                 lastDirections.put(item.getId(), moveDirection);
-                if(newTile.getState() != RoomTileState.INVALID && newTile != oldLocation && room.furnitureFitsAt(newTile, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
-                    if (room.moveFurniTo(item, newTile, item.getRotation(), null, false) == FurnitureMovementError.NONE) {
+                if (newTile.getState() != RoomTileState.INVALID && newTile != oldLocation && room.getRoomItemManager().furnitureFitsAt(newTile, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
+                    if (room.getRoomItemManager().moveFurniTo(item, newTile, item.getRotation(), null, false, true) == FurnitureMovementError.NONE) {
                         room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newTile, item.getZ(), 0, room).compose());
                     }
                 }

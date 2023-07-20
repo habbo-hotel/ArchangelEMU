@@ -208,6 +208,6 @@ public class FreezeGamePlayer extends GamePlayer {
         if (this.dead)
             return;
 
-        super.getHabbo().getRoomUnit().getRoom().giveEffect(super.getHabbo(), this.correctEffectId(), -1, true);
+        super.getHabbo().getRoomUnit().giveEffect(this.correctEffectId(), -1, true);
     }
 }

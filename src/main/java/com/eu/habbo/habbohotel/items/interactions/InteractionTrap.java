@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 
@@ -35,24 +35,24 @@ public class InteractionTrap extends InteractionDefault {
         }
 
         if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
-            if (roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
+            if (roomUnit instanceof RoomHabbo roomHabbo) {
 
-                if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
-                    room.giveEffect(habbo, this.getBaseItem().getEffectM(), -1);
+                if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0 && roomHabbo.getEffectId() != this.getBaseItem().getEffectM()) {
+                    roomHabbo.giveEffect(this.getBaseItem().getEffectM(), -1);
                     return;
                 }
 
-                if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF()) {
-                    room.giveEffect(habbo, this.getBaseItem().getEffectF(), -1);
+                if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0 && roomHabbo.getEffectId() != this.getBaseItem().getEffectF()) {
+                    roomHabbo.giveEffect(this.getBaseItem().getEffectF(), -1);
                     return;
                 }
 
 
-                roomUnit.setCanWalk(false);
+                roomHabbo.setCanWalk(false);
                 Emulator.getThreading().run(() -> {
-                    room.giveEffect(roomUnit, 0, -1);
+                    roomHabbo.giveEffect(0, -1);
                     roomUnit.setCanWalk(true);
-                    room.giveEffect(roomUnit, effect, -1);
+                    roomHabbo.giveEffect(effect, -1);
                 }, delay);
             }
         }

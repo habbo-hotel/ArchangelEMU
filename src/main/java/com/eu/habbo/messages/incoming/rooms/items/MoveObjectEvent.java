@@ -26,14 +26,14 @@ public class MoveObjectEvent extends MessageHandler {
         int rotation = this.packet.readInt();
         RoomTile tile = room.getLayout().getTile((short) x, (short) y);
 
-        FurnitureMovementError error = room.canPlaceFurnitureAt(item, this.client.getHabbo(), tile, rotation);
+        FurnitureMovementError error = room.getRoomItemManager().canPlaceFurnitureAt(item, this.client.getHabbo(), tile, rotation);
         if (!error.equals(FurnitureMovementError.NONE)) {
             this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
             this.client.sendResponse(new ObjectUpdateMessageComposer(item));
             return;
         }
 
-        error = room.moveFurniTo(item, tile, rotation, this.client.getHabbo());
+        error = room.getRoomItemManager().moveFurniTo(item, tile, rotation, this.client.getHabbo());
         if (!error.equals(FurnitureMovementError.NONE)) {
             this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
             this.client.sendResponse(new ObjectUpdateMessageComposer(item));

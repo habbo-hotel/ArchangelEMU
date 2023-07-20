@@ -11,7 +11,7 @@ public class HabnamCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (gameClient.getHabbo().getHabboStats().hasActiveClub() && gameClient.getHabbo().getRoomUnit().getRoom() != null) {
-            gameClient.getHabbo().getRoomUnit().getRoom().giveEffect(gameClient.getHabbo(), 140, 30);
+            gameClient.getHabbo().getRoomUnit().giveEffect(140, 30);
             return true;
         }
 

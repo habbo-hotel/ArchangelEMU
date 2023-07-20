@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.Event;
@@ -296,6 +297,37 @@ public class RoomAvatar extends RoomUnit {
         this.handItem = handItem;
         this.handItemTimestamp = System.currentTimeMillis();
         return this;
+    }
+
+    public void giveEffect(int effectId, int duration) {
+        this.giveEffect(effectId, duration, false);
+    }
+
+    public void giveEffect(int effectId, int duration, boolean forceEffect) {
+        if (!this.isInRoom()) {
+            return;
+        } else {
+            RoomAvatar roomAvatar = this;
+        }
+
+        if(this instanceof RoomHabbo) {
+            Habbo habbo = this.getRoom().getRoomUnitManager().getHabboByRoomUnit(this);
+            if(habbo == null || (habbo.getHabboInfo().isInGame() && !forceEffect)) {
+                return;
+            }
+        }
+
+        if (duration == -1 || duration == Integer.MAX_VALUE) {
+            duration = Integer.MAX_VALUE;
+        } else {
+            duration += Emulator.getIntUnixTimestamp();
+        }
+
+        if ((this.getRoom().isAllowEffects() || forceEffect) && !this.isSwimming()) {
+            this.setEffectId(effectId);
+            this.setEffectEndTimestamp(duration);
+            this.getRoom().sendComposer(new AvatarEffectMessageComposer(this).compose());
+        }
     }
 
     private void handleSitStatus(RoomItem topItem) {

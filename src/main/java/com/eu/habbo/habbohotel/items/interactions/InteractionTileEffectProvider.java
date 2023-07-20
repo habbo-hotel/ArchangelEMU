@@ -57,6 +57,6 @@ public class InteractionTileEffectProvider extends InteractionCustomValues {
             room.updateItem(proxy);
         }, 500);
 
-        room.giveEffect(roomHabbo, effectId, -1);
+        roomHabbo.giveEffect(effectId, -1);
     }
 }

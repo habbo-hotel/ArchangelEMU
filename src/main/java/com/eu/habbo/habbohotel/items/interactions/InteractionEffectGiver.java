@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,7 +39,10 @@ public class InteractionEffectGiver extends InteractionDefault {
         if (!this.getExtradata().equals("0")) return;
 
         RoomItem instance = this;
-        room.giveEffect(roomUnit, this.getBaseItem().getRandomVendingItem(), -1);
+
+        if(roomUnit instanceof RoomAvatar roomAvatar) {
+            roomAvatar.giveEffect(this.getBaseItem().getRandomVendingItem(), -1);
+        }
 
         if (this.getBaseItem().getStateCount() > 1) {
             this.setExtradata("1");

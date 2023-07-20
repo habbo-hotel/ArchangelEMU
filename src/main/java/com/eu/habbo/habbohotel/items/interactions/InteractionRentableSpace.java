@@ -167,7 +167,7 @@ public class InteractionRentableSpace extends RoomItem {
 
         for (RoomItem item : items) {
             if (item.getUserId() == this.renterId) {
-                room.pickUpItem(item, null);
+                room.getRoomItemManager().pickUpItem(item, null);
             }
         }
 

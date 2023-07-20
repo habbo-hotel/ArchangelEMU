@@ -95,9 +95,9 @@ public class InteractionVendingMachine extends RoomItem {
             giveVendingMachineItem(room, roomAvatar);
 
             if (this.getBaseItem().getEffectM() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.M)
-                room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectM(), -1);
+                client.getHabbo().getRoomUnit().giveEffect(this.getBaseItem().getEffectM(), -1);
             if (this.getBaseItem().getEffectF() > 0 && client.getHabbo().getHabboInfo().getGender() == HabboGender.F)
-                room.giveEffect(client.getHabbo(), this.getBaseItem().getEffectF(), -1);
+                client.getHabbo().getRoomUnit().giveEffect(this.getBaseItem().getEffectF(), -1);
 
             Emulator.getThreading().run(this, 500);
         }, 1500);

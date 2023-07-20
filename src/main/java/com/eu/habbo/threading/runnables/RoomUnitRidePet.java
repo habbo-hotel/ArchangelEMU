@@ -23,7 +23,7 @@ public class RoomUnitRidePet implements Runnable {
 
         if (habbo.getRoomUnit().getCurrentPosition().distance(pet.getRoomUnit().getCurrentPosition()) <= 1) {
             habbo.getRoomUnit().stopWalking();
-            habbo.getRoomUnit().getRoom().giveEffect(habbo, 77, -1);
+            habbo.getRoomUnit().giveEffect(77, -1);
             habbo.getHabboInfo().setRiding(pet);
             habbo.getRoomUnit().setCurrentPosition(this.pet.getRoomUnit().getCurrentPosition());
             habbo.getRoomUnit().setPreviousLocation(this.pet.getRoomUnit().getCurrentPosition());

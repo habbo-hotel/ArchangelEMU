@@ -4,10 +4,13 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
@@ -63,11 +66,14 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
 
             boolean slideAnimation = item.getRotation() == newRotation;
 
-            FurnitureMovementError furniMoveTest = room.furnitureFitsAt(newLocation, item, newRotation, true);
+            FurnitureMovementError furniMoveTest = room.getRoomItemManager().furnitureFitsAt(newLocation, item, newRotation, true);
             if(newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && (furniMoveTest == FurnitureMovementError.NONE || ((furniMoveTest == FurnitureMovementError.TILE_HAS_BOTS || furniMoveTest == FurnitureMovementError.TILE_HAS_HABBOS || furniMoveTest == FurnitureMovementError.TILE_HAS_PETS) && newLocation == oldLocation))) {
-                if(room.furnitureFitsAt(newLocation, item, newRotation, false) == FurnitureMovementError.NONE && room.moveFurniTo(item, newLocation, newRotation, null, !slideAnimation) == FurnitureMovementError.NONE) {
-                    if(slideAnimation) {
-                        room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
+                if(room.getRoomItemManager().furnitureFitsAt(newLocation, item, newRotation, false) == FurnitureMovementError.NONE) {
+                    boolean sendUpdates = !slideAnimation;
+                    if (room.getRoomItemManager().moveFurniTo(item, newLocation, newRotation, null, sendUpdates, true) == FurnitureMovementError.NONE) {
+                        if (slideAnimation) {
+                            room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
+                        }
                     }
                 }
             }

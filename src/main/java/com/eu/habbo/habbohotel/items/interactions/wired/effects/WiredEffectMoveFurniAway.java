@@ -73,8 +73,8 @@ public class WiredEffectMoveFurniAway extends InteractionWiredEffect {
                 RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
                 double oldZ = item.getZ();
 
-                if(newLocation != null && newLocation.getState() != RoomTileState.INVALID && newLocation != oldLocation && room.furnitureFitsAt(newLocation, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
-                    if(room.moveFurniTo(item, newLocation, item.getRotation(), null, false) == FurnitureMovementError.NONE) {
+                if (newLocation != null && newLocation.getState() != RoomTileState.INVALID && newLocation != oldLocation && room.getRoomItemManager().furnitureFitsAt(newLocation, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
+                    if (room.getRoomItemManager().moveFurniTo(item, newLocation, item.getRotation(), null, false, true) == FurnitureMovementError.NONE) {
                         room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                     }
                 }

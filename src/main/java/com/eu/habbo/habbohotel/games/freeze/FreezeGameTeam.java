@@ -44,12 +44,12 @@ public class FreezeGameTeam extends GameTeam {
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-            room.giveEffect(habbo, nextEffectM, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectM, nextEffectDuration, true);
             return;
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-            room.giveEffect(habbo, nextEffectF, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectF, nextEffectDuration, true);
         }
 
         roomUnit.setCanWalk(true);
@@ -68,6 +68,6 @@ public class FreezeGameTeam extends GameTeam {
         RoomHabbo roomHabbo = gamePlayer.getHabbo().getRoomUnit();
         if (roomHabbo.getEffectId() > 0)
             roomHabbo.setPreviousEffectId(roomHabbo.getEffectId(), roomHabbo.getPreviousEffectEndTimestamp());
-        gamePlayer.getHabbo().getRoomUnit().getRoom().giveEffect(gamePlayer.getHabbo(), FreezeGame.effectId + this.teamColor.type, -1, true);
+        gamePlayer.getHabbo().getRoomUnit().giveEffect(FreezeGame.effectId + this.teamColor.type, -1, true);
     }
 }

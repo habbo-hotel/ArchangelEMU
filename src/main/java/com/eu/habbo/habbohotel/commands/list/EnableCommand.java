@@ -39,7 +39,7 @@ public class EnableCommand extends Command {
                             return true;
                         }
 
-                        target.getRoomUnit().getRoom().giveEffect(target, effectId, -1);
+                        target.getRoomUnit().giveEffect(effectId, -1);
                     }
                 } catch (Exception e) {
                     log.error("Caught exception", e);

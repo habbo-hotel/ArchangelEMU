@@ -3,9 +3,12 @@ package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.InteractionWiredMatchFurniSettings;
-import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
@@ -63,8 +66,8 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
             double oldZ = item.getZ();
 
             if(rotation && !position) {
-                if(item.getRotation() != furniSettings.getRotation() && room.furnitureFitsAt(oldLocation, item, furniSettings.getRotation(), false) == FurnitureMovementError.NONE) {
-                    room.moveFurniTo(item, oldLocation, furniSettings.getRotation(), null, true);
+                if (item.getRotation() != furniSettings.getRotation() && room.getRoomItemManager().furnitureFitsAt(oldLocation, item, furniSettings.getRotation(), false) == FurnitureMovementError.NONE) {
+                    room.getRoomItemManager().moveFurniTo(item, oldLocation, furniSettings.getRotation(), null, true, true);
                 }
             }
             else if(position) {
@@ -72,9 +75,10 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
                 RoomTile newLocation = room.getLayout().getTile((short) furniSettings.getX(), (short) furniSettings.getY());
                 int newRotation = rotation ? furniSettings.getRotation() : item.getRotation();
 
-                if(newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && room.furnitureFitsAt(newLocation, item, newRotation, true) == FurnitureMovementError.NONE) {
-                    if(room.moveFurniTo(item, newLocation, newRotation, null, !slideAnimation) == FurnitureMovementError.NONE) {
-                        if(slideAnimation) {
+                if (newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && room.getRoomItemManager().furnitureFitsAt(newLocation, item, newRotation, true) == FurnitureMovementError.NONE) {
+                    boolean sendUpdates = !slideAnimation;
+                    if (room.getRoomItemManager().moveFurniTo(item, newLocation, newRotation, null, sendUpdates, true) == FurnitureMovementError.NONE) {
+                        if (slideAnimation) {
                             room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                         }
                     }

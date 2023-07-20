@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
 
@@ -86,12 +87,12 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
             }
 
             if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-                room.giveEffect(habbo, nextEffectM, nextEffectDuration, true);
+                habbo.getRoomUnit().giveEffect(nextEffectM, nextEffectDuration, true);
                 return;
             }
 
             if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-                room.giveEffect(habbo, nextEffectF, nextEffectDuration, true);
+                habbo.getRoomUnit().giveEffect(nextEffectF, nextEffectDuration, true);
             }
         }
     }
@@ -164,7 +165,11 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
     private void setEffect(Room room, int effectId) {
         if (this.roomUnitId == -1) return;
 
-        room.giveEffect(this.getCurrentRoomUnit(room), effectId, -1);
+        RoomUnit roomUnit = this.getCurrentRoomUnit(room);
+
+        if(roomUnit instanceof RoomAvatar roomAvatar) {
+            roomAvatar.giveEffect(effectId, -1);
+        }
     }
 
     private void reset(Room room) {

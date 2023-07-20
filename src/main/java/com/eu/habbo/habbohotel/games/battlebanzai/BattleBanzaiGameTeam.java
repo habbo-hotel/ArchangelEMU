@@ -27,7 +27,7 @@ public class BattleBanzaiGameTeam extends GameTeam {
             roomHabbo.setPreviousEffectEndTimestamp(roomHabbo.getPreviousEffectEndTimestamp());
         }
 
-        gamePlayer.getHabbo().getRoomUnit().getRoom().giveEffect(gamePlayer.getHabbo(), BattleBanzaiGame.effectId + this.teamColor.type, -1, true);
+        gamePlayer.getHabbo().getRoomUnit().giveEffect(BattleBanzaiGame.effectId + this.teamColor.type, -1, true);
     }
 
     @Override
@@ -56,12 +56,12 @@ public class BattleBanzaiGameTeam extends GameTeam {
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-            room.giveEffect(habbo, nextEffectM, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectM, nextEffectDuration, true);
             return;
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-            room.giveEffect(habbo, nextEffectF, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectF, nextEffectDuration, true);
         }
 
         roomUnit.setCanWalk(true);

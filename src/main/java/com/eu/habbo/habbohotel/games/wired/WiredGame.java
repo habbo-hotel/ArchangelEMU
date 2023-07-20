@@ -4,7 +4,6 @@ import com.eu.habbo.habbohotel.games.*;
 import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
@@ -35,14 +34,14 @@ public class WiredGame extends Game {
         RoomHabbo roomHabbo = habbo.getRoomUnit();
         if (roomHabbo.getEffectId() > 0)
             roomHabbo.setPreviousEffectId(roomHabbo.getEffectId(), roomHabbo.getPreviousEffectEndTimestamp());
-        this.room.giveEffect(habbo, FreezeGame.effectId + teamColor.type, -1, true);
+        roomHabbo.giveEffect(FreezeGame.effectId + teamColor.type, -1, true);
         return super.addHabbo(habbo, teamColor);
     }
 
     @Override
     public void removeHabbo(Habbo habbo) {
         super.removeHabbo(habbo);
-        RoomUnit roomUnit = habbo.getRoomUnit();
+        RoomHabbo roomUnit = habbo.getRoomUnit();
         Room room = this.room;
         if (room == null) return;
 
@@ -61,12 +60,12 @@ public class WiredGame extends Game {
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-            room.giveEffect(habbo, nextEffectM, nextEffectDuration, true);
+            roomUnit.giveEffect(nextEffectM, nextEffectDuration, true);
             return;
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-            room.giveEffect(habbo, nextEffectF, nextEffectDuration, true);
+            roomUnit.giveEffect(nextEffectF, nextEffectDuration, true);
         }
     }
 

@@ -15,7 +15,7 @@ public class MoonwalkCommand extends Command {
             if (gameClient.getHabbo().getRoomUnit().getEffectId() == 136)
                 effect = 0;
 
-            gameClient.getHabbo().getRoomUnit().getRoom().giveEffect(gameClient.getHabbo(), effect, -1);
+            gameClient.getHabbo().getRoomUnit().giveEffect(effect, -1);
 
             return true;
         }

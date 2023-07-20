@@ -93,7 +93,7 @@ public class PlaceObjectEvent extends MessageHandler {
                 }
             }
 
-            FurnitureMovementError error = room.placeFloorFurniAt(item, tile, rotation, this.client.getHabbo());
+            FurnitureMovementError error = room.getRoomItemManager().placeFloorItemAt(item, tile, rotation, this.client.getHabbo());
 
             if (!error.equals(FurnitureMovementError.NONE)) {
                 this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
@@ -101,7 +101,7 @@ public class PlaceObjectEvent extends MessageHandler {
             }
 
         } else {
-            FurnitureMovementError error = room.placeWallFurniAt(item, values[1] + " " + values[2] + " " + values[3], this.client.getHabbo());
+            FurnitureMovementError error = room.getRoomItemManager().placeWallFurniAt(item, values[1] + " " + values[2] + " " + values[3], this.client.getHabbo());
             if (!error.equals(FurnitureMovementError.NONE)) {
                 this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
                 return;

@@ -22,7 +22,7 @@ public class InteractionEffectVendingMachineNoSides extends InteractionVendingMa
 
     @Override
     public void giveVendingMachineItem(Room room, RoomAvatar roomAvatar) {
-        room.giveEffect(roomAvatar, this.getBaseItem().getRandomVendingItem(), 30);
+        roomAvatar.giveEffect(this.getBaseItem().getRandomVendingItem(), 30);
     }
 
     @Override

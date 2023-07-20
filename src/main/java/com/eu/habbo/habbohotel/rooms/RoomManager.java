@@ -712,7 +712,7 @@ public class RoomManager {
             }
 
             int effect = habbo.getInventory().getEffectsComponent().getActivatedEffect();
-            room.giveEffect(habbo.getRoomUnit(), effect, -1);
+            habbo.getRoomUnit().giveEffect(effect, -1);
         }
 
 

@@ -100,7 +100,7 @@ public abstract class TagGame extends Game {
 
         THashSet<RoomItem> poles = room.getRoomSpecialTypes().getItemsOfType(this.getTagPole());
         InteractionTagPole pole = this.taggers.get(tagger);
-        room.giveEffect(tagged, this.getTaggedEffect(tagged), -1);
+        tagged.getRoomUnit().giveEffect(this.getTaggedEffect(tagged), -1);
 
         if (poles.size() > this.taggers.size()) {
             for (Map.Entry<Habbo, InteractionTagPole> set : this.taggers.entrySet()) {
@@ -108,12 +108,12 @@ public abstract class TagGame extends Game {
             }
 
             for (RoomItem item : poles) {
-                tagged.getRoomUnit().getRoom().giveEffect(tagged, this.getTaggedEffect(tagged), -1);
+                tagged.getRoomUnit().giveEffect(this.getTaggedEffect(tagged), -1);
                 this.taggers.put(tagged, (InteractionTagPole) item);
             }
         } else {
             if (tagger != null) {
-                room.giveEffect(tagger, this.getEffect(tagger), -1);
+                tagger.getRoomUnit().giveEffect(this.getEffect(tagger), -1);
                 this.taggers.remove(tagger);
             }
 
@@ -145,8 +145,8 @@ public abstract class TagGame extends Game {
                     RoomItem item = iterator.next();
                     if (roomHabbo.getEffectId() > 0)
                         roomHabbo.setPreviousEffectId(roomHabbo.getEffectId(), roomHabbo.getPreviousEffectEndTimestamp());
-                    habbo.getRoomUnit().getRoom().giveEffect(habbo, this.getEffect(habbo), -1, true);
-                    this.room.scheduledTasks.add(() -> habbo.getRoomUnit().getRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1, true));
+                    habbo.getRoomUnit().giveEffect(this.getEffect(habbo), -1, true);
+                    this.room.scheduledTasks.add(() -> habbo.getRoomUnit().giveEffect(this.getTaggedEffect(habbo), -1, true));
                     this.taggers.put(habbo, (InteractionTagPole) item);
                     return true;
                 }
@@ -155,15 +155,15 @@ public abstract class TagGame extends Game {
             if (this.taggers.isEmpty()) {
                 if (roomHabbo.getEffectId() > 0)
                     roomHabbo.setPreviousEffectId(roomHabbo.getEffectId(), roomHabbo.getPreviousEffectEndTimestamp());
-                habbo.getRoomUnit().getRoom().giveEffect(habbo, this.getEffect(habbo), -1, true);
-                this.room.scheduledTasks.add(() -> habbo.getRoomUnit().getRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1, true));
+                habbo.getRoomUnit().giveEffect(this.getEffect(habbo), -1, true);
+                this.room.scheduledTasks.add(() -> habbo.getRoomUnit().giveEffect(this.getTaggedEffect(habbo), -1, true));
                 this.taggers.put(habbo, null);
                 return true;
             }
         }
         if (roomHabbo.getEffectId() > 0)
             roomHabbo.setPreviousEffectId(roomHabbo.getEffectId(), roomHabbo.getPreviousEffectEndTimestamp());
-        habbo.getRoomUnit().getRoom().giveEffect(habbo, this.getEffect(habbo), -1, true);
+        habbo.getRoomUnit().giveEffect(this.getEffect(habbo), -1, true);
 
         return true;
     }
@@ -192,12 +192,12 @@ public abstract class TagGame extends Game {
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-            room.giveEffect(habbo, nextEffectM, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectM, nextEffectDuration, true);
             return;
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-            room.giveEffect(habbo, nextEffectF, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectF, nextEffectDuration, true);
         }
     }
 
