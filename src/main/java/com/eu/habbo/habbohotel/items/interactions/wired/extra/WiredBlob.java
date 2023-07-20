@@ -59,7 +59,7 @@ public class WiredBlob extends InteractionDefault {
 
         if (!this.getExtradata().equals(WiredBlobState.ACTIVE.getState())) return;
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             GamePlayer player = habbo.getHabboInfo().getGamePlayer();

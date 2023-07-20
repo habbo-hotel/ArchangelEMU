@@ -36,7 +36,7 @@ public abstract class TagGame extends Game {
         if (event.room == null || event.roomUnit == null || event.location == null) return;
 
         if (RoomLayout.tilesAdjecent(event.roomUnit.getCurrentPosition(), event.location)) {
-            Habbo habbo = event.room.getHabbo(event.roomUnit);
+            Habbo habbo = event.room.getRoomUnitManager().getHabboByRoomUnit(event.roomUnit);
 
             if (habbo != null) {
                 if (habbo.getHabboInfo().getCurrentGame() != null) {

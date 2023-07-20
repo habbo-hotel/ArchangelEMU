@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
-import com.eu.habbo.habbohotel.rooms.entities.items.types.RoomFloorItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -299,7 +298,7 @@ public class RoomAvatar extends RoomUnit {
         return this;
     }
 
-    private void handleSitStatus(RoomFloorItem topItem) {
+    private void handleSitStatus(RoomItem topItem) {
         if(!this.isCmdSitEnabled()) {
             if((topItem == null || !topItem.getBaseItem().allowSit()) && this.hasStatus(RoomUnitStatus.SIT)) {
                 this.removeStatus(RoomUnitStatus.SIT);
@@ -311,7 +310,7 @@ public class RoomAvatar extends RoomUnit {
         }
     }
 
-    private void handleLayStatus(RoomFloorItem topItem) {
+    private void handleLayStatus(RoomItem topItem) {
         if(!this.isCmdLayEnabled()) {
             if((topItem == null || !topItem.getBaseItem().allowLay()) && this.hasStatus(RoomUnitStatus.LAY)) {
                 this.removeStatus(RoomUnitStatus.LAY);

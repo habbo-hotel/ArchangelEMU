@@ -36,7 +36,7 @@ import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
 @Slf4j
 @Getter
 public class RoomUnitManager {
-    private final int roomId;
+    private final Room room;
     private final ConcurrentHashMap<Integer, RoomUnit> currentRoomUnits;
     private final ConcurrentHashMap<Integer, Habbo> currentRoomHabbos;
     private final ConcurrentHashMap<Integer, Bot> currentRoomBots;
@@ -44,15 +44,13 @@ public class RoomUnitManager {
     private volatile int roomUnitCounter;
     public final Object roomUnitLock;
 
-    public RoomUnitManager(int roomId) {
-        this.roomId = roomId;
+    public RoomUnitManager(Room room) {
+        this.room = room;
         this.currentRoomUnits = new ConcurrentHashMap<>();
-
         this.currentRoomHabbos = new ConcurrentHashMap<>();
         this.currentRoomBots = new ConcurrentHashMap<>();
         this.currentRoomPets = new ConcurrentHashMap<>();
         this.roomUnitCounter = 0;
-
         this.roomUnitLock = new Object();
     }
 
@@ -62,23 +60,23 @@ public class RoomUnitManager {
     }
 
     private synchronized void loadBots(Connection connection) {
+        this.currentRoomBots.clear();
+
         try (PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots INNER JOIN users ON bots.user_id = users.id WHERE room_id = ?")) {
-            statement.setInt(1, this.roomId);
+            statement.setInt(1, this.room.getRoomInfo().getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     Bot bot = Emulator.getGameEnvironment().getBotManager().loadBot(set);
-                    Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.roomId);
 
-
-                    if (bot != null && room != null) {
-                        bot.setRoom(room);
+                    if (bot != null) {
+                        bot.setRoom(this.room);
                         bot.setRoomUnit(new RoomBot());
-                        bot.getRoomUnit().setRoom(room);
-                        bot.getRoomUnit().setLocation(room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y")));
+                        bot.getRoomUnit().setRoom(this.room);
+                        bot.getRoomUnit().setLocation(this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y")));
                         if (bot.getRoomUnit().getCurrentPosition() == null || bot.getRoomUnit().getCurrentPosition().getState() == RoomTileState.INVALID) {
-                            bot.getRoomUnit().setCurrentZ(room.getLayout().getDoorTile().getStackHeight());
-                            bot.getRoomUnit().setLocation(room.getLayout().getDoorTile());
-                            bot.getRoomUnit().setRotation(RoomRotation.fromValue(room.getLayout().getDoorDirection()));
+                            bot.getRoomUnit().setCurrentZ(this.room.getLayout().getDoorTile().getStackHeight());
+                            bot.getRoomUnit().setLocation(this.room.getLayout().getDoorTile());
+                            bot.getRoomUnit().setRotation(RoomRotation.fromValue(this.room.getLayout().getDoorDirection()));
                         } else {
                             bot.getRoomUnit().setCurrentZ(set.getDouble("z"));
                             bot.getRoomUnit().setPreviousLocationZ(set.getDouble("z"));
@@ -87,7 +85,7 @@ public class RoomUnitManager {
                         bot.getRoomUnit().setRoomUnitType(RoomUnitType.BOT);
                         bot.getRoomUnit().setDanceType(DanceType.values()[set.getInt("dance")]);
                         bot.getRoomUnit().setInRoom(true);
-                        room.giveEffect(bot.getRoomUnit(), set.getInt("effect"), Integer.MAX_VALUE);
+                        this.room.giveEffect(bot.getRoomUnit(), set.getInt("effect"), Integer.MAX_VALUE);
                         this.addRoomUnit(bot);
                     }
                 }
@@ -100,21 +98,22 @@ public class RoomUnitManager {
     }
 
     private synchronized void loadPets(Connection connection) {
+        this.currentRoomPets.clear();
+
         try (PreparedStatement statement = connection.prepareStatement("SELECT users.username as pet_owner_name, users_pets.* FROM users_pets INNER JOIN users ON users_pets.user_id = users.id WHERE room_id = ?")) {
-            statement.setInt(1, this.roomId);
+            statement.setInt(1, this.room.getRoomInfo().getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     Pet pet = PetManager.loadPet(set);
-                    Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.roomId);
 
-                    pet.setRoom(room);
+                    pet.setRoom(this.room);
                     pet.setRoomUnit(new RoomPet());
-                    pet.getRoomUnit().setRoom(room);
-                    pet.getRoomUnit().setLocation(room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y")));
+                    pet.getRoomUnit().setRoom(this.room);
+                    pet.getRoomUnit().setLocation(this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y")));
                     if (pet.getRoomUnit().getCurrentPosition() == null || pet.getRoomUnit().getCurrentPosition().getState() == RoomTileState.INVALID) {
-                        pet.getRoomUnit().setCurrentZ(room.getLayout().getDoorTile().getStackHeight());
-                        pet.getRoomUnit().setLocation(room.getLayout().getDoorTile());
-                        pet.getRoomUnit().setRotation(RoomRotation.fromValue(room.getLayout().getDoorDirection()));
+                        pet.getRoomUnit().setCurrentZ(this.room.getLayout().getDoorTile().getStackHeight());
+                        pet.getRoomUnit().setLocation(this.room.getLayout().getDoorTile());
+                        pet.getRoomUnit().setRotation(RoomRotation.fromValue(this.room.getLayout().getDoorDirection()));
                     } else {
                         pet.getRoomUnit().setCurrentZ(set.getDouble("z"));
                         pet.getRoomUnit().setRotation(RoomRotation.values()[set.getInt("rot")]);
@@ -122,7 +121,7 @@ public class RoomUnitManager {
                     pet.getRoomUnit().setRoomUnitType(RoomUnitType.PET);
                     pet.getRoomUnit().setCanWalk(true);
                     this.addRoomUnit(pet);
-                    room.getFurniOwnerNames().put(pet.getUserId(), set.getString("pet_owner_name"));
+                    this.room.getFurniOwnerNames().put(pet.getUserId(), set.getString("pet_owner_name"));
                 }
             }
         } catch (SQLException e) {
@@ -138,23 +137,19 @@ public class RoomUnitManager {
             this.currentRoomUnits.put(unit.getRoomUnit().getVirtualId(), unit.getRoomUnit());
             this.roomUnitCounter++;
 
-            switch(unit.getRoomUnit().getRoomUnitType()) {
-                case HABBO:
+            switch (unit.getRoomUnit().getRoomUnitType()) {
+                case HABBO -> {
                     this.currentRoomHabbos.put(((Habbo) unit).getHabboInfo().getId(), (Habbo) unit);
                     unit.getRoomUnit().getRoom().updateDatabaseUserCount();
-                    break;
-                case BOT:
-                    this.currentRoomBots.put(((Bot) unit).getId(), (Bot) unit);
-                    break;
-                case PET:
+                }
+                case BOT -> this.currentRoomBots.put(((Bot) unit).getId(), (Bot) unit);
+                case PET -> {
                     this.currentRoomPets.put(((Pet) unit).getId(), (Pet) unit);
-
                     Habbo habbo = this.getRoomHabboById(((Pet) unit).getUserId());
-
                     if (habbo != null) {
                         unit.getRoomUnit().getRoom().getFurniOwnerNames().put(((Pet) unit).getUserId(), this.getRoomHabboById(((Pet) unit).getUserId()).getHabboInfo().getUsername());
                     }
-                    break;
+                }
             }
         }
     }
@@ -185,8 +180,13 @@ public class RoomUnitManager {
     public Habbo getRoomHabboById(int habboId) {
         return this.currentRoomHabbos.get(habboId);
     }
+
     public Habbo getRoomHabboByUsername(String username) {
         return this.currentRoomHabbos.values().stream().filter(habbo -> habbo.getHabboInfo().getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
+    }
+
+    public Habbo getHabboByVirtualId(int virtualId) {
+        return this.currentRoomHabbos.values().stream().filter(habbo -> habbo.getRoomUnit().getVirtualId() == virtualId).findFirst().orElse(null);
     }
 
     public Habbo getHabboByRoomUnit(RoomUnit roomUnit) {

@@ -19,7 +19,7 @@ public class MimicCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 2) {
-            Habbo habbo = gameClient.getHabbo().getRoomUnit().getRoom().getHabbo(params[1]);
+            Habbo habbo = gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboByUsername(params[1]);
 
             if (habbo == null) {
                 gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_mimic.not_found"), ""), RoomChatMessageBubbles.ALERT);

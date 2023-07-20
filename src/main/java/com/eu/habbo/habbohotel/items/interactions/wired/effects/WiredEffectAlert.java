@@ -20,7 +20,7 @@ public class WiredEffectAlert extends WiredEffectWhisper {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             habbo.alert(this.getWiredSettings().getStringParam()

@@ -5,11 +5,13 @@ import com.eu.habbo.habbohotel.games.GameTeam;
 import com.eu.habbo.habbohotel.games.battlebanzai.BattleBanzaiGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPushable;
-import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -149,7 +151,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
 
     @Override
     public void onMove(Room room, RoomTile from, RoomTile to, RoomRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
-        Habbo habbo = room.getHabbo(kicker);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(kicker);
 
         if (habbo != null) {
             BattleBanzaiGame game = (BattleBanzaiGame) room.getGame(BattleBanzaiGame.class);

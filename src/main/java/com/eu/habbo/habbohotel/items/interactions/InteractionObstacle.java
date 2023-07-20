@@ -94,7 +94,7 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo == null) {
             Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
@@ -123,7 +123,7 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo == null) {
             Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);

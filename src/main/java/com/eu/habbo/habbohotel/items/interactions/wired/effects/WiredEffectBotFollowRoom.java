@@ -25,7 +25,7 @@ public class WiredEffectBotFollowRoom extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
         List<Bot> bots = room.getRoomUnitManager().getBotsByName(this.getWiredSettings().getStringParam());
 
         if (habbo != null && bots.size() == 1) {

@@ -26,90 +26,63 @@ import java.util.List;
 
 @Slf4j
 @Getter
+@Setter
+@Accessors(chain = true)
 public class HabboInfo implements Runnable {
-    
-    public boolean firstVisit = false;
-    @Setter
+    private final int id;
     private String username;
-    @Setter
     private String motto;
-    @Setter
-    @Accessors(chain = true)
     private String look;
-    @Setter
     private HabboGender gender;
-    @Setter
     private String mail;
-    @Setter
     private String sso;
-    @Setter
     private String ipRegister;
-    @Setter
     private String ipLogin;
-    private int id;
-    @Setter
     private int accountCreated;
-    @Setter
     private PermissionGroup permissionGroup;
     private int credits;
-    @Setter
     private int lastOnline;
-    @Setter
     private int homeRoom;
-    @Setter
     private boolean online;
-    @Setter
     private int roomQueueId;
-    @Setter
     private RideablePet riding;
-    @Setter
     private Class<? extends Game> currentGame;
     private TIntIntHashMap currencies;
-    @Setter
     private GamePlayer gamePlayer;
-    @Setter
     private int photoRoomId;
-    @Setter
     private int photoTimestamp;
-    @Setter
     private String photoURL;
-    @Setter
     private String photoJSON;
-    @Setter
     private int webPublishTimestamp;
-    @Setter
     private String machineID;
     private List<NavigatorSavedSearch> savedSearches = new ArrayList<>();
     private List<MessengerCategory> messengerCategories = new ArrayList<>();
+    public boolean firstVisit = false;
 
-    public HabboInfo(ResultSet set) {
-        try {
-            this.id = set.getInt("id");
-            this.username = set.getString("username");
-            this.motto = set.getString("motto");
-            this.look = set.getString("look");
-            this.gender = HabboGender.valueOf(set.getString("gender"));
-            this.mail = set.getString("mail");
-            this.sso = set.getString("auth_ticket");
-            this.ipRegister = set.getString("ip_register");
-            this.ipLogin = set.getString("ip_current");
-            this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(set.getInt("rank"));
+    public HabboInfo(ResultSet set) throws SQLException {
+        this.id = set.getInt("id");
+        this.username = set.getString("username");
+        this.motto = set.getString("motto");
+        this.look = set.getString("look");
+        this.gender = HabboGender.valueOf(set.getString("gender"));
+        this.mail = set.getString("mail");
+        this.sso = set.getString("auth_ticket");
+        this.ipRegister = set.getString("ip_register");
+        this.ipLogin = set.getString("ip_current");
+        this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(set.getInt("rank"));
 
-            if (this.permissionGroup == null) {
-                log.error("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
-                log.warn(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
-                this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(1);
-            }
-
-            this.accountCreated = set.getInt("account_created");
-            this.credits = set.getInt("credits");
-            this.homeRoom = set.getInt("home_room");
-            this.lastOnline = set.getInt("last_online");
-            this.machineID = set.getString("machine_id");
-            this.online = false;
-        } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+        if (this.permissionGroup == null) {
+            log.error("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+            log.warn(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+            this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(1);
         }
+
+        this.accountCreated = set.getInt("account_created");
+        this.credits = set.getInt("credits");
+        this.homeRoom = set.getInt("home_room");
+        this.lastOnline = set.getInt("last_online");
+        this.machineID = set.getString("machine_id");
+        this.online = false;
 
         this.loadCurrencies();
         this.loadSavedSearches();

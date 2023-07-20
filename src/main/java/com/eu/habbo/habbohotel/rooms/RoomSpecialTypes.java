@@ -27,8 +27,8 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class RoomSpecialTypes {
     private final THashMap<Integer, InteractionBattleBanzaiTeleporter> banzaiTeleporters;
@@ -636,12 +636,12 @@ public class RoomSpecialTypes {
         }
     }
 
-    public void addFreezeExitTile(InteractionFreezeExitTile freezeExitTile) {
-        this.freezeExitTile.put(freezeExitTile.getId(), freezeExitTile);
-    }
-
     public THashMap<Integer, InteractionFreezeExitTile> getFreezeExitTiles() {
         return this.freezeExitTile;
+    }
+
+    public void addFreezeExitTile(InteractionFreezeExitTile freezeExitTile) {
+        this.freezeExitTile.put(freezeExitTile.getId(), freezeExitTile);
     }
 
     public void removeFreezeExitTile(InteractionFreezeExitTile freezeExitTile) {

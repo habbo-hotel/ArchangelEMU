@@ -110,7 +110,7 @@ public class InteractionMultiHeight extends RoomItem {
         if (roomUnit != null
                 && (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
                 && roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
-            Habbo habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
             if (habbo != null) {
                 if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
@@ -132,7 +132,7 @@ public class InteractionMultiHeight extends RoomItem {
         if (roomUnit != null
                 && (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
                 && roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
-            Habbo habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
             if (habbo != null) {
                 if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0) {

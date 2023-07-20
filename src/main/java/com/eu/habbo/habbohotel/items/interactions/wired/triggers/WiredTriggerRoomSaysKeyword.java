@@ -31,7 +31,7 @@ public class WiredTriggerRoomSaysKeyword extends InteractionWiredTrigger {
 
         if (stuff[0] instanceof String) {
             if (((String) stuff[0]).toLowerCase().contains(this.getWiredSettings().getStringParam().toLowerCase())) {
-                Habbo habbo = room.getHabbo(roomUnit);
+                Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
                 return !ownerOnly || (habbo != null && room.getRoomInfo().getOwnerInfo().getId() == habbo.getHabboInfo().getId());
             }
         }

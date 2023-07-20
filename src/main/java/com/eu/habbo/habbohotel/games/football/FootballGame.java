@@ -35,7 +35,7 @@ public class FootballGame extends Game {
         if (this.room == null || !this.room.isLoaded())
             return;
 
-        Habbo habbo = this.room.getHabbo(kicker);
+        Habbo habbo = this.room.getRoomUnitManager().getHabboByRoomUnit(kicker);
         if (habbo != null) {
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("FootballGoalScored"));
             if (habbo.getHabboInfo().getId() != this.room.getRoomInfo().getOwnerInfo().getId()) {

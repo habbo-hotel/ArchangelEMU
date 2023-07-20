@@ -30,7 +30,7 @@ public class WiredEffectKickRoom extends InteractionWiredEffect {
         if (room == null)
             return false;
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             if (habbo.hasRight(Permission.ACC_UNKICKABLE)) {

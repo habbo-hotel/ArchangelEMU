@@ -74,11 +74,11 @@ public class InteractionFreezeTile extends RoomItem {
 
 
     @Override
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
+    public boolean canStackAt(List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
         for (Pair<RoomTile, THashSet<RoomItem>> set : itemsAtLocation) {
             if (set.getValue() != null && !set.getValue().isEmpty()) return false;
         }
 
-        return super.canStackAt(room, itemsAtLocation);
+        return super.canStackAt(itemsAtLocation);
     }
 }

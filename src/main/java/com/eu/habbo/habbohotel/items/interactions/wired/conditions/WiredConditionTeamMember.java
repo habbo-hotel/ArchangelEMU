@@ -33,7 +33,7 @@ public class WiredConditionTeamMember extends InteractionWiredCondition {
 
         GameTeamColors teamColor = GameTeamColors.values()[teamValue];
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             if (habbo.getHabboInfo().getGamePlayer() != null) {

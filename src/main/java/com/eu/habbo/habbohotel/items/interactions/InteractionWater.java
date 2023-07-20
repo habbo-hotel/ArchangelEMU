@@ -118,7 +118,7 @@ public class InteractionWater extends InteractionDefault {
     }
 
     @Override
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
+    public boolean canStackAt(List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
         for (Pair<RoomTile, THashSet<RoomItem>> set : itemsAtLocation) {
             for (RoomItem item : set.getValue()) {
                 if(item != this)
@@ -126,7 +126,7 @@ public class InteractionWater extends InteractionDefault {
             }
         }
 
-        return super.canStackAt(room, itemsAtLocation);
+        return super.canStackAt(itemsAtLocation);
     }
 
     @Override

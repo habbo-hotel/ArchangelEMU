@@ -32,7 +32,7 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
         }
 
         if (roomUnit != null) {
-            Habbo habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
             if (habbo != null) {
                 String msg = this.getWiredSettings().getStringParam().replace("%user%", habbo.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + "");

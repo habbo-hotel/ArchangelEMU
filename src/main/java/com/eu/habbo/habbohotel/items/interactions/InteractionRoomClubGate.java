@@ -31,7 +31,7 @@ public class InteractionRoomClubGate extends InteractionDefault implements Condi
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         return habbo != null && habbo.getHabboStats().hasActiveClub();
     }
@@ -69,7 +69,7 @@ public class InteractionRoomClubGate extends InteractionDefault implements Condi
         if (roomUnit == null || room == null)
             return;
 
-        room.getHabbo(roomUnit).getClient().sendResponse(
+        room.getRoomUnitManager().getHabboByRoomUnit(roomUnit).getClient().sendResponse(
                 new CustomUserNotificationMessageComposer(CustomUserNotificationMessageComposer.GATE_NO_HC)
         );
     }

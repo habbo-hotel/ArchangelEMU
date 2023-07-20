@@ -20,7 +20,7 @@ public class SuperPullCommand extends Command {
             return true;
         }
 
-        Habbo habbo = gameClient.getHabbo().getRoomUnit().getRoom().getHabbo(params[1]);
+        Habbo habbo = gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboByUsername(params[1]);
 
         if (habbo == null) {
             gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_pull.not_found"), params[1]), RoomChatMessageBubbles.ALERT);

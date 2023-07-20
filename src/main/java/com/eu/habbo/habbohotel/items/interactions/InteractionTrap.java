@@ -22,9 +22,9 @@ public class InteractionTrap extends InteractionDefault {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        if (this.getExtradata().equals("0") || roomUnit == null || room.getHabbo(roomUnit) == null) return;
+        if (this.getExtradata().equals("0") || roomUnit == null || room.getRoomUnitManager().getHabboByRoomUnit(roomUnit) == null) return;
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
         int effect = habbo.getClient().getHabbo().getRoomUnit().getEffectId();
         roomUnit.stopWalking();
         super.onWalkOn(roomUnit, room, objects);

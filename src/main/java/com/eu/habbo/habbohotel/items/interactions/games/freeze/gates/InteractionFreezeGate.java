@@ -52,12 +52,12 @@ public class InteractionFreezeGate extends InteractionGameGate {
             room.addGame(game);
         }
 
-        GameTeam team = game.getTeamForHabbo(room.getHabbo(roomUnit));
+        GameTeam team = game.getTeamForHabbo(room.getRoomUnitManager().getHabboByRoomUnit(roomUnit));
 
         if (team != null) {
-            game.removeHabbo(room.getHabbo(roomUnit));
+            game.removeHabbo(room.getRoomUnitManager().getHabboByRoomUnit(roomUnit));
         } else {
-            game.addHabbo(room.getHabbo(roomUnit), this.teamColor);
+            game.addHabbo(room.getRoomUnitManager().getHabboByRoomUnit(roomUnit), this.teamColor);
         }
 
         updateState(game, 5);

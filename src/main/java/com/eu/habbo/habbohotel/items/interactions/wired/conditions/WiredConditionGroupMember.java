@@ -25,7 +25,7 @@ public class WiredConditionGroupMember extends InteractionWiredCondition {
             return false;
         }
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         return habbo != null && habbo.getHabboStats().hasGuild(room.getRoomInfo().getGuild().getId());
     }

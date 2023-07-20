@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Item implements ISerialize {
-
     @Getter
     private int id;
     @Getter
@@ -33,7 +32,7 @@ public class Item implements ISerialize {
     private boolean allowWalk;
     private boolean allowSit;
     private boolean allowLay;
-    private boolean allowRecyle;
+    private boolean allowRecycle;
     private boolean allowTrade;
     private boolean allowMarketplace;
     private boolean allowGift;
@@ -52,7 +51,6 @@ public class Item implements ISerialize {
     private String customParams;
     @Getter
     private String clothingOnWalk;
-
     @Getter
     private ItemInteraction interactionType;
     @Getter
@@ -103,7 +101,7 @@ public class Item implements ISerialize {
         this.allowWalk = set.getBoolean("allow_walk");
         this.allowSit = set.getBoolean("allow_sit");
         this.allowLay = set.getBoolean("allow_lay");
-        this.allowRecyle = set.getBoolean("allow_recycle");
+        this.allowRecycle = set.getBoolean("allow_recycle");
         this.allowTrade = set.getBoolean("allow_trade");
         this.allowMarketplace = set.getBoolean("allow_marketplace_sell");
         this.allowGift = set.getBoolean("allow_gift");
@@ -164,7 +162,7 @@ public class Item implements ISerialize {
     }
 
     public boolean allowRecyle() {
-        return this.allowRecyle;
+        return this.allowRecycle;
     }
 
     public boolean allowTrade() {

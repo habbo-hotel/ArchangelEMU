@@ -28,7 +28,7 @@ public class InteractionIceTagField extends InteractionTagField {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
         if (habbo != null)
             this.stepTimes.put(habbo, Emulator.getIntUnixTimestamp());
     }
@@ -37,7 +37,7 @@ public class InteractionIceTagField extends InteractionTagField {
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
         if (habbo != null && this.stepTimes.containsKey(habbo)) {
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("TagC"), (Emulator.getIntUnixTimestamp() - this.stepTimes.get(habbo)) / 60);
             this.stepTimes.remove(habbo);

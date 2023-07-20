@@ -52,7 +52,7 @@ public class InteractionEffectTile extends InteractionPressurePlate {
         super.onWalkOn(roomUnit, room, objects);
 
         if (roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
-            Habbo habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
             if (habbo != null) {
                 this.giveEffect(room, roomUnit, habbo.getHabboInfo().getGender());

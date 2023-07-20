@@ -77,7 +77,7 @@ public class InteractionRentableSpace extends RoomItem {
         if (this.getExtradata().isEmpty())
             return false;
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo == null)
             return true;

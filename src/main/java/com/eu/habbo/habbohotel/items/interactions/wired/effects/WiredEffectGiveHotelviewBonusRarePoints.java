@@ -33,7 +33,7 @@ public class WiredEffectGiveHotelviewBonusRarePoints extends WiredEffectWhisper 
             return false;
         }
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo == null) {
             return false;

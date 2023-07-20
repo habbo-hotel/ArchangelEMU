@@ -19,7 +19,7 @@ public class OpenTradingEvent extends MessageHandler {
             Room room = this.client.getHabbo().getRoomUnit().getRoom();
             if (room != null) {
                 if (userId >= 0 && userId != this.client.getHabbo().getRoomUnit().getVirtualId()) {
-                    Habbo targetUser = room.getHabboByRoomUnitId(userId);
+                    Habbo targetUser = room.getRoomUnitManager().getHabboByVirtualId(userId);
 
                     boolean tradeAnywhere = this.client.getHabbo().hasRight(Permission.ACC_TRADE_ANYWHERE);
 

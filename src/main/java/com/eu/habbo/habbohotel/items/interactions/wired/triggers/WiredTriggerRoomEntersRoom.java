@@ -25,7 +25,7 @@ public class WiredTriggerRoomEntersRoom extends InteractionWiredTrigger {
             return true;
         }
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             return habbo.getHabboInfo().getUsername().equalsIgnoreCase(this.getWiredSettings().getStringParam());

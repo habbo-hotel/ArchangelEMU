@@ -272,7 +272,7 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
         }
 
         if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousLocation() != roomUnit.getGoalLocation() && roomUnit.getGoalLocation() == room.getLayout().getTile(this.x, this.y)) {
-            Habbo habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
             if (habbo != null && habbo.getClient() != null) {
                 String[] clothingKeys = Arrays.stream(this.getBaseItem().getClothingOnWalk().split("\\.")).map(k -> k.split("-")[0]).toArray(String[]::new);
@@ -459,7 +459,7 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
         return this.baseItem.getStateCount() > 1;
     }
 
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
+    public boolean canStackAt(List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
         return true;
     }
 

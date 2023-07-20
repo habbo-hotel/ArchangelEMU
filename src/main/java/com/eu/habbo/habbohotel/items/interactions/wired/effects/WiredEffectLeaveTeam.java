@@ -23,7 +23,7 @@ public class WiredEffectLeaveTeam extends InteractionWiredEffect {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             if (habbo.getHabboInfo().getCurrentGame() != null) {

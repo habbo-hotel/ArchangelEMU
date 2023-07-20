@@ -61,7 +61,7 @@ public class WiredEffectGiveReward extends InteractionWiredEffect {
             return false;
         }
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         return habbo != null && WiredHandler.getReward(habbo, this);
     }

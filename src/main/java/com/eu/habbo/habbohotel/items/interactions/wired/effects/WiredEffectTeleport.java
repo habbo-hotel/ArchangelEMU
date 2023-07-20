@@ -65,7 +65,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
 
         // makes a temporary effect
 
-        roomHabbo.getRoom().unIdle(roomHabbo.getRoom().getHabbo(roomHabbo));
+        roomHabbo.getRoom().unIdle(roomHabbo.getRoom().getRoomUnitManager().getHabboByRoomUnit(roomHabbo));
         room.sendComposer(new AvatarEffectMessageComposer(roomHabbo, 4).compose());
         Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomHabbo), (long) WiredHandler.TELEPORT_DELAY + 1000);
 

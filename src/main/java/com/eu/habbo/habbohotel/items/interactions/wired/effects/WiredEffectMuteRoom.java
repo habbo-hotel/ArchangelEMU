@@ -33,7 +33,7 @@ public class WiredEffectMuteRoom extends InteractionWiredEffect {
         if (roomUnit == null)
             return true;
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             if (room.hasRights(habbo))

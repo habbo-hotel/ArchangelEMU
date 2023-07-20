@@ -33,7 +33,7 @@ public class WiredEffectBotTalkToRoom extends InteractionWiredEffect {
         String botName = stringParams[0].substring(0, Math.min(stringParams[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
         String message = stringParams[1].substring(0, Math.min(stringParams[1].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             message = message.replace(Emulator.getTexts().getValue("wired.variable.username", "%username%"), habbo.getHabboInfo().getUsername())

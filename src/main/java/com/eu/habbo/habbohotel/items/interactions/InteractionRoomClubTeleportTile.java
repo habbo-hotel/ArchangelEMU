@@ -20,7 +20,7 @@ public class InteractionRoomClubTeleportTile extends InteractionTeleportTile {
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             return habbo.getHabboStats().hasActiveClub();

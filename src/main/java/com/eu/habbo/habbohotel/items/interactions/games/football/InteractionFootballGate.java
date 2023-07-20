@@ -113,7 +113,7 @@ public class InteractionFootballGate extends RoomItem {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
         if (habbo != null) {
             if (habbo.getHabboStats().getCache().containsKey(CACHE_KEY)) {
                 String oldlook = (String) habbo.getHabboStats().getCache().get(CACHE_KEY);

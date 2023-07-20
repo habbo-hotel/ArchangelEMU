@@ -4,8 +4,8 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.util.Pair;
@@ -68,7 +68,7 @@ public class InteractionRoller extends RoomItem {
 
 
     @Override
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
+    public boolean canStackAt(List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
         if (NO_RULES) return true;
         if (itemsAtLocation.isEmpty()) return false;
 

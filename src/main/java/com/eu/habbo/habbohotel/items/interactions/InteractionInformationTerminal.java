@@ -40,7 +40,7 @@ public class InteractionInformationTerminal extends InteractionCustomValues {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
         if (habbo != null && this.values.containsKey("internalLink")) {
             habbo.getClient().sendResponse(new InClientLinkMessageComposer(this.values.get("internalLink")));
         }

@@ -27,7 +27,7 @@ public class WiredConditionRoomWearsBadge extends InteractionWiredCondition {
         }
 
         String badgeCode = this.getWiredSettings().getStringParam();
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if(habbo == null) {
             return false;

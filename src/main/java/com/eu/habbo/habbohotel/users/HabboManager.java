@@ -28,10 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class HabboManager {
-
     //Configuration. Loaded from database & updated accordingly.
     public static String WELCOME_MESSAGE = "";
-    public static boolean NAMECHANGE_ENABLED = false;
 
     @Getter
     private final ConcurrentHashMap<Integer, Habbo> onlineHabbos;

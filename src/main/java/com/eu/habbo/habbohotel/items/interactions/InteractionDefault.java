@@ -21,7 +21,6 @@ import java.sql.SQLException;
 
 @Slf4j
 public class InteractionDefault extends RoomItem {
-
     public InteractionDefault(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
@@ -110,7 +109,7 @@ public class InteractionDefault extends RoomItem {
         }
 
         if (roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
-            Habbo habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
             if (habbo == null) return;
 
@@ -176,7 +175,7 @@ public class InteractionDefault extends RoomItem {
                 }
 
                 if (roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
-                    Habbo habbo = room.getHabbo(roomUnit);
+                    Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
                     if (habbo != null) {
 

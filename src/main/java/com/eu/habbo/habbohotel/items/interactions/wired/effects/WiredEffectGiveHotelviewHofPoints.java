@@ -34,7 +34,7 @@ public class WiredEffectGiveHotelviewHofPoints extends InteractionWiredEffect {
             return false;
         }
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo == null) {
             return false;

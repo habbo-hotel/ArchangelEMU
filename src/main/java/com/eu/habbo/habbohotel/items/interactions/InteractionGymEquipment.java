@@ -49,7 +49,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
         this.roomUnitId = roomUnit.getVirtualId();
 
         if (roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
-            Habbo habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
             if (habbo != null) {
                 this.startTime = Emulator.getIntUnixTimestamp();
@@ -66,7 +66,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
         this.reset(room);
 
         if (roomUnit != null) {
-            Habbo habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
             RoomItem topItem = room.getTopItemAt(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
             int nextEffectM = 0;
             int nextEffectF = 0;
@@ -107,7 +107,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
     @Override
     public void cycle(Room room) {
         if (this.roomUnitId != -1) {
-            Habbo habbo = room.getHabboByRoomUnitId(this.roomUnitId);
+            Habbo habbo = room.getRoomUnitManager().getHabboByVirtualId(this.roomUnitId);
 
             if (habbo != null) {
                 int timestamp = Emulator.getIntUnixTimestamp();

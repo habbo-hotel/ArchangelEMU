@@ -35,7 +35,7 @@ public class WiredEffectJoinTeam extends InteractionWiredEffect {
 
         GameTeamColors teamColor = GameTeamColors.values()[teamValue];
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             WiredGame game = (WiredGame) room.getGameOrCreate(WiredGame.class);

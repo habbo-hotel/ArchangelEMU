@@ -13,7 +13,7 @@ public class UnignoreUserEvent extends MessageHandler {
         if (room != null) {
             String username = this.packet.readString();
 
-            Habbo habbo = room.getHabbo(username);
+            Habbo habbo = room.getRoomUnitManager().getRoomHabboByUsername(username);
 
             if (habbo != null) {
                 if (habbo.getHabboStats().allowTalk()) {

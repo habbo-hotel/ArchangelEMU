@@ -36,7 +36,7 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
             return false;
         }
 
-        Habbo habbo = room.getHabbo(roomAvatar);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomAvatar);
         List<Bot> bots = room.getRoomUnitManager().getBotsByName(this.getWiredSettings().getStringParam());
         int itemId = this.getWiredSettings().getIntegerParams().get(PARAM_ITEM_ID);
 
