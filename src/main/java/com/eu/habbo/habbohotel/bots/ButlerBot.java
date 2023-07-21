@@ -86,7 +86,7 @@ public class ButlerBot extends Bot {
                                 final Bot bot = this;
 
                                 // Step 1: Look at Habbo
-                                bot.lookAt(serveEvent.getHabbo());
+                                bot.getRoomUnit().lookAtPoint(serveEvent.getHabbo().getRoomUnit().getCurrentPosition());
 
                                 // Step 2: Prepare tasks for when the Bot (carrying the handitem) reaches the Habbo
                                 final List<Runnable> tasks = new ArrayList<>();

@@ -46,20 +46,11 @@ import java.util.List;
 
 @Slf4j
 public abstract class RoomItem implements Runnable, IEventTriggers {
-    
-    @SuppressWarnings("rawtypes")
-    private static final Class[] TOGGLING_INTERACTIONS = new Class[]{
-            InteractionGameTimer.class,
-            InteractionWired.class,
-            InteractionWiredHighscore.class,
-            InteractionMultiHeight.class
-    };
-
     @Getter
     private final int id;
     @Getter
     @Setter
-    private int userId;
+    private int ownerId;
     @Getter
     @Setter
     private int roomId;
@@ -89,10 +80,17 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
     private boolean needsUpdate = false;
     private boolean needsDelete = false;
     private boolean isFromGift = false;
+    @SuppressWarnings("rawtypes")
+    private static final Class[] TOGGLING_INTERACTIONS = new Class[]{
+            InteractionGameTimer.class,
+            InteractionWired.class,
+            InteractionWiredHighscore.class,
+            InteractionMultiHeight.class
+    };
 
     public RoomItem(ResultSet set, Item baseItem) throws SQLException {
         this.id = set.getInt("id");
-        this.userId = set.getInt(DatabaseConstants.USER_ID);
+        this.ownerId = set.getInt(DatabaseConstants.USER_ID);
         this.roomId = set.getInt("room_id");
         this.baseItem = baseItem;
         this.wallPosition = set.getString("wall_pos");
@@ -109,9 +107,9 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
         }
     }
 
-    public RoomItem(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
+    public RoomItem(int id, int ownerId, Item item, String extradata, int limitedStack, int limitedSells) {
         this.id = id;
-        this.userId = userId;
+        this.ownerId = ownerId;
         this.roomId = 0;
         this.baseItem = item;
         this.wallPosition = "";
@@ -163,7 +161,7 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
             serverMessage.appendString(this.extradata);
         serverMessage.appendInt(-1);
         serverMessage.appendInt(this.isUsable());
-        serverMessage.appendInt(this.getUserId());
+        serverMessage.appendInt(this.getOwnerId());
     }
 
     public int getGiftAdjustedId() {
@@ -216,7 +214,7 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
                 }
             } else if (this.needsUpdate) {
                 try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ?, room_id = ?, wall_pos = ?, x = ?, y = ?, z = ?, rot = ?, extra_data = ?, limited_data = ? WHERE id = ?")) {
-                    statement.setInt(1, this.userId);
+                    statement.setInt(1, this.ownerId);
                     statement.setInt(2, this.roomId);
                     statement.setString(3, this.wallPosition);
                     statement.setInt(4, this.x);
@@ -299,21 +297,21 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
     public void onPlace(Room room) {
         //TODO: IMPORTANT: MAKE THIS GENERIC. (HOLES, ICE SKATE PATCHES, BLACK HOLE, BUNNY RUN FIELD, FOOTBALL FIELD)
         Achievement roomDecoAchievement = Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoFurniCount");
-        Habbo owner = room.getRoomUnitManager().getRoomHabboById(this.getUserId());
+        Habbo owner = room.getRoomUnitManager().getRoomHabboById(this.getOwnerId());
 
         int furniCollecterProgress;
         if (owner == null) {
-            furniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.getUserId(), roomDecoAchievement);
+            furniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.getOwnerId(), roomDecoAchievement);
         } else {
             furniCollecterProgress = owner.getHabboStats().getAchievementProgress(roomDecoAchievement);
         }
 
-        int difference = room.getUserFurniCount(this.getUserId()) - furniCollecterProgress;
+        int difference = room.getUserFurniCount(this.getOwnerId()) - furniCollecterProgress;
         if (difference > 0) {
             if (owner != null) {
                 AchievementManager.progressAchievement(owner, roomDecoAchievement, difference);
             } else {
-                AchievementManager.progressAchievement(this.getUserId(), roomDecoAchievement, difference);
+                AchievementManager.progressAchievement(this.getOwnerId(), roomDecoAchievement, difference);
             }
         }
 
@@ -321,17 +319,17 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
 
         int uniqueFurniCollecterProgress;
         if (owner == null) {
-            uniqueFurniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.getUserId(), roomDecoUniqueAchievement);
+            uniqueFurniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.getOwnerId(), roomDecoUniqueAchievement);
         } else {
             uniqueFurniCollecterProgress = owner.getHabboStats().getAchievementProgress(roomDecoUniqueAchievement);
         }
 
-        int uniqueDifference = room.getUserUniqueFurniCount(this.getUserId()) - uniqueFurniCollecterProgress;
+        int uniqueDifference = room.getUserUniqueFurniCount(this.getOwnerId()) - uniqueFurniCollecterProgress;
         if (uniqueDifference > 0) {
             if (owner != null) {
                 AchievementManager.progressAchievement(owner, roomDecoUniqueAchievement, uniqueDifference);
             } else {
-                AchievementManager.progressAchievement(this.getUserId(), roomDecoUniqueAchievement, uniqueDifference);
+                AchievementManager.progressAchievement(this.getOwnerId(), roomDecoUniqueAchievement, uniqueDifference);
             }
         }
     }

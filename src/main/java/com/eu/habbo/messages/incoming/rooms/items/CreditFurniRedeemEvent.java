@@ -25,7 +25,7 @@ public class CreditFurniRedeemEvent extends MessageHandler {
         if (room != null) {
             RoomItem item = room.getHabboItem(itemId);
 
-            if (item != null && this.client.getHabbo().getHabboInfo().getId() == item.getUserId()) {
+            if (item != null && this.client.getHabbo().getHabboInfo().getId() == item.getOwnerId()) {
                 boolean furnitureRedeemEventRegistered = Emulator.getPluginManager().isRegistered(FurnitureRedeemedEvent.class, true);
                 FurnitureRedeemedEvent furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), 0, FurnitureRedeemedEvent.CREDITS);
 

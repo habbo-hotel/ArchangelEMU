@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRentableSpace;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ public class ClearRentedSpace implements Runnable {
 
         for (RoomTile t : this.room.getLayout().getTilesAt(this.room.getLayout().getTile(this.item.getX(), this.item.getY()), this.item.getBaseItem().getWidth(), this.item.getBaseItem().getLength(), this.item.getRotation())) {
             for (RoomItem i : this.room.getItemsAt(t)) {
-                if (i.getUserId() == this.item.getRenterId()) {
+                if (i.getOwnerId() == this.item.getRenterId()) {
                     items.add(i);
                     i.setRoomId(0);
                     i.needsUpdate(true);

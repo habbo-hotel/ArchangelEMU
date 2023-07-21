@@ -183,7 +183,7 @@ public class RoomTrade {
             try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ? WHERE id = ? LIMIT 1")) {
                 try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO room_trade_log_items (id, item_id, user_id) VALUES (?, ?, ?)")) {
                     for (RoomItem item : userOne.getItems()) {
-                        item.setUserId(userTwoId);
+                        item.setOwnerId(userTwoId);
                         statement.setInt(1, userTwoId);
                         statement.setInt(2, item.getId());
                         statement.addBatch();
@@ -197,7 +197,7 @@ public class RoomTrade {
                     }
 
                     for (RoomItem item : userTwo.getItems()) {
-                        item.setUserId(userOneId);
+                        item.setOwnerId(userOneId);
                         statement.setInt(1, userOneId);
                         statement.setInt(2, item.getId());
                         statement.addBatch();

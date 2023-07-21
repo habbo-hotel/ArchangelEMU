@@ -80,7 +80,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
             for (RoomTile tile : this.tiles) {
                 THashSet<RoomItem> tileItems = room.getItemsAt(tile);
                 for (RoomItem tileItem : tileItems) {
-                    if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
+                    if (canBuild.contains(tileItem.getOwnerId()) && tileItem != this) {
                         room.getRoomItemManager().pickUpItem(tileItem, null);
                     }
                 }
@@ -130,7 +130,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
                 THashSet<RoomItem> tileItems = room.getItemsAt(tile);
                 if (newTiles.contains(tile)) continue;
                 for (RoomItem tileItem : tileItems) {
-                    if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
+                    if (canBuild.contains(tileItem.getOwnerId()) && tileItem != this) {
                         room.getRoomItemManager().pickUpItem(tileItem, null);
                     }
                 }
@@ -204,7 +204,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
             for (RoomTile tile : oldTiles) {
                 THashSet<RoomItem> tileItems = room.getItemsAt(tile);
                 for (RoomItem tileItem : tileItems) {
-                    if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
+                    if (canBuild.contains(tileItem.getOwnerId()) && tileItem != this) {
                         room.getRoomItemManager().pickUpItem(tileItem, null);
                     }
                 }

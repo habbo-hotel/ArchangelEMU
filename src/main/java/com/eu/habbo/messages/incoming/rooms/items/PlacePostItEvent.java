@@ -31,7 +31,7 @@ public class PlacePostItEvent extends MessageHandler {
                         item.setExtradata("FFFF33");
                         item.setRoomId(this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId());
                         item.setWallPosition(location);
-                        item.setUserId(this.client.getHabbo().getHabboInfo().getId());
+                        item.setOwnerId(this.client.getHabbo().getHabboInfo().getId());
                         item.needsUpdate(true);
                         room.sendComposer(new ItemAddMessageComposer(item, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);

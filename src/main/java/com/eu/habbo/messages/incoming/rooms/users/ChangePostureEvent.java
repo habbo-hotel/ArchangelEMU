@@ -11,7 +11,8 @@ public class ChangePostureEvent extends MessageHandler {
             if (this.client.getHabbo().getRoomUnit().isWalking()) {
                 this.client.getHabbo().getRoomUnit().stopWalking();
             }
-            this.client.getHabbo().getRoomUnit().getRoom().makeSit(this.client.getHabbo());
+
+            this.client.getHabbo().getRoomUnit().makeSit();
 
             UserIdleEvent event = new UserIdleEvent(this.client.getHabbo(), UserIdleEvent.IdleReason.WALKED, false);
             Emulator.getPluginManager().fireEvent(event);

@@ -30,7 +30,7 @@ public class RedeemCommand extends Command {
         TIntIntMap points = new TIntIntHashMap();
 
         for (RoomItem item : gameClient.getHabbo().getInventory().getItemsComponent().getItemsAsValueCollection()) {
-            if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_")) && item.getUserId() == gameClient.getHabbo().getHabboInfo().getId()) {
+            if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_")) && item.getOwnerId() == gameClient.getHabbo().getHabboInfo().getId()) {
                 items.add(item);
                 if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_")) {
                     try {

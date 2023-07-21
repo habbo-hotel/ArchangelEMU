@@ -17,7 +17,7 @@ public class RoomSitCommand extends Command {
             } else if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.SIT)) {
                 return;
             }
-            gameClient.getHabbo().getRoomUnit().getRoom().makeSit(habbo);
+            gameClient.getHabbo().getRoomUnit().makeSit();
         });
 
         return true;

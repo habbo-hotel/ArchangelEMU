@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionGift;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.inventory.FurniListAddOrUpdateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
@@ -37,7 +37,7 @@ public class OpenGift implements Runnable {
                 if (inside == null)
                     inside = i;
 
-                i.setUserId(this.habbo.getHabboInfo().getId());
+                i.setOwnerId(this.habbo.getHabboInfo().getId());
                 i.needsUpdate(true);
                 i.run();
             }

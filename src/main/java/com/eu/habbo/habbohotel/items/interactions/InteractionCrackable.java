@@ -92,7 +92,7 @@ public class InteractionCrackable extends RoomItem {
     public void onTick(Habbo habbo, Room room) {
         if (this.cracked) return;
 
-        if (this.allowAnyone() || this.getUserId() == habbo.getHabboInfo().getId()) {
+        if (this.allowAnyone() || this.getOwnerId() == habbo.getHabboInfo().getId()) {
             CrackableReward rewardData = Emulator.getGameEnvironment().getItemManager().getCrackableData(this.getBaseItem().getId());
 
             if (rewardData != null) {

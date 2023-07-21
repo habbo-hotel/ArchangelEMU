@@ -48,7 +48,7 @@ public class InteractionIceTagField extends InteractionTagField {
     public void onPlace(Room room) {
         super.onPlace(room);
 
-        Habbo itemOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId());
+        Habbo itemOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getOwnerId());
 
         if (itemOwner != null) {
             AchievementManager.progressAchievement(itemOwner, Emulator.getGameEnvironment().getAchievementManager().getAchievement("TagA"));

@@ -127,7 +127,7 @@ public class MoveAvatarEvent extends MessageHandler {
                         return;
                 }
 
-                if (room.canLayAt(tile.getX(), tile.getY())) {
+                if (room.canLayAt(tile)) {
                     RoomItem bed = room.getTopItemAt(tile.getX(), tile.getY());
 
                     if (bed != null && bed.getBaseItem().allowLay()) {
@@ -138,7 +138,7 @@ public class MoveAvatarEvent extends MessageHandler {
                             default -> room.getLayout().getTile(bed.getX(), bed.getY());
                         };
 
-                        if (pillow != null && room.canLayAt(pillow.getX(), pillow.getY())) {
+                        if (pillow != null && room.canLayAt(pillow)) {
                             roomUnit.setGoalLocation(pillow);
                             return;
                         }

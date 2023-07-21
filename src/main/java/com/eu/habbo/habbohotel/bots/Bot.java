@@ -2,8 +2,10 @@ package com.eu.habbo.habbohotel.bots;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;
-import com.eu.habbo.habbohotel.rooms.*;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.RoomUserAction;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -410,19 +412,6 @@ public class Bot extends Unit implements Runnable {
 
     public void setCanWalk(boolean canWalk) {
         this.canWalk = canWalk;
-    }
-
-    public void lookAt(Habbo habbo) {
-        this.lookAt(habbo.getRoomUnit().getCurrentPosition());
-    }
-
-    public void lookAt(RoomUnit roomUnit) {
-        this.lookAt(roomUnit.getCurrentPosition());
-    }
-
-    public void lookAt(RoomTile tile) {
-        this.getRoomUnit().lookAtPoint(tile);
-        this.getRoomUnit().setStatusUpdateNeeded(true);
     }
 
     public void onPlaceUpdate() {

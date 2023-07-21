@@ -11,6 +11,9 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
+import com.eu.habbo.habbohotel.users.DanceType;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitSetGoalEvent;
@@ -144,6 +147,7 @@ public abstract class RoomUnit extends RoomEntity {
     public void setRotation(RoomRotation rotation) {
         this.bodyRotation = rotation;
         this.headRotation = rotation;
+        this.statusUpdateNeeded = true;
     }
 
     public void clearWalking() {
@@ -157,7 +161,7 @@ public abstract class RoomUnit extends RoomEntity {
     public void stopWalking() {
         synchronized (this.statuses) {
             this.statuses.remove(RoomUnitStatus.MOVE);
-            this.setStatusUpdateNeeded(true);
+            this.statusUpdateNeeded = true;
             this.setGoalLocation(this.getCurrentPosition());
         }
     }
@@ -249,17 +253,45 @@ public abstract class RoomUnit extends RoomEntity {
 
     public RoomUnit removeStatus(RoomUnitStatus key) {
         this.statuses.remove(key);
+        this.statusUpdateNeeded = true;
         return this;
     }
 
     public void setStatus(RoomUnitStatus key, String value) {
         if (key != null && value != null) {
             this.statuses.put(key, value);
+            this.statusUpdateNeeded = true;
         }
     }
 
     public boolean hasStatus(RoomUnitStatus key) {
         return this.statuses.containsKey(key);
+    }
+
+    public void makeStand() {
+        RoomItem item = this.getRoom().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
+        if (item == null || !item.getBaseItem().allowSit() || !item.getBaseItem().allowLay()) {
+            this.setCmdStandEnabled(true);
+            this.setBodyRotation(RoomRotation.values()[this.getBodyRotation().getValue() - this.getBodyRotation().getValue() % 2]);
+            this.removeStatus(RoomUnitStatus.SIT);
+            this.getRoom().sendComposer(new UserUpdateComposer(this).compose());
+        }
+    }
+
+    public void makeSit() {
+        if (this.hasStatus(RoomUnitStatus.SIT) || !this.canForcePosture()) {
+            return;
+        }
+
+        this.setCmdSitEnabled(true);
+        this.setBodyRotation(RoomRotation.values()[this.getBodyRotation().getValue() - this.getBodyRotation().getValue() % 2]);
+        this.setStatus(RoomUnitStatus.SIT, 0.5 + "");
+
+        if(this instanceof RoomAvatar roomAvatar) {
+            roomAvatar.setDance(DanceType.NONE);
+        }
+
+        this.getRoom().sendComposer(new UserUpdateComposer(this).compose());
     }
 
     public void clearStatuses() {
@@ -311,10 +343,6 @@ public abstract class RoomUnit extends RoomEntity {
         return this.idleTicks > Room.IDLE_CYCLES; //Amount of room cycles / 2 = seconds.
     }
 
-    public int getIdleTicks() {
-        return this.idleTicks;
-    }
-
     public void resetIdleTimer() {
         this.idleTicks = 0;
     }
@@ -324,7 +352,9 @@ public abstract class RoomUnit extends RoomEntity {
     }
 
     public void lookAtPoint(RoomTile location) {
-        if (!this.isCanRotate()) return;
+        if (!this.isCanRotate()) {
+            return;
+        }
 
         if (Emulator.getPluginManager().isRegistered(RoomUnitLookAtPointEvent.class, false)) {
             Event lookAtPointEvent = new RoomUnitLookAtPointEvent(this.getRoom(), this, location);
@@ -338,15 +368,17 @@ public abstract class RoomUnit extends RoomEntity {
             return;
         }
 
-        if (!this.statuses.containsKey(RoomUnitStatus.SIT)) {
-            this.bodyRotation = (RoomRotation.values()[Rotation.Calculate(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), location.getX(), location.getY())]);
-        }
-
         RoomRotation rotation = (RoomRotation.values()[Rotation.Calculate(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), location.getX(), location.getY())]);
+
+        if (!this.statuses.containsKey(RoomUnitStatus.SIT)) {
+            this.bodyRotation = rotation;
+        }
 
         if (Math.abs(rotation.getValue() - this.bodyRotation.getValue()) <= 1) {
             this.headRotation = rotation;
         }
+
+        this.statusUpdateNeeded = true;
     }
 
     public boolean canOverrideTile(RoomTile tile) {

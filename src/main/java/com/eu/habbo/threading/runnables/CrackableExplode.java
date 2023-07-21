@@ -40,7 +40,7 @@ public class CrackableExplode implements Runnable {
         Item rewardItem = Emulator.getGameEnvironment().getItemManager().getCrackableReward(this.habboItem.getBaseItem().getId());
 
         if (rewardItem != null) {
-            RoomItem newItem = Emulator.getGameEnvironment().getItemManager().createItem(this.habboItem.allowAnyone() ? this.habbo.getHabboInfo().getId() : this.habboItem.getUserId(), rewardItem, 0, 0, "");
+            RoomItem newItem = Emulator.getGameEnvironment().getItemManager().createItem(this.habboItem.allowAnyone() ? this.habbo.getHabboInfo().getId() : this.habboItem.getOwnerId(), rewardItem, 0, 0, "");
 
             if (newItem != null) {
                 //Add to inventory in case if isn't possible place the item or in case is wall item
@@ -56,7 +56,7 @@ public class CrackableExplode implements Runnable {
                     newItem.needsUpdate(true);
                     this.room.addHabboItem(newItem);
                     this.room.updateItem(newItem);
-                    this.room.sendComposer(new ObjectAddMessageComposer(newItem, this.room.getFurniOwnerNames().get(newItem.getUserId())).compose());
+                    this.room.sendComposer(new ObjectAddMessageComposer(newItem, this.room.getFurniOwnerNames().get(newItem.getOwnerId())).compose());
                 }
             }
         }

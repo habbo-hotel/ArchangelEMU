@@ -298,7 +298,7 @@ public class TraxManager implements Disposable {
             musicDisc.needsUpdate(true);
             Emulator.getThreading().run(musicDisc);
 
-            Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getUserId());
+            Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getOwnerId());
 
             if (owner != null) {
                 owner.getInventory().getItemsComponent().addItem(musicDisc);
@@ -328,7 +328,7 @@ public class TraxManager implements Disposable {
                             musicDisc.needsUpdate(true);
                             Emulator.getThreading().run(musicDisc);
 
-                            Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getUserId());
+                            Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getOwnerId());
 
                             if (owner != null) {
                                 owner.getInventory().getItemsComponent().addItem(musicDisc);

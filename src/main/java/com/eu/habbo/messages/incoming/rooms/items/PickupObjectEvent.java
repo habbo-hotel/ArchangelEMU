@@ -24,15 +24,15 @@ public class PickupObjectEvent extends MessageHandler {
             return;
         }
 
-        if (item.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
+        if (item.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
             room.getRoomItemManager().pickUpItem(item, this.client.getHabbo());
         } else {
             if (room.hasRights(this.client.getHabbo())) {
                 if (this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
-                    item.setUserId(this.client.getHabbo().getHabboInfo().getId());
+                    item.setOwnerId(this.client.getHabbo().getHabboInfo().getId());
                 } else {
                     if (!room.getRoomInfo().isRoomOwner(this.client.getHabbo())) {
-                        if (item.getUserId() == room.getRoomInfo().getOwnerInfo().getId()) {
+                        if (item.getOwnerId() == room.getRoomInfo().getOwnerInfo().getId()) {
                             return;
                         }
                     }

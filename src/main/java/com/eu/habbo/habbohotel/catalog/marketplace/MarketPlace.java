@@ -3,8 +3,8 @@ package com.eu.habbo.habbohotel.catalog.marketplace;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.incoming.catalog.marketplace.GetMarketplaceOffersEvent;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceBuyOfferResultComposer;
@@ -281,7 +281,7 @@ public class MarketPlace {
                                 }
                                 event.price = calculateCommision(event.price);
 
-                                item.setUserId(client.getHabbo().getHabboInfo().getId());
+                                item.setOwnerId(client.getHabbo().getHabboInfo().getId());
                                 item.needsUpdate(true);
                                 Emulator.getThreading().run(item);
 
@@ -362,7 +362,7 @@ public class MarketPlace {
         MarketPlaceOffer offer = new MarketPlaceOffer(event.getItem(), event.getPrice(), client.getHabbo());
         client.getHabbo().getInventory().addMarketplaceOffer(offer);
         client.getHabbo().getInventory().getItemsComponent().removeHabboItem(event.getItem());
-        item.setUserId(-1);
+        item.setOwnerId(-1);
         item.needsUpdate(true);
         Emulator.getThreading().run(item);
 

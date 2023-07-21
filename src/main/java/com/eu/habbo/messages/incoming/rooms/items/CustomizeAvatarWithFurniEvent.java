@@ -30,7 +30,7 @@ public class CustomizeAvatarWithFurniEvent extends MessageHandler {
                 this.client.getHabbo().getRoomUnit().getRoom().hasRights(this.client.getHabbo())) {
             RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
 
-            if (item != null && item.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
+            if (item != null && item.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
                 if (item instanceof InteractionClothing) {
                     ClothItem clothing = Emulator.getGameEnvironment().getCatalogManager().getClothing(item.getBaseItem().getName());
 

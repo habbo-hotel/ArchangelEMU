@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.HabboGender;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
@@ -25,7 +25,7 @@ public class InteractionFXBox extends InteractionDefault {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) {
-        if (client != null && this.getUserId() == client.getHabbo().getHabboInfo().getId()) {
+        if (client != null && this.getOwnerId() == client.getHabbo().getHabboInfo().getId()) {
             if(this.getExtradata().equals("1"))
                 return;
 

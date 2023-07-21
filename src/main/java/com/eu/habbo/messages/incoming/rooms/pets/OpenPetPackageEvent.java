@@ -22,7 +22,7 @@ public class OpenPetPackageEvent extends MessageHandler {
 
         if (room != null) {
             RoomItem item = room.getHabboItem(itemId);
-            if (item != null && item.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
+            if (item != null && item.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
                 if (!name.matches("^[a-zA-Z0-9]*$")) {
                     this.client.sendResponse(new PerkAllowancesComposer(itemId, PerkAllowancesComposer.CONTAINS_INVALID_CHARS, name.replaceAll("^[a-zA-Z0-9]*$", "")));
                     return;
@@ -66,7 +66,7 @@ public class OpenPetPackageEvent extends MessageHandler {
                     RoomTile tile = room.getLayout().getTile(item.getX(), item.getY());
                     room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
                     room.sendComposer(new HeightMapUpdateMessageComposer(tile.getX(), tile.getY(), tile.getZ(), tile.relativeHeight()).compose());
-                    item.setUserId(0);
+                    item.setOwnerId(0);
                 } else {
                     this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
                 }

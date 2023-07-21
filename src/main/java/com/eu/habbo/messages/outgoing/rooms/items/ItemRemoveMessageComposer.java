@@ -14,7 +14,7 @@ public class ItemRemoveMessageComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.itemRemoveMessageComposer);
         this.response.appendString(this.item.getId() + "");
-        this.response.appendInt(this.item.getUserId());
+        this.response.appendInt(this.item.getOwnerId());
         return this.response;
     }
 }

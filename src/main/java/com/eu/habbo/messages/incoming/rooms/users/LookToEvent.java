@@ -51,8 +51,6 @@ public class LookToEvent extends MessageHandler {
 
         if (tile != null) {
             roomUnit.lookAtPoint(tile);
-            roomUnit.setStatusUpdateNeeded(true);
-            //room.sendComposer(new RoomUserStatusComposer(roomUnit).compose());
         }
     }
 }

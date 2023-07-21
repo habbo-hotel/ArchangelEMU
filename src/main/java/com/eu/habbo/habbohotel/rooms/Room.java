@@ -1453,17 +1453,17 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         synchronized (this.furniOwnerCount) {
-            this.furniOwnerCount.put(item.getUserId(), this.furniOwnerCount.get(item.getUserId()) + 1);
+            this.furniOwnerCount.put(item.getOwnerId(), this.furniOwnerCount.get(item.getOwnerId()) + 1);
         }
 
         synchronized (this.furniOwnerNames) {
-            if (!this.furniOwnerNames.containsKey(item.getUserId())) {
-                HabboInfo habbo = HabboManager.getOfflineHabboInfo(item.getUserId());
+            if (!this.furniOwnerNames.containsKey(item.getOwnerId())) {
+                HabboInfo habbo = HabboManager.getOfflineHabboInfo(item.getOwnerId());
 
                 if (habbo != null) {
-                    this.furniOwnerNames.put(item.getUserId(), habbo.getUsername());
+                    this.furniOwnerNames.put(item.getOwnerId(), habbo.getUsername());
                 } else {
-                    log.error("Failed to find username for item (ID: {}, UserID: {})", item.getId(), item.getUserId());
+                    log.error("Failed to find username for item (ID: {}, UserID: {})", item.getId(), item.getOwnerId());
                 }
             }
         }
@@ -1610,13 +1610,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             if (i != null) {
                 synchronized (this.furniOwnerCount) {
                     synchronized (this.furniOwnerNames) {
-                        int count = this.furniOwnerCount.get(i.getUserId());
+                        int count = this.furniOwnerCount.get(i.getOwnerId());
 
                         if (count > 1)
-                            this.furniOwnerCount.put(i.getUserId(), count - 1);
+                            this.furniOwnerCount.put(i.getOwnerId(), count - 1);
                         else {
-                            this.furniOwnerCount.remove(i.getUserId());
-                            this.furniOwnerNames.remove(i.getUserId());
+                            this.furniOwnerCount.remove(i.getOwnerId());
+                            this.furniOwnerNames.remove(i.getOwnerId());
                         }
                     }
                 }
@@ -2176,8 +2176,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public THashSet<RoomItem> getItemsAt(RoomTile tile, boolean returnOnFirst) {
         THashSet<RoomItem> items = new THashSet<>(0);
 
-        if (tile == null)
+        if (tile == null) {
             return items;
+        }
 
         if (this.loaded) {
             THashSet<RoomItem> cachedItems = this.tileCache.get(tile);
@@ -2497,8 +2498,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return tallestItem.getBaseItem().allowSit();
     }
 
-    public boolean canLayAt(int x, int y) {
-        return this.canLayAt(this.getItemsAt(x, y));
+    public boolean canLayAt(RoomTile tile) {
+        return this.canLayAt(this.getItemsAt(tile));
     }
 
     boolean canLayAt(THashSet<RoomItem> items) {
@@ -2532,14 +2533,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             if (habbo.getClient() == null) continue;
 
             habbo.getClient().sendResponse(message);
-        }
-    }
-
-    public void sendComposerToHabbosWithRights(ServerMessage message) {
-        for (Habbo habbo : this.roomUnitManager.getRoomHabbos()) {
-            if (this.hasRights(habbo)) {
-                habbo.getClient().sendResponse(message);
-            }
         }
     }
 
@@ -2788,32 +2781,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.bannedHabbos.put(roomBan.getUserId(), roomBan);
     }
 
-    public void makeSit(Habbo habbo) {
-        if (habbo.getRoomUnit() == null) return;
-
-        if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.SIT) || !habbo.getRoomUnit().canForcePosture()) {
-            return;
-        }
-
-        habbo.getRoomUnit().setDance(DanceType.NONE);
-        habbo.getRoomUnit().setCmdSitEnabled(true);
-        habbo.getRoomUnit().setBodyRotation(RoomRotation.values()[habbo.getRoomUnit().getBodyRotation().getValue() - habbo.getRoomUnit().getBodyRotation().getValue() % 2]);
-        habbo.getRoomUnit().setStatus(RoomUnitStatus.SIT, 0.5 + "");
-        this.sendComposer(new UserUpdateComposer(habbo.getRoomUnit()).compose());
-    }
-
-    public void makeStand(Habbo habbo) {
-        if (habbo.getRoomUnit() == null) return;
-
-        RoomItem item = this.getTopItemAt(habbo.getRoomUnit().getCurrentPosition().getX(), habbo.getRoomUnit().getCurrentPosition().getY());
-        if (item == null || !item.getBaseItem().allowSit() || !item.getBaseItem().allowLay()) {
-            habbo.getRoomUnit().setCmdStandEnabled(true);
-            habbo.getRoomUnit().setBodyRotation(RoomRotation.values()[habbo.getRoomUnit().getBodyRotation().getValue() - habbo.getRoomUnit().getBodyRotation().getValue() % 2]);
-            habbo.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
-            this.sendComposer(new UserUpdateComposer(habbo.getRoomUnit()).compose());
-        }
-    }
-
     public void updateItem(RoomItem item) {
         if (!this.isLoaded()) {
             return;
@@ -2856,7 +2823,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         THashSet<Item> items = new THashSet<>();
 
         for (RoomItem item : this.roomItems.valueCollection()) {
-            if (!items.contains(item.getBaseItem()) && item.getUserId() == userId) items.add(item.getBaseItem());
+            if (!items.contains(item.getBaseItem()) && item.getOwnerId() == userId) items.add(item.getBaseItem());
         }
 
         return items.size();
@@ -2874,7 +2841,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 break;
             }
 
-            if (iterator.value().getUserId() == userId) {
+            if (iterator.value().getOwnerId() == userId) {
                 items.add(iterator.value());
                 iterator.value().setRoomId(0);
             }
@@ -2892,11 +2859,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
     }
 
-    public void ejectAll() {
-        this.ejectAll(null);
+    public void ejectAllFurni() {
+        this.ejectAllFurni(null);
     }
 
-    public void ejectAll(Habbo habbo) {
+    public void ejectAllFurni(Habbo habbo) {
         THashMap<Integer, THashSet<RoomItem>> userItemsMap = new THashMap<>();
 
         synchronized (this.roomItems) {
@@ -2909,13 +2876,13 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     break;
                 }
 
-                if (habbo != null && iterator.value().getUserId() == habbo.getHabboInfo().getId())
+                if (habbo != null && iterator.value().getOwnerId() == habbo.getHabboInfo().getId())
                     continue;
 
                 if (iterator.value() instanceof InteractionPostIt)
                     continue;
 
-                userItemsMap.computeIfAbsent(iterator.value().getUserId(), k -> new THashSet<>()).add(iterator.value());
+                userItemsMap.computeIfAbsent(iterator.value().getOwnerId(), k -> new THashSet<>()).add(iterator.value());
             }
         }
 

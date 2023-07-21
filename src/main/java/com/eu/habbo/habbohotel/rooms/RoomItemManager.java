@@ -314,7 +314,7 @@ public class RoomItemManager {
         item.onPlace(this.room);
         this.room.updateTiles(occupiedTiles);
 
-        this.room.sendComposer(new ObjectAddMessageComposer(item, this.room.getFurniOwnerName(item.getUserId())).compose());
+        this.room.sendComposer(new ObjectAddMessageComposer(item, this.room.getFurniOwnerName(item.getOwnerId())).compose());
 
         for (RoomTile t : occupiedTiles) {
             this.room.updateHabbosAt(t);
@@ -339,10 +339,10 @@ public class RoomItemManager {
         }
 
         item.setWallPosition(wallPosition);
-        if (!this.room.getFurniOwnerNames().containsKey(item.getUserId()) && owner != null) {
-            this.room.getFurniOwnerNames().put(item.getUserId(), owner.getHabboInfo().getUsername());
+        if (!this.room.getFurniOwnerNames().containsKey(item.getOwnerId()) && owner != null) {
+            this.room.getFurniOwnerNames().put(item.getOwnerId(), owner.getHabboInfo().getUsername());
         }
-        this.room.sendComposer(new ItemAddMessageComposer(item, this.room.getFurniOwnerName(item.getUserId())).compose());
+        this.room.sendComposer(new ItemAddMessageComposer(item, this.room.getFurniOwnerName(item.getOwnerId())).compose());
         item.needsUpdate(true);
         this.addRoomItem(item);
         item.setRoomId(this.room.getRoomInfo().getId());
@@ -565,7 +565,7 @@ public class RoomItemManager {
             this.room.sendComposer(new ItemRemoveMessageComposer(item).compose());
         }
 
-        Habbo habbo = (picker != null && picker.getHabboInfo().getId() == item.getId() ? picker : Emulator.getGameServer().getGameClientManager().getHabbo(item.getUserId()));
+        Habbo habbo = (picker != null && picker.getHabboInfo().getId() == item.getId() ? picker : Emulator.getGameServer().getGameClientManager().getHabbo(item.getOwnerId()));
         if (habbo != null) {
             habbo.getInventory().getItemsComponent().addItem(item);
             habbo.getClient().sendResponse(new UnseenItemsComposer(item));
