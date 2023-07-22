@@ -49,7 +49,7 @@ public class KickMemberEvent extends MessageHandler {
                         if (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit() != null)
                             habbo.getRoomUnit().getRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(habbo.getRoomUnit(), null).compose());
                         if (habbo.getRoomUnit().getRoom() == room)
-                            room.refreshRightsForHabbo(habbo);
+                            room.getRoomRightsManager().refreshRightsForHabbo(habbo);
                     }
 
                     habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));

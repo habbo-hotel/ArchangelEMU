@@ -22,7 +22,6 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
 import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
-import com.eu.habbo.habbohotel.messenger.MessengerBuddy;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
@@ -47,8 +46,13 @@ import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.QuestionAnsweredComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.QuestionComposer;
-import com.eu.habbo.messages.outgoing.rooms.*;
-import com.eu.habbo.messages.outgoing.rooms.items.*;
+import com.eu.habbo.messages.outgoing.rooms.FlatAccessDeniedMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.FlatAccessibleMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ItemUpdateMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.ObjectUpdateMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.OneWayDoorStatusMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.messages.outgoing.users.RemainingMutePeriodComposer;
 import com.eu.habbo.plugin.Event;
@@ -57,11 +61,13 @@ import com.eu.habbo.plugin.events.furniture.FurnitureStackHeightEvent;
 import com.eu.habbo.plugin.events.rooms.RoomLoadedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUnloadedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUnloadingEvent;
-import com.eu.habbo.plugin.events.users.*;
+import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
+import com.eu.habbo.plugin.events.users.UserIdleEvent;
+import com.eu.habbo.plugin.events.users.UserRolledEvent;
+import com.eu.habbo.plugin.events.users.UsernameTalkEvent;
 import com.eu.habbo.threading.runnables.YouAreAPirate;
 import gnu.trove.TCollections;
 import gnu.trove.iterator.TIntObjectIterator;
-import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
@@ -96,6 +102,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     @Getter
     private final RoomItemManager roomItemManager;
     @Getter
+    private final RoomRightsManager roomRightsManager;
+    @Getter
     private TraxManager traxManager;
     private static final String CAUGHT_EXCEPTION = "Caught exception";
     public static final Comparator<Room> SORT_SCORE = (o1, o2) -> o2.roomInfo.getScore() - o1.roomInfo.getScore();
@@ -118,8 +126,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     @Getter
     private final TIntObjectMap<Habbo> habboQueue = TCollections.synchronizedMap(new TIntObjectHashMap<>(0));
     private final THashSet<RoomTrade> activeTrades;
-    @Getter
-    private final TIntArrayList rights;
     private final TIntIntHashMap mutedHabbos;
     private final TIntObjectHashMap<RoomBan> bannedHabbos;
     @Getter
@@ -184,6 +190,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.roomInfo = new RoomInfo(set);
         this.roomUnitManager = new RoomUnitManager(this);
         this.roomItemManager = new RoomItemManager(this);
+        this.roomRightsManager = new RoomRightsManager(this);
 
         this.layoutName = set.getString("model");
         this.bannedHabbos = new TIntObjectHashMap<>();
@@ -219,7 +226,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         this.games = new ConcurrentSet<>();
 
         this.activeTrades = new THashSet<>(0);
-        this.rights = new TIntArrayList();
         this.userVotes = new ArrayList<>();
 
         this.triggersOnRoom = new HashMap<>();
@@ -238,7 +244,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.roomSpecialTypes = new RoomSpecialTypes();
 
                 this.loadLayout();
-                this.loadRights(connection);
+                this.roomRightsManager.load(connection);
 
                 //TODO Deprecated
                 this.loadItems(connection);
@@ -1791,7 +1797,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public boolean isMuted(Habbo habbo) {
-        if (this.getRoomInfo().isRoomOwner(habbo) || this.hasRights(habbo))
+        if (this.getRoomInfo().isRoomOwner(habbo) || this.roomRightsManager.hasRights(habbo))
             return false;
 
         if (this.mutedHabbos.containsKey(habbo.getHabboInfo().getId())) {
@@ -1905,7 +1911,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (!habbo.hasRight(Permission.ACC_NOMUTE)) {
-            if (this.isMuted() && !this.hasRights(habbo)) {
+            if (this.isMuted() && !this.roomRightsManager.hasRights(habbo)) {
                 return;
             }
 
@@ -1935,7 +1941,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
             if (chatCounter > 3) {
                 final boolean floodRights = Emulator.getConfig().getBoolean("flood.with.rights");
-                final boolean hasRights = this.hasRights(habbo);
+                final boolean hasRights = this.roomRightsManager.hasRights(habbo);
 
                 if (floodRights || !hasRights) {
                     if (this.roomInfo.getChatProtection() == 0 || (this.roomInfo.getChatProtection() == 1 && chatCounter > 4) || (this.roomInfo.getChatProtection() == 2 && chatCounter > 5)) {
@@ -2005,7 +2011,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             for (Habbo h : this.roomUnitManager.getRoomHabbos()) {
                 if ((h.getRoomUnit().getCurrentPosition().distance(habbo.getRoomUnit().getCurrentPosition()) <= this.roomInfo.getChatDistance() ||
                         h.equals(habbo) ||
-                        this.hasRights(h) ||
+                        this.roomRightsManager.hasRights(h) ||
                         noChatLimit) && (tentRectangle == null || RoomLayout.tileInSquare(tentRectangle, h.getRoomUnit().getCurrentPosition()))) {
                     if (!h.getHabboStats().userIgnored(habbo.getHabboInfo().getId())) {
                         if (prefixMessage != null && !h.getHabboStats().isPreferOldChat()) {
@@ -2528,6 +2534,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return null;
     }
 
+    public void alert(String message) {
+        this.sendComposer(new HabboBroadcastMessageComposer(message).compose());
+    }
+
     public void sendComposer(ServerMessage message) {
         for (Habbo habbo : this.roomUnitManager.getRoomHabbos()) {
             if (habbo.getClient() == null) continue;
@@ -2552,22 +2562,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             if (habbo == null) { return ; }
             if (!habbo.getHabboStats().isIgnoreBots())
                 habbo.getClient().sendResponse(message);
-        }
-    }
-
-    private void loadRights(Connection connection) {
-        this.rights.clear();
-        try (PreparedStatement statement = connection.prepareStatement("SELECT user_id FROM room_rights WHERE room_id = ?")) {
-            statement.setInt(1, this.roomInfo.getId());
-            try (ResultSet set = statement.executeQuery()) {
-                while (set.next()) {
-                    this.rights.add(set.getInt(DatabaseConstants.USER_ID));
-                }
-            }
-        } catch (SQLException e) {
-            log.error(CAUGHT_SQL_EXCEPTION, e);
-        } catch (Exception e) {
-            log.error(CAUGHT_EXCEPTION, e);
         }
     }
 
@@ -2605,150 +2599,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         return RoomRightLevels.NONE;
-    }
-
-    public boolean hasRights(Habbo habbo) {
-        return this.getRoomInfo().isRoomOwner(habbo) || this.rights.contains(habbo.getHabboInfo().getId()) || (habbo.getRoomUnit().getRightsLevel() != RoomRightLevels.NONE && this.roomUnitManager.getCurrentRoomHabbos().containsKey(habbo.getHabboInfo().getId()));
-    }
-
-    public void giveRights(Habbo habbo) {
-        if (habbo != null) {
-            this.giveRights(habbo.getHabboInfo().getId());
-        }
-    }
-
-    public void giveRights(int userId) {
-        if (this.rights.contains(userId))
-            return;
-
-        if (this.rights.add(userId)) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_rights VALUES (?, ?)")) {
-                statement.setInt(1, this.roomInfo.getId());
-                statement.setInt(2, userId);
-                statement.execute();
-            } catch (SQLException e) {
-                log.error(CAUGHT_SQL_EXCEPTION, e);
-            }
-        }
-
-        Habbo habbo = this.roomUnitManager.getRoomHabboById(userId);
-
-        if (habbo != null) {
-            this.refreshRightsForHabbo(habbo);
-
-            this.sendComposer(new FlatControllerAddedComposer(this, habbo.getHabboInfo().getId(), habbo.getHabboInfo().getUsername()).compose());
-        } else {
-            Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.roomInfo.getOwnerInfo().getId());
-
-            if (owner != null) {
-                MessengerBuddy buddy = owner.getMessenger().getFriend(userId);
-
-                if (buddy != null) {
-                    this.sendComposer(new FlatControllerAddedComposer(this, userId, buddy.getUsername()).compose());
-                }
-            }
-        }
-    }
-
-    public void removeRights(int userId) {
-        Habbo habbo = this.roomUnitManager.getRoomHabboById(userId);
-
-        if (Emulator.getPluginManager().fireEvent(new UserRightsTakenEvent(this.roomUnitManager.getRoomHabboById(this.roomInfo.getOwnerInfo().getId()), userId, habbo)).isCancelled())
-            return;
-
-        this.sendComposer(new FlatControllerRemovedComposer(this, userId).compose());
-
-        if (this.rights.remove(userId)) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM room_rights WHERE room_id = ? AND user_id = ?")) {
-                statement.setInt(1, this.roomInfo.getId());
-                statement.setInt(2, userId);
-                statement.execute();
-            } catch (SQLException e) {
-                log.error(CAUGHT_SQL_EXCEPTION, e);
-            }
-        }
-
-        if (habbo != null) {
-            this.ejectUserFurni(habbo.getHabboInfo().getId());
-            habbo.getRoomUnit().setRightsLevel(RoomRightLevels.NONE);
-            habbo.getRoomUnit().removeStatus(RoomUnitStatus.FLAT_CONTROL);
-            this.refreshRightsForHabbo(habbo);
-        }
-    }
-
-    public void removeAllRights() {
-        for (int userId : rights.toArray()) {
-            this.ejectUserFurni(userId);
-        }
-
-        this.rights.clear();
-
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM room_rights WHERE room_id = ?")) {
-            statement.setInt(1, this.roomInfo.getId());
-            statement.execute();
-        } catch (SQLException e) {
-            log.error(CAUGHT_SQL_EXCEPTION, e);
-        }
-
-        this.refreshRightsInRoom();
-    }
-
-    void refreshRightsInRoom() {
-        Room room = this;
-        for (Habbo habbo : this.roomUnitManager.getRoomHabbos()) {
-            if (habbo.getRoomUnit().getRoom() == room) {
-                this.refreshRightsForHabbo(habbo);
-            }
-        }
-    }
-
-    public void refreshRightsForHabbo(Habbo habbo) {
-        RoomItem item;
-        RoomRightLevels flatCtrl = RoomRightLevels.NONE;
-        if (habbo.getHabboStats().isRentingSpace()) {
-            item = this.getHabboItem(habbo.getHabboStats().getRentedItemId());
-
-            if (item != null) {
-                return;
-            }
-        }
-
-        if (habbo.hasRight(Permission.ACC_ANYROOMOWNER) || this.getRoomInfo().isRoomOwner(habbo)) {
-            habbo.getClient().sendResponse(new YouAreOwnerMessageComposer());
-            flatCtrl = RoomRightLevels.MODERATOR;
-        } else if (this.hasRights(habbo) && !this.roomInfo.hasGuild()) {
-            flatCtrl = RoomRightLevels.RIGHTS;
-        } else if (this.roomInfo.hasGuild()) {
-            flatCtrl = this.getGuildRightLevel(habbo);
-        }
-
-        habbo.getClient().sendResponse(new YouAreControllerMessageComposer(flatCtrl));
-        habbo.getRoomUnit().setStatus(RoomUnitStatus.FLAT_CONTROL, String.valueOf(flatCtrl.getLevel()));
-        habbo.getRoomUnit().setRightsLevel(flatCtrl);
-        habbo.getRoomUnit().setStatusUpdateNeeded(true);
-
-        if (flatCtrl.equals(RoomRightLevels.MODERATOR)) {
-            habbo.getClient().sendResponse(new FlatControllersComposer(this));
-        }
-    }
-
-    public THashMap<Integer, String> getUsersWithRights() {
-        THashMap<Integer, String> rightsMap = new THashMap<>();
-
-        if (!this.rights.isEmpty()) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username AS username, users.id as user_id FROM room_rights INNER JOIN users ON room_rights.user_id = users.id WHERE room_id = ?")) {
-                statement.setInt(1, this.roomInfo.getId());
-                try (ResultSet set = statement.executeQuery()) {
-                    while (set.next()) {
-                        rightsMap.put(set.getInt(DatabaseConstants.USER_ID), set.getString("username"));
-                    }
-                }
-            } catch (SQLException e) {
-                log.error(CAUGHT_SQL_EXCEPTION, e);
-            }
-        }
-
-        return rightsMap;
     }
 
     public void unbanHabbo(int userId) {
@@ -2940,7 +2790,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         for (Habbo habbo : this.roomUnitManager.getRoomHabbos()) {
             if ((habbo.getRoomUnit().getRoom() == this && habbo.getHabboInfo().getId() != this.roomInfo.getOwnerInfo().getId())
                     && (!(habbo.hasRight(Permission.ACC_ANYROOMOWNER) || habbo.hasRight(Permission.ACC_MOVEROTATE))))
-                this.refreshRightsForHabbo(habbo);
+                this.getRoomRightsManager().refreshRightsForHabbo(habbo);
         }
     }
 
@@ -3029,36 +2879,5 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public boolean hasVotedInWordQuiz(Habbo habbo) {
         return this.userVotes.contains(habbo.getHabboInfo().getId());
-    }
-
-    public void alert(String message) {
-        this.sendComposer(new HabboBroadcastMessageComposer(message).compose());
-    }
-
-    public void setHideWired(boolean hideWired) {
-        this.roomInfo.setHiddenWiredEnabled(hideWired);
-
-        if (this.roomInfo.isHiddenWiredEnabled()) {
-            for (RoomItem item : this.roomSpecialTypes.getTriggers()) {
-                this.sendComposer(new RemoveFloorItemComposer(item).compose());
-            }
-
-            for (RoomItem item : this.roomSpecialTypes.getEffects()) {
-                this.sendComposer(new RemoveFloorItemComposer(item).compose());
-            }
-
-            for (RoomItem item : this.roomSpecialTypes.getConditions()) {
-                this.sendComposer(new RemoveFloorItemComposer(item).compose());
-            }
-
-            for (RoomItem item : this.roomSpecialTypes.getExtras()) {
-                this.sendComposer(new RemoveFloorItemComposer(item).compose());
-            }
-        } else {
-            this.sendComposer(new ObjectsMessageComposer(this.furniOwnerNames, this.roomSpecialTypes.getTriggers()).compose());
-            this.sendComposer(new ObjectsMessageComposer(this.furniOwnerNames, this.roomSpecialTypes.getEffects()).compose());
-            this.sendComposer(new ObjectsMessageComposer(this.furniOwnerNames, this.roomSpecialTypes.getConditions()).compose());
-            this.sendComposer(new ObjectsMessageComposer(this.furniOwnerNames, this.roomSpecialTypes.getExtras()).compose());
-        }
     }
 }

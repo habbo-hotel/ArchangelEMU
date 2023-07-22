@@ -11,7 +11,7 @@ public class DiagonalCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getRoomUnit().getRoom() != null && gameClient.getHabbo().getRoomUnit().getRoom().hasRights(gameClient.getHabbo())) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() != null && gameClient.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(gameClient.getHabbo())) {
             gameClient.getHabbo().getRoomUnit().getRoom().setDiagonalMoveEnabled(!gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().isDiagonalMoveEnabled());
 
             if (!gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().isDiagonalMoveEnabled()) {

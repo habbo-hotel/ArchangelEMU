@@ -14,13 +14,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Getter
 public class RoomWiredManager {
+    private final Room room;
     private final ConcurrentHashMap<Integer, InteractionWired> currentWireds;
     private final ConcurrentHashMap<WiredTriggerType, Set<InteractionWiredTrigger>> currentWiredTriggers;
     private final ConcurrentHashMap<WiredEffectType, Set<InteractionWiredEffect>> currentWiredEffects;
     private final ConcurrentHashMap<WiredConditionType, Set<InteractionWiredCondition>> currentWiredConditions;
     private final ConcurrentHashMap<Integer, InteractionWiredExtra> currentWiredExtras;
 
-    public RoomWiredManager() {
+    public RoomWiredManager(Room room) {
+        this.room = room;
         this.currentWireds = new ConcurrentHashMap<>(0);
         this.currentWiredTriggers = new ConcurrentHashMap<>(0);
         this.currentWiredEffects = new ConcurrentHashMap<>(0);
@@ -111,6 +113,19 @@ public class RoomWiredManager {
 
     public void removeWiredExtra(InteractionWiredExtra extra) {
         currentWiredExtras.remove(extra.getId());
+    }
+
+    public void setHideWired(boolean hideWired) {
+        //TODO FIX THIS
+//        this.room.getRoomInfo().setHiddenWiredEnabled(hideWired);
+//
+//        if (this.room.getRoomInfo().isHiddenWiredEnabled()) {
+//            for (RoomItem item : this.currentWireds.values()) {
+//                this.room.sendComposer(new RemoveFloorItemComposer(item).compose());
+//            }
+//        } else {
+//            this.room.sendComposer(new ObjectsMessageComposer(this.room.getFurniOwnerNames(), this.currentWireds).compose());
+//        }
     }
 
     public void clear() {

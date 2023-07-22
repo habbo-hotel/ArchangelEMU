@@ -41,8 +41,7 @@ public class InteractionGate extends RoomItem {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         boolean executedByWired = (objects.length >= 2 && objects[1] instanceof WiredEffectType && objects[1] == WiredEffectType.TOGGLE_STATE);
 
-        if (client != null && !room.hasRights(client.getHabbo()) && !executedByWired)
-            return;
+        if (client != null && !room.getRoomRightsManager().hasRights(client.getHabbo()) && !executedByWired) return;
 
         // If a Habbo is standing on a tile occupied by the gate, the gate shouldn't open/close
         for (RoomTile tile : room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))

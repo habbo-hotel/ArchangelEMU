@@ -36,7 +36,8 @@ public class RemoveAdminRightsFromMemberEvent extends MessageHandler {
                 if (habbo != null) {
                     habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, this.client, false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild.getId(), userId)));
 
-                    if (room != null && habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom() == room) room.refreshRightsForHabbo(habbo);
+                    if (room != null && habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom() == room)
+                        room.getRoomRightsManager().refreshRightsForHabbo(habbo);
                 }
                 GuildMember guildMember = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, userId);
 

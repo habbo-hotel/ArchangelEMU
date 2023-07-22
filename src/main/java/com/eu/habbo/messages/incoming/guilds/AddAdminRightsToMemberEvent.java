@@ -32,7 +32,7 @@ public class AddAdminRightsToMemberEvent extends MessageHandler {
                 Room room = habbo.getRoomUnit().getRoom();
                 if (room != null) {
                     if (room.getRoomInfo().getGuild().getId() == guildId) {
-                        room.refreshRightsForHabbo(habbo);
+                        room.getRoomRightsManager().refreshRightsForHabbo(habbo);
                     }
                 }
             }

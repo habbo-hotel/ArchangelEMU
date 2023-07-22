@@ -12,7 +12,7 @@ public class BotsCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getRoomUnit().getRoom() == null || !gameClient.getHabbo().getRoomUnit().getRoom().hasRights(gameClient.getHabbo()))
+        if (gameClient.getHabbo().getRoomUnit().getRoom() == null || !gameClient.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(gameClient.getHabbo()))
             return false;
 
         StringBuilder data = new StringBuilder(getTextsValue("total") + ": " + gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentRoomBots().values().size());

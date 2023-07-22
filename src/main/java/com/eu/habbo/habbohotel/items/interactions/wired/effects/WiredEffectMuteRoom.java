@@ -36,7 +36,7 @@ public class WiredEffectMuteRoom extends InteractionWiredEffect {
         Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
-            if (room.hasRights(habbo))
+            if (room.getRoomRightsManager().hasRights(habbo))
                 return false;
 
             room.muteHabbo(habbo, 60);

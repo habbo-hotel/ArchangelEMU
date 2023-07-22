@@ -17,7 +17,7 @@ public class SetCustomStackingHeightEvent extends MessageHandler {
         if (this.client.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
-        if (this.client.getHabbo().getHabboInfo().getId() == this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getOwnerInfo().getId() || this.client.getHabbo().getRoomUnit().getRoom().hasRights(this.client.getHabbo())) {
+        if (this.client.getHabbo().getHabboInfo().getId() == this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getOwnerInfo().getId() || this.client.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(this.client.getHabbo())) {
             RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
 
             if (item instanceof InteractionStackHelper) {

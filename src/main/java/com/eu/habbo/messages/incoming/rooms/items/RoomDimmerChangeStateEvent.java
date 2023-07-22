@@ -14,7 +14,7 @@ public class RoomDimmerChangeStateEvent extends MessageHandler {
     public void handle() {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if ((room.getRoomInfo().getGuild().getId() > 0 && room.getGuildRightLevel(this.client.getHabbo()).isLessThan(RoomRightLevels.GUILD_RIGHTS)) && !room.hasRights(this.client.getHabbo()))
+        if ((room.getRoomInfo().getGuild().getId() > 0 && room.getGuildRightLevel(this.client.getHabbo()).isLessThan(RoomRightLevels.GUILD_RIGHTS)) && !room.getRoomRightsManager().hasRights(this.client.getHabbo()))
             return;
 
         for (RoomItem moodLight : room.getRoomSpecialTypes().getItemsOfType(InteractionMoodLight.class)) {

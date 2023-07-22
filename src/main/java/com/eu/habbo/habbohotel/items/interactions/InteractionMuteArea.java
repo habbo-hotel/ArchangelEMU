@@ -48,7 +48,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if((objects.length >= 2 && objects[1] instanceof WiredEffectType) || (client != null && room.hasRights(client.getHabbo()))) {
+        if((objects.length >= 2 && objects[1] instanceof WiredEffectType) || (client != null && room.getRoomRightsManager().hasRights(client.getHabbo()))) {
             this.values.put("state", this.values.get("state").equals("0") ? "1" : "0");
             room.sendComposer(new ObjectDataUpdateMessageComposer(this).compose());
         }

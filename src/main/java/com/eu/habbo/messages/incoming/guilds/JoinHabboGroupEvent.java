@@ -34,6 +34,6 @@ public class JoinHabboGroupEvent extends MessageHandler {
         if (room == null || room.getRoomInfo().getGuild().getId() != guildId)
             return;
 
-        room.refreshRightsForHabbo(this.client.getHabbo());
+        room.getRoomRightsManager().refreshRightsForHabbo(this.client.getHabbo());
     }
 }

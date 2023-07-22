@@ -26,8 +26,7 @@ public class CustomizeAvatarWithFurniEvent extends MessageHandler {
     public void handle() {
         int itemId = this.packet.readInt();
 
-        if (this.client.getHabbo().getRoomUnit().getRoom() != null &&
-                this.client.getHabbo().getRoomUnit().getRoom().hasRights(this.client.getHabbo())) {
+        if (this.client.getHabbo().getRoomUnit().getRoom() != null && this.client.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(this.client.getHabbo())) {
             RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
 
             if (item != null && item.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {

@@ -65,7 +65,7 @@ public class RoomItemManager {
     public RoomItemManager(Room room) {
         this.room = room;
         this.currentItems = new ConcurrentHashMap<>();
-        this.wiredManager = new RoomWiredManager();
+        this.wiredManager = new RoomWiredManager(room);
 
         this.floorItems = new ConcurrentHashMap<>();
         this.wallItems = new ConcurrentHashMap<>();
@@ -236,7 +236,7 @@ public class RoomItemManager {
         }
 
         rotation %= 8;
-        if (this.room.hasRights(habbo) || this.room.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS) || habbo.hasRight(Permission.ACC_MOVEROTATE)) {
+        if (this.room.getRoomRightsManager().hasRights(habbo) || this.room.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS) || habbo.hasRight(Permission.ACC_MOVEROTATE)) {
             return FurnitureMovementError.NONE;
         }
 
@@ -326,7 +326,7 @@ public class RoomItemManager {
     }
 
     public FurnitureMovementError placeWallFurniAt(RoomItem item, String wallPosition, Habbo owner) {
-        if (!(this.room.hasRights(owner) || this.room.getGuildRightLevel(owner).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
+        if (!(this.room.getRoomRightsManager().hasRights(owner) || this.room.getGuildRightLevel(owner).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
             return FurnitureMovementError.NO_RIGHTS;
         }
 

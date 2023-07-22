@@ -8,8 +8,8 @@ import com.eu.habbo.habbohotel.games.wired.WiredGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -232,7 +232,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
                 Emulator.getThreading().run(new GameTimer(this), 1000);
             }
         } else if (client != null) {
-            if (!(room.hasRights(client.getHabbo()) || client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)))
+            if (!(room.getRoomRightsManager().hasRights(client.getHabbo()) || client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)))
                 return;
 
             InteractionGameTimerAction state = InteractionGameTimerAction.START_STOP;

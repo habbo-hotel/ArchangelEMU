@@ -37,7 +37,7 @@ public class GetGuestRoomResultComposer extends MessageComposer {
         this.response.appendInt(this.room.getRoomInfo().getWhoCanKickOption());
         this.response.appendInt(this.room.getRoomInfo().getWhoCanBanOption());
 
-        this.response.appendBoolean(this.room.hasRights(this.habbo)); //mute all button
+        this.response.appendBoolean(this.room.getRoomRightsManager().hasRights(this.habbo)); //mute all button
 
         this.response.appendInt(this.room.getRoomInfo().getChatMode());
         this.response.appendInt(this.room.getRoomInfo().getChatWeight());

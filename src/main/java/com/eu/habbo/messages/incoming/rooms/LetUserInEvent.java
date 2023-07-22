@@ -10,7 +10,7 @@ import com.eu.habbo.messages.outgoing.rooms.FlatAccessibleMessageComposer;
 public class LetUserInEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().getRoomUnit().getRoom() != null && this.client.getHabbo().getRoomUnit().getRoom().hasRights(this.client.getHabbo())) {
+        if (this.client.getHabbo().getRoomUnit().getRoom() != null && this.client.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(this.client.getHabbo())) {
             String username = this.packet.readString();
             boolean accepted = this.packet.readBoolean();
 

@@ -18,7 +18,7 @@ public class RemoveRightsEvent extends MessageHandler {
             for (int i = 0; i < amount; i++) {
                 int userId = this.packet.readInt();
 
-                room.removeRights(userId);
+                room.getRoomRightsManager().removeRights(userId);
             }
         }
     }

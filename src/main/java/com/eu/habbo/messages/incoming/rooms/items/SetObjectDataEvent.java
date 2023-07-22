@@ -16,7 +16,7 @@ public class SetObjectDataEvent extends MessageHandler {
         if (room == null)
             return;
 
-        if (!room.hasRights(this.client.getHabbo()))
+        if (!room.getRoomRightsManager().hasRights(this.client.getHabbo()))
             return;
 
         RoomItem item = room.getHabboItem(this.packet.readInt());

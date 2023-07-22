@@ -38,7 +38,7 @@ public class ApplySnapshotEvent extends MessageHandler {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         // Executing Habbo should be able to edit wireds
-        if (room == null || (!room.hasRights(this.client.getHabbo()) && !room.getRoomInfo().isRoomOwner(this.client.getHabbo()))) {
+        if (room == null || (!room.getRoomRightsManager().hasRights(this.client.getHabbo()) && !room.getRoomInfo().isRoomOwner(this.client.getHabbo()))) {
             return;
         }
 

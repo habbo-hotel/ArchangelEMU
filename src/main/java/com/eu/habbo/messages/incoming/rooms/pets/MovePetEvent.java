@@ -15,7 +15,7 @@ public class MovePetEvent extends MessageHandler {
 
         if (pet != null) {
             Room room = this.client.getHabbo().getRoomUnit().getRoom();
-            if (room != null && room.hasRights(this.client.getHabbo())) {
+            if (room != null && room.getRoomRightsManager().hasRights(this.client.getHabbo())) {
                 if (pet.getRoomUnit() != null) {
                     int x = this.packet.readInt();
                     int y = this.packet.readInt();

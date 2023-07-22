@@ -74,7 +74,7 @@ public class InteractionTotemHead extends InteractionDefault {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) {
-        if (!((client != null && room != null && room.hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
+        if (!((client != null && room != null && room.getRoomRightsManager().hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
             return;
 
         TotemType newType = TotemType.fromInt(getTotemType().getType() + 1);

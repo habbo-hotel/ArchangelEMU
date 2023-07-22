@@ -79,7 +79,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
         this.wiredSettings.getItems(room);
 
         if (client != null) {
-            if (room.hasRights(client.getHabbo())) {
+            if (room.getRoomRightsManager().hasRights(client.getHabbo())) {
                 MessageComposer composer = null;
                 if(this instanceof InteractionWiredEffect) {
                     composer = new WiredEffectDataComposer((InteractionWiredEffect) this, room);

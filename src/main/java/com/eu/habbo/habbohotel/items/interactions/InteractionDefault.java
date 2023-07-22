@@ -215,7 +215,7 @@ public class InteractionDefault extends RoomItem {
     }
 
     public boolean canToggle(Habbo habbo, Room room) {
-        if (room.hasRights(habbo)) return true;
+        if (room.getRoomRightsManager().hasRights(habbo)) return true;
 
         if (!habbo.getHabboStats().isRentingSpace()) return false;
 

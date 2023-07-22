@@ -75,7 +75,7 @@ public class PlaceObjectEvent extends MessageHandler {
                 rentSpace = room.getHabboItem(this.client.getHabbo().getHabboStats().getRentedItemId());
             }
 
-            if ((rentSpace != null || buildArea != null) && !room.hasRights(this.client.getHabbo())) {
+            if ((rentSpace != null || buildArea != null) && !room.getRoomRightsManager().hasRights(this.client.getHabbo())) {
                 if (item instanceof InteractionRoller ||
                         item instanceof InteractionStackHelper ||
                         item instanceof InteractionWired ||

@@ -63,7 +63,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
                     Guild guild = Emulator.getGameEnvironment().getGuildManager().createGuild(this.client.getHabbo(), roomId, r.getRoomInfo().getName(), name, description, badge.toString(), colorOne, colorTwo);
 
                     r.getRoomInfo().setGuild(guild);
-                    r.removeAllRights();
+                    r.getRoomRightsManager().removeAllRights(); //TODO Check if this is needed
                     r.setNeedsUpdate(true);
 
                     if (Emulator.getConfig().getBoolean("imager.internal.enabled")) {

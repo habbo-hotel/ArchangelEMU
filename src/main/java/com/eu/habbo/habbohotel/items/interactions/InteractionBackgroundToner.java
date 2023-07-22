@@ -61,7 +61,7 @@ public class InteractionBackgroundToner extends RoomItem {
 
         if(client != null)
         {
-            if (!client.getHabbo().getRoomUnit().getRoom().hasRights(client.getHabbo())) {
+            if (!client.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(client.getHabbo())) {
                 ScripterManager.scripterDetected(
                         client,
                         Emulator.getTexts().getValue("scripter.warning.item.bgtoner.permission").replace("%username%", client.getHabbo().getHabboInfo().getUsername())

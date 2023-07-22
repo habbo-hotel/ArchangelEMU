@@ -16,7 +16,7 @@ public class SetRoomBackgroundColorDataEvent extends MessageHandler {
         if (room == null)
             return;
 
-        if (room.hasRights(this.client.getHabbo()) || this.client.getHabbo().hasRight(Permission.ACC_PLACEFURNI)) {
+        if (room.getRoomRightsManager().hasRights(this.client.getHabbo()) || this.client.getHabbo().hasRight(Permission.ACC_PLACEFURNI)) {
             RoomItem item = room.getHabboItem(itemId);
 
             if (item == null)

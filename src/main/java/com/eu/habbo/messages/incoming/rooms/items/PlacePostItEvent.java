@@ -22,7 +22,7 @@ public class PlacePostItEvent extends MessageHandler {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
-            if (room.hasRights(this.client.getHabbo()) || !room.getRoomSpecialTypes().getItemsOfType(InteractionStickyPole.class).isEmpty()) {
+            if (room.getRoomRightsManager().hasRights(this.client.getHabbo()) || !room.getRoomSpecialTypes().getItemsOfType(InteractionStickyPole.class).isEmpty()) {
                 RoomItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
 
                 if (item instanceof InteractionPostIt) {

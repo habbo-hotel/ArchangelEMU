@@ -18,7 +18,7 @@ public class RemoveAllRightsEvent extends MessageHandler {
             return;
 
         if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
-            room.getRights().forEach(value -> {
+            room.getRoomRightsManager().getRights().forEach(value -> {
                 Habbo habbo = room.getRoomUnitManager().getRoomHabboById(value);
 
                     if (habbo != null) {
@@ -26,11 +26,9 @@ public class RemoveAllRightsEvent extends MessageHandler {
                         habbo.getRoomUnit().removeStatus(RoomUnitStatus.FLAT_CONTROL);
                         habbo.getClient().sendResponse(new YouAreControllerMessageComposer(RoomRightLevels.NONE));
                     }
-
-                return true;
             });
 
-            room.removeAllRights();
+            room.getRoomRightsManager().removeAllRights();
         }
     }
 }

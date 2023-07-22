@@ -264,6 +264,11 @@ public abstract class RoomUnit extends RoomEntity {
         }
     }
 
+    public void setRightsLevel(RoomRightLevels rightsLevel) {
+        this.rightsLevel = rightsLevel;
+        this.statusUpdateNeeded = true;
+    }
+
     public boolean hasStatus(RoomUnitStatus key) {
         return this.statuses.containsKey(key);
     }

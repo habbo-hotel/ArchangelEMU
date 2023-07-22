@@ -59,7 +59,7 @@ public class ApproveMembershipRequestEvent extends MessageHandler {
         if (habbo != null && userInfo.isOnline() && habbo.getRoomUnit().getRoom() != null) {
             if (habbo.getRoomUnit().getRoom().getRoomInfo().getGuild().getId() == guildId) {
                 habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, userId)));
-                habbo.getRoomUnit().getRoom().refreshRightsForHabbo(habbo);
+                habbo.getRoomUnit().getRoom().getRoomRightsManager().refreshRightsForHabbo(habbo);
             }
         }
     }

@@ -17,7 +17,7 @@ public class HideWiredCommand extends Command {
         }
 
         if (room.getRoomInfo().isRoomOwner(gameClient.getHabbo())) {
-            room.setHideWired(!room.getRoomInfo().isHiddenWiredEnabled());
+            room.getRoomItemManager().getWiredManager().setHideWired(!room.getRoomInfo().isHiddenWiredEnabled());
             gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_hidewired." + (room.getRoomInfo().isHiddenWiredEnabled() ? "hidden" : "shown")));
         } else {
             gameClient.getHabbo().whisper(getTextsValue("commands.errors.cmd_hidewired.permission"));
