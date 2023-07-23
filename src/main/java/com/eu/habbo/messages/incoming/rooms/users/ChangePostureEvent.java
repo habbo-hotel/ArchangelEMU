@@ -19,7 +19,7 @@ public class ChangePostureEvent extends MessageHandler {
 
             if (!event.isCancelled()) {
                 if (!event.isIdle()) {
-                    this.client.getHabbo().getRoomUnit().getRoom().unIdle(this.client.getHabbo());
+                    this.client.getHabbo().getRoomUnit().unIdle();
                 }
             }
         }

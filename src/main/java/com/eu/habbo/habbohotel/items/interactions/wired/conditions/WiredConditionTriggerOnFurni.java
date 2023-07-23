@@ -31,7 +31,7 @@ public class WiredConditionTriggerOnFurni extends InteractionWiredCondition {
             return false;
         }
 
-        THashSet<RoomItem> itemsAtUser = room.getItemsAt(roomUnit.getCurrentPosition());
+        THashSet<RoomItem> itemsAtUser = room.getRoomItemManager().getItemsAt(roomUnit.getCurrentPosition());
         return this.getWiredSettings().getItems(room).stream().anyMatch(itemsAtUser::contains);
     }
 

@@ -52,7 +52,7 @@ class FreezeHandleSnowballExplosion implements Runnable {
             THashSet<InteractionFreezeTile> freezeTiles = new THashSet<>();
 
             for (RoomTile roomTile : tiles) {
-                THashSet<RoomItem> items = this.thrownData.room.getItemsAt(roomTile);
+                THashSet<RoomItem> items = this.thrownData.room.getRoomItemManager().getItemsAt(roomTile);
 
                 for (RoomItem freezeTile : items) {
                     if (freezeTile instanceof InteractionFreezeTile || freezeTile instanceof InteractionFreezeBlock) {

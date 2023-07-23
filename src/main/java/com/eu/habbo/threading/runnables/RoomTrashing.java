@@ -40,7 +40,7 @@ public class RoomTrashing implements Runnable {
                 if (event.habbo.getRoomUnit().getRoom().equals(INSTANCE.room)) {
                     THashSet<ServerMessage> messages = new THashSet<>();
 
-                    THashSet<RoomItem> items = INSTANCE.room.getItemsAt(event.toLocation);
+                    THashSet<RoomItem> items = INSTANCE.room.getRoomItemManager().getItemsAt(event.toLocation);
 
                     int offset = Emulator.getRandom().nextInt(4) + 2;
 
@@ -56,7 +56,7 @@ public class RoomTrashing implements Runnable {
                     }
 
                     for (RoomItem item : items) {
-                        double offsetZ = (INSTANCE.room.getTopHeightAt(t.getX(), t.getY())) - item.getZ();
+                        double offsetZ = (INSTANCE.room.getRoomItemManager().getTopHeightAt(t.getX(), t.getY())) - item.getZ();
 
                         messages.add(new FloorItemOnRollerComposer(item, null, t, offsetZ, INSTANCE.room).compose());
                     }
@@ -78,11 +78,11 @@ public class RoomTrashing implements Runnable {
                     RoomTile s = INSTANCE.room.getLayout().getTileInFront(INSTANCE.habbo.getRoomUnit().getCurrentPosition(), INSTANCE.habbo.getRoomUnit().getBodyRotation().getValue() + 7);
 
                     if (s != null) {
-                        items = INSTANCE.room.getItemsAt(s);
+                        items = INSTANCE.room.getRoomItemManager().getItemsAt(s);
                     }
 
                     for (RoomItem item : items) {
-                        double offsetZ = (INSTANCE.room.getTopHeightAt(t.getX(), t.getY())) - item.getZ();
+                        double offsetZ = (INSTANCE.room.getRoomItemManager().getTopHeightAt(t.getX(), t.getY())) - item.getZ();
 
                         messages.add(new FloorItemOnRollerComposer(item, null, t, offsetZ, INSTANCE.room).compose());
                     }
@@ -101,10 +101,10 @@ public class RoomTrashing implements Runnable {
                     }
 
                     s = INSTANCE.getRoom().getLayout().getTileInFront(INSTANCE.habbo.getRoomUnit().getCurrentPosition(), INSTANCE.habbo.getRoomUnit().getBodyRotation().getValue() + 1);
-                    items = INSTANCE.room.getItemsAt(s);
+                    items = INSTANCE.room.getRoomItemManager().getItemsAt(s);
 
                     for (RoomItem item : items) {
-                        double offsetZ = (INSTANCE.room.getTopHeightAt(t.getX(), t.getY())) - item.getZ();
+                        double offsetZ = (INSTANCE.room.getRoomItemManager().getTopHeightAt(t.getX(), t.getY())) - item.getZ();
 
                         messages.add(new FloorItemOnRollerComposer(item, null, t, offsetZ, INSTANCE.room).compose());
                     }

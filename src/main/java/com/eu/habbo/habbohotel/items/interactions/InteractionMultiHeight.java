@@ -57,7 +57,7 @@ public class InteractionMultiHeight extends RoomItem {
         }
 
         if (objects[0] instanceof Integer && room != null) {
-            RoomItem topItem = room.getTopItemAt(this.getX(), this.getY());
+            RoomItem topItem = room.getRoomItemManager().getTopItemAt(this.getX(), this.getY());
             if (topItem != null && !topItem.equals(this)) { // multiheight items cannot change height even if there is a stackable item on top - no items allowed on top
                 return;
             }

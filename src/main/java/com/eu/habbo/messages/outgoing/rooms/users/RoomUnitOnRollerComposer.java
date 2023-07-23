@@ -36,7 +36,7 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         this.newLocation = newLocation;
         this.newZ = newZ;
         this.room = room;
-        oldTopItem = this.room.getTopItemAt(oldLocation.getX(), oldLocation.getY());
+        oldTopItem = this.room.getRoomItemManager().getTopItemAt(oldLocation.getX(), oldLocation.getY());
     }
 
     public RoomUnitOnRollerComposer(RoomUnit roomUnit, RoomTile newLocation, Room room) {
@@ -70,8 +70,8 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
         if (this.roller != null && room.getLayout() != null) {
             Emulator.getThreading().run(() -> {
                 if(!this.roomUnit.isWalking() && this.roomUnit.getCurrentPosition() == this.oldLocation) {
-                    RoomItem topItem = this.room.getTopItemAt(this.oldLocation.getX(), this.oldLocation.getY());
-                    RoomItem topItemNewLocation = this.room.getTopItemAt(this.newLocation.getX(), this.newLocation.getY());
+                    RoomItem topItem = this.room.getRoomItemManager().getTopItemAt(this.oldLocation.getX(), this.oldLocation.getY());
+                    RoomItem topItemNewLocation = this.room.getRoomItemManager().getTopItemAt(this.newLocation.getX(), this.newLocation.getY());
 
                     if (topItem != null && (oldTopItem == null || oldTopItem != topItemNewLocation)) {
                         try {

@@ -25,7 +25,5 @@ public interface IRoomEntity {
     double getTargetZ();
     RoomEntity setTargetZ(double targetZ);
 
-    void setTargetTile(short x, short y);
-
     void incrementTilesMoved();
 }

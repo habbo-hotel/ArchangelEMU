@@ -1,7 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +17,8 @@ public class RoomTile {
     private final short y;
     @Getter
     private final short z;
-    private final HashSet<RoomEntity> units;
+    private final HashSet<RoomUnit> roomUnits;
+    private final HashSet<RoomItem> roomItems;
     @Setter
     @Getter
     private RoomTileState state;
@@ -39,7 +40,8 @@ public class RoomTile {
         this.stackHeight = z;
         this.state = state;
         this.setAllowStack(allowStack);
-        this.units = new HashSet<>();
+        this.roomUnits = new HashSet<>();
+        this.roomItems = new HashSet<>();
     }
 
     public RoomTile(RoomTile tile) {
@@ -56,20 +58,8 @@ public class RoomTile {
         if (this.state == RoomTileState.INVALID) {
             this.allowStack = false;
         }
-        this.units = tile.units;
-    }
-
-    public RoomTile() {
-        x = 0;
-        y = 0;
-        z = 0;
-        this.stackHeight = 0;
-        this.state = RoomTileState.INVALID;
-        this.allowStack = false;
-        this.diagonally = false;
-        this.gCosts = 0;
-        this.hCosts = 0;
-        this.units = null;
+        this.roomUnits = tile.roomUnits;
+        this.roomItems = tile.roomItems;
     }
 
     public double getStackHeight() {
@@ -175,36 +165,41 @@ public class RoomTile {
         return this.x == x && this.y == y;
     }
 
-    public List<RoomEntity> getEntities() {
-        synchronized (this.units) {
-            return new ArrayList<>(this.units);
+    public List<RoomUnit> getRoomUnits() {
+        synchronized (this.roomUnits) {
+            return new ArrayList<>(this.roomUnits);
         }
     }
 
-    public void addUnit(RoomEntity entity) {
-        synchronized (this.units) {
-            if (!this.units.contains(entity)) {
-                this.units.add(entity);
+    public void addRoomUnit(RoomUnit roomUnit) {
+        synchronized (this.roomUnits) {
+            if (!this.roomUnits.contains(roomUnit)) {
+                this.roomUnits.add(roomUnit);
             }
         }
     }
 
-    public void removeUnit(RoomEntity entity) {
-        synchronized (this.units) {
-            this.units.remove(entity);
+    public void removeUnit(RoomUnit roomUnit) {
+        synchronized (this.roomUnits) {
+            this.roomUnits.remove(roomUnit);
         }
     }
 
     public boolean hasUnits() {
-        synchronized (this.units) {
-            return this.units.size() > 0;
+        synchronized (this.roomUnits) {
+            return !this.roomUnits.isEmpty();
         }
     }
 
-    public boolean unitIsOnFurniOnTile(RoomUnit unit, Item item) {
-        if ((unit.getCurrentPosition().getX() < this.x || unit.getCurrentPosition().getX() >= this.x + item.getLength()))
+    public boolean unitIsOnFurniOnTile(RoomUnit roomUnit, Item item) {
+        if ((roomUnit.getCurrentPosition().getX() < this.x || roomUnit.getCurrentPosition().getX() >= this.x + item.getLength())) {
             return false;
-        if (unit.getCurrentPosition().getY() < this.y) return false;
-        return unit.getCurrentPosition().getY() < this.y + item.getWidth();
+        }
+
+        if (roomUnit.getCurrentPosition().getY() < this.y) {
+            return false;
+        }
+
+        return roomUnit.getCurrentPosition().getY() < this.y + item.getWidth();
     }
 }

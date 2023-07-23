@@ -40,7 +40,7 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
                 Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, roomUnit, room, new Object[]{ msg }));
 
                 if (habbo.getRoomUnit().isIdle()) {
-                    habbo.getRoomUnit().getRoom().unIdle(habbo);
+                    habbo.getRoomUnit().unIdle();
                 }
                 return true;
             }

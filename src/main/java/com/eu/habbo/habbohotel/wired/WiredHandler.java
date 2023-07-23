@@ -255,7 +255,7 @@ public class WiredHandler {
     public static boolean executeEffectsAtTiles(THashSet<RoomTile> tiles, final RoomUnit roomUnit, final Room room, final Object[] stuff) {
         for (RoomTile tile : tiles) {
             if (room != null) {
-                THashSet<RoomItem> items = room.getItemsAt(tile);
+                THashSet<RoomItem> items = room.getRoomItemManager().getItemsAt(tile);
 
                 long millis = room.getCycleTimestamp();
                 for (final RoomItem item : items) {

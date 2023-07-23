@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.users;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
@@ -26,31 +26,31 @@ public class LookToEvent extends MessageHandler {
             }
         }
 
-        RoomUnit roomUnit = habbo.getRoomUnit();
+        RoomHabbo roomHabbo = habbo.getRoomUnit();
 
-        if (!roomUnit.isCanWalk())
+        if (!roomHabbo.isCanWalk())
             return;
 
-        if (roomUnit.isWalking() || roomUnit.hasStatus(RoomUnitStatus.MOVE))
+        if (roomHabbo.isWalking() || roomHabbo.hasStatus(RoomUnitStatus.MOVE))
             return;
 
-        if (roomUnit.isCmdLayEnabled() || roomUnit.hasStatus(RoomUnitStatus.LAY))
+        if (roomHabbo.isCmdLayEnabled() || roomHabbo.hasStatus(RoomUnitStatus.LAY))
             return;
 
-        if (roomUnit.isIdle())
+        if (roomHabbo.isIdle())
             return;
 
         int x = this.packet.readInt();
         int y = this.packet.readInt();
 
-        if (x == roomUnit.getCurrentPosition().getX()) {
-            if (y == roomUnit.getCurrentPosition().getY()) return;
+        if (x == roomHabbo.getCurrentPosition().getX()) {
+            if (y == roomHabbo.getCurrentPosition().getY()) return;
         }
 
         RoomTile tile = habbo.getRoomUnit().getRoom().getLayout().getTile((short) x, (short) y);
 
         if (tile != null) {
-            roomUnit.lookAtPoint(tile);
+            roomHabbo.lookAtPoint(tile);
         }
     }
 }

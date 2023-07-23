@@ -12,7 +12,7 @@ import java.util.LinkedList;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class RoomEntity implements IRoomEntity {
+public abstract class RoomEntity implements IRoomEntity {
     private Room room;
     private RoomTile previousPosition;
     private double previousZ;
@@ -22,32 +22,6 @@ public class RoomEntity implements IRoomEntity {
     private double targetZ;
     private Deque<RoomTile> path = new LinkedList<>();
     private int tilesMoved;
-
-    public RoomEntity setCurrentPosition(RoomTile tile) {
-        if (this.currentPosition != null) {
-            this.currentPosition.removeUnit(this);
-        }
-
-        this.currentPosition = tile;
-
-        if(this.currentPosition != null) {
-            tile.addUnit(this);
-        }
-
-        return this;
-    }
-
-    public void setTargetTile(short x, short y) {
-        RoomTile targetTile = this.getRoom().getLayout().getTile(x, y);
-
-        if(this.getCurrentPosition().equals(targetTile)) {
-            return;
-        }
-
-        if (targetTile.isWalkable()) {
-            this.setTargetPosition(targetTile);
-        }
-    }
 
     public synchronized void incrementTilesMoved() {
         this.tilesMoved++;

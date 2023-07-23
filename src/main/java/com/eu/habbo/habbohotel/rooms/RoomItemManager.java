@@ -375,7 +375,7 @@ public class RoomItemManager {
 
         boolean magicTile = item instanceof InteractionStackHelper;
 
-        Optional<RoomItem> stackHelper = this.room.getItemsAt(targetTile).stream().filter(InteractionStackHelper.class::isInstance).findAny();
+        Optional<RoomItem> stackHelper = this.getItemsAt(targetTile).stream().filter(InteractionStackHelper.class::isInstance).findAny();
 
         //Check if can be placed at new position
         THashSet<RoomTile> occupiedTiles = this.room.getLayout().getTilesAt(targetTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
@@ -387,12 +387,12 @@ public class RoomItemManager {
             return fits;
         }
 
-        RoomItem topItem = this.room.getTopItemAt(occupiedTiles, null);
+        RoomItem topItem = this.getTopItemAt(occupiedTiles, null);
 
         if ((stackHelper.isEmpty() && !pluginHelper) || item.getBaseItem().getInteractionType().getType() == InteractionWater.class) {
             if (oldLocation != targetTile) {
                 for (RoomTile t : occupiedTiles) {
-                    RoomItem tileTopItem = this.room.getTopItemAt(t.getX(), t.getY());
+                    RoomItem tileTopItem = this.getTopItemAt(t.getX(), t.getY());
                     if (!magicTile && (tileTopItem != null && tileTopItem != item ? (t.getState().equals(RoomTileState.INVALID) || !t.getAllowStack() || !tileTopItem.getBaseItem().allowStack() ||
                             (tileTopItem.getBaseItem().getInteractionType().getType() == InteractionWater.class && (item.getBaseItem().getInteractionType().getType() != InteractionWaterItem.class || item.getBaseItem().getInteractionType().getType() == InteractionWater.class))) : this.room.calculateTileState(t, item).equals(RoomTileState.INVALID)) || stackHelper.isPresent() && item.getBaseItem().getInteractionType().getType() == InteractionWater.class) {
                         return FurnitureMovementError.CANT_STACK;
@@ -414,7 +414,7 @@ public class RoomItemManager {
             List<Pair<RoomTile, THashSet<RoomItem>>> tileFurniList = new ArrayList<>();
 
             for (RoomTile t : occupiedTiles) {
-                tileFurniList.add(Pair.create(t, this.room.getItemsAt(t)));
+                tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
             }
 
             if (!magicTile && !item.canStackAt(tileFurniList)) {
@@ -670,14 +670,14 @@ public class RoomItemManager {
             }
         }
 
-        Optional<RoomItem> stackHelper = this.room.getItemsAt(targetTile).stream().filter(InteractionStackHelper.class::isInstance).findAny();
+        Optional<RoomItem> stackHelper = this.getItemsAt(targetTile).stream().filter(InteractionStackHelper.class::isInstance).findAny();
 
         List<Pair<RoomTile, THashSet<RoomItem>>> tileFurniList = new ArrayList<>();
 
         for (RoomTile t : occupiedTiles) {
-            tileFurniList.add(Pair.create(t, this.room.getItemsAt(t)));
+            tileFurniList.add(Pair.create(t, this.getItemsAt(t)));
 
-            RoomItem topItem = this.room.getTopItemAt(t.getX(), t.getY(), item);
+            RoomItem topItem = this.getTopItemAt(t.getX(), t.getY(), item);
             if (topItem != null && !topItem.getBaseItem().allowStack() && !t.getAllowStack()) {
                 return FurnitureMovementError.CANT_STACK;
             }
@@ -692,6 +692,211 @@ public class RoomItemManager {
         }
 
         return FurnitureMovementError.NONE;
+    }
+
+    @Deprecated
+    public THashSet<RoomItem> getItemsAt(int x, int y) {
+        RoomTile tile = this.room.getLayout().getTile((short) x, (short) y);
+
+        if (tile != null) {
+            return this.getItemsAt(tile);
+        }
+
+        return new THashSet<>(0);
+    }
+
+    public THashSet<RoomItem> getItemsAt(RoomTile tile) {
+        return getItemsAt(tile, false);
+    }
+
+    public THashSet<RoomItem> getItemsAt(RoomTile tile, boolean returnOnFirst) {
+        THashSet<RoomItem> items = new THashSet<>(0);
+
+        if (tile == null) {
+            return items;
+        }
+
+        if (this.room.isLoaded()) {
+            THashSet<RoomItem> cachedItems = this.room.tileCache.get(tile);
+            if (cachedItems != null)
+                return cachedItems;
+        }
+
+        Iterator<RoomItem> iterator = this.currentItems.values().iterator();
+
+        for (int i = this.currentItems.size(); i-- > 0; ) {
+            RoomItem item;
+            try {
+                item = iterator.next();
+            } catch (Exception e) {
+                break;
+            }
+
+            if (item == null || item.getBaseItem().getType() != FurnitureType.FLOOR) {
+                continue;
+            }
+
+            int width, length;
+
+            if (item.getRotation() != 2 && item.getRotation() != 6) {
+                width = item.getBaseItem().getWidth() > 0 ? item.getBaseItem().getWidth() : 1;
+                length = item.getBaseItem().getLength() > 0 ? item.getBaseItem().getLength() : 1;
+            } else {
+                width = item.getBaseItem().getLength() > 0 ? item.getBaseItem().getLength() : 1;
+                length = item.getBaseItem().getWidth() > 0 ? item.getBaseItem().getWidth() : 1;
+            }
+
+            if (!(tile.getX() >= item.getX() && tile.getX() <= item.getX() + width - 1 && tile.getY() >= item.getY() && tile.getY() <= item.getY() + length - 1))
+                continue;
+
+            items.add(item);
+
+            if (returnOnFirst) {
+                return items;
+            }
+        }
+
+        if (this.room.isLoaded()) {
+            this.room.tileCache.put(tile, items);
+        }
+
+        return items;
+    }
+
+    public THashSet<RoomItem> getItemsAt(int x, int y, double minZ) {
+        THashSet<RoomItem> items = new THashSet<>();
+
+        for (RoomItem item : this.getItemsAt(x, y)) {
+            if (item.getZ() < minZ)
+                continue;
+
+            items.add(item);
+        }
+        return items;
+    }
+
+    public THashSet<RoomItem> getItemsAt(Class<? extends RoomItem> type, int x, int y) {
+        THashSet<RoomItem> items = new THashSet<>();
+
+        for (RoomItem item : this.getItemsAt(x, y)) {
+            if (!item.getClass().equals(type))
+                continue;
+
+            items.add(item);
+        }
+        return items;
+    }
+
+    public boolean hasItemsAt(int x, int y) {
+        RoomTile tile = this.room.getLayout().getTile((short) x, (short) y);
+
+        if (tile == null)
+            return false;
+
+        return !this.getItemsAt(tile, true).isEmpty();
+    }
+
+    public RoomItem getTopItemAt(RoomTile tile) {
+        if(tile == null) {
+            return null;
+        }
+
+        return this.getTopItemAt(tile.getX(), tile.getY(), null);
+    }
+
+    public RoomItem getTopItemAt(int x, int y) {
+        return this.getTopItemAt(x, y, null);
+    }
+
+    public RoomItem getTopItemAt(int x, int y, RoomItem exclude) {
+        RoomTile tile = this.room.getLayout().getTile((short) x, (short) y);
+
+        if (tile == null)
+            return null;
+
+        RoomItem highestItem = null;
+
+        for (RoomItem item : this.getItemsAt(x, y)) {
+            if (exclude != null && exclude == item)
+                continue;
+
+            if (highestItem != null && highestItem.getZ() + Item.getCurrentHeight(highestItem) > item.getZ() + Item.getCurrentHeight(item))
+                continue;
+
+            highestItem = item;
+        }
+
+        return highestItem;
+    }
+
+    public RoomItem getTopItemAt(THashSet<RoomTile> tiles, RoomItem exclude) {
+        RoomItem highestItem = null;
+        for (RoomTile tile : tiles) {
+
+            if (tile == null)
+                continue;
+
+            for (RoomItem item : this.getItemsAt(tile.getX(), tile.getY())) {
+                if (exclude != null && exclude == item)
+                    continue;
+
+                if (highestItem != null && highestItem.getZ() + Item.getCurrentHeight(highestItem) > item.getZ() + Item.getCurrentHeight(item))
+                    continue;
+
+                highestItem = item;
+            }
+        }
+
+        return highestItem;
+    }
+
+    public double getTopHeightAt(int x, int y) {
+        RoomItem item = this.getTopItemAt(x, y);
+        if (item != null) {
+            return (item.getZ() + Item.getCurrentHeight(item) - (item.getBaseItem().allowSit() ? 1 : 0));
+        } else {
+            return this.room.getLayout().getHeightAtSquare(x, y);
+        }
+    }
+
+    public RoomItem getLowestChair(RoomTile tile) {
+        RoomItem lowestChair = null;
+
+        THashSet<RoomItem> items = this.getItemsAt(tile);
+        if (items != null && !items.isEmpty()) {
+            for (RoomItem item : items) {
+
+                if (!item.getBaseItem().allowSit())
+                    continue;
+
+                if (lowestChair != null && lowestChair.getZ() < item.getZ())
+                    continue;
+
+                lowestChair = item;
+            }
+        }
+
+        return lowestChair;
+    }
+
+    public RoomItem getTallestChair(RoomTile tile) {
+        RoomItem lowestChair = null;
+
+        THashSet<RoomItem> items = this.getItemsAt(tile);
+        if (items != null && !items.isEmpty()) {
+            for (RoomItem item : items) {
+
+                if (!item.getBaseItem().allowSit())
+                    continue;
+
+                if (lowestChair != null && lowestChair.getZ() + Item.getCurrentHeight(lowestChair) > item.getZ() + Item.getCurrentHeight(item))
+                    continue;
+
+                lowestChair = item;
+            }
+        }
+
+        return lowestChair;
     }
 
     public void addCycleTask(ICycleable task) {

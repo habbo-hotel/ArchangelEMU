@@ -41,7 +41,7 @@ public class InteractionTotemLegs extends InteractionDefault {
     }
 
     private void updateHead(Room room, RoomTile tile) {
-        for(RoomItem item : room.getItemsAt(tile)) {
+        for(RoomItem item : room.getRoomItemManager().getItemsAt(tile)) {
             if(item instanceof InteractionTotemHead && item.getZ() > this.getZ())
                 ((InteractionTotemHead)item).updateTotemState(room);
         }

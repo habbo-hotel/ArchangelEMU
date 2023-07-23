@@ -64,7 +64,7 @@ public abstract class TagGame extends Game {
     @EventHandler
     public static void onUserWalkEvent(UserTakeStepEvent event) {
         if (event.habbo.getHabboInfo().getCurrentGame() != null && TagGame.class.isAssignableFrom(event.habbo.getHabboInfo().getCurrentGame())) {
-            THashSet<RoomItem> items = event.habbo.getRoomUnit().getRoom().getItemsAt(event.toLocation);
+            THashSet<RoomItem> items = event.habbo.getRoomUnit().getRoom().getRoomItemManager().getItemsAt(event.toLocation);
 
             TagGame game = (TagGame) event.habbo.getRoomUnit().getRoom().getGame(event.habbo.getHabboInfo().getCurrentGame());
 
@@ -177,7 +177,7 @@ public abstract class TagGame extends Game {
         Room room = roomUnit.getRoom();
         if (room == null) return;
 
-        RoomItem topItem = room.getTopItemAt(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
+        RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
         int nextEffectM = 0;
         int nextEffectF = 0;
         int nextEffectDuration = -1;

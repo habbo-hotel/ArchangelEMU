@@ -36,9 +36,9 @@ public class AvatarExpressionEvent extends MessageHandler {
 
             if (!event.isCancelled()) {
                 if (event.isIdle()) {
-                    room.idle(habbo);
+                    habbo.getRoomUnit().idle();
                 } else {
-                    room.unIdle(habbo);
+                    habbo.getRoomUnit().unIdle();
                 }
             }
         } else {
@@ -46,7 +46,7 @@ public class AvatarExpressionEvent extends MessageHandler {
             Emulator.getPluginManager().fireEvent(event);
 
             if (!event.isCancelled() && !event.isIdle()) {
-                room.unIdle(habbo);
+                habbo.getRoomUnit().unIdle();
             }
 
         }

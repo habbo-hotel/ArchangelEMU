@@ -78,7 +78,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
 
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : this.tiles) {
-                THashSet<RoomItem> tileItems = room.getItemsAt(tile);
+                THashSet<RoomItem> tileItems = room.getRoomItemManager().getItemsAt(tile);
                 for (RoomItem tileItem : tileItems) {
                     if (canBuild.contains(tileItem.getOwnerId()) && tileItem != this) {
                         room.getRoomItemManager().pickUpItem(tileItem, null);
@@ -127,7 +127,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
 
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : this.tiles) {
-                THashSet<RoomItem> tileItems = room.getItemsAt(tile);
+                THashSet<RoomItem> tileItems = room.getRoomItemManager().getItemsAt(tile);
                 if (newTiles.contains(tile)) continue;
                 for (RoomItem tileItem : tileItems) {
                     if (canBuild.contains(tileItem.getOwnerId()) && tileItem != this) {
@@ -202,7 +202,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
         }
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : oldTiles) {
-                THashSet<RoomItem> tileItems = room.getItemsAt(tile);
+                THashSet<RoomItem> tileItems = room.getRoomItemManager().getItemsAt(tile);
                 for (RoomItem tileItem : tileItems) {
                     if (canBuild.contains(tileItem.getOwnerId()) && tileItem != this) {
                         room.getRoomItemManager().pickUpItem(tileItem, null);

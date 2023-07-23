@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
@@ -37,19 +37,19 @@ public class MoveAvatarEvent extends MessageHandler {
             }
 
             // Get Room Habbo object (Unique GUID?)
-            RoomUnit roomUnit = this.client.getHabbo().getRoomUnit();
+            RoomHabbo roomHabbo = this.client.getHabbo().getRoomUnit();
 
-            if(roomUnit == null) {
+            if(roomHabbo == null) {
                 return;
             }
 
             // If habbo is teleporting, don't calculate a new path
-            if (roomUnit.isTeleporting()) {
+            if (roomHabbo.isTeleporting()) {
                 return;
             }
 
             // If habbo is being kicked don't calculate a new path
-            if (roomUnit.isKicked()) {
+            if (roomHabbo.isKicked()) {
                 return;
             }
 
@@ -61,13 +61,13 @@ public class MoveAvatarEvent extends MessageHandler {
             }
 
             // Don't calulcate a new path if are already at the end position
-            if (x == roomUnit.getCurrentPosition().getX() && y == roomUnit.getCurrentPosition().getY()) {
+            if (x == roomHabbo.getCurrentPosition().getX() && y == roomHabbo.getCurrentPosition().getY()) {
                 return;
             }
 
             // If habbo has control (im assuming admin, do something else, but we dont care about this part here)
-            if (roomUnit.getCacheable().get("control") != null) {
-                habbo = (Habbo) roomUnit.getCacheable().get("control");
+            if (roomHabbo.getCacheable().get("control") != null) {
+                habbo = (Habbo) roomHabbo.getCacheable().get("control");
 
                 if (habbo.getRoomUnit().getRoom() != room) {
                     habbo.getRoomUnit().getCacheable().remove("controller");
@@ -77,20 +77,20 @@ public class MoveAvatarEvent extends MessageHandler {
             }
 
             // Recover roomUnit if necessary
-            roomUnit = habbo.getRoomUnit();
+            roomHabbo = habbo.getRoomUnit();
 
             // If our room unit is not nullptr and we are in a room and we can walk, then calculate a new path
-            if (roomUnit != null && roomUnit.isInRoom() && roomUnit.isCanWalk()) {
+            if (roomHabbo != null && roomHabbo.isInRoom() && roomHabbo.isCanWalk()) {
 
                 //If teleport command is enabled
-                if(roomUnit.isCmdTeleportEnabled()) {
+                if(roomHabbo.isCmdTeleportEnabled()) {
                     RoomTile t = room.getLayout().getTile((short) x, (short) y);
 
                     if (habbo.getHabboInfo().getRiding() != null) {
-                        room.sendComposer(new RoomUnitOnRollerComposer(roomUnit, null, roomUnit.getCurrentPosition(), roomUnit.getCurrentZ(), t, t.getStackHeight() + 1.0D, room).compose());
+                        room.sendComposer(new RoomUnitOnRollerComposer(roomHabbo, null, roomHabbo.getCurrentPosition(), roomHabbo.getCurrentZ(), t, t.getStackHeight() + 1.0D, room).compose());
                         room.sendComposer(new RoomUnitOnRollerComposer(habbo.getHabboInfo().getRiding().getRoomUnit(), t, room).compose());
                     } else {
-                        room.sendComposer(new RoomUnitOnRollerComposer(roomUnit, t, room).compose());
+                        room.sendComposer(new RoomUnitOnRollerComposer(roomHabbo, t, room).compose());
                     }
 
                     return;
@@ -101,14 +101,15 @@ public class MoveAvatarEvent extends MessageHandler {
                     return;
 
                 // Reset idle status
-                if (roomUnit.isIdle()) {
+                if (roomHabbo.isIdle()) {
                     UserIdleEvent event = new UserIdleEvent(habbo, UserIdleEvent.IdleReason.WALKED, false);
                     Emulator.getPluginManager().fireEvent(event);
 
                     if (!event.isCancelled()) {
                         if (!event.isIdle()) {
-                            if (roomUnit.getRoom() != null) roomUnit.getRoom().unIdle(habbo);
-                            roomUnit.resetIdleTimer();
+                            if (roomHabbo.getRoom() != null) {
+                                roomHabbo.unIdle();
+                            }
                         }
                     }
                 }
@@ -128,7 +129,7 @@ public class MoveAvatarEvent extends MessageHandler {
                 }
 
                 if (room.canLayAt(tile)) {
-                    RoomItem bed = room.getTopItemAt(tile.getX(), tile.getY());
+                    RoomItem bed = room.getRoomItemManager().getTopItemAt(tile.getX(), tile.getY());
 
                     if (bed != null && bed.getBaseItem().allowLay()) {
                         room.getLayout().getTile(bed.getX(), bed.getY());
@@ -139,17 +140,17 @@ public class MoveAvatarEvent extends MessageHandler {
                         };
 
                         if (pillow != null && room.canLayAt(pillow)) {
-                            roomUnit.setGoalLocation(pillow);
+                            roomHabbo.setGoalLocation(pillow);
                             return;
                         }
                     }
                 }
 
-                THashSet<RoomItem> items = room.getItemsAt(tile);
+                THashSet<RoomItem> items = room.getRoomItemManager().getItemsAt(tile);
 
                 if (items.size() > 0) {
                     for (RoomItem item : items) {
-                        RoomTile overriddenTile = item.getOverrideGoalTile(roomUnit, room, tile);
+                        RoomTile overriddenTile = item.getOverrideGoalTile(roomHabbo, room, tile);
 
                         if (overriddenTile == null) {
                             return; // null cancels the entire event
@@ -164,7 +165,7 @@ public class MoveAvatarEvent extends MessageHandler {
 
                 // This is where we set the end location and begin finding a path
                 if (tile.isWalkable() || room.canSitOrLayAt(tile.getX(), tile.getY())) {
-                    roomUnit.setGoalLocation(tile);
+                    roomHabbo.setGoalLocation(tile);
                 }
             }
         }

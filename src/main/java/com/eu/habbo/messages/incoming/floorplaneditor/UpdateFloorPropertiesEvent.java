@@ -111,7 +111,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                     String square = String.valueOf(mapRows[y].charAt(x));
                     short height;
 
-                    if (square.equalsIgnoreCase("x") && room.getTopItemAt(x, y) != null) {
+                    if (square.equalsIgnoreCase("x") && room.getRoomItemManager().getTopItemAt(x, y) != null) {
                         errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
                         break blockingRoomItemScan;
                     } else {
@@ -124,7 +124,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                         }
                     }
 
-                    if (tile != null && tile.getState() != RoomTileState.INVALID && height != tile.getZ() && room.getTopItemAt(x, y) != null) {
+                    if (tile != null && tile.getState() != RoomTileState.INVALID && height != tile.getZ() && room.getRoomItemManager().getTopItemAt(x, y) != null) {
                         errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
                         break blockingRoomItemScan;
                     }

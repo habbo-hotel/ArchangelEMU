@@ -307,7 +307,7 @@ public class RoomUnitManager {
 
         roomHabbo.getRoom().sendComposer(new UserRemoveMessageComposer(roomHabbo).compose());
 
-        RoomItem item = roomHabbo.getRoom().getTopItemAt(roomHabbo.getCurrentPosition());
+        RoomItem item = roomHabbo.getRoom().getRoomItemManager().getTopItemAt(roomHabbo.getCurrentPosition());
 
         if (item != null) {
             try {

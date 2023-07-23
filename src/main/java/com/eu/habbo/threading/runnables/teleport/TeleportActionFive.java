@@ -60,7 +60,7 @@ class TeleportActionFive implements Runnable {
 
         Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), 1000);
 
-        RoomItem teleportTile = this.room.getTopItemAt(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY());
+        RoomItem teleportTile = this.room.getRoomItemManager().getTopItemAt(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY());
 
         if (teleportTile instanceof InteractionTeleportTile && teleportTile != this.currentTeleport) {
             try {

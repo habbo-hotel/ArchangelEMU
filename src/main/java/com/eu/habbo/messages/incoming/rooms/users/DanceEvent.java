@@ -36,7 +36,7 @@ public class DanceEvent extends MessageHandler {
 
                 if (!event.isCancelled()) {
                     if (!event.isIdle()) {
-                        this.client.getHabbo().getRoomUnit().getRoom().unIdle(habbo);
+                        this.client.getHabbo().getRoomUnit().unIdle();
                     }
                 }
 

@@ -89,7 +89,7 @@ public class RoomPet extends RoomUnit {
 
             this.removeStatus(RoomUnitStatus.DEAD);
 
-            RoomItem item = room.getTopItemAt(next.getX(), next.getY());
+            RoomItem item = room.getRoomItemManager().getTopItemAt(next.getX(), next.getY());
 
             double height = next.getStackHeight() - this.getCurrentPosition().getStackHeight();
             if (!room.tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.getState() == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
@@ -109,7 +109,7 @@ public class RoomPet extends RoomUnit {
             boolean canSitNextTile = room.canSitAt(next.getX(), next.getY());
 
             if (canSitNextTile) {
-                RoomItem tallestChair = room.getTallestChair(next);
+                RoomItem tallestChair = room.getRoomItemManager().getTallestChair(next);
 
                 if (tallestChair != null)
                     item = tallestChair;
@@ -123,7 +123,7 @@ public class RoomPet extends RoomUnit {
 
             double zHeight = 0.0D;
 
-            RoomItem roomItem = room.getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
+            RoomItem roomItem = room.getRoomItemManager().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
             if (roomItem != null && (roomItem != item || !RoomLayout.pointInSquare(roomItem.getX(), roomItem.getY(), roomItem.getX() + roomItem.getBaseItem().getWidth() - 1, roomItem.getY() + roomItem.getBaseItem().getLength() - 1, next.getX(), next.getY())))
                 roomItem.onWalkOff(this, room, new Object[]{this.getCurrentPosition(), next});
 

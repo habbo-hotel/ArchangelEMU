@@ -9,7 +9,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
@@ -180,25 +179,23 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
         }
 
         for(RoomTile tile : this.middleTiles) {
-            for(RoomEntity entity : tile.getEntities()) {
-                if(!(entity instanceof RoomUnit)) {
+            for(RoomUnit roomUnit : tile.getRoomUnits()) {
+                if(roomUnit == null) {
                     continue;
                 }
 
-                RoomUnit unit = (RoomUnit) entity;
-
-                if(unit.getPath().size() == 0 && !unit.hasStatus(RoomUnitStatus.MOVE)) {
-                    if(unit.getBodyRotation().getValue() != this.getRotation() && Objects.requireNonNull(unit.getBodyRotation().getOpposite()).getValue() != this.getRotation())
+                if(roomUnit.getPath().size() == 0 && !roomUnit.hasStatus(RoomUnitStatus.MOVE)) {
+                    if(roomUnit.getBodyRotation().getValue() != this.getRotation() && Objects.requireNonNull(roomUnit.getBodyRotation().getOpposite()).getValue() != this.getRotation())
                         continue;
 
-                    RoomTile tileInfront = room.getLayout().getTileInFront(unit.getCurrentPosition(), unit.getBodyRotation().getValue());
+                    RoomTile tileInfront = room.getLayout().getTileInFront(roomUnit.getCurrentPosition(), roomUnit.getBodyRotation().getValue());
                     if(tileInfront.getState() != RoomTileState.INVALID && tileInfront.getState() != RoomTileState.BLOCKED && room.getRoomUnitManager().getRoomUnitsAt(tileInfront).size() == 0) {
-                        unit.setGoalLocation(tileInfront);
+                        roomUnit.setGoalLocation(tileInfront);
                     }
                     else {
-                        RoomTile tileBehind = room.getLayout().getTileInFront(unit.getCurrentPosition(), Objects.requireNonNull(unit.getBodyRotation().getOpposite()).getValue());
+                        RoomTile tileBehind = room.getLayout().getTileInFront(roomUnit.getCurrentPosition(), Objects.requireNonNull(roomUnit.getBodyRotation().getOpposite()).getValue());
                         if(tileBehind.getState() != RoomTileState.INVALID && tileBehind.getState() != RoomTileState.BLOCKED && room.getRoomUnitManager().getRoomUnitsAt(tileBehind).size() == 0) {
-                            unit.setGoalLocation(tileBehind);
+                            roomUnit.setGoalLocation(tileBehind);
                         }
                     }
                 }

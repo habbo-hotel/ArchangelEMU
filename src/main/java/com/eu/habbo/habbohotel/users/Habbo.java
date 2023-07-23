@@ -460,7 +460,7 @@ public class Habbo extends Unit implements Runnable {
             AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RespectGiven"));
             AchievementManager.progressAchievement(target, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RespectEarned"));
 
-            this.client.getHabbo().getRoomUnit().getRoom().unIdle(this.client.getHabbo());
+            this.client.getHabbo().getRoomUnit().unIdle();
             this.client.getHabbo().getRoomUnit().setDance(DanceType.NONE);
         }
     }

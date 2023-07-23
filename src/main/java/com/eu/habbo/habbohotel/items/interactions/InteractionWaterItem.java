@@ -60,7 +60,8 @@ public class InteractionWaterItem extends InteractionMultiHeight {
         for (short x = (short) rectangle.x; x < rectangle.getWidth() + rectangle.x && foundWater; x++) {
             for (short y = (short) rectangle.y; y < rectangle.getHeight() + rectangle.y && foundWater; y++) {
                 boolean tile = false;
-                THashSet<RoomItem> items = room.getItemsAt(room.getLayout().getTile(x, y));
+                RoomTile tile1 = room.getLayout().getTile(x, y);
+                THashSet<RoomItem> items = room.getRoomItemManager().getItemsAt(tile1);
 
                 for (RoomItem item : items) {
                     if (item instanceof InteractionWater) {

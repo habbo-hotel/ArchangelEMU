@@ -191,7 +191,7 @@ public class FreezeGame extends Game {
         if (this.room.getRoomSpecialTypes().hasFreezeExitTile()) {
             for (Habbo habbo : this.room.getRoomUnitManager().getRoomHabbos()) {
                 if (this.getTeamForHabbo(habbo) == null) {
-                    for (RoomItem item : this.room.getItemsAt(habbo.getRoomUnit().getCurrentPosition())) {
+                    for (RoomItem item : this.room.getRoomItemManager().getItemsAt(habbo.getRoomUnit().getCurrentPosition())) {
                         if (item instanceof InteractionFreezeTile) {
                             RoomItem exitTile = this.room.getRoomSpecialTypes().getRandomFreezeExitTile();
                             WiredEffectTeleport.teleportUnitToTile(habbo.getRoomUnit(), this.room.getLayout().getTile(exitTile.getX(), exitTile.getY()));

@@ -64,9 +64,10 @@ public class InteractionPuzzleBox extends RoomItem {
         if (!boxLocation.equals(room.getLayout().getTileInFront(client.getHabbo().getRoomUnit().getCurrentPosition(), rotation.getValue())))
             return;
 
-        RoomItem item = room.getTopItemAt(tile.getX(), tile.getY());
+        RoomItem item = room.getRoomItemManager().getTopItemAt(tile.getX(), tile.getY());
 
-        if (item != null && !room.getTopItemAt(tile.getX(), tile.getY()).getBaseItem().allowStack()) return;
+        if (item != null && !room.getRoomItemManager().getTopItemAt(tile.getX(), tile.getY()).getBaseItem().allowStack())
+            return;
 
         this.setZ(room.getStackHeight(tile.getX(), tile.getY(), false));
         this.needsUpdate(true);

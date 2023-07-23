@@ -75,7 +75,6 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
             return;
         }
 
-        roomBot.getRoom().unIdle(roomBot.getRoom().getRoomUnitManager().getHabboByRoomUnit(roomBot));
         room.sendComposer(new AvatarEffectMessageComposer(roomBot, 4).compose());
         Emulator.getThreading().run(new SendRoomUnitEffectComposer(room, roomBot), (long) WiredHandler.TELEPORT_DELAY + 1000);
 

@@ -21,7 +21,7 @@ public class ClearRentedSpace implements Runnable {
         HashSet<RoomItem> items = new HashSet<>();
 
         for (RoomTile t : this.room.getLayout().getTilesAt(this.room.getLayout().getTile(this.item.getX(), this.item.getY()), this.item.getBaseItem().getWidth(), this.item.getBaseItem().getLength(), this.item.getRotation())) {
-            for (RoomItem i : this.room.getItemsAt(t)) {
+            for (RoomItem i : this.room.getRoomItemManager().getItemsAt(t)) {
                 if (i.getOwnerId() == this.item.getRenterId()) {
                     items.add(i);
                     i.setRoomId(0);

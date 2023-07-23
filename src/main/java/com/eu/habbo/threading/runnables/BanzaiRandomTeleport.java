@@ -19,7 +19,7 @@ public class BanzaiRandomTeleport implements Runnable {
 
     @Override
     public void run() {
-        RoomItem topItemNow = this.room.getTopItemAt(this.habbo.getCurrentPosition().getX(), this.habbo.getCurrentPosition().getY());
+        RoomItem topItemNow = this.room.getRoomItemManager().getTopItemAt(this.habbo.getCurrentPosition().getX(), this.habbo.getCurrentPosition().getY());
         RoomTile lastLocation = this.habbo.getCurrentPosition();
         RoomTile newLocation = this.room.getLayout().getTile(toItem.getX(), toItem.getY());
 
@@ -45,7 +45,7 @@ public class BanzaiRandomTeleport implements Runnable {
 
         Emulator.getThreading().run(() -> {
             this.habbo.setCanWalk(true);
-            RoomItem topItemNext = this.room.getTopItemAt(this.habbo.getCurrentPosition().getX(), this.habbo.getCurrentPosition().getY());
+            RoomItem topItemNext = this.room.getRoomItemManager().getTopItemAt(this.habbo.getCurrentPosition().getX(), this.habbo.getCurrentPosition().getY());
 
             if(topItemNext != null) {
                 try {

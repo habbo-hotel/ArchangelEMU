@@ -131,7 +131,7 @@ public class BotManager {
                 RoomBot roomBot = bot.getRoomUnit();
                 roomBot.setRotation(RoomRotation.SOUTH);
                 roomBot.setLocation(location);
-                double stackHeight = room.getTopHeightAt(location.getX(), location.getY());
+                double stackHeight = room.getRoomItemManager().getTopHeightAt(location.getX(), location.getY());
                 roomBot.setPreviousLocationZ(stackHeight);
                 roomBot.setCurrentZ(stackHeight);
                 roomBot.setRoom(room);
@@ -150,7 +150,7 @@ public class BotManager {
                 habbo.getClient().sendResponse(new BotRemovedFromInventoryComposer(bot));
                 bot.onPlace(habbo, room);
 
-                RoomItem topItem = room.getTopItemAt(location.getX(), location.getY());
+                RoomItem topItem = room.getRoomItemManager().getTopItemAt(location.getX(), location.getY());
 
                 if (topItem != null) {
                     try {

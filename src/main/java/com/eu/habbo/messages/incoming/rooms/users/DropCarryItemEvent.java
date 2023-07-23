@@ -10,7 +10,7 @@ public class DropCarryItemEvent extends MessageHandler {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
         this.client.getHabbo().getRoomUnit().setHandItem(0);
         if (room != null) {
-            room.unIdle(this.client.getHabbo());
+            this.client.getHabbo().getRoomUnit().unIdle();
             room.sendComposer(new CarryObjectMessageComposer(this.client.getHabbo().getRoomUnit()).compose());
         }
     }

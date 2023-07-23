@@ -336,7 +336,7 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
 
     public void onPickUp(Room room) {
         if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
-            RoomItem topItem2 = room.getTopItemAt(this.getX(), this.getY(), this);
+            RoomItem topItem2 = room.getRoomItemManager().getTopItemAt(this.getX(), this.getY(), this);
             int nextEffectM = 0;
             int nextEffectF = 0;
 
@@ -370,7 +370,7 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
 
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
-            RoomItem topItem2 = room.getTopItemAt(oldLocation.getX(), oldLocation.getY(), this);
+            RoomItem topItem2 = room.getRoomItemManager().getTopItemAt(oldLocation.getX(), oldLocation.getY(), this);
             int nextEffectM = 0;
             int nextEffectF = 0;
 

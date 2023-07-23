@@ -57,7 +57,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
             if (room.getRoomItemManager().furnitureFitsAt(tile, item, item.getRotation(), true) == FurnitureMovementError.INVALID_MOVE)
                 continue;
 
-            RoomItem topItem = room.getTopItemAt(tile.getX(), tile.getY());
+            RoomItem topItem = room.getRoomItemManager().getTopItemAt(tile.getX(), tile.getY());
             if (topItem != null && !topItem.getBaseItem().allowStack())
                 continue;
 

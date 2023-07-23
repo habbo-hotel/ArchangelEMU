@@ -130,13 +130,14 @@ public class RoomAvatar extends RoomUnit {
             this.removeStatus(RoomUnitStatus.DEAD);
 
             if (habbo != null) {
-                if (this.isIdle()) {
-                    UserIdleEvent event = new UserIdleEvent(habbo, UserIdleEvent.IdleReason.WALKED, false);
-                    Emulator.getPluginManager().fireEvent(event);
+                if(this instanceof RoomHabbo roomHabbo) {
+                    if (roomHabbo.isIdle()) {
+                        UserIdleEvent event = new UserIdleEvent(habbo, UserIdleEvent.IdleReason.WALKED, false);
+                        Emulator.getPluginManager().fireEvent(event);
 
-                    if (!event.isCancelled() && !event.isIdle()) {
-                        room.unIdle(habbo);
-                        this.resetIdleTimer();;
+                        if (!event.isCancelled() && !event.isIdle()) {
+                            roomHabbo.unIdle();
+                        }
                     }
                 }
 
@@ -152,7 +153,7 @@ public class RoomAvatar extends RoomUnit {
                 }
             }
 
-            RoomItem item = room.getTopItemAt(next.getX(), next.getY());
+            RoomItem item = room.getRoomItemManager().getTopItemAt(next.getX(), next.getY());
 
             double height = next.getStackHeight() - this.getCurrentPosition().getStackHeight();
             if (!room.tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.getState() == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
@@ -172,7 +173,7 @@ public class RoomAvatar extends RoomUnit {
             boolean canSitNextTile = room.canSitAt(next.getX(), next.getY());
 
             if (canSitNextTile) {
-                RoomItem tallestChair = room.getTallestChair(next);
+                RoomItem tallestChair = room.getRoomItemManager().getTallestChair(next);
 
                 if (tallestChair != null)
                     item = tallestChair;
@@ -190,7 +191,7 @@ public class RoomAvatar extends RoomUnit {
                 zHeight += 1.0D;
             }
 
-            RoomItem roomItem = room.getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
+            RoomItem roomItem = room.getRoomItemManager().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
             if (roomItem != null && (roomItem != item || !RoomLayout.pointInSquare(roomItem.getX(), roomItem.getY(), roomItem.getX() + roomItem.getBaseItem().getWidth() - 1, roomItem.getY() + roomItem.getBaseItem().getLength() - 1, next.getX(), next.getY())))
                 roomItem.onWalkOff(this, room, new Object[]{this.getCurrentPosition(), next});
 
@@ -255,10 +256,13 @@ public class RoomAvatar extends RoomUnit {
 
             this.setCurrentZ(zHeight);
             this.setCurrentPosition(room.getLayout().getTile(next.getX(), next.getY()));
-            this.resetIdleTimer();
+
+            if(this instanceof RoomHabbo roomHabbo) {
+                roomHabbo.resetIdleTicks();
+            }
 
             if(habbo != null) {
-                RoomItem topItem = room.getTopItemAt(next.getX(), next.getY());
+                RoomItem topItem = room.getRoomItemManager().getTopItemAt(next.getX(), next.getY());
 
                 boolean isAtDoor = next.getX() == room.getLayout().getDoorX() && next.getY() == room.getLayout().getDoorY();
                 boolean publicRoomKicks = !room.getRoomInfo().isPublicRoom() || Emulator.getConfig().getBoolean("hotel.room.public.doortile.kick");

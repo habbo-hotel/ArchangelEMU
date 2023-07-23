@@ -80,7 +80,6 @@ public abstract class RoomUnit extends RoomEntity {
     private boolean sitUpdate = false;
     @Setter
     private boolean isKicked;
-    @Getter
     @Setter
     private int kickCount = 0;
     @Getter
@@ -109,8 +108,6 @@ public abstract class RoomUnit extends RoomEntity {
     private int previousEffectId;
     private int previousEffectEndTimestamp;
     private int timeInRoom;
-    //RoomHabbo
-    private int idleTicks;
     @Getter
     private RoomRightLevels rightsLevel = RoomRightLevels.NONE;
     private final THashSet<Integer> overridableTiles;
@@ -142,6 +139,21 @@ public abstract class RoomUnit extends RoomEntity {
     }
 
     public abstract boolean cycle(Room room);
+
+    @Override
+    public RoomUnit setCurrentPosition(RoomTile tile) {
+        if (this.getCurrentPosition() != null) {
+            this.getCurrentPosition().removeUnit(this);
+        }
+
+        super.setCurrentPosition(tile);
+
+        if(this.getCurrentPosition() != null) {
+            tile.addRoomUnit(this);
+        }
+
+        return this;
+    }
 
     public void setRotation(RoomRotation rotation) {
         this.bodyRotation = rotation;
@@ -273,7 +285,7 @@ public abstract class RoomUnit extends RoomEntity {
     }
 
     public void makeStand() {
-        RoomItem item = this.getRoom().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
+        RoomItem item = this.getRoom().getRoomItemManager().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
         if (item == null || !item.getBaseItem().allowSit() || !item.getBaseItem().allowLay()) {
             this.setCmdStandEnabled(true);
             this.setBodyRotation(RoomRotation.values()[this.getBodyRotation().getValue() - this.getBodyRotation().getValue() % 2]);
@@ -339,22 +351,6 @@ public abstract class RoomUnit extends RoomEntity {
         this.timeInRoom = 0;
     }
 
-    public void increaseIdleTimer() {
-        this.idleTicks++;
-    }
-
-    public boolean isIdle() {
-        return this.idleTicks > Room.IDLE_CYCLES; //Amount of room cycles / 2 = seconds.
-    }
-
-    public void resetIdleTimer() {
-        this.idleTicks = 0;
-    }
-
-    public void setIdle() {
-        this.idleTicks = Room.IDLE_CYCLES + 1;
-    }
-
     public void lookAtPoint(RoomTile location) {
         if (!this.isCanRotate()) {
             return;
@@ -388,7 +384,7 @@ public abstract class RoomUnit extends RoomEntity {
     public boolean canOverrideTile(RoomTile tile) {
         if (tile == null || this.getRoom() == null || this.getRoom().getLayout() == null) return false;
 
-        if (this.getRoom().getItemsAt(tile).stream().anyMatch(i -> i.canOverrideTile(this, this.getRoom(), tile)))
+        if (this.getRoom().getRoomItemManager().getItemsAt(tile).stream().anyMatch(i -> i.canOverrideTile(this, this.getRoom(), tile)))
             return true;
 
         int tileIndex = (tile.getX() & 0xFF) | (tile.getY() << 12);
@@ -412,7 +408,7 @@ public abstract class RoomUnit extends RoomEntity {
     public boolean canForcePosture() {
         if (this.getRoom() == null) return false;
 
-        RoomItem topItem = this.getRoom().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
+        RoomItem topItem = this.getRoom().getRoomItemManager().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
 
         return (!(topItem instanceof InteractionWater) && !(topItem instanceof InteractionWaterItem));
     }

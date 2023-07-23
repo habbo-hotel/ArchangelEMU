@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.games.freeze.FreezeGamePlayer;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -34,7 +35,8 @@ public class InteractionFreezeBlock extends RoomItem {
             return;
 
         RoomItem item = null;
-        THashSet<RoomItem> items = room.getItemsAt(room.getLayout().getTile(this.getX(), this.getY()));
+        RoomTile tile = room.getLayout().getTile(this.getX(), this.getY());
+        THashSet<RoomItem> items = room.getRoomItemManager().getItemsAt(tile);
 
         for (RoomItem i : items) {
             if (i instanceof InteractionFreezeTile) {

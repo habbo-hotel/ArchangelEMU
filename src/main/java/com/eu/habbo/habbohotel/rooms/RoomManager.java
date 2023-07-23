@@ -588,7 +588,7 @@ public class RoomManager {
             if(spawnLocation != null) {
                 roomHabbo.setCanLeaveRoomByDoor(false);
                 roomHabbo.setTeleporting(true);
-                RoomItem topItem = room.getTopItemAt(spawnLocation);
+                RoomItem topItem = room.getRoomItemManager().getTopItemAt(spawnLocation);
 
                 if(topItem != null) {
                     spawnDirection = RoomRotation.values()[topItem.getRotation()];
@@ -674,7 +674,7 @@ public class RoomManager {
             }
         }
 
-        roomHabbo.resetIdleTimer();
+        roomHabbo.resetIdleTicks();
         roomHabbo.setInvisible(false);
 
         room.getRoomUnitManager().addRoomUnit(habbo);

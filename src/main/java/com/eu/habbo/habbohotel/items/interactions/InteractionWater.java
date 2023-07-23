@@ -285,7 +285,7 @@ public class InteractionWater extends InteractionDefault {
     }
 
     private boolean isValidForMask(Room room, int x, int y, double z, boolean corner) {
-        for (RoomItem item : room.getItemsAt(x, y, z)) {
+        for (RoomItem item : room.getRoomItemManager().getItemsAt(x, y, z)) {
             if (item instanceof InteractionWater water) {
 
                 // Take out picked up water from the recalculation.

@@ -149,7 +149,7 @@ public class InteractionFootball extends InteractionPushable {
     @Override
     public boolean validMove(Room room, RoomTile from, RoomTile to) {
         if (to == null || to.getState() == RoomTileState.INVALID) return false;
-        RoomItem topItem = room.getTopItemAt(to.getX(), to.getY(), this);
+        RoomItem topItem = room.getRoomItemManager().getTopItemAt(to.getX(), to.getY(), this);
 
         // Move is valid if there isnt any furni yet
         if (topItem == null) {
@@ -157,7 +157,7 @@ public class InteractionFootball extends InteractionPushable {
         }
 
         // If any furni on tile is not stackable, move is invalid (tested on 22-03-2022)
-        if (room.getItemsAt(to).stream().anyMatch(x -> !x.getBaseItem().allowStack())) {
+        if (room.getRoomItemManager().getItemsAt(to).stream().anyMatch(x -> !x.getBaseItem().allowStack())) {
             return false;
         }
 
@@ -215,8 +215,8 @@ public class InteractionFootball extends InteractionPushable {
                 return;
             }
         }
-        RoomItem currentTopItem = room.getTopItemAt(from.getX(), from.getY(), this);
-        RoomItem topItem = room.getTopItemAt(to.getX(), to.getY(), this);
+        RoomItem currentTopItem = room.getRoomItemManager().getTopItemAt(from.getX(), from.getY(), this);
+        RoomItem topItem = room.getRoomItemManager().getTopItemAt(to.getX(), to.getY(), this);
         if ((topItem != null) && ((currentTopItem == null) || (currentTopItem.getId() != topItem.getId())) && topItem instanceof InteractionFootballGoal interactionFootballGoal) {
             GameTeamColors color = interactionFootballGoal.teamColor;
             game.onScore(kicker, color);
@@ -239,7 +239,7 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public boolean canStillMove(Room room, RoomTile from, RoomTile to, RoomRotation direction, RoomUnit kicker, int nextRoll, int currentStep, int totalSteps) {
-        RoomItem topItem = room.getTopItemAt(from.getX(), from.getY(), this);
+        RoomItem topItem = room.getRoomItemManager().getTopItemAt(from.getX(), from.getY(), this);
         return !((Emulator.getRandom().nextInt(10) >= 3 && room.getRoomUnitManager().hasHabbosAt(to)) || (topItem != null && topItem.getBaseItem().getName().startsWith("fball_goal_") && currentStep != 1));
     }
 

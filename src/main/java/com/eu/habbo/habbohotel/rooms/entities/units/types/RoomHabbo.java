@@ -2,6 +2,10 @@ package com.eu.habbo.habbohotel.rooms.entities.units.types;
 
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
+import com.eu.habbo.habbohotel.users.DanceType;
+import com.eu.habbo.habbohotel.wired.WiredHandler;
+import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import com.eu.habbo.messages.outgoing.rooms.users.SleepMessageComposer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -45,12 +49,40 @@ public class RoomHabbo extends RoomAvatar {
         this.kickCount++;
     }
 
-    public void incrementIdleTick() {
-        this.idleTicks++;
+    public void idle() {
+        this.setIdle();
+
+        if (this.getDanceType() != DanceType.NONE) {
+            this.setDance(DanceType.NONE);
+        }
+
+        this.getRoom().sendComposer(new SleepMessageComposer(this).compose());
+
+        WiredHandler.handle(WiredTriggerType.IDLES, this, this.getRoom(), new Object[]{this});
+    }
+
+    public void unIdle() {
+        this.resetIdleTicks();
+
+        this.getRoom().sendComposer(new SleepMessageComposer(this).compose());
+
+        WiredHandler.handle(WiredTriggerType.UNIDLES, this, this.getRoom(), new Object[]{this});
     }
 
     public boolean isIdle() {
         return this.idleTicks > Room.IDLE_CYCLES;
+    }
+
+    public void setIdle() {
+        this.idleTicks = Room.IDLE_CYCLES + 1;
+    }
+
+    public void incrementIdleTicks() {
+        this.idleTicks++;
+    }
+
+    public void resetIdleTicks() {
+        this.idleTicks = 0;
     }
 
     public RoomUnitType getRoomUnitType() {

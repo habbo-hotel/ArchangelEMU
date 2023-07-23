@@ -36,7 +36,7 @@ public class RoomUnitTeleport implements Runnable {
         RoomTile lastLocation = this.roomUnit.getCurrentPosition();
         RoomTile newLocation = this.room.getLayout().getTile((short) this.x, (short) this.y);
 
-        RoomItem topItem = this.room.getTopItemAt(this.roomUnit.getCurrentPosition().getX(), this.roomUnit.getCurrentPosition().getY());
+        RoomItem topItem = this.room.getRoomItemManager().getTopItemAt(this.roomUnit.getCurrentPosition().getX(), this.roomUnit.getCurrentPosition().getY());
         if (topItem != null) {
             try {
                 topItem.onWalkOff(this.roomUnit, this.room, new Object[]{this});
@@ -59,7 +59,7 @@ public class RoomUnitTeleport implements Runnable {
         this.room.updateHabbosAt(newLocation);
         this.room.updateBotsAt(newLocation.getX(), newLocation.getY());
 
-        topItem = room.getTopItemAt(x, y);
+        topItem = room.getRoomItemManager().getTopItemAt(x, y);
         if (topItem != null && roomUnit.getCurrentPosition().equals(room.getLayout().getTile((short) x, (short) y))) {
             try {
                 topItem.onWalkOn(roomUnit, room, new Object[]{ lastLocation, newLocation, this });

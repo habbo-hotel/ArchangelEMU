@@ -26,8 +26,8 @@ public class CoordsCommand extends Command {
                     "Tile State: " + gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX(), gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY()).getState().name() + "\r" +
                     "Tile Walkable: " + gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX(), gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY()).isWalkable() + "\r" +
                     "Tile relative height: " + gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX(), gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY()).relativeHeight() + "\r" +
-                    "Tile stack height: " + gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX(), gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY()).getStackHeight());
-
+                    "Tile stack height: " + gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(gameClient.getHabbo().getRoomUnit().getCurrentPosition().getX(), gameClient.getHabbo().getRoomUnit().getCurrentPosition().getY()).getStackHeight() + "\r" +
+                    "Tile has Furni: " + (!gameClient.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getItemsAt(gameClient.getHabbo().getRoomUnit().getCurrentPosition()).isEmpty()));
         } else {
             RoomTile tile = gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTile(Short.parseShort(params[1]), Short.parseShort(params[2]));
 

@@ -161,7 +161,7 @@ public class InteractionRentableSpace extends RoomItem {
         THashSet<RoomItem> items = new THashSet<>();
         for (int i = rect.x; i < rect.x + rect.getWidth(); i++) {
             for (int j = rect.y; j < rect.y + rect.getHeight(); j++) {
-                items.addAll(room.getItemsAt(i, j, this.getZ()));
+                items.addAll(room.getRoomItemManager().getItemsAt(i, j, this.getZ()));
             }
         }
 

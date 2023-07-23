@@ -35,14 +35,14 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
             return this.getWiredSettings().getItems(room).stream().allMatch(item -> {
                 double minZ = item.getZ() + Item.getCurrentHeight(item);
                 THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
-                return occupiedTiles.stream().noneMatch(tile -> room.getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
+                return occupiedTiles.stream().noneMatch(tile -> room.getRoomItemManager().getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
             });
         }
         else {
             return this.getWiredSettings().getItems(room).stream().anyMatch(item -> {
                 double minZ = item.getZ() + Item.getCurrentHeight(item);
                 THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
-                return occupiedTiles.stream().noneMatch(tile -> room.getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
+                return occupiedTiles.stream().noneMatch(tile -> room.getRoomItemManager().getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
             });
         }
     }

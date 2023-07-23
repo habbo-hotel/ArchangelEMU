@@ -52,7 +52,7 @@ public class InteractionDefault extends RoomItem {
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         super.onMove(room, oldLocation, newLocation);
 
-        if (room.getItemsAt(oldLocation).stream().noneMatch(item -> item.getClass().isAssignableFrom(InteractionRoller.class))) {
+        if (room.getRoomItemManager().getItemsAt(oldLocation).stream().noneMatch(item -> item.getClass().isAssignableFrom(InteractionRoller.class))) {
             for (RoomUnit unit : room.getRoomUnitManager().getCurrentRoomUnits().values()) {
                 if (!oldLocation.unitIsOnFurniOnTile(unit, this.getBaseItem()))
                     continue; // If the unit was previously on the furni...
@@ -165,7 +165,8 @@ public class InteractionDefault extends RoomItem {
 
                 if (objects != null && objects.length == 2) {
                     if (objects[0] instanceof RoomTile goalTile && objects[1] instanceof RoomTile) {
-                        RoomItem topItem = room.getTopItemAt(goalTile.getX(), goalTile.getY(), (objects[0] != objects[1]) ? this : null);
+                        RoomItem exclude = (objects[0] != objects[1]) ? this : null;
+                        RoomItem topItem = room.getRoomItemManager().getTopItemAt(goalTile.getX(), goalTile.getY(), exclude);
 
                         if (topItem != null && (topItem.getBaseItem().getEffectM() == this.getBaseItem().getEffectM() || topItem.getBaseItem().getEffectF() == this.getBaseItem().getEffectF())) {
                             return;
