@@ -18,11 +18,11 @@ public class PickallCommand extends Command {
         }
 
         if (room.getRoomInfo().isRoomOwner(gameClient.getHabbo())) {
-            room.ejectAllFurni();
+            room.getRoomItemManager().ejectAllFurni();
             return true;
         }
 
-        room.ejectUserFurni(gameClient.getHabbo().getHabboInfo().getId());
+        room.getRoomItemManager().ejectUserFurni(gameClient.getHabbo().getHabboInfo().getId());
 
         return true;
     }

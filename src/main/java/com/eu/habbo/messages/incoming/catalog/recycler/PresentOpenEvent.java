@@ -23,7 +23,8 @@ public class PresentOpenEvent extends MessageHandler {
             return;
 
         if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
-            RoomItem item = room.getHabboItem(this.packet.readInt());
+            int id = this.packet.readInt();
+            RoomItem item = room.getRoomItemManager().getRoomItemById(id);
 
             if (item == null)
                 return;
@@ -50,7 +51,7 @@ public class PresentOpenEvent extends MessageHandler {
                     }
                 }
                 room.sendComposer(new RemoveFloorItemComposer(item).compose());
-                room.removeHabboItem(item);
+                room.getRoomItemManager().removeRoomItem(item);
 
             }
 

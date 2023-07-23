@@ -16,7 +16,7 @@ public class FriendFurniConfirmLockEvent extends MessageHandler {
             if (this.client.getHabbo().getRoomUnit().getRoom() == null)
                 return;
 
-            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
+            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
             if (item == null)
                 return;

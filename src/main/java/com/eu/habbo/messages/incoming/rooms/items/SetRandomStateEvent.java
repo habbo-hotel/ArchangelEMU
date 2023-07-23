@@ -17,7 +17,7 @@ public class SetRandomStateEvent extends MessageHandler {
 
             Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-            RoomItem item = room.getHabboItem(itemId);
+            RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
             if (!(item instanceof InteractionRandomState randomStateItem))
                 return;

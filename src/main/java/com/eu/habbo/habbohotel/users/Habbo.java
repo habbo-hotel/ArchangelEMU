@@ -28,7 +28,6 @@ import com.eu.habbo.plugin.events.users.UserGetIPAddressEvent;
 import com.eu.habbo.plugin.events.users.UserPointsEvent;
 import gnu.trove.TIntCollection;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -329,13 +328,6 @@ public class Habbo extends Unit implements Runnable {
     public void addFurniture(RoomItem item) {
         this.inventory.getItemsComponent().addItem(item);
         this.client.sendResponse(new UnseenItemsComposer(item));
-        this.client.sendResponse(new FurniListInvalidateComposer());
-    }
-
-
-    public void addFurniture(THashSet<RoomItem> items) {
-        this.inventory.getItemsComponent().addItems(items);
-        this.client.sendResponse(new UnseenItemsComposer(items));
         this.client.sendResponse(new FurniListInvalidateComposer());
     }
 

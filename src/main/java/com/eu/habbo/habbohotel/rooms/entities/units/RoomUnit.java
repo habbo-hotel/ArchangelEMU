@@ -112,7 +112,6 @@ public abstract class RoomUnit extends RoomEntity {
     //RoomHabbo
     private int idleTicks;
     @Getter
-    @Setter
     private RoomRightLevels rightsLevel = RoomRightLevels.NONE;
     private final THashSet<Integer> overridableTiles;
 

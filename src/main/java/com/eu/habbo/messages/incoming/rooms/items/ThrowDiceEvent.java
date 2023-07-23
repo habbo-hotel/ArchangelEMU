@@ -18,7 +18,7 @@ public class ThrowDiceEvent extends MessageHandler {
             return;
         }
 
-        RoomItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (item != null) {
             if (item instanceof InteractionDice || item instanceof InteractionSpinningBottle) {

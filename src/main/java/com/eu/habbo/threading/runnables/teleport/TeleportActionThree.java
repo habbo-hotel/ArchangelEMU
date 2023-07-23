@@ -38,7 +38,8 @@ class TeleportActionThree implements Runnable {
             targetRoom.loadData();
         }
 
-        targetTeleport = targetRoom.getHabboItem(((InteractionTeleport) this.currentTeleport).getTargetId());
+        int id = ((InteractionTeleport) this.currentTeleport).getTargetId();
+        targetTeleport = targetRoom.getRoomItemManager().getRoomItemById(id);
 
         if (targetTeleport == null) {
             Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);

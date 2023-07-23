@@ -106,7 +106,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 if(room.getRoomItemManager().furnitureFitsAt(newTargetTile, item, setting.getRotation(), false) != FurnitureMovementError.NONE)
                     continue;
 
-                room.getRoomItemManager().moveFurniTo(item, newTargetTile, setting.getRotation(), null, true, true);
+                room.getRoomItemManager().moveItemTo(item, newTargetTile, setting.getRotation(), null, true, true);
             }
 
             boolean hasRoomUnits = false;
@@ -126,7 +126,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
                 if (!hasRoomUnits) {
                     RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
                     double oldZ = item.getZ();
-                    if (room.getRoomItemManager().moveFurniTo(item, newTargetTile, item.getRotation(), null, false, true) == FurnitureMovementError.NONE) {
+                    if (room.getRoomItemManager().moveItemTo(item, newTargetTile, item.getRotation(), null, false, true) == FurnitureMovementError.NONE) {
                         room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, targetTile, item.getZ(), 0, room).compose());
                     }
                 }

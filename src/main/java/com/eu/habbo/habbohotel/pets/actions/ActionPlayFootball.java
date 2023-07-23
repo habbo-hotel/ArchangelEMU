@@ -23,7 +23,7 @@ public class ActionPlayFootball extends PetAction {
 
         RoomItem foundBall = null;
 
-        for(RoomItem item : room.getFloorItems()) {
+        for(RoomItem item : room.getRoomItemManager().getFloorItems().values()) {
             if(item instanceof InteractionPushable) {
                 foundBall = item;
             }

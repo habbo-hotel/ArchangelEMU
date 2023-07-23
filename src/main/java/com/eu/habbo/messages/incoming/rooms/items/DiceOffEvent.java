@@ -18,7 +18,7 @@ public class DiceOffEvent extends MessageHandler {
         if (room == null)
             return;
 
-        RoomItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (item != null) {
             if (item instanceof InteractionDice) {

@@ -26,7 +26,7 @@ public class SignEvent extends MessageHandler {
             if(signId <= 10) {
 
                 int userId = this.client.getHabbo().getHabboInfo().getId();
-                for (RoomItem item : room.getFloorItems()) {
+                for (RoomItem item : room.getRoomItemManager().getFloorItems().values()) {
                     if (item instanceof InteractionVoteCounter) {
                         ((InteractionVoteCounter)item).vote(room, userId, signId);
                     }

@@ -15,7 +15,7 @@ public class SpinWheelOfFortuneEvent extends MessageHandler {
         if (room == null)
             return;
 
-        RoomItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (item instanceof InteractionColorWheel) {
             item.onClick(this.client, room, null);

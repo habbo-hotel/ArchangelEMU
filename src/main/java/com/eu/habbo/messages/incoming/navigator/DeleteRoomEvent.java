@@ -39,8 +39,8 @@ public class DeleteRoomEvent extends MessageHandler {
                     return;
                 }
 
-                room.ejectAllFurni();
-                room.ejectUserFurni(room.getRoomInfo().getOwnerInfo().getId());
+                room.getRoomItemManager().ejectAllFurni();
+                room.getRoomItemManager().ejectUserFurni(room.getRoomInfo().getOwnerInfo().getId());
 
                 List<Bot> bots = new ArrayList<>(room.getRoomUnitManager().getCurrentRoomBots().values());
                 for (Bot bot : bots) {

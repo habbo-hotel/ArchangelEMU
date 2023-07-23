@@ -54,7 +54,7 @@ public class InteractionFXBox extends InteractionDefault {
 
             this.setExtradata("1");
             room.updateItemState(this);
-            room.removeHabboItem(this);
+            room.getRoomItemManager().removeRoomItem(this);
             RoomItem item = this;
             Emulator.getThreading().run(() -> {
                 new QueryDeleteHabboItem(item.getId()).run();

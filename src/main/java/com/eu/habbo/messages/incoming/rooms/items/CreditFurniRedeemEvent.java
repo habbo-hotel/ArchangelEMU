@@ -23,7 +23,7 @@ public class CreditFurniRedeemEvent extends MessageHandler {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
-            RoomItem item = room.getHabboItem(itemId);
+            RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
             if (item != null && this.client.getHabbo().getHabboInfo().getId() == item.getOwnerId()) {
                 boolean furnitureRedeemEventRegistered = Emulator.getPluginManager().isRegistered(FurnitureRedeemedEvent.class, true);
@@ -93,10 +93,10 @@ public class CreditFurniRedeemEvent extends MessageHandler {
                     if (furniRedeemEvent.amount < 1)
                         return;
 
-                    if (room.getHabboItem(item.getId()) == null) // plugins may cause a lag between which time the item can be removed from the room
+                    if (room.getRoomItemManager().getRoomItemById(item.getId()) == null) // plugins may cause a lag between which time the item can be removed from the room
                         return;
 
-                    room.removeHabboItem(item);
+                    room.getRoomItemManager().removeRoomItem(item);
                     room.sendComposer(new RemoveFloorItemComposer(item).compose());
                     RoomTile t = room.getLayout().getTile(item.getX(), item.getY());
                     t.setStackHeight(room.getStackHeight(item.getX(), item.getY(), false));

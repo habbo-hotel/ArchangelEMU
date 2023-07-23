@@ -13,7 +13,7 @@ public class ConfirmPetBreedingEvent extends MessageHandler {
         int petOneId = this.packet.readInt();
         int petTwoId = this.packet.readInt();
 
-        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
         if (item instanceof InteractionPetBreedingNest) {
             ((InteractionPetBreedingNest) item).breed(this.client.getHabbo(), name);

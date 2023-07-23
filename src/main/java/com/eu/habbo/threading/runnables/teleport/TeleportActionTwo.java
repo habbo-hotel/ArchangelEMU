@@ -41,7 +41,8 @@ class TeleportActionTwo implements Runnable {
         this.room.sendComposer(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
 
         if (((InteractionTeleport) this.currentTeleport).getTargetRoomId() > 0 && ((InteractionTeleport) this.currentTeleport).getTargetId() > 0) {
-            RoomItem item = this.room.getHabboItem(((InteractionTeleport) this.currentTeleport).getTargetId());
+            int id = ((InteractionTeleport) this.currentTeleport).getTargetId();
+            RoomItem item = this.room.getRoomItemManager().getRoomItemById(id);
             if (item == null) {
                 ((InteractionTeleport) this.currentTeleport).setTargetRoomId(0);
                 ((InteractionTeleport) this.currentTeleport).setTargetId(0);

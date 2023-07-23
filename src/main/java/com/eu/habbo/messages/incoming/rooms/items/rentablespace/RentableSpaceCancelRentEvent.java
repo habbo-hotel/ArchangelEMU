@@ -16,7 +16,7 @@ public class RentableSpaceCancelRentEvent extends MessageHandler {
         if (room == null)
             return;
 
-        RoomItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() ||
                 this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {

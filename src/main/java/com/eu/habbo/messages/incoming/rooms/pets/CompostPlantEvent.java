@@ -37,7 +37,7 @@ public class CompostPlantEvent extends MessageHandler {
                             compost.setY(pet.getRoomUnit().getCurrentPosition().getY());
                             compost.setZ(pet.getRoomUnit().getCurrentZ());
                             compost.setRotation(pet.getRoomUnit().getBodyRotation().getValue());
-                            room.addHabboItem(compost);
+                            room.getRoomItemManager().addRoomItem(compost);
                             room.sendComposer(new ObjectAddMessageComposer(compost, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         }
 

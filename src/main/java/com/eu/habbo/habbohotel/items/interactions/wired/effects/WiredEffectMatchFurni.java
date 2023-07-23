@@ -67,7 +67,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
 
             if(rotation && !position) {
                 if (item.getRotation() != furniSettings.getRotation() && room.getRoomItemManager().furnitureFitsAt(oldLocation, item, furniSettings.getRotation(), false) == FurnitureMovementError.NONE) {
-                    room.getRoomItemManager().moveFurniTo(item, oldLocation, furniSettings.getRotation(), null, true, true);
+                    room.getRoomItemManager().moveItemTo(item, oldLocation, furniSettings.getRotation(), null, true, true);
                 }
             }
             else if(position) {
@@ -77,7 +77,7 @@ public class WiredEffectMatchFurni extends InteractionWiredEffect implements Int
 
                 if (newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && room.getRoomItemManager().furnitureFitsAt(newLocation, item, newRotation, true) == FurnitureMovementError.NONE) {
                     boolean sendUpdates = !slideAnimation;
-                    if (room.getRoomItemManager().moveFurniTo(item, newLocation, newRotation, null, sendUpdates, true) == FurnitureMovementError.NONE) {
+                    if (room.getRoomItemManager().moveItemTo(item, newLocation, newRotation, null, sendUpdates, true) == FurnitureMovementError.NONE) {
                         if (slideAnimation) {
                             room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                         }

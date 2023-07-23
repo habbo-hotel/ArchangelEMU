@@ -15,7 +15,7 @@ public class RentableSpaceRentEvent extends MessageHandler {
         if (room == null)
             return;
 
-        RoomItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (!(item instanceof InteractionRentableSpace))
             return;

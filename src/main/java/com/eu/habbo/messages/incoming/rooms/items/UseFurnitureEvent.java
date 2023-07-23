@@ -34,7 +34,7 @@ public class UseFurnitureEvent extends MessageHandler {
             int itemId = this.packet.readInt();
             int state = this.packet.readInt();
 
-            RoomItem item = room.getHabboItem(itemId);
+            RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
             if (item == null || item instanceof InteractionDice || item instanceof InteractionSpinningBottle)
                 return;
@@ -71,7 +71,7 @@ public class UseFurnitureEvent extends MessageHandler {
 
             MonsterplantPet pet = Emulator.getGameEnvironment().getPetManager().createMonsterplant(room, this.client.getHabbo(), isRare, room.getLayout().getTile(item.getX(), item.getY()), rarity);
             room.sendComposer(new RemoveFloorItemComposer(item, true).compose());
-            room.removeHabboItem(item);
+            room.getRoomItemManager().removeRoomItem(item);
             room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
             room.getRoomUnitManager().placePet(pet, room, item.getX(), item.getY(), item.getZ());
             pet.cycle();

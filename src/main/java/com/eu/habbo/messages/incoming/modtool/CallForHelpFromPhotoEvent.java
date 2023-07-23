@@ -36,7 +36,7 @@ public class CallForHelpFromPhotoEvent extends MessageHandler {
 
         if (room == null) return;
 
-        RoomItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (!(item instanceof InteractionExternalImage)) return;
 

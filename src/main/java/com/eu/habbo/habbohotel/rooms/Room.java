@@ -12,16 +12,7 @@ import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
-import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
-import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameScoreboard;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
-import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiSphere;
-import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiTeleporter;
-import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeExitTile;
-import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
-import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
-import com.eu.habbo.habbohotel.items.interactions.pets.*;
-import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
@@ -33,8 +24,6 @@ import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ISerialize;
@@ -43,7 +32,6 @@ import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.GenericErrorComposer;
 import com.eu.habbo.messages.outgoing.generic.alerts.HabboBroadcastMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.HabboGroupDetailsMessageComposer;
-import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.QuestionAnsweredComposer;
 import com.eu.habbo.messages.outgoing.polls.infobus.QuestionComposer;
 import com.eu.habbo.messages.outgoing.rooms.FlatAccessDeniedMessageComposer;
@@ -70,7 +58,6 @@ import gnu.trove.TCollections;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.hash.THashSet;
@@ -319,7 +306,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             statement.setInt(1, this.roomInfo.getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-                    this.addHabboItem(Emulator.getGameEnvironment().getItemManager().loadHabboItem(set));
+                    RoomItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set);
+                    this.getRoomItemManager().addRoomItem(item);
                 }
             }
         } catch (SQLException e) {
@@ -1446,274 +1434,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return true;
     }
 
-    public void addHabboItem(RoomItem item) {
-        if (item == null)
-            return;
-
-        synchronized (this.roomItems) {
-            try {
-                this.roomItems.put(item.getId(), item);
-            } catch (Exception ignored) {
-
-            }
-        }
-
-        synchronized (this.furniOwnerCount) {
-            this.furniOwnerCount.put(item.getOwnerId(), this.furniOwnerCount.get(item.getOwnerId()) + 1);
-        }
-
-        synchronized (this.furniOwnerNames) {
-            if (!this.furniOwnerNames.containsKey(item.getOwnerId())) {
-                HabboInfo habbo = HabboManager.getOfflineHabboInfo(item.getOwnerId());
-
-                if (habbo != null) {
-                    this.furniOwnerNames.put(item.getOwnerId(), habbo.getUsername());
-                } else {
-                    log.error("Failed to find username for item (ID: {}, UserID: {})", item.getId(), item.getOwnerId());
-                }
-            }
-        }
-
-        //TODO: Move this list
-        synchronized (this.roomSpecialTypes) {
-            if (item instanceof ICycleable) {
-                this.roomSpecialTypes.addCycleTask((ICycleable) item);
-            }
-
-            if (item instanceof InteractionWiredTrigger interactionWiredTrigger) {
-                this.roomSpecialTypes.addTrigger(interactionWiredTrigger);
-            } else if (item instanceof InteractionWiredEffect interactionWiredEffect) {
-                this.roomSpecialTypes.addEffect(interactionWiredEffect);
-            } else if (item instanceof InteractionWiredCondition interactionWiredCondition) {
-                this.roomSpecialTypes.addCondition(interactionWiredCondition);
-            } else if (item instanceof InteractionWiredExtra interactionWiredExtra) {
-                this.roomSpecialTypes.addExtra(interactionWiredExtra);
-            } else if (item instanceof InteractionBattleBanzaiTeleporter interactionBattleBanzaiTeleporter) {
-                this.roomSpecialTypes.addBanzaiTeleporter(interactionBattleBanzaiTeleporter);
-            } else if (item instanceof InteractionRoller interactionRoller) {
-                this.roomSpecialTypes.addRoller(interactionRoller);
-            } else if (item instanceof InteractionGameScoreboard interactionGameScoreboard) {
-                this.roomSpecialTypes.addGameScoreboard(interactionGameScoreboard);
-            } else if (item instanceof InteractionGameGate interactionGameGate) {
-                this.roomSpecialTypes.addGameGate(interactionGameGate);
-            } else if (item instanceof InteractionGameTimer interactionGameTimer) {
-                this.roomSpecialTypes.addGameTimer(interactionGameTimer);
-            } else if (item instanceof InteractionFreezeExitTile interactionFreezeExitTile) {
-                this.roomSpecialTypes.addFreezeExitTile(interactionFreezeExitTile);
-            } else if (item instanceof InteractionNest interactionNest) {
-                this.roomSpecialTypes.addNest(interactionNest);
-            } else if (item instanceof InteractionPetDrink interactionPetDrink) {
-                this.roomSpecialTypes.addPetDrink(interactionPetDrink);
-            } else if (item instanceof InteractionPetFood interactionPetFood) {
-                this.roomSpecialTypes.addPetFood(interactionPetFood);
-            } else if (item instanceof InteractionPetToy interactionPetToy) {
-                this.roomSpecialTypes.addPetToy(interactionPetToy);
-            } else if (item instanceof InteractionPetTree) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionPetTrampoline) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionMoodLight) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionPyramid) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionMusicDisc) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionBattleBanzaiSphere) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionTalkingFurniture) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionWater) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionWaterItem) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionMuteArea) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionBuildArea) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionTagPole) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionTagField) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionJukeBox) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionPetBreedingNest) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionBlackHole) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionWiredHighscore) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionStickyPole) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof WiredBlob) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionTent) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionSnowboardSlope) {
-                this.roomSpecialTypes.addUndefined(item);
-            } else if (item instanceof InteractionFireworks) {
-                this.roomSpecialTypes.addUndefined(item);
-            }
-
-        }
-    }
-
-    public RoomItem getHabboItem(int id) {
-        if (this.roomItems == null || this.roomSpecialTypes == null)
-            return null; // room not loaded completely
-
-        RoomItem item;
-        synchronized (this.roomItems) {
-            item = this.roomItems.get(id);
-        }
-
-        if (item == null)
-            item = this.roomSpecialTypes.getBanzaiTeleporter(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getTrigger(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getEffect(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getCondition(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getGameGate(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getGameScorebord(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getGameTimer(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getFreezeExitTiles().get(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getRoller(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getNest(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getPetDrink(id);
-
-        if (item == null)
-            item = this.roomSpecialTypes.getPetFood(id);
-
-        return item;
-    }
-
-    public void removeHabboItem(RoomItem item) {
-        if (item != null) {
-
-            RoomItem i;
-            synchronized (this.roomItems) {
-                i = this.roomItems.remove(item.getId());
-            }
-
-            if (i != null) {
-                synchronized (this.furniOwnerCount) {
-                    synchronized (this.furniOwnerNames) {
-                        int count = this.furniOwnerCount.get(i.getOwnerId());
-
-                        if (count > 1)
-                            this.furniOwnerCount.put(i.getOwnerId(), count - 1);
-                        else {
-                            this.furniOwnerCount.remove(i.getOwnerId());
-                            this.furniOwnerNames.remove(i.getOwnerId());
-                        }
-                    }
-                }
-
-                if (item instanceof ICycleable) {
-                    this.roomSpecialTypes.removeCycleTask((ICycleable) item);
-                }
-
-                if (item instanceof InteractionBattleBanzaiTeleporter) {
-                    this.roomSpecialTypes.removeBanzaiTeleporter((InteractionBattleBanzaiTeleporter) item);
-                } else if (item instanceof InteractionWiredTrigger) {
-                    this.roomSpecialTypes.removeTrigger((InteractionWiredTrigger) item);
-                } else if (item instanceof InteractionWiredEffect) {
-                    this.roomSpecialTypes.removeEffect((InteractionWiredEffect) item);
-                } else if (item instanceof InteractionWiredCondition) {
-                    this.roomSpecialTypes.removeCondition((InteractionWiredCondition) item);
-                } else if (item instanceof InteractionWiredExtra) {
-                    this.roomSpecialTypes.removeExtra((InteractionWiredExtra) item);
-                } else if (item instanceof InteractionRoller) {
-                    this.roomSpecialTypes.removeRoller((InteractionRoller) item);
-                } else if (item instanceof InteractionGameScoreboard) {
-                    this.roomSpecialTypes.removeScoreboard((InteractionGameScoreboard) item);
-                } else if (item instanceof InteractionGameGate) {
-                    this.roomSpecialTypes.removeGameGate((InteractionGameGate) item);
-                } else if (item instanceof InteractionGameTimer) {
-                    this.roomSpecialTypes.removeGameTimer((InteractionGameTimer) item);
-                } else if (item instanceof InteractionFreezeExitTile) {
-                    this.roomSpecialTypes.removeFreezeExitTile((InteractionFreezeExitTile) item);
-                } else if (item instanceof InteractionNest) {
-                    this.roomSpecialTypes.removeNest((InteractionNest) item);
-                } else if (item instanceof InteractionPetDrink) {
-                    this.roomSpecialTypes.removePetDrink((InteractionPetDrink) item);
-                } else if (item instanceof InteractionPetFood) {
-                    this.roomSpecialTypes.removePetFood((InteractionPetFood) item);
-                } else if (item instanceof InteractionPetToy) {
-                    this.roomSpecialTypes.removePetToy((InteractionPetToy) item);
-                } else if (item instanceof InteractionPetTree) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionPetTrampoline) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionMoodLight) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionPyramid) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionMusicDisc) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionBattleBanzaiSphere) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionTalkingFurniture) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionWaterItem) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionWater) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionMuteArea) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionTagPole) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionTagField) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionJukeBox) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionPetBreedingNest) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionBlackHole) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionWiredHighscore) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionStickyPole) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof WiredBlob) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionTent) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionSnowboardSlope) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                } else if (item instanceof InteractionBuildArea) {
-                    this.roomSpecialTypes.removeUndefined(item);
-                }
-            }
-        }
-    }
-
-    public List<RoomItem> getFloorItems() {
-        return roomItems.valueCollection().stream().filter(i -> i.getBaseItem().getType() == FurnitureType.FLOOR).toList();
-    }
-
-    public List<RoomItem> getWallItems() {
-        return roomItems.valueCollection().stream().filter(i -> i.getBaseItem().getType() == FurnitureType.WALL).toList();
-    }
-
     public List<RoomItem> getPostItNotes() {
         return roomItems.valueCollection().stream().filter(i -> i.getBaseItem().getInteractionType().getType() == InteractionPostIt.class).toList();
     }
@@ -2679,77 +2399,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         return items.size();
     }
 
-    public void ejectUserFurni(int userId) {
-        THashSet<RoomItem> items = new THashSet<>();
-
-        TIntObjectIterator<RoomItem> iterator = this.roomItems.iterator();
-
-        for (int i = this.roomItems.size(); i-- > 0; ) {
-            try {
-                iterator.advance();
-            } catch (Exception e) {
-                break;
-            }
-
-            if (iterator.value().getOwnerId() == userId) {
-                items.add(iterator.value());
-                iterator.value().setRoomId(0);
-            }
-        }
-
-        Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
-
-        if (habbo != null) {
-            habbo.getInventory().getItemsComponent().addItems(items);
-            habbo.getClient().sendResponse(new UnseenItemsComposer(items));
-        }
-
-        for (RoomItem i : items) {
-            this.getRoomItemManager().pickUpItem(i, null);
-        }
-    }
-
-    public void ejectAllFurni() {
-        this.ejectAllFurni(null);
-    }
-
-    public void ejectAllFurni(Habbo habbo) {
-        THashMap<Integer, THashSet<RoomItem>> userItemsMap = new THashMap<>();
-
-        synchronized (this.roomItems) {
-            TIntObjectIterator<RoomItem> iterator = this.roomItems.iterator();
-
-            for (int i = this.roomItems.size(); i-- > 0; ) {
-                try {
-                    iterator.advance();
-                } catch (Exception e) {
-                    break;
-                }
-
-                if (habbo != null && iterator.value().getOwnerId() == habbo.getHabboInfo().getId())
-                    continue;
-
-                if (iterator.value() instanceof InteractionPostIt)
-                    continue;
-
-                userItemsMap.computeIfAbsent(iterator.value().getOwnerId(), k -> new THashSet<>()).add(iterator.value());
-            }
-        }
-
-        for (Map.Entry<Integer, THashSet<RoomItem>> entrySet : userItemsMap.entrySet()) {
-            for (RoomItem i : entrySet.getValue()) {
-                this.getRoomItemManager().pickUpItem(i, null);
-            }
-
-            Habbo user = Emulator.getGameEnvironment().getHabboManager().getHabbo(entrySet.getKey());
-
-            if (user != null) {
-                user.getInventory().getItemsComponent().addItems(entrySet.getValue());
-                user.getClient().sendResponse(new UnseenItemsComposer(entrySet.getValue()));
-            }
-        }
-    }
-
     public void refreshGuild(Guild guild) {
         if (guild.getRoomId() == this.roomInfo.getId()) {
             THashSet<GuildMember> members = Emulator.getGameEnvironment().getGuildManager().getGuildMembers(guild.getId());
@@ -2770,7 +2419,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (guild.getRoomId() == this.roomInfo.getId()) {
             TIntObjectIterator<RoomItem> iterator = this.roomItems.iterator();
 
-            for (int i = this.roomItems.size(); i-- > 0; ) {
+            for (int i = this.roomItemManager.getCurrentItems().size(); i-- > 0; ) {
                 try {
                     iterator.advance();
                 } catch (Exception e) {

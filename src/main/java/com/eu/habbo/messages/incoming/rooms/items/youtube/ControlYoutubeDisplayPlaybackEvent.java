@@ -46,7 +46,7 @@ public class ControlYoutubeDisplayPlaybackEvent extends YoutubeEvent {
         if(!validate(habbo)) return;
 
         Room room = habbo.getRoomUnit().getRoom();
-        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
         if (!(item instanceof InteractionYoutubeTV tv)) return;
 

@@ -72,7 +72,7 @@ public class PlaceObjectEvent extends MessageHandler {
             RoomItem rentSpace = null;
 
             if (this.client.getHabbo().getHabboStats().isRentingSpace()) {
-                rentSpace = room.getHabboItem(this.client.getHabbo().getHabboStats().getRentedItemId());
+                rentSpace = room.getRoomItemManager().getRoomItemById(this.client.getHabbo().getHabboStats().getRentedItemId());
             }
 
             if ((rentSpace != null || buildArea != null) && !room.getRoomRightsManager().hasRights(this.client.getHabbo())) {
@@ -101,7 +101,7 @@ public class PlaceObjectEvent extends MessageHandler {
             }
 
         } else {
-            FurnitureMovementError error = room.getRoomItemManager().placeWallFurniAt(item, values[1] + " " + values[2] + " " + values[3], this.client.getHabbo());
+            FurnitureMovementError error = room.getRoomItemManager().placeWallItemAt(item, values[1] + " " + values[2] + " " + values[3], this.client.getHabbo());
             if (!error.equals(FurnitureMovementError.NONE)) {
                 this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
                 return;

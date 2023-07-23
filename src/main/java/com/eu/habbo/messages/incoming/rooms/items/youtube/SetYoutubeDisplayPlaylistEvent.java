@@ -24,7 +24,7 @@ public class SetYoutubeDisplayPlaylistEvent extends YoutubeEvent {
         Room room = habbo.getRoomUnit().getRoom();
 
 
-        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
         if (!(item instanceof InteractionYoutubeTV)) return;
 

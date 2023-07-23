@@ -18,7 +18,7 @@ public class PickupObjectEvent extends MessageHandler {
             return;
         }
 
-        RoomItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (item == null || item instanceof InteractionPostIt) {
             return;

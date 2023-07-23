@@ -18,7 +18,7 @@ public class UseWallItemEvent extends MessageHandler {
         int itemId = this.packet.readInt();
         int state = this.packet.readInt();
 
-        RoomItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (item == null)
             return;

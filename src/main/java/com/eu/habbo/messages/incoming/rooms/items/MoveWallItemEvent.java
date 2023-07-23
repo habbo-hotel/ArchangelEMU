@@ -30,7 +30,7 @@ public class MoveWallItemEvent extends MessageHandler {
         if (itemId <= 0 || wallPosition.length() <= 13)
             return;
 
-        RoomItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (item == null)
             return;

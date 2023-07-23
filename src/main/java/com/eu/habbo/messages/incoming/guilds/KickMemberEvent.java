@@ -57,7 +57,7 @@ public class KickMemberEvent extends MessageHandler {
 
                 if (room != null) {
                     if (room.getRoomInfo().getGuild().getId() == guildId) {
-                        room.ejectUserFurni(userId);
+                        room.getRoomItemManager().ejectUserFurni(userId);
                     }
                 }
             }

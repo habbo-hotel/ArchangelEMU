@@ -78,7 +78,7 @@ public class FreezeGame extends Game {
     }
 
     synchronized void resetMap() {
-        for (RoomItem item : this.room.getFloorItems()) {
+        for (RoomItem item : this.room.getRoomItemManager().getFloorItems().values()) {
             if (item instanceof InteractionFreezeBlock || item instanceof InteractionFreezeScoreboard) {
                 item.setExtradata("0");
                 this.room.updateItemState(item);

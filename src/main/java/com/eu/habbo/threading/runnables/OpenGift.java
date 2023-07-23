@@ -10,14 +10,10 @@ import com.eu.habbo.messages.outgoing.inventory.FurniListAddOrUpdateComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.PresentOpenedMessageComposer;
-import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @AllArgsConstructor
@@ -32,7 +28,7 @@ public class OpenGift implements Runnable {
         try {
             RoomItem inside = null;
 
-            THashSet<RoomItem> items = ((InteractionGift) this.item).loadItems();
+            HashSet<RoomItem> items = ((InteractionGift) this.item).loadItems();
             for (RoomItem i : items) {
                 if (inside == null)
                     inside = i;

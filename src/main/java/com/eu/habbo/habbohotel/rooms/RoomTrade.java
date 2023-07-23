@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -221,14 +222,14 @@ public class RoomTrade {
             log.error("Caught SQL exception", e);
         }
 
-        THashSet<RoomItem> itemsUserOne = new THashSet<>(userOne.getItems());
-        THashSet<RoomItem> itemsUserTwo = new THashSet<>(userTwo.getItems());
+        HashSet<RoomItem> itemsUserOne = new HashSet<>(userOne.getItems());
+        HashSet<RoomItem> itemsUserTwo = new HashSet<>(userTwo.getItems());
 
         userOne.clearItems();
         userTwo.clearItems();
 
         int creditsForUserTwo = 0;
-        THashSet<RoomItem> creditFurniUserOne = new THashSet<>();
+        HashSet<RoomItem> creditFurniUserOne = new HashSet<>();
         for (RoomItem item : itemsUserOne) {
             int worth = RoomTrade.getCreditsByItem(item);
             if (worth > 0) {

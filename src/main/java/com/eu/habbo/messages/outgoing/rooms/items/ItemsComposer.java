@@ -10,14 +10,13 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import lombok.AllArgsConstructor;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 public class ItemsComposer extends MessageComposer {
     private final Room room;
-
 
     @Override
     protected ServerMessage composeInternal() {
@@ -42,7 +41,7 @@ public class ItemsComposer extends MessageComposer {
             this.response.appendString(set.getValue());
         }
 
-        List<RoomItem> items = this.room.getWallItems();
+        Collection<RoomItem> items = this.room.getRoomItemManager().getWallItems().values();
 
         this.response.appendInt(items.size());
         for (RoomItem item : items) {

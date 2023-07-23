@@ -61,7 +61,7 @@ public class WiredSettings implements IWiredSettings {
         }
 
         for(int i = 0; i < this.itemIds.size(); i++) {
-            RoomItem item = room.getHabboItem(this.itemIds.get(i));
+            RoomItem item = room.getRoomItemManager().getRoomItemById(this.itemIds.get(i));
 
             if(item == null || item.getRoomId() == 0) {
                 this.itemIds.remove(i);

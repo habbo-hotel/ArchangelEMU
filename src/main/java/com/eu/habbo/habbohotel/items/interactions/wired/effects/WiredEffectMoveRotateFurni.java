@@ -70,7 +70,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
             if(newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != item.getRotation()) && (furniMoveTest == FurnitureMovementError.NONE || ((furniMoveTest == FurnitureMovementError.TILE_HAS_BOTS || furniMoveTest == FurnitureMovementError.TILE_HAS_HABBOS || furniMoveTest == FurnitureMovementError.TILE_HAS_PETS) && newLocation == oldLocation))) {
                 if(room.getRoomItemManager().furnitureFitsAt(newLocation, item, newRotation, false) == FurnitureMovementError.NONE) {
                     boolean sendUpdates = !slideAnimation;
-                    if (room.getRoomItemManager().moveFurniTo(item, newLocation, newRotation, null, sendUpdates, true) == FurnitureMovementError.NONE) {
+                    if (room.getRoomItemManager().moveItemTo(item, newLocation, newRotation, null, sendUpdates, true) == FurnitureMovementError.NONE) {
                         if (slideAnimation) {
                             room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
                         }

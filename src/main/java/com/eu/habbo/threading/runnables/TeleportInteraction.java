@@ -51,14 +51,14 @@ class TeleportInteraction extends Thread {
                 if (data.length == 2 && data[0] != 0) {
                     if (this.room.getRoomInfo().getId() == data[0]) {
                         this.targetRoom = this.room;
-                        this.teleportTwo = this.room.getHabboItem(data[1]);
+                        this.teleportTwo = this.room.getRoomItemManager().getRoomItemById(data[1]);
 
                         if (this.teleportTwo == null) {
                             this.teleportTwo = this.teleportOne;
                         }
                     } else {
                         this.targetRoom = Emulator.getGameEnvironment().getRoomManager().getRoom(data[0]);
-                        this.teleportTwo = this.targetRoom.getHabboItem(data[1]);
+                        this.teleportTwo = this.targetRoom.getRoomItemManager().getRoomItemById(data[1]);
                     }
                 } else {
                     this.targetRoom = this.room;

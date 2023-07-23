@@ -735,7 +735,7 @@ public class RoomManager {
 
         final THashSet<RoomItem> floorItems = new THashSet<>();
 
-        THashSet<RoomItem> allFloorItems = new THashSet<>(room.getFloorItems());
+        THashSet<RoomItem> allFloorItems = new THashSet<>(room.getRoomItemManager().getFloorItems().values());
 
         if (Emulator.getPluginManager().isRegistered(RoomFloorItemsLoadEvent.class, true)) {
             RoomFloorItemsLoadEvent roomFloorItemsLoadEvent = Emulator.getPluginManager().fireEvent(new RoomFloorItemsLoadEvent(habbo, allFloorItems));

@@ -21,7 +21,7 @@ public class OpenPetPackageEvent extends MessageHandler {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
-            RoomItem item = room.getHabboItem(itemId);
+            RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
             if (item != null && item.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
                 if (!name.matches("^[a-zA-Z0-9]*$")) {
                     this.client.sendResponse(new PerkAllowancesComposer(itemId, PerkAllowancesComposer.CONTAINS_INVALID_CHARS, name.replaceAll("^[a-zA-Z0-9]*$", "")));
@@ -61,7 +61,7 @@ public class OpenPetPackageEvent extends MessageHandler {
                     pet.getRoomUnit().setLocation(room.getLayout().getTile(item.getX(), item.getY()));
                     pet.getRoomUnit().setCurrentZ(item.getZ());
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
-                    room.removeHabboItem(item);
+                    room.getRoomItemManager().removeRoomItem(item);
                     room.sendComposer(new RemoveFloorItemComposer(item).compose());
                     RoomTile tile = room.getLayout().getTile(item.getX(), item.getY());
                     room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));

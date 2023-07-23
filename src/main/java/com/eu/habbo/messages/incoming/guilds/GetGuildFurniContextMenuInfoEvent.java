@@ -13,7 +13,7 @@ public class GetGuildFurniContextMenuInfoEvent extends MessageHandler {
         int guildId = this.packet.readInt();
 
         if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
-            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
+            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
             Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
             if (item != null && guild != null)

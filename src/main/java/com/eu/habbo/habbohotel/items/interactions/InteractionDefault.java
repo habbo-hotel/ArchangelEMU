@@ -219,7 +219,7 @@ public class InteractionDefault extends RoomItem {
 
         if (!habbo.getHabboStats().isRentingSpace()) return false;
 
-        RoomItem rentSpace = room.getHabboItem(habbo.getHabboStats().getRentedItemId());
+        RoomItem rentSpace = room.getRoomItemManager().getRoomItemById(habbo.getHabboStats().getRentedItemId());
 
         return rentSpace != null && RoomLayout.squareInSquare(RoomLayout.getRectangle(rentSpace.getX(), rentSpace.getY(), rentSpace.getBaseItem().getWidth(), rentSpace.getBaseItem().getLength(), rentSpace.getRotation()), RoomLayout.getRectangle(this.getX(), this.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()));
 

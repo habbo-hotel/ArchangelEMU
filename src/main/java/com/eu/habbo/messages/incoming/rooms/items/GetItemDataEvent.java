@@ -14,7 +14,7 @@ public class GetItemDataEvent extends MessageHandler {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
-            RoomItem item = room.getHabboItem(itemId);
+            RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
             if (item instanceof InteractionPostIt) {
                 this.client.sendResponse(new ItemDataUpdateMessageComposer((InteractionPostIt) item));

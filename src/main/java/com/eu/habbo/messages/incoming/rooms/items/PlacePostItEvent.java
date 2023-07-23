@@ -27,7 +27,7 @@ public class PlacePostItEvent extends MessageHandler {
 
                 if (item instanceof InteractionPostIt) {
                     if (room.getPostItNotes().size() < Room.MAXIMUM_POSTITNOTES) {
-                        room.addHabboItem(item);
+                        room.getRoomItemManager().addRoomItem(item);
                         item.setExtradata("FFFF33");
                         item.setRoomId(this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId());
                         item.setWallPosition(location);

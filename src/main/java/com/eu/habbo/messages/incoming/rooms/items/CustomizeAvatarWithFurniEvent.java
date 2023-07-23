@@ -27,7 +27,7 @@ public class CustomizeAvatarWithFurniEvent extends MessageHandler {
         int itemId = this.packet.readInt();
 
         if (this.client.getHabbo().getRoomUnit().getRoom() != null && this.client.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(this.client.getHabbo())) {
-            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
+            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
             if (item != null && item.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
                 if (item instanceof InteractionClothing) {
@@ -37,7 +37,7 @@ public class CustomizeAvatarWithFurniEvent extends MessageHandler {
                         if (!this.client.getHabbo().getInventory().getWardrobeComponent().getClothing().contains(clothing.getId())) {
                             item.setRoomId(0);
                             RoomTile tile = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile(item.getX(), item.getY());
-                            this.client.getHabbo().getRoomUnit().getRoom().removeHabboItem(item);
+                            this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(item);
                             this.client.getHabbo().getRoomUnit().getRoom().updateTile(tile);
                             this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new HeightMapUpdateMessageComposer(tile.getX(), tile.getY(), tile.getZ(), tile.relativeHeight()).compose());
                             this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new RemoveFloorItemComposer(item, true).compose());

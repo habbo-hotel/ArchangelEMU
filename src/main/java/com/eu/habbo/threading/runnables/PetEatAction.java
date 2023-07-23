@@ -43,7 +43,7 @@ public class PetEatAction implements Runnable {
                 if (this.food != null && Integer.parseInt(this.food.getExtradata()) == this.food.getBaseItem().getStateCount()) {
                     Emulator.getThreading().run(new QueryDeleteHabboItem(this.food.getId()), 500);
                     if (this.pet.getRoom() != null) {
-                        this.pet.getRoom().removeHabboItem(this.food);
+                        this.pet.getRoom().getRoomItemManager().removeRoomItem(this.food);
                         this.pet.getRoom().sendComposer(new RemoveFloorItemComposer(this.food, true).compose());
                     }
                 }

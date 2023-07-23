@@ -11,8 +11,8 @@ import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.scoreboards
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.ExpressionMessageComposer;
 import com.eu.habbo.threading.runnables.BattleBanzaiTilesFlicker;
 import gnu.trove.map.hash.THashMap;
@@ -226,7 +226,7 @@ public class BattleBanzaiGame extends Game {
 
     private synchronized void resetMap() {
         this.tileCount = 0;
-        for (RoomItem item : this.room.getFloorItems()) {
+        for (RoomItem item : this.room.getRoomItemManager().getFloorItems().values()) {
             if (item instanceof InteractionBattleBanzaiTile) {
                 item.setExtradata("1");
                 this.room.updateItemState(item);

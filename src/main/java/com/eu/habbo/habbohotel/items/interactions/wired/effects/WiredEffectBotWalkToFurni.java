@@ -37,7 +37,11 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
         }
 
         Bot bot = bots.get(0);
-        this.getWiredSettings().getItems(room).removeIf(item -> item == null || item.getRoomId() != this.getRoomId() || Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId()).getHabboItem(item.getId()) == null);
+        this.getWiredSettings().getItems(room).removeIf(item -> {
+            if (item == null || item.getRoomId() != this.getRoomId()) return true;
+            Room room1 = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
+            return room1.getRoomItemManager().getRoomItemById(item.getId()) == null;
+        });
 
         // Bots shouldn't walk to the tile they are already standing on
         List<RoomItem> possibleItems = this.getWiredSettings().getItems(room).stream()

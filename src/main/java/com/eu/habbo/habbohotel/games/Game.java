@@ -209,7 +209,7 @@ public abstract class Game implements Runnable {
         this.state = GameState.IDLE;
 
         boolean gamesActive = false;
-        for (RoomItem timer : room.getFloorItems()) {
+        for (RoomItem timer : room.getRoomItemManager().getFloorItems().values()) {
             if (timer instanceof InteractionGameTimer) {
                 if (((InteractionGameTimer) timer).isRunning())
                     gamesActive = true;

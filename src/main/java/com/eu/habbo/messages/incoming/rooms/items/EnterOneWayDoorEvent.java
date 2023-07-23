@@ -11,7 +11,7 @@ public class EnterOneWayDoorEvent extends MessageHandler {
             return;
 
         int itemId = this.packet.readInt();
-        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
         if (item == null)
             return;

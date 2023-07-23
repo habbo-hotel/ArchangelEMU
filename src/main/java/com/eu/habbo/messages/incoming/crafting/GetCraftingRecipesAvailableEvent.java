@@ -16,7 +16,7 @@ public class GetCraftingRecipesAvailableEvent extends MessageHandler {
     public void handle() {
         int altarId = this.packet.readInt();
 
-        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(altarId);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(altarId);
 
         CraftingAltar altar = Emulator.getGameEnvironment().getCraftingManager().getAltar(item.getBaseItem());
 

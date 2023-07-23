@@ -14,10 +14,10 @@ import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
@@ -846,7 +846,7 @@ public class CatalogManager {
                     }
                 }
 
-                THashSet<RoomItem> itemsList = new THashSet<>();
+                HashSet<RoomItem> itemsList = new HashSet<>();
 
 
                 if (amount > 1 && !CatalogItem.haveOffer(item)) {

@@ -21,7 +21,7 @@ public class CraftEvent extends MessageHandler {
     @Override
     public void handle() {
         int craftingTable = this.packet.readInt();
-        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(craftingTable);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(craftingTable);
         CraftingAltar altar = Emulator.getGameEnvironment().getCraftingManager().getAltar(item.getBaseItem());
         CraftingRecipe recipe = altar.getRecipe(this.packet.readString());
 

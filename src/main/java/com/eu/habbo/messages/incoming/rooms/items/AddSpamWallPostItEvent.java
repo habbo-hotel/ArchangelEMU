@@ -35,7 +35,7 @@ public class AddSpamWallPostItEvent extends MessageHandler {
             String text = this.packet.readString();
 
             Room room = this.client.getHabbo().getRoomUnit().getRoom();
-            RoomItem sticky = room.getHabboItem(itemId);
+            RoomItem sticky = room.getRoomItemManager().getRoomItemById(itemId);
 
             if (sticky != null && sticky.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
                 sticky.setOwnerId(room.getRoomInfo().getOwnerInfo().getId());

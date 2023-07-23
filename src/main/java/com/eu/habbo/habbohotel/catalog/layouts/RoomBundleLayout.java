@@ -73,7 +73,7 @@ public class RoomBundleLayout extends SingleBundle {
 
             THashMap<Item, Integer> items = new THashMap<>();
 
-            for (RoomItem i : this.room.getFloorItems()) {
+            for (RoomItem i : this.room.getRoomItemManager().getFloorItems().values()) {
                 if (!items.contains(i.getBaseItem())) {
                     items.put(i.getBaseItem(), 0);
                 }
@@ -81,7 +81,7 @@ public class RoomBundleLayout extends SingleBundle {
                 items.put(i.getBaseItem(), items.get(i.getBaseItem()) + 1);
             }
 
-            for (RoomItem i : this.room.getWallItems()) {
+            for (RoomItem i : this.room.getRoomItemManager().getWallItems().values()) {
                 if (!items.contains(i.getBaseItem())) {
                     items.put(i.getBaseItem(), 0);
                 }
@@ -141,11 +141,11 @@ public class RoomBundleLayout extends SingleBundle {
 
         this.room.save();
 
-        for (RoomItem item : this.room.getFloorItems()) {
+        for (RoomItem item : this.room.getRoomItemManager().getFloorItems().values()) {
             item.run();
         }
 
-        for (RoomItem item : this.room.getWallItems()) {
+        for (RoomItem item : this.room.getRoomItemManager().getWallItems().values()) {
             item.run();
         }
 

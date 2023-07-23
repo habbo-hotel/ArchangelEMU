@@ -15,9 +15,8 @@ public class EjectAllCommand extends Command {
         Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
-            if (room.getRoomInfo().isRoomOwner(gameClient.getHabbo())
-                    || (room.getRoomInfo().hasGuild() && room.getGuildRightLevel(gameClient.getHabbo()).equals(RoomRightLevels.GUILD_ADMIN))) {
-                room.ejectAllFurni(gameClient.getHabbo());
+            if (room.getRoomInfo().isRoomOwner(gameClient.getHabbo()) || (room.getRoomInfo().hasGuild() && room.getGuildRightLevel(gameClient.getHabbo()).equals(RoomRightLevels.GUILD_ADMIN))) {
+                room.getRoomItemManager().ejectAllFurni(gameClient.getHabbo());
             }
         }
 

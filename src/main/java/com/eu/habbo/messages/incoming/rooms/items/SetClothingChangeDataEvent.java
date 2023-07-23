@@ -13,7 +13,8 @@ public class SetClothingChangeDataEvent extends MessageHandler {
         if (room == null || this.client.getHabbo().getHabboInfo().getId() != room.getRoomInfo().getOwnerInfo().getId())
             return;
 
-        RoomItem item = room.getHabboItem(this.packet.readInt());
+        int id = this.packet.readInt();
+        RoomItem item = room.getRoomItemManager().getRoomItemById(id);
         if (!(item instanceof InteractionFootballGate))
             return;
 

@@ -14,26 +14,26 @@ public class MoveObjectEvent extends MessageHandler {
     public void handle() {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if (room == null)
+        if (room == null) {
             return;
+        }
 
-        int furniId = this.packet.readInt();
-        RoomItem item = room.getHabboItem(furniId);
-        if (item == null) return;
+        int itemId = this.packet.readInt();
+
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
+
+        if (item == null) {
+            return;
+        }
 
         int x = this.packet.readInt();
         int y = this.packet.readInt();
         int rotation = this.packet.readInt();
+
         RoomTile tile = room.getLayout().getTile((short) x, (short) y);
 
-        FurnitureMovementError error = room.getRoomItemManager().canPlaceFurnitureAt(item, this.client.getHabbo(), tile, rotation);
-        if (!error.equals(FurnitureMovementError.NONE)) {
-            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
-            this.client.sendResponse(new ObjectUpdateMessageComposer(item));
-            return;
-        }
+        FurnitureMovementError error = room.getRoomItemManager().moveItemTo(item, tile, rotation, this.client.getHabbo());
 
-        error = room.getRoomItemManager().moveFurniTo(item, tile, rotation, this.client.getHabbo());
         if (!error.equals(FurnitureMovementError.NONE)) {
             this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
             this.client.sendResponse(new ObjectUpdateMessageComposer(item));

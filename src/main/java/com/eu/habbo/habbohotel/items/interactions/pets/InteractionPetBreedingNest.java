@@ -156,7 +156,7 @@ public class InteractionPetBreedingNest extends RoomItem {
             offspring.setNeedsUpdate(true);
             offspring.run();
             InteractionPetBreedingNest.this.freePets();
-            habbo.getRoomUnit().getRoom().removeHabboItem(box);
+            habbo.getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(box);
             habbo.getClient().sendResponse(new NestBreedingSuccessComposer(offspring.getId(), Emulator.getGameEnvironment().getPetManager().getRarityForOffspring(offspring)));
 
             if (box.getBaseItem().getName().startsWith("pet_breeding_")) {

@@ -15,7 +15,8 @@ public class SetMannequinFigureEvent extends MessageHandler {
         if (room == null || !room.getRoomInfo().isRoomOwner(habbo))
             return;
 
-        RoomItem item = room.getHabboItem(this.packet.readInt());
+        int id = this.packet.readInt();
+        RoomItem item = room.getRoomItemManager().getRoomItemById(id);
         if (item == null)
             return;
 

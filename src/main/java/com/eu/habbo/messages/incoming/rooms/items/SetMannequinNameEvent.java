@@ -12,7 +12,8 @@ public class SetMannequinNameEvent extends MessageHandler {
         if (room == null || !room.getRoomInfo().isRoomOwner(this.client.getHabbo()))
             return;
 
-        RoomItem item = room.getHabboItem(this.packet.readInt());
+        int id = this.packet.readInt();
+        RoomItem item = room.getRoomItemManager().getRoomItemById(id);
         if (item == null)
             return;
 

@@ -142,7 +142,7 @@ public class RoomRightsManager {
         }
 
         if (habbo != null) {
-            this.room.ejectUserFurni(habbo.getHabboInfo().getId());
+            this.room.getRoomItemManager().ejectUserFurni(habbo.getHabboInfo().getId());
             habbo.getRoomUnit().setRightsLevel(RoomRightLevels.NONE);
             habbo.getRoomUnit().removeStatus(RoomUnitStatus.FLAT_CONTROL);
             this.refreshRightsForHabbo(habbo);
@@ -151,7 +151,7 @@ public class RoomRightsManager {
 
     public void removeAllRights() {
         for (int userId : this.rights) {
-            this.room.ejectUserFurni(userId);
+            this.room.getRoomItemManager().ejectUserFurni(userId);
         }
 
         this.rights.clear();

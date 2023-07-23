@@ -25,7 +25,7 @@ public class CraftSecretEvent extends MessageHandler {
         int altarId = this.packet.readInt();
         int count = this.packet.readInt();
 
-        RoomItem craftingAltar = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(altarId);
+        RoomItem craftingAltar = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(altarId);
 
         if (craftingAltar != null) {
             CraftingAltar altar = Emulator.getGameEnvironment().getCraftingManager().getAltar(craftingAltar.getBaseItem());

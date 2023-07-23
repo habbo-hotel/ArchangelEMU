@@ -20,7 +20,7 @@ public class GetYoutubeDisplayStatusEvent extends MessageHandler {
         int itemId = this.packet.readInt();
 
         if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
-            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getHabboItem(itemId);
+            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
             if (item instanceof InteractionYoutubeTV tv) {
 

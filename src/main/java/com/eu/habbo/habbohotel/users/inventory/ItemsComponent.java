@@ -2,9 +2,9 @@ package com.eu.habbo.habbohotel.users.inventory;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInventory;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.plugin.events.inventory.InventoryItemAddedEvent;
 import com.eu.habbo.plugin.events.inventory.InventoryItemRemovedEvent;
 import com.eu.habbo.plugin.events.inventory.InventoryItemsAddedEvent;
@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 
 @Slf4j
@@ -79,7 +80,7 @@ public class ItemsComponent {
         }
     }
 
-    public void addItems(THashSet<RoomItem> items) {
+    public void addItems(HashSet<RoomItem> items) {
         InventoryItemsAddedEvent event = new InventoryItemsAddedEvent(this.inventory, items);
         if (Emulator.getPluginManager().fireEvent(event).isCancelled()) {
             return;

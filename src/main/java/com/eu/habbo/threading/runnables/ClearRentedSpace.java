@@ -7,8 +7,9 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
-import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
+
+import java.util.HashSet;
 
 @AllArgsConstructor
 public class ClearRentedSpace implements Runnable {
@@ -17,7 +18,7 @@ public class ClearRentedSpace implements Runnable {
 
     @Override
     public void run() {
-        THashSet<RoomItem> items = new THashSet<>();
+        HashSet<RoomItem> items = new HashSet<>();
 
         for (RoomTile t : this.room.getLayout().getTilesAt(this.room.getLayout().getTile(this.item.getX(), this.item.getY()), this.item.getBaseItem().getWidth(), this.item.getBaseItem().getLength(), this.item.getRotation())) {
             for (RoomItem i : this.room.getItemsAt(t)) {

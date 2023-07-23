@@ -1,15 +1,17 @@
 package com.eu.habbo.habbohotel.rooms;
 
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
-import gnu.trove.set.hash.THashSet;
+import com.eu.habbo.habbohotel.users.Habbo;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.HashSet;
 
 public class RoomTradeUser {
     @Getter
     private final Habbo habbo;
-    private final THashSet<RoomItem> items;
+    @Getter
+    private final HashSet<RoomItem> items;
     @Setter
     @Getter
     private int userId;
@@ -28,7 +30,7 @@ public class RoomTradeUser {
 
         this.accepted = false;
         this.confirmed = false;
-        this.items = new THashSet<>();
+        this.items = new HashSet<>();
     }
 
     public void confirm() {
@@ -47,10 +49,6 @@ public class RoomTradeUser {
         }
 
         return null;
-    }
-
-    public THashSet<RoomItem> getItems() {
-        return this.items;
     }
 
     public void putItemsIntoInventory() {
