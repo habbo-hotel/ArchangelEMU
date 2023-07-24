@@ -347,15 +347,15 @@ public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
                         AchievementManager.progressAchievement(userId, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GiftReceiver"));
                     }
 
-                    if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_CREDITS)) {
+                    if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_CREDITS)) {
                         if (totalCredits > 0) {
                             this.client.getHabbo().giveCredits(-totalCredits);
                         }
                     }
                     if (totalPoints > 0) {
-                        if (item.getPointsType() == 0 && !this.client.getHabbo().hasRight(Permission.ACC_INFINITE_PIXELS)) {
+                        if (item.getPointsType() == 0 && !this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_PIXELS)) {
                             this.client.getHabbo().givePixels(-totalPoints);
-                        } else if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_POINTS)) {
+                        } else if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_POINTS)) {
                             this.client.getHabbo().givePoints(item.getPointsType(), -totalPoints);
                         }
                         this.client.sendResponse(new HabboActivityPointNotificationMessageComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -totalPoints, item.getPointsType()));

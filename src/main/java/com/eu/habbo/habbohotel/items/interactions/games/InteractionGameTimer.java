@@ -232,7 +232,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
                 Emulator.getThreading().run(new GameTimer(this), 1000);
             }
         } else if (client != null) {
-            if (!(room.getRoomRightsManager().hasRights(client.getHabbo()) || client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)))
+            if (!(room.getRoomRightsManager().hasRights(client.getHabbo()) || client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)))
                 return;
 
             InteractionGameTimerAction state = InteractionGameTimerAction.START_STOP;

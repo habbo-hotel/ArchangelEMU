@@ -1,15 +1,15 @@
 package com.eu.habbo.messages.incoming.rooms.items.jukebox;
 
-import com.eu.habbo.habbohotel.rooms.TraxManager;
+import com.eu.habbo.habbohotel.rooms.RoomTraxManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.JukeboxSongDisksMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.jukebox.UserSongDisksInventoryMessageComposer;
 
 public abstract class JukeboxEvent  extends MessageHandler {
     protected void updateHabboWithCurrentPlaying() {
-        TraxManager traxManager = this.client.getHabbo().getRoomUnit().getRoom().getTraxManager();
-        this.client.sendResponse(new JukeboxSongDisksMessageComposer(traxManager.getSongs(), traxManager.totalLength()));
-        this.client.sendResponse(new UserSongDisksInventoryMessageComposer(traxManager.myList(this.client.getHabbo())));
-        this.client.getHabbo().getRoomUnit().getRoom().getTraxManager().updateCurrentPlayingSong(this.client.getHabbo());
+        RoomTraxManager roomTraxManager = this.client.getHabbo().getRoomUnit().getRoom().getRoomTraxManager();
+        this.client.sendResponse(new JukeboxSongDisksMessageComposer(roomTraxManager.getSongs(), roomTraxManager.totalLength()));
+        this.client.sendResponse(new UserSongDisksInventoryMessageComposer(roomTraxManager.myList(this.client.getHabbo())));
+        this.client.getHabbo().getRoomUnit().getRoom().getRoomTraxManager().updateCurrentPlayingSong(this.client.getHabbo());
     }
 }

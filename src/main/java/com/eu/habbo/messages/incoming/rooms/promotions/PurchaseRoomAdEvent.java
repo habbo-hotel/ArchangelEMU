@@ -49,11 +49,11 @@ public class PurchaseRoomAdEvent extends MessageHandler {
                 }
 
                 if (room.isPromoted()) {
-                    if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_CREDITS)) {
+                    if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_CREDITS)) {
                         this.client.getHabbo().giveCredits(-item.getCredits());
                     }
 
-                    if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_POINTS)) {
+                    if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_POINTS)) {
                         this.client.getHabbo().givePoints(item.getPointsType(), -item.getPoints());
                     }
 

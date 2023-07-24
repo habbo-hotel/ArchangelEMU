@@ -15,16 +15,17 @@ public class SignEvent extends MessageHandler {
 
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if (room == null)
+        if (room == null) {
             return;
+        }
 
         UserSignEvent event = new UserSignEvent(this.client.getHabbo(), signId);
+
         if (!Emulator.getPluginManager().fireEvent(event).isCancelled()) {
-            this.client.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.SIGN, event.getSign() + "");
+            this.client.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.SIGN, String.valueOf(event.getSign()));
             this.client.getHabbo().getRoomUnit().unIdle();
 
             if(signId <= 10) {
-
                 int userId = this.client.getHabbo().getHabboInfo().getId();
                 for (RoomItem item : room.getRoomItemManager().getFloorItems().values()) {
                     if (item instanceof InteractionVoteCounter) {

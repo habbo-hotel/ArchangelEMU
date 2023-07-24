@@ -52,7 +52,7 @@ public class ModBanEvent extends MessageHandler {
             case BAN_AVATAR_ONLY_100_YEARS:
                 duration = Emulator.getIntUnixTimestamp();
         }
-        if (!this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.ban").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()));
             return;
         }

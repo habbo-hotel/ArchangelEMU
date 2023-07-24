@@ -19,7 +19,7 @@ public class AssignRightsEvent extends MessageHandler {
             return;
         }
 
-        if (room.getRoomInfo().isRoomOwner(this.client.getHabbo())  || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getRoomInfo().isRoomOwner(this.client.getHabbo())  || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             Habbo target = room.getRoomUnitManager().getRoomHabboById(targetId);
 
             if (target != null) {

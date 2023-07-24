@@ -3,8 +3,8 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
@@ -48,10 +48,10 @@ public class InteractionJukeBox extends RoomItem {
 
         if (client != null && objects.length == 1) {
             if ((Integer) objects[0] == 0) {
-                if (room.getTraxManager().isPlaying()) {
-                    room.getTraxManager().stop();
+                if (room.getRoomTraxManager().isPlaying()) {
+                    room.getRoomTraxManager().stop();
                 } else {
-                    room.getTraxManager().play(0, client.getHabbo());
+                    room.getRoomTraxManager().play(0, client.getHabbo());
                 }
             }
         }
@@ -61,14 +61,14 @@ public class InteractionJukeBox extends RoomItem {
     public void onPickUp(Room room) {
         super.onPickUp(room);
         this.setExtradata("0");
-        room.getTraxManager().removeTraxOnRoom(this);
+        room.getRoomTraxManager().removeTraxOnRoom(this);
     }
 
     @Override
     public void onPlace(Room room) {
         super.onPlace(room);
-        room.getTraxManager().addTraxOnRoom(this);
-        if (room.getTraxManager().isPlaying()) {
+        room.getRoomTraxManager().addTraxOnRoom(this);
+        if (room.getRoomTraxManager().isPlaying()) {
             this.setExtradata("1");
         }
     }

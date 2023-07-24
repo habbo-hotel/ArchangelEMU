@@ -41,7 +41,6 @@ import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadedEvent;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
 import com.eu.habbo.plugin.events.users.*;
-import com.eu.habbo.threading.runnables.RoomTrashing;
 import com.eu.habbo.threading.runnables.ShutdownEmulator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -115,8 +114,8 @@ public class PluginManager {
         NavigatorManager.MAXIMUM_RESULTS_PER_PAGE = Emulator.getConfig().getInt("hotel.navigator.search.maxresults");
         NavigatorManager.CATEGORY_SORT_USING_ORDER_NUM = Emulator.getConfig().getBoolean("hotel.navigator.sort.ordernum");
         RoomChatMessage.MAXIMUM_LENGTH = Emulator.getConfig().getInt("hotel.chat.max.length");
-        TraxManager.LARGE_JUKEBOX_LIMIT = Emulator.getConfig().getInt("hotel.jukebox.limit.large");
-        TraxManager.NORMAL_JUKEBOX_LIMIT = Emulator.getConfig().getInt("hotel.jukebox.limit.normal");
+        RoomTraxManager.LARGE_JUKEBOX_LIMIT = Emulator.getConfig().getInt("hotel.jukebox.limit.large");
+        RoomTraxManager.NORMAL_JUKEBOX_LIMIT = Emulator.getConfig().getInt("hotel.jukebox.limit.normal");
 
         String[] bannedBubbles = Emulator.getConfig().getValue("commands.cmd_chatcolor.banned_numbers").split(";");
         RoomChatMessage.BANNED_BUBBLES = new int[bannedBubbles.length];
@@ -409,7 +408,6 @@ public class PluginManager {
 
     private void registerDefaultEvents() {
         try {
-            this.methods.add(RoomTrashing.class.getMethod("onUserWalkEvent", UserTakeStepEvent.class));
             this.methods.add(Easter.class.getMethod("onUserChangeMotto", UserSavedMottoEvent.class));
             this.methods.add(TagGame.class.getMethod("onUserLookAtPoint", RoomUnitLookAtPointEvent.class));
             this.methods.add(TagGame.class.getMethod("onUserWalkEvent", UserTakeStepEvent.class));

@@ -26,7 +26,7 @@ public class OneWayGateActionOne implements Runnable {
         }
 
         if (t.isWalkable()) {
-            if (this.room.tileWalkable(t) && this.client.getHabbo().getRoomUnit().getCurrentPosition().getX() == this.oneWayGate.getX() && this.client.getHabbo().getRoomUnit().getCurrentPosition().getY() == this.oneWayGate.getY()) {
+            if (this.room.getLayout().tileWalkable(t) && this.client.getHabbo().getRoomUnit().getCurrentPosition().getX() == this.oneWayGate.getX() && this.client.getHabbo().getRoomUnit().getCurrentPosition().getY() == this.oneWayGate.getY()) {
                 this.client.getHabbo().getRoomUnit().setGoalLocation(t);
 
                 if (!this.oneWayGate.getExtradata().equals("0")) {

@@ -15,7 +15,7 @@ public class UpdateGuildIdentityEvent extends MessageHandler {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
         if (guild != null) {
-            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN)) {
+            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN)) {
                 GuildChangedNameEvent nameEvent = new GuildChangedNameEvent(guild, this.packet.readString(), this.packet.readString());
                 Emulator.getPluginManager().fireEvent(nameEvent);
 

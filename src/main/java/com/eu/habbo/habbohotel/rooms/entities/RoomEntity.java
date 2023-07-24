@@ -26,6 +26,7 @@ public abstract class RoomEntity implements IRoomEntity {
     public synchronized void incrementTilesMoved() {
         this.tilesMoved++;
     }
+
     public synchronized void decrementTilesMoved() {
         this.tilesMoved--;
     }

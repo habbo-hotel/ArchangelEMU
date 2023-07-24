@@ -92,7 +92,7 @@ public class RoomPet extends RoomUnit {
             RoomItem item = room.getRoomItemManager().getTopItemAt(next.getX(), next.getY());
 
             double height = next.getStackHeight() - this.getCurrentPosition().getStackHeight();
-            if (!room.tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.getState() == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
+            if (!room.getLayout().tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.getState() == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
                 this.setRoom(room);
                 this.getPath().clear();
                 this.findPath();

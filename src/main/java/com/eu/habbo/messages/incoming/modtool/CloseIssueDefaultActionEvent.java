@@ -9,7 +9,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 public class CloseIssueDefaultActionEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             int issueId = this.packet.readInt();
             int unknown = this.packet.readInt();
             int category = this.packet.readInt();

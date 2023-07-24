@@ -263,8 +263,12 @@ public abstract class RoomUnit extends RoomEntity {
     }
 
     public RoomUnit removeStatus(RoomUnitStatus key) {
-        this.statuses.remove(key);
-        this.statusUpdateNeeded = true;
+        String statusRemoved = this.statuses.remove(key);
+
+        if(statusRemoved != null) {
+            this.statusUpdateNeeded = true;
+        }
+
         return this;
     }
 

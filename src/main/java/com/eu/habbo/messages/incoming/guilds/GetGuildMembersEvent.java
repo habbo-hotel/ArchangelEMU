@@ -19,7 +19,7 @@ public class GetGuildMembersEvent extends MessageHandler {
         Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(groupId);
 
         if (g != null) {
-            boolean isAdmin = this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN);
+            boolean isAdmin = this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN);
             if (!isAdmin && this.client.getHabbo().getHabboStats().hasGuild(g.getId())) {
                 GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(g, this.client.getHabbo());
                 isAdmin = member != null && (member.getRank().equals(GuildRank.OWNER) || member.getRank().equals(GuildRank.ADMIN));

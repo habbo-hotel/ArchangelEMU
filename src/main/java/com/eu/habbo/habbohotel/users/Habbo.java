@@ -193,28 +193,19 @@ public class Habbo extends Unit implements Runnable {
     }
 
     public boolean canExecuteCommand(String key) {
-        return this.getHabboInfo().getPermissionGroup().canExecuteCommand(key, false);
+        return this.canExecuteCommand(key, false);
     }
 
     public boolean canExecuteCommand(String key, boolean hasRoomRights) {
         return this.getHabboInfo().getPermissionGroup().canExecuteCommand(key, hasRoomRights);
     }
 
-    public boolean hasCommand(String key) {
-        return this.hasCommand(key, false);
+    public boolean hasPermissionRight(String key) {
+        return this.hasPermissionRight(key, false);
     }
 
-
-    public boolean hasCommand(String name, boolean hasRoomRights) {
-        return this.getHabboInfo().getPermissionGroup().hasCommand(name, hasRoomRights);
-    }
-
-    public boolean hasRight(String key) {
-        return this.hasRight(key, false);
-    }
-
-    public boolean hasRight(String key, boolean hasRoomRights) {
-        return this.getHabboInfo().getPermissionGroup().hasRight(key, hasRoomRights);
+    public boolean hasPermissionRight(String key, boolean hasRoomRights) {
+        return this.getHabboInfo().getPermissionGroup().hasPermissionRight(key, hasRoomRights);
     }
 
 
@@ -403,7 +394,7 @@ public class Habbo extends Unit implements Runnable {
             return;
         }
 
-        if (!this.hasRight(Permission.ACC_NO_MUTE)) {
+        if (!this.hasPermissionRight(Permission.ACC_NO_MUTE)) {
             int remaining = this.habboStats.addMuteTime(seconds);
             this.client.sendResponse(new FloodControlMessageComposer(remaining));
             this.client.sendResponse(new RemainingMutePeriodComposer(remaining));

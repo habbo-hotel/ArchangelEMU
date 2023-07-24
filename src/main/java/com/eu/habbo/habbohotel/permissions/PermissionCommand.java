@@ -1,17 +1,17 @@
 package com.eu.habbo.habbohotel.permissions;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+@Slf4j
+@Getter
 public class PermissionCommand {
-    @Getter
     private final String name;
-
     private final String description;
-    @Getter
     private final String[] keys;
 
     public PermissionCommand(ResultSet set) throws SQLException {

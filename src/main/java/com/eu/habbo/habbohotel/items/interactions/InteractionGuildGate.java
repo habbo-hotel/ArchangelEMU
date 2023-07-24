@@ -37,7 +37,7 @@ public class InteractionGuildGate extends InteractionGuildFurni implements Condi
 
         Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
-        return habbo != null && (habbo.getHabboStats().hasGuild(super.getGuildId()) || habbo.hasRight(Permission.ACC_GUILDGATE));
+        return habbo != null && (habbo.getHabboStats().hasGuild(super.getGuildId()) || habbo.hasPermissionRight(Permission.ACC_GUILDGATE));
     }
 
     @Override

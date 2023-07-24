@@ -386,7 +386,7 @@ public class ModToolManager {
     }
 
     public void alert(Habbo moderator, Habbo target, String message, SupportUserAlertedReason reason) {
-        if (!moderator.hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (!moderator.hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             ScripterManager.scripterDetected(moderator.getClient(), Emulator.getTexts().getValue("scripter.warning.modtools.alert").replace("%username%", moderator.getHabboInfo().getUsername()).replace("%message%", message));
             return;
         }
@@ -401,7 +401,7 @@ public class ModToolManager {
     }
 
     public void kick(Habbo moderator, Habbo target, String message) {
-        if (moderator.hasRight(Permission.ACC_SUPPORTTOOL) && !target.hasRight(Permission.ACC_UNKICKABLE)) {
+        if (moderator.hasPermissionRight(Permission.ACC_SUPPORTTOOL) && !target.hasPermissionRight(Permission.ACC_UNKICKABLE)) {
             if (target.getRoomUnit().getRoom() != null) {
                 Emulator.getGameEnvironment().getRoomManager().leaveRoom(target, target.getRoomUnit().getRoom());
             }
@@ -484,7 +484,7 @@ public class ModToolManager {
 
         if (roomActionEvent.isKickUsers()) {
             for (Habbo habbo : room.getRoomUnitManager().getRoomHabbos()) {
-                if (!(habbo.hasRight(Permission.ACC_UNKICKABLE) || habbo.hasRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo))) {
+                if (!(habbo.hasPermissionRight(Permission.ACC_UNKICKABLE) || habbo.hasPermissionRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo))) {
                     room.kickHabbo(habbo, false);
                 }
             }

@@ -23,7 +23,7 @@ public class RemoveItemEvent extends MessageHandler {
         RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (item instanceof InteractionPostIt || item instanceof InteractionExternalImage) {
-            if (item.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() ||  this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+            if (item.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() ||  this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
                 item.setRoomId(0);
                 room.getRoomItemManager().removeRoomItem(item);
                 room.sendComposer(new ItemRemoveMessageComposer(item).compose());

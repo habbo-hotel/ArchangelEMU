@@ -31,7 +31,7 @@ public class EnableCommand extends Command {
             if (target == null) {
                 return true;
             }
-            if (target == gameClient.getHabbo() || gameClient.getHabbo().hasRight(Permission.ACC_ENABLE_OTHERS)) {
+            if (target == gameClient.getHabbo() || gameClient.getHabbo().hasPermissionRight(Permission.ACC_ENABLE_OTHERS)) {
                 try {
                     if (target.getRoomUnit().getRoom() != null && target.getHabboInfo().getRiding() == null) {
                         if (Emulator.getGameEnvironment().getPermissionsManager().isEffectBlocked(effectId, target.getHabboInfo().getPermissionGroup().getId())) {

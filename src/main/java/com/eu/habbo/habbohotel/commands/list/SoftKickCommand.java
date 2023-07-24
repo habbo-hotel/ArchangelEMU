@@ -29,7 +29,7 @@ public class SoftKickCommand extends Command {
 
         final Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
-        if (room != null && (!(habbo.hasRight(Permission.ACC_UNKICKABLE) || habbo.hasRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo)))) {
+        if (room != null && (!(habbo.hasPermissionRight(Permission.ACC_UNKICKABLE) || habbo.hasPermissionRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo)))) {
             room.kickHabbo(habbo, false);
         }
         return true;

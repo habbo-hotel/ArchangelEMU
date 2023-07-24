@@ -87,7 +87,7 @@ public class WiredEffectChangeFurniDirection extends InteractionWiredEffect {
 
             RoomTile targetTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), setting.getDirection().getValue());
             int count = 1;
-            while ((targetTile == null || targetTile.getState() == RoomTileState.INVALID || !room.tileWalkable(targetTile) || room.getRoomItemManager().furnitureFitsAt(targetTile, item, item.getRotation(), false) != FurnitureMovementError.NONE) && count < 8) {
+            while ((targetTile == null || targetTile.getState() == RoomTileState.INVALID || !room.getLayout().tileWalkable(targetTile) || room.getRoomItemManager().furnitureFitsAt(targetTile, item, item.getRotation(), false) != FurnitureMovementError.NONE) && count < 8) {
                 setting.setDirection(this.nextDirection(setting.getDirection()));
 
                 RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), setting.getDirection().getValue());

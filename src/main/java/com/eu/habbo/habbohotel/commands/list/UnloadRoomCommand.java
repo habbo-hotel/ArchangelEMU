@@ -15,7 +15,7 @@ public class UnloadRoomCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
-        if (room != null && (room.getRoomInfo().isRoomOwner(gameClient.getHabbo()) || (room.getRoomInfo().hasGuild() && room.getGuildRightLevel(gameClient.getHabbo()).equals(RoomRightLevels.GUILD_ADMIN))) || gameClient.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+        if (room != null && (room.getRoomInfo().isRoomOwner(gameClient.getHabbo()) || (room.getRoomInfo().hasGuild() && room.getGuildRightLevel(gameClient.getHabbo()).equals(RoomRightLevels.GUILD_ADMIN))) || gameClient.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             room.dispose();
             return true;
         }

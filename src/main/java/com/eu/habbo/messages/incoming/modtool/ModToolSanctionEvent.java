@@ -9,7 +9,7 @@ import com.eu.habbo.threading.runnables.UpdateModToolIssue;
 public class ModToolSanctionEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             int ticketId = this.packet.readInt();
             int unknownInt = this.packet.readInt();
             int categoryId = this.packet.readInt();

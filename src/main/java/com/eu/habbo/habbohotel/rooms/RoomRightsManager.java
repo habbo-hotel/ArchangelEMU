@@ -186,7 +186,7 @@ public class RoomRightsManager {
             }
         }
 
-        if (habbo.hasRight(Permission.ACC_ANYROOMOWNER) || this.room.getRoomInfo().isRoomOwner(habbo)) {
+        if (habbo.hasPermissionRight(Permission.ACC_ANYROOMOWNER) || this.room.getRoomInfo().isRoomOwner(habbo)) {
             habbo.getClient().sendResponse(new YouAreOwnerMessageComposer());
             flatCtrl = RoomRightLevels.MODERATOR;
         } else if (this.hasRights(habbo) && !this.room.getRoomInfo().hasGuild()) {

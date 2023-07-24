@@ -33,7 +33,7 @@ public class ChatTypeCommand extends Command {
                 return true;
             }
 
-            if (!gameClient.getHabbo().hasRight(Permission.ACC_ANYCHATCOLOR)) {
+            if (!gameClient.getHabbo().hasPermissionRight(Permission.ACC_ANYCHATCOLOR)) {
                 for (String s : Emulator.getConfig().getValue("commands.cmd_chatcolor.banned_numbers").split(";")) {
                     if (Integer.parseInt(s) == chatColor) {
                         gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_chatcolor.banned"), RoomChatMessageBubbles.ALERT);

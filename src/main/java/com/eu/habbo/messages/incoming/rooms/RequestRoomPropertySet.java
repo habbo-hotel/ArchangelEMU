@@ -17,7 +17,7 @@ public class RequestRoomPropertySet extends MessageHandler {
 
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || room.getRoomRightsManager().hasRights(this.client.getHabbo()) || this.client.getHabbo().hasRight(Permission.ACC_PLACEFURNI)) {
+        if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || room.getRoomRightsManager().hasRights(this.client.getHabbo()) || this.client.getHabbo().hasPermissionRight(Permission.ACC_PLACEFURNI)) {
             int itemId = this.packet.readInt();
             RoomItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
 

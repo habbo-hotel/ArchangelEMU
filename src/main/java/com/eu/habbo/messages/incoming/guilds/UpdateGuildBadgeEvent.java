@@ -13,7 +13,7 @@ public class UpdateGuildBadgeEvent extends GuildBadgeEvent {
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
         if (guild != null) {
-            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN)) {
+            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN)) {
                 Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(guild.getRoomId());
 
                 if (room == null || room.getRoomInfo().getId() != guild.getRoomId())

@@ -15,7 +15,7 @@ public class UpdateGuildColorsEvent extends MessageHandler {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
         if (guild != null) {
-            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN)) {
+            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN)) {
                 GuildChangedColorsEvent colorsEvent = new GuildChangedColorsEvent(guild, this.packet.readInt(), this.packet.readInt());
                 Emulator.getPluginManager().fireEvent(colorsEvent);
 

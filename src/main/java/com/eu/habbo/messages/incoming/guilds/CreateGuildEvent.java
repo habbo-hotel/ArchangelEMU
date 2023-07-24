@@ -31,7 +31,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
             return;
         }
 
-        if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_CREDITS)) {
+        if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_CREDITS)) {
             int guildPrice = Emulator.getConfig().getInt("catalog.guild.price");
             if (this.client.getHabbo().getHabboInfo().getCredits() >= guildPrice) {
                 this.client.getHabbo().giveCredits(-guildPrice);

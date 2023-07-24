@@ -30,7 +30,7 @@ public class VisitUserEvent extends MessageHandler {
             return;
         }
 
-        if (habbo.getHabboStats().isBlockFollowing() && !this.client.getHabbo().hasRight(Permission.ACC_CAN_STALK)) {
+        if (habbo.getHabboStats().isBlockFollowing() && !this.client.getHabbo().hasPermissionRight(Permission.ACC_CAN_STALK)) {
             this.client.sendResponse(new FollowFriendFailedComposer(FollowFriendFailedComposer.FRIEND_BLOCKED_STALKING));
             return;
         }

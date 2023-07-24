@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class TraxManager implements Disposable {
+public class RoomTraxManager implements Disposable {
     public static int NORMAL_JUKEBOX_LIMIT = 10;
     public static int LARGE_JUKEBOX_LIMIT = 20;
     private final Room room;
@@ -47,7 +47,7 @@ public class TraxManager implements Disposable {
 
     private boolean disposed = false;
 
-    public TraxManager(Room room) {
+    public RoomTraxManager(Room room) {
         this.room = room;
 
         //Check if room has a Jukebox already on DB

@@ -59,15 +59,17 @@ public class RoomAvatar extends RoomUnit {
     @Override
     public boolean cycle(Room room) {
         try {
+            if (this.hasStatus(RoomUnitStatus.SIGN)) {
+                this.getRoom().sendComposer(new UserUpdateComposer(this).compose());
+                this.removeStatus(RoomUnitStatus.SIGN);
+            }
+
             Habbo habboT = room.getRoomUnitManager().getHabboByRoomUnit(this);
 
             if (!this.isWalking() && !this.isKicked() && this.removeStatus(RoomUnitStatus.MOVE) == null && habboT != null) {
                 habboT.getHabboInfo().getRiding().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
                 return true;
             }
-
-            if (this.removeStatus(RoomUnitStatus.SIT) != null || this.removeStatus(RoomUnitStatus.MOVE) != null || this.removeStatus(RoomUnitStatus.LAY) != null)
-                this.setStatusUpdateNeeded(true);
 
             for (Map.Entry<RoomUnitStatus, String> set : this.getStatuses().entrySet()) {
                 if (set.getKey().isRemoveWhenWalking()) {
@@ -76,27 +78,28 @@ public class RoomAvatar extends RoomUnit {
             }
 
             if (this.getPath() == null || this.getPath().isEmpty()) {
-                this.setStatusUpdateNeeded(true);
                 return true;
             }
 
             boolean canFastWalk = habboT == null || habboT.getHabboInfo().getRiding() == null;
 
             RoomTile next = this.getPath().poll();
-            boolean overrideChecks = next != null && this.canOverrideTile(next);
+
+            boolean overrideTile = next != null && this.canOverrideTile(next);
 
             if (this.getPath().isEmpty()) {
                 this.setSitUpdate(true);
 
-                if (next != null && room.getRoomUnitManager().areRoomUnitsAt(next) && !overrideChecks) {
-                    this.setStatusUpdateNeeded(false);
+                if (next != null && room.getRoomUnitManager().areRoomUnitsAt(next) && !overrideTile) {
                     return false;
                 }
             }
 
             Deque<RoomTile> peekPath = room.getLayout().findPath(this.getCurrentPosition(), this.getPath().peek(), this.getGoalLocation(), this);
 
-            if (peekPath == null) peekPath = new LinkedList<>();
+            if (peekPath == null) {
+                peekPath = new LinkedList<>();
+            }
 
             if (peekPath.size() >= 3) {
                 if (this.getPath().isEmpty()) {
@@ -156,14 +159,13 @@ public class RoomAvatar extends RoomUnit {
             RoomItem item = room.getRoomItemManager().getTopItemAt(next.getX(), next.getY());
 
             double height = next.getStackHeight() - this.getCurrentPosition().getStackHeight();
-            if (!room.tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.getState() == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
-                this.setRoom(room);
+
+            if (!room.getLayout().tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.getState() == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
                 this.getPath().clear();
                 this.findPath();
 
                 if (this.getPath().isEmpty()) {
                     this.removeStatus(RoomUnitStatus.MOVE);
-                    this.setStatusUpdateNeeded(false);
                     return false;
                 }
                 next = this.getPath().pop();
@@ -179,9 +181,8 @@ public class RoomAvatar extends RoomUnit {
                     item = tallestChair;
             }
 
-            if (next.equals(this.getGoalLocation()) && next.getState() == RoomTileState.SIT && !overrideChecks && (item == null || item.getZ() - this.getCurrentZ() > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
+            if (next.equals(this.getGoalLocation()) && next.getState() == RoomTileState.SIT && !overrideTile && (item == null || item.getZ() - this.getCurrentZ() > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
                 this.removeStatus(RoomUnitStatus.MOVE);
-                this.setStatusUpdateNeeded(false);
                 return false;
             }
 
@@ -199,6 +200,7 @@ public class RoomAvatar extends RoomUnit {
             this.incrementTilesMoved();
 
             RoomRotation oldRotation = this.getBodyRotation();
+
             this.setRotation(RoomRotation.values()[Rotation.Calculate(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), next.getX(), next.getY())]);
             if (item != null) {
                 if (item != roomItem || !RoomLayout.pointInSquare(item.getX(), item.getY(), item.getX() + item.getBaseItem().getWidth() - 1, item.getY() + item.getBaseItem().getLength() - 1, this.getCurrentPosition().getX(), this.getCurrentPosition().getY())) {
@@ -215,7 +217,6 @@ public class RoomAvatar extends RoomUnit {
                             conditionalGate.onRejected(this, this.getRoom(), new Object[]{});
                         }
 
-                        this.setStatusUpdateNeeded(false);
                         return false;
                     }
                 } else {
@@ -273,16 +274,14 @@ public class RoomAvatar extends RoomUnit {
                 }
             }
 
-            this.setStatusUpdateNeeded(false);
             return false;
 
         } catch (Exception e) {
             log.error("Caught exception", e);
-            this.setStatusUpdateNeeded(false);
             return false;
         }
     }
-    
+
     public void setDance(DanceType danceType) {
         if (this.danceType != danceType) {
             boolean isDancing = !this.danceType.equals(DanceType.NONE);

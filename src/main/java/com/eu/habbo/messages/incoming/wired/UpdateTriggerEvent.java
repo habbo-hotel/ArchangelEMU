@@ -16,7 +16,7 @@ public class UpdateTriggerEvent extends MessageHandler {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
-            if (room.getRoomRightsManager().hasRights(this.client.getHabbo()) || room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasRight(Permission.ACC_MOVEROTATE)) {
+            if (room.getRoomRightsManager().hasRights(this.client.getHabbo()) || room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER) || this.client.getHabbo().hasPermissionRight(Permission.ACC_MOVEROTATE)) {
                 InteractionWiredTrigger trigger = room.getRoomSpecialTypes().getTrigger(itemId);
 
                 try {

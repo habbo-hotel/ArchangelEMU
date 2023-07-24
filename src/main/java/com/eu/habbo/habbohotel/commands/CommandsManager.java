@@ -87,13 +87,16 @@ public class CommandsManager {
 
         String commandKey = parts[0];
         Room currentRoom = gameClient.getHabbo().getRoomUnit().getRoom();
-        boolean hasRights = currentRoom != null &&
-                (currentRoom.getRoomRightsManager().hasRights(gameClient.getHabbo())) ||
-                gameClient.getHabbo().hasRight(Permission.ACC_PLACEFURNI) ||
-                currentRoom.getRoomInfo().getGuild().getId() > 0 && currentRoom.getGuildRightLevel(gameClient.getHabbo()).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS);
 
+        if(currentRoom == null) {
+            return false;
+        }
 
-        if (!gameClient.getHabbo().canExecuteCommand(commandKey, hasRights)) {
+        boolean hasRights = (currentRoom.getRoomRightsManager().hasRights(gameClient.getHabbo())) || gameClient.getHabbo().hasPermissionRight(Permission.ACC_PLACEFURNI) || (currentRoom.getRoomInfo().hasGuild() && currentRoom.getGuildRightLevel(gameClient.getHabbo()).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS));
+
+        boolean canExecuteCommand = gameClient.getHabbo().canExecuteCommand(commandKey, hasRights);
+
+        if (!canExecuteCommand) {
             return false;
         }
 

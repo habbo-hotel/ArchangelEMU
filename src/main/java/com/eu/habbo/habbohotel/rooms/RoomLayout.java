@@ -3,6 +3,8 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
@@ -17,16 +19,30 @@ public class RoomLayout {
     public static double MAXIMUM_STEP_HEIGHT = 1.1;
     public static boolean ALLOW_FALLING = true;
     public boolean CANMOVEDIAGONALY = true;
+    @Getter
     private String name;
+    @Getter
+    @Setter
     private short doorX;
+    @Getter
+    @Setter
     private short doorY;
+    @Getter
     private short doorZ;
+    @Getter
+    @Setter
     private int doorDirection;
+    @Getter
+    @Setter
     private String heightmap;
+    @Getter
     private int mapSize;
+    @Getter
     private int mapSizeX;
+    @Getter
     private int mapSizeY;
     private RoomTile[][] roomTiles;
+    @Getter
     private RoomTile doorTile;
     private final Room room;
 
@@ -143,62 +159,6 @@ public class RoomLayout {
         }
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public short getDoorX() {
-        return this.doorX;
-    }
-
-    public void setDoorX(short doorX) {
-        this.doorX = doorX;
-    }
-
-    public short getDoorY() {
-        return this.doorY;
-    }
-
-    public void setDoorY(short doorY) {
-        this.doorY = doorY;
-    }
-
-    public int getDoorZ() {
-        return this.doorZ;
-    }
-
-    public RoomTile getDoorTile() {
-        return this.doorTile;
-    }
-
-    public int getDoorDirection() {
-        return this.doorDirection;
-    }
-
-    public void setDoorDirection(int doorDirection) {
-        this.doorDirection = doorDirection;
-    }
-
-    public String getHeightmap() {
-        return this.heightmap;
-    }
-
-    public void setHeightmap(String heightMap) {
-        this.heightmap = heightMap;
-    }
-
-    public int getMapSize() {
-        return this.mapSize;
-    }
-
-    public int getMapSizeX() {
-        return this.mapSizeX;
-    }
-
-    public int getMapSizeY() {
-        return this.mapSizeY;
-    }
-
     public short getHeightAtSquare(int x, int y) {
         if (x < 0 ||
                 y < 0 ||
@@ -241,8 +201,19 @@ public class RoomLayout {
         return !(x < 0 || y < 0 || x >= this.getMapSizeX() || y >= this.getMapSizeY());
     }
 
+    public boolean tileWalkable(RoomTile tile) {
+        return this.tileWalkable(tile.getX(), tile.getY());
+    }
+
     public boolean tileWalkable(short x, short y) {
-        return this.tileExists(x, y) && this.roomTiles[x][y].getState() == RoomTileState.OPEN && this.roomTiles[x][y].isWalkable();
+        boolean walkable = false;
+
+        if(this.tileExists(x, y)) {
+            RoomTile tile = this.getTile(x, y);
+            walkable = tile.getState().equals(RoomTileState.OPEN) && tile.isWalkable() && (this.room.getRoomUnitManager().areRoomUnitsAt(tile) && !this.room.getRoomInfo().isAllowWalkthrough());
+        }
+
+        return walkable;
     }
 
     public boolean isVoidTile(short x, short y) {

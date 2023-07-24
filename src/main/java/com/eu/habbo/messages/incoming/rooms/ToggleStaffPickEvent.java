@@ -12,7 +12,7 @@ import com.eu.habbo.messages.outgoing.rooms.GetGuestRoomResultComposer;
 public class ToggleStaffPickEvent extends MessageHandler {
     @Override
     public void handle() throws Exception {
-        if (this.client.getHabbo().hasRight(Permission.ACC_STAFF_PICK)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_STAFF_PICK)) {
             int roomId = this.packet.readInt();
 
             Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);

@@ -17,7 +17,7 @@ public class MoveWallItemEvent extends MessageHandler {
         if (room == null)
             return;
 
-        if (!room.getRoomRightsManager().hasRights(this.client.getHabbo()) && !this.client.getHabbo().hasRight(Permission.ACC_PLACEFURNI)) {
+        if (!room.getRoomRightsManager().hasRights(this.client.getHabbo()) && !this.client.getHabbo().hasPermissionRight(Permission.ACC_PLACEFURNI)) {
             if (!(room.getRoomInfo().getGuild().getId() > 0 && room.getGuildRightLevel(this.client.getHabbo()).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
                 this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
                 return;

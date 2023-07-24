@@ -44,9 +44,9 @@ public class UserInfoCommand extends Command {
                 getTextsValue("command.cmd_userinfo.motto") + ": " + habbo.getMotto().replace("<", "[").replace(">", "]") + "\r" +
                 getTextsValue("command.cmd_userinfo.rank") + ": " + habbo.getPermissionGroup().getName() + " (" + habbo.getPermissionGroup().getId() + ") \r" +
                 getTextsValue("command.cmd_userinfo.online") + ": " + (onlineHabbo == null ? getTextsValue("generic.no") : getTextsValue("generic.yes")) + "\r" +
-                ((habbo.getPermissionGroup().hasRight(Permission.ACC_HIDE_MAIL, true)) ? "" : getTextsValue("command.cmd_userinfo.email") + ": " + habbo.getMail() + "\r") +
-                ((habbo.getPermissionGroup().hasRight(Permission.ACC_HIDE_IP, true)) ? "" : getTextsValue("command.cmd_userinfo.ip_register") + ": " + habbo.getIpRegister() + "\r") +
-                ((habbo.getPermissionGroup().hasRight(Permission.ACC_HIDE_IP, true)) || onlineHabbo == null ? "" : getTextsValue("command.cmd_userinfo.ip_current") + ": " + onlineHabbo.getHabboInfo().getIpLogin() + "\r") +
+                ((habbo.getPermissionGroup().hasPermissionRight(Permission.ACC_HIDE_MAIL, true)) ? "" : getTextsValue("command.cmd_userinfo.email") + ": " + habbo.getMail() + "\r") +
+                ((habbo.getPermissionGroup().hasPermissionRight(Permission.ACC_HIDE_IP, true)) ? "" : getTextsValue("command.cmd_userinfo.ip_register") + ": " + habbo.getIpRegister() + "\r") +
+                ((habbo.getPermissionGroup().hasPermissionRight(Permission.ACC_HIDE_IP, true)) || onlineHabbo == null ? "" : getTextsValue("command.cmd_userinfo.ip_current") + ": " + onlineHabbo.getHabboInfo().getIpLogin() + "\r") +
                 (onlineHabbo != null ? getTextsValue("command.cmd_userinfo.achievement_score") + ": " + onlineHabbo.getHabboStats().getAchievementScore() + "\r" : ""));
 
         ModToolBan ban = Emulator.getGameEnvironment().getModToolManager().checkForBan(habbo.getId());

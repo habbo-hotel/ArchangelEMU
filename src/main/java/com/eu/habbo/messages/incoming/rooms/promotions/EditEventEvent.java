@@ -19,7 +19,7 @@ public class EditEventEvent extends MessageHandler {
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(id);
 
-        if (room == null || room.getRoomInfo().getOwnerInfo().getId() != this.client.getHabbo().getHabboInfo().getId() || !this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+        if (room == null || room.getRoomInfo().getOwnerInfo().getId() != this.client.getHabbo().getHabboInfo().getId() || !this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             return;
         }
 

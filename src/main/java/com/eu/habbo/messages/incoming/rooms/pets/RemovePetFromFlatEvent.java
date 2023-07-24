@@ -23,8 +23,8 @@ public class RemovePetFromFlatEvent extends MessageHandler {
         Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
 
         if (pet != null) {
-            if (this.client.getHabbo().getHabboInfo().getId() == pet.getUserId() || room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
-                if (!this.client.getHabbo().hasRight(Permission.ACC_UNLIMITED_PETS) && this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= PetManager.MAXIMUM_PET_INVENTORY_SIZE) {
+            if (this.client.getHabbo().getHabboInfo().getId() == pet.getUserId() || room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
+                if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_UNLIMITED_PETS) && this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= PetManager.MAXIMUM_PET_INVENTORY_SIZE) {
                     this.client.getHabbo().alert(Emulator.getTexts().getValue("error.pets.max.inventory").replace("%amount%", PetManager.MAXIMUM_PET_INVENTORY_SIZE + ""));
                     return;
                 }

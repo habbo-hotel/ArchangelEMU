@@ -60,7 +60,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
             this.bubble = RoomChatMessageBubbles.NORMAL;
         }
 
-        if (!message.client.getHabbo().hasRight(Permission.ACC_ANYCHATCOLOR)) {
+        if (!message.client.getHabbo().hasPermissionRight(Permission.ACC_ANYCHATCOLOR)) {
             for (Integer i : RoomChatMessage.BANNED_BUBBLES) {
                 if (i == this.bubble.getType()) {
                     this.bubble = RoomChatMessageBubbles.NORMAL;
@@ -155,7 +155,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
     @Override
     public void serialize(ServerMessage message) {
         if (this.habbo != null && this.bubble.isOverridable()) {
-            if (!this.habbo.hasRight(Permission.ACC_ANYCHATCOLOR)) {
+            if (!this.habbo.hasPermissionRight(Permission.ACC_ANYCHATCOLOR)) {
                 for (Integer i : RoomChatMessage.BANNED_BUBBLES) {
                     if (i == this.bubble.getType()) {
                         this.bubble = RoomChatMessageBubbles.NORMAL;
@@ -166,7 +166,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         }
 
         if (!this.getBubble().getPermission().isEmpty()) {
-            if (this.habbo != null && !this.habbo.hasRight(this.getBubble().getPermission())) {
+            if (this.habbo != null && !this.habbo.hasPermissionRight(this.getBubble().getPermission())) {
                 this.bubble = RoomChatMessageBubbles.NORMAL;
             }
         }
@@ -191,7 +191,7 @@ public class RoomChatMessage implements Runnable, ISerialize, DatabaseLoggable {
         }
 
         if (Emulator.getConfig().getBoolean("hotel.wordfilter.enabled", true) && Emulator.getConfig().getBoolean("hotel.wordfilter.rooms")) {
-            if (!this.habbo.hasRight(Permission.ACC_CHAT_NO_FILTER)) {
+            if (!this.habbo.hasPermissionRight(Permission.ACC_CHAT_NO_FILTER)) {
                 if (!Emulator.getGameEnvironment().getWordFilter().autoReportCheck(this)) {
                     if (!Emulator.getGameEnvironment().getWordFilter().hideMessageCheck(this.message)) {
                         Emulator.getGameEnvironment().getWordFilter().filter(this, this.habbo);

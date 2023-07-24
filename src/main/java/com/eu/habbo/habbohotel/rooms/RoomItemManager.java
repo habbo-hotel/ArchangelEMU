@@ -232,7 +232,7 @@ public class RoomItemManager {
             return FurnitureMovementError.MAX_SOUNDFURNI;
         } else if (tile == null || tile.getState() == RoomTileState.INVALID) {
             return FurnitureMovementError.INVALID_MOVE;
-        } else if (this.room.getRoomRightsManager().hasRights(habbo) || this.room.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS) || habbo.hasRight(Permission.ACC_MOVEROTATE)) {
+        } else if (this.room.getRoomRightsManager().hasRights(habbo) || this.room.getGuildRightLevel(habbo).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS) || habbo.hasPermissionRight(Permission.ACC_MOVEROTATE)) {
             return FurnitureMovementError.NONE;
         }
 
@@ -1088,5 +1088,16 @@ public class RoomItemManager {
         } else if (item instanceof InteractionFireworks) {
             this.addUndefined(item);
         }
+    }
+
+    public void dispose() {
+        this.currentItems.values().parallelStream()
+                .filter(RoomItem::needsUpdate)
+                .forEach(roomItem -> {
+                    roomItem.run();
+                    this.currentItems.remove(roomItem.getId());
+                });
+
+        this.currentItems.clear();
     }
 }

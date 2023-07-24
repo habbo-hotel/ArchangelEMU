@@ -10,7 +10,7 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 public class ReleaseIssuesEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             int count = this.packet.readInt();
 
             while (count != 0) {

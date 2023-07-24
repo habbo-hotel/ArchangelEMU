@@ -24,7 +24,7 @@ public class SetObjectDataEvent extends MessageHandler {
         if (item == null)
             return;
 
-        if (item instanceof InteractionRoomAds && !this.client.getHabbo().hasRight(Permission.ACC_ADS_BACKGROUND)) {
+        if (item instanceof InteractionRoomAds && !this.client.getHabbo().hasPermissionRight(Permission.ACC_ADS_BACKGROUND)) {
             this.client.getHabbo().alert(Emulator.getTexts().getValue("hotel.error.roomads.nopermission"));
             return;
         }

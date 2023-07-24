@@ -17,7 +17,7 @@ public class FreezeBotsCommand extends Command {
         }
 
         if (gameClient.getHabbo().getHabboInfo().getId() == gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getOwnerInfo().getId()
-                || gameClient.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+                || gameClient.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             gameClient.getHabbo().getRoomUnit().getRoom().setAllowBotsWalk(!gameClient.getHabbo().getRoomUnit().getRoom().isAllowBotsWalk());
             gameClient.getHabbo().whisper(gameClient.getHabbo().getRoomUnit().getRoom().isAllowBotsWalk() ? getTextsValue("commands.succes.cmd_freeze_bots.unfrozen") : getTextsValue("commands.succes.cmd_freeze_bots.frozen"), RoomChatMessageBubbles.ALERT);
         } else {

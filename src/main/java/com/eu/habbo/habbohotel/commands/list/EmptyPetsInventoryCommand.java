@@ -32,7 +32,7 @@ public class EmptyPetsInventoryCommand extends Command {
 
         if (params.length >= 2 && params[1].equalsIgnoreCase(getTextsValue("generic.yes"))) {
 
-            Habbo habbo = (params.length == 3 && gameClient.getHabbo().hasRight(Permission.ACC_EMPTY_OTHERS)) ? Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]) : gameClient.getHabbo();
+            Habbo habbo = (params.length == 3 && gameClient.getHabbo().hasPermissionRight(Permission.ACC_EMPTY_OTHERS)) ? Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]) : gameClient.getHabbo();
 
             if (habbo != null) {
                 TIntObjectHashMap<Pet> pets = new TIntObjectHashMap<>(habbo.getInventory().getPetsComponent().getPets());

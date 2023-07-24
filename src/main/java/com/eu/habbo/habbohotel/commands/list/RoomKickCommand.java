@@ -25,7 +25,7 @@ public class RoomKickCommand extends Command {
             }
 
             for (Habbo habbo : room.getRoomUnitManager().getRoomHabbos()) {
-                if (!(habbo.hasRight(Permission.ACC_UNKICKABLE) || habbo.hasRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo))) {
+                if (!(habbo.hasPermissionRight(Permission.ACC_UNKICKABLE) || habbo.hasPermissionRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo))) {
                     room.kickHabbo(habbo, true);
                 }
             }

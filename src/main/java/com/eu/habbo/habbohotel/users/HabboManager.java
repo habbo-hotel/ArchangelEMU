@@ -177,7 +177,7 @@ public class HabboManager {
     public void sendPacketToHabbosWithPermission(ServerMessage message, String perm) {
         synchronized (this.onlineHabbos) {
             for (Habbo habbo : this.onlineHabbos.values()) {
-                if (habbo.hasRight(perm)) {
+                if (habbo.hasPermissionRight(perm)) {
                     habbo.getClient().sendResponse(message);
                 }
             }
@@ -262,7 +262,7 @@ public class HabboManager {
             habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
             habbo.getClient().sendResponse(new UserPerksComposer(habbo));
 
-            if (habbo.hasRight(Permission.ACC_SUPPORTTOOL)) {
+            if (habbo.hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
                 habbo.getClient().sendResponse(new ModeratorInitMessageComposer(habbo));
             }
             habbo.getHabboInfo().run();

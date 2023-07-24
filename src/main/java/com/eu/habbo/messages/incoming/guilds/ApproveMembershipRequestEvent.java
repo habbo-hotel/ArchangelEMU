@@ -30,7 +30,7 @@ public class ApproveMembershipRequestEvent extends MessageHandler {
         else userInfo = habbo.getHabboInfo();
 
 
-        if (userInfo == null || groupMember == null || userId == this.client.getHabbo().getHabboInfo().getId() || (!this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN) && guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId() && !groupMember.getRank().equals(GuildRank.ADMIN) && !groupMember.getRank().equals(GuildRank.OWNER)))
+        if (userInfo == null || groupMember == null || userId == this.client.getHabbo().getHabboInfo().getId() || (!this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN) && guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId() && !groupMember.getRank().equals(GuildRank.ADMIN) && !groupMember.getRank().equals(GuildRank.OWNER)))
             return;
 
         if (!userInfo.getHabboStats().hasGuild(guild.getId())) {

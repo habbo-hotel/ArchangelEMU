@@ -197,7 +197,7 @@ public class RoomInfo {
     }
 
     public boolean isRoomOwner(Habbo owner) {
-        return this.ownerInfo.getId() == owner.getHabboInfo().getId() || owner.hasRight(Permission.ACC_ANYROOMOWNER);
+        return this.ownerInfo.getId() == owner.getHabboInfo().getId() || owner.hasPermissionRight(Permission.ACC_ANYROOMOWNER);
     }
 
     public String[] filterAnything() {

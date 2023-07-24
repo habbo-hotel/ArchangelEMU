@@ -22,7 +22,7 @@ public class CalendarCommand extends Command {
         if (Emulator.getConfig().getBoolean("hotel.calendar.enabled")) {
             String campaignName = Emulator.getConfig().getValue("hotel.calendar.default");
 
-            if (params.length > 1 && gameClient.getHabbo().hasCommand("cmd_calendar_staff")) {
+            if (params.length > 1 && gameClient.getHabbo().canExecuteCommand("cmd_calendar_staff")) {
                 campaignName = params[1];
             }
 

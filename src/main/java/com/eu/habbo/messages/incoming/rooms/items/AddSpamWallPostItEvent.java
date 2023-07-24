@@ -22,7 +22,7 @@ public class AddSpamWallPostItEvent extends MessageHandler {
         this.packet.readString();
         String color = this.packet.readString();
         if (itemId == -1234) {
-            if (this.client.getHabbo().hasCommand("cmd_multi")) {
+            if (this.client.getHabbo().canExecuteCommand("cmd_multi")) {
                 String[] commands = this.packet.readString().split("\r");
 
                 Arrays.stream(commands)

@@ -2,8 +2,8 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.ServerMessage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,13 +74,13 @@ public class InteractionMusicDisc extends RoomItem {
     public void onPlace(Room room) {
         super.onPlace(room);
 
-        room.getTraxManager().sendUpdatedSongList();
+        room.getRoomTraxManager().sendUpdatedSongList();
     }
 
     @Override
     public void onPickUp(Room room) {
         super.onPickUp(room);
 
-        room.getTraxManager().sendUpdatedSongList();
+        room.getRoomTraxManager().sendUpdatedSongList();
     }
 }

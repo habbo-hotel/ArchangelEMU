@@ -128,7 +128,7 @@ public class NewNavigatorSearchEvent extends MessageHandler {
             }
         }
 
-        SearchResultList list = new SearchResultList(0, "query", "", SearchAction.NONE, ListMode.LIST, DisplayMode.VISIBLE, new ArrayList<>(searchRooms.values()), true, this.client.getHabbo().hasRight(Permission.ACC_ENTERANYROOM) || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER), DisplayOrder.ACTIVITY, -1);
+        SearchResultList list = new SearchResultList(0, "query", "", SearchAction.NONE, ListMode.LIST, DisplayMode.VISIBLE, new ArrayList<>(searchRooms.values()), true, this.client.getHabbo().hasPermissionRight(Permission.ACC_ENTERANYROOM) || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER), DisplayOrder.ACTIVITY, -1);
         nList.add(list);
         return nList;
     }

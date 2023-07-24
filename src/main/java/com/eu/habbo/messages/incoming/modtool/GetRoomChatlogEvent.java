@@ -10,7 +10,7 @@ import com.eu.habbo.messages.outgoing.modtool.RoomChatlogComposer;
 public class GetRoomChatlogEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             this.packet.readInt();
             Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.packet.readInt());
 

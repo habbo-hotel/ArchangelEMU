@@ -12,7 +12,7 @@ import com.eu.habbo.plugin.events.support.SupportUserAlertedReason;
 public class AmbassadorAlertEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (!this.client.getHabbo().hasRight(Permission.ACC_AMBASSADOR)) {
+        if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_AMBASSADOR)) {
             ScripterManager.scripterDetected(this.client, Emulator.getTexts().getValue("scripter.warning.modtools.alert").replace("%username%", client.getHabbo().getHabboInfo().getUsername()).replace("%message%", "${notification.ambassador.alert.warning.message}"));
             return;
         }

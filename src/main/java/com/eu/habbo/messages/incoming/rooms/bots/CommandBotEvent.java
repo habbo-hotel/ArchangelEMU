@@ -26,7 +26,7 @@ public class CommandBotEvent extends MessageHandler {
         if (room == null)
             return;
 
-        if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             int botId = this.packet.readInt();
 
             Bot bot = room.getRoomUnitManager().getRoomBotById(Math.abs(botId));
@@ -74,7 +74,7 @@ public class CommandBotEvent extends MessageHandler {
                             String result = Emulator.getGameEnvironment().getWordFilter().filter(s, this.client.getHabbo());
 
                             if (!result.isEmpty()) {
-                                if (!this.client.getHabbo().hasRight(Permission.ACC_CHAT_NO_FILTER)) {
+                                if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_CHAT_NO_FILTER)) {
                                     result = Emulator.getGameEnvironment().getWordFilter().filter(result, this.client.getHabbo());
                                 }
 

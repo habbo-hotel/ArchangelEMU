@@ -416,12 +416,12 @@ public class RoomUnitManager {
         }
     }
 
-    public void dispose(Room room) {
+    public void dispose() {
         for(Habbo habbo : this.currentRoomHabbos.values()) {
-            Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, room);
+            Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room);
         }
 
-        room.sendComposer(new CloseConnectionMessageComposer().compose());
+        this.room.sendComposer(new CloseConnectionMessageComposer().compose());
 
         this.currentRoomHabbos.clear();
 

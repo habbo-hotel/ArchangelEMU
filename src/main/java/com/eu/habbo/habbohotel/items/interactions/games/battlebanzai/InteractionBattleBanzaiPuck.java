@@ -127,11 +127,14 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
 
     @Override
     public boolean validMove(Room room, RoomTile from, RoomTile to) {
-       if (to == null) return false;
+        if (to == null) {
+            return false;
+        }
+
         RoomItem topItem = room.getRoomItemManager().getTopItemAt(to.getX(), to.getY(), this);
-       return !(!room.getLayout().tileWalkable(to.getX(), to.getY()) || (topItem != null && (!topItem.getBaseItem().allowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
-       
-        //return !(!room.getLayout().tileWalkable(to.x, to.y) || (topItem != null && (!topItem.getBaseItem().setAllowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
+
+        return !(!room.getLayout().tileWalkable(to) || (topItem != null && (!topItem.getBaseItem().allowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
+    //return !(!room.getLayout().tileWalkable(to.x, to.y) || (topItem != null && (!topItem.getBaseItem().setAllowStack() || topItem.getBaseItem().allowSit() || topItem.getBaseItem().allowLay())));
     }
 
     @Override
