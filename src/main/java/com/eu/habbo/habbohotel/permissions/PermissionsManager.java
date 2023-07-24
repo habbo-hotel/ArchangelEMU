@@ -58,6 +58,7 @@ public class PermissionsManager {
             log.error("Caught SQL exception", e);
         }
 
+        //TODO if Group is eliminated every user that has this rank must update to lowest Rank
         this.permissionGroups.entrySet().removeIf(entry -> !currentGroupIds.contains(entry.getKey()));
     }
 
