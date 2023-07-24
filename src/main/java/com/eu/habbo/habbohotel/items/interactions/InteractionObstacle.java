@@ -179,7 +179,7 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
         }
 
         for(RoomTile tile : this.middleTiles) {
-            for(RoomUnit roomUnit : tile.getRoomUnits()) {
+            for(RoomUnit roomUnit : room.getRoomUnitManager().getRoomUnitsAt(tile)) {
                 if(roomUnit == null) {
                     continue;
                 }

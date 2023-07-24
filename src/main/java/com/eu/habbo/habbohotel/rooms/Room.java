@@ -414,7 +414,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         boolean walkable = this.layout.tileWalkable(x, y);
         RoomTile tile = this.getLayout().getTile(x, y);
 
-        if ((walkable && tile != null) && (tile.hasUnits() && !this.roomInfo.isAllowWalkthrough())) {
+        if ((walkable && tile != null) && (this.roomUnitManager.areRoomUnitsAt(tile) && !this.roomInfo.isAllowWalkthrough())) {
             walkable = false;
         }
 
@@ -953,7 +953,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
                         itemsOnRoller.remove(roller);
 
-                        if (!rollerTile.hasUnits() && itemsOnRoller.isEmpty())
+                        if (!this.roomUnitManager.areRoomUnitsAt(rollerTile) && itemsOnRoller.isEmpty())
                             return true;
 
                         RoomTile tileInFront = Room.this.layout.getTileInFront(Room.this.layout.getTile(roller.getX(), roller.getY()), roller.getRotation());
@@ -970,7 +970,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         if (!tileInFront.getAllowStack() && !(tileInFront.isWalkable() || tileInFront.getState() == RoomTileState.SIT || tileInFront.getState() == RoomTileState.LAY))
                             return true;
 
-                        if (tileInFront.hasUnits())
+                        if (this.roomUnitManager.areRoomUnitsAt(tileInFront))
                             return true;
 
                         THashSet<RoomItem> itemsNewTile = new THashSet<>();
@@ -1025,9 +1025,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 roomUserRolledEvent = new UserRolledEvent(null, null, null);
                             }
 
-                            ArrayList<RoomUnit> unitsOnTile = new ArrayList<>(rollerTile.getRoomUnits());
+                            ArrayList<RoomUnit> unitsOnTile = new ArrayList<>(this.roomUnitManager.getRoomUnitsAt(rollerTile));
 
-                            for (RoomUnit roomUnit : rollerTile.getRoomUnits()) {
+                            for (RoomUnit roomUnit : this.roomUnitManager.getRoomUnitsAt(rollerTile)) {
                                 if (roomUnit instanceof RoomPet) {
                                     Pet pet = this.roomUnitManager.getPetByRoomUnit(roomUnit);
                                     if (pet instanceof RideablePet rideablePet && rideablePet.getRider() != null) {

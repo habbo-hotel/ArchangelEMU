@@ -76,51 +76,47 @@ public class InteractionOneWayGate extends RoomItem {
             if (unit == null)
                 return;
 
-            if (tileInfront.getX() == unit.getCurrentPosition().getX()) {
-                if (tileInfront.getY() == unit.getCurrentPosition().getY()) {
-                    if (!currentLocation.hasUnits()) {
-                        List<Runnable> onSuccess = new ArrayList<>();
-                        List<Runnable> onFail = new ArrayList<>();
+            if (tileInfront.equals(unit.getCurrentPosition()) && !room.getRoomUnitManager().areRoomUnitsAt(currentLocation)) {
+                List<Runnable> onSuccess = new ArrayList<>();
+                List<Runnable> onFail = new ArrayList<>();
 
-                        onSuccess.add(() -> {
-                            unit.setCanLeaveRoomByDoor(false);
-                            walkable = this.getBaseItem().allowWalk();
-                            RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation() + 4);
-                            unit.setGoalLocation(tile);
-                            Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
+                onSuccess.add(() -> {
+                    unit.setCanLeaveRoomByDoor(false);
+                    walkable = this.getBaseItem().allowWalk();
+                    RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation() + 4);
+                    unit.setGoalLocation(tile);
+                    Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
 
-                            Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, unit, room, new Object[]{this}), 500);
-                        });
+                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, unit, room, new Object[]{this}), 500);
+                });
 
-                        onFail.add(() -> {
-                            unit.setCanLeaveRoomByDoor(true);
-                            walkable = this.getBaseItem().allowWalk();
-                            room.updateTile(currentLocation);
-                            room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
-                            unit.removeOverrideTile(currentLocation);
-                        });
+                onFail.add(() -> {
+                    unit.setCanLeaveRoomByDoor(true);
+                    walkable = this.getBaseItem().allowWalk();
+                    room.updateTile(currentLocation);
+                    room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
+                    unit.removeOverrideTile(currentLocation);
+                });
 
-                        walkable = true;
-                        room.updateTile(currentLocation);
-                        unit.addOverrideTile(currentLocation);
-                        unit.setGoalLocation(currentLocation);
-                        Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
-                        room.sendComposer(new DiceValueMessageComposer(this.getId(), 1).compose());
+                walkable = true;
+                room.updateTile(currentLocation);
+                unit.addOverrideTile(currentLocation);
+                unit.setGoalLocation(currentLocation);
+                Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
+                room.sendComposer(new DiceValueMessageComposer(this.getId(), 1).compose());
 
-                        /*
-                        room.scheduledTasks.add(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                gate.roomUnitID = client.getHabbo().getRoomUnit().getId();
-                                room.updateTile(gatePosition);
-                                client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(InteractionOneWayGate.this.getX(), InteractionOneWayGate.this.getY()), InteractionOneWayGate.this.getRotation() + 4));
-                            }
-                        });
-                        */
+                /*
+                room.scheduledTasks.add(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        gate.roomUnitID = client.getHabbo().getRoomUnit().getId();
+                        room.updateTile(gatePosition);
+                        client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(InteractionOneWayGate.this.getX(), InteractionOneWayGate.this.getY()), InteractionOneWayGate.this.getRotation() + 4));
                     }
-                }
+                });
+                */
             }
         }
     }

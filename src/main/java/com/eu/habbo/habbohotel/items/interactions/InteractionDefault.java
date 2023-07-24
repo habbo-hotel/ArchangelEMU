@@ -52,11 +52,16 @@ public class InteractionDefault extends RoomItem {
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
         super.onMove(room, oldLocation, newLocation);
 
+        //Check if there a no rollers
         if (room.getRoomItemManager().getItemsAt(oldLocation).stream().noneMatch(item -> item.getClass().isAssignableFrom(InteractionRoller.class))) {
             for (RoomUnit unit : room.getRoomUnitManager().getCurrentRoomUnits().values()) {
-                if (!oldLocation.unitIsOnFurniOnTile(unit, this.getBaseItem()))
+                if (!oldLocation.unitIsOnFurniOnTile(unit, this.getBaseItem())) {
                     continue; // If the unit was previously on the furni...
-                if (newLocation.unitIsOnFurniOnTile(unit, this.getBaseItem())) continue; // but is not anymore...
+                }
+
+                if (newLocation.unitIsOnFurniOnTile(unit, this.getBaseItem())) {
+                    continue; // but is not anymore...
+                }
 
                 try {
                     this.onWalkOff(unit, room, new Object[]{oldLocation, newLocation}); // the unit walked off!

@@ -6,9 +6,7 @@ import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 public class RoomTile {
     @Getter
@@ -165,12 +163,6 @@ public class RoomTile {
         return this.x == x && this.y == y;
     }
 
-    public List<RoomUnit> getRoomUnits() {
-        synchronized (this.roomUnits) {
-            return new ArrayList<>(this.roomUnits);
-        }
-    }
-
     public void addRoomUnit(RoomUnit roomUnit) {
         synchronized (this.roomUnits) {
             if (!this.roomUnits.contains(roomUnit)) {
@@ -185,12 +177,7 @@ public class RoomTile {
         }
     }
 
-    public boolean hasUnits() {
-        synchronized (this.roomUnits) {
-            return !this.roomUnits.isEmpty();
-        }
-    }
-
+    //TODO Move this to RoomUnit
     public boolean unitIsOnFurniOnTile(RoomUnit roomUnit, Item item) {
         if ((roomUnit.getCurrentPosition().getX() < this.x || roomUnit.getCurrentPosition().getX() >= this.x + item.getLength())) {
             return false;

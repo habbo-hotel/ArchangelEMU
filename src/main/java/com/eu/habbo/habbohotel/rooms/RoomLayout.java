@@ -304,7 +304,7 @@ public class RoomLayout {
                     continue;
                 }
 
-                if (currentAdj.hasUnits() && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
+                if (this.room.getRoomUnitManager().areRoomUnitsAt(currentAdj) && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
                     closedList.add(currentAdj);
                     openList.remove(currentAdj);
                     continue;

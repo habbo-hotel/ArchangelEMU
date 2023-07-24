@@ -54,7 +54,7 @@ public class RoomPet extends RoomUnit {
             if (this.getPath().isEmpty()) {
                 this.setSitUpdate(true);
 
-                if (next != null && next.hasUnits() && !overrideChecks) {
+                if (next != null && room.getRoomUnitManager().areRoomUnitsAt(next) && !overrideChecks) {
                     this.setStatusUpdateNeeded(false);
                     return false;
                 }

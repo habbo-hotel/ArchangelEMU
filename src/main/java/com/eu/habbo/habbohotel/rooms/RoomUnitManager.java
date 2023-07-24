@@ -160,9 +160,14 @@ public class RoomUnitManager {
         return this.currentRoomUnits.values().stream().filter(roomUnit -> roomUnit.getCurrentPosition().equals(tile)).collect(Collectors.toSet());
     }
 
+    public boolean areRoomUnitsAt(RoomTile tile) {
+        return this.currentRoomUnits.values().stream().anyMatch(roomUnit -> roomUnit.getCurrentPosition().equals(tile));
+    }
+
     public Collection<RoomUnit> getAvatarsAt(RoomTile tile) {
         return Stream.concat(this.getHabbosAt(tile).stream(), this.getBotsAt(tile).stream()).map(Unit::getRoomUnit).collect(Collectors.toList());
     }
+
     public Collection<Habbo> getRoomHabbos() {
         return this.currentRoomHabbos.values();
     }
