@@ -784,7 +784,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         habbo.getHabboStats().getChatCounter().decrementAndGet();
                     }
 
-                    if (this.cycleRoomUnit(habbo.getRoomUnit())) {
+                    habbo.getRoomUnit().cycle(this);
+
+                    if(habbo.getRoomUnit().isStatusUpdateNeeded()) {
                         habbo.getRoomUnit().setStatusUpdateNeeded(false);
                         updatedUnit.add(habbo.getRoomUnit());
                     }

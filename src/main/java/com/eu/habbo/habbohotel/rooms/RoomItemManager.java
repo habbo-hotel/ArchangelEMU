@@ -381,12 +381,6 @@ public class RoomItemManager {
         THashSet<RoomTile> occupiedTiles = this.room.getLayout().getTilesAt(targetTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
         THashSet<RoomTile> newOccupiedTiles = this.room.getLayout().getTilesAt(targetTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation);
 
-        FurnitureMovementError fits = this.furnitureFitsAt(targetTile, item, rotation, true);
-
-        if (!fits.equals(FurnitureMovementError.NONE) && !pluginHelper) {
-            return fits;
-        }
-
         RoomItem topItem = this.getTopItemAt(occupiedTiles, null);
 
         if ((stackHelper.isEmpty() && !pluginHelper) || item.getBaseItem().getInteractionType().getType() == InteractionWater.class) {
@@ -652,21 +646,15 @@ public class RoomItemManager {
 
         THashSet<RoomTile> occupiedTiles = this.room.getLayout().getTilesAt(targetTile, baseItem.getWidth(), baseItem.getLength(), rotation);
 
-        for (RoomTile t : occupiedTiles) {
-            if (t.getState() == RoomTileState.INVALID) {
+        for (RoomTile occupiedTile : occupiedTiles) {
+            if (occupiedTile.getState() == RoomTileState.INVALID) {
                 return FurnitureMovementError.INVALID_MOVE;
             }
 
-            if (!wiredPlaceUnder || (!item.isWalkable() && !baseItem.allowSit() && !baseItem.allowLay())) {
-                if (checkForUnits) {
-                    if (this.room.getRoomUnitManager().hasHabbosAt(t)) {
-                        return FurnitureMovementError.TILE_HAS_HABBOS;
-                    } else if (this.room.getRoomUnitManager().hasBotsAt(t)) {
-                        return FurnitureMovementError.TILE_HAS_BOTS;
-                    } else if (this.room.getRoomUnitManager().hasPetsAt(t)) {
-                        return FurnitureMovementError.TILE_HAS_PETS;
-                    }
-                }
+            if(!Emulator.getConfig().getBoolean("wired.place.under", false) || (Emulator.getConfig().getBoolean("wired.place.under", false) && !item.isWalkable() && !item.getBaseItem().allowSit() && !item.getBaseItem().allowLay())) {
+                if (checkForUnits && this.room.getRoomUnitManager().hasHabbosAt(occupiedTile)) return FurnitureMovementError.TILE_HAS_HABBOS;
+                if (checkForUnits && this.room.getRoomUnitManager().hasBotsAt(occupiedTile)) return FurnitureMovementError.TILE_HAS_BOTS;
+                if (checkForUnits && this.room.getRoomUnitManager().hasPetsAt(occupiedTile)) return FurnitureMovementError.TILE_HAS_PETS;
             }
         }
 

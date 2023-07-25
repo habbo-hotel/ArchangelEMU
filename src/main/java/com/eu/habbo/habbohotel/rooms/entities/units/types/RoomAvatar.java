@@ -64,6 +64,17 @@ public class RoomAvatar extends RoomUnit {
                 this.removeStatus(RoomUnitStatus.SIGN);
             }
 
+            if(!this.isWalking() || this.getPath() == null || this.getPath().isEmpty()) {
+                if (this.hasStatus(RoomUnitStatus.MOVE) && !this.isAnimateWalk()) {
+                    this.removeStatus(RoomUnitStatus.MOVE);
+                }
+
+                if(!this.isWalking()) {
+                    RoomItem topItem = this.getRoom().getRoomItemManager().getTopItemAt(this.getCurrentPosition());
+                    return this.handleSitStatus(topItem) || this.handleLayStatus(topItem);
+                }
+            }
+
             Habbo habboT = room.getRoomUnitManager().getHabboByRoomUnit(this);
 
             if (!this.isWalking() && !this.isKicked() && this.removeStatus(RoomUnitStatus.MOVE) == null && habboT != null) {
@@ -263,7 +274,7 @@ public class RoomAvatar extends RoomUnit {
             }
 
             if(habbo != null) {
-                RoomItem topItem = room.getRoomItemManager().getTopItemAt(next.getX(), next.getY());
+                RoomItem topItem = room.getRoomItemManager().getTopItemAt(next);
 
                 boolean isAtDoor = next.getX() == room.getLayout().getDoorX() && next.getY() == room.getLayout().getDoorY();
                 boolean publicRoomKicks = !room.getRoomInfo().isPublicRoom() || Emulator.getConfig().getBoolean("hotel.room.public.doortile.kick");
@@ -333,28 +344,49 @@ public class RoomAvatar extends RoomUnit {
         }
     }
 
-    private void handleSitStatus(RoomItem topItem) {
+    private boolean handleSitStatus(RoomItem topItem) {
+        if(topItem == null || !topItem.getBaseItem().allowSit()) {
+            return false;
+        }
+
         if(!this.isCmdSitEnabled()) {
-            if((topItem == null || !topItem.getBaseItem().allowSit()) && this.hasStatus(RoomUnitStatus.SIT)) {
-                this.removeStatus(RoomUnitStatus.SIT);
-                this.setStatusUpdateNeeded(true);
-            } else if(this.getCurrentPosition().getState() == RoomTileState.SIT && (!this.hasStatus(RoomUnitStatus.SIT))) {
+            if(this.getCurrentPosition().getState().equals(RoomTileState.SIT) && !this.hasStatus(RoomUnitStatus.SIT)) {
                 this.setStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(topItem)));
-                this.setStatusUpdateNeeded(true);
+                this.setCurrentZ(topItem.getZ());
+                this.setRotation(RoomRotation.values()[topItem.getRotation()]);
+                return true;
+            } else if(!topItem.getBaseItem().allowSit() && this.hasStatus(RoomUnitStatus.SIT)) {
+                this.removeStatus(RoomUnitStatus.SIT);
+                return true;
             }
         }
+
+        return false;
     }
 
-    private void handleLayStatus(RoomItem topItem) {
+    private boolean handleLayStatus(RoomItem topItem) {
+        if(topItem == null || !topItem.getBaseItem().allowLay()) {
+            return false;
+        }
+
         if(!this.isCmdLayEnabled()) {
-            if((topItem == null || !topItem.getBaseItem().allowLay()) && this.hasStatus(RoomUnitStatus.LAY)) {
-                this.removeStatus(RoomUnitStatus.LAY);
-                this.setStatusUpdateNeeded(true);
-            } else if(!this.hasStatus(RoomUnitStatus.LAY)) {
+            if(this.getCurrentPosition().getState().equals(RoomTileState.LAY) && !this.hasStatus(RoomUnitStatus.LAY)) {
                 this.setStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(topItem)));
-                this.setStatusUpdateNeeded(true);
+                this.setRotation(RoomRotation.values()[topItem.getRotation() % 4]);
+
+                if (topItem.getRotation() == 0 || topItem.getRotation() == 4) {
+                    this.setLocation(this.getRoom().getLayout().getTile(this.getCurrentPosition().getX(), topItem.getY()));
+                } else {
+                    this.setLocation(this.getRoom().getLayout().getTile(topItem.getX(), this.getCurrentPosition().getY()));
+                }
+                return true;
+            } else if (!topItem.getBaseItem().allowLay() && this.hasStatus(RoomUnitStatus.LAY)) {
+                this.removeStatus(RoomUnitStatus.LAY);
+                return true;
             }
         }
+
+        return false;
     }
 
     @Override
