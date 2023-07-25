@@ -57,8 +57,12 @@ public class Bot extends Unit implements Runnable {
     private boolean chatRandom;
     @Getter
     private short chatDelay;
+    @Getter
+    @Setter
     private int chatTimeOut;
     private int chatTimestamp;
+    @Getter
+    @Setter
     private short lastChatIndex;
     private final int bubble;
     @Getter
@@ -445,4 +449,11 @@ public class Bot extends Unit implements Runnable {
         }
     }
 
+    public void incrementLastChatIndex() {
+        this.lastChatIndex++;
+    }
+
+    public void resetLastChatIndex() {
+        this.lastChatIndex = 0;
+    }
 }

@@ -320,8 +320,6 @@ public class RoomAvatar extends RoomUnit {
     public void giveEffect(int effectId, int duration, boolean forceEffect) {
         if (!this.isInRoom()) {
             return;
-        } else {
-            RoomAvatar roomAvatar = this;
         }
 
         if(this instanceof RoomHabbo) {

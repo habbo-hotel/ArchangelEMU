@@ -159,8 +159,6 @@ public class BotManager {
                         log.error("Caught exception", e);
                     }
                 }
-
-                bot.cycle(false);
             } else {
                 habbo.getClient().sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
             }

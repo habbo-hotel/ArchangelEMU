@@ -816,10 +816,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 continue;
                             }
 
-                            bot.cycle(this.allowBotsWalk);
+                            bot.getRoomUnit().cycle(this);
 
-
-                            if (this.cycleRoomUnit(bot.getRoomUnit())) {
+                            if(bot.getRoomUnit().isStatusUpdateNeeded()) {
                                 bot.getRoomUnit().setStatusUpdateNeeded(false);
                                 updatedUnit.add(bot.getRoomUnit());
                             }
