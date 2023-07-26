@@ -189,7 +189,7 @@ public class FreezeGame extends Game {
         super.start();
 
         if (this.room.getRoomSpecialTypes().hasFreezeExitTile()) {
-            for (Habbo habbo : this.room.getRoomUnitManager().getRoomHabbos()) {
+            for (Habbo habbo : this.room.getRoomUnitManager().getCurrentHabbos().values()) {
                 if (this.getTeamForHabbo(habbo) == null) {
                     for (RoomItem item : this.room.getRoomItemManager().getItemsAt(habbo.getRoomUnit().getCurrentPosition())) {
                         if (item instanceof InteractionFreezeTile) {

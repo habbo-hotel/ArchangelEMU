@@ -334,16 +334,16 @@ public class Pet extends Unit implements ISerialize, Runnable {
     public void cycle() {
         this.idleCommandTicks++;
 
-        int time = Emulator.getIntUnixTimestamp();
+        int currentTime = Emulator.getIntUnixTimestamp();
+
         if (this.getRoomUnit() != null && this.task != PetTasks.RIDE) {
-            if (time - this.gestureTickTimeout > 5 && this.getRoomUnit().hasStatus(RoomUnitStatus.GESTURE)) {
+            if (currentTime - this.gestureTickTimeout > 5 && this.getRoomUnit().hasStatus(RoomUnitStatus.GESTURE)) {
                 this.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
-                this.setPacketUpdate(true);
             }
 
-            if (time - this.postureTimeout > 1 && this.task == null) {
+            if (currentTime - this.postureTimeout > 1 && this.task == null) {
                 this.clearPosture();
-                this.postureTimeout = time + 120;
+                this.postureTimeout = currentTime + 120;
             }
 
             if (this.freeCommandTicks > 0) {
@@ -355,7 +355,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
             }
 
             if (!this.getRoomUnit().isWalking()) {
-                if (this.getRoomUnit().getWalkTimeOut() < time && this.canWalk()) {
+                if (this.getRoomUnit().getWalkTimeOut() < currentTime && this.canWalk()) {
                     RoomTile tile = this.room.getRandomWalkableTile();
 
                     if (tile != null) {
@@ -379,7 +379,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
                         this.getRoomUnit().setGoalLocation(this.room.getRandomWalkableTile());
                         this.task = null;
                         this.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, PetGestures.ENERGY.getKey());
-                        this.gestureTickTimeout = time;
+                        this.gestureTickTimeout = currentTime;
                     }
                 } /* this is regeneration, add back if needed
                 else if (this.tickTimeout >= 5) {
@@ -401,7 +401,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
                     this.getRoomUnit().setCanWalk(true);
                 }
             } else {
-                this.getRoomUnit().setWalkTimeOut(20 + time);
+                this.getRoomUnit().setWalkTimeOut(20 + currentTime);
 
                 if (this.energy >= 2)
                     this.addEnergy(-1);
@@ -413,20 +413,20 @@ public class Pet extends Unit implements ISerialize, Runnable {
                 if (this.levelThirst < 100)
                     this.levelThirst++;
 
-                if (this.happiness > 0 && time - this.happinessDelay >= 30) {
+                if (this.happiness > 0 && currentTime - this.happinessDelay >= 30) {
                     this.happiness--;
-                    this.happinessDelay = time;
+                    this.happinessDelay = currentTime;
                 }
             }
 
-            if (time - this.gestureTickTimeout > 15) {
-                this.updateGesture(time);
-            } else if (time - this.randomActionTickTimeout > 30) {
+            if (currentTime - this.gestureTickTimeout > 15) {
+                this.updateGesture(currentTime);
+            } else if (currentTime - this.randomActionTickTimeout > 30) {
                 this.randomAction();
-                this.randomActionTickTimeout = time + (10 * Emulator.getRandom().nextInt(60));
+                this.randomActionTickTimeout = currentTime + (10 * Emulator.getRandom().nextInt(60));
             }
 
-            if (!this.muted && this.chatTimeout <= time) {
+            if (!this.muted && this.chatTimeout <= currentTime) {
                 if (this.energy <= 30) {
                     this.say(this.petData.randomVocal(PetVocalsType.TIRED));
                     if (this.energy <= 10)
@@ -444,7 +444,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
                 }
 
                 int timeOut = Emulator.getRandom().nextInt(30);
-                this.chatTimeout = time + (timeOut < 3 ? 30 : timeOut);
+                this.chatTimeout = currentTime + (timeOut < 3 ? 30 : timeOut);
             }
         }
     }

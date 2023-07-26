@@ -116,9 +116,9 @@ public class PermissionGroup {
         }
     }
 
-    public boolean canExecuteCommand(String key, boolean hasRoomRights) {
+    public boolean canExecuteCommand(String commandName, boolean hasRoomRights) {
         PermissionsManager permissionsManager = Emulator.getGameEnvironment().getPermissionsManager();
-        PermissionCommand command = permissionsManager.getCommandByKey(key);
+        PermissionCommand command = permissionsManager.getCommandByKey(commandName);
 
         if(command == null) {
             return false;
@@ -141,11 +141,10 @@ public class PermissionGroup {
         return false;
     }
 
-    public boolean hasPermissionRight(String name, boolean hasRoomRights) {
-        PermissionRight right = Emulator.getGameEnvironment().getPermissionsManager().getRight(name);
-        if(right != null && this.rights.containsKey(right)) {
-            PermissionSetting setting = this.rights.get(right);
-            return (setting == PermissionSetting.ALLOWED || (setting == PermissionSetting.HAS_ROOM_RIGHTS && hasRoomRights));
+    public boolean hasPermissionRight(String rightName, boolean hasRoomRights) {
+        if(this.rights.containsKey(rightName)) {
+            PermissionSetting setting = this.rights.get(rightName);
+            return setting == PermissionSetting.ALLOWED || setting == PermissionSetting.HAS_ROOM_RIGHTS && hasRoomRights;
         }
 
         return false;

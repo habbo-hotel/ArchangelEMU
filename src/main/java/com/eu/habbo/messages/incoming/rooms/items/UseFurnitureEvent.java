@@ -50,7 +50,7 @@ public class UseFurnitureEvent extends MessageHandler {
 
 
             if (PET_PRESENTS.contains(item.getBaseItem().getName().toLowerCase())) {
-                if (room.getRoomUnitManager().getCurrentRoomPets().size() < Room.MAXIMUM_PETS) {
+                if (room.getRoomUnitManager().getCurrentPets().size() < Room.MAXIMUM_PETS) {
                     this.client.sendResponse(new OpenPetPackageRequestedMessageComposer(item));
                     return;
                 }

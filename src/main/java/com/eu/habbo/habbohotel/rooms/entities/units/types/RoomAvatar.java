@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.rooms.entities.units.types;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
+import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
@@ -25,9 +26,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Getter
@@ -35,6 +34,7 @@ import java.util.Map;
 @Accessors(chain = true)
 public class RoomAvatar extends RoomUnit {
     private RideablePet rideablePet;
+    private boolean rideLock;
     private DanceType danceType;
     private int handItem;
     private long handItemTimestamp;
@@ -75,11 +75,12 @@ public class RoomAvatar extends RoomUnit {
                 }
             }
 
-            Habbo habboT = room.getRoomUnitManager().getHabboByRoomUnit(this);
+            Habbo habbo = null;
+            boolean canFastWalk = false;
 
-            if (!this.isWalking() && !this.isKicked() && this.removeStatus(RoomUnitStatus.MOVE) == null && habboT != null) {
-                habboT.getHabboInfo().getRiding().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
-                return true;
+            if(this instanceof RoomHabbo roomHabbo) {
+                habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomHabbo);
+                canFastWalk = habbo == null || habbo.getHabboInfo().getRiding() == null;
             }
 
             for (Map.Entry<RoomUnitStatus, String> set : this.getStatuses().entrySet()) {
@@ -92,10 +93,7 @@ public class RoomAvatar extends RoomUnit {
                 return true;
             }
 
-            boolean canFastWalk = habboT == null || habboT.getHabboInfo().getRiding() == null;
-
             RoomTile next = this.getPath().poll();
-
             boolean overrideTile = next != null && this.canOverrideTile(next);
 
             if (this.getPath().isEmpty()) {
@@ -139,19 +137,16 @@ public class RoomAvatar extends RoomUnit {
                 return true;
             }
 
-            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(this);
-
             this.removeStatus(RoomUnitStatus.DEAD);
 
             if (habbo != null) {
-                if(this instanceof RoomHabbo roomHabbo) {
-                    if (roomHabbo.isIdle()) {
-                        UserIdleEvent event = new UserIdleEvent(habbo, UserIdleEvent.IdleReason.WALKED, false);
-                        Emulator.getPluginManager().fireEvent(event);
+                RoomHabbo roomHabbo = (RoomHabbo) this;
+                if (roomHabbo.isIdle()) {
+                    UserIdleEvent event = new UserIdleEvent(habbo, UserIdleEvent.IdleReason.WALKED, false);
+                    Emulator.getPluginManager().fireEvent(event);
 
-                        if (!event.isCancelled() && !event.isIdle()) {
-                            roomHabbo.unIdle();
-                        }
+                    if (!event.isCancelled() && !event.isIdle()) {
+                        roomHabbo.unIdle();
                     }
                 }
 
@@ -180,7 +175,6 @@ public class RoomAvatar extends RoomUnit {
                     return false;
                 }
                 next = this.getPath().pop();
-
             }
 
             boolean canSitNextTile = room.canSitAt(next.getX(), next.getY());
@@ -222,7 +216,7 @@ public class RoomAvatar extends RoomUnit {
                         this.decrementTilesMoved();
                         this.setGoalLocation(this.getCurrentPosition());
                         this.removeStatus(RoomUnitStatus.MOVE);
-                        room.sendComposer(new UserUpdateComposer(this).compose());
+                        this.instantUpdate();
 
                         if(this instanceof RoomHabbo) {
                             conditionalGate.onRejected(this, this.getRoom(), new Object[]{});
@@ -242,7 +236,6 @@ public class RoomAvatar extends RoomUnit {
             } else {
                 zHeight += room.getLayout().getHeightAtSquare(next.getX(), next.getY());
             }
-
 
             this.setPreviousLocation(this.getCurrentPosition());
 
@@ -293,6 +286,41 @@ public class RoomAvatar extends RoomUnit {
         }
     }
 
+    public void dismountPet(boolean isRemoving) {
+        Habbo habbo = null;
+
+        if(this instanceof RoomHabbo roomHabbo) {
+            habbo = this.getRoom().getRoomUnitManager().getHabboByRoomUnit(roomHabbo);
+        }
+
+        if(habbo == null || habbo.getHabboInfo().getRiding() == null) {
+            return;
+        }
+
+        RideablePet ridingPet = habbo.getHabboInfo().getRiding();
+
+        ridingPet.setRider(null);
+        ridingPet.setTask(PetTasks.FREE);
+
+        habbo.getHabboInfo().setRiding(null);
+
+        this.giveEffect(0, -1);
+        this.setCurrentZ(ridingPet.getRoomUnit().getCurrentZ());
+        this.setPreviousLocationZ(ridingPet.getRoomUnit().getCurrentZ());
+        this.stopWalking();
+
+        ridingPet.getRoomUnit().stopWalking();
+
+        this.instantUpdate();
+        ridingPet.getRoomUnit().instantUpdate();
+
+        List<RoomTile> availableTiles = isRemoving ? new ArrayList<>() : this.getRoom().getLayout().getWalkableTilesAround(this.getCurrentPosition());
+
+        RoomTile tile = availableTiles.isEmpty() ? this.getCurrentPosition() : availableTiles.get(0);
+        this.setGoalLocation(tile);
+        this.setStatusUpdateNeeded(true);
+    }
+
     public void setDance(DanceType danceType) {
         if (this.danceType != danceType) {
             boolean isDancing = !this.danceType.equals(DanceType.NONE);
@@ -336,55 +364,11 @@ public class RoomAvatar extends RoomUnit {
         }
 
         if ((this.getRoom().isAllowEffects() || forceEffect) && !this.isSwimming()) {
-            this.setEffectId(effectId);
-            this.setEffectEndTimestamp(duration);
+            this.effectId = effectId;
+            this.effectEndTimestamp = duration;
+
             this.getRoom().sendComposer(new AvatarEffectMessageComposer(this).compose());
         }
-    }
-
-    private boolean handleSitStatus(RoomItem topItem) {
-        if(topItem == null || !topItem.getBaseItem().allowSit()) {
-            return false;
-        }
-
-        if(!this.isCmdSitEnabled()) {
-            if(this.getCurrentPosition().getState().equals(RoomTileState.SIT) && !this.hasStatus(RoomUnitStatus.SIT)) {
-                this.setStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(topItem)));
-                this.setCurrentZ(topItem.getZ());
-                this.setRotation(RoomRotation.values()[topItem.getRotation()]);
-                return true;
-            } else if(!topItem.getBaseItem().allowSit() && this.hasStatus(RoomUnitStatus.SIT)) {
-                this.removeStatus(RoomUnitStatus.SIT);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private boolean handleLayStatus(RoomItem topItem) {
-        if(topItem == null || !topItem.getBaseItem().allowLay()) {
-            return false;
-        }
-
-        if(!this.isCmdLayEnabled()) {
-            if(this.getCurrentPosition().getState().equals(RoomTileState.LAY) && !this.hasStatus(RoomUnitStatus.LAY)) {
-                this.setStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(topItem)));
-                this.setRotation(RoomRotation.values()[topItem.getRotation() % 4]);
-
-                if (topItem.getRotation() == 0 || topItem.getRotation() == 4) {
-                    this.setLocation(this.getRoom().getLayout().getTile(this.getCurrentPosition().getX(), topItem.getY()));
-                } else {
-                    this.setLocation(this.getRoom().getLayout().getTile(topItem.getX(), this.getCurrentPosition().getY()));
-                }
-                return true;
-            } else if (!topItem.getBaseItem().allowLay() && this.hasStatus(RoomUnitStatus.LAY)) {
-                this.removeStatus(RoomUnitStatus.LAY);
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override

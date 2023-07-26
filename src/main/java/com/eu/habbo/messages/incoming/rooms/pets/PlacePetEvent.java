@@ -36,7 +36,7 @@ public class PlacePetEvent extends MessageHandler {
         if (pet == null) {
             return;
         }
-        if (room.getRoomUnitManager().getCurrentRoomPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasPermissionRight(Permission.ACC_UNLIMITED_PETS)) {
+        if (room.getRoomUnitManager().getCurrentPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasPermissionRight(Permission.ACC_UNLIMITED_PETS)) {
             this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_MAX_PETS));
             return;
         }

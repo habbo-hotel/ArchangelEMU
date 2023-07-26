@@ -173,7 +173,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                 room.getRoomInfo().setWallHeight(wallHeight);
                 room.save();
                 Collection<Habbo> habbos = new ArrayList<>(room.getRoomUnitManager().getRoomHabbosCount());
-                habbos.addAll(room.getRoomUnitManager().getRoomHabbos());
+                habbos.addAll(room.getRoomUnitManager().getCurrentHabbos().values());
                 Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
                 room = Emulator.getGameEnvironment().getRoomManager().getRoom(room.getRoomInfo().getId());
                 ServerMessage message = new RoomForwardMessageComposer(room.getRoomInfo().getId()).compose();

@@ -28,7 +28,7 @@ public class RoomDanceCommand extends Command {
                 return true;
             }
 
-            gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos().forEach(habbo -> {
+            gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentHabbos().values().forEach(habbo -> {
                 habbo.getRoomUnit().setDanceType(DanceType.values()[danceId]);
                 habbo.getRoomUnit().getRoom().sendComposer(new DanceMessageComposer(habbo.getRoomUnit()).compose());
             });

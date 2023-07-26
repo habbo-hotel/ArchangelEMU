@@ -42,16 +42,16 @@ public class DeleteRoomEvent extends MessageHandler {
                 room.getRoomItemManager().ejectAllFurni();
                 room.getRoomItemManager().ejectUserFurni(room.getRoomInfo().getOwnerInfo().getId());
 
-                List<Bot> bots = new ArrayList<>(room.getRoomUnitManager().getCurrentRoomBots().values());
+                List<Bot> bots = new ArrayList<>(room.getRoomUnitManager().getCurrentBots().values());
                 for (Bot bot : bots) {
                     Emulator.getGameEnvironment().getBotManager().pickUpBot(bot, null, room);
                 }
 
-                List<Pet> pets = new ArrayList<>(room.getRoomUnitManager().getCurrentRoomPets().values());
+                List<Pet> pets = new ArrayList<>(room.getRoomUnitManager().getCurrentPets().values());
                 for (Pet pet : pets) {
                     if (pet instanceof RideablePet rideablePet) {
                         if (rideablePet.getRider() != null) {
-                            rideablePet.getRider().getHabboInfo().dismountPet(true, room);
+                            rideablePet.getRider().getRoomUnit().dismountPet(true);
                         }
                     }
 

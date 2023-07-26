@@ -113,7 +113,7 @@ public class BotManager {
 
         if (room != null && bot != null && habbo != null) {
             if (room.getRoomInfo().isRoomOwner(habbo) || habbo.hasPermissionRight(Permission.ACC_ANYROOMOWNER) || habbo.hasPermissionRight(Permission.ACC_PLACEFURNI)) {
-                if (room.getRoomUnitManager().getCurrentRoomBots().size() >= Room.MAXIMUM_BOTS && !habbo.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS)) {
+                if (room.getRoomUnitManager().getCurrentBots().size() >= Room.MAXIMUM_BOTS && !habbo.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS)) {
                     habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_MAX_BOTS));
                     return;
                 }

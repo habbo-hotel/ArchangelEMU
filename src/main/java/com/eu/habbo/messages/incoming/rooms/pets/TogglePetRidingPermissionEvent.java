@@ -23,7 +23,7 @@ public class TogglePetRidingPermissionEvent extends MessageHandler {
         rideablePet.setNeedsUpdate(true);
 
         if (!rideablePet.anyoneCanRide() && rideablePet.getRider() != null && rideablePet.getRider().getHabboInfo().getId() != this.client.getHabbo().getHabboInfo().getId()) {
-            rideablePet.getRider().getHabboInfo().dismountPet(this.client.getHabbo().getRoomUnit().getRoom());
+            rideablePet.getRider().getRoomUnit().dismountPet(false);
         }
 
         if (pet instanceof HorsePet) {

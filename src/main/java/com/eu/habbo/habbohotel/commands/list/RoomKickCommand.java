@@ -24,7 +24,7 @@ public class RoomKickCommand extends Command {
                 room.sendComposer(new HabboBroadcastMessageComposer(message + "\r\n-" + gameClient.getHabbo().getHabboInfo().getUsername()).compose());
             }
 
-            for (Habbo habbo : room.getRoomUnitManager().getRoomHabbos()) {
+            for (Habbo habbo : room.getRoomUnitManager().getCurrentHabbos().values()) {
                 if (!(habbo.hasPermissionRight(Permission.ACC_UNKICKABLE) || habbo.hasPermissionRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo))) {
                     room.kickHabbo(habbo, true);
                 }

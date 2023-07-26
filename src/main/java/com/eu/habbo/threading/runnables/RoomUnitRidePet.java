@@ -30,7 +30,7 @@ public class RoomUnitRidePet implements Runnable {
             habbo.getRoomUnit().setCurrentZ(this.pet.getRoomUnit().getCurrentZ() + 1);
             habbo.getRoomUnit().setPreviousLocationZ(this.pet.getRoomUnit().getCurrentZ() + 1);
             habbo.getRoomUnit().setRotation(this.pet.getRoomUnit().getBodyRotation());
-            habbo.getRoomUnit().setStatusUpdateNeeded(true);
+            habbo.getRoomUnit().setRideLock(false);
             pet.setRider(habbo);
             habbo.getRoomUnit().getRoom().sendComposer(new UserUpdateComposer(habbo.getRoomUnit()).compose());
             habbo.getRoomUnit().getRoom().sendComposer(new AvatarEffectMessageComposer(habbo.getRoomUnit()).compose());

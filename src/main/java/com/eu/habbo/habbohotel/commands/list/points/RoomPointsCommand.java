@@ -55,7 +55,7 @@ public class RoomPointsCommand extends BasePointsCommand {
         if (amount != 0) {
             final String message = replaceAmountAndType(getTextsValue("commands.generic.cmd_points.received"), amount + "", getTextsValue("seasonal.name." + type));
 
-            for (Habbo habbo : gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos()) {
+            for (Habbo habbo : gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentHabbos().values()) {
                 habbo.givePoints(type, amount);
                 habbo.whisper(message, RoomChatMessageBubbles.ALERT);
             }

@@ -31,7 +31,7 @@ public class RemovePetFromFlatEvent extends MessageHandler {
 
                 if (pet instanceof RideablePet rideablePet) {
                     if (rideablePet.getRider() != null) {
-                        rideablePet.getRider().getHabboInfo().dismountPet(true, room);
+                        rideablePet.getRider().getRoomUnit().dismountPet(true);
                     }
                 }
 

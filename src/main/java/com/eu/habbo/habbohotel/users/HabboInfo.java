@@ -8,12 +8,7 @@ import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.messenger.MessengerCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.PermissionGroup;
-import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.RideablePet;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
-import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -269,44 +264,6 @@ public class HabboInfo implements Runnable {
     public void addPixels(int pixels) {
         this.addCurrencyAmount(0, pixels);
         this.run();
-    }
-
-    public void dismountPet(Room room) {
-        this.dismountPet(false, room);
-    }
-
-    public void dismountPet(boolean isRemoving, Room room) {
-        if (this.getRiding() == null)
-            return;
-
-        Habbo habbo = room.getRoomUnitManager().getRoomHabboById(this.getId());
-
-        if (habbo == null)
-            return;
-
-        RideablePet riding = this.getRiding();
-
-        riding.setRider(null);
-        riding.setTask(PetTasks.FREE);
-        this.setRiding(null);
-
-        habbo.getRoomUnit().giveEffect(0, -1);
-
-        RoomUnit roomUnit = habbo.getRoomUnit();
-        if (roomUnit == null)
-            return;
-
-        roomUnit.setCurrentZ(riding.getRoomUnit().getCurrentZ());
-        roomUnit.setPreviousLocationZ(riding.getRoomUnit().getCurrentZ());
-        roomUnit.stopWalking();
-
-        room.sendComposer(new UserUpdateComposer(roomUnit).compose());
-
-        List<RoomTile> availableTiles = isRemoving ? new ArrayList<>() : room.getLayout().getWalkableTilesAround(roomUnit.getCurrentPosition());
-
-        RoomTile tile = availableTiles.isEmpty() ? roomUnit.getCurrentPosition() : availableTiles.get(0);
-        roomUnit.setGoalLocation(tile);
-        roomUnit.setStatusUpdateNeeded(true);
     }
 
     public boolean isInGame() {

@@ -83,8 +83,9 @@ public class InteractionMultiHeight extends RoomItem {
             Collection<RoomUnit> unitsOnItem = room.getRoomUnitManager().getRoomUnitsAt(room.getLayout().getTile(tile.getX(), tile.getY()));
 
             for (RoomUnit unit : unitsOnItem) {
-                if (unit.hasStatus(RoomUnitStatus.MOVE) && unit.getGoalLocation() != tile)
+                if (unit.hasStatus(RoomUnitStatus.MOVE) && unit.getGoalLocation() != tile) {
                     continue;
+                }
 
                 if (this.getBaseItem().allowSit() || unit.hasStatus(RoomUnitStatus.SIT)) {
                     unit.setSitUpdate(true);

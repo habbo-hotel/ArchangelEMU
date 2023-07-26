@@ -64,7 +64,6 @@ class TeleportActionThree implements Runnable {
         }
 
         this.client.getHabbo().getRoomUnit().setRotation(RoomRotation.values()[targetTeleport.getRotation() % 8]);
-        this.client.getHabbo().getRoomUnit().setStatusUpdateNeeded(true);
 
         targetTeleport.setExtradata("2");
         targetRoom.updateItem(targetTeleport);

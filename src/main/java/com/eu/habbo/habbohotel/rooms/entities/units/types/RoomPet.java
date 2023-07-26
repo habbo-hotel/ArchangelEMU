@@ -10,7 +10,6 @@ import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.util.pathfinding.Rotation;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,12 +28,23 @@ public class RoomPet extends RoomUnit {
         try {
             Pet pet = this.getRoom().getRoomUnitManager().getPetByRoomUnit(this);
 
-            if (this.handleRider(pet, room)) {
-                return this.isStatusUpdateNeeded();
+            if(pet == null) {
+                return false;
             }
 
-            if (this.removeStatus(RoomUnitStatus.SIT) != null || this.removeStatus(RoomUnitStatus.MOVE) != null || this.removeStatus(RoomUnitStatus.LAY) != null) {
-                this.setStatusUpdateNeeded(true);
+            if (this.handleRider(pet, room)) {
+                return true;
+            }
+
+            if(!this.isWalking() || this.getPath() == null || this.getPath().isEmpty()) {
+                if (this.hasStatus(RoomUnitStatus.MOVE) && !this.isAnimateWalk()) {
+                    this.removeStatus(RoomUnitStatus.MOVE);
+                }
+
+                if(!this.isWalking()) {
+                    RoomItem topItem = this.getRoom().getRoomItemManager().getTopItemAt(this.getCurrentPosition());
+                    return this.handleSitStatus(topItem) || this.handleLayStatus(topItem);
+                }
             }
 
             for (Map.Entry<RoomUnitStatus, String> set : this.getStatuses().entrySet()) {
@@ -44,7 +54,6 @@ public class RoomPet extends RoomUnit {
             }
 
             if (this.getPath() == null || this.getPath().isEmpty()) {
-                this.setStatusUpdateNeeded(true);
                 return true;
             }
 
@@ -55,14 +64,15 @@ public class RoomPet extends RoomUnit {
                 this.setSitUpdate(true);
 
                 if (next != null && room.getRoomUnitManager().areRoomUnitsAt(next) && !overrideChecks) {
-                    this.setStatusUpdateNeeded(false);
                     return false;
                 }
             }
 
             Deque<RoomTile> peekPath = room.getLayout().findPath(this.getCurrentPosition(), this.getPath().peek(), this.getGoalLocation(), this);
 
-            if (peekPath == null) peekPath = new LinkedList<>();
+            if (peekPath == null) {
+                peekPath = new LinkedList<>();
+            }
 
             if (peekPath.size() >= 3) {
                 if (this.getPath().isEmpty()) {
@@ -93,13 +103,11 @@ public class RoomPet extends RoomUnit {
 
             double height = next.getStackHeight() - this.getCurrentPosition().getStackHeight();
             if (!room.getLayout().tileWalkable(next) || (!RoomLayout.ALLOW_FALLING && height < -RoomLayout.MAXIMUM_STEP_HEIGHT) || (next.getState() == RoomTileState.OPEN && height > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
-                this.setRoom(room);
                 this.getPath().clear();
                 this.findPath();
 
                 if (this.getPath().isEmpty()) {
                     this.removeStatus(RoomUnitStatus.MOVE);
-                    this.setStatusUpdateNeeded(false);
                     return false;
                 }
                 next = this.getPath().pop();
@@ -117,7 +125,6 @@ public class RoomPet extends RoomUnit {
 
             if (next.equals(this.getGoalLocation()) && next.getState() == RoomTileState.SIT && !overrideChecks && (item == null || item.getZ() - this.getCurrentZ() > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
                 this.removeStatus(RoomUnitStatus.MOVE);
-                this.setStatusUpdateNeeded(false);
                 return false;
             }
 
@@ -141,9 +148,8 @@ public class RoomPet extends RoomUnit {
                         this.decrementTilesMoved();
                         this.setGoalLocation(this.getCurrentPosition());
                         this.removeStatus(RoomUnitStatus.MOVE);
-                        room.sendComposer(new UserUpdateComposer(this).compose());
+                        this.instantUpdate();
 
-                        this.setStatusUpdateNeeded(false);
                         return false;
                     }
                 } else {
@@ -167,7 +173,6 @@ public class RoomPet extends RoomUnit {
             this.setCurrentZ(zHeight);
             this.setCurrentPosition(room.getLayout().getTile(next.getX(), next.getY()));
 
-            this.setStatusUpdateNeeded(false);
             return false;
         } catch (Exception e) {
             log.error("Caught exception", e);
@@ -187,7 +192,7 @@ public class RoomPet extends RoomUnit {
         }
 
         // copy things from rider
-        if (this.hasStatus(RoomUnitStatus.MOVE) && !rider.getRoomUnit().hasStatus(RoomUnitStatus.MOVE)) {
+        if (this.hasStatus(RoomUnitStatus.MOVE) && !rider.getRoomUnit().hasStatus(RoomUnitStatus.MOVE) || !rider.getRoomUnit().isWalking()) {
             this.removeStatus(RoomUnitStatus.MOVE);
         }
 

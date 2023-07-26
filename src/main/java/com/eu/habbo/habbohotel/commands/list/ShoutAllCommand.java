@@ -22,7 +22,7 @@ public class ShoutAllCommand extends Command {
 
         String message = IntStream.range(1, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
 
-        for (Habbo habbo : gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos()) {
+        for (Habbo habbo : gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentHabbos().values()) {
             habbo.shout(message);
         }
 

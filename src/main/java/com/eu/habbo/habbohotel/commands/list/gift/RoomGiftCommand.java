@@ -17,7 +17,7 @@ public class RoomGiftCommand extends BaseGiftCommand {
 
             final String finalMessage = getFinalMessage(params);
 
-            gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos().forEach(habbo -> {
+            gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentHabbos().values().forEach(habbo -> {
                         createGift(finalMessage, habbo, params);
                         habbo.getClient().sendResponse(new WiredRewardResultMessageComposer(WiredRewardResultMessageComposer.REWARD_RECEIVED_ITEM));
                     }

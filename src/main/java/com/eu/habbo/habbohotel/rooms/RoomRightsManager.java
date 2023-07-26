@@ -55,7 +55,7 @@ public class RoomRightsManager {
     }
 
     public boolean hasRights(Habbo habbo) {
-        return this.room.getRoomInfo().isRoomOwner(habbo) || this.rights.contains(habbo.getHabboInfo().getId()) || (habbo.getRoomUnit().getRightsLevel() != RoomRightLevels.NONE && this.room.getRoomUnitManager().getCurrentRoomHabbos().containsKey(habbo.getHabboInfo().getId()));
+        return this.room.getRoomInfo().isRoomOwner(habbo) || this.rights.contains(habbo.getHabboInfo().getId()) || (habbo.getRoomUnit().getRightsLevel() != RoomRightLevels.NONE && this.room.getRoomUnitManager().getCurrentHabbos().containsKey(habbo.getHabboInfo().getId()));
     }
 
     public HashMap<Integer, String> getUsersWithRights() {
@@ -167,7 +167,7 @@ public class RoomRightsManager {
     }
 
     private void refreshRightsInRoom() {
-        for (Habbo habbo : this.room.getRoomUnitManager().getRoomHabbos()) {
+        for (Habbo habbo : this.room.getRoomUnitManager().getCurrentHabbos().values()) {
             if (habbo.getRoomUnit().getRoom() == room) {
                 this.refreshRightsForHabbo(habbo);
             }

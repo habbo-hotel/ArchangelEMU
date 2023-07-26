@@ -395,7 +395,7 @@ public class RoomTraxManager implements Disposable {
     }
 
     public void sendUpdatedSongList() {
-        this.room.getRoomUnitManager().getRoomHabbos().forEach(h -> {
+        this.room.getRoomUnitManager().getCurrentHabbos().values().forEach(h -> {
             GameClient client = h.getClient();
 
             if (client != null) {

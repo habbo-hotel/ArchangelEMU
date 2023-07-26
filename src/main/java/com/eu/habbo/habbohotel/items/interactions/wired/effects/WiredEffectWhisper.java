@@ -45,7 +45,7 @@ public class WiredEffectWhisper extends InteractionWiredEffect {
                 return true;
             }
         } else {
-            for (Habbo h : room.getRoomUnitManager().getRoomHabbos()) {
+            for (Habbo h : room.getRoomUnitManager().getCurrentHabbos().values()) {
                 h.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(this.getWiredSettings().getStringParam().replace("%user%", h.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + ""), h, h, RoomChatMessageBubbles.WIRED)));
             }
 

@@ -29,7 +29,7 @@ public class RoomItemCommand extends Command {
             }
         }
 
-        for (Habbo habbo : gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos()) {
+        for (Habbo habbo : gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentHabbos().values()) {
             habbo.getRoomUnit().setHandItem(itemId);
             habbo.getRoomUnit().getRoom().sendComposer(new CarryObjectMessageComposer(habbo.getRoomUnit()).compose());
         }

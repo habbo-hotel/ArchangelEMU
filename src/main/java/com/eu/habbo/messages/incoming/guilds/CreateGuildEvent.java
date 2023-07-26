@@ -72,7 +72,7 @@ public class CreateGuildEvent extends GuildBadgeEvent {
 
                     this.client.sendResponse(new PurchaseOKMessageComposer());
                     this.client.sendResponse(new GuildCreatedMessageComposer(guild));
-                    for (Habbo habbo : r.getRoomUnitManager().getRoomHabbos()) {
+                    for (Habbo habbo : r.getRoomUnitManager().getCurrentHabbos().values()) {
                         habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
                     }
                     r.refreshGuild(guild);

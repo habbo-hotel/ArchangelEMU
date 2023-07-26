@@ -149,11 +149,11 @@ public class CommandsManager {
 
         Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
-        if (room.getRoomUnitManager().getCurrentRoomPets().isEmpty()) {
+        if (room.getRoomUnitManager().getCurrentPets().isEmpty()) {
             return false;
         }
 
-        for(Pet pet : room.getRoomUnitManager().getCurrentRoomPets().values()) {
+        for(Pet pet : room.getRoomUnitManager().getCurrentPets().values()) {
             if (pet != null && pet.getName().equalsIgnoreCase(args[0])) {
                 StringBuilder commandBuilder = new StringBuilder();
 
@@ -166,7 +166,7 @@ public class CommandsManager {
                 for (PetCommand command : pet.getPetData().getPetCommands()) {
                     if (command.getKey().equalsIgnoreCase(commandKey)) {
                         if (pet instanceof RideablePet rideablePet && rideablePet.getRider() != null && rideablePet.getRider().getHabboInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
-                            rideablePet.getRider().getHabboInfo().dismountPet(room);
+                            rideablePet.getRider().getRoomUnit().dismountPet(false);
                             break;
                         }
 

@@ -53,6 +53,11 @@ public class MoveAvatarEvent extends MessageHandler {
                 return;
             }
 
+            //Is going to ride a pet, can't cancel
+            if(roomHabbo.isRideLock()) {
+                return;
+            }
+
             // Get the room the habbo is in
             Room room = habbo.getRoomUnit().getRoom();
 

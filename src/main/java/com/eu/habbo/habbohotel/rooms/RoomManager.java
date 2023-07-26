@@ -427,7 +427,7 @@ public class RoomManager {
             room.getRoomInfo().setScore(room.getRoomInfo().getScore() + 1);
             room.setNeedsUpdate(true);
             habbo.getHabboStats().getVotedRooms().push(room.getRoomInfo().getId());
-            for (Habbo h : room.getRoomUnitManager().getRoomHabbos()) {
+            for (Habbo h : room.getRoomUnitManager().getCurrentHabbos().values()) {
                 h.getClient().sendResponse(new RoomRatingComposer(room.getRoomInfo().getScore(), !this.hasVotedForRoom(h, room)));
             }
 
@@ -523,7 +523,7 @@ public class RoomManager {
             boolean habbosWithRights = false;
 
             synchronized (room.getRoomUnitManager().roomUnitLock) {
-                for (Habbo current : room.getRoomUnitManager().getRoomHabbos()) {
+                for (Habbo current : room.getRoomUnitManager().getCurrentHabbos().values()) {
                     if (room.getRoomRightsManager().hasRights(current) || current.getHabboInfo().getId() == room.getRoomInfo().getOwnerInfo().getId() || (room.getRoomInfo().hasGuild() && room.getGuildRightLevel(current).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
                         current.getClient().sendResponse(new DoorbellMessageComposer(habbo.getHabboInfo().getUsername()));
                         habbosWithRights = true;
@@ -681,9 +681,9 @@ public class RoomManager {
 
         List<Habbo> visibleHabbos = new ArrayList<>();
 
-        if (!room.getRoomUnitManager().getCurrentRoomHabbos().isEmpty()) {
-            Collection<Habbo> habbosToSendEnter = room.getRoomUnitManager().getRoomHabbos();
-            Collection<Habbo> allHabbos = room.getRoomUnitManager().getRoomHabbos();
+        if (!room.getRoomUnitManager().getCurrentHabbos().values().isEmpty()) {
+            Collection<Habbo> habbosToSendEnter = room.getRoomUnitManager().getCurrentHabbos().values();
+            Collection<Habbo> allHabbos = room.getRoomUnitManager().getCurrentHabbos().values();
 
             if (Emulator.getPluginManager().isRegistered(HabboAddedToRoomEvent.class, false)) {
                 HabboAddedToRoomEvent event = Emulator.getPluginManager().fireEvent(new HabboAddedToRoomEvent(habbo, room, habbosToSendEnter, allHabbos));
@@ -716,14 +716,14 @@ public class RoomManager {
         }
 
 
-        habbo.getClient().sendResponse(new RoomUsersComposer(room.getRoomUnitManager().getCurrentRoomBots().values(), true));
+        habbo.getClient().sendResponse(new RoomUsersComposer(room.getRoomUnitManager().getCurrentBots().values(), true));
 
-        if (!room.getRoomUnitManager().getCurrentRoomBots().isEmpty()) {
-            room.getRoomUnitManager().getCurrentRoomBots().values().stream()
+        if (!room.getRoomUnitManager().getCurrentBots().isEmpty()) {
+            room.getRoomUnitManager().getCurrentBots().values().stream()
                     .filter(b -> !b.getRoomUnit().getDanceType().equals(DanceType.NONE))
                     .forEach(b -> habbo.getClient().sendResponse(new DanceMessageComposer(b.getRoomUnit())));
 
-            room.getRoomUnitManager().getCurrentRoomBots().values()
+            room.getRoomUnitManager().getCurrentBots().values()
                     .forEach(b -> habbo.getClient().sendResponse(new UserUpdateComposer(b.getRoomUnit(), b.getRoomUnit().getCurrentZ())));
         }
 
@@ -760,9 +760,9 @@ public class RoomManager {
         habbo.getClient().sendResponse(new ObjectsMessageComposer(room.getFurniOwnerNames(), floorItems));
         floorItems.clear();
 
-        if (!room.getRoomUnitManager().getCurrentRoomPets().isEmpty()) {
-            habbo.getClient().sendResponse(new RoomPetComposer(room.getRoomUnitManager().getCurrentRoomPets()));
-            room.getRoomUnitManager().getCurrentRoomPets().values().forEach(pet -> habbo.getClient().sendResponse(new UserUpdateComposer(pet.getRoomUnit())));
+        if (!room.getRoomUnitManager().getCurrentPets().isEmpty()) {
+            habbo.getClient().sendResponse(new RoomPetComposer(room.getRoomUnitManager().getCurrentPets()));
+            room.getRoomUnitManager().getCurrentPets().values().forEach(pet -> habbo.getClient().sendResponse(new UserUpdateComposer(pet.getRoomUnit())));
         }
 
         if (!habbo.getHabboStats().allowTalk()) {

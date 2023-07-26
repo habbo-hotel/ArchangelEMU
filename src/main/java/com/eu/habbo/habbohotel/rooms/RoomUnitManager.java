@@ -38,18 +38,18 @@ import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
 public class RoomUnitManager {
     private final Room room;
     private final ConcurrentHashMap<Integer, RoomUnit> currentRoomUnits;
-    private final ConcurrentHashMap<Integer, Habbo> currentRoomHabbos;
-    private final ConcurrentHashMap<Integer, Bot> currentRoomBots;
-    private final ConcurrentHashMap<Integer, Pet> currentRoomPets;
+    private final ConcurrentHashMap<Integer, Habbo> currentHabbos;
+    private final ConcurrentHashMap<Integer, Bot> currentBots;
+    private final ConcurrentHashMap<Integer, Pet> currentPets;
     private volatile int roomUnitCounter;
     public final Object roomUnitLock;
 
     public RoomUnitManager(Room room) {
         this.room = room;
         this.currentRoomUnits = new ConcurrentHashMap<>();
-        this.currentRoomHabbos = new ConcurrentHashMap<>();
-        this.currentRoomBots = new ConcurrentHashMap<>();
-        this.currentRoomPets = new ConcurrentHashMap<>();
+        this.currentHabbos = new ConcurrentHashMap<>();
+        this.currentBots = new ConcurrentHashMap<>();
+        this.currentPets = new ConcurrentHashMap<>();
         this.roomUnitCounter = 0;
         this.roomUnitLock = new Object();
     }
@@ -60,7 +60,7 @@ public class RoomUnitManager {
     }
 
     private synchronized void loadBots(Connection connection) {
-        this.currentRoomBots.clear();
+        this.currentBots.clear();
 
         try (PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots INNER JOIN users ON bots.user_id = users.id WHERE room_id = ?")) {
             statement.setInt(1, this.room.getRoomInfo().getId());
@@ -100,7 +100,7 @@ public class RoomUnitManager {
     }
 
     private synchronized void loadPets(Connection connection) {
-        this.currentRoomPets.clear();
+        this.currentPets.clear();
 
         try (PreparedStatement statement = connection.prepareStatement("SELECT users.username as pet_owner_name, users_pets.* FROM users_pets INNER JOIN users ON users_pets.user_id = users.id WHERE room_id = ?")) {
             statement.setInt(1, this.room.getRoomInfo().getId());
@@ -141,12 +141,12 @@ public class RoomUnitManager {
 
             switch (unit.getRoomUnit().getRoomUnitType()) {
                 case HABBO -> {
-                    this.currentRoomHabbos.put(((Habbo) unit).getHabboInfo().getId(), (Habbo) unit);
+                    this.currentHabbos.put(((Habbo) unit).getHabboInfo().getId(), (Habbo) unit);
                     unit.getRoomUnit().getRoom().updateDatabaseUserCount();
                 }
-                case BOT -> this.currentRoomBots.put(((Bot) unit).getId(), (Bot) unit);
+                case BOT -> this.currentBots.put(((Bot) unit).getId(), (Bot) unit);
                 case PET -> {
-                    this.currentRoomPets.put(((Pet) unit).getId(), (Pet) unit);
+                    this.currentPets.put(((Pet) unit).getId(), (Pet) unit);
                     Habbo habbo = this.getRoomHabboById(((Pet) unit).getUserId());
                     if (habbo != null) {
                         unit.getRoomUnit().getRoom().getFurniOwnerNames().put(((Pet) unit).getUserId(), this.getRoomHabboById(((Pet) unit).getUserId()).getHabboInfo().getUsername());
@@ -164,66 +164,62 @@ public class RoomUnitManager {
         return this.currentRoomUnits.values().stream().anyMatch(roomUnit -> roomUnit.getCurrentPosition().equals(tile));
     }
 
-    public Collection<RoomUnit> getAvatarsAt(RoomTile tile) {
+    public List<RoomUnit> getAvatarsAt(RoomTile tile) {
         return Stream.concat(this.getHabbosAt(tile).stream(), this.getBotsAt(tile).stream()).map(Unit::getRoomUnit).collect(Collectors.toList());
     }
 
-    public Collection<Habbo> getRoomHabbos() {
-        return this.currentRoomHabbos.values();
-    }
-
     public int getRoomHabbosCount() {
-        return this.currentRoomHabbos.size();
+        return this.currentHabbos.size();
     }
 
     public boolean hasHabbosAt(RoomTile tile) {
-        return this.currentRoomHabbos.values().stream().anyMatch(habbo -> habbo.getRoomUnit().getCurrentPosition().equals(tile));
+        return this.currentHabbos.values().stream().anyMatch(habbo -> habbo.getRoomUnit().getCurrentPosition().equals(tile));
     }
 
     public Collection<Habbo> getHabbosAt(RoomTile tile) {
-        return this.currentRoomHabbos.values().stream().filter(habbo -> habbo.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
+        return this.currentHabbos.values().stream().filter(habbo -> habbo.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
     }
 
     public Habbo getRoomHabboById(int habboId) {
-        return this.currentRoomHabbos.get(habboId);
+        return this.currentHabbos.get(habboId);
     }
 
     public Habbo getRoomHabboByUsername(String username) {
-        return this.currentRoomHabbos.values().stream().filter(habbo -> habbo.getHabboInfo().getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
+        return this.currentHabbos.values().stream().filter(habbo -> habbo.getHabboInfo().getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
     }
 
     public Habbo getHabboByVirtualId(int virtualId) {
-        return this.currentRoomHabbos.values().stream().filter(habbo -> habbo.getRoomUnit().getVirtualId() == virtualId).findFirst().orElse(null);
+        return this.currentHabbos.values().stream().filter(habbo -> habbo.getRoomUnit().getVirtualId() == virtualId).findFirst().orElse(null);
     }
 
     public Habbo getHabboByRoomUnit(RoomUnit roomUnit) {
-        return this.currentRoomHabbos.values().stream().filter(habbo -> habbo.getRoomUnit() == roomUnit).findFirst().orElse(null);
+        return this.currentHabbos.values().stream().filter(habbo -> habbo.getRoomUnit() == roomUnit).findFirst().orElse(null);
     }
 
     public Bot getRoomBotById(int botId) {
-        return this.currentRoomBots.get(botId);
+        return this.currentBots.get(botId);
     }
 
     public List<Bot> getBotsByName(String name) {
-        synchronized (this.currentRoomBots) {
-            return currentRoomBots.values().stream().filter(bot -> bot.getName().equalsIgnoreCase(name)).toList();
+        synchronized (this.currentBots) {
+            return currentBots.values().stream().filter(bot -> bot.getName().equalsIgnoreCase(name)).toList();
         }
     }
 
     public Bot getBotByRoomUnit(RoomUnit roomUnit) {
-        return this.currentRoomBots.values().stream().filter(bot -> bot.getRoomUnit() == roomUnit).findFirst().orElse(null);
+        return this.currentBots.values().stream().filter(bot -> bot.getRoomUnit() == roomUnit).findFirst().orElse(null);
     }
 
     public boolean hasBotsAt(RoomTile tile) {
-        return this.currentRoomBots.values().stream().anyMatch(bot -> bot.getRoomUnit().getCurrentPosition().equals(tile));
+        return this.currentBots.values().stream().anyMatch(bot -> bot.getRoomUnit().getCurrentPosition().equals(tile));
     }
 
     public Collection<Bot> getBotsAt(RoomTile tile) {
-        return this.currentRoomBots.values().stream().filter(bot -> bot.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
+        return this.currentBots.values().stream().filter(bot -> bot.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
     }
 
     public void placePet(Pet pet, Room room, short x, short y, double z) {
-        synchronized (this.currentRoomPets) {
+        synchronized (this.currentPets) {
             RoomTile tile = room.getLayout().getTile(x, y);
 
             if (tile == null) {
@@ -255,26 +251,26 @@ public class RoomUnitManager {
     }
 
     public boolean hasPetsAt(RoomTile tile) {
-        return this.currentRoomPets.values().stream().anyMatch(pet -> pet.getRoomUnit().getCurrentPosition().equals(tile));
+        return this.currentPets.values().stream().anyMatch(pet -> pet.getRoomUnit().getCurrentPosition().equals(tile));
     }
 
     public Collection<Pet> getPetsAt(RoomTile tile) {
-        return this.currentRoomPets.values().stream().filter(pet -> pet.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
+        return this.currentPets.values().stream().filter(pet -> pet.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
     }
 
     public Pet getRoomPetById(int petId) {
-        return this.currentRoomPets.get(petId);
+        return this.currentPets.get(petId);
     }
 
     public Pet getPetByRoomUnit(RoomUnit roomUnit) {
-        return this.currentRoomPets.values().stream().filter(pet -> pet.getRoomUnit() == roomUnit).findFirst().orElse(null);
+        return this.currentPets.values().stream().filter(pet -> pet.getRoomUnit() == roomUnit).findFirst().orElse(null);
     }
 
     public void pickUpMyPets(Habbo owner) {
         THashSet<Pet> pets = new THashSet<>();
 
-        synchronized (this.currentRoomPets) {
-            for (Pet pet : this.currentRoomPets.values()) {
+        synchronized (this.currentPets) {
+            for (Pet pet : this.currentPets.values()) {
                 if (pet.getUserId() == owner.getHabboInfo().getId()) {
                     pets.add(pet);
                 }
@@ -286,12 +282,12 @@ public class RoomUnitManager {
             Emulator.getThreading().run(pet);
             owner.getInventory().getPetsComponent().addPet(pet);
             owner.getClient().sendResponse(new PetAddedToInventoryComposer(pet));
-            this.currentRoomPets.remove(pet.getId());
+            this.currentPets.remove(pet.getId());
         }
     }
 
     public void removeHabbo(Habbo habbo, boolean sendRemovePacket) {
-        if(!this.currentRoomHabbos.containsKey(habbo.getHabboInfo().getId())) {
+        if(!this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
             return;
         }
 
@@ -306,7 +302,7 @@ public class RoomUnitManager {
         }
 
         synchronized (this.roomUnitLock) {
-            this.currentRoomHabbos.remove(habbo.getHabboInfo().getId());
+            this.currentHabbos.remove(habbo.getHabboInfo().getId());
             this.currentRoomUnits.remove(roomHabbo.getVirtualId());
         }
 
@@ -342,13 +338,13 @@ public class RoomUnitManager {
     }
 
     public boolean removeBot(Bot bot) {
-        synchronized (this.currentRoomBots) {
-            if (this.currentRoomBots.containsKey(bot.getId())) {
+        synchronized (this.currentBots) {
+            if (this.currentBots.containsKey(bot.getId())) {
                 if (bot.getRoomUnit() != null && bot.getRoomUnit().getCurrentPosition() != null) {
                     bot.getRoomUnit().getCurrentPosition().removeUnit(bot.getRoomUnit());
                 }
 
-                this.currentRoomBots.remove(bot.getId());
+                this.currentBots.remove(bot.getId());
                 this.currentRoomUnits.remove(bot.getRoomUnit().getVirtualId());
 
                 bot.getRoomUnit().setInRoom(false);
@@ -363,16 +359,16 @@ public class RoomUnitManager {
     }
 
     public Pet removePet(int petId) {
-        Pet pet = this.currentRoomPets.get(petId);
+        Pet pet = this.currentPets.get(petId);
         this.currentRoomUnits.remove(pet.getRoomUnit().getVirtualId());
-        return this.currentRoomPets.remove(petId);
+        return this.currentPets.remove(petId);
     }
 
     public void removeAllPetsExceptRoomOwner() {
         ArrayList<Pet> toRemovePets = new ArrayList<>();
         ArrayList<Pet> removedPets = new ArrayList<>();
-        synchronized (this.currentRoomPets) {
-            for (Pet pet : this.currentRoomPets.values()) {
+        synchronized (this.currentPets) {
+            for (Pet pet : this.currentPets.values()) {
                 try {
                     if (pet.getUserId() != pet.getRoomUnit().getRoom().getRoomInfo().getOwnerInfo().getId()) {
                         toRemovePets.add(pet);
@@ -401,7 +397,7 @@ public class RoomUnitManager {
         }
 
         for (Pet pet : removedPets) {
-            this.currentRoomPets.remove(pet.getId());
+            this.currentPets.remove(pet.getId());
             this.currentRoomUnits.remove(pet.getRoomUnit().getVirtualId());
         }
     }
@@ -409,23 +405,23 @@ public class RoomUnitManager {
     public void clear() {
         synchronized (this.roomUnitLock) {
             this.currentRoomUnits.clear();
-            this.currentRoomHabbos.clear();
-            this.currentRoomBots.clear();
-            this.currentRoomPets.clear();
+            this.currentHabbos.clear();
+            this.currentBots.clear();
+            this.currentPets.clear();
             this.roomUnitCounter = 0;
         }
     }
 
     public void dispose() {
-        for(Habbo habbo : this.currentRoomHabbos.values()) {
+        for(Habbo habbo : this.currentHabbos.values()) {
             Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room);
         }
 
         this.room.sendComposer(new CloseConnectionMessageComposer().compose());
 
-        this.currentRoomHabbos.clear();
+        this.currentHabbos.clear();
 
-        Iterator<Bot> botIterator = this.currentRoomBots.values().iterator();
+        Iterator<Bot> botIterator = this.currentBots.values().iterator();
 
         while(botIterator.hasNext()) {
             try {
@@ -438,8 +434,8 @@ public class RoomUnitManager {
             }
         }
 
-        this.currentRoomBots.clear();
-        this.currentRoomPets.clear();
+        this.currentBots.clear();
+        this.currentPets.clear();
 
         this.currentRoomUnits.clear();
     }

@@ -2,12 +2,10 @@ package com.eu.habbo.habbohotel.rooms.entities.units;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
@@ -188,6 +186,7 @@ public abstract class RoomUnit extends RoomEntity {
             }
         }
 
+        this.statusUpdateNeeded = true;
         return this;
     }
 
@@ -447,6 +446,60 @@ public abstract class RoomUnit extends RoomEntity {
                         .filter(t -> t != null && t.isWalkable() && (this.getCurrentPosition().equals(t) || !this.getRoom().getRoomUnitManager().hasHabbosAt(t)))
                         .toList()
         );
+    }
+
+    public boolean handleSitStatus(RoomItem topItem) {
+        if(topItem == null || !topItem.getBaseItem().allowSit()) {
+            return false;
+        }
+
+        if(!this.isCmdSitEnabled()) {
+            if(this.getCurrentPosition().getState().equals(RoomTileState.SIT) && !this.hasStatus(RoomUnitStatus.SIT)) {
+                this.setStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(topItem)));
+                this.setCurrentZ(topItem.getZ());
+                this.setRotation(RoomRotation.values()[topItem.getRotation()]);
+                return true;
+            } else if(!topItem.getBaseItem().allowSit() && this.hasStatus(RoomUnitStatus.SIT)) {
+                this.removeStatus(RoomUnitStatus.SIT);
+                this.instantUpdate();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean handleLayStatus(RoomItem topItem) {
+        if(topItem == null || !topItem.getBaseItem().allowLay()) {
+            return false;
+        }
+
+        if(!this.isCmdLayEnabled()) {
+            if(this.getCurrentPosition().getState().equals(RoomTileState.LAY) && !this.hasStatus(RoomUnitStatus.LAY)) {
+                this.setStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(topItem)));
+                this.setRotation(RoomRotation.values()[topItem.getRotation() % 4]);
+
+                if (topItem.getRotation() == 0 || topItem.getRotation() == 4) {
+                    this.setLocation(this.getRoom().getLayout().getTile(this.getCurrentPosition().getX(), topItem.getY()));
+                } else {
+                    this.setLocation(this.getRoom().getLayout().getTile(topItem.getX(), this.getCurrentPosition().getY()));
+                }
+                return true;
+            } else if (!topItem.getBaseItem().allowLay() && this.hasStatus(RoomUnitStatus.LAY)) {
+                this.removeStatus(RoomUnitStatus.LAY);
+                this.instantUpdate();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void instantUpdate() {
+        if(this.statusUpdateNeeded) {
+            this.statusUpdateNeeded = false;
+            this.getRoom().sendComposer(new UserUpdateComposer(this).compose());
+        }
     }
 
     public void clear() {

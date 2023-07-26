@@ -483,7 +483,7 @@ public class ModToolManager {
         }
 
         if (roomActionEvent.isKickUsers()) {
-            for (Habbo habbo : room.getRoomUnitManager().getRoomHabbos()) {
+            for (Habbo habbo : room.getRoomUnitManager().getCurrentHabbos().values()) {
                 if (!(habbo.hasPermissionRight(Permission.ACC_UNKICKABLE) || habbo.hasPermissionRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo))) {
                     room.kickHabbo(habbo, false);
                 }

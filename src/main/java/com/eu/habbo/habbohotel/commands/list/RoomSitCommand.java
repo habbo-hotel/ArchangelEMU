@@ -11,7 +11,7 @@ public class RoomSitCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbos().forEach(habbo -> {
+        gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentHabbos().values().forEach(habbo -> {
             if (habbo.getRoomUnit().isWalking()) {
                 habbo.getRoomUnit().stopWalking();
             } else if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.SIT)) {
