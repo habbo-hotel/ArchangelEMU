@@ -25,7 +25,7 @@ public class CreditFurniRedeemEvent extends MessageHandler {
         if (room != null) {
             RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
-            if (item != null && this.client.getHabbo().getHabboInfo().getId() == item.getOwnerId()) {
+            if (item != null && this.client.getHabbo().getHabboInfo().getId() == item.getOwnerInfo().getId()) {
                 boolean furnitureRedeemEventRegistered = Emulator.getPluginManager().isRegistered(FurnitureRedeemedEvent.class, true);
                 FurnitureRedeemedEvent furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), 0, FurnitureRedeemedEvent.CREDITS);
 
@@ -98,10 +98,10 @@ public class CreditFurniRedeemEvent extends MessageHandler {
 
                     room.getRoomItemManager().removeRoomItem(item);
                     room.sendComposer(new RemoveFloorItemComposer(item).compose());
-                    RoomTile t = room.getLayout().getTile(item.getX(), item.getY());
-                    t.setStackHeight(room.getStackHeight(item.getX(), item.getY(), false));
+                    RoomTile t = room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
+                    t.setStackHeight(room.getStackHeight(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), false));
                     room.updateTile(t);
-                    room.sendComposer(new HeightMapUpdateMessageComposer(item.getX(), item.getY(), t.getZ(), t.relativeHeight()).compose());
+                    room.sendComposer(new HeightMapUpdateMessageComposer(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), t.getZ(), t.relativeHeight()).compose());
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 
                     switch (furniRedeemEvent.currencyID) {

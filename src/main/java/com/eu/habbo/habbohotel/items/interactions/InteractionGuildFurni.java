@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 
@@ -23,8 +24,8 @@ public class InteractionGuildFurni extends InteractionDefault {
         this.guildId = set.getInt("guild_id");
     }
 
-    public InteractionGuildFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionGuildFurni(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
         this.guildId = 0;
     }
 
@@ -43,14 +44,14 @@ public class InteractionGuildFurni extends InteractionDefault {
         if (guild != null) {
             serverMessage.appendInt(2 + (this.isLimited() ? 256 : 0));
             serverMessage.appendInt(5);
-            serverMessage.appendString(this.getExtradata());
+            serverMessage.appendString(this.getExtraData());
             serverMessage.appendString(guild.getId() + "");
             serverMessage.appendString(guild.getBadge());
             serverMessage.appendString(Emulator.getGameEnvironment().getGuildManager().getSymbolColor(guild.getColorOne()).getValueA());
             serverMessage.appendString(Emulator.getGameEnvironment().getGuildManager().getBackgroundColor(guild.getColorTwo()).getValueA());
         } else {
             serverMessage.appendInt((this.isLimited() ? 256 : 0));
-            serverMessage.appendString(this.getExtradata());
+            serverMessage.appendString(this.getExtraData());
         }
 
         if (this.isLimited()) {

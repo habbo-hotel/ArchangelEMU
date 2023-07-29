@@ -20,6 +20,7 @@ public class RoomTile {
     @Setter
     @Getter
     private RoomTileState state;
+    @Getter
     private double stackHeight;
     private boolean allowStack = true;
     @Getter
@@ -58,10 +59,6 @@ public class RoomTile {
         }
         this.roomUnits = tile.roomUnits;
         this.roomItems = tile.roomItems;
-    }
-
-    public double getStackHeight() {
-        return this.stackHeight;
     }
 
     public void setStackHeight(double stackHeight) {

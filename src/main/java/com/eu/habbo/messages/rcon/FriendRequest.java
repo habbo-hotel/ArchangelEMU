@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.outgoing.friends.NewFriendRequestComposer;
 import com.google.gson.Gson;
 
@@ -25,7 +24,7 @@ public class FriendRequest extends RCONMessage<FriendRequest.JSON> {
                 if (from != null) {
                     target.getClient().sendResponse(new NewFriendRequestComposer(from.getHabboInfo()));
                 } else {
-                    final HabboInfo info = HabboManager.getOfflineHabboInfo(json.user_id);
+                    final HabboInfo info = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(json.user_id);
 
                     if (info != null) {
                         target.getClient().sendResponse(new NewFriendRequestComposer(info));

@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 
 import java.sql.ResultSet;
@@ -31,14 +32,14 @@ public class WiredConditionDateRangeActive extends InteractionWiredCondition {
     /**
      * Creates a new instance of this class.
      * @param id The ID of this item.
-     * @param userId The ID of the user that owns this item.
+     * @param ownerInfo The info of the user that owns this item.
      * @param item The item this instance is associated with.
      * @param extradata Additional data associated with this item.
      * @param limitedStack The amount of items in this stack (if this item is stackable).
      * @param limitedSells The amount of items that can be sold from this stack (if this item is sellable).
      */
-    public WiredConditionDateRangeActive(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredConditionDateRangeActive(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     /**

@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
 import com.eu.habbo.messages.outgoing.inventory.BadgesComposer;
 import com.eu.habbo.messages.outgoing.users.UserBadgesComposer;
@@ -51,7 +50,7 @@ public class TakeBadgeCommand extends BaseBadgeCommand {
             if (habbo != null)
                 userId = habbo.getHabboInfo().getId();
             else {
-                HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(username);
+                HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(username);
                 if (habboInfo != null)
                     userId = habboInfo.getId();
             }

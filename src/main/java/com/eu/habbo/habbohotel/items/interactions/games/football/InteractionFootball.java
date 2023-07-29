@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.outgoing.rooms.items.OneWayDoorStatusMessageComposer;
 import com.eu.habbo.util.pathfinding.Rotation;
 
@@ -26,14 +27,14 @@ public class InteractionFootball extends InteractionPushable {
         super(set, baseItem);
     }
 
-    public InteractionFootball(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionFootball(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
 
     @Override
     public int getWalkOnVelocity(RoomUnit roomUnit, Room room) {
-        if (roomUnit.getPath().isEmpty() && roomUnit.getTilesMoved() == 2 && this.getExtradata().equals("1"))
+        if (roomUnit.getPath().isEmpty() && roomUnit.getTilesMoved() == 2 && this.getExtraData().equals("1"))
             return 0;
 
         if (roomUnit.getPath().isEmpty() && roomUnit.getTilesMoved() == 1)
@@ -72,7 +73,12 @@ public class InteractionFootball extends InteractionPushable {
     @Override
     public RoomRotation getWalkOffDirection(RoomUnit roomUnit, Room room) {
         RoomTile peek = roomUnit.getPath().peek();
-        RoomTile nextWalkTile = peek != null ? room.getLayout().getTile(peek.getX(), peek.getY()) : roomUnit.getGoalLocation();
+        RoomTile nextWalkTile;
+        if (peek != null) {
+            nextWalkTile = room.getLayout().getTile(peek.getX(), peek.getY());
+        } else {
+            nextWalkTile = roomUnit.getTargetPosition();
+        }
         return RoomRotation.values()[(RoomRotation.values().length + Rotation.Calculate(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY(), nextWalkTile.getX(), nextWalkTile.getY()) + 4) % 8];
     }
 
@@ -103,9 +109,9 @@ public class InteractionFootball extends InteractionPushable {
                 return RoomRotation.SOUTH;
 
             case NORTH_EAST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_WEST.getValue())))
+                if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.NORTH_WEST.getValue())))
                     return RoomRotation.NORTH_WEST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_EAST.getValue())))
+                else if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.SOUTH_EAST.getValue())))
                     return RoomRotation.SOUTH_EAST;
                 else
                     return RoomRotation.SOUTH_WEST;
@@ -114,9 +120,9 @@ public class InteractionFootball extends InteractionPushable {
                 return RoomRotation.WEST;
 
             case SOUTH_EAST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_WEST.getValue())))
+                if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.SOUTH_WEST.getValue())))
                     return RoomRotation.SOUTH_WEST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_EAST.getValue())))
+                else if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.NORTH_EAST.getValue())))
                     return RoomRotation.NORTH_EAST;
                 else
                     return RoomRotation.NORTH_WEST;
@@ -125,9 +131,9 @@ public class InteractionFootball extends InteractionPushable {
                 return RoomRotation.NORTH;
 
             case SOUTH_WEST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_EAST.getValue())))
+                if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.SOUTH_EAST.getValue())))
                     return RoomRotation.SOUTH_EAST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_WEST.getValue())))
+                else if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.NORTH_WEST.getValue())))
                     return RoomRotation.NORTH_WEST;
                 else
                     return RoomRotation.NORTH_EAST;
@@ -136,9 +142,9 @@ public class InteractionFootball extends InteractionPushable {
                 return RoomRotation.EAST;
 
             case NORTH_WEST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_EAST.getValue())))
+                if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.NORTH_EAST.getValue())))
                     return RoomRotation.NORTH_EAST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_WEST.getValue())))
+                else if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.SOUTH_WEST.getValue())))
                     return RoomRotation.SOUTH_WEST;
                 else
                     return RoomRotation.SOUTH_EAST;
@@ -162,8 +168,8 @@ public class InteractionFootball extends InteractionPushable {
         }
 
         // Ball can only go up by 1.65 according to Habbo (tested using stack tile on 22-03-2022)
-        BigDecimal topItemHeight = BigDecimal.valueOf(topItem.getZ() + topItem.getBaseItem().getHeight());
-        BigDecimal ballHeight = BigDecimal.valueOf(this.getZ());
+        BigDecimal topItemHeight = BigDecimal.valueOf(topItem.getCurrentZ() + topItem.getBaseItem().getHeight());
+        BigDecimal ballHeight = BigDecimal.valueOf(this.getCurrentZ());
 
         if (topItemHeight.subtract(ballHeight).compareTo(BigDecimal.valueOf(1.65)) > 0) {
             return false;
@@ -222,7 +228,7 @@ public class InteractionFootball extends InteractionPushable {
             game.onScore(kicker, color);
         }
 
-        this.setExtradata(Math.abs(currentStep - (totalSteps + 1)) + "");
+        this.setExtraData(Math.abs(currentStep - (totalSteps + 1)) + "");
         room.sendComposer(new OneWayDoorStatusMessageComposer(this).compose());
     }
 
@@ -233,7 +239,7 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public void onStop(Room room, RoomUnit kicker, int currentStep, int totalSteps) {
-        this.setExtradata("0");
+        this.setExtraData("0");
         room.sendComposer(new OneWayDoorStatusMessageComposer(this).compose());
     }
 
@@ -245,7 +251,7 @@ public class InteractionFootball extends InteractionPushable {
 
     @Override
     public void onPickUp(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
 }

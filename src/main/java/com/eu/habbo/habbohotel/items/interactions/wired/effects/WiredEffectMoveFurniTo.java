@@ -5,8 +5,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
@@ -22,8 +23,8 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
         super(set, baseItem);
     }
 
-    public WiredEffectMoveFurniTo(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredEffectMoveFurniTo(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -50,10 +51,10 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
                 if (randomItem != null) {
                     int indexOffset = 0;
 
-                    RoomTile objectTile = room.getLayout().getTile(randomItem.getX(), randomItem.getY());
+                    RoomTile objectTile = room.getLayout().getTile(randomItem.getCurrentPosition().getX(), randomItem.getCurrentPosition().getY());
 
                     if (objectTile != null) {
-                        THashSet<RoomTile> refreshTiles = room.getLayout().getTilesAt(room.getLayout().getTile(((RoomItem) object).getX(), ((RoomItem) object).getY()), ((RoomItem) object).getBaseItem().getWidth(), ((RoomItem) object).getBaseItem().getLength(), ((RoomItem) object).getRotation());
+                        THashSet<RoomTile> refreshTiles = room.getLayout().getTilesAt(room.getLayout().getTile(((RoomItem) object).getCurrentPosition().getX(), ((RoomItem) object).getCurrentPosition().getY()), ((RoomItem) object).getBaseItem().getWidth(), ((RoomItem) object).getBaseItem().getLength(), ((RoomItem) object).getRotation());
 
                         RoomTile tile = room.getLayout().getTileInFront(objectTile, direction, indexOffset);
                         if (tile == null || !tile.getAllowStack()) {
@@ -61,8 +62,8 @@ public class WiredEffectMoveFurniTo extends InteractionWiredEffect {
                             tile = room.getLayout().getTileInFront(objectTile, direction, indexOffset);
                         }
 
-                        room.sendComposer(new FloorItemOnRollerComposer((RoomItem) object, null, tile, tile.getStackHeight() - ((RoomItem) object).getZ(), room).compose());
-                        refreshTiles.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(((RoomItem) object).getX(), ((RoomItem) object).getY()), ((RoomItem) object).getBaseItem().getWidth(), ((RoomItem) object).getBaseItem().getLength(), ((RoomItem) object).getRotation()));
+                        room.sendComposer(new FloorItemOnRollerComposer((RoomItem) object, null, tile, tile.getStackHeight() - ((RoomItem) object).getCurrentZ(), room).compose());
+                        refreshTiles.addAll(room.getLayout().getTilesAt(room.getLayout().getTile(((RoomItem) object).getCurrentPosition().getX(), ((RoomItem) object).getCurrentPosition().getY()), ((RoomItem) object).getBaseItem().getWidth(), ((RoomItem) object).getBaseItem().getLength(), ((RoomItem) object).getRotation()));
                         room.updateTiles(refreshTiles);
                     }
                 }

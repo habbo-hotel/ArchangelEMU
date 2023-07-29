@@ -15,11 +15,13 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -45,41 +47,23 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-public abstract class RoomItem implements Runnable, IEventTriggers {
-    @Getter
+@Getter
+@Setter
+@Accessors(chain = true)
+public abstract class RoomItem extends RoomEntity implements Runnable, IEventTriggers {
     private final int id;
-    @Getter
-    @Setter
-    private int ownerId;
-    @Getter
-    @Setter
+    private HabboInfo ownerInfo;
     private int roomId;
-    @Getter
     private final Item baseItem;
-    @Getter
-    @Setter
     private String wallPosition;
-    @Setter
-    @Getter
-    private short x;
-    @Setter
-    @Getter
-    private short y;
-    @Getter
-    private double z;
-    @Getter
     private int rotation;
-    @Setter
-    @Getter
-    @Accessors(chain = true)
-    private String extradata;
-    @Getter
+    private String extraData;
     private int limitedStack;
-    @Getter
     private int limitedSells;
     private boolean needsUpdate = false;
     private boolean needsDelete = false;
     private boolean isFromGift = false;
+
     @SuppressWarnings("rawtypes")
     private static final Class[] TOGGLING_INTERACTIONS = new Class[]{
             InteractionGameTimer.class,
@@ -90,54 +74,66 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
 
     public RoomItem(ResultSet set, Item baseItem) throws SQLException {
         this.id = set.getInt("id");
-        this.ownerId = set.getInt(DatabaseConstants.USER_ID);
+        this.ownerInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(set.getInt(DatabaseConstants.USER_ID));
         this.roomId = set.getInt("room_id");
+
+        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(set.getInt("room_id"));
+        this.setRoom(room);
+
         this.baseItem = baseItem;
         this.wallPosition = set.getString("wall_pos");
-        this.x = set.getShort("x");
-        this.y = set.getShort("y");
-        this.z = set.getDouble("z");
+
+        if(room != null) {
+            this.setCurrentPosition(room.getLayout().getTile(set.getShort("x"), set.getShort("y")));
+            this.setCurrentZ(set.getDouble("z"));
+        }
+
         this.rotation = set.getInt("rot");
-        this.extradata = set.getString("extra_data").isEmpty() ? "0" : set.getString("extra_data");
+        this.extraData = set.getString("extra_data").isEmpty() ? "0" : set.getString("extra_data");
 
         String ltdData = set.getString("limited_data");
         if (!ltdData.isEmpty()) {
             this.limitedStack = Integer.parseInt(set.getString("limited_data").split(":")[0]);
             this.limitedSells = Integer.parseInt(set.getString("limited_data").split(":")[1]);
         }
+
+        this.setRoom(Emulator.getGameEnvironment().getRoomManager().getRoom(set.getInt("room_id")));
     }
 
-    public RoomItem(int id, int ownerId, Item item, String extradata, int limitedStack, int limitedSells) {
+    public RoomItem(int id, HabboInfo ownerInfo, Item item, String extraData, int limitedStack, int limitedSells) {
         this.id = id;
-        this.ownerId = ownerId;
+        this.ownerInfo = ownerInfo;
+
+        //@Deprecated RoomItem
         this.roomId = 0;
+
         this.baseItem = item;
         this.wallPosition = "";
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+
         this.rotation = 0;
-        this.extradata = extradata.isEmpty() ? "0" : extradata;
+        this.extraData = extraData.isEmpty() ? "0" : extraData;
         this.limitedSells = limitedSells;
         this.limitedStack = limitedStack;
+
+        this.setRoom(null);
+        this.setCurrentPosition(null);
+        this.setCurrentZ(0);
     }
 
     public static RoomTile getSquareInFront(RoomLayout roomLayout, RoomItem item) {
-        return roomLayout.getTileInFront(roomLayout.getTile(item.getX(), item.getY()), item.getRotation());
+        return roomLayout.getTileInFront(roomLayout.getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), item.getRotation());
     }
 
     public void serializeFloorData(ServerMessage serverMessage) {
         try {
             serverMessage.appendInt(this.getId());
             serverMessage.appendInt(this.baseItem.getSpriteId());
-            serverMessage.appendInt(this.x);
-            serverMessage.appendInt(this.y);
+            serverMessage.appendInt(this.getCurrentPosition().getX());
+            serverMessage.appendInt(this.getCurrentPosition().getY());
             serverMessage.appendInt(this.getRotation());
-            serverMessage.appendString(Double.toString(this.z));
+            serverMessage.appendString(Double.toString(this.getCurrentZ()));
 
-            serverMessage.appendString((this.getBaseItem().getInteractionType().getType() == InteractionTrophy.class || this.getBaseItem().getInteractionType().getType() == InteractionCrackable.class || this.getBaseItem().getName().equalsIgnoreCase("gnome_box")) ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? Item.getCurrentHeight(this) + "" : ""));
-            //serverMessage.appendString( ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? Item.getCurrentHeight(this) : ""));
-
+            serverMessage.appendString((this.getBaseItem().getInteractionType().getType() == InteractionTrophy.class || this.getBaseItem().getInteractionType().getType() == InteractionCrackable.class || this.getBaseItem().getName().equalsIgnoreCase("gnome_box")) ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? String.valueOf(Item.getCurrentHeight(this)) : ""));
         } catch (Exception e) {
             log.error("Caught exception", e);
         }
@@ -151,28 +147,23 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
     }
 
     public void serializeWallData(ServerMessage serverMessage) {
-        serverMessage.appendString(this.getId() + "");
+        serverMessage.appendString(String.valueOf(this.getId()));
         serverMessage.appendInt(this.baseItem.getSpriteId());
         serverMessage.appendString(this.wallPosition);
 
         if (this instanceof InteractionPostIt)
-            serverMessage.appendString(this.extradata.split(" ")[0]);
+            serverMessage.appendString(this.extraData.split(" ")[0]);
         else
-            serverMessage.appendString(this.extradata);
+            serverMessage.appendString(this.extraData);
         serverMessage.appendInt(-1);
         serverMessage.appendInt(this.isUsable());
-        serverMessage.appendInt(this.getOwnerId());
+        serverMessage.appendInt(this.ownerInfo.getId());
     }
 
     public int getGiftAdjustedId() {
         if (this.isFromGift) return -this.id;
 
         return this.id;
-    }
-
-    public void setZ(double z) {
-        if (z > 9999 || z < -9999) return;
-        this.z = z;
     }
 
     public void setRotation(int rotation) {
@@ -214,12 +205,12 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
                 }
             } else if (this.needsUpdate) {
                 try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ?, room_id = ?, wall_pos = ?, x = ?, y = ?, z = ?, rot = ?, extra_data = ?, limited_data = ? WHERE id = ?")) {
-                    statement.setInt(1, this.ownerId);
+                    statement.setInt(1, this.ownerInfo.getId());
                     statement.setInt(2, this.roomId);
                     statement.setString(3, this.wallPosition);
-                    statement.setInt(4, this.x);
-                    statement.setInt(5, this.y);
-                    statement.setDouble(6, Math.max(-9999, Math.min(9999, Math.round(this.z * Math.pow(10, 6)) / Math.pow(10, 6))));
+                    statement.setInt(4, this.getCurrentPosition().getX());
+                    statement.setInt(5, this.getCurrentPosition().getY());
+                    statement.setDouble(6, Math.max(-9999, Math.min(9999, Math.round(this.getCurrentZ() * Math.pow(10, 6)) / Math.pow(10, 6))));
                     statement.setInt(7, this.rotation);
                     statement.setString(8, this instanceof InteractionGuildGate ? "" : this.getDatabaseExtraData());
                     statement.setString(9, this.limitedStack + ":" + this.limitedSells);
@@ -257,9 +248,6 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        /*if (objects != null && objects.length >= 1 && objects[0] instanceof InteractionWired)
-            return;*/
-
         WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, roomUnit, room, new Object[]{this});
 
         if(roomUnit instanceof RoomAvatar roomAvatar) {
@@ -267,18 +255,35 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
                 roomAvatar.setDanceType(DanceType.NONE);
                 room.sendComposer(new DanceMessageComposer(roomAvatar).compose());
             }
+
+            if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
+                Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomAvatar);
+
+                if (habbo != null && habbo.getHabboInfo().getRiding() == null) {
+                    if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0) {
+                        roomAvatar.giveEffect(this.getBaseItem().getEffectM(), -1);
+                        return;
+                    }
+
+                    if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0) {
+                        roomAvatar.giveEffect(this.getBaseItem().getEffectF(), -1);
+                    }
+                }
+            }
         }
 
-        if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousLocation() != roomUnit.getGoalLocation() && roomUnit.getGoalLocation() == room.getLayout().getTile(this.x, this.y)) {
-            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
+        if (!this.getBaseItem().getClothingOnWalk().isEmpty() && roomUnit.getPreviousPosition() != roomUnit.getTargetPosition()) {
+            if (this.getCurrentPosition().equals(roomUnit.getTargetPosition())) {
+                Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
-            if (habbo != null && habbo.getClient() != null) {
-                String[] clothingKeys = Arrays.stream(this.getBaseItem().getClothingOnWalk().split("\\.")).map(k -> k.split("-")[0]).toArray(String[]::new);
-                habbo.getHabboInfo().setLook(String.join(".", Arrays.stream(habbo.getHabboInfo().getLook().split("\\.")).filter(k -> !ArrayUtils.contains(clothingKeys, k.split("-")[0])).toArray(String[]::new)) + "." + this.getBaseItem().getClothingOnWalk());
+                if (habbo != null && habbo.getClient() != null) {
+                    String[] clothingKeys = Arrays.stream(this.getBaseItem().getClothingOnWalk().split("\\.")).map(k -> k.split("-")[0]).toArray(String[]::new);
+                    habbo.getHabboInfo().setLook(String.join(".", Arrays.stream(habbo.getHabboInfo().getLook().split("\\.")).filter(k -> !ArrayUtils.contains(clothingKeys, k.split("-")[0])).toArray(String[]::new)) + "." + this.getBaseItem().getClothingOnWalk());
 
-                habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
-                if (habbo.getRoomUnit().getRoom() != null) {
-                    habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
+                    habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
+                    if (habbo.getRoomUnit().getRoom() != null) {
+                        habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
+                    }
                 }
             }
         }
@@ -289,29 +294,43 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
         if(objects != null && objects.length > 0) {
             WiredHandler.handle(WiredTriggerType.WALKS_OFF_FURNI, roomUnit, room, new Object[]{this});
         }
+
+        if (roomUnit instanceof RoomAvatar roomAvatar) {
+
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomAvatar);
+
+            if (habbo != null && habbo.getHabboInfo().getRiding() == null) {
+                if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0) {
+                    roomAvatar.giveEffect(0, -1);
+                }
+
+                if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0) {
+                    roomAvatar.giveEffect(0, -1);
+                }
+            }
+        }
     }
 
     public abstract void onWalk(RoomUnit roomUnit, Room room, Object[] objects) throws Exception;
 
-
     public void onPlace(Room room) {
         //TODO: IMPORTANT: MAKE THIS GENERIC. (HOLES, ICE SKATE PATCHES, BLACK HOLE, BUNNY RUN FIELD, FOOTBALL FIELD)
         Achievement roomDecoAchievement = Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoFurniCount");
-        Habbo owner = room.getRoomUnitManager().getRoomHabboById(this.getOwnerId());
+        Habbo owner = room.getRoomUnitManager().getRoomHabboById(this.ownerInfo.getId());
 
         int furniCollecterProgress;
         if (owner == null) {
-            furniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.getOwnerId(), roomDecoAchievement);
+            furniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.ownerInfo.getId(), roomDecoAchievement);
         } else {
             furniCollecterProgress = owner.getHabboStats().getAchievementProgress(roomDecoAchievement);
         }
 
-        int difference = room.getUserFurniCount(this.getOwnerId()) - furniCollecterProgress;
+        int difference = room.getUserFurniCount(this.ownerInfo.getId()) - furniCollecterProgress;
         if (difference > 0) {
             if (owner != null) {
                 AchievementManager.progressAchievement(owner, roomDecoAchievement, difference);
             } else {
-                AchievementManager.progressAchievement(this.getOwnerId(), roomDecoAchievement, difference);
+                AchievementManager.progressAchievement(this.ownerInfo.getId(), roomDecoAchievement, difference);
             }
         }
 
@@ -319,24 +338,24 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
 
         int uniqueFurniCollecterProgress;
         if (owner == null) {
-            uniqueFurniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.getOwnerId(), roomDecoUniqueAchievement);
+            uniqueFurniCollecterProgress = AchievementManager.getAchievementProgressForHabbo(this.ownerInfo.getId(), roomDecoUniqueAchievement);
         } else {
             uniqueFurniCollecterProgress = owner.getHabboStats().getAchievementProgress(roomDecoUniqueAchievement);
         }
 
-        int uniqueDifference = room.getUserUniqueFurniCount(this.getOwnerId()) - uniqueFurniCollecterProgress;
+        int uniqueDifference = room.getUserUniqueFurniCount(this.ownerInfo.getId()) - uniqueFurniCollecterProgress;
         if (uniqueDifference > 0) {
             if (owner != null) {
                 AchievementManager.progressAchievement(owner, roomDecoUniqueAchievement, uniqueDifference);
             } else {
-                AchievementManager.progressAchievement(this.getOwnerId(), roomDecoUniqueAchievement, uniqueDifference);
+                AchievementManager.progressAchievement(this.ownerInfo.getId(), roomDecoUniqueAchievement, uniqueDifference);
             }
         }
     }
 
     public void onPickUp(Room room) {
         if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
-            RoomItem topItem2 = room.getRoomItemManager().getTopItemAt(this.getX(), this.getY(), this);
+            RoomItem topItem2 = room.getRoomItemManager().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), this);
             int nextEffectM = 0;
             int nextEffectF = 0;
 
@@ -355,7 +374,7 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
                 }
             }
 
-            RoomTile tile = room.getLayout().getTile(this.getX(), this.getY());
+            RoomTile tile = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
             for (Bot bot : room.getRoomUnitManager().getBotsAt(tile)) {
                 if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM()) {
                     bot.getRoomUnit().giveEffect(nextEffectM, -1);
@@ -441,12 +460,12 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
     }
 
     public String getDatabaseExtraData() {
-        return this.getExtradata();
+        return this.getExtraData();
     }
 
     @Override
     public String toString() {
-        return "ID: " + this.id + ", BaseID: " + this.getBaseItem().getId() + ", X: " + this.x + ", Y: " + this.y + ", Z: " + this.z + ", Extradata: " + this.extradata;
+        return "ID: " + this.id + ", BaseID: " + this.getBaseItem().getId() + ", X: " + this.getCurrentPosition().getX() + ", Y: " + this.getCurrentPosition().getY() + ", Z: " + this.getCurrentZ() + ", Extradata: " + this.extraData;
     }
 
     public boolean allowWiredResetState() {
@@ -461,20 +480,12 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
         return true;
     }
 
-    public boolean isFromGift() {
-        return isFromGift;
-    }
-
-    public void setFromGift(boolean fromGift) {
-        isFromGift = fromGift;
-    }
-
     public boolean invalidatesToRoomKick() { return false; }
 
     public List<RoomTile> getOccupyingTiles(RoomLayout layout) {
         List<RoomTile> tiles = new ArrayList<>();
 
-        Rectangle rect = RoomLayout.getRectangle(this.getX(), this.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+        Rectangle rect = RoomLayout.getRectangle(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
 
         for (int i = rect.x; i < rect.x + rect.getWidth(); i++) {
             for (int j = rect.y; j < rect.y + rect.getHeight(); j++) {
@@ -499,8 +510,8 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
 
     public Rectangle getRectangle() {
         return RoomLayout.getRectangle(
-                this.getX(),
-                this.getY(),
+                this.getCurrentPosition().getX(),
+                this.getCurrentPosition().getY(),
                 this.getBaseItem().getWidth(),
                 this.getBaseItem().getLength(),
                 this.getRotation());
@@ -508,8 +519,8 @@ public abstract class RoomItem implements Runnable, IEventTriggers {
 
     public Rectangle getRectangle(int marginX, int marginY) {
         return RoomLayout.getRectangle(
-                this.getX() - marginX,
-                this.getY() - marginY,
+                this.getCurrentPosition().getX() - marginX,
+                this.getCurrentPosition().getY() - marginY,
                 this.getBaseItem().getWidth() + (marginX * 2),
                 this.getBaseItem().getLength() + (marginY * 2),
                 this.getRotation());

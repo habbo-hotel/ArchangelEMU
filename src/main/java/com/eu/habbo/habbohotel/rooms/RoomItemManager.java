@@ -242,7 +242,7 @@ public class RoomItemManager {
             RoomItem rentSpace = this.currentItems.get(habbo.getHabboStats().getRentedItemId());
 
             if (rentSpace != null) {
-                if (!RoomLayout.squareInSquare(RoomLayout.getRectangle(rentSpace.getX(), rentSpace.getY(), rentSpace.getBaseItem().getWidth(), rentSpace.getBaseItem().getLength(), rentSpace.getRotation()), RoomLayout.getRectangle(tile.getX(), tile.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))) {
+                if (!RoomLayout.squareInSquare(RoomLayout.getRectangle(rentSpace.getCurrentPosition().getX(), rentSpace.getCurrentPosition().getY(), rentSpace.getBaseItem().getWidth(), rentSpace.getBaseItem().getLength(), rentSpace.getRotation()), RoomLayout.getRectangle(tile.getX(), tile.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))) {
                     return FurnitureMovementError.NO_RIGHTS;
                 } else {
                     return FurnitureMovementError.NONE;
@@ -303,9 +303,8 @@ public class RoomItemManager {
             }
         }
 
-        item.setZ(height);
-        item.setX(tile.getX());
-        item.setY(tile.getY());
+        item.setCurrentPosition(tile);
+        item.setCurrentZ(height);
         item.setRotation(rotation);
         item.needsUpdate(true);
 
@@ -314,7 +313,7 @@ public class RoomItemManager {
         item.onPlace(this.room);
         this.room.updateTiles(occupiedTiles);
 
-        this.room.sendComposer(new ObjectAddMessageComposer(item, this.room.getFurniOwnerName(item.getOwnerId())).compose());
+        this.room.sendComposer(new ObjectAddMessageComposer(item, this.room.getFurniOwnerName(item.getOwnerInfo().getId())).compose());
 
         for (RoomTile t : occupiedTiles) {
             this.room.updateHabbosAt(t);
@@ -339,10 +338,10 @@ public class RoomItemManager {
         }
 
         item.setWallPosition(wallPosition);
-        if (!this.room.getFurniOwnerNames().containsKey(item.getOwnerId()) && owner != null) {
-            this.room.getFurniOwnerNames().put(item.getOwnerId(), owner.getHabboInfo().getUsername());
+        if (!this.room.getFurniOwnerNames().containsKey(item.getOwnerInfo().getId()) && owner != null) {
+            this.room.getFurniOwnerNames().put(item.getOwnerInfo().getId(), owner.getHabboInfo().getUsername());
         }
-        this.room.sendComposer(new ItemAddMessageComposer(item, this.room.getFurniOwnerName(item.getOwnerId())).compose());
+        this.room.sendComposer(new ItemAddMessageComposer(item, this.room.getFurniOwnerName(item.getOwnerInfo().getId())).compose());
         item.needsUpdate(true);
         this.addRoomItem(item);
         item.setRoomId(this.room.getRoomInfo().getId());
@@ -362,7 +361,7 @@ public class RoomItemManager {
             return error;
         }
 
-        RoomTile oldLocation = this.room.getLayout().getTile(item.getX(), item.getY());
+        RoomTile oldLocation = this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
 
         boolean pluginHelper = false;
         if (Emulator.getPluginManager().isRegistered(FurnitureMovedEvent.class, true)) {
@@ -416,7 +415,7 @@ public class RoomItemManager {
             }
         }
 
-        THashSet<RoomTile> oldOccupiedTiles = this.room.getLayout().getTilesAt(this.room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+        THashSet<RoomTile> oldOccupiedTiles = this.room.getLayout().getTilesAt(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
 
         int oldRotation = item.getRotation();
 
@@ -433,7 +432,7 @@ public class RoomItemManager {
                 }
             }
 
-            if ((stackHelper.isEmpty() && topItem != null && topItem != item && !topItem.getBaseItem().allowStack()) || (topItem != null && topItem != item && topItem.getZ() + Item.getCurrentHeight(topItem) + Item.getCurrentHeight(item) > Room.MAXIMUM_FURNI_HEIGHT)) {
+            if ((stackHelper.isEmpty() && topItem != null && topItem != item && !topItem.getBaseItem().allowStack()) || (topItem != null && topItem != item && topItem.getCurrentZ() + Item.getCurrentHeight(topItem) + Item.getCurrentHeight(item) > Room.MAXIMUM_FURNI_HEIGHT)) {
                 item.setRotation(oldRotation);
                 return FurnitureMovementError.CANT_STACK;
             }
@@ -445,9 +444,9 @@ public class RoomItemManager {
         double height;
 
         if (stackHelper.isPresent()) {
-            height = stackHelper.get().getExtradata().isEmpty() ? Double.parseDouble("0.0") : (Double.parseDouble(stackHelper.get().getExtradata()) / 100);
+            height = stackHelper.get().getExtraData().isEmpty() ? Double.parseDouble("0.0") : (Double.parseDouble(stackHelper.get().getExtraData()) / 100);
         } else if (item == topItem) {
-            height = item.getZ();
+            height = item.getCurrentZ();
         } else {
             height = this.room.getStackHeight(targetTile.getX(), targetTile.getY(), false, item);
             for (RoomTile til : occupiedTiles) {
@@ -481,17 +480,16 @@ public class RoomItemManager {
             return FurnitureMovementError.CANT_STACK; //prevent furni going under the floor
         }
 
-        item.setX(targetTile.getX());
-        item.setY(targetTile.getY());
-        item.setZ(height);
+        item.setCurrentPosition(targetTile);
+        item.setCurrentZ(height);
 
         if (magicTile) {
-            item.setZ(targetTile.getZ());
-            item.setExtradata("" + item.getZ() * 100);
+            item.setCurrentZ(targetTile.getZ());
+            item.setExtraData(String.valueOf(item.getCurrentZ() * 100));
         }
 
-        if (item.getZ() > Room.MAXIMUM_FURNI_HEIGHT) {
-            item.setZ(Room.MAXIMUM_FURNI_HEIGHT);
+        if (item.getCurrentZ() > Room.MAXIMUM_FURNI_HEIGHT) {
+            item.setCurrentZ(Room.MAXIMUM_FURNI_HEIGHT);
         }
 
         //Update Furniture
@@ -512,8 +510,8 @@ public class RoomItemManager {
 
         //Update Habbos at old position
         for (RoomTile t : occupiedTiles) {
-            this.room.updateHabbosAt(t.getX(), t.getY(), new ArrayList<>(this.room.getRoomUnitManager().getHabbosAt(t)));
-            this.room.updateBotsAt(t.getX(), t.getY());
+            this.room.updateHabbosAt(t);
+            this.room.updateBotsAt(t);
         }
 
         if (Emulator.getConfig().getBoolean("wired.place.under", false)) {
@@ -552,7 +550,7 @@ public class RoomItemManager {
             this.room.sendComposer(new RemoveFloorItemComposer(item).compose());
 
             THashSet<RoomTile> updatedTiles = new THashSet<>();
-            Rectangle rectangle = RoomLayout.getRectangle(item.getX(), item.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+            Rectangle rectangle = RoomLayout.getRectangle(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
 
             for (short x = (short) rectangle.x; x < rectangle.x + rectangle.getWidth(); x++) {
                 for (short y = (short) rectangle.y; y < rectangle.y + rectangle.getHeight(); y++) {
@@ -575,7 +573,8 @@ public class RoomItemManager {
             this.room.sendComposer(new ItemRemoveMessageComposer(item).compose());
         }
 
-        Habbo habbo = (picker != null && picker.getHabboInfo().getId() == item.getId() ? picker : Emulator.getGameServer().getGameClientManager().getHabbo(item.getOwnerId()));
+        Habbo habbo;
+        habbo = picker != null && picker.getHabboInfo().getId() == item.getId() ? (picker) : (Emulator.getGameServer().getGameClientManager().getHabbo(item.getOwnerInfo().getId()));
         if (habbo != null) {
             habbo.getInventory().getItemsComponent().addItem(item);
             habbo.getClient().sendResponse(new UnseenItemsComposer(item));
@@ -590,7 +589,7 @@ public class RoomItemManager {
 
     public void ejectUserFurni(int userId) {
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
-        HashSet<RoomItem> userItems = this.currentItems.values().stream().filter(item -> item.getOwnerId() == userId).collect(Collectors.toCollection(HashSet::new));
+        HashSet<RoomItem> userItems = this.currentItems.values().stream().filter(item -> item.getOwnerInfo().getId() == userId).collect(Collectors.toCollection(HashSet::new));
 
         if (habbo != null) {
             habbo.getInventory().getItemsComponent().addItems(userItems);
@@ -610,11 +609,11 @@ public class RoomItemManager {
         ConcurrentHashMap<Integer, HashSet<RoomItem>> userItemsMap = new ConcurrentHashMap<>();
 
         for (RoomItem item : this.currentItems.values()) {
-            if ((habbo != null && item.getOwnerId() == habbo.getHabboInfo().getId()) || item instanceof InteractionPostIt) {
+            if ((habbo != null && item.getOwnerInfo().getId() == habbo.getHabboInfo().getId()) || item instanceof InteractionPostIt) {
                 continue;
             }
 
-            userItemsMap.computeIfAbsent(item.getOwnerId(), k -> new HashSet<>()).add(item);
+            userItemsMap.computeIfAbsent(item.getOwnerInfo().getId(), k -> new HashSet<>()).add(item);
         }
 
         for (Map.Entry<Integer, HashSet<RoomItem>> entrySet : userItemsMap.entrySet()) {
@@ -734,7 +733,7 @@ public class RoomItemManager {
                 length = item.getBaseItem().getWidth() > 0 ? item.getBaseItem().getWidth() : 1;
             }
 
-            if (!(tile.getX() >= item.getX() && tile.getX() <= item.getX() + width - 1 && tile.getY() >= item.getY() && tile.getY() <= item.getY() + length - 1))
+            if (!(tile.getX() >= item.getCurrentPosition().getX() && tile.getX() <= item.getCurrentPosition().getX() + width - 1 && tile.getY() >= item.getCurrentPosition().getY() && tile.getY() <= item.getCurrentPosition().getY() + length - 1))
                 continue;
 
             items.add(item);
@@ -755,7 +754,7 @@ public class RoomItemManager {
         THashSet<RoomItem> items = new THashSet<>();
 
         for (RoomItem item : this.getItemsAt(x, y)) {
-            if (item.getZ() < minZ)
+            if (item.getCurrentZ() < minZ)
                 continue;
 
             items.add(item);
@@ -808,8 +807,10 @@ public class RoomItemManager {
             if (exclude != null && exclude == item)
                 continue;
 
-            if (highestItem != null && highestItem.getZ() + Item.getCurrentHeight(highestItem) > item.getZ() + Item.getCurrentHeight(item))
-                continue;
+            if (highestItem != null) {
+                if (highestItem.getCurrentZ() + Item.getCurrentHeight(highestItem) > item.getCurrentZ() + Item.getCurrentHeight(item))
+                    continue;
+            }
 
             highestItem = item;
         }
@@ -828,8 +829,10 @@ public class RoomItemManager {
                 if (exclude != null && exclude == item)
                     continue;
 
-                if (highestItem != null && highestItem.getZ() + Item.getCurrentHeight(highestItem) > item.getZ() + Item.getCurrentHeight(item))
-                    continue;
+                if (highestItem != null) {
+                    if (highestItem.getCurrentZ() + Item.getCurrentHeight(highestItem) > item.getCurrentZ() + Item.getCurrentHeight(item))
+                        continue;
+                }
 
                 highestItem = item;
             }
@@ -841,7 +844,7 @@ public class RoomItemManager {
     public double getTopHeightAt(int x, int y) {
         RoomItem item = this.getTopItemAt(x, y);
         if (item != null) {
-            return (item.getZ() + Item.getCurrentHeight(item) - (item.getBaseItem().allowSit() ? 1 : 0));
+            return (item.getCurrentZ() + Item.getCurrentHeight(item) - (item.getBaseItem().allowSit() ? 1 : 0));
         } else {
             return this.room.getLayout().getHeightAtSquare(x, y);
         }
@@ -857,8 +860,9 @@ public class RoomItemManager {
                 if (!item.getBaseItem().allowSit())
                     continue;
 
-                if (lowestChair != null && lowestChair.getZ() < item.getZ())
-                    continue;
+                if (lowestChair != null) {
+                    if (lowestChair.getCurrentZ() < item.getCurrentZ()) continue;
+                }
 
                 lowestChair = item;
             }
@@ -877,8 +881,10 @@ public class RoomItemManager {
                 if (!item.getBaseItem().allowSit())
                     continue;
 
-                if (lowestChair != null && lowestChair.getZ() + Item.getCurrentHeight(lowestChair) > item.getZ() + Item.getCurrentHeight(item))
-                    continue;
+                if (lowestChair != null) {
+                    if (lowestChair.getCurrentZ() + Item.getCurrentHeight(lowestChair) > item.getCurrentZ() + Item.getCurrentHeight(item))
+                        continue;
+                }
 
                 lowestChair = item;
             }

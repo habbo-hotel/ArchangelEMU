@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,8 +22,8 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
         super(set, baseItem);
     }
 
-    public InteractionBattleBanzaiPuck(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionBattleBanzaiPuck(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -78,9 +79,9 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
                 return RoomRotation.SOUTH;
 
             case NORTH_EAST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_WEST.getValue())))
+                if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.NORTH_WEST.getValue())))
                     return RoomRotation.NORTH_WEST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_EAST.getValue())))
+                else if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.SOUTH_EAST.getValue())))
                     return RoomRotation.SOUTH_EAST;
                 else
                     return RoomRotation.SOUTH_WEST;
@@ -89,9 +90,9 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
                 return RoomRotation.WEST;
 
             case SOUTH_EAST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_WEST.getValue())))
+                if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.SOUTH_WEST.getValue())))
                     return RoomRotation.SOUTH_WEST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_EAST.getValue())))
+                else if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.NORTH_EAST.getValue())))
                     return RoomRotation.NORTH_EAST;
                 else
                     return RoomRotation.NORTH_WEST;
@@ -100,9 +101,9 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
                 return RoomRotation.NORTH;
 
             case SOUTH_WEST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_EAST.getValue())))
+                if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.SOUTH_EAST.getValue())))
                     return RoomRotation.SOUTH_EAST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_WEST.getValue())))
+                else if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.NORTH_WEST.getValue())))
                     return RoomRotation.NORTH_WEST;
                 else
                     return RoomRotation.NORTH_EAST;
@@ -111,9 +112,9 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
                 return RoomRotation.EAST;
 
             case NORTH_WEST:
-                if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.NORTH_EAST.getValue())))
+                if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.NORTH_EAST.getValue())))
                     return RoomRotation.NORTH_EAST;
-                else if (this.validMove(room, room.getLayout().getTile(this.getX(), this.getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), RoomRotation.SOUTH_WEST.getValue())))
+                else if (this.validMove(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), RoomRotation.SOUTH_WEST.getValue())))
                     return RoomRotation.SOUTH_WEST;
                 else
                     return RoomRotation.SOUTH_EAST;
@@ -167,7 +168,7 @@ public class InteractionBattleBanzaiPuck extends InteractionPushable {
                         } catch (Exception e) {
                             return;
                         }
-                    this.setExtradata(team.teamColor.type + "");
+                    this.setExtraData(team.teamColor.type + "");
                     room.updateItemState(this);
                 }
             }

@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.rentablespaces.RentableSpaceStatusMessageComposer;
 import com.eu.habbo.threading.runnables.ClearRentedSpace;
@@ -66,15 +67,15 @@ public class InteractionRentableSpace extends RoomItem {
         }
     }
 
-    public InteractionRentableSpace(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionRentableSpace(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         this.renterName = "";
     }
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        if (this.getExtradata().isEmpty())
+        if (this.getExtraData().isEmpty())
             return false;
 
         Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
@@ -109,8 +110,8 @@ public class InteractionRentableSpace extends RoomItem {
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
-        if (this.getExtradata().isEmpty())
-            this.setExtradata("0:0");
+        if (this.getExtraData().isEmpty())
+            this.setExtraData("0:0");
 
         serverMessage.appendInt(1 + (this.isLimited() ? 256 : 0));
 
@@ -156,17 +157,17 @@ public class InteractionRentableSpace extends RoomItem {
         if (room == null)
             return;
 
-        Rectangle rect = RoomLayout.getRectangle(this.getX(), this.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+        Rectangle rect = RoomLayout.getRectangle(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
 
         THashSet<RoomItem> items = new THashSet<>();
         for (int i = rect.x; i < rect.x + rect.getWidth(); i++) {
             for (int j = rect.y; j < rect.y + rect.getHeight(); j++) {
-                items.addAll(room.getRoomItemManager().getItemsAt(i, j, this.getZ()));
+                items.addAll(room.getRoomItemManager().getItemsAt(i, j, this.getCurrentZ()));
             }
         }
 
         for (RoomItem item : items) {
-            if (item.getOwnerId() == this.renterId) {
+            if (item.getOwnerInfo().getId() == this.renterId) {
                 room.getRoomItemManager().pickUpItem(item, null);
             }
         }
@@ -196,7 +197,7 @@ public class InteractionRentableSpace extends RoomItem {
     }
 
     @Override
-    public String getExtradata() {
+    public String getExtraData() {
         return this.renterId + ":" + this.endTimestamp;
     }
 

@@ -15,6 +15,6 @@ public class GetExtendedProfileEvent extends MessageHandler {
         if (habbo != null)
             this.client.sendResponse(new ExtendedProfileMessageComposer(habbo, this.client));
         else
-            this.client.sendResponse(new ExtendedProfileMessageComposer(HabboManager.getOfflineHabboInfo(habboId), this.client));
+            this.client.sendResponse(new ExtendedProfileMessageComposer(Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(habboId), this.client));
     }
 }

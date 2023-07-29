@@ -40,7 +40,7 @@ public class SetItemDataEvent extends MessageHandler {
             return;
 
         if (!color.equalsIgnoreCase(PostItColor.YELLOW.hexColor) && !room.getRoomRightsManager().hasRights(this.client.getHabbo())) {
-            if (!text.startsWith(item.getExtradata().replace(item.getExtradata().split(" ")[0], ""))) {
+            if (!text.startsWith(item.getExtraData().replace(item.getExtraData().split(" ")[0], ""))) {
                 return;
             }
         } else {
@@ -51,7 +51,7 @@ public class SetItemDataEvent extends MessageHandler {
         if (color.isEmpty())
             color = PostItColor.YELLOW.hexColor;
 
-        item.setExtradata(color + " " + text);
+        item.setExtraData(color + " " + text);
         item.needsUpdate(true);
         room.updateItem(item);
         Emulator.getThreading().run(item);

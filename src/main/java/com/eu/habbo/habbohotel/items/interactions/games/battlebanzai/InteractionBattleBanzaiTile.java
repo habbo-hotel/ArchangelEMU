@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.util.Pair;
@@ -19,18 +20,18 @@ import java.util.List;
 public class InteractionBattleBanzaiTile extends RoomItem {
     public InteractionBattleBanzaiTile(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionBattleBanzaiTile(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionBattleBanzaiTile(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -54,10 +55,10 @@ public class InteractionBattleBanzaiTile extends RoomItem {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        if (this.getExtradata().isEmpty())
-            this.setExtradata("0");
+        if (this.getExtraData().isEmpty())
+            this.setExtraData("0");
 
-        int state = Integer.parseInt(this.getExtradata());
+        int state = Integer.parseInt(this.getExtraData());
 
         if (state % 3 == 2)
             return;
@@ -85,10 +86,10 @@ public class InteractionBattleBanzaiTile extends RoomItem {
     }
 
     public boolean isLocked() {
-        if (this.getExtradata().isEmpty())
+        if (this.getExtraData().isEmpty())
             return false;
 
-        return Integer.parseInt(this.getExtradata()) % 3 == 2;
+        return Integer.parseInt(this.getExtraData()) % 3 == 2;
     }
 
     @Override
@@ -104,7 +105,7 @@ public class InteractionBattleBanzaiTile extends RoomItem {
     public void onPickUp(Room room) {
         super.onPickUp(room);
 
-        this.setExtradata("0");
+        this.setExtraData("0");
         room.updateItem(this);
     }
 
@@ -115,7 +116,7 @@ public class InteractionBattleBanzaiTile extends RoomItem {
         BattleBanzaiGame game = (BattleBanzaiGame) room.getGame(BattleBanzaiGame.class);
 
         if (game != null && game.getState() != GameState.IDLE) {
-            this.setExtradata("1");
+            this.setExtraData("1");
         }
     }
 }

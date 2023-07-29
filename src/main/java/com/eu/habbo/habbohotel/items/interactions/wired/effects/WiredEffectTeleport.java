@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
@@ -31,8 +32,8 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
         this.items = new ArrayList<>();
     }
 
-    public WiredEffectTeleport(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredEffectTeleport(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
         this.items = new ArrayList<>();
     }
 
@@ -48,7 +49,7 @@ public class WiredEffectTeleport extends InteractionWiredEffect {
 
         RoomItem randomItem = items[randomItemIndex];
 
-        teleportUnitToTile(roomUnit, room.getLayout().getTile(randomItem.getX(), randomItem.getY()));
+        teleportUnitToTile(roomUnit, room.getLayout().getTile(randomItem.getCurrentPosition().getX(), randomItem.getCurrentPosition().getY()));
 
         return true;
     }

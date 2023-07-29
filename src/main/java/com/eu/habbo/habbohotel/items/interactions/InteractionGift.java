@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +38,8 @@ public class InteractionGift extends RoomItem {
         }
     }
 
-    public InteractionGift(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionGift(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         try {
             this.loadData();
@@ -91,8 +92,8 @@ public class InteractionGift extends RoomItem {
     private void loadData() throws NumberFormatException {
         String[] data = null;
 
-        if (this.getExtradata().contains("\t"))
-            data = this.getExtradata().split("\t");
+        if (this.getExtraData().contains("\t"))
+            data = this.getExtraData().split("\t");
 
         if (data != null && data.length >= 5) {
             int count = Integer.parseInt(data[0]);

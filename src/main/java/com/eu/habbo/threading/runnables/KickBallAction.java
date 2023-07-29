@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPushable;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 
 
@@ -36,10 +36,10 @@ public class KickBallAction implements Runnable {
             return;
 
         if (this.currentStep < this.totalSteps) {
-            RoomTile currentTile = this.room.getLayout().getTile(this.ball.getX(), this.ball.getY());
+            RoomTile currentTile = this.room.getLayout().getTile(this.ball.getCurrentPosition().getX(), this.ball.getCurrentPosition().getY());
             RoomTile next = this.room.getLayout().getTileInFront(currentTile, this.currentDirection.getValue());
 
-            if (next == null || !this.ball.validMove(this.room, this.room.getLayout().getTile(this.ball.getX(), this.ball.getY()), next)) {
+            if (next == null || !this.ball.validMove(this.room, this.room.getLayout().getTile(this.ball.getCurrentPosition().getX(), this.ball.getCurrentPosition().getY()), next)) {
                 RoomRotation oldDirection = this.currentDirection;
 
                 if(!this.isDrag) {
@@ -58,10 +58,10 @@ public class KickBallAction implements Runnable {
 
                 int delay = this.ball.getNextRollDelay(this.currentStep, this.totalSteps); //Algorithm to work out the delay till next run
 
-                if (this.ball.canStillMove(this.room, this.room.getLayout().getTile(this.ball.getX(), this.ball.getY()), next, this.currentDirection, this.kicker, delay, this.currentStep, this.totalSteps)) {
-                    this.ball.onMove(this.room, this.room.getLayout().getTile(this.ball.getX(), this.ball.getY()), next, this.currentDirection, this.kicker, delay, this.currentStep, this.totalSteps);
+                if (this.ball.canStillMove(this.room, this.room.getLayout().getTile(this.ball.getCurrentPosition().getX(), this.ball.getCurrentPosition().getY()), next, this.currentDirection, this.kicker, delay, this.currentStep, this.totalSteps)) {
+                    this.ball.onMove(this.room, this.room.getLayout().getTile(this.ball.getCurrentPosition().getX(), this.ball.getCurrentPosition().getY()), next, this.currentDirection, this.kicker, delay, this.currentStep, this.totalSteps);
 
-                    this.room.sendComposer(new FloorItemOnRollerComposer(this.ball, null, next, next.getStackHeight() - this.ball.getZ(), this.room).compose());
+                    this.room.sendComposer(new FloorItemOnRollerComposer(this.ball, null, next, next.getStackHeight() - this.ball.getCurrentZ(), this.room).compose());
 
                     Emulator.getThreading().run(this, delay);
                 } else {

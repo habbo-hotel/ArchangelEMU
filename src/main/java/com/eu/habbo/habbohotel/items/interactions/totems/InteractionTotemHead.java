@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 
 import java.sql.ResultSet;
@@ -17,14 +18,14 @@ public class InteractionTotemHead extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionTotemHead(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionTotemHead(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     public TotemType getTotemType() {
         int extraData;
         try {
-            extraData = Integer.parseInt(this.getExtradata());
+            extraData = Integer.parseInt(this.getExtraData());
         } catch(NumberFormatException ex) {
             extraData = 0;
         }
@@ -37,7 +38,7 @@ public class InteractionTotemHead extends InteractionDefault {
     public TotemColor getTotemColor() {
         int extraData;
         try {
-            extraData = Integer.parseInt(this.getExtradata());
+            extraData = Integer.parseInt(this.getExtraData());
         }catch(NumberFormatException ex) {
             extraData = 0;
         }
@@ -51,22 +52,23 @@ public class InteractionTotemHead extends InteractionDefault {
         InteractionTotemLegs legs = null;
 
         for(RoomItem item : room.getRoomItemManager().getItemsAt(tile)) {
-            if(item instanceof InteractionTotemLegs && item.getZ() < this.getZ())
-                legs = (InteractionTotemLegs)item;
+            if(item instanceof InteractionTotemLegs) {
+                if (item.getCurrentZ() < this.getCurrentZ()) legs = (InteractionTotemLegs) item;
+            }
         }
 
         if(legs == null)
             return;
 
-        this.setExtradata(((4 * this.getTotemType().getType()) + legs.getTotemColor().getColor()) - 1 + "");
+        this.setExtraData(((4 * this.getTotemType().getType()) + legs.getTotemColor().getColor()) - 1 + "");
     }
 
     public void updateTotemState(Room room) {
-        updateTotemState(room, room.getLayout().getTile(this.getX(), this.getY()));
+        updateTotemState(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
     }
 
     public void updateTotemState(Room room, RoomTile tile) {
-        this.setExtradata(getTotemType().getType() - 1 + "");
+        this.setExtraData(getTotemType().getType() - 1 + "");
         update(room, tile);
         this.needsUpdate(true);
         room.updateItem(this);
@@ -82,7 +84,7 @@ public class InteractionTotemHead extends InteractionDefault {
             newType = TotemType.TROLL;
         }
 
-        this.setExtradata(newType.getType() - 1 + "");
+        this.setExtraData(newType.getType() - 1 + "");
 
         updateTotemState(room);
     }

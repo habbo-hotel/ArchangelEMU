@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerR
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import lombok.Setter;
@@ -25,8 +26,8 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements IWi
         super(set, baseItem);
     }
 
-    public WiredTriggerRepeater(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredTriggerRepeater(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class WiredTriggerRepeater extends InteractionWiredTrigger implements IWi
 
     @Override
     public void onPickUp(Room room) {
-        RoomTile oldLocation = room.getLayout().getTile(this.getX(), this.getY());
+        RoomTile oldLocation = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
 
         if(room.getTriggersOnRoom().containsKey(oldLocation)) {
             if(room.getTriggersOnRoom().get(oldLocation).getId() == this.getId()) {

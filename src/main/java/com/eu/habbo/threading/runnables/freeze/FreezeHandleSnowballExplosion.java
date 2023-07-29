@@ -41,11 +41,11 @@ class FreezeHandleSnowballExplosion implements Runnable {
                 return;
 
             if (player.nextHorizontal) {
-                tiles.addAll(game.affectedTilesByExplosion(this.thrownData.targetTile.getX(), this.thrownData.targetTile.getY(), this.thrownData.radius + 1));
+                tiles.addAll(game.affectedTilesByExplosion(this.thrownData.targetTile.getCurrentPosition().getX(), this.thrownData.targetTile.getCurrentPosition().getY(), this.thrownData.radius + 1));
             }
 
             if (player.nextDiagonal) {
-                tiles.addAll(game.affectedTilesByExplosionDiagonal(this.thrownData.targetTile.getX(), this.thrownData.targetTile.getY(), this.thrownData.radius + 1));
+                tiles.addAll(game.affectedTilesByExplosionDiagonal(this.thrownData.targetTile.getCurrentPosition().getX(), this.thrownData.targetTile.getCurrentPosition().getY(), this.thrownData.radius + 1));
                 player.nextDiagonal = false;
             }
 
@@ -57,20 +57,20 @@ class FreezeHandleSnowballExplosion implements Runnable {
                 for (RoomItem freezeTile : items) {
                     if (freezeTile instanceof InteractionFreezeTile || freezeTile instanceof InteractionFreezeBlock) {
                         int distance = 0;
-                        if (freezeTile.getX() != this.thrownData.targetTile.getX() && freezeTile.getY() != this.thrownData.targetTile.getY()) {
-                            distance = Math.abs(freezeTile.getX() - this.thrownData.targetTile.getX());
+                        if (freezeTile.getCurrentPosition().getX() != this.thrownData.targetTile.getCurrentPosition().getX() && freezeTile.getCurrentPosition().getY() != this.thrownData.targetTile.getCurrentPosition().getY()) {
+                            distance = Math.abs(freezeTile.getCurrentPosition().getX() - this.thrownData.targetTile.getCurrentPosition().getX());
                         } else {
-                            distance = (int) Math.ceil(this.thrownData.room.getLayout().getTile(this.thrownData.targetTile.getX(), this.thrownData.targetTile.getY()).distance(roomTile));
+                            distance = (int) Math.ceil(this.thrownData.room.getLayout().getTile(this.thrownData.targetTile.getCurrentPosition().getX(), this.thrownData.targetTile.getCurrentPosition().getY()).distance(roomTile));
                         }
 
                         if (freezeTile instanceof InteractionFreezeTile) {
-                            freezeTile.setExtradata("11" + String.format("%03d", distance * 100)); //TODO Investigate this further. Probably height dependent or something.
+                            freezeTile.setExtraData("11" + String.format("%03d", distance * 100)); //TODO Investigate this further. Probably height dependent or something.
                             freezeTiles.add((InteractionFreezeTile) freezeTile);
                             this.thrownData.room.updateItem(freezeTile);
 
 
                             THashSet<Habbo> habbos = new THashSet<>();
-                            RoomTile tile = this.thrownData.room.getLayout().getTile(freezeTile.getX(), freezeTile.getY());
+                            RoomTile tile = this.thrownData.room.getLayout().getTile(freezeTile.getCurrentPosition().getX(), freezeTile.getCurrentPosition().getY());
                             habbos.addAll(this.thrownData.room.getRoomUnitManager().getHabbosAt(tile));
 
                             for (Habbo habbo : habbos) {
@@ -91,7 +91,7 @@ class FreezeHandleSnowballExplosion implements Runnable {
                                 }
                             }
                         } else {
-                            if (freezeTile.getExtradata().equalsIgnoreCase("0")) {
+                            if (freezeTile.getExtraData().equalsIgnoreCase("0")) {
                                 game.explodeBox((InteractionFreezeBlock) freezeTile, distance * 100);
                                 player.addScore(FreezeGame.DESTROY_BLOCK_POINTS);
                             }

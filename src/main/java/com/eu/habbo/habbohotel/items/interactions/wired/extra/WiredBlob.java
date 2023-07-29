@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,8 +40,8 @@ public class WiredBlob extends InteractionDefault {
         this.parseCustomParams();
     }
 
-    public WiredBlob(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredBlob(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         this.parseCustomParams();
     }
@@ -49,7 +50,7 @@ public class WiredBlob extends InteractionDefault {
     public void onPlace(Room room) {
         super.onPlace(room);
 
-        this.setExtradata(WiredBlobState.USED.getState());
+        this.setExtraData(WiredBlobState.USED.getState());
         room.updateItem(this);
     }
 
@@ -57,7 +58,7 @@ public class WiredBlob extends InteractionDefault {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        if (!this.getExtradata().equals(WiredBlobState.ACTIVE.getState())) return;
+        if (!this.getExtraData().equals(WiredBlobState.ACTIVE.getState())) return;
 
         Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
@@ -73,7 +74,7 @@ public class WiredBlob extends InteractionDefault {
                     battleBanzaiGame.refreshCounters(habbo.getHabboInfo().getGamePlayer().getTeamColor());
                 }
 
-                this.setExtradata(WiredBlobState.USED.getState());
+                this.setExtraData(WiredBlobState.USED.getState());
                 room.updateItem(this);
             }
         }
@@ -82,20 +83,20 @@ public class WiredBlob extends InteractionDefault {
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) {
         if (!this.RESETS_WITH_GAME && objects != null && objects.length == 2 && objects[1].equals(WiredEffectType.TOGGLE_STATE) && room.getGames().stream().anyMatch(game -> game.getState().equals(GameState.RUNNING) || game.getState().equals(GameState.PAUSED))) {
-            this.setExtradata(this.getExtradata().equals(WiredBlobState.ACTIVE.getState()) ? WiredBlobState.USED.getState() : WiredBlobState.ACTIVE.getState());
+            this.setExtraData(this.getExtraData().equals(WiredBlobState.ACTIVE.getState()) ? WiredBlobState.USED.getState() : WiredBlobState.ACTIVE.getState());
             room.updateItem(this);
         }
     }
 
     public void onGameStart(Room room) {
         if (this.RESETS_WITH_GAME) {
-            this.setExtradata(WiredBlobState.ACTIVE.getState());
+            this.setExtraData(WiredBlobState.ACTIVE.getState());
             room.updateItem(this);
         }
     }
 
     public void onGameEnd(Room room) {
-        this.setExtradata(WiredBlobState.USED.getState());
+        this.setExtraData(WiredBlobState.USED.getState());
         room.updateItem(this);
     }
 

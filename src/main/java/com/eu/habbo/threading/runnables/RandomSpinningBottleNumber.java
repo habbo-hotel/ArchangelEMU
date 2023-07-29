@@ -29,7 +29,7 @@ public class RandomSpinningBottleNumber implements Runnable {
         if (this.result <= 0)
             this.result = Emulator.getRandom().nextInt(this.maxNumber);
 
-        this.item.setExtradata(this.result + "");
+        this.item.setExtraData(this.result + "");
         this.item.needsUpdate(true);
         Emulator.getThreading().run(this.item);
 

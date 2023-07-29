@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -42,7 +41,7 @@ public class BadgeCommand extends BaseBadgeCommand {
 
                 return true;
             } else {
-                HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(params[1]);
+                HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(params[1]);
 
                 if (habboInfo == null) {
                     gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_badge.unknown_user"), RoomChatMessageBubbles.ALERT);

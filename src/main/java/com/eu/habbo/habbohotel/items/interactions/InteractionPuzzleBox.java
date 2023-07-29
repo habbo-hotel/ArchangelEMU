@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 
@@ -19,35 +20,35 @@ public class InteractionPuzzleBox extends RoomItem {
         super(set, baseItem);
     }
 
-    public InteractionPuzzleBox(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionPuzzleBox(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        RoomTile boxLocation = room.getLayout().getTile(this.getX(), this.getY());
+        RoomTile boxLocation = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
         RoomRotation rotation = null;
 
-        if (this.getX() == client.getHabbo().getRoomUnit().getCurrentPosition().getX()) {
-            if (this.getY() == client.getHabbo().getRoomUnit().getCurrentPosition().getY() + 1) {
+        if (this.getCurrentPosition().getX() == client.getHabbo().getRoomUnit().getCurrentPosition().getX()) {
+            if (this.getCurrentPosition().getY() == client.getHabbo().getRoomUnit().getCurrentPosition().getY() + 1) {
                 rotation = RoomRotation.SOUTH;
             } else {
-                if (this.getY() == client.getHabbo().getRoomUnit().getCurrentPosition().getY() - 1) {
+                if (this.getCurrentPosition().getY() == client.getHabbo().getRoomUnit().getCurrentPosition().getY() - 1) {
                     rotation = RoomRotation.NORTH;
                 }
             }
         } else {
-            if (this.getY() == client.getHabbo().getRoomUnit().getCurrentPosition().getY()) {
-                if (this.getX() == client.getHabbo().getRoomUnit().getCurrentPosition().getX() + 1) {
+            if (this.getCurrentPosition().getY() == client.getHabbo().getRoomUnit().getCurrentPosition().getY()) {
+                if (this.getCurrentPosition().getX() == client.getHabbo().getRoomUnit().getCurrentPosition().getX() + 1) {
                     rotation = RoomRotation.EAST;
-                } else if (this.getX() == client.getHabbo().getRoomUnit().getCurrentPosition().getX() - 1) {
+                } else if (this.getCurrentPosition().getX() == client.getHabbo().getRoomUnit().getCurrentPosition().getX() - 1) {
                     rotation = RoomRotation.WEST;
                 }
             }
         }
 
         if (rotation == null) {
-            RoomTile nearestTile = client.getHabbo().getRoomUnit().getClosestAdjacentTile(this.getX(), this.getY(), false);
+            RoomTile nearestTile = client.getHabbo().getRoomUnit().getClosestAdjacentTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), false);
 
             if (nearestTile != null) client.getHabbo().getRoomUnit().setGoalLocation(nearestTile);
             return;
@@ -55,7 +56,7 @@ public class InteractionPuzzleBox extends RoomItem {
 
         super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});
 
-        RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), rotation.getValue());
+        RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), rotation.getValue());
 
         if (tile == null || tile.getState() == RoomTileState.INVALID || room.getRoomUnitManager().hasHabbosAt(tile)) {
             return;
@@ -69,8 +70,9 @@ public class InteractionPuzzleBox extends RoomItem {
         if (item != null && !room.getRoomItemManager().getTopItemAt(tile.getX(), tile.getY()).getBaseItem().allowStack())
             return;
 
-        this.setZ(room.getStackHeight(tile.getX(), tile.getY(), false));
+        this.setCurrentZ(room.getStackHeight(tile.getX(), tile.getY(), false));
         this.needsUpdate(true);
+
         room.updateItem(this);
 
         room.scheduledComposers.add(new FloorItemOnRollerComposer(this, null, tile, 0, room).compose());
@@ -85,7 +87,7 @@ public class InteractionPuzzleBox extends RoomItem {
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }

@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import gnu.trove.set.hash.THashSet;
 
 import java.awt.*;
@@ -17,8 +18,8 @@ public class InteractionWaterItem extends InteractionMultiHeight {
         super(set, baseItem);
     }
 
-    public InteractionWaterItem(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionWaterItem(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class InteractionWaterItem extends InteractionMultiHeight {
     @Override
     public void onPickUp(Room room) {
         super.onPickUp(room);
-        this.setExtradata("0");
+        this.setExtraData("0");
         this.needsUpdate(true);
     }
 
@@ -79,8 +80,8 @@ public class InteractionWaterItem extends InteractionMultiHeight {
         // Update data if changed.
         String updatedData = foundWater ? "1" : "0";
 
-        if (!this.getExtradata().equals(updatedData)) {
-            this.setExtradata(updatedData);
+        if (!this.getExtraData().equals(updatedData)) {
+            this.setExtraData(updatedData);
             this.needsUpdate(true);
             room.updateItemState(this);
         }

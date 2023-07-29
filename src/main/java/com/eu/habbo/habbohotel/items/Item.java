@@ -66,13 +66,13 @@ public class Item implements ISerialize {
 
     public static double getCurrentHeight(RoomItem item) {
         if (item instanceof InteractionMultiHeight && item.getBaseItem().getMultiHeights().length > 0) {
-            if (item.getExtradata().isEmpty()) {
-                item.setExtradata("0");
+            if (item.getExtraData().isEmpty()) {
+                item.setExtraData("0");
             }
 
             try {
-                int index = Integer.parseInt(item.getExtradata()) % (item.getBaseItem().getMultiHeights().length);
-                return item.getBaseItem().getMultiHeights()[(item.getExtradata().isEmpty() ? 0 : index)];
+                int index = Integer.parseInt(item.getExtraData()) % (item.getBaseItem().getMultiHeights().length);
+                return item.getBaseItem().getMultiHeights()[(item.getExtraData().isEmpty() ? 0 : index)];
             } catch (NumberFormatException ignored) {
 
             }

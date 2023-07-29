@@ -155,7 +155,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                 if (layout.getDoorTile() == null) {
                     this.client.getHabbo().alert("Error");
                     ((CustomRoomLayout) layout).needsUpdate(false);
-                    Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
+                    room.dispose();
                     return;
                 }
                 ((CustomRoomLayout) layout).needsUpdate(true);
@@ -174,7 +174,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                 room.save();
                 Collection<Habbo> habbos = new ArrayList<>(room.getRoomUnitManager().getRoomHabbosCount());
                 habbos.addAll(room.getRoomUnitManager().getCurrentHabbos().values());
-                Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
+                room.dispose();
                 room = Emulator.getGameEnvironment().getRoomManager().getRoom(room.getRoomInfo().getId());
                 ServerMessage message = new RoomForwardMessageComposer(room.getRoomInfo().getId()).compose();
                 for (Habbo habbo : habbos) {

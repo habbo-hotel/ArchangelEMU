@@ -24,7 +24,7 @@ public class RoomUnitTeleportWalkToAction implements Runnable {
         }
         RoomTile tile = RoomItem.getSquareInFront(this.room.getLayout(), this.roomItem);
 
-        if (!this.habbo.getRoomUnit().getGoalLocation().equals(tile)) {
+        if (!this.habbo.getRoomUnit().getTargetPosition().equals(tile)) {
             return;
         }
 

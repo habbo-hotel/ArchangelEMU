@@ -37,7 +37,7 @@ public class PresentOpenEvent extends MessageHandler {
 
                 Emulator.getThreading().run(new OpenGift(item, this.client.getHabbo(), room), item.getBaseItem().getName().contains("present_wrap") ? 1000 : 0);
             } else {
-                if (item.getExtradata().length() == 0) {
+                if (item.getExtraData().length() == 0) {
                     this.client.sendResponse(new WhisperMessageComposer(new RoomChatMessage(Emulator.getTexts().getValue("error.recycler.box.empty"), this.client.getHabbo(), this.client.getHabbo(), RoomChatMessageBubbles.BOT)));
                 } else {
                     RoomItem reward = Emulator.getGameEnvironment().getItemManager().handleOpenRecycleBox(this.client.getHabbo(), item);
@@ -47,7 +47,7 @@ public class PresentOpenEvent extends MessageHandler {
                         this.client.sendResponse(new UnseenItemsComposer(reward));
                         this.client.sendResponse(new FurniListInvalidateComposer());
 
-                        this.client.sendResponse(new PresentOpenedMessageComposer(reward, item.getExtradata(), true));
+                        this.client.sendResponse(new PresentOpenedMessageComposer(reward, item.getExtraData(), true));
                     }
                 }
                 room.sendComposer(new RemoveFloorItemComposer(item).compose());
@@ -56,16 +56,16 @@ public class PresentOpenEvent extends MessageHandler {
             }
 
             if (item.getRoomId() == 0) {
-                room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
+                room.updateTile(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
                 RoomLayout roomLayout = room.getLayout();
-                short z = (short)room.getStackHeight(item.getX(), item.getY(), true);
+                short z = (short)room.getStackHeight(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), true);
                 if(roomLayout != null) {
-                    RoomTile roomTile = roomLayout.getTile(item.getX(), item.getY());
+                    RoomTile roomTile = roomLayout.getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
                     if(roomTile != null) {
                         z = roomTile.getZ();
                     }
                 }
-                room.sendComposer(new HeightMapUpdateMessageComposer(item.getX(), item.getY(), z, room.getStackHeight(item.getX(), item.getY(), true)).compose());
+                room.sendComposer(new HeightMapUpdateMessageComposer(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), z, room.getStackHeight(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), true)).compose());
             }
         }
     }

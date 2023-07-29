@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -13,8 +14,8 @@ public class InteractionNoSidesVendingMachine extends InteractionVendingMachine 
         super(set, baseItem);
     }
 
-    public InteractionNoSidesVendingMachine(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionNoSidesVendingMachine(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -23,7 +24,7 @@ public class InteractionNoSidesVendingMachine extends InteractionVendingMachine 
         THashSet<RoomTile> tiles = new THashSet<>();
         for(int x = -1; x <= 1; x++) {
             for(int y = -1; y <= 1; y++) {
-                RoomTile tile = room.getLayout().getTile((short)(this.getX() + x), (short)(this.getY() + y));
+                RoomTile tile = room.getLayout().getTile((short)(this.getCurrentPosition().getX() + x), (short)(this.getCurrentPosition().getY() + y));
                 if(tile != null) {
                     tiles.add(tile);
                 }

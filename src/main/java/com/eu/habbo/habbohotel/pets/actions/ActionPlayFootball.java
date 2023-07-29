@@ -32,7 +32,7 @@ public class ActionPlayFootball extends PetAction {
         if(foundBall == null)
             return false;
 
-        pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(foundBall.getX(), foundBall.getY()));
+        pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(foundBall.getCurrentPosition().getX(), foundBall.getCurrentPosition().getY()));
 
         if (pet.getHappiness() > 75)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));

@@ -15,7 +15,7 @@ public class ItemUpdateMessageComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.itemUpdateMessageComposer);
         this.item.serializeWallData(this.response);
-        this.response.appendString(this.item.getOwnerId() + "");
+        this.response.appendString(String.valueOf(this.item.getOwnerInfo().getId()));
         return this.response;
     }
 }

@@ -10,8 +10,10 @@ public class StandCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getRiding() == null)
+        if (gameClient.getHabbo().getHabboInfo().getRiding() == null) {
             gameClient.getHabbo().getRoomUnit().makeStand();
+        }
+
         return true;
     }
 }

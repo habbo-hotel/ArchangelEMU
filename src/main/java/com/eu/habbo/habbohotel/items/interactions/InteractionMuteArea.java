@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectDataUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
@@ -39,8 +40,8 @@ public class InteractionMuteArea extends InteractionCustomValues {
         tiles = new THashSet<>();
     }
 
-    public InteractionMuteArea(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, defaultValues);
+    public InteractionMuteArea(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, defaultValues);
         tiles = new THashSet<>();
     }
 
@@ -96,10 +97,10 @@ public class InteractionMuteArea extends InteractionCustomValues {
     }
 
     private void regenAffectedTiles(Room room) {
-        int minX = Math.max(0, this.getX() - Integer.parseInt(this.values.get("tilesBack")));
-        int minY = Math.max(0, this.getY() - Integer.parseInt(this.values.get("tilesRight")));
-        int maxX = Math.min(room.getLayout().getMapSizeX(), this.getX() + Integer.parseInt(this.values.get("tilesFront")));
-        int maxY = Math.min(room.getLayout().getMapSizeY(), this.getY() + Integer.parseInt(this.values.get("tilesLeft")));
+        int minX = Math.max(0, this.getCurrentPosition().getX() - Integer.parseInt(this.values.get("tilesBack")));
+        int minY = Math.max(0, this.getCurrentPosition().getY() - Integer.parseInt(this.values.get("tilesRight")));
+        int maxX = Math.min(room.getLayout().getMapSizeX(), this.getCurrentPosition().getX() + Integer.parseInt(this.values.get("tilesFront")));
+        int maxY = Math.min(room.getLayout().getMapSizeY(), this.getCurrentPosition().getY() + Integer.parseInt(this.values.get("tilesLeft")));
 
         this.tiles.clear();
 
@@ -129,10 +130,10 @@ public class InteractionMuteArea extends InteractionCustomValues {
             int id = 0;
             for(RoomTile tile : this.tiles) {
                 id--;
-                RoomItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
-                item.setX(tile.getX());
-                item.setY(tile.getY());
-                item.setZ(tile.relativeHeight());
+                RoomItem item = new InteractionDefault(id, null, effectItem, "1", 0, 0);
+
+                item.setCurrentPosition(tile);
+                item.setCurrentZ(tile.relativeHeight());
                 items.add(item);
             }
 

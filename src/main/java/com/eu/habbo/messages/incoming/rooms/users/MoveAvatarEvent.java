@@ -102,8 +102,9 @@ public class MoveAvatarEvent extends MessageHandler {
                 }
 
                 // Don't calculate a new path if we are on a horse
-                if (habbo.getHabboInfo().getRiding() != null && habbo.getHabboInfo().getRiding().getTask() != null && habbo.getHabboInfo().getRiding().getTask().equals(PetTasks.JUMP))
+                if (habbo.getHabboInfo().getRiding() != null && habbo.getHabboInfo().getRiding().getTask() != null && habbo.getHabboInfo().getRiding().getTask().equals(PetTasks.JUMP)) {
                     return;
+                }
 
                 // Reset idle status
                 if (roomHabbo.isIdle()) {
@@ -137,11 +138,12 @@ public class MoveAvatarEvent extends MessageHandler {
                     RoomItem bed = room.getRoomItemManager().getTopItemAt(tile.getX(), tile.getY());
 
                     if (bed != null && bed.getBaseItem().allowLay()) {
-                        room.getLayout().getTile(bed.getX(), bed.getY());
+                        room.getLayout().getTile(bed.getCurrentPosition().getX(), bed.getCurrentPosition().getY());
                         RoomTile pillow = switch (bed.getRotation()) {
-                            case 0, 4 -> room.getLayout().getTile((short) x, bed.getY());
-                            case 2, 8 -> room.getLayout().getTile(bed.getX(), (short) y);
-                            default -> room.getLayout().getTile(bed.getX(), bed.getY());
+                            case 0, 4 -> room.getLayout().getTile((short) x, bed.getCurrentPosition().getY());
+                            case 2, 8 -> room.getLayout().getTile(bed.getCurrentPosition().getX(), (short) y);
+                            default ->
+                                    room.getLayout().getTile(bed.getCurrentPosition().getX(), bed.getCurrentPosition().getY());
                         };
 
                         if (pillow != null && room.canLayAt(pillow)) {

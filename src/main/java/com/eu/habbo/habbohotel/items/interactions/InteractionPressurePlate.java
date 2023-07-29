@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -15,12 +16,12 @@ import java.util.HashSet;
 public class InteractionPressurePlate extends InteractionDefault {
     public InteractionPressurePlate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionPressurePlate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionPressurePlate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
@@ -66,7 +67,7 @@ public class InteractionPressurePlate extends InteractionDefault {
 
     @Override
     public void onPickUp(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
     public void updateState(Room room) {
@@ -74,7 +75,7 @@ public class InteractionPressurePlate extends InteractionDefault {
 
         if (room == null || room.getLayout() == null || this.getBaseItem() == null) return;
 
-        RoomTile tileAtItem = room.getLayout().getTile(this.getX(), this.getY());
+        RoomTile tileAtItem = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
 
         if (tileAtItem == null) return;
 
@@ -95,7 +96,7 @@ public class InteractionPressurePlate extends InteractionDefault {
             }
         }
 
-        this.setExtradata(occupied ? "1" : "0");
+        this.setExtraData(occupied ? "1" : "0");
         room.updateItemState(this);
     }
 

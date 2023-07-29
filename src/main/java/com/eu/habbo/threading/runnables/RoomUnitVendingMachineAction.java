@@ -27,7 +27,7 @@ public class RoomUnitVendingMachineAction implements Runnable {
             return;
         }
 
-        if (this.habbo.getRoomUnit().getGoalLocation().equals(tile)) {
+        if (this.habbo.getRoomUnit().getTargetPosition().equals(tile)) {
             if (this.habbo.getRoomUnit().getCurrentPosition().equals(tile)) {
                 try {
                     this.roomItem.onClick(this.habbo.getClient(), this.room, new Object[]{0});

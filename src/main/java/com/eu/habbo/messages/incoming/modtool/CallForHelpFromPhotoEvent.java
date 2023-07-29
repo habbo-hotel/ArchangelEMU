@@ -40,7 +40,7 @@ public class CallForHelpFromPhotoEvent extends MessageHandler {
 
         if (!(item instanceof InteractionExternalImage)) return;
 
-        HabboInfo photoOwner = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(item.getOwnerId());
+        HabboInfo photoOwner = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(item.getOwnerInfo().getId());
 
         if (photoOwner == null) return;
 

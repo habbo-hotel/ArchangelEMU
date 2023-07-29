@@ -22,9 +22,9 @@ public class DiceOffEvent extends MessageHandler {
 
         if (item != null) {
             if (item instanceof InteractionDice) {
-                if (RoomLayout.tilesAdjecent(room.getLayout().getTile(item.getX(), item.getY()), this.client.getHabbo().getRoomUnit().getCurrentPosition())) {
-                    if (!item.getExtradata().equals("-1")) {
-                        item.setExtradata("0");
+                if (RoomLayout.tilesAdjecent(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), this.client.getHabbo().getRoomUnit().getCurrentPosition())) {
+                    if (!item.getExtraData().equals("-1")) {
+                        item.setExtraData("0");
                         item.needsUpdate(true);
                         Emulator.getThreading().run(item);
                         room.updateItem(item);

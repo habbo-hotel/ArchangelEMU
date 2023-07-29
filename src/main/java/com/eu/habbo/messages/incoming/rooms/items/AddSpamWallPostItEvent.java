@@ -37,8 +37,8 @@ public class AddSpamWallPostItEvent extends MessageHandler {
             Room room = this.client.getHabbo().getRoomUnit().getRoom();
             RoomItem sticky = room.getRoomItemManager().getRoomItemById(itemId);
 
-            if (sticky != null && sticky.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
-                sticky.setOwnerId(room.getRoomInfo().getOwnerInfo().getId());
+            if (sticky != null && sticky.getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId()) {
+                sticky.setOwnerInfo(room.getRoomInfo().getOwnerInfo());
 
                 if (color.equalsIgnoreCase(PostItColor.YELLOW.hexColor)) {
                     color = PostItColor.randomColorNotYellow().hexColor;
@@ -47,8 +47,8 @@ public class AddSpamWallPostItEvent extends MessageHandler {
                     text = InteractionPostIt.STICKYPOLE_PREFIX_TEXT.replace("\\r", "\r").replace("%username%", this.client.getHabbo().getHabboInfo().getUsername()).replace("%timestamp%", LocalDate.now().toString()) + text;
                 }
 
-                sticky.setOwnerId(room.getRoomInfo().getOwnerInfo().getId());
-                sticky.setExtradata(color + " " + text);
+                sticky.setOwnerInfo(room.getRoomInfo().getOwnerInfo());
+                sticky.setExtraData(color + " " + text);
                 sticky.needsUpdate(true);
                 room.updateItem(sticky);
                 Emulator.getThreading().run(sticky);

@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -38,13 +39,13 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     public InteractionWired(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         this.wiredSettings = new WiredSettings();
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    InteractionWired(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    InteractionWired(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
         this.wiredSettings = new WiredSettings();
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
     public abstract boolean execute(RoomUnit roomUnit, Room room, Object[] stuff);
@@ -190,7 +191,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
     }
 
     public void activateBox(Room room, RoomUnit roomUnit, long millis) {
-        this.setExtradata(this.getExtradata().equals("1") ? "0" : "1");
+        this.setExtraData(this.getExtraData().equals("1") ? "0" : "1");
         room.sendComposer(new OneWayDoorStatusMessageComposer(this).compose());
         if (roomUnit != null) {
             this.addUserExecutionCache(roomUnit.getVirtualId(), millis);

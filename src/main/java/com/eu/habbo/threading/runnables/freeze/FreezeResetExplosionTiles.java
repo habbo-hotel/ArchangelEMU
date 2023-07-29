@@ -15,7 +15,7 @@ class FreezeResetExplosionTiles implements Runnable {
     @Override
     public void run() {
         for (RoomItem item : this.tiles) {
-            item.setExtradata("0");
+            item.setExtraData("0");
             this.room.updateItem(item);
         }
     }

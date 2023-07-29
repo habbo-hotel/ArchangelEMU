@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,8 +16,8 @@ public class InteractionBlackHole extends InteractionGate {
         super(set, baseItem);
     }
 
-    public InteractionBlackHole(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionBlackHole(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -24,10 +25,10 @@ public class InteractionBlackHole extends InteractionGate {
         Achievement holeCountAchievement = Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHoleFurniCount");
 
         int holesCountProgress = 0;
-        Habbo owner = room.getRoomUnitManager().getRoomHabboById(this.getOwnerId());
+        Habbo owner = room.getRoomUnitManager().getRoomHabboById(this.getOwnerInfo().getId());
 
         if (owner == null) {
-            holesCountProgress = AchievementManager.getAchievementProgressForHabbo(this.getOwnerId(), holeCountAchievement);
+            holesCountProgress = AchievementManager.getAchievementProgressForHabbo(this.getOwnerInfo().getId(), holeCountAchievement);
         } else {
             holesCountProgress = owner.getHabboStats().getAchievementProgress(holeCountAchievement);
         }
@@ -37,7 +38,7 @@ public class InteractionBlackHole extends InteractionGate {
             if (owner != null) {
                 AchievementManager.progressAchievement(owner, holeCountAchievement, holeDifference);
             } else {
-                AchievementManager.progressAchievement(this.getOwnerId(), holeCountAchievement, holeDifference);
+                AchievementManager.progressAchievement(this.getOwnerInfo().getId(), holeCountAchievement, holeDifference);
             }
         }
 

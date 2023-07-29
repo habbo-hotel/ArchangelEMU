@@ -46,7 +46,7 @@ class TeleportActionThree implements Runnable {
             return;
         }
 
-        RoomTile teleportLocation = targetRoom.getLayout().getTile(targetTeleport.getX(), targetTeleport.getY());
+        RoomTile teleportLocation = targetRoom.getLayout().getTile(targetTeleport.getCurrentPosition().getX(), targetTeleport.getCurrentPosition().getY());
 
         if (teleportLocation == null) {
             Emulator.getThreading().run(new TeleportActionFive(this.currentTeleport, this.room, this.client), 0);
@@ -65,7 +65,7 @@ class TeleportActionThree implements Runnable {
 
         this.client.getHabbo().getRoomUnit().setRotation(RoomRotation.values()[targetTeleport.getRotation() % 8]);
 
-        targetTeleport.setExtradata("2");
+        targetTeleport.setExtraData("2");
         targetRoom.updateItem(targetTeleport);
         //targetRoom.updateHabbo(this.client.getHabbo());
         //LOGGER.info((targetTeleport.getX() + " | " + targetTeleport.getY());

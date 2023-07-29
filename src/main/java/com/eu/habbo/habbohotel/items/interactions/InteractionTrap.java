@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,13 +17,13 @@ public class InteractionTrap extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionTrap(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionTrap(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        if (this.getExtradata().equals("0") || roomUnit == null || room.getRoomUnitManager().getHabboByRoomUnit(roomUnit) == null) return;
+        if (this.getExtraData().equals("0") || roomUnit == null || room.getRoomUnitManager().getHabboByRoomUnit(roomUnit) == null) return;
 
         Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
         int effect = habbo.getClient().getHabbo().getRoomUnit().getEffectId();

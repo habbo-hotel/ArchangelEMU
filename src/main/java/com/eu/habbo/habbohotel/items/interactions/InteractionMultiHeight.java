@@ -7,9 +7,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
-import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
@@ -19,8 +17,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 public class InteractionMultiHeight extends RoomItem {
-    public InteractionMultiHeight(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionMultiHeight(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     public InteractionMultiHeight(ResultSet set, Item baseItem) throws SQLException {
@@ -30,7 +28,7 @@ public class InteractionMultiHeight extends RoomItem {
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -49,42 +47,47 @@ public class InteractionMultiHeight extends RoomItem {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if (client != null && !room.getRoomRightsManager().hasRights(client.getHabbo()) && !(objects.length >= 2 && objects[1] instanceof WiredEffectType && objects[1] == WiredEffectType.TOGGLE_STATE))
+        if (client != null && !room.getRoomRightsManager().hasRights(client.getHabbo()) && !(objects.length >= 2 && objects[1] instanceof WiredEffectType && objects[1] == WiredEffectType.TOGGLE_STATE)) {
             return;
+        }
 
-        if (objects.length <= 0) {
+        if (objects.length == 0) {
             return;
         }
 
         if (objects[0] instanceof Integer && room != null) {
-            RoomItem topItem = room.getRoomItemManager().getTopItemAt(this.getX(), this.getY());
+            RoomItem topItem = room.getRoomItemManager().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
+
             if (topItem != null && !topItem.equals(this)) { // multiheight items cannot change height even if there is a stackable item on top - no items allowed on top
                 return;
             }
 
             this.needsUpdate(true);
 
-            if (this.getExtradata().length() == 0)
-                this.setExtradata("0");
+            if (this.getExtraData().length() == 0) {
+                this.setExtraData("0");
+            }
 
             if (this.getBaseItem().getMultiHeights().length > 0) {
-                this.setExtradata("" + (Integer.parseInt(this.getExtradata()) + 1) % (this.getBaseItem().getMultiHeights().length));
+                this.setExtraData(String.valueOf((Integer.parseInt(this.getExtraData()) + 1) % (this.getBaseItem().getMultiHeights().length)));
                 this.needsUpdate(true);
-                room.updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()));
+                room.updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()));
                 room.updateItemState(this);
             }
         }
     }
 
     public void updateUnitsOnItem(Room room) {
-        THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+        THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
 
         for(RoomTile tile : occupiedTiles) {
             Collection<RoomUnit> unitsOnItem = room.getRoomUnitManager().getRoomUnitsAt(room.getLayout().getTile(tile.getX(), tile.getY()));
 
             for (RoomUnit unit : unitsOnItem) {
-                if (unit.hasStatus(RoomUnitStatus.MOVE) && unit.getGoalLocation() != tile) {
-                    continue;
+                if (unit.hasStatus(RoomUnitStatus.MOVE)) {
+                    if (unit.getTargetPosition() != tile) {
+                        continue;
+                    }
                 }
 
                 if (this.getBaseItem().allowSit() || unit.hasStatus(RoomUnitStatus.SIT)) {
@@ -92,8 +95,6 @@ public class InteractionMultiHeight extends RoomItem {
                     unit.setStatusUpdateNeeded(true);
                 } else {
                     unit.setCurrentZ(unit.getCurrentPosition().getStackHeight());
-                    unit.setPreviousLocationZ(unit.getCurrentZ());
-                    unit.setStatusUpdateNeeded(true);
                 }
             }
         }
@@ -107,45 +108,11 @@ public class InteractionMultiHeight extends RoomItem {
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
-
-        if (roomUnit != null
-                && (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
-                && roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
-            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
-
-            if (habbo != null) {
-                if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectM()) {
-                    habbo.getRoomUnit().giveEffect(this.getBaseItem().getEffectM(), -1);
-                    return;
-                }
-
-                if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0 && habbo.getRoomUnit().getEffectId() != this.getBaseItem().getEffectF()) {
-                    habbo.getRoomUnit().giveEffect(this.getBaseItem().getEffectF(), -1);
-                }
-            }
-        }
     }
 
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
-
-        if (roomUnit != null
-                && (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0)
-                && roomUnit.getRoomUnitType().equals(RoomUnitType.HABBO)) {
-            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
-
-            if (habbo != null) {
-                if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0) {
-                    habbo.getRoomUnit().giveEffect(0, -1);
-                    return;
-                }
-
-                if (habbo.getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() > 0) {
-                    habbo.getRoomUnit().giveEffect(0, -1);
-                }
-            }
-        }
     }
 
     @Override

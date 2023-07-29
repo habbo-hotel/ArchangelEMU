@@ -35,7 +35,7 @@ public class SetRoomBackgroundColorDataEvent extends MessageHandler {
             saturation = event.getSaturation() % 256;
             brightness = event.getBrightness() % 256;
 
-            item.setExtradata(item.getExtradata().split(":")[0] + ":" + hue + ":" + saturation + ":" + brightness);
+            item.setExtraData(item.getExtraData().split(":")[0] + ":" + hue + ":" + saturation + ":" + brightness);
             item.needsUpdate(true);
             Emulator.getThreading().run(item);
             room.updateItem(item);

@@ -32,7 +32,7 @@ public class CannonKickAction implements Runnable {
         dater.put("message", "${notification.room.kick.cannonball.message}");
 
         int rotation = this.cannon.getRotation();
-        List<RoomTile> tiles = this.room.getLayout().getTilesInFront(this.room.getLayout().getTile(this.cannon.getX(), this.cannon.getY()), rotation + 6, 3);
+        List<RoomTile> tiles = this.room.getLayout().getTilesInFront(this.room.getLayout().getTile(this.cannon.getCurrentPosition().getX(), this.cannon.getCurrentPosition().getY()), rotation + 6, 3);
 
         ServerMessage message = new NotificationDialogMessageComposer("cannon.png", dater).compose();
 

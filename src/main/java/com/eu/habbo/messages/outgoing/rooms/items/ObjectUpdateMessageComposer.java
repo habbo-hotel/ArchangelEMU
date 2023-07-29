@@ -21,7 +21,7 @@ public class ObjectUpdateMessageComposer extends MessageComposer {
         this.item.serializeExtradata(this.response);
         this.response.appendInt(-1);
         this.response.appendInt(0);
-        this.response.appendInt(this.item.getOwnerId());
+        this.response.appendInt(this.item.getOwnerInfo().getId());
         return this.response;
     }
 }

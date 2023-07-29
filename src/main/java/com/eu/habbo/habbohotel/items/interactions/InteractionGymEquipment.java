@@ -13,6 +13,7 @@ import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,8 +26,8 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
         super(set, baseItem);
     }
 
-    public InteractionGymEquipment(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionGymEquipment(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -66,9 +67,9 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
 
         this.reset(room);
 
-        if (roomUnit != null) {
-            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
-            RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
+        if (roomUnit instanceof RoomAvatar roomAvatar) {
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomAvatar);
+            RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomAvatar.getCurrentPosition().getX(), roomAvatar.getCurrentPosition().getY());
             int nextEffectM = 0;
             int nextEffectF = 0;
             int nextEffectDuration = -1;
@@ -76,23 +77,23 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
             if (topItem != null) {
                 nextEffectM = topItem.getBaseItem().getEffectM();
                 nextEffectF = topItem.getBaseItem().getEffectF();
-            } else if (roomUnit.getPreviousEffectId() > 0) {
-                nextEffectF = roomUnit.getPreviousEffectId();
-                nextEffectM = roomUnit.getPreviousEffectId();
-                nextEffectDuration = roomUnit.getPreviousEffectEndTimestamp();
+            } else if (roomAvatar.getPreviousEffectId() > 0) {
+                nextEffectF = roomAvatar.getPreviousEffectId();
+                nextEffectM = roomAvatar.getPreviousEffectId();
+                nextEffectDuration = roomAvatar.getPreviousEffectEndTimestamp();
             }
 
             if (this.forceRotation()) {
-                roomUnit.setCanRotate(true);
+                roomAvatar.setCanRotate(true);
             }
 
             if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-                habbo.getRoomUnit().giveEffect(nextEffectM, nextEffectDuration, true);
+                roomAvatar.giveEffect(nextEffectM, nextEffectDuration, true);
                 return;
             }
 
             if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-                habbo.getRoomUnit().giveEffect(nextEffectF, nextEffectDuration, true);
+                roomAvatar.giveEffect(nextEffectF, nextEffectDuration, true);
             }
         }
     }
@@ -175,7 +176,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
     private void reset(Room room) {
         this.roomUnitId = -1;
         this.startTime = 0;
-        this.setExtradata("0");
+        this.setExtraData("0");
         room.updateItem(this);
     }
 

@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import gnu.trove.set.hash.THashSet;
 
@@ -20,8 +21,8 @@ public class WiredConditionNotFurniHaveRoom extends InteractionWiredCondition {
         super(set, baseItem);
     }
 
-    public WiredConditionNotFurniHaveRoom(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredConditionNotFurniHaveRoom(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class WiredConditionNotFurniHaveRoom extends InteractionWiredCondition {
         Collection<Pet> pets = room.getRoomUnitManager().getCurrentPets().values();
 
         return this.getWiredSettings().getItems(room).stream().noneMatch(item -> {
-            THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+            THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
             return habbos.stream().anyMatch(character -> occupiedTiles.contains(character.getRoomUnit().getCurrentPosition())) ||
                     bots.stream().anyMatch(character -> occupiedTiles.contains(character.getRoomUnit().getCurrentPosition())) ||
                     pets.stream().anyMatch(character -> occupiedTiles.contains(character.getRoomUnit().getCurrentPosition()));

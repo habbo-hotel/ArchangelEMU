@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,23 +15,23 @@ public class InteractionVikingCotie extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionVikingCotie(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionVikingCotie(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) {
-        if (this.getExtradata().isEmpty()) {
-            this.setExtradata("0");
+        if (this.getExtraData().isEmpty()) {
+            this.setExtraData("0");
         }
 
-        if (client != null && client.getHabbo().getHabboInfo().getId() == this.getOwnerId()) {
+        if (client != null && client.getHabbo().getHabboInfo().getId() == this.getOwnerInfo().getId()) {
             if (client.getHabbo().getRoomUnit().getEffectId() == 172 || client.getHabbo().getRoomUnit().getEffectId() == 173) {
-                int state = Integer.parseInt(this.getExtradata());
+                int state = Integer.parseInt(this.getExtraData());
 
                 if (state < 5) {
                     state++;
-                    this.setExtradata(state + "");
+                    this.setExtraData(state + "");
                     room.updateItem(this);
 
                     if (state == 5) {

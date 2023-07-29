@@ -157,7 +157,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                 }
 
                 this.getRoomUnit().clearStatuses();
-                this.getRoomUnit().setStatus(RoomUnitStatus.RIP, "");
+                this.getRoomUnit().addStatus(RoomUnitStatus.RIP, "");
                 this.setPacketUpdate(true);
             } else {
                 int difference = Emulator.getIntUnixTimestamp() - this.created + 1;
@@ -181,7 +181,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                     if (g > this.growthStage) {
                         this.growthStage = g;
                         this.getRoomUnit().clearStatuses();
-                        this.getRoomUnit().setStatus(RoomUnitStatus.fromString("grw" + this.growthStage), "");
+                        this.getRoomUnit().addStatus(RoomUnitStatus.fromString("grw" + this.growthStage), "");
                         this.setPacketUpdate(true);
                     }
                 }
@@ -305,8 +305,8 @@ public class MonsterplantPet extends Pet implements IPetLook {
             this.room.sendComposer(new PetStatusUpdateComposer(pet).compose());
             this.room.sendComposer(new PetStatusUpdateComposer(this).compose());
 
-            this.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "reb");
-            pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "reb");
+            this.getRoomUnit().addStatus(RoomUnitStatus.GESTURE, "reb");
+            pet.getRoomUnit().addStatus(RoomUnitStatus.GESTURE, "reb");
 
             this.room.sendComposer(new UserUpdateComposer(this.getRoomUnit()).compose());
             this.room.sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());

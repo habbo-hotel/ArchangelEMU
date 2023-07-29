@@ -68,7 +68,7 @@ public class RoomPet extends RoomUnit {
                 }
             }
 
-            Deque<RoomTile> peekPath = room.getLayout().findPath(this.getCurrentPosition(), this.getPath().peek(), this.getGoalLocation(), this);
+            Deque<RoomTile> peekPath = room.getLayout().findPath(this.getCurrentPosition(), this.getPath().peek(), this.getTargetPosition(), this);
 
             if (peekPath == null) {
                 peekPath = new LinkedList<>();
@@ -123,7 +123,7 @@ public class RoomPet extends RoomUnit {
                     item = tallestChair;
             }
 
-            if (next.equals(this.getGoalLocation()) && next.getState() == RoomTileState.SIT && !overrideChecks && (item == null || item.getZ() - this.getCurrentZ() > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
+            if (next.equals(this.getTargetPosition()) && next.getState() == RoomTileState.SIT && !overrideChecks && (item == null || item.getCurrentZ() - this.getCurrentZ() > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
                 this.removeStatus(RoomUnitStatus.MOVE);
                 return false;
             }
@@ -131,7 +131,7 @@ public class RoomPet extends RoomUnit {
             double zHeight = 0.0D;
 
             RoomItem roomItem = room.getRoomItemManager().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
-            if (roomItem != null && (roomItem != item || !RoomLayout.pointInSquare(roomItem.getX(), roomItem.getY(), roomItem.getX() + roomItem.getBaseItem().getWidth() - 1, roomItem.getY() + roomItem.getBaseItem().getLength() - 1, next.getX(), next.getY())))
+            if (roomItem != null && (roomItem != item || !RoomLayout.pointInSquare(roomItem.getCurrentPosition().getX(), roomItem.getCurrentPosition().getY(), roomItem.getCurrentPosition().getX() + roomItem.getBaseItem().getWidth() - 1, roomItem.getCurrentPosition().getY() + roomItem.getBaseItem().getLength() - 1, next.getX(), next.getY())))
                 roomItem.onWalkOff(this, room, new Object[]{this.getCurrentPosition(), next});
 
 
@@ -140,7 +140,7 @@ public class RoomPet extends RoomUnit {
             RoomRotation oldRotation = this.getBodyRotation();
             this.setRotation(RoomRotation.values()[Rotation.Calculate(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), next.getX(), next.getY())]);
             if (item != null) {
-                if (item != roomItem || !RoomLayout.pointInSquare(item.getX(), item.getY(), item.getX() + item.getBaseItem().getWidth() - 1, item.getY() + item.getBaseItem().getLength() - 1, this.getCurrentPosition().getX(), this.getCurrentPosition().getY())) {
+                if (item != roomItem || !RoomLayout.pointInSquare(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getCurrentPosition().getX() + item.getBaseItem().getWidth() - 1, item.getCurrentPosition().getY() + item.getBaseItem().getLength() - 1, this.getCurrentPosition().getX(), this.getCurrentPosition().getY())) {
                     if (item.canWalkOn(this, room, null)) {
                         item.onWalkOn(this, room, new Object[]{this.getCurrentPosition(), next});
                     } else if (item instanceof ConditionalGate conditionalGate) {
@@ -156,7 +156,7 @@ public class RoomPet extends RoomUnit {
                     item.onWalk(this, room, new Object[]{this.getCurrentPosition(), next});
                 }
 
-                zHeight += item.getZ();
+                zHeight += item.getCurrentZ();
 
                 if (!item.getBaseItem().allowSit() && !item.getBaseItem().allowLay()) {
                     zHeight += Item.getCurrentHeight(item);
@@ -168,7 +168,7 @@ public class RoomPet extends RoomUnit {
 
             this.setPreviousLocation(this.getCurrentPosition());
 
-            this.setStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + zHeight);
+            this.addStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + zHeight);
 
             this.setCurrentZ(zHeight);
             this.setCurrentPosition(room.getLayout().getTile(next.getX(), next.getY()));
@@ -197,9 +197,9 @@ public class RoomPet extends RoomUnit {
         }
 
         if (!this.getCurrentPosition().equals(rider.getRoomUnit().getCurrentPosition())) {
-            this.setStatus(RoomUnitStatus.MOVE, rider.getRoomUnit().getCurrentPosition().getX() + "," + rider.getRoomUnit().getCurrentPosition().getY() + "," + (rider.getRoomUnit().getCurrentPosition().getStackHeight()));
-            this.setPreviousLocation(rider.getRoomUnit().getPreviousLocation());
-            this.setPreviousLocationZ(rider.getRoomUnit().getPreviousLocation().getStackHeight());
+            this.addStatus(RoomUnitStatus.MOVE, rider.getRoomUnit().getCurrentPosition().getX() + "," + rider.getRoomUnit().getCurrentPosition().getY() + "," + (rider.getRoomUnit().getCurrentPosition().getStackHeight()));
+            this.setPreviousLocation(rider.getRoomUnit().getPreviousPosition());
+            this.setPreviousLocationZ(rider.getRoomUnit().getPreviousPosition().getStackHeight());
             this.setCurrentPosition(rider.getRoomUnit().getCurrentPosition());
             this.setCurrentZ(rider.getRoomUnit().getCurrentPosition().getStackHeight());
         }

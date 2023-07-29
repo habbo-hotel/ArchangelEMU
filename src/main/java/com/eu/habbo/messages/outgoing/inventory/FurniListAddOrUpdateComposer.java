@@ -29,13 +29,13 @@ public class FurniListAddOrUpdateComposer extends MessageComposer {
         if (this.roomItem.isLimited()) {
             this.response.appendInt(1);
             this.response.appendInt(256);
-            this.response.appendString(this.roomItem.getExtradata());
+            this.response.appendString(this.roomItem.getExtraData());
             this.response.appendInt(this.roomItem.getLimitedSells());
             this.response.appendInt(this.roomItem.getLimitedStack());
         } else {
             this.response.appendInt(1);
             this.response.appendInt(0);
-            this.response.appendString(this.roomItem.getExtradata());
+            this.response.appendString(this.roomItem.getExtraData());
         }
         this.response.appendBoolean(this.roomItem.getBaseItem().allowRecyle());
         this.response.appendBoolean(this.roomItem.getBaseItem().allowTrade());

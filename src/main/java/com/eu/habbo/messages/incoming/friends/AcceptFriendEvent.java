@@ -14,8 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.eu.habbo.habbohotel.users.HabboManager.getOfflineHabboInfo;
-
 @Slf4j
 public class AcceptFriendEvent extends MessageHandler {
 
@@ -38,7 +36,7 @@ public class AcceptFriendEvent extends MessageHandler {
             Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
             if(target == null) {
-                HabboInfo habboInfo = getOfflineHabboInfo(userId);
+                HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(userId);
 
                 if(habboInfo == null) {
                     this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.TARGET_NOT_FOUND));

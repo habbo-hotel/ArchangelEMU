@@ -84,7 +84,7 @@ public class PlacePetEvent extends MessageHandler {
 
         roomUnit.setLocation(tile);
         roomUnit.setCurrentZ(tile.getStackHeight());
-        roomUnit.setStatus(RoomUnitStatus.SIT, "0");
+        roomUnit.addStatus(RoomUnitStatus.SIT, "0");
         roomUnit.setRoomUnitType(RoomUnitType.PET);
         if (playerTile != null) {
             roomUnit.lookAtPoint(playerTile);

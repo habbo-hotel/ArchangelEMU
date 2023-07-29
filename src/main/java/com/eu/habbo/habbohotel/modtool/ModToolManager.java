@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomState;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.outgoing.modtool.IssueCloseNotificationMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.IssueInfoMessageComposer;
@@ -415,7 +414,7 @@ public class ModToolManager {
 
         List<ModToolBan> bans = new ArrayList<>();
         Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(targetUserId);
-        HabboInfo offlineInfo = target != null ? target.getHabboInfo() : HabboManager.getOfflineHabboInfo(targetUserId);
+        HabboInfo offlineInfo = target != null ? target.getHabboInfo() : Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(targetUserId);
 
         if (moderator.getHabboInfo().getPermissionGroup().getId() < offlineInfo.getPermissionGroup().getId()) {
             return bans;

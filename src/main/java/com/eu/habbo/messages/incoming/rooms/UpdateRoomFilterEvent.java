@@ -29,9 +29,9 @@ public class UpdateRoomFilterEvent extends MessageHandler {
 
         // Modify word filter.
         if (add) {
-            room.addToWordFilter(word);
+            room.getRoomWordFilterManager().addWord(word);
         } else {
-            room.removeFromWordFilter(word);
+            room.getRoomWordFilterManager().removeWord(word);
         }
     }
 }

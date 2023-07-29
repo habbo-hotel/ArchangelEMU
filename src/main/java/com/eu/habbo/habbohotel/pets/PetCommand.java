@@ -67,10 +67,10 @@ public class PetCommand implements Comparable<PetCommand> {
                     }
 
                     for (RoomUnitStatus status : this.action.statusToSet) {
-                        pet.getRoomUnit().setStatus(status, "0");
+                        pet.getRoomUnit().addStatus(status, "0");
                     }
 
-                    pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, this.action.gestureToSet);
+                    pet.getRoomUnit().addStatus(RoomUnitStatus.GESTURE, this.action.gestureToSet);
                     pet.getRoom().sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
                     pet.addEnergy(-this.energyCost);
                     pet.addHappiness(-this.happinessCost);

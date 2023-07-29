@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.outgoing.friends.UpdateFriendComposer;
 import com.eu.habbo.plugin.events.users.friends.UserAcceptFriendRequestEvent;
 import gnu.trove.map.hash.THashMap;
@@ -77,7 +76,7 @@ public class Messenger {
         if (user != null) {
             habboInfo = user.getHabboInfo();
         } else {
-            habboInfo = HabboManager.getOfflineHabboInfo(friend);
+            habboInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(friend);
         }
 
         if (habboInfo == null) {

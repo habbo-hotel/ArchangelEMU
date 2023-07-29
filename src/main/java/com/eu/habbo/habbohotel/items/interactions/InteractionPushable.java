@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.threading.runnables.KickBallAction;
 
 import java.sql.ResultSet;
@@ -21,12 +22,12 @@ public abstract class InteractionPushable extends InteractionDefault {
 
     public InteractionPushable(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionPushable(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionPushable(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
@@ -64,7 +65,7 @@ public abstract class InteractionPushable extends InteractionDefault {
         super.onClick(client, room, objects);
 
         if (client == null) return;
-        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getX(), this.getY()))) {
+        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()))) {
             int velocity = this.getTackleVelocity(client.getHabbo().getRoomUnit(), room);
             RoomRotation direction = this.getWalkOnDirection(client.getHabbo().getRoomUnit(), room);
             this.onTackle(room, client.getHabbo().getRoomUnit(), velocity, direction);
@@ -87,7 +88,7 @@ public abstract class InteractionPushable extends InteractionDefault {
         boolean isDrag = false;
         RoomRotation direction;
 
-        if (this.getX() == roomUnit.getGoalLocation().getX() && this.getY() == roomUnit.getGoalLocation().getY()) //User clicked on the tile the ball is on, they want to kick it
+        if (this.getCurrentPosition().getX() == roomUnit.getTargetPosition().getX() && this.getCurrentPosition().getY() == roomUnit.getTargetPosition().getY()) //User clicked on the tile the ball is on, they want to kick it
         {
             velocity = this.getWalkOnVelocity(roomUnit, room);
             direction = this.getWalkOnDirection(roomUnit, room);

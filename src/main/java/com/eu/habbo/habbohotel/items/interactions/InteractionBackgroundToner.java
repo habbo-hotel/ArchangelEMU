@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.BackgroundAnimation;
 
@@ -18,16 +19,16 @@ public class InteractionBackgroundToner extends RoomItem {
         super(set, baseItem);
     }
 
-    public InteractionBackgroundToner(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionBackgroundToner(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt(5 + (this.isLimited() ? 256 : 0));
         serverMessage.appendInt(4);
-        if (this.getExtradata().split(":").length == 4) {
-            String[] colorData = this.getExtradata().split(":");
+        if (this.getExtraData().split(":").length == 4) {
+            String[] colorData = this.getExtraData().split(":");
             serverMessage.appendInt(Integer.parseInt(colorData[0]));
             serverMessage.appendInt(Integer.parseInt(colorData[1]));
             serverMessage.appendInt(Integer.parseInt(colorData[2]));
@@ -37,7 +38,7 @@ public class InteractionBackgroundToner extends RoomItem {
             serverMessage.appendInt(126);
             serverMessage.appendInt(126);
             serverMessage.appendInt(126);
-            this.setExtradata("0:126:126:126");
+            this.setExtraData("0:126:126:126");
             this.needsUpdate(true);
             Emulator.getThreading().run(this);
         }
@@ -77,12 +78,12 @@ public class InteractionBackgroundToner extends RoomItem {
             }
         }
 
-        if (this.getExtradata().split(":").length == 4) {
-            String[] data = this.getExtradata().split(":");
-            this.setExtradata((data[0].equals("0") ? "1" : "0") + ":" + data[1] + ":" + data[2] + ":" + data[3]);
+        if (this.getExtraData().split(":").length == 4) {
+            String[] data = this.getExtraData().split(":");
+            this.setExtraData((data[0].equals("0") ? "1" : "0") + ":" + data[1] + ":" + data[2] + ":" + data[3]);
             room.updateItem(this);
         } else {
-            this.setExtradata("0:126:126:126");
+            this.setExtraData("0:126:126:126");
             room.updateItem(this);
         }
         this.needsUpdate(true);

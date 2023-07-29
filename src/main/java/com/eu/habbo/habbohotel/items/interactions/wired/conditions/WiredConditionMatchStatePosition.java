@@ -4,8 +4,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.InteractionWiredMatchFurniSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import lombok.Getter;
@@ -26,8 +27,8 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
         super(set, baseItem);
     }
 
-    public WiredConditionMatchStatePosition(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredConditionMatchStatePosition(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -49,13 +50,13 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
             }
 
             if(state) {
-                if(!item.getExtradata().equals(furniSettings.getState())) {
+                if(!item.getExtraData().equals(furniSettings.getState())) {
                     return false;
                 }
             }
 
             if(position) {
-                if (!(furniSettings.getX() == item.getX() && furniSettings.getY() == item.getY())) {
+                if (!(furniSettings.getX() == item.getCurrentPosition().getX() && furniSettings.getY() == item.getCurrentPosition().getY())) {
                     return false;
                 }
             }
@@ -84,7 +85,7 @@ public class WiredConditionMatchStatePosition extends InteractionWiredCondition 
         List<WiredMatchFurniSetting> matchSettings = new ArrayList<>();
 
         for (RoomItem item : this.getWiredSettings().getItems(room)) {
-            WiredMatchFurniSetting settings = new WiredMatchFurniSetting(item.getId(), item.getExtradata(), item.getRotation(), item.getX(), item.getY());
+            WiredMatchFurniSetting settings = new WiredMatchFurniSetting(item.getId(), item.getExtraData(), item.getRotation(), item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
             matchSettings.add(settings);
         }
 

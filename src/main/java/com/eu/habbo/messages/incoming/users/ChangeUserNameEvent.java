@@ -4,7 +4,6 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.ChangeUserNameResultMessageEvent;
 import com.eu.habbo.messages.outgoing.rooms.users.UserNameChangedMessageComposer;
@@ -41,7 +40,7 @@ public class ChangeUserNameEvent extends MessageHandler {
         }
 
         if (name.equals(this.client.getHabbo().getHabboStats().getChangeNameChecked())) {
-            HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(name);
+            HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(name);
 
             if (habboInfo == null) {
                 synchronized (changingUsernames) {

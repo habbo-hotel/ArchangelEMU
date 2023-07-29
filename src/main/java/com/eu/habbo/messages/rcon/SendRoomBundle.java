@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.catalog.CatalogPage;
 import com.eu.habbo.habbohotel.catalog.layouts.RoomBundleLayout;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.google.gson.Gson;
 
 public class SendRoomBundle extends RCONMessage<SendRoomBundle.JSON> {
@@ -23,7 +22,7 @@ public class SendRoomBundle extends RCONMessage<SendRoomBundle.JSON> {
                 if (habbo != null) {
                     ((RoomBundleLayout) page).buyRoom(habbo);
                 } else {
-                    HabboInfo info = HabboManager.getOfflineHabboInfo(json.user_id);
+                    HabboInfo info = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(json.user_id);
 
                     if (info != null) {
                         ((RoomBundleLayout) page).buyRoom(null, json.user_id, info.getUsername());

@@ -29,7 +29,6 @@ import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.incoming.users.NewUserExperienceScriptProceedEvent;
@@ -406,10 +405,6 @@ public class RoomManager {
         }
 
         return layout;
-    }
-
-    public void unloadRoom(Room room) {
-        room.dispose();
     }
 
     public void uncacheRoom(Room room) {
@@ -1374,7 +1369,7 @@ public class RoomManager {
 
             name = habbo.getHabboInfo().getUsername();
         } else {
-            HabboInfo info = HabboManager.getOfflineHabboInfo(userId);
+            HabboInfo info = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(userId);
 
             if (info != null) {
                 if (info.getPermissionGroup().hasPermissionRight(Permission.ACC_UNKICKABLE, false)) {

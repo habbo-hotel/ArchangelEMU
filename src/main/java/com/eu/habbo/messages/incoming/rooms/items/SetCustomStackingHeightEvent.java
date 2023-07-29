@@ -22,7 +22,7 @@ public class SetCustomStackingHeightEvent extends MessageHandler {
 
             if (item instanceof InteractionStackHelper) {
                 Room room = this.client.getHabbo().getRoomUnit().getRoom();
-                RoomTile itemTile = room.getLayout().getTile(item.getX(), item.getY());
+                RoomTile itemTile = room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
                 double stackerHeight = this.packet.readInt();
 
                 THashSet<RoomTile> tiles = room.getLayout().getTilesAt(itemTile, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
@@ -46,9 +46,10 @@ public class SetCustomStackingHeightEvent extends MessageHandler {
                     tile.setStackHeight(height);
                 }
 
-                item.setZ(height);
-                item.setExtradata((int) (height * 100) + "");
+                item.setCurrentZ(height);
+                item.setExtraData(String.valueOf((int) (height * 100)));
                 item.needsUpdate(true);
+
                 this.client.getHabbo().getRoomUnit().getRoom().updateItem(item);
                 this.client.getHabbo().getRoomUnit().getRoom().updateTiles(tiles);
                 this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new HeightMapUpdateMessageComposer (room, tiles).compose());

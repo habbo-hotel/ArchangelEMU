@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 
 public class CreditsCommand extends BaseCreditsCommand {
     private static final String INVALID_AMOUNT = "commands.error.cmd_credits.invalid_amount";
@@ -17,7 +16,7 @@ public class CreditsCommand extends BaseCreditsCommand {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 3) {
-            HabboInfo info = HabboManager.getOfflineHabboInfo(params[1]);
+            HabboInfo info = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(params[1]);
 
             if (info != null) {
                 Habbo habbo = getHabbo(params[1]);

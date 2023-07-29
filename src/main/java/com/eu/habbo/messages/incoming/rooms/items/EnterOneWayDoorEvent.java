@@ -17,7 +17,7 @@ public class EnterOneWayDoorEvent extends MessageHandler {
             return;
 
         if (item instanceof InteractionOneWayGate) {
-            if (!item.getExtradata().equals("0") || this.client.getHabbo().getRoomUnit().isTeleporting())
+            if (!item.getExtraData().equals("0") || this.client.getHabbo().getRoomUnit().isTeleporting())
                 return;
 
             item.onClick(this.client, this.client.getHabbo().getRoomUnit().getRoom(), null);

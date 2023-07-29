@@ -15,7 +15,7 @@ public class ActionCroak extends ActionVocals {
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        pet.getRoomUnit().setStatus(RoomUnitStatus.CROAK, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
+        pet.getRoomUnit().addStatus(RoomUnitStatus.CROAK, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
 
         Emulator.getThreading().run(new PetClearPosture(pet, RoomUnitStatus.CROAK, null, false), this.minimumActionDuration);
 

@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 public class SleepMessageComposer extends MessageComposer {
     private final RoomHabbo roomHabbo;
 
-
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.sleepMessageComposer);

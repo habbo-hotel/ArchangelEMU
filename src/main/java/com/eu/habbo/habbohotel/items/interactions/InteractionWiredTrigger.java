@@ -1,11 +1,10 @@
 package com.eu.habbo.habbohotel.items.interactions;
 
-import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredTriggerInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.outgoing.wired.WiredTriggerDataComposer;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,13 +27,13 @@ public abstract class InteractionWiredTrigger extends InteractionWired implement
         super(set, baseItem);
     }
 
-    protected InteractionWiredTrigger(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    protected InteractionWiredTrigger(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     public List<Integer> getBlockedEffects(Room room) {
         List<Integer> blockedEffects = new ArrayList<>();
-        THashSet<InteractionWiredEffect> effects = room.getRoomSpecialTypes().getEffects(this.getX(), this.getY());
+        THashSet<InteractionWiredEffect> effects = room.getRoomSpecialTypes().getEffects(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
 
         for(InteractionWiredEffect effect : effects) {
             if (!effect.requiresTriggeringUser()) {

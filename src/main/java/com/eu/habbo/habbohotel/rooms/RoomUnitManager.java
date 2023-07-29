@@ -435,6 +435,20 @@ public class RoomUnitManager {
         }
 
         this.currentBots.clear();
+
+        Iterator<Pet> petIterator = this.currentPets.values().iterator();
+
+        while(petIterator.hasNext()) {
+            try {
+                Pet pet = petIterator.next();
+                pet.setNeedsUpdate(true);
+                Emulator.getThreading().run(pet);
+            } catch (NoSuchElementException e) {
+                log.error("Caught Exception", e);
+                break;
+            }
+        }
+
         this.currentPets.clear();
 
         this.currentRoomUnits.clear();

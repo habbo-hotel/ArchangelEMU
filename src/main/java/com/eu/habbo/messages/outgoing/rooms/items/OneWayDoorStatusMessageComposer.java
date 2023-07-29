@@ -15,7 +15,7 @@ public class OneWayDoorStatusMessageComposer extends MessageComposer {
         this.response.init(Outgoing.oneWayDoorStatusMessageComposer);
         this.response.appendInt(this.item.getId());
         try {
-            int state = Integer.parseInt(this.item.getExtradata());
+            int state = Integer.parseInt(this.item.getExtraData());
             this.response.appendInt(state);
         } catch (Exception e) {
             this.response.appendInt(0);

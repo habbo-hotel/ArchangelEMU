@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.outgoing.generic.alerts.CustomUserNotificationMessageComposer;
 import com.eu.habbo.threading.runnables.CloseGate;
 
@@ -16,12 +17,12 @@ import java.sql.SQLException;
 public class InteractionRoomClubGate extends InteractionDefault implements ConditionalGate {
     public InteractionRoomClubGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionRoomClubGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionRoomClubGate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
@@ -41,7 +42,7 @@ public class InteractionRoomClubGate extends InteractionDefault implements Condi
         super.onWalkOn(roomUnit, room, objects);
 
         if (this.canWalkOn(roomUnit, room, objects)) {
-            this.setExtradata("1");
+            this.setExtraData("1");
             room.updateItemState(this);
         }
     }

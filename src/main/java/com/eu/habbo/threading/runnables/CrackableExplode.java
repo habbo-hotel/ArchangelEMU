@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.FurnitureType;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionCrackable;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
@@ -19,8 +20,7 @@ public class CrackableExplode implements Runnable {
     private final InteractionCrackable habboItem;
     private final Habbo habbo;
     private final boolean toInventory;
-    private final short x;
-    private final short y;
+    private final RoomTile tile;
 
     @Override
     public void run() {
@@ -40,7 +40,7 @@ public class CrackableExplode implements Runnable {
         Item rewardItem = Emulator.getGameEnvironment().getItemManager().getCrackableReward(this.habboItem.getBaseItem().getId());
 
         if (rewardItem != null) {
-            RoomItem newItem = Emulator.getGameEnvironment().getItemManager().createItem(this.habboItem.allowAnyone() ? this.habbo.getHabboInfo().getId() : this.habboItem.getOwnerId(), rewardItem, 0, 0, "");
+            RoomItem newItem = Emulator.getGameEnvironment().getItemManager().createItem(this.habboItem.allowAnyone() ? this.habbo.getHabboInfo().getId() : this.habboItem.getOwnerInfo().getId(), rewardItem, 0, 0, "");
 
             if (newItem != null) {
                 //Add to inventory in case if isn't possible place the item or in case is wall item
@@ -49,18 +49,18 @@ public class CrackableExplode implements Runnable {
                     this.habbo.getClient().sendResponse(new UnseenItemsComposer(newItem));
                     this.habbo.getClient().sendResponse(new FurniListInvalidateComposer());
                 } else {
-                    newItem.setX(this.x);
-                    newItem.setY(this.y);
-                    newItem.setZ(this.room.getStackHeight(this.x, this.y, false));
+                    newItem.setCurrentPosition(this.tile);
+                    newItem.setCurrentZ(this.room.getStackHeight(this.tile.getX(), this.tile.getY(), false));
+
                     newItem.setRoomId(this.room.getRoomInfo().getId());
                     newItem.needsUpdate(true);
                     this.room.getRoomItemManager().addRoomItem(newItem);
                     this.room.updateItem(newItem);
-                    this.room.sendComposer(new ObjectAddMessageComposer(newItem, this.room.getFurniOwnerNames().get(newItem.getOwnerId())).compose());
+                    this.room.sendComposer(new ObjectAddMessageComposer(newItem, this.room.getFurniOwnerNames().get(newItem.getOwnerInfo().getId())).compose());
                 }
             }
         }
 
-        this.room.updateTile(this.room.getLayout().getTile(this.x, this.y));
+        this.room.updateTile(this.tile);
     }
 }

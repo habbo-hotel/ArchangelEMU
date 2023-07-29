@@ -28,17 +28,17 @@ public class RequestRoomPropertySet extends MessageHandler {
 
             switch (item.getBaseItem().getName()) {
                 case "floor":
-                    room.getRoomInfo().setFloorPaint(item.getExtradata());
+                    room.getRoomInfo().setFloorPaint(item.getExtraData());
 
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoFloor"));
                     break;
                 case "wallpaper":
-                    room.getRoomInfo().setWallPaint(item.getExtradata());
+                    room.getRoomInfo().setWallPaint(item.getExtraData());
 
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoWallpaper"));
                     break;
                 case "landscape":
-                    room.getRoomInfo().setLandscapePaint(item.getExtradata());
+                    room.getRoomInfo().setLandscapePaint(item.getExtraData());
 
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoLandscape"));
                     break;
@@ -48,7 +48,7 @@ public class RequestRoomPropertySet extends MessageHandler {
 
             this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
             room.setNeedsUpdate(true);
-            room.sendComposer(new RoomPropertyMessageComposer(item.getBaseItem().getName(), item.getExtradata()).compose());
+            room.sendComposer(new RoomPropertyMessageComposer(item.getBaseItem().getName(), item.getExtraData()).compose());
             item.needsDelete(true);
             Emulator.getThreading().run(item);
             this.client.sendResponse(new FurniListRemoveComposer(itemId));

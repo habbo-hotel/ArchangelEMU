@@ -197,7 +197,7 @@ public class RoomRightsManager {
 
         habbo.getClient().sendResponse(new YouAreControllerMessageComposer(flatCtrl));
 
-        habbo.getRoomUnit().setStatus(RoomUnitStatus.FLAT_CONTROL, String.valueOf(flatCtrl.getLevel()));
+        habbo.getRoomUnit().addStatus(RoomUnitStatus.FLAT_CONTROL, String.valueOf(flatCtrl.getLevel()));
         habbo.getRoomUnit().setRightsLevel(flatCtrl);
 
         if (flatCtrl.equals(RoomRightLevels.MODERATOR)) {

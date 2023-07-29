@@ -62,7 +62,7 @@ public class WiredHandler {
         List<RoomTile> triggeredTiles = new ArrayList<>();
 
         for (InteractionWiredTrigger trigger : triggers) {
-            RoomTile tile = room.getLayout().getTile(trigger.getX(), trigger.getY());
+            RoomTile tile = room.getLayout().getTile(trigger.getCurrentPosition().getX(), trigger.getCurrentPosition().getY());
 
             if (triggeredTiles.contains(tile)) {
                 continue;
@@ -113,7 +113,7 @@ public class WiredHandler {
         for (InteractionWiredTrigger trigger : triggers) {
             if (trigger.getClass() != triggerType) continue;
 
-            RoomTile tile = room.getLayout().getTile(trigger.getX(), trigger.getY());
+            RoomTile tile = room.getLayout().getTile(trigger.getCurrentPosition().getX(), trigger.getCurrentPosition().getY());
 
             if (triggeredTiles.contains(tile))
                 continue;
@@ -157,8 +157,8 @@ public class WiredHandler {
             //DUNNO IF YOU HAVE TO SET EXTRADATA TO 1 IN HERE (In case of Repeaters)
             trigger.activateBox(room, roomUnit, millis);
 
-            THashSet<InteractionWiredCondition> conditions = room.getRoomSpecialTypes().getConditions(trigger.getX(), trigger.getY());
-            THashSet<InteractionWiredEffect> effects = room.getRoomSpecialTypes().getEffects(trigger.getX(), trigger.getY());
+            THashSet<InteractionWiredCondition> conditions = room.getRoomSpecialTypes().getConditions(trigger.getCurrentPosition().getX(), trigger.getCurrentPosition().getY());
+            THashSet<InteractionWiredEffect> effects = room.getRoomSpecialTypes().getEffects(trigger.getCurrentPosition().getX(), trigger.getCurrentPosition().getY());
             if (Emulator.getPluginManager().fireEvent(new WiredStackTriggeredEvent(room, roomUnit, trigger, effects, conditions)).isCancelled())
                 return false;
 
@@ -182,9 +182,9 @@ public class WiredHandler {
 
             trigger.setCooldown(millis);
 
-            boolean hasExtraRandom = room.getRoomSpecialTypes().hasExtraType(trigger.getX(), trigger.getY(), WiredExtraRandom.class);
-            boolean hasExtraUnseen = room.getRoomSpecialTypes().hasExtraType(trigger.getX(), trigger.getY(), WiredExtraUnseen.class);
-            THashSet<InteractionWiredExtra> extras = room.getRoomSpecialTypes().getExtras(trigger.getX(), trigger.getY());
+            boolean hasExtraRandom = room.getRoomSpecialTypes().hasExtraType(trigger.getCurrentPosition().getX(), trigger.getCurrentPosition().getY(), WiredExtraRandom.class);
+            boolean hasExtraUnseen = room.getRoomSpecialTypes().hasExtraType(trigger.getCurrentPosition().getX(), trigger.getCurrentPosition().getY(), WiredExtraUnseen.class);
+            THashSet<InteractionWiredExtra> extras = room.getRoomSpecialTypes().getExtras(trigger.getCurrentPosition().getX(), trigger.getCurrentPosition().getY());
 
             for (InteractionWiredExtra extra : extras) {
                 extra.activateBox(room, roomUnit, millis);
@@ -198,9 +198,9 @@ public class WiredHandler {
 
 
             if (hasExtraUnseen) {
-                for (InteractionWiredExtra extra : room.getRoomSpecialTypes().getExtras(trigger.getX(), trigger.getY())) {
+                for (InteractionWiredExtra extra : room.getRoomSpecialTypes().getExtras(trigger.getCurrentPosition().getX(), trigger.getCurrentPosition().getY())) {
                     if (extra instanceof WiredExtraUnseen) {
-                        extra.setExtradata(extra.getExtradata().equals("1") ? "0" : "1");
+                        extra.setExtraData(extra.getExtraData().equals("1") ? "0" : "1");
                         InteractionWiredEffect effect = ((WiredExtraUnseen) extra).getUnseenEffect(effectList);
                         effectsToExecute.add(effect); // triggerEffect(effect, roomUnit, room, stuff, millis);
                         break;

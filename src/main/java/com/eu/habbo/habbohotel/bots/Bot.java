@@ -17,7 +17,6 @@ import com.eu.habbo.plugin.events.bots.BotChatEvent;
 import com.eu.habbo.plugin.events.bots.BotShoutEvent;
 import com.eu.habbo.plugin.events.bots.BotTalkEvent;
 import com.eu.habbo.plugin.events.bots.BotWhisperEvent;
-import com.eu.habbo.threading.runnables.BotFollowHabbo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -64,13 +63,16 @@ public class Bot extends Unit implements Runnable {
     @Getter
     @Setter
     private short lastChatIndex;
-    private final int bubble;
+    @Getter
+    private final int bubbleId;
     @Getter
     private final String type;
     @Getter
     private int effect;
     private transient boolean canWalk = true;
     private boolean needsUpdate;
+    @Getter
+    @Setter
     private transient int followingHabboId;
     @Getter
     @Setter
@@ -95,7 +97,7 @@ public class Bot extends Unit implements Runnable {
         this.chatLines = new ArrayList<>();
         this.type = "generic_bot";
         this.room = null;
-        this.bubble = RoomChatMessageBubbles.BOT_RENTABLE.getType();
+        this.bubbleId = RoomChatMessageBubbles.BOT_RENTABLE.getType();
     }
 
     public Bot(ResultSet set) throws SQLException {
@@ -116,7 +118,7 @@ public class Bot extends Unit implements Runnable {
         this.room = null;
         this.chatTimeOut = Emulator.getIntUnixTimestamp() + this.chatDelay;
         this.needsUpdate = false;
-        this.bubble = set.getInt("bubble_id");
+        this.bubbleId = set.getInt("bubble_id");
 
         this.roomUnit = new RoomBot();
     }
@@ -135,7 +137,7 @@ public class Bot extends Unit implements Runnable {
         this.chatLines = new ArrayList<>(List.of("Default Message :D"));
         this.type = bot.getType();
         this.effect = bot.getEffect();
-        this.bubble = bot.getBubbleId();
+        this.bubbleId = bot.getBubbleId();
         this.needsUpdate = false;
     }
 
@@ -177,7 +179,7 @@ public class Bot extends Unit implements Runnable {
                 statement.setString(12, this.chatRandom ? "1" : "0");
                 statement.setInt(13, this.chatDelay);
                 statement.setInt(14, this.effect);
-                statement.setInt(15, this.bubble);
+                statement.setInt(15, this.bubbleId);
                 statement.setInt(16, this.id);
                 statement.execute();
                 this.needsUpdate = false;
@@ -287,12 +289,10 @@ public class Bot extends Unit implements Runnable {
 
     }
 
-    public void onUserSay(final RoomChatMessage message) {
-
-    }
+    public void onUserSay(final RoomChatMessage message) {}
 
     public int getBubbleId() {
-        return bubble;
+        return bubbleId;
     }
 
     public void setName(String name) {
@@ -396,20 +396,6 @@ public class Bot extends Unit implements Runnable {
         }
     }
 
-    public int getFollowingHabboId() {
-        return this.followingHabboId;
-    }
-
-    public void startFollowingHabbo(Habbo habbo) {
-        this.followingHabboId = habbo.getHabboInfo().getId();
-
-        Emulator.getThreading().run(new BotFollowHabbo(this, habbo, habbo.getRoomUnit().getRoom()));
-    }
-
-    public void stopFollowingHabbo() {
-        this.followingHabboId = 0;
-    }
-
     public boolean canWalk() {
         return this.canWalk;
     }
@@ -441,7 +427,7 @@ public class Bot extends Unit implements Runnable {
             statement.setString(15, this.chatRandom ? "1" : "0");
             statement.setInt(16, this.chatDelay);
             statement.setInt(17, this.effect);
-            statement.setInt(18, this.bubble);
+            statement.setInt(18, this.bubbleId);
             statement.setInt(19, this.id);
             statement.execute();
         } catch (SQLException e) {

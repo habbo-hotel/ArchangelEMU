@@ -41,11 +41,11 @@ public class WiredGame extends Game {
     @Override
     public void removeHabbo(Habbo habbo) {
         super.removeHabbo(habbo);
-        RoomHabbo roomUnit = habbo.getRoomUnit();
+        RoomHabbo roomHabbo = habbo.getRoomUnit();
         Room room = this.room;
         if (room == null) return;
 
-        RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
+        RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomHabbo.getCurrentPosition().getX(), roomHabbo.getCurrentPosition().getY());
         int nextEffectM = 0;
         int nextEffectF = 0;
         int nextEffectDuration = -1;
@@ -53,19 +53,19 @@ public class WiredGame extends Game {
         if (topItem != null) {
             nextEffectM = topItem.getBaseItem().getEffectM();
             nextEffectF = topItem.getBaseItem().getEffectF();
-        } else if (roomUnit.getPreviousEffectId() > 0) {
-            nextEffectF = roomUnit.getPreviousEffectId();
-            nextEffectM = roomUnit.getPreviousEffectId();
-            nextEffectDuration = roomUnit.getPreviousEffectEndTimestamp();
+        } else if (roomHabbo.getPreviousEffectId() > 0) {
+            nextEffectF = roomHabbo.getPreviousEffectId();
+            nextEffectM = roomHabbo.getPreviousEffectId();
+            nextEffectDuration = roomHabbo.getPreviousEffectEndTimestamp();
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-            roomUnit.giveEffect(nextEffectM, nextEffectDuration, true);
+            roomHabbo.giveEffect(nextEffectM, nextEffectDuration, true);
             return;
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-            roomUnit.giveEffect(nextEffectF, nextEffectDuration, true);
+            roomHabbo.giveEffect(nextEffectF, nextEffectDuration, true);
         }
     }
 

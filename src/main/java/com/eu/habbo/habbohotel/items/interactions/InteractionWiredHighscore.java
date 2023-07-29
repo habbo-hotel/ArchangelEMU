@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -46,8 +47,8 @@ public class InteractionWiredHighscore extends RoomItem {
         this.reloadData();
     }
 
-    public InteractionWiredHighscore(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionWiredHighscore(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         this.scoreType = WiredHighscoreScoreType.CLASSIC;
         this.clearType = WiredHighscoreClearType.ALLTIME;
@@ -84,13 +85,13 @@ public class InteractionWiredHighscore extends RoomItem {
         if (room == null || !((client != null && room.getRoomRightsManager().hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
             return;
 
-        if (this.getExtradata() == null || this.getExtradata().isEmpty() || this.getExtradata().length() == 0) {
-            this.setExtradata("0");
+        if (this.getExtraData() == null || this.getExtraData().isEmpty() || this.getExtraData().length() == 0) {
+            this.setExtraData("0");
         }
 
         try {
-            int state = Integer.parseInt(this.getExtradata());
-            this.setExtradata(Math.abs(state - 1) + "");
+            int state = Integer.parseInt(this.getExtraData());
+            this.setExtraData(Math.abs(state - 1) + "");
             room.updateItem(this);
         } catch (Exception e) {
             log.error("Caught exception", e);
@@ -105,7 +106,7 @@ public class InteractionWiredHighscore extends RoomItem {
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt(6);
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
         serverMessage.appendInt(this.scoreType.getType());
         serverMessage.appendInt(this.clearType.getType());
 

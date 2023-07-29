@@ -4,10 +4,9 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
@@ -46,7 +45,7 @@ public class GiftCommand extends BaseGiftCommand {
                 return true;
             }
 
-            HabboInfo habboInfo = HabboManager.getOfflineHabboInfo(username);
+            HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(username);
 
             if (habboInfo == null) {
                 gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_gift.user_not_found"), username), RoomChatMessageBubbles.ALERT);

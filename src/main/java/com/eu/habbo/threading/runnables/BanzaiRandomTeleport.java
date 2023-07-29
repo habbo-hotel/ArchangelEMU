@@ -21,7 +21,7 @@ public class BanzaiRandomTeleport implements Runnable {
     public void run() {
         RoomItem topItemNow = this.room.getRoomItemManager().getTopItemAt(this.habbo.getCurrentPosition().getX(), this.habbo.getCurrentPosition().getY());
         RoomTile lastLocation = this.habbo.getCurrentPosition();
-        RoomTile newLocation = this.room.getLayout().getTile(toItem.getX(), toItem.getY());
+        RoomTile newLocation = this.room.getLayout().getTile(toItem.getCurrentPosition().getX(), toItem.getCurrentPosition().getY());
 
         if(topItemNow != null) {
             try {
@@ -32,14 +32,14 @@ public class BanzaiRandomTeleport implements Runnable {
         }
 
         Emulator.getThreading().run(() -> {
-            if (this.item.getExtradata().equals("1")) {
-                this.item.setExtradata("0");
+            if (this.item.getExtraData().equals("1")) {
+                this.item.setExtraData("0");
                 this.room.updateItemState(this.item);
             }
         }, 500);
 
-        if(!this.toItem.getExtradata().equals("1")) {
-            this.toItem.setExtradata("1");
+        if(!this.toItem.getExtraData().equals("1")) {
+            this.toItem.setExtraData("1");
             this.room.updateItemState(this.toItem);
         }
 
@@ -55,8 +55,8 @@ public class BanzaiRandomTeleport implements Runnable {
                 }
             }
 
-            if (this.toItem.getExtradata().equals("1")) {
-                this.toItem.setExtradata("0");
+            if (this.toItem.getExtraData().equals("1")) {
+                this.toItem.setExtraData("0");
                 this.room.updateItemState(this.toItem);
             }
         }, 750);

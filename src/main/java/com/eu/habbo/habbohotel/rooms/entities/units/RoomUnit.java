@@ -86,13 +86,9 @@ public abstract class RoomUnit extends RoomEntity {
     @Setter
     private RoomTile botStartLocation;
     @Getter
-    private RoomTile previousLocation;
-    @Getter
     @Setter
     @Accessors(chain = true)
     private double previousLocationZ;
-    @Getter
-    private RoomTile goalLocation;
     @Getter
     @Setter
     private boolean inRoom;
@@ -160,8 +156,7 @@ public abstract class RoomUnit extends RoomEntity {
     }
 
     public void clearWalking() {
-        this.goalLocation = null;
-        this.setCurrentPosition(null);
+        this.setTargetPosition(null);
         this.startLocation = this.getCurrentPosition();
         this.statuses.clear();
         this.cacheable.clear();
@@ -211,13 +206,14 @@ public abstract class RoomUnit extends RoomEntity {
 
         if (goalLocation != null && !noReset) {
             boolean isWalking = this.hasStatus(RoomUnitStatus.MOVE);
-            this.goalLocation = goalLocation;
+            this.setTargetPosition(goalLocation);
+
             this.findPath(); ///< Quadral: this is where we start formulating a path
             if (!this.getPath().isEmpty()) {
                 this.setTilesMoved(isWalking ? this.getTilesMoved() : 0);
                 this.setCmdSitEnabled(false);
             } else {
-                this.goalLocation = this.getCurrentPosition();
+                this.setTargetPosition(this.getCurrentPosition());
             }
         }
     }
@@ -227,38 +223,36 @@ public abstract class RoomUnit extends RoomEntity {
             this.startLocation = location;
             this.setPreviousLocation(location);
             this.setCurrentPosition(location);
-            this.goalLocation = location;
+            this.setTargetPosition(location);
             this.botStartLocation = location;
         }
         return this;
     }
 
-    public void setPreviousLocation(RoomTile previousLocation) {
-        this.previousLocation = previousLocation;
-        this.previousLocationZ = this.getCurrentZ();
-    }
-
     public void findPath() {
-        if (this.getRoom() != null && this.getRoom().getLayout() != null && this.goalLocation != null && (this.goalLocation.isWalkable() || this.getRoom().canSitOrLayAt(this.goalLocation.getX(), this.goalLocation.getY()) || this.canOverrideTile(this.goalLocation))) {
-            Deque<RoomTile> newPath = this.getRoom().getLayout().findPath(this.getCurrentPosition(), this.goalLocation, this.goalLocation, this);
+        if (this.getRoom() != null && this.getRoom().getLayout() != null && this.getTargetPosition() != null && (this.getTargetPosition().isWalkable() || this.getRoom().canSitOrLayAt(this.getTargetPosition().getX(), this.getTargetPosition().getY()) || this.canOverrideTile(this.getTargetPosition()))) {
+            Deque<RoomTile> newPath = this.getRoom().getLayout().findPath(this.getCurrentPosition(), this.getTargetPosition(), this.getTargetPosition(), this);
             if (newPath != null) this.setPath(newPath);
         }
-    }
-
-    public boolean isAtGoal() {
-        if(this.getCurrentPosition() == null) {
-            return false;
-        }
-
-        return this.getCurrentPosition().equals(this.goalLocation);
     }
 
     public boolean isWalking() {
         return !this.isAtGoal() && this.canWalk;
     }
 
+    public boolean hasStatus(RoomUnitStatus key) {
+        return this.statuses.containsKey(key);
+    }
+
     public String getStatus(RoomUnitStatus key) {
         return this.statuses.get(key);
+    }
+
+    public void addStatus(RoomUnitStatus key, String value) {
+        if (key != null && value != null) {
+            this.statuses.put(key, value);
+            this.statusUpdateNeeded = true;
+        }
     }
 
     public RoomUnit removeStatus(RoomUnitStatus key) {
@@ -271,20 +265,13 @@ public abstract class RoomUnit extends RoomEntity {
         return this;
     }
 
-    public void setStatus(RoomUnitStatus key, String value) {
-        if (key != null && value != null) {
-            this.statuses.put(key, value);
-            this.statusUpdateNeeded = true;
-        }
+    public void clearStatuses() {
+        this.statuses.clear();
     }
 
     public void setRightsLevel(RoomRightLevels rightsLevel) {
         this.rightsLevel = rightsLevel;
         this.statusUpdateNeeded = true;
-    }
-
-    public boolean hasStatus(RoomUnitStatus key) {
-        return this.statuses.containsKey(key);
     }
 
     public void makeStand() {
@@ -293,7 +280,7 @@ public abstract class RoomUnit extends RoomEntity {
             this.setCmdStandEnabled(true);
             this.setBodyRotation(RoomRotation.values()[this.getBodyRotation().getValue() - this.getBodyRotation().getValue() % 2]);
             this.removeStatus(RoomUnitStatus.SIT);
-            this.getRoom().sendComposer(new UserUpdateComposer(this).compose());
+            this.instantUpdate();
         }
     }
 
@@ -304,34 +291,17 @@ public abstract class RoomUnit extends RoomEntity {
 
         this.setCmdSitEnabled(true);
         this.setBodyRotation(RoomRotation.values()[this.getBodyRotation().getValue() - this.getBodyRotation().getValue() % 2]);
-        this.setStatus(RoomUnitStatus.SIT, 0.5 + "");
+        this.addStatus(RoomUnitStatus.SIT, 0.5 + "");
 
         if(this instanceof RoomAvatar roomAvatar) {
             roomAvatar.setDance(DanceType.NONE);
         }
 
-        this.getRoom().sendComposer(new UserUpdateComposer(this).compose());
-    }
-
-    public void clearStatuses() {
-        this.statuses.clear();
+        this.instantUpdate();
     }
 
     public TMap<String, Object> getCacheable() {
         return this.cacheable;
-    }
-
-    public int getPreviousEffectId() {
-        return this.previousEffectId;
-    }
-
-    public void setPreviousEffectId(int effectId, int endTimestamp) {
-        this.previousEffectId = effectId;
-        this.previousEffectEndTimestamp = endTimestamp;
-    }
-
-    public int getPreviousEffectEndTimestamp() {
-        return this.previousEffectEndTimestamp;
     }
 
     public int getWalkTimeOut() {
@@ -455,8 +425,8 @@ public abstract class RoomUnit extends RoomEntity {
 
         if(!this.isCmdSitEnabled()) {
             if(this.getCurrentPosition().getState().equals(RoomTileState.SIT) && !this.hasStatus(RoomUnitStatus.SIT)) {
-                this.setStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(topItem)));
-                this.setCurrentZ(topItem.getZ());
+                this.addStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(topItem)));
+                this.setCurrentZ(topItem.getCurrentZ());
                 this.setRotation(RoomRotation.values()[topItem.getRotation()]);
                 return true;
             } else if(!topItem.getBaseItem().allowSit() && this.hasStatus(RoomUnitStatus.SIT)) {
@@ -476,13 +446,13 @@ public abstract class RoomUnit extends RoomEntity {
 
         if(!this.isCmdLayEnabled()) {
             if(this.getCurrentPosition().getState().equals(RoomTileState.LAY) && !this.hasStatus(RoomUnitStatus.LAY)) {
-                this.setStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(topItem)));
+                this.addStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(topItem)));
                 this.setRotation(RoomRotation.values()[topItem.getRotation() % 4]);
 
                 if (topItem.getRotation() == 0 || topItem.getRotation() == 4) {
-                    this.setLocation(this.getRoom().getLayout().getTile(this.getCurrentPosition().getX(), topItem.getY()));
+                    this.setLocation(this.getRoom().getLayout().getTile(this.getCurrentPosition().getX(), topItem.getCurrentPosition().getY()));
                 } else {
-                    this.setLocation(this.getRoom().getLayout().getTile(topItem.getX(), this.getCurrentPosition().getY()));
+                    this.setLocation(this.getRoom().getLayout().getTile(topItem.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
                 }
                 return true;
             } else if (!topItem.getBaseItem().allowLay() && this.hasStatus(RoomUnitStatus.LAY)) {

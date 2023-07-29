@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.CannonKickAction;
 import com.eu.habbo.threading.runnables.CannonResetCooldownAction;
@@ -20,18 +21,18 @@ public class InteractionCannon extends RoomItem {
 
     public InteractionCannon(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionCannon(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionCannon(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -55,7 +56,7 @@ public class InteractionCannon extends RoomItem {
         if (room == null)
             return;
 
-        RoomTile tile = room.getLayout().getTile(this.getX(), this.getY());
+        RoomTile tile = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
         RoomTile fuseTile = this.getRotation() >= 4 ? tile : room.getLayout().getTileInFront(tile, ((this.getRotation() % 2) + 2) % 8);
         List<RoomTile> tiles = room.getLayout().getTilesAround(fuseTile);
         tiles.remove(room.getLayout().getTileInFront(tile, (this.getRotation() + (this.getRotation() >= 4 ? -1 : 0)) % 8));
@@ -70,7 +71,7 @@ public class InteractionCannon extends RoomItem {
             }
 
             this.cooldown = true;
-            this.setExtradata(this.getExtradata().equals("1") ? "0" : "1");
+            this.setExtraData(this.getExtraData().equals("1") ? "0" : "1");
             room.updateItemState(this);
             Emulator.getThreading().run(new CannonKickAction(this, room, client), 750);
             Emulator.getThreading().run(new CannonResetCooldownAction(this), 2000);
@@ -94,7 +95,7 @@ public class InteractionCannon extends RoomItem {
 
     @Override
     public void onPickUp(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
 

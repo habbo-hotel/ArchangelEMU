@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import gnu.trove.map.hash.TIntIntHashMap;
 
@@ -22,8 +23,8 @@ public class WiredEffectGiveScoreToTeam extends InteractionWiredEffect {
 
     private final GameTeamColors DEFAULT_TEAM = GameTeamColors.RED;
 
-    public WiredEffectGiveScoreToTeam(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredEffectGiveScoreToTeam(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     public WiredEffectGiveScoreToTeam(ResultSet set, Item baseItem) throws SQLException {

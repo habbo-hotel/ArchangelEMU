@@ -3,8 +3,9 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.map.hash.THashMap;
 
@@ -29,8 +30,8 @@ public abstract class InteractionCustomValues extends RoomItem {
         }
     }
 
-    public InteractionCustomValues(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, THashMap<String, String> defaultValues) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionCustomValues(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells, THashMap<String, String> defaultValues) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         this.values.putAll(defaultValues);
     }
@@ -52,7 +53,7 @@ public abstract class InteractionCustomValues extends RoomItem {
 
     @Override
     public void run() {
-        this.setExtradata(this.toExtraData());
+        this.setExtraData(this.toExtraData());
 
         super.run();
     }

@@ -185,7 +185,7 @@ public class RoomTraxManager implements Disposable {
 
     public void play(int index, Habbo starter) {
         if (this.currentlyPlaying == null) {
-            this.jukeBox.setExtradata("1");
+            this.jukeBox.setExtraData("1");
             this.room.updateItem(this.jukeBox);
         }
 
@@ -226,7 +226,7 @@ public class RoomTraxManager implements Disposable {
         this.starter = null;
         this.playingIndex = 0;
 
-        this.jukeBox.setExtradata("0");
+        this.jukeBox.setExtraData("0");
         this.room.updateItem(this.jukeBox);
 
         this.room.sendComposer(new NowPlayingMessageComposer(null, -1, 0).compose());
@@ -298,7 +298,7 @@ public class RoomTraxManager implements Disposable {
             musicDisc.needsUpdate(true);
             Emulator.getThreading().run(musicDisc);
 
-            Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getOwnerId());
+            Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getOwnerInfo().getId());
 
             if (owner != null) {
                 owner.getInventory().getItemsComponent().addItem(musicDisc);
@@ -328,7 +328,7 @@ public class RoomTraxManager implements Disposable {
                             musicDisc.needsUpdate(true);
                             Emulator.getThreading().run(musicDisc);
 
-                            Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getOwnerId());
+                            Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getOwnerInfo().getId());
 
                             if (owner != null) {
                                 owner.getInventory().getItemsComponent().addItem(musicDisc);

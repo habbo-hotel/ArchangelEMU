@@ -22,7 +22,7 @@ class HopperActionTwo implements Runnable {
     
     @Override
     public void run() {
-        this.teleportOne.setExtradata("2");
+        this.teleportOne.setExtraData("2");
 
         int targetRoomId = 0;
         int targetItemId = 0;
@@ -44,7 +44,7 @@ class HopperActionTwo implements Runnable {
         if (targetRoomId != 0 && targetItemId != 0) {
             Emulator.getThreading().run(new HopperActionThree(this.teleportOne, this.room, this.client, targetRoomId, targetItemId), 500);
         } else {
-            this.teleportOne.setExtradata("0");
+            this.teleportOne.setExtraData("0");
             this.client.getHabbo().getRoomUnit().setCanWalk(true);
             this.client.getHabbo().getRoomUnit().setTeleporting(false);
             Emulator.getThreading().run(new HopperActionFour(this.teleportOne, this.room, this.client), 500);

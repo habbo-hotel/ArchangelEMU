@@ -82,6 +82,8 @@ public class HabboInfo implements Runnable {
         this.loadCurrencies();
         this.loadSavedSearches();
         this.loadMessengerCategories();
+
+        Emulator.getGameEnvironment().getHabboManager().getHabboInfoCache().getData().remove(this.id);
     }
 
     private void loadCurrencies() {

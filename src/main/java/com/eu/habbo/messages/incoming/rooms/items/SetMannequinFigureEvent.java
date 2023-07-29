@@ -20,7 +20,7 @@ public class SetMannequinFigureEvent extends MessageHandler {
         if (item == null)
             return;
 
-        String[] data = item.getExtradata().split(":");
+        String[] data = item.getExtraData().split(":");
         //TODO: Only clothing not whole body part.
 
         StringBuilder look = new StringBuilder();
@@ -36,9 +36,9 @@ public class SetMannequinFigureEvent extends MessageHandler {
         }
 
         if (data.length == 3) {
-            item.setExtradata(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + data[2]);
+            item.setExtraData(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + data[2]);
         } else {
-            item.setExtradata(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + habbo.getHabboInfo().getUsername() + "'s look.");
+            item.setExtraData(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + habbo.getHabboInfo().getUsername() + "'s look.");
         }
 
         item.needsUpdate(true);

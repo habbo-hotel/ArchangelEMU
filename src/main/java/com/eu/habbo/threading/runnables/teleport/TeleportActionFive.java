@@ -37,7 +37,7 @@ class TeleportActionFive implements Runnable {
 
         if (this.room.getLayout() == null || this.currentTeleport == null) return;
 
-        RoomTile currentLocation = this.room.getLayout().getTile(this.currentTeleport.getX(), this.currentTeleport.getY());
+        RoomTile currentLocation = this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY());
         RoomTile tile = this.room.getLayout().getTileInFront(currentLocation, this.currentTeleport.getRotation());
 
         if (tile != null) {
@@ -55,7 +55,7 @@ class TeleportActionFive implements Runnable {
             Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onSuccess, onSuccess));
         }
 
-        this.currentTeleport.setExtradata("1");
+        this.currentTeleport.setExtraData("1");
         this.room.updateItem(this.currentTeleport);
 
         Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), 1000);

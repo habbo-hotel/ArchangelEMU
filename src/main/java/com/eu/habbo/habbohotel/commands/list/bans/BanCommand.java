@@ -8,7 +8,6 @@ import com.eu.habbo.habbohotel.modtool.ModToolBanType;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -54,7 +53,7 @@ public class BanCommand extends Command {
         if (t != null) {
             target = t.getHabboInfo();
         } else {
-            target = HabboManager.getOfflineHabboInfo(params[1]);
+            target = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(params[1]);
         }
 
         if (target == null) {

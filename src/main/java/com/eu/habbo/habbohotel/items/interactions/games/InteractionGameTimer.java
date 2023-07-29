@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -76,7 +77,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
             }
 
             if (data.length >= 1) {
-                this.setExtradata(data[0] + "\t0");
+                this.setExtraData(data[0] + "\t0");
             }
         }
         catch (Exception e) {
@@ -85,8 +86,8 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
         }
     }
 
-    public InteractionGameTimer(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionGameTimer(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         parseCustomParams(item);
     }
@@ -163,7 +164,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
     public void onPickUp(Room room) {
         this.endGame(room);
 
-        this.setExtradata(this.baseTime + "\t" + this.baseTime);
+        this.setExtraData(this.baseTime + "\t" + this.baseTime);
         this.needsUpdate(true);
     }
 
@@ -175,7 +176,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
 
         this.timeNow = this.baseTime;
 
-        this.setExtradata(this.timeNow + "\t" + this.baseTime);
+        this.setExtraData(this.timeNow + "\t" + this.baseTime);
         room.updateItem(this);
         this.needsUpdate(true);
 
@@ -202,8 +203,8 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        if (this.getExtradata().isEmpty()) {
-            this.setExtradata("0\t" + this.TIMER_INTERVAL_STEPS[0]);
+        if (this.getExtraData().isEmpty()) {
+            this.setExtraData("0\t" + this.TIMER_INTERVAL_STEPS[0]);
         }
 
         // if wired triggered it
@@ -313,7 +314,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
         }
 
         this.baseTime = baseTime;
-        this.setExtradata(this.timeNow + "\t" + this.baseTime);
+        this.setExtraData(this.timeNow + "\t" + this.baseTime);
 
         this.timeNow = this.baseTime;
         room.updateItem(this);
@@ -322,7 +323,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
 
     @Override
     public String getDatabaseExtraData() {
-        return this.getExtradata();
+        return this.getExtraData();
     }
 
     @Override

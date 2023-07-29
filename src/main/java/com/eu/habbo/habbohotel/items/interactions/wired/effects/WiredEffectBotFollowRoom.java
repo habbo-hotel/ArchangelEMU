@@ -1,12 +1,15 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.effects;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
+import com.eu.habbo.threading.runnables.BotFollowHabbo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,8 +22,8 @@ public class WiredEffectBotFollowRoom extends InteractionWiredEffect {
         super(set, baseItem);
     }
 
-    public WiredEffectBotFollowRoom(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredEffectBotFollowRoom(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -32,9 +35,10 @@ public class WiredEffectBotFollowRoom extends InteractionWiredEffect {
             Bot bot = bots.get(0);
 
             if (this.getWiredSettings().getIntegerParams().get(PARAM_MODE) == 1) {
-                bot.startFollowingHabbo(habbo);
+                bot.setFollowingHabboId(habbo.getHabboInfo().getId());
+                Emulator.getThreading().run(new BotFollowHabbo(bot, habbo, habbo.getRoomUnit().getRoom()));
             } else {
-                bot.stopFollowingHabbo();
+                bot.setFollowingHabboId(0);
             }
 
             return true;

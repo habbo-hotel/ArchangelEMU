@@ -65,13 +65,13 @@ public class ApplySnapshotEvent extends MessageHandler {
                 RoomItem matchItem = room.getRoomItemManager().getRoomItemById(setting.getItem_id());
 
                 // Match state
-                if (wired.shouldMatchState() && matchItem.allowWiredResetState() && !setting.getState().equals(" ") && !matchItem.getExtradata().equals(setting.getState())) {
-                    matchItem.setExtradata(setting.getState());
+                if (wired.shouldMatchState() && matchItem.allowWiredResetState() && !setting.getState().equals(" ") && !matchItem.getExtraData().equals(setting.getState())) {
+                    matchItem.setExtraData(setting.getState());
                     room.updateItemState(matchItem);
                 }
 
-                RoomTile oldLocation = room.getLayout().getTile(matchItem.getX(), matchItem.getY());
-                double oldZ = matchItem.getZ();
+                RoomTile oldLocation = room.getLayout().getTile(matchItem.getCurrentPosition().getX(), matchItem.getCurrentPosition().getY());
+                double oldZ = matchItem.getCurrentZ();
 
                 // Match Position & Rotation
                 if (wired.shouldMatchRotation() && !wired.shouldMatchPosition()) {
@@ -86,7 +86,7 @@ public class ApplySnapshotEvent extends MessageHandler {
                     if (newLocation != null && newLocation.getState() != RoomTileState.INVALID && (newLocation != oldLocation || newRotation != matchItem.getRotation()) && room.getRoomItemManager().furnitureFitsAt(newLocation, matchItem, newRotation, true) == FurnitureMovementError.NONE) {
                         boolean sendUpdates = !slideAnimation;
                         if (room.getRoomItemManager().moveItemTo(matchItem, newLocation, newRotation, null, sendUpdates, true) == FurnitureMovementError.NONE && slideAnimation) {
-                            room.sendComposer(new FloorItemOnRollerComposer(matchItem, null, oldLocation, oldZ, newLocation, matchItem.getZ(), 0, room).compose());
+                            room.sendComposer(new FloorItemOnRollerComposer(matchItem, null, oldLocation, oldZ, newLocation, matchItem.getCurrentZ(), 0, room).compose());
                         }
                     }
                 }

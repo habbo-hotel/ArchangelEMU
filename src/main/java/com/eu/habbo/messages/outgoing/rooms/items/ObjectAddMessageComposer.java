@@ -21,7 +21,7 @@ public class ObjectAddMessageComposer extends MessageComposer {
         this.item.serializeExtradata(this.response);
         this.response.appendInt(-1);
         this.response.appendInt(this.item instanceof InteractionTeleport || this.item instanceof InteractionSwitch || this.item instanceof InteractionSwitchRemoteControl || this.item instanceof InteractionVendingMachine || this.item instanceof InteractionInformationTerminal || this.item instanceof InteractionPostIt || this.item instanceof InteractionSpinningBottle || this.item instanceof InteractionPuzzleBox ? 2 : this.item.isUsable() ? 1 : 0);
-        this.response.appendInt(this.item.getOwnerId());
+        this.response.appendInt(this.item.getOwnerInfo().getId());
         this.response.appendString(this.itemOwnerName);
         return this.response;
     }

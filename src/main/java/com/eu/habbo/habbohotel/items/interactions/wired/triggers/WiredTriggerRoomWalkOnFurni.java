@@ -3,8 +3,9 @@ package com.eu.habbo.habbohotel.items.interactions.wired.triggers;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 
 import java.sql.ResultSet;
@@ -15,8 +16,8 @@ public class WiredTriggerRoomWalkOnFurni extends InteractionWiredTrigger {
         super(set, baseItem);
     }
 
-    public WiredTriggerRoomWalkOnFurni(int id, int userId, Item item, String extraData, int limitedStack, int limitedSells) {
-        super(id, userId, item, extraData, limitedStack, limitedSells);
+    public WiredTriggerRoomWalkOnFurni(int id, HabboInfo ownerInfo, Item item, String extraData, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extraData, limitedStack, limitedSells);
     }
 
     @Override

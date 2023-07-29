@@ -8,7 +8,6 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import gnu.trove.iterator.TIntIntIterator;
 
 import java.text.SimpleDateFormat;
@@ -30,7 +29,7 @@ public class UserInfoCommand extends Command {
         HabboInfo habbo = (onlineHabbo != null ? onlineHabbo.getHabboInfo() : null);
 
         if (habbo == null) {
-            habbo = HabboManager.getOfflineHabboInfo(params[1]);
+            habbo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(params[1]);
         }
 
         if (habbo == null) {

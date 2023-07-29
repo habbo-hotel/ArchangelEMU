@@ -13,6 +13,7 @@ import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.threading.runnables.PetClearPosture;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import org.slf4j.Logger;
@@ -31,13 +32,13 @@ public class InteractionPetDrink extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionPetDrink(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionPetDrink(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public boolean canToggle(Habbo habbo, Room room) {
-        return RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getX(), this.getY()), habbo.getRoomUnit().getCurrentPosition());
+        return RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), habbo.getRoomUnit().getCurrentPosition());
     }
 
     @Override
@@ -47,7 +48,7 @@ public class InteractionPetDrink extends InteractionDefault {
 
         if (!this.canToggle(client.getHabbo(), room)) {
             RoomTile closestTile = null;
-            for (RoomTile tile : room.getLayout().getTilesAround(room.getLayout().getTile(this.getX(), this.getY()))) {
+            for (RoomTile tile : room.getLayout().getTilesAround(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()))) {
                 if (tile.isWalkable() && (closestTile == null || closestTile.distance(client.getHabbo().getRoomUnit().getCurrentPosition()) > tile.distance(client.getHabbo().getRoomUnit().getCurrentPosition()))) {
                     closestTile = tile;
                 }
@@ -68,17 +69,17 @@ public class InteractionPetDrink extends InteractionDefault {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        if (this.getExtradata() == null || this.getExtradata().isEmpty())
-            this.setExtradata("0");
+        if (this.getExtraData() == null || this.getExtraData().isEmpty())
+            this.setExtraData("0");
 
         Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null && pet.getPetData().haveDrinkItem(this) && pet.levelThirst >= 35) {
             pet.clearPosture();
-            pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getX(), this.getY()));
+            pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
             pet.getRoomUnit().setRotation(RoomRotation.values()[this.getRotation()]);
             pet.getRoomUnit().clearStatuses();
-            pet.getRoomUnit().setStatus(RoomUnitStatus.EAT, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
+            pet.getRoomUnit().addStatus(RoomUnitStatus.EAT, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
             pet.setPacketUpdate(true);
 
             Emulator.getThreading().run(() -> {
@@ -102,12 +103,12 @@ public class InteractionPetDrink extends InteractionDefault {
     private void change(Room room, int amount) {
         int state = 0;
 
-        if (this.getExtradata() == null || this.getExtradata().isEmpty()) {
-            this.setExtradata("0");
+        if (this.getExtraData() == null || this.getExtraData().isEmpty()) {
+            this.setExtraData("0");
         }
 
         try {
-            state = Integer.parseInt(this.getExtradata());
+            state = Integer.parseInt(this.getExtraData());
         } catch (Exception e) {
             LOGGER.error("Caught exception", e);
         }
@@ -121,7 +122,7 @@ public class InteractionPetDrink extends InteractionDefault {
             state = 0;
         }
 
-        this.setExtradata(state + "");
+        this.setExtraData(state + "");
         this.needsUpdate(true);
         room.updateItemState(this);
     }

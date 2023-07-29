@@ -13,6 +13,7 @@ import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 
@@ -26,20 +27,20 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
 
     public InteractionObstacle(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
         this.middleTiles = new THashSet<>();
     }
 
-    public InteractionObstacle(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionObstacle(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
         this.middleTiles = new THashSet<>();
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -155,12 +156,12 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
         middleTiles.clear();
 
         if(this.getRotation() == 2) {
-            middleTiles.add(room.getLayout().getTile((short)(this.getX() + 1), this.getY()));
-            middleTiles.add(room.getLayout().getTile((short)(this.getX() + 1), (short)(this.getY() + 1)));
+            middleTiles.add(room.getLayout().getTile((short)(this.getCurrentPosition().getX() + 1), this.getCurrentPosition().getY()));
+            middleTiles.add(room.getLayout().getTile((short)(this.getCurrentPosition().getX() + 1), (short)(this.getCurrentPosition().getY() + 1)));
         }
         else if(this.getRotation() == 4) {
-            middleTiles.add(room.getLayout().getTile(this.getX(), (short)(this.getY() + 1)));
-            middleTiles.add(room.getLayout().getTile((short)(this.getX() + 1), (short)(this.getY() + 1)));
+            middleTiles.add(room.getLayout().getTile(this.getCurrentPosition().getX(), (short)(this.getCurrentPosition().getY() + 1)));
+            middleTiles.add(room.getLayout().getTile((short)(this.getCurrentPosition().getX() + 1), (short)(this.getCurrentPosition().getY() + 1)));
         }
     }
 

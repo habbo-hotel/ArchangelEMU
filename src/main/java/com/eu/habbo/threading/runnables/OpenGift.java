@@ -33,7 +33,7 @@ public class OpenGift implements Runnable {
                 if (inside == null)
                     inside = i;
 
-                i.setOwnerId(this.habbo.getHabboInfo().getId());
+                i.setOwnerInfo(this.habbo.getHabboInfo());
                 i.needsUpdate(true);
                 i.run();
             }
@@ -42,7 +42,7 @@ public class OpenGift implements Runnable {
 
             this.habbo.getInventory().getItemsComponent().addItems(items);
 
-            RoomTile tile = this.room.getLayout().getTile(this.item.getX(), this.item.getY());
+            RoomTile tile = this.room.getLayout().getTile(this.item.getCurrentPosition().getX(), this.item.getCurrentPosition().getY());
             if (tile != null) {
                 this.room.updateTile(tile);
             }

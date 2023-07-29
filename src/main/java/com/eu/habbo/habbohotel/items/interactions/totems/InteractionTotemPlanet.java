@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
@@ -16,14 +17,14 @@ public class InteractionTotemPlanet extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionTotemPlanet(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionTotemPlanet(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     public TotemPlanetType getPlanetType() {
         int extraData;
         try {
-            extraData = Integer.parseInt(this.getExtradata());
+            extraData = Integer.parseInt(this.getExtraData());
         } catch(NumberFormatException ex) {
             extraData = 0;
         }
@@ -32,7 +33,7 @@ public class InteractionTotemPlanet extends InteractionDefault {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        if(client.getHabbo().getHabboInfo().getId() != this.getOwnerId()) {
+        if(client.getHabbo().getHabboInfo().getId() != this.getOwnerInfo().getId()) {
             super.onClick(client, room, objects);
             return;
         }
@@ -40,12 +41,13 @@ public class InteractionTotemPlanet extends InteractionDefault {
         InteractionTotemLegs legs = null;
         InteractionTotemHead head = null;
 
-        RoomTile tile = room.getLayout().getTile(this.getX(), this.getY());
+        RoomTile tile = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
         THashSet<RoomItem> items = room.getRoomItemManager().getItemsAt(tile);
 
         for(RoomItem item : items) {
-            if(item instanceof InteractionTotemLegs && item.getZ() < this.getZ())
-                legs = (InteractionTotemLegs)item;
+            if(item instanceof InteractionTotemLegs) {
+                if (item.getCurrentZ() < this.getCurrentZ()) legs = (InteractionTotemLegs) item;
+            }
         }
 
         if(legs == null) {
@@ -54,8 +56,9 @@ public class InteractionTotemPlanet extends InteractionDefault {
         }
 
         for(RoomItem item : items) {
-            if(item instanceof InteractionTotemHead && item.getZ() > legs.getZ())
-                head = (InteractionTotemHead)item;
+            if(item instanceof InteractionTotemHead) {
+                if (item.getCurrentZ() > legs.getCurrentZ()) head = (InteractionTotemHead) item;
+            }
         }
 
         if(head == null) {

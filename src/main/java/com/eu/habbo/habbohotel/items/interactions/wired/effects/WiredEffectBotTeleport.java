@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
@@ -26,8 +27,8 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
         super(set, baseItem);
     }
 
-    public WiredEffectBotTeleport(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredEffectBotTeleport(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
                 Room room1 = bot.getRoom();
                 if (item.getRoomId() == room1.getRoomInfo().getId()) {
                     if (i == j) {
-                        teleportUnitToTile(bot.getRoomUnit(), room.getLayout().getTile(item.getX(), item.getY()));
+                        teleportUnitToTile(bot.getRoomUnit(), room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
                         return true;
                     } else {
                         j++;

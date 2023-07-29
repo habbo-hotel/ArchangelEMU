@@ -21,7 +21,7 @@ public class ActionDown extends PetAction {
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         if (pet.getTask() != PetTasks.DOWN && !pet.getRoomUnit().hasStatus(RoomUnitStatus.LAY)) {
             pet.getRoomUnit().setCmdLayEnabled(true);
-            pet.getRoomUnit().setStatus(RoomUnitStatus.LAY, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
+            pet.getRoomUnit().addStatus(RoomUnitStatus.LAY, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
 
             Emulator.getThreading().run(() -> {
                 pet.getRoomUnit().setCmdLayEnabled(false);

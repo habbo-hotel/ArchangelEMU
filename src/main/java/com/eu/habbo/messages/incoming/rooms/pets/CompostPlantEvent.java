@@ -32,11 +32,12 @@ public class CompostPlantEvent extends MessageHandler {
                         Item baseItem = Emulator.getGameEnvironment().getItemManager().getItem("mnstr_compost");
 
                         if (baseItem != null) {
-                            RoomItem compost = Emulator.getGameEnvironment().getItemManager().createItem(pet.getUserId(), baseItem, 0, 0, "");
-                            compost.setX(pet.getRoomUnit().getCurrentPosition().getX());
-                            compost.setY(pet.getRoomUnit().getCurrentPosition().getY());
-                            compost.setZ(pet.getRoomUnit().getCurrentZ());
+                            RoomItem compost = Emulator.getGameEnvironment().getItemManager().createItem(pet.getUserId(), baseItem, 0, 0, "");;
+
+                            compost.setCurrentPosition(pet.getRoomUnit().getCurrentPosition());
+                            compost.setCurrentZ(pet.getRoomUnit().getCurrentZ());
                             compost.setRotation(pet.getRoomUnit().getBodyRotation().getValue());
+
                             room.getRoomItemManager().addRoomItem(compost);
                             room.sendComposer(new ObjectAddMessageComposer(compost, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         }

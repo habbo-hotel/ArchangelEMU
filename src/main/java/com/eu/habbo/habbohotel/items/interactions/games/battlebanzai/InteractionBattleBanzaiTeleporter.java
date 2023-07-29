@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.BanzaiRandomTeleport;
 
@@ -16,18 +17,18 @@ import java.sql.SQLException;
 public class InteractionBattleBanzaiTeleporter extends RoomItem {
     public InteractionBattleBanzaiTeleporter(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionBattleBanzaiTeleporter(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionBattleBanzaiTeleporter(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -60,7 +61,7 @@ public class InteractionBattleBanzaiTeleporter extends RoomItem {
             RoomItem target = room.getRoomSpecialTypes().getRandomTeleporter(null, this);
             if (target == null) return;
 
-            this.setExtradata("1");
+            this.setExtraData("1");
             room.updateItemState(this);
             roomUnit.removeStatus(RoomUnitStatus.MOVE);
             roomUnit.setGoalLocation(roomUnit.getCurrentPosition());

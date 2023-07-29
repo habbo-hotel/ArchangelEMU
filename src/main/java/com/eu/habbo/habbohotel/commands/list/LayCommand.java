@@ -35,7 +35,7 @@ public class LayCommand extends Command {
             return false;
         }
 
-        gameClient.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.LAY, 0.5 + "");
+        gameClient.getHabbo().getRoomUnit().addStatus(RoomUnitStatus.LAY, 0.5 + "");
         gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserUpdateComposer(gameClient.getHabbo().getRoomUnit()).compose());
         return true;
     }

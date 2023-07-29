@@ -19,17 +19,17 @@ public class OneWayGateActionOne implements Runnable {
     public void run() {
         this.room.sendComposer(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
 
-        RoomTile t = this.room.getLayout().getTileInFront(this.room.getLayout().getTile(this.oneWayGate.getX(), this.oneWayGate.getY()), (this.oneWayGate.getRotation() + 4) % 8);
+        RoomTile t = this.room.getLayout().getTileInFront(this.room.getLayout().getTile(this.oneWayGate.getCurrentPosition().getX(), this.oneWayGate.getCurrentPosition().getY()), (this.oneWayGate.getRotation() + 4) % 8);
 
         if (this.client.getHabbo().getRoomUnit().isAnimateWalk()) {
             this.client.getHabbo().getRoomUnit().setAnimateWalk(false);
         }
 
         if (t.isWalkable()) {
-            if (this.room.getLayout().tileWalkable(t) && this.client.getHabbo().getRoomUnit().getCurrentPosition().getX() == this.oneWayGate.getX() && this.client.getHabbo().getRoomUnit().getCurrentPosition().getY() == this.oneWayGate.getY()) {
+            if (this.room.getLayout().tileWalkable(t) && this.client.getHabbo().getRoomUnit().getCurrentPosition().getX() == this.oneWayGate.getCurrentPosition().getX() && this.client.getHabbo().getRoomUnit().getCurrentPosition().getY() == this.oneWayGate.getCurrentPosition().getY()) {
                 this.client.getHabbo().getRoomUnit().setGoalLocation(t);
 
-                if (!this.oneWayGate.getExtradata().equals("0")) {
+                if (!this.oneWayGate.getExtraData().equals("0")) {
                     Emulator.getThreading().run(new HabboItemNewState(this.oneWayGate, this.room, "0"), 1000);
                 }
             }
@@ -38,7 +38,7 @@ public class OneWayGateActionOne implements Runnable {
 
             //}
             else {
-                if (!this.oneWayGate.getExtradata().equals("0")) {
+                if (!this.oneWayGate.getExtraData().equals("0")) {
                     Emulator.getThreading().run(new HabboItemNewState(this.oneWayGate, this.room, "0"), 1000);
                 }
             }

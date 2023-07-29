@@ -260,8 +260,7 @@ public class RoomSpecialTypes {
 
             for (Map.Entry<WiredTriggerType, List<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
                 for (InteractionWiredTrigger trigger : map.getValue()) {
-                    if (trigger.getX() == x && trigger.getY() == y)
-                        triggers.add(trigger);
+                    if (trigger.getCurrentPosition().getX() == x && trigger.getCurrentPosition().getY() == y) triggers.add(trigger);
                 }
             }
 
@@ -324,8 +323,7 @@ public class RoomSpecialTypes {
 
             for (Map.Entry<WiredEffectType, THashSet<InteractionWiredEffect>> map : this.wiredEffects.entrySet()) {
                 for (InteractionWiredEffect effect : map.getValue()) {
-                    if (effect.getX() == x && effect.getY() == y)
-                        effects.add(effect);
+                    if (effect.getCurrentPosition().getX() == x && effect.getCurrentPosition().getY() == y) effects.add(effect);
                 }
             }
 
@@ -389,7 +387,7 @@ public class RoomSpecialTypes {
 
             for (Map.Entry<WiredConditionType, THashSet<InteractionWiredCondition>> map : this.wiredConditions.entrySet()) {
                 for (InteractionWiredCondition condition : map.getValue()) {
-                    if (condition.getX() == x && condition.getY() == y)
+                    if (condition.getCurrentPosition().getX() == x && condition.getCurrentPosition().getY() == y)
                         conditions.add(condition);
                 }
             }
@@ -435,7 +433,7 @@ public class RoomSpecialTypes {
             THashSet<InteractionWiredExtra> extras = new THashSet<>();
 
             for (Map.Entry<Integer, InteractionWiredExtra> map : this.wiredExtras.entrySet()) {
-                if (map.getValue().getX() == x && map.getValue().getY() == y) {
+                if (map.getValue().getCurrentPosition().getX() == x && map.getValue().getCurrentPosition().getY() == y) {
                     extras.add(map.getValue());
                 }
             }
@@ -459,7 +457,7 @@ public class RoomSpecialTypes {
     public boolean hasExtraType(short x, short y, Class<? extends InteractionWiredExtra> type) {
         synchronized (this.wiredExtras) {
             for (Map.Entry<Integer, InteractionWiredExtra> map : this.wiredExtras.entrySet()) {
-                if (map.getValue().getX() == x && map.getValue().getY() == y && map.getValue().getClass().isAssignableFrom(type)) {
+                if (map.getValue().getCurrentPosition().getX() == x && map.getValue().getCurrentPosition().getY() == y && map.getValue().getClass().isAssignableFrom(type)) {
                     return true;
                 }
             }
@@ -680,7 +678,7 @@ public class RoomSpecialTypes {
         RoomItem i = null;
         synchronized (this.undefined) {
             for (RoomItem item : this.undefined.values()) {
-                if (i == null || item.getZ() < i.getZ()) {
+                if (i == null || item.getCurrentZ() < i.getCurrentZ()) {
                     if (item.getClass().isAssignableFrom(type)) {
                         i = item;
                     }
@@ -725,7 +723,7 @@ public class RoomSpecialTypes {
 
     public Rectangle tentAt(RoomTile location) {
         for (RoomItem item : this.getItemsOfType(InteractionTent.class)) {
-            Rectangle rectangle = RoomLayout.getRectangle(item.getX(), item.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+            Rectangle rectangle = RoomLayout.getRectangle(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
             if (RoomLayout.tileInSquare(rectangle, location)) {
                 return rectangle;
             }

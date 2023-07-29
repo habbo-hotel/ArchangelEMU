@@ -93,14 +93,14 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                 if (((MonsterplantPet) pet).isDead()) {
                     ((MonsterplantPet) pet).setDeathTimestamp(Emulator.getIntUnixTimestamp() + MonsterplantPet.TIME_TO_LIVE);
                     pet.getRoomUnit().clearStatuses();
-                    pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "rev");
+                    pet.getRoomUnit().addStatus(RoomUnitStatus.GESTURE, "rev");
                     pet.setPacketUpdate(true);
 
                     this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(item);
                     this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new RemoveFloorItemComposer(item).compose());
                     this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
                     this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new PetStatusUpdateComposer(pet).compose());
-                    this.client.getHabbo().getRoomUnit().getRoom().updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
+                    this.client.getHabbo().getRoomUnit().getRoom().updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantHealer"));
                     pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
@@ -110,13 +110,13 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                     pet.setCreated(pet.getCreated() - MonsterplantPet.GROW_TIME);
                     pet.getRoomUnit().clearStatuses();
                     pet.cycle();
-                    pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "spd");
-                    pet.getRoomUnit().setStatus(RoomUnitStatus.fromString("grw" + ((MonsterplantPet) pet).getGrowthStage()), "");
+                    pet.getRoomUnit().addStatus(RoomUnitStatus.GESTURE, "spd");
+                    pet.getRoomUnit().addStatus(RoomUnitStatus.fromString("grw" + ((MonsterplantPet) pet).getGrowthStage()), "");
                     this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(item);
                     this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new RemoveFloorItemComposer(item).compose());
                     this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
                     this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new PetStatusUpdateComposer(pet).compose());
-                    this.client.getHabbo().getRoomUnit().getRoom().updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
+                    this.client.getHabbo().getRoomUnit().getRoom().updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                     pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
                     pet.cycle();
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
@@ -132,13 +132,13 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                     {
                         ((MonsterplantPet) pet).setCanBreed(true);
                         pet.getRoomUnit().clearStatuses();
-                        pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "reb");
+                        pet.getRoomUnit().addStatus(RoomUnitStatus.GESTURE, "reb");
 
                         this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(item);
                         this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new RemoveFloorItemComposer(item).compose());
                         this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
                         this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new PetStatusUpdateComposer(pet).compose());
-                        this.client.getHabbo().getRoomUnit().getRoom().updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
+                        this.client.getHabbo().getRoomUnit().getRoom().updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation()));
                         pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
                         Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
                     }

@@ -12,6 +12,7 @@ import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.RoomUnitGiveHanditem;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
@@ -26,12 +27,12 @@ import java.util.List;
 public class InteractionVendingMachine extends RoomItem {
     public InteractionVendingMachine(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionVendingMachine(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionVendingMachine(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
     
     public THashSet<RoomTile> getActivatorTiles(Room room) {
@@ -41,14 +42,14 @@ public class InteractionVendingMachine extends RoomItem {
         if (tileInFront != null)
             tiles.add(tileInFront);
 
-        tiles.add(room.getLayout().getTile(this.getX(), this.getY()));
+        tiles.add(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
         return tiles;
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -77,7 +78,7 @@ public class InteractionVendingMachine extends RoomItem {
             return;
         }
 
-        this.setExtradata("1");
+        this.setExtraData("1");
         room.updateItem(this);
 
         try {
@@ -159,8 +160,8 @@ public class InteractionVendingMachine extends RoomItem {
     @Override
     public void run() {
         super.run();
-        if (this.getExtradata().equals("1")) {
-            this.setExtradata("0");
+        if (this.getExtraData().equals("1")) {
+            this.setExtraData("0");
             Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
             if (room != null) {
                 room.updateItem(this);
@@ -184,7 +185,7 @@ public class InteractionVendingMachine extends RoomItem {
     }
 
     private void rotateToMachine(RoomUnit unit) {
-        RoomRotation rotation = RoomRotation.values()[Rotation.Calculate(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY(), this.getX(), this.getY())];
+        RoomRotation rotation = RoomRotation.values()[Rotation.Calculate(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY(), this.getCurrentPosition().getX(), this.getCurrentPosition().getY())];
 
         if(Math.abs(unit.getBodyRotation().getValue() - rotation.getValue()) > 1) {
             unit.setRotation(rotation);

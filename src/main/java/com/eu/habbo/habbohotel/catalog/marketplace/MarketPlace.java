@@ -281,7 +281,7 @@ public class MarketPlace {
                                 }
                                 event.price = calculateCommision(event.price);
 
-                                item.setOwnerId(client.getHabbo().getHabboInfo().getId());
+                                item.setOwnerInfo(client.getHabbo().getHabboInfo());
                                 item.needsUpdate(true);
                                 Emulator.getThreading().run(item);
 
@@ -362,7 +362,7 @@ public class MarketPlace {
         MarketPlaceOffer offer = new MarketPlaceOffer(event.getItem(), event.getPrice(), client.getHabbo());
         client.getHabbo().getInventory().addMarketplaceOffer(offer);
         client.getHabbo().getInventory().getItemsComponent().removeHabboItem(event.getItem());
-        item.setOwnerId(-1);
+        item.setOwnerInfo(null);
         item.needsUpdate(true);
         Emulator.getThreading().run(item);
 

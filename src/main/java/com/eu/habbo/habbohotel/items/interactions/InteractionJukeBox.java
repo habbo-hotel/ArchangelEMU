@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
@@ -15,14 +16,14 @@ public class InteractionJukeBox extends RoomItem {
         super(set, baseItem);
     }
 
-    public InteractionJukeBox(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionJukeBox(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -60,7 +61,7 @@ public class InteractionJukeBox extends RoomItem {
     @Override
     public void onPickUp(Room room) {
         super.onPickUp(room);
-        this.setExtradata("0");
+        this.setExtraData("0");
         room.getRoomTraxManager().removeTraxOnRoom(this);
     }
 
@@ -69,7 +70,7 @@ public class InteractionJukeBox extends RoomItem {
         super.onPlace(room);
         room.getRoomTraxManager().addTraxOnRoom(this);
         if (room.getRoomTraxManager().isPlaying()) {
-            this.setExtradata("1");
+            this.setExtraData("1");
         }
     }
 }

@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ServerMessage;
 
@@ -17,14 +18,14 @@ public class InteractionGate extends RoomItem {
         super(set, baseItem);
     }
 
-    public InteractionGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionGate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -34,7 +35,7 @@ public class InteractionGate extends RoomItem {
     }
 
     public boolean isWalkable() {
-        return this.getExtradata().equals("1");
+        return this.getExtraData().equals("1");
     }
 
     @Override
@@ -44,16 +45,16 @@ public class InteractionGate extends RoomItem {
         if (client != null && !room.getRoomRightsManager().hasRights(client.getHabbo()) && !executedByWired) return;
 
         // If a Habbo is standing on a tile occupied by the gate, the gate shouldn't open/close
-        for (RoomTile tile : room.getLayout().getTilesAt(room.getLayout().getTile(this.getX(), this.getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))
+        for (RoomTile tile : room.getLayout().getTilesAt(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()))
             if (room.getRoomUnitManager().hasHabbosAt(tile))
                 return;
 
         // Gate closed = 0, open = 1
-        if (this.getExtradata().length() == 0)
-            this.setExtradata("0");
+        if (this.getExtraData().length() == 0)
+            this.setExtraData("0");
 
-        this.setExtradata((Integer.parseInt(this.getExtradata()) + 1) % 2 + "");
-        room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
+        this.setExtraData((Integer.parseInt(this.getExtraData()) + 1) % 2 + "");
+        room.updateTile(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
         this.needsUpdate(true);
         room.updateItemState(this);
 

@@ -21,7 +21,7 @@ public class ActionSwing extends PetAction {
             boolean findTree = pet.findPetItem(PetTasks.SWING, InteractionPetTree.class);
             if (!findTree && pet.getPetData().getToyItems().stream().noneMatch(item -> item.getInteractionType().getType() == InteractionPetTree.class)) {
                 pet.getRoomUnit().setCanWalk(false);
-                pet.getRoomUnit().setStatus(RoomUnitStatus.SWING, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
+                pet.getRoomUnit().addStatus(RoomUnitStatus.SWING, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
 
                 Emulator.getThreading().run(() -> {
                     pet.getRoomUnit().setCanWalk(true);

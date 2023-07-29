@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import com.eu.habbo.threading.runnables.WiredCollissionRunnable;
@@ -32,8 +33,8 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
         this.lastDirections = new THashMap<>();
     }
 
-    public WiredEffectMoveFurniTowards(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredEffectMoveFurniTowards(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
         this.lastDirections = new THashMap<>();
     }
 
@@ -41,7 +42,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
         List<RoomRotation> availableDirections = new ArrayList<>();
         RoomLayout layout = room.getLayout();
 
-        RoomTile currentTile = layout.getTile(item.getX(), item.getY());
+        RoomTile currentTile = layout.getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
 
         RoomRotation[] rotations = new RoomRotation[]{RoomRotation.NORTH, RoomRotation.EAST, RoomRotation.SOUTH, RoomRotation.WEST};
 
@@ -96,7 +97,7 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                 RoomRotation[] rotations = new RoomRotation[]{RoomRotation.NORTH, RoomRotation.EAST, RoomRotation.SOUTH, RoomRotation.WEST};
 
                 for (RoomRotation rot : rotations) {
-                    RoomTile startTile = layout.getTile(item.getX(), item.getY());
+                    RoomTile startTile = layout.getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
 
                     for (int ii = 0; ii <= i; ii++) {
                         if (startTile == null)
@@ -123,25 +124,25 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                 continue;
 
             if (target != null) {
-                if (target.getCurrentPosition().getX() == item.getX()) {
-                    if (item.getY() < target.getCurrentPosition().getY())
+                if (target.getCurrentPosition().getX() == item.getCurrentPosition().getX()) {
+                    if (item.getCurrentPosition().getY() < target.getCurrentPosition().getY())
                         moveDirection = RoomRotation.SOUTH;
                     else
                         moveDirection = RoomRotation.NORTH;
                 } else {
-                    if (target.getCurrentPosition().getY() == item.getY()) {
-                        if (item.getX() < target.getCurrentPosition().getX())
+                    if (target.getCurrentPosition().getY() == item.getCurrentPosition().getY()) {
+                        if (item.getCurrentPosition().getX() < target.getCurrentPosition().getX())
                             moveDirection = RoomRotation.EAST;
                         else
                             moveDirection = RoomRotation.WEST;
                     } else {
-                        if (target.getCurrentPosition().getX() - item.getX() > target.getCurrentPosition().getY() - item.getY()) {
-                            if (target.getCurrentPosition().getX() - item.getX() > 0)
+                        if (target.getCurrentPosition().getX() - item.getCurrentPosition().getX() > target.getCurrentPosition().getY() - item.getCurrentPosition().getY()) {
+                            if (target.getCurrentPosition().getX() - item.getCurrentPosition().getX() > 0)
                                 moveDirection = RoomRotation.EAST;
                             else
                                 moveDirection = RoomRotation.WEST;
                         } else {
-                            if (target.getCurrentPosition().getY() - item.getY() > 0)
+                            if (target.getCurrentPosition().getY() - item.getCurrentPosition().getY() > 0)
                                 moveDirection = RoomRotation.SOUTH;
                             else
                                 moveDirection = RoomRotation.NORTH;
@@ -193,16 +194,16 @@ public class WiredEffectMoveFurniTowards extends InteractionWiredEffect {
                 }
             }
 
-            RoomTile newTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getX(), item.getY()), moveDirection.getValue());
+            RoomTile newTile = room.getLayout().getTileInFront(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), moveDirection.getValue());
 
-            RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
-            double oldZ = item.getZ();
+            RoomTile oldLocation = room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
+            double oldZ = item.getCurrentZ();
 
             if(newTile != null) {
                 lastDirections.put(item.getId(), moveDirection);
                 if (newTile.getState() != RoomTileState.INVALID && newTile != oldLocation && room.getRoomItemManager().furnitureFitsAt(newTile, item, item.getRotation(), true) == FurnitureMovementError.NONE) {
                     if (room.getRoomItemManager().moveItemTo(item, newTile, item.getRotation(), null, false, true) == FurnitureMovementError.NONE) {
-                        room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newTile, item.getZ(), 0, room).compose());
+                        room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newTile, item.getCurrentZ(), 0, room).compose());
                     }
                 }
             }

@@ -42,7 +42,7 @@ public class SetObjectDataEvent extends MessageHandler {
                 ((InteractionCustomValues) item).values.put(key, value);
             }
 
-            item.setExtradata(((InteractionCustomValues) item).toExtraData());
+            item.setExtraData(((InteractionCustomValues) item).toExtraData());
             item.needsUpdate(true);
             Emulator.getThreading().run(item);
             room.updateItem(item);

@@ -29,14 +29,14 @@ public class CustomizeAvatarWithFurniEvent extends MessageHandler {
         if (this.client.getHabbo().getRoomUnit().getRoom() != null && this.client.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(this.client.getHabbo())) {
             RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
-            if (item != null && item.getOwnerId() == this.client.getHabbo().getHabboInfo().getId()) {
+            if (item != null && item.getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId()) {
                 if (item instanceof InteractionClothing) {
                     ClothItem clothing = Emulator.getGameEnvironment().getCatalogManager().getClothing(item.getBaseItem().getName());
 
                     if (clothing != null) {
                         if (!this.client.getHabbo().getInventory().getWardrobeComponent().getClothing().contains(clothing.getId())) {
                             item.setRoomId(0);
-                            RoomTile tile = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile(item.getX(), item.getY());
+                            RoomTile tile = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
                             this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(item);
                             this.client.getHabbo().getRoomUnit().getRoom().updateTile(tile);
                             this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new HeightMapUpdateMessageComposer(tile.getX(), tile.getY(), tile.getZ(), tile.relativeHeight()).compose());

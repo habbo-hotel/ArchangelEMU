@@ -43,7 +43,7 @@ public class ObjectsMessageComposer extends MessageComposer {
             item.serializeExtradata(this.response);
             this.response.appendInt(-1);
             this.response.appendInt(item instanceof InteractionTeleport || item instanceof InteractionSwitch || item instanceof InteractionSwitchRemoteControl || item instanceof InteractionVendingMachine || item instanceof InteractionInformationTerminal || item instanceof InteractionPostIt || item instanceof InteractionSpinningBottle || item instanceof InteractionPuzzleBox ? 2 : item.isUsable() ? 1 : 0);
-            this.response.appendInt(item.getOwnerId());
+            this.response.appendInt(item.getOwnerInfo().getId());
         }
         return this.response;
     }

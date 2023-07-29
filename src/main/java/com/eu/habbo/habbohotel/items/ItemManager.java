@@ -51,8 +51,9 @@ import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraRandom;
 import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredExtraUnseen;
 import com.eu.habbo.habbohotel.items.interactions.wired.triggers.*;
-import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreManager;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
 import com.eu.habbo.plugin.events.emulator.EmulatorLoadItemsManagerEvent;
@@ -488,13 +489,14 @@ public class ItemManager {
             try (ResultSet set = statement.getGeneratedKeys()) {
                 if (set.next()) {
                     Class<? extends RoomItem> itemClass = item.getInteractionType().getType();
+                    HabboInfo userInfo = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(habboId);
 
                     if (itemClass != null) {
                         try {
-                            return itemClass.getDeclaredConstructor(int.class, int.class, Item.class, String.class, int.class, int.class).newInstance(set.getInt(1), habboId, item, extraData, limitedStack, limitedSells);
+                            return itemClass.getDeclaredConstructor(int.class, HabboInfo.class, Item.class, String.class, int.class, int.class).newInstance(set.getInt(1), userInfo, item, extraData, limitedStack, limitedSells);
                         } catch (Exception e) {
                             log.error("Caught exception", e);
-                            return new InteractionDefault(set.getInt(1), habboId, item, extraData, limitedStack, limitedSells);
+                            return new InteractionDefault(set.getInt(1), userInfo, item, extraData, limitedStack, limitedSells);
                         }
                     }
                 }
@@ -562,7 +564,7 @@ public class ItemManager {
                         preparedStatement.setInt(1, set.getInt(1));
                         preparedStatement.setInt(2, Integer.parseInt(itemId));
                         preparedStatement.addBatch();
-                        item = new InteractionDefault(set.getInt(1), habbo.getHabboInfo().getId(), Emulator.getGameEnvironment().getCatalogManager().ecotronItem, extradata, 0, 0);
+                        item = new InteractionDefault(set.getInt(1), habbo.getHabboInfo(), Emulator.getGameEnvironment().getCatalogManager().ecotronItem, extradata, 0, 0);
                     }
 
                     preparedStatement.executeBatch();

@@ -29,8 +29,8 @@ public class RoomDimmerChangeStateEvent extends MessageHandler {
             }
 
             RoomMoodlightData adjusted = RoomMoodlightData.fromString(extradata);
-            if (RoomMoodlightData.fromString(moodLight.getExtradata()).isEnabled()) adjusted.disable();
-            moodLight.setExtradata(adjusted.toString());
+            if (RoomMoodlightData.fromString(moodLight.getExtraData()).isEnabled()) adjusted.disable();
+            moodLight.setExtraData(adjusted.toString());
 
             moodLight.needsUpdate(true);
             room.updateItem(moodLight);

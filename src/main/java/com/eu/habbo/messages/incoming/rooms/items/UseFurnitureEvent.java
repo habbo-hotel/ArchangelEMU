@@ -69,11 +69,11 @@ public class UseFurnitureEvent extends MessageHandler {
             boolean isRare = item.getBaseItem().getName().contains("rare");
             int rarity = getRarity(item, isRare);
 
-            MonsterplantPet pet = Emulator.getGameEnvironment().getPetManager().createMonsterplant(room, this.client.getHabbo(), isRare, room.getLayout().getTile(item.getX(), item.getY()), rarity);
+            MonsterplantPet pet = Emulator.getGameEnvironment().getPetManager().createMonsterplant(room, this.client.getHabbo(), isRare, room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), rarity);
             room.sendComposer(new RemoveFloorItemComposer(item, true).compose());
             room.getRoomItemManager().removeRoomItem(item);
-            room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
-            room.getRoomUnitManager().placePet(pet, room, item.getX(), item.getY(), item.getZ());
+            room.updateTile(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
+            room.getRoomUnitManager().placePet(pet, room, item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getCurrentZ());
             pet.cycle();
             room.sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
             return true;
@@ -82,11 +82,11 @@ public class UseFurnitureEvent extends MessageHandler {
     }
 
     private int getRarity(RoomItem item, boolean isRare) {
-        if (item.getExtradata().isEmpty() || Integer.parseInt(item.getExtradata()) - 1 < 0) {
+        if (item.getExtraData().isEmpty() || Integer.parseInt(item.getExtraData()) - 1 < 0) {
             return isRare ? InteractionMonsterPlantSeed.randomGoldenRarityLevel() : InteractionMonsterPlantSeed.randomRarityLevel();
         } else {
             try {
-                return Integer.parseInt(item.getExtradata()) - 1;
+                return Integer.parseInt(item.getExtraData()) - 1;
             } catch (Exception ignored) {
                 return 0;
             }

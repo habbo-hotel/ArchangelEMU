@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionWiredCondition;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredConditionOperator;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import gnu.trove.set.hash.THashSet;
@@ -19,8 +20,8 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
         super(set, baseItem);
     }
 
-    public WiredConditionNotFurniHaveFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredConditionNotFurniHaveFurni(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -33,16 +34,22 @@ public class WiredConditionNotFurniHaveFurni extends InteractionWiredCondition {
 
         if(allFurni) {
             return this.getWiredSettings().getItems(room).stream().allMatch(item -> {
-                double minZ = item.getZ() + Item.getCurrentHeight(item);
-                THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
-                return occupiedTiles.stream().noneMatch(tile -> room.getRoomItemManager().getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
+                double minZ = item.getCurrentZ() + Item.getCurrentHeight(item);
+                THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+                return occupiedTiles.stream().noneMatch(tile -> room.getRoomItemManager().getItemsAt(tile).stream().anyMatch(matchedItem -> {
+                    if (matchedItem == item) return false;
+                    return matchedItem.getCurrentZ() >= minZ;
+                }));
             });
         }
         else {
             return this.getWiredSettings().getItems(room).stream().anyMatch(item -> {
-                double minZ = item.getZ() + Item.getCurrentHeight(item);
-                THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getX(), item.getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
-                return occupiedTiles.stream().noneMatch(tile -> room.getRoomItemManager().getItemsAt(tile).stream().anyMatch(matchedItem -> matchedItem != item && matchedItem.getZ() >= minZ));
+                double minZ = item.getCurrentZ() + Item.getCurrentHeight(item);
+                THashSet<RoomTile> occupiedTiles = room.getLayout().getTilesAt(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+                return occupiedTiles.stream().noneMatch(tile -> room.getRoomItemManager().getItemsAt(tile).stream().anyMatch(matchedItem -> {
+                    if (matchedItem == item) return false;
+                    return matchedItem.getCurrentZ() >= minZ;
+                }));
             });
         }
     }

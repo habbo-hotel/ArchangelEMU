@@ -43,7 +43,7 @@ public class RoomUnitWalkToLocation implements Runnable {
             return;
         }
 
-        if (!this.walker.getGoalLocation().equals(this.goalTile) || (this.walker.getPath().isEmpty() && !this.walker.hasStatus(RoomUnitStatus.MOVE))) {
+        if (!this.walker.getTargetPosition().equals(this.goalTile) || (this.walker.getPath().isEmpty() && !this.walker.hasStatus(RoomUnitStatus.MOVE))) {
             onFail();
             return;
         }

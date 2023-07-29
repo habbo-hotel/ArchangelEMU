@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 
@@ -20,14 +21,14 @@ public class InteractionNest extends RoomItem {
         super(set, baseItem);
     }
 
-    public InteractionNest(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionNest(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -71,10 +72,10 @@ public class InteractionNest extends RoomItem {
             return;
 
         pet.setTask(PetTasks.NEST);
-        pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getX(), this.getY()));
+        pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
         pet.getRoomUnit().clearStatuses();
         pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
-        pet.getRoomUnit().setStatus(RoomUnitStatus.LAY, room.getStackHeight(this.getX(), this.getY(), false) + "");
+        pet.getRoomUnit().addStatus(RoomUnitStatus.LAY, room.getStackHeight(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), false) + "");
         room.sendComposer(new UserUpdateComposer(roomUnit).compose());
     }
 

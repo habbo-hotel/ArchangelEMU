@@ -91,7 +91,7 @@ public class DeleteRoomEvent extends MessageHandler {
                         }
                     }
 
-                    Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
+                    room.dispose();
 
                     try (PreparedStatement rights = connection.prepareStatement("DELETE FROM room_rights WHERE room_id = ?")) {
                         rights.setInt(1, roomId);

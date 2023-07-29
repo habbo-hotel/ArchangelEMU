@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.CrackableExplode;
@@ -27,19 +28,19 @@ public class InteractionCrackable extends RoomItem {
         super(set, baseItem);
     }
 
-    public InteractionCrackable(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionCrackable(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
-        if (this.getExtradata().length() == 0)
-            this.setExtradata("0");
+        if (this.getExtraData().length() == 0)
+            this.setExtraData("0");
 
         serverMessage.appendInt(7 + (this.isLimited() ? 256 : 0));
 
-        serverMessage.appendString(Emulator.getGameEnvironment().getItemManager().calculateCrackState(Integer.parseInt(this.getExtradata()), Emulator.getGameEnvironment().getItemManager().getCrackableCount(this.getBaseItem().getId()), this.getBaseItem()) + "");
-        serverMessage.appendInt(Integer.parseInt(this.getExtradata()));
+        serverMessage.appendString(Emulator.getGameEnvironment().getItemManager().calculateCrackState(Integer.parseInt(this.getExtraData()), Emulator.getGameEnvironment().getItemManager().getCrackableCount(this.getBaseItem().getId()), this.getBaseItem()) + "");
+        serverMessage.appendInt(Integer.parseInt(this.getExtraData()));
         serverMessage.appendInt(Emulator.getGameEnvironment().getItemManager().getCrackableCount(this.getBaseItem().getId()));
 
         super.serializeExtradata(serverMessage);
@@ -69,13 +70,13 @@ public class InteractionCrackable extends RoomItem {
             if (this.cracked)
                 return;
 
-            if (this.userRequiredToBeAdjacent() && client.getHabbo().getRoomUnit().getCurrentPosition().distance(room.getLayout().getTile(this.getX(), this.getY())) > 1.5) {
-                client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), Rotation.Calculate(client.getHabbo().getRoomUnit().getCurrentPosition().getX(), client.getHabbo().getRoomUnit().getCurrentPosition().getY(), this.getX(), this.getY())));
+            if (this.userRequiredToBeAdjacent() && client.getHabbo().getRoomUnit().getCurrentPosition().distance(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY())) > 1.5) {
+                client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), Rotation.Calculate(client.getHabbo().getRoomUnit().getCurrentPosition().getX(), client.getHabbo().getRoomUnit().getCurrentPosition().getY(), this.getCurrentPosition().getX(), this.getCurrentPosition().getY())));
                 return;
             }
 
-            if (this.getExtradata().length() == 0)
-                this.setExtradata("0");
+            if (this.getExtraData().length() == 0)
+                this.setExtraData("0");
 
             if (this.getBaseItem().getEffectF() > 0)
                 if (client.getHabbo().getHabboInfo().getGender().equals(HabboGender.F) && this.getBaseItem().getEffectF() == client.getHabbo().getRoomUnit().getEffectId())
@@ -92,7 +93,7 @@ public class InteractionCrackable extends RoomItem {
     public void onTick(Habbo habbo, Room room) {
         if (this.cracked) return;
 
-        if (this.allowAnyone() || this.getOwnerId() == habbo.getHabboInfo().getId()) {
+        if (this.allowAnyone() || this.getOwnerInfo().getId() == habbo.getHabboInfo().getId()) {
             CrackableReward rewardData = Emulator.getGameEnvironment().getItemManager().getCrackableData(this.getBaseItem().getId());
 
             if (rewardData != null) {
@@ -102,10 +103,10 @@ public class InteractionCrackable extends RoomItem {
                 if(this.ticks < 1)
                 {
                     // If there are no ticks (for example because the room has been reloaded), check the current extradata of the item and update the ticks.
-                    this.ticks = Integer.parseInt(this.getExtradata());
+                    this.ticks = Integer.parseInt(this.getExtraData());
                 }
                 this.ticks++;
-                this.setExtradata("" + (this.ticks));
+                this.setExtraData("" + (this.ticks));
                 this.needsUpdate(true);
                 room.updateItem(this);
 
@@ -114,7 +115,7 @@ public class InteractionCrackable extends RoomItem {
                 }
                 if (!this.cracked && this.ticks == Emulator.getGameEnvironment().getItemManager().getCrackableCount(this.getBaseItem().getId())) {
                     this.cracked = true;
-                    Emulator.getThreading().run(new CrackableExplode(room, this, habbo, !this.placeInRoom(), this.getX(), this.getY()), 1500);
+                    Emulator.getThreading().run(new CrackableExplode(room, this, habbo, !this.placeInRoom(), this.getCurrentPosition()), 1500);
 
                     if (!rewardData.getAchievementCracked().isEmpty()) {
                         AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement(rewardData.getAchievementCracked()));
@@ -168,7 +169,7 @@ public class InteractionCrackable extends RoomItem {
     public void reset(Room room) {
         this.cracked = false;
         this.ticks = 0;
-        this.setExtradata("0");
+        this.setExtraData("0");
         room.updateItem(this);
     }
 

@@ -17,6 +17,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,8 +74,8 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
         super(set, baseItem);
     }
 
-    public WiredEffectToggleFurni(int id, int userId, Item item, String extraData, int limitedStack, int limitedSells) {
-        super(id, userId, item, extraData, limitedStack, limitedSells);
+    public WiredEffectToggleFurni(int id, HabboInfo ownerInfo, Item item, String extraData, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extraData, limitedStack, limitedSells);
     }
 
     @Override
@@ -98,9 +99,9 @@ public class WiredEffectToggleFurni extends InteractionWiredEffect {
             if (item.getBaseItem().getStateCount() > 1 || item instanceof InteractionGameTimer) {
                 int state = 0;
 
-                if (!item.getExtradata().isEmpty()) {
+                if (!item.getExtraData().isEmpty()) {
                     try {
-                        state = Integer.parseInt(item.getExtradata()); // assumes that extradata is state, could be something else for trophies etc.
+                        state = Integer.parseInt(item.getExtraData()); // assumes that extradata is state, could be something else for trophies etc.
                     } catch (NumberFormatException ignored) {
 
                     }

@@ -39,7 +39,7 @@ public class PurchasePhotoEvent extends MessageHandler {
         RoomItem photoItem = Emulator.getGameEnvironment().getItemManager().createItem(this.client.getHabbo().getHabboInfo().getId(), Emulator.getGameEnvironment().getItemManager().getItem(Emulator.getConfig().getInt("camera.item_id")), 0, 0, this.client.getHabbo().getHabboInfo().getPhotoJSON());
 
         if (photoItem != null) {
-            photoItem.setExtradata(photoItem.getExtradata().replace("%id%", photoItem.getId() + ""));
+            photoItem.setExtraData(photoItem.getExtraData().replace("%id%", photoItem.getId() + ""));
             photoItem.needsUpdate(true);
 
             this.client.getHabbo().getInventory().getItemsComponent().addItem(photoItem);

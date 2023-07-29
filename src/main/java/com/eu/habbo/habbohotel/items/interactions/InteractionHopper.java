@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.hopper.HopperActionOne;
 
@@ -16,18 +17,18 @@ import java.sql.SQLException;
 public class InteractionHopper extends RoomItem {
     public InteractionHopper(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionHopper(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionHopper(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -56,7 +57,7 @@ public class InteractionHopper extends RoomItem {
             if (loc != null) {
                 if (this.canUseTeleport(client, loc, room)) {
                     client.getHabbo().getRoomUnit().setTeleporting(true);
-                    this.setExtradata("1");
+                    this.setExtraData("1");
                     room.updateItemState(this);
 
                     Emulator.getThreading().run(new HopperActionOne(this, room, client), 500);
@@ -69,13 +70,13 @@ public class InteractionHopper extends RoomItem {
 
     @Override
     public void onPickUp(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
     @Override
     public void run() {
-        if (!this.getExtradata().equals("0")) {
-            this.setExtradata("0");
+        if (!this.getExtraData().equals("0")) {
+            this.setExtraData("0");
 
             Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
             if (room != null) {
@@ -95,7 +96,7 @@ public class InteractionHopper extends RoomItem {
         if (client.getHabbo().getRoomUnit().isTeleporting())
             return false;
 
-        RoomTile tile = room.getLayout().getTile(this.getX(), this.getY());
+        RoomTile tile = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
 
         if(tile == null) {
             return false;
@@ -104,6 +105,6 @@ public class InteractionHopper extends RoomItem {
         if (room.getRoomUnitManager().hasHabbosAt(tile))
             return false;
 
-        return this.getExtradata().equals("0");
+        return this.getExtraData().equals("0");
     }
 }

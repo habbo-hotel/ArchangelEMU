@@ -104,7 +104,7 @@ public class RoomAvatar extends RoomUnit {
                 }
             }
 
-            Deque<RoomTile> peekPath = room.getLayout().findPath(this.getCurrentPosition(), this.getPath().peek(), this.getGoalLocation(), this);
+            Deque<RoomTile> peekPath = room.getLayout().findPath(this.getCurrentPosition(), this.getPath().peek(), this.getTargetPosition(), this);
 
             if (peekPath == null) {
                 peekPath = new LinkedList<>();
@@ -186,7 +186,7 @@ public class RoomAvatar extends RoomUnit {
                     item = tallestChair;
             }
 
-            if (next.equals(this.getGoalLocation()) && next.getState() == RoomTileState.SIT && !overrideTile && (item == null || item.getZ() - this.getCurrentZ() > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
+            if (next.equals(this.getTargetPosition()) && next.getState() == RoomTileState.SIT && !overrideTile && (item == null || item.getCurrentZ() - this.getCurrentZ() > RoomLayout.MAXIMUM_STEP_HEIGHT)) {
                 this.removeStatus(RoomUnitStatus.MOVE);
                 return false;
             }
@@ -198,7 +198,7 @@ public class RoomAvatar extends RoomUnit {
             }
 
             RoomItem roomItem = room.getRoomItemManager().getTopItemAt(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
-            if (roomItem != null && (roomItem != item || !RoomLayout.pointInSquare(roomItem.getX(), roomItem.getY(), roomItem.getX() + roomItem.getBaseItem().getWidth() - 1, roomItem.getY() + roomItem.getBaseItem().getLength() - 1, next.getX(), next.getY())))
+            if (roomItem != null && (roomItem != item || !RoomLayout.pointInSquare(roomItem.getCurrentPosition().getX(), roomItem.getCurrentPosition().getY(), roomItem.getCurrentPosition().getX() + roomItem.getBaseItem().getWidth() - 1, roomItem.getCurrentPosition().getY() + roomItem.getBaseItem().getLength() - 1, next.getX(), next.getY())))
                 roomItem.onWalkOff(this, room, new Object[]{this.getCurrentPosition(), next});
 
 
@@ -208,7 +208,7 @@ public class RoomAvatar extends RoomUnit {
 
             this.setRotation(RoomRotation.values()[Rotation.Calculate(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), next.getX(), next.getY())]);
             if (item != null) {
-                if (item != roomItem || !RoomLayout.pointInSquare(item.getX(), item.getY(), item.getX() + item.getBaseItem().getWidth() - 1, item.getY() + item.getBaseItem().getLength() - 1, this.getCurrentPosition().getX(), this.getCurrentPosition().getY())) {
+                if (item != roomItem || !RoomLayout.pointInSquare(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getCurrentPosition().getX() + item.getBaseItem().getWidth() - 1, item.getCurrentPosition().getY() + item.getBaseItem().getLength() - 1, this.getCurrentPosition().getX(), this.getCurrentPosition().getY())) {
                     if (item.canWalkOn(this, room, null)) {
                         item.onWalkOn(this, room, new Object[]{this.getCurrentPosition(), next});
                     } else if (item instanceof ConditionalGate conditionalGate) {
@@ -228,7 +228,7 @@ public class RoomAvatar extends RoomUnit {
                     item.onWalk(this, room, new Object[]{this.getCurrentPosition(), next});
                 }
 
-                zHeight += item.getZ();
+                zHeight += item.getCurrentZ();
 
                 if (!item.getBaseItem().allowSit() && !item.getBaseItem().allowLay()) {
                     zHeight += Item.getCurrentHeight(item);
@@ -239,7 +239,7 @@ public class RoomAvatar extends RoomUnit {
 
             this.setPreviousLocation(this.getCurrentPosition());
 
-            this.setStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + zHeight);
+            this.addStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + zHeight);
 
             if(habbo != null) {
                 RideablePet rideablePet = habbo.getHabboInfo().getRiding();
@@ -252,8 +252,8 @@ public class RoomAvatar extends RoomUnit {
                         this.setCurrentZ(zHeight - 1.0);
                         ridingUnit.setRotation(RoomRotation.values()[Rotation.Calculate(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), next.getX(), next.getY())]);
                         ridingUnit.setPreviousLocation(this.getCurrentPosition());
-                        ridingUnit.setGoalLocation(this.getGoalLocation());
-                        ridingUnit.setStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + (zHeight - 1.0));
+                        ridingUnit.setGoalLocation(this.getTargetPosition());
+                        ridingUnit.addStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + (zHeight - 1.0));
                         room.sendComposer(new UserUpdateComposer(ridingUnit).compose());
                     }
                 }
@@ -350,6 +350,10 @@ public class RoomAvatar extends RoomUnit {
             return;
         }
 
+        if(this.getEffectId() == effectId) {
+            return;
+        }
+
         if(this instanceof RoomHabbo) {
             Habbo habbo = this.getRoom().getRoomUnitManager().getHabboByRoomUnit(this);
             if(habbo == null || (habbo.getHabboInfo().isInGame() && !forceEffect)) {
@@ -369,6 +373,11 @@ public class RoomAvatar extends RoomUnit {
 
             this.getRoom().sendComposer(new AvatarEffectMessageComposer(this).compose());
         }
+    }
+
+    public void setPreviousEffectId(int effectId, int endTimestamp) {
+        this.previousEffectId = effectId;
+        this.previousEffectEndTimestamp = endTimestamp;
     }
 
     @Override

@@ -33,14 +33,14 @@ public class BattleBanzaiTilesFlicker implements Runnable {
         }
 
         for (RoomItem item : this.items) {
-            item.setExtradata(state + "");
+            item.setExtraData(state + "");
         }
 
         this.room.sendComposer(new ItemsDataUpdateComposer(this.items).compose());
 
         if (this.count == 9) {
             for (RoomItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
-                item.setExtradata("0");
+                item.setExtraData("0");
                 this.room.updateItemState(item);
             }
             return;

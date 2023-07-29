@@ -1,10 +1,10 @@
 package com.eu.habbo.habbohotel.commands.list.bans;
 
+import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -43,7 +43,7 @@ public abstract class BaseBanCommand extends Command {
             if (h != null) {
                 return h.getHabboInfo();
             } else {
-                return HabboManager.getOfflineHabboInfo(params[1]);
+                return Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(params[1]);
             }
         }
         return null;

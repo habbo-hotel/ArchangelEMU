@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,8 +20,8 @@ public class InteractionBattleBanzaiGate extends InteractionGameGate {
         super(set, baseItem, teamColor);
     }
 
-    public InteractionBattleBanzaiGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, teamColor);
+    public InteractionBattleBanzaiGate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, teamColor);
     }
 
     @Override

@@ -284,7 +284,7 @@ public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
                                         itemsList.add(hopper);
                                     } else if (baseItem.getInteractionType().getType() == InteractionGuildFurni.class || baseItem.getInteractionType().getType() == InteractionGuildGate.class) {
                                         InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
-                                        habboItem.setExtradata("");
+                                        habboItem.setExtraData("");
                                         habboItem.needsUpdate(true);
                                         int guildId;
                                         try {

@@ -35,31 +35,31 @@ public class FloorItemOnRollerComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        short oldX = this.item.getX();
-        short oldY = this.item.getY();
+        short oldX = this.item.getCurrentPosition().getX();
+        short oldY = this.item.getCurrentPosition().getY();
 
         this.response.init(Outgoing.slideObjectBundleMessageComposer);
-        this.response.appendInt(this.oldLocation != null ? this.oldLocation.getX() : this.item.getX());
-        this.response.appendInt(this.oldLocation != null ? this.oldLocation.getY() : this.item.getY());
+        this.response.appendInt(this.oldLocation != null ? this.oldLocation.getX() : this.item.getCurrentPosition().getX());
+        this.response.appendInt(this.oldLocation != null ? this.oldLocation.getY() : this.item.getCurrentPosition().getY());
         this.response.appendInt(this.newLocation.getX());
         this.response.appendInt(this.newLocation.getY());
         this.response.appendInt(1);
         this.response.appendInt(this.item.getId());
-        this.response.appendString(Double.toString(this.oldLocation != null ? this.oldZ : this.item.getZ()));
-        this.response.appendString(Double.toString(this.oldLocation != null ? this.newZ : (this.item.getZ() + this.heightOffset)));
+        this.response.appendString(Double.toString(this.oldLocation != null ? this.oldZ : this.item.getCurrentZ()));
+        this.response.appendString(Double.toString(this.oldLocation != null ? this.newZ : (this.item.getCurrentZ() + this.heightOffset)));
         this.response.appendInt(this.roller != null ? this.roller.getId() : -1);
 
         if(this.oldLocation == null) {
-            this.item.onMove(this.room, this.room.getLayout().getTile(this.item.getX(), this.item.getY()), this.newLocation);
-            this.item.setX(this.newLocation.getX());
-            this.item.setY(this.newLocation.getY());
-            this.item.setZ(this.item.getZ() + this.heightOffset);
+            this.item.onMove(this.room, this.room.getLayout().getTile(this.item.getCurrentPosition().getX(), this.item.getCurrentPosition().getY()), this.newLocation);
+
+            this.item.setCurrentPosition(this.newLocation);
+            this.item.setCurrentZ(this.item.getCurrentZ() + this.heightOffset);
             this.item.needsUpdate(true);
 
             //TODO This is bad
             //
             THashSet<RoomTile> tiles = this.room.getLayout().getTilesAt(this.room.getLayout().getTile(oldX, oldY), this.item.getBaseItem().getWidth(), this.item.getBaseItem().getLength(), this.item.getRotation());
-            tiles.addAll(this.room.getLayout().getTilesAt(this.room.getLayout().getTile(this.item.getX(), this.item.getY()), this.item.getBaseItem().getWidth(), this.item.getBaseItem().getLength(), this.item.getRotation()));
+            tiles.addAll(this.room.getLayout().getTilesAt(this.room.getLayout().getTile(this.item.getCurrentPosition().getX(), this.item.getCurrentPosition().getY()), this.item.getBaseItem().getWidth(), this.item.getBaseItem().getLength(), this.item.getRotation()));
             this.room.updateTiles(tiles);
             //this.room.sendComposer(new UpdateStackHeightComposer(oldX, oldY, this.room.getStackHeight(oldX, oldY, true)).compose());
             //

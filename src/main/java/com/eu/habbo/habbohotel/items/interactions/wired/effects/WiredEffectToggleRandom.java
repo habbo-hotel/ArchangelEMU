@@ -14,8 +14,9 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
 import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -70,8 +71,8 @@ public class WiredEffectToggleRandom extends InteractionWiredEffect {
         super(set, baseItem);
     }
 
-    public WiredEffectToggleRandom(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredEffectToggleRandom(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -82,7 +83,7 @@ public class WiredEffectToggleRandom extends InteractionWiredEffect {
             }
 
             try {
-                item.setExtradata(Emulator.getRandom().nextInt(item.getBaseItem().getStateCount() + 1) + "");
+                item.setExtraData(Emulator.getRandom().nextInt(item.getBaseItem().getStateCount() + 1) + "");
                 room.updateItem(item);
             } catch (Exception e) {
                 log.error("Caught exception", e);

@@ -12,7 +12,7 @@ public class HabboItemNewState implements Runnable {
 
     @Override
     public void run() {
-        this.item.setExtradata(this.state);
+        this.item.setExtraData(this.state);
 
         if (this.item.getRoomId() == this.room.getRoomInfo().getId()) {
             this.room.updateItemState(this.item);

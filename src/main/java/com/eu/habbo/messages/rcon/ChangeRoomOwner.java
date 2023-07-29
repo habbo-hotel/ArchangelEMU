@@ -27,7 +27,7 @@ public class ChangeRoomOwner extends RCONMessage<ChangeRoomOwner.JSON> {
         room.getRoomInfo().setOwnerInfo(newOwner.getHabboInfo());
         room.setNeedsUpdate(true);
         room.save();
-        Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
+        room.dispose();
     }
 
     static class JSON {

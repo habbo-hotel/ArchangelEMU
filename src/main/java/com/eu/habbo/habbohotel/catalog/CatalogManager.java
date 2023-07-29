@@ -1005,7 +1005,7 @@ public class CatalogManager {
 
                                     if (guild != null && Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo) != null) {
                                         InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(habbo.getClient().getHabbo().getHabboInfo().getId(), baseItem, limitedStack, limitedNumber, extradata);
-                                        habboItem.setExtradata("");
+                                        habboItem.setExtraData("");
                                         habboItem.needsUpdate(true);
 
                                         Emulator.getThreading().run(habboItem);

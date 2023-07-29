@@ -11,6 +11,7 @@ import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import gnu.trove.set.hash.THashSet;
@@ -29,8 +30,8 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
         super(set, baseItem);
     }
 
-    public WiredEffectMoveRotateFurni(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredEffectMoveRotateFurni(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -52,15 +53,15 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
 
         for (RoomItem item : this.getWiredSettings().getItems(room)) {
             int newRotation = rotation > 0 ? this.getNewRotation(item, rotation) : item.getRotation();
-            RoomTile newLocation = room.getLayout().getTile(item.getX(), item.getY());
-            RoomTile oldLocation = room.getLayout().getTile(item.getX(), item.getY());
-            double oldZ = item.getZ();
+            RoomTile newLocation = room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
+            RoomTile oldLocation = room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
+            double oldZ = item.getCurrentZ();
 
             if(direction > 0) {
                 RoomRotation moveDirection = this.getMovementDirection(direction);
                 newLocation = room.getLayout().getTile(
-                    (short) (item.getX() + ((moveDirection == RoomRotation.WEST || moveDirection == RoomRotation.NORTH_WEST || moveDirection == RoomRotation.SOUTH_WEST) ? -1 : (((moveDirection == RoomRotation.EAST || moveDirection == RoomRotation.SOUTH_EAST || moveDirection == RoomRotation.NORTH_EAST) ? 1 : 0)))),
-                    (short) (item.getY() + ((moveDirection == RoomRotation.NORTH || moveDirection == RoomRotation.NORTH_EAST || moveDirection == RoomRotation.NORTH_WEST) ? 1 : ((moveDirection == RoomRotation.SOUTH || moveDirection == RoomRotation.SOUTH_EAST || moveDirection == RoomRotation.SOUTH_WEST) ? -1 : 0)))
+                    (short) (item.getCurrentPosition().getX() + ((moveDirection == RoomRotation.WEST || moveDirection == RoomRotation.NORTH_WEST || moveDirection == RoomRotation.SOUTH_WEST) ? -1 : (((moveDirection == RoomRotation.EAST || moveDirection == RoomRotation.SOUTH_EAST || moveDirection == RoomRotation.NORTH_EAST) ? 1 : 0)))),
+                    (short) (item.getCurrentPosition().getY() + ((moveDirection == RoomRotation.NORTH || moveDirection == RoomRotation.NORTH_EAST || moveDirection == RoomRotation.NORTH_WEST) ? 1 : ((moveDirection == RoomRotation.SOUTH || moveDirection == RoomRotation.SOUTH_EAST || moveDirection == RoomRotation.SOUTH_WEST) ? -1 : 0)))
                 );
             }
 
@@ -72,7 +73,7 @@ public class WiredEffectMoveRotateFurni extends InteractionWiredEffect implement
                     boolean sendUpdates = !slideAnimation;
                     if (room.getRoomItemManager().moveItemTo(item, newLocation, newRotation, null, sendUpdates, true) == FurnitureMovementError.NONE) {
                         if (slideAnimation) {
-                            room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getZ(), 0, room).compose());
+                            room.sendComposer(new FloorItemOnRollerComposer(item, null, oldLocation, oldZ, newLocation, item.getCurrentZ(), 0, room).compose());
                         }
                     }
                 }

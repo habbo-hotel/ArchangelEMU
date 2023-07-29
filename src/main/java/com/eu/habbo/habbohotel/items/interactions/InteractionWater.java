@@ -11,6 +11,7 @@ import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.util.Pair;
 
@@ -32,8 +33,8 @@ public class InteractionWater extends InteractionDefault {
         this.isInRoom = this.getRoomId() != 0;
     }
 
-    public InteractionWater(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionWater(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
         this.isDeepWater = false;
         this.isInRoom = this.getRoomId() != 0;
     }
@@ -89,7 +90,7 @@ public class InteractionWater extends InteractionDefault {
             return;
 
         if (!pet.getRoomUnit().hasStatus(RoomUnitStatus.SWIM) && pet.getPetData().isCanSwim()) {
-            pet.getRoomUnit().setStatus(RoomUnitStatus.SWIM, "");
+            pet.getRoomUnit().addStatus(RoomUnitStatus.SWIM, "");
         }
     }
 
@@ -206,55 +207,63 @@ public class InteractionWater extends InteractionDefault {
         byte _12 = 0;
 
         // Check if we are touching a water tile.
-        if (this.isValidForMask(room, this.getX() - 1, this.getY() - 1, this.getZ(), true)) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() - 1, this.getCurrentPosition().getY() - 1, this.getCurrentZ(), true)) {
             _1 = 1;
         }
-        if (this.isValidForMask(room, this.getX(), this.getY() - 1, this.getZ())) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX(), this.getCurrentPosition().getY() - 1, this.getCurrentZ())) {
             _2 = 1;
         }
-        if (this.isValidForMask(room, this.getX() + 1, this.getY() - 1, this.getZ())) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() + 1, this.getCurrentPosition().getY() - 1, this.getCurrentZ())) {
             _3 = 1;
         }
-        if (this.isValidForMask(room, this.getX() + 2, this.getY() - 1, this.getZ(), true)) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() + 2, this.getCurrentPosition().getY() - 1, this.getCurrentZ(), true)) {
             _4 = 1;
         }
-        if (this.isValidForMask(room, this.getX() - 1, this.getY(), this.getZ())) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() - 1, this.getCurrentPosition().getY(), this.getCurrentZ())) {
             _5 = 1;
         }
-        if (this.isValidForMask(room, this.getX() + 2, this.getY(), this.getZ())) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() + 2, this.getCurrentPosition().getY(), this.getCurrentZ())) {
             _6 = 1;
         }
-        if (this.isValidForMask(room, this.getX() - 1, this.getY() + 1, this.getZ())) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() - 1, this.getCurrentPosition().getY() + 1, this.getCurrentZ())) {
             _7 = 1;
         }
-        if (this.isValidForMask(room, this.getX() + 2, this.getY() + 1, this.getZ())) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() + 2, this.getCurrentPosition().getY() + 1, this.getCurrentZ())) {
             _8 = 1;
         }
-        if (this.isValidForMask(room, this.getX() - 1, this.getY() + 2, this.getZ(), true)) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() - 1, this.getCurrentPosition().getY() + 2, this.getCurrentZ(), true)) {
             _9 = 1;
         }
-        if (this.isValidForMask(room, this.getX(), this.getY() + 2, this.getZ())) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX(), this.getCurrentPosition().getY() + 2, this.getCurrentZ())) {
             _10 = 1;
         }
-        if (this.isValidForMask(room, this.getX() + 1, this.getY() + 2, this.getZ())) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() + 1, this.getCurrentPosition().getY() + 2, this.getCurrentZ())) {
             _11 = 1;
         }
-        if (this.isValidForMask(room, this.getX() + 2, this.getY() + 2, this.getZ(), true)) {
+        if (this.isValidForMask(room, this.getCurrentPosition().getX() + 2, this.getCurrentPosition().getY() + 2, this.getCurrentZ(), true)) {
             _12 = 1;
         }
 
         // Check if we are touching invalid tiles.
         // if (_1  == 0 && room.getLayout().isVoidTile((short)(this.getX() -1), (short) (this.getY() -1))) _1  = 1;
-        if (_2 == 0 && room.getLayout().isVoidTile(this.getX(), (short) (this.getY() - 1))) _2 = 1;
-        if (_3 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 1), (short) (this.getY() - 1))) _3 = 1;
+        if (_2 == 0 && room.getLayout().isVoidTile(this.getCurrentPosition().getX(), (short) (this.getCurrentPosition().getY() - 1)))
+            _2 = 1;
+        if (_3 == 0 && room.getLayout().isVoidTile((short) (this.getCurrentPosition().getX() + 1), (short) (this.getCurrentPosition().getY() - 1)))
+            _3 = 1;
         // if (_4  == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() - 1))) _4  = 1;
-        if (_5 == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), this.getY())) _5 = 1;
-        if (_6 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), this.getY())) _6 = 1;
-        if (_7 == 0 && room.getLayout().isVoidTile((short) (this.getX() - 1), (short) (this.getY() + 1))) _7 = 1;
-        if (_8 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() + 1))) _8 = 1;
+        if (_5 == 0 && room.getLayout().isVoidTile((short) (this.getCurrentPosition().getX() - 1), this.getCurrentPosition().getY()))
+            _5 = 1;
+        if (_6 == 0 && room.getLayout().isVoidTile((short) (this.getCurrentPosition().getX() + 2), this.getCurrentPosition().getY()))
+            _6 = 1;
+        if (_7 == 0 && room.getLayout().isVoidTile((short) (this.getCurrentPosition().getX() - 1), (short) (this.getCurrentPosition().getY() + 1)))
+            _7 = 1;
+        if (_8 == 0 && room.getLayout().isVoidTile((short) (this.getCurrentPosition().getX() + 2), (short) (this.getCurrentPosition().getY() + 1)))
+            _8 = 1;
         // if (_9  == 0 && room.getLayout().isVoidTile((short)(this.getX() -1), (short) (this.getY() + 2))) _9 = 1;
-        if (_10 == 0 && room.getLayout().isVoidTile(this.getX(), (short) (this.getY() + 2))) _10 = 1;
-        if (_11 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 1), (short) (this.getY() + 2))) _11 = 1;
+        if (_10 == 0 && room.getLayout().isVoidTile(this.getCurrentPosition().getX(), (short) (this.getCurrentPosition().getY() + 2)))
+            _10 = 1;
+        if (_11 == 0 && room.getLayout().isVoidTile((short) (this.getCurrentPosition().getX() + 1), (short) (this.getCurrentPosition().getY() + 2)))
+            _11 = 1;
         // if (_12 == 0 && room.getLayout().isVoidTile((short) (this.getX() + 2), (short) (this.getY() + 2))) _12 = 1;
 
         // Update water.
@@ -273,8 +282,8 @@ public class InteractionWater extends InteractionDefault {
 
         String updatedData = String.valueOf(result);
 
-        if (!this.getExtradata().equals(updatedData)) {
-            this.setExtradata(updatedData);
+        if (!this.getExtraData().equals(updatedData)) {
+            this.setExtraData(updatedData);
             this.needsUpdate(true);
             room.updateItem(this);
         }

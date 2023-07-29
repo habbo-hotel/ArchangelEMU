@@ -18,7 +18,7 @@ public class RoomUnitRidePet implements Runnable {
 
     @Override
     public void run() {
-        if (this.habbo.getRoomUnit() == null || this.pet.getRoomUnit() == null || this.pet.getRoom() != this.habbo.getRoomUnit().getRoom() || this.goalTile == null || this.habbo.getRoomUnit().getGoalLocation() != this.goalTile)
+        if (this.habbo.getRoomUnit() == null || this.pet.getRoomUnit() == null || this.pet.getRoom() != this.habbo.getRoomUnit().getRoom() || this.goalTile == null || this.habbo.getRoomUnit().getTargetPosition() != this.goalTile)
             return;
 
         if (habbo.getRoomUnit().getCurrentPosition().distance(pet.getRoomUnit().getCurrentPosition()) <= 1) {

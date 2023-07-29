@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,8 +21,8 @@ public class InteractionRollerskateField extends InteractionTagField {
         super(set, baseItem, RollerskateGame.class);
     }
 
-    public InteractionRollerskateField(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, RollerskateGame.class);
+    public InteractionRollerskateField(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, RollerskateGame.class);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class InteractionRollerskateField extends InteractionTagField {
     public void onPlace(Room room) {
         super.onPlace(room);
 
-        Habbo itemOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getOwnerId());
+        Habbo itemOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getOwnerInfo().getId());
 
         if (itemOwner != null) {
             AchievementManager.progressAchievement(itemOwner, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RbTagA"));

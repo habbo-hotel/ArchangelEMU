@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.GuildMemberMgmtFailedMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildMembershipRejectedMessageComposer;
@@ -26,7 +25,7 @@ public class ApproveMembershipRequestEvent extends MessageHandler {
         GuildMember groupMember = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
-        if (habbo == null) userInfo = HabboManager.getOfflineHabboInfo(userId);
+        if (habbo == null) userInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(userId);
         else userInfo = habbo.getHabboInfo();
 
 

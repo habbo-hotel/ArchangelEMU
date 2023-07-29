@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
@@ -23,12 +24,12 @@ public class InteractionOneWayGate extends RoomItem {
 
     public InteractionOneWayGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionOneWayGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionOneWayGate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
@@ -48,13 +49,13 @@ public class InteractionOneWayGate extends RoomItem {
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
-        if (this.getExtradata().length() == 0) {
-            this.setExtradata("0");
+        if (this.getExtraData().length() == 0) {
+            this.setExtraData("0");
             this.needsUpdate(true);
         }
 
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -64,11 +65,11 @@ public class InteractionOneWayGate extends RoomItem {
         super.onClick(client, room, objects);
 
         if (client != null) {
-            RoomTile tileInfront = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation());
+            RoomTile tileInfront = room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), this.getRotation());
             if (tileInfront == null)
                 return;
 
-            RoomTile currentLocation = room.getLayout().getTile(this.getX(), this.getY());
+            RoomTile currentLocation = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
             if (currentLocation == null)
                 return;
 
@@ -83,7 +84,7 @@ public class InteractionOneWayGate extends RoomItem {
                 onSuccess.add(() -> {
                     unit.setCanLeaveRoomByDoor(false);
                     walkable = this.getBaseItem().allowWalk();
-                    RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation() + 4);
+                    RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), this.getRotation() + 4);
                     unit.setGoalLocation(tile);
                     Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
 
@@ -122,14 +123,14 @@ public class InteractionOneWayGate extends RoomItem {
     }
 
     private void refresh(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
         room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
-        room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
+        room.updateTile(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
     }
 
     @Override
     public void onPickUp(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
         this.refresh(room);
     }
 

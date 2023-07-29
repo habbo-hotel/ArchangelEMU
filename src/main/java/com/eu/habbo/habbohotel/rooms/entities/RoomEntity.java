@@ -23,6 +23,25 @@ public abstract class RoomEntity implements IRoomEntity {
     private Deque<RoomTile> path = new LinkedList<>();
     private int tilesMoved;
 
+    public boolean isAtGoal() {
+        if(this.currentPosition == null) {
+            return false;
+        }
+
+        return this.currentPosition.equals(this.targetPosition);
+    }
+
+    public void setPreviousLocation(RoomTile previousLocation) {
+        this.previousPosition = previousLocation;
+        this.previousZ = this.getCurrentZ();
+    }
+
+    public RoomEntity setCurrentZ(double currentZ) {
+        this.previousZ = this.currentZ;
+        this.currentZ = Math.max(-9999, Math.min(currentZ, 9999));
+        return this;
+    }
+
     public synchronized void incrementTilesMoved() {
         this.tilesMoved++;
     }

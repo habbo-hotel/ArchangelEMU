@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
@@ -44,7 +45,7 @@ public class RoomTrade {
     protected void initializeTradeStatus() {
         for (RoomTradeUser roomTradeUser : this.users) {
             if (!roomTradeUser.getHabbo().getRoomUnit().hasStatus(RoomUnitStatus.TRADING)) {
-                roomTradeUser.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.TRADING, "");
+                roomTradeUser.getHabbo().getRoomUnit().addStatus(RoomUnitStatus.TRADING, "");
                 if (!roomTradeUser.getHabbo().getRoomUnit().isWalking())
                     this.room.sendComposer(new UserUpdateComposer(roomTradeUser.getHabbo().getRoomUnit()).compose());
             }
@@ -178,35 +179,35 @@ public class RoomTrade {
                 }
             }
 
-            int userOneId = userOne.getHabbo().getHabboInfo().getId();
-            int userTwoId = userTwo.getHabbo().getHabboInfo().getId();
+            HabboInfo userOneInfo = userOne.getHabbo().getHabboInfo();
+            HabboInfo userTwoInfo = userTwo.getHabbo().getHabboInfo();
 
             try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ? WHERE id = ? LIMIT 1")) {
                 try (PreparedStatement stmt = connection.prepareStatement("INSERT INTO room_trade_log_items (id, item_id, user_id) VALUES (?, ?, ?)")) {
                     for (RoomItem item : userOne.getItems()) {
-                        item.setOwnerId(userTwoId);
-                        statement.setInt(1, userTwoId);
+                        item.setOwnerInfo(userTwoInfo);
+                        statement.setInt(1, userTwoInfo.getId());
                         statement.setInt(2, item.getId());
                         statement.addBatch();
 
                         if (logTrades) {
                             stmt.setInt(1, tradeId);
                             stmt.setInt(2, item.getId());
-                            stmt.setInt(3, userOneId);
+                            stmt.setInt(3, userOneInfo.getId());
                             stmt.addBatch();
                         }
                     }
 
                     for (RoomItem item : userTwo.getItems()) {
-                        item.setOwnerId(userOneId);
-                        statement.setInt(1, userOneId);
+                        item.setOwnerInfo(userOneInfo);
+                        statement.setInt(1, userOneInfo.getId());
                         statement.setInt(2, item.getId());
                         statement.addBatch();
 
                         if (logTrades) {
                             stmt.setInt(1, tradeId);
                             stmt.setInt(2, item.getId());
-                            stmt.setInt(3, userTwoId);
+                            stmt.setInt(3, userTwoInfo.getId());
                             stmt.addBatch();
                         }
                     }

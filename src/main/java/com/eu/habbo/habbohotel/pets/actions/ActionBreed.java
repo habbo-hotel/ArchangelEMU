@@ -25,7 +25,7 @@ public class ActionBreed extends PetAction {
         }
 
         if (nest != null) {
-            pet.getRoomUnit().setGoalLocation(pet.getRoom().getLayout().getTile(nest.getX(), nest.getY()));
+            pet.getRoomUnit().setGoalLocation(pet.getRoom().getLayout().getTile(nest.getCurrentPosition().getX(), nest.getCurrentPosition().getY()));
 
             return true;
         } else {

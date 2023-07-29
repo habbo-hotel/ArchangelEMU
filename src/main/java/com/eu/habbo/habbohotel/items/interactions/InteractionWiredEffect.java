@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredEffectInteraction;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
@@ -26,13 +27,13 @@ public abstract class InteractionWiredEffect extends InteractionWired implements
         super(set, baseItem);
     }
 
-    public InteractionWiredEffect(int id, int userId, Item item, String extraData, int limitedStack, int limitedSells) {
-        super(id, userId, item, extraData, limitedStack, limitedSells);
+    public InteractionWiredEffect(int id, HabboInfo ownerInfo, Item item, String extraData, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extraData, limitedStack, limitedSells);
     }
 
     public List<Integer> getBlockedTriggers(Room room) {
         List<Integer> blockedTriggers = new ArrayList<>();
-        THashSet<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(this.getX(), this.getY());
+        THashSet<InteractionWiredTrigger> triggers = room.getRoomSpecialTypes().getTriggers(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
 
         for(InteractionWiredTrigger trigger : triggers) {
             if(!trigger.isTriggeredByRoomUnit()) {

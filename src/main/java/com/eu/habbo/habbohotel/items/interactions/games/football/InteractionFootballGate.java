@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
@@ -33,8 +34,8 @@ public class InteractionFootballGate extends RoomItem {
         this.figureF = bits.length > 1 ? bits[1] : "";
     }
 
-    public InteractionFootballGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionFootballGate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         String[] bits = extradata.split(";");
         this.figureM = bits.length > 0 ? bits[0] : "";
@@ -76,7 +77,7 @@ public class InteractionFootballGate extends RoomItem {
     public void setFigureM(String look) {
         this.figureM = look;
 
-        this.setExtradata(this.figureM + ";" + this.figureF);
+        this.setExtraData(this.figureM + ";" + this.figureF);
         this.needsUpdate(true);
         Emulator.getThreading().run(this);
     }
@@ -84,7 +85,7 @@ public class InteractionFootballGate extends RoomItem {
     public void setFigureF(String look) {
         this.figureF = look;
 
-        this.setExtradata(this.figureM + ";" + this.figureF);
+        this.setExtraData(this.figureM + ";" + this.figureF);
         this.needsUpdate(true);
         Emulator.getThreading().run(this);
     }

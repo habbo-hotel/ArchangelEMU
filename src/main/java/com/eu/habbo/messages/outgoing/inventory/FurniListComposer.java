@@ -57,7 +57,7 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
             }
 
             this.response.appendInt(0);
-            this.response.appendString(roomItem.getExtradata());
+            this.response.appendString(roomItem.getExtraData());
         } else {
             if (roomItem.getBaseItem().getName().equals("gnome_box"))
                 this.response.appendInt(13);
@@ -77,7 +77,7 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
         if (roomItem.getBaseItem().getType() == FurnitureType.FLOOR) {
             this.response.appendString("");
             if(roomItem.getBaseItem().getName().equals("song_disk")) {
-                List<String> extraDataAsList = Arrays.asList(roomItem.getExtradata().split("\n"));
+                List<String> extraDataAsList = Arrays.asList(roomItem.getExtraData().split("\n"));
                 this.response.appendInt(Integer.valueOf(extraDataAsList.get(extraDataAsList.size() - 1)));
                 return true;
             }
@@ -89,7 +89,7 @@ public class FurniListComposer extends MessageComposer implements TIntObjectProc
 
     public void addExtraDataToResponse(RoomItem roomItem) {
         this.response.appendInt(0);
-        this.response.appendString(roomItem.getExtradata());
+        this.response.appendString(roomItem.getExtraData());
     }
 
 }

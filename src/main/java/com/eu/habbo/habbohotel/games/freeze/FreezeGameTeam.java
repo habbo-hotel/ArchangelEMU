@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
@@ -25,11 +24,11 @@ public class FreezeGameTeam extends GameTeam {
 
         Habbo habbo = gamePlayer.getHabbo();
         Game game = habbo.getRoomUnit().getRoom().getGame(FreezeGame.class);
-        RoomUnit roomUnit = habbo.getRoomUnit();
-        Room room = roomUnit.getRoom();
+        RoomHabbo roomHabbo = habbo.getRoomUnit();
+        Room room = roomHabbo.getRoom();
         if(room == null) return;
 
-        RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
+        RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomHabbo.getCurrentPosition().getX(), roomHabbo.getCurrentPosition().getY());
         int nextEffectM = 0;
         int nextEffectF = 0;
         int nextEffectDuration = -1;
@@ -37,10 +36,10 @@ public class FreezeGameTeam extends GameTeam {
         if (topItem != null) {
             nextEffectM = topItem.getBaseItem().getEffectM();
             nextEffectF = topItem.getBaseItem().getEffectF();
-        } else if (roomUnit.getPreviousEffectId() > 0) {
-            nextEffectF = roomUnit.getPreviousEffectId();
-            nextEffectM = roomUnit.getPreviousEffectId();
-            nextEffectDuration = roomUnit.getPreviousEffectEndTimestamp();
+        } else if (roomHabbo.getPreviousEffectId() > 0) {
+            nextEffectF = roomHabbo.getPreviousEffectId();
+            nextEffectM = roomHabbo.getPreviousEffectId();
+            nextEffectDuration = roomHabbo.getPreviousEffectEndTimestamp();
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
@@ -52,7 +51,7 @@ public class FreezeGameTeam extends GameTeam {
             habbo.getRoomUnit().giveEffect(nextEffectF, nextEffectDuration, true);
         }
 
-        roomUnit.setCanWalk(true);
+        roomHabbo.setCanWalk(true);
 
         if (room.getRoomSpecialTypes() != null) {
             for (InteractionGameGate gate : room.getRoomSpecialTypes().getFreezeGates().values()) {

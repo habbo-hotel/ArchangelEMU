@@ -77,7 +77,7 @@ class TeleportActionTwo implements Runnable {
             }
         }
 
-        this.currentTeleport.setExtradata("0");
+        this.currentTeleport.setExtraData("0");
         this.room.updateItem(this.currentTeleport);
 
         if (((InteractionTeleport) this.currentTeleport).getTargetRoomId() == 0) {

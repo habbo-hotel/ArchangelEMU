@@ -28,10 +28,10 @@ public class PlacePostItEvent extends MessageHandler {
                 if (item instanceof InteractionPostIt) {
                     if (room.getPostItNotes().size() < Room.MAXIMUM_POSTITNOTES) {
                         room.getRoomItemManager().addRoomItem(item);
-                        item.setExtradata("FFFF33");
+                        item.setExtraData("FFFF33");
                         item.setRoomId(this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId());
                         item.setWallPosition(location);
-                        item.setOwnerId(this.client.getHabbo().getHabboInfo().getId());
+                        item.setOwnerInfo(this.client.getHabbo().getHabboInfo());
                         item.needsUpdate(true);
                         room.sendComposer(new ItemAddMessageComposer(item, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);

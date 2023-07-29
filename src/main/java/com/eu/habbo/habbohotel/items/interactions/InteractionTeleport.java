@@ -9,6 +9,7 @@ import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import com.eu.habbo.threading.runnables.teleport.TeleportActionOne;
@@ -27,19 +28,19 @@ public class InteractionTeleport extends RoomItem {
     public InteractionTeleport(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
         walkable = baseItem.allowWalk();
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionTeleport(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionTeleport(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
         walkable = item.allowWalk();
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -73,7 +74,7 @@ public class InteractionTeleport extends RoomItem {
             return;
         }
 
-        RoomTile currentItemLocation = room.getLayout().getTile(this.getX(), this.getY());
+        RoomTile currentItemLocation = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
 
         if (currentItemLocation == null) {
             return;
@@ -97,7 +98,7 @@ public class InteractionTeleport extends RoomItem {
         } else if (roomHabbo.getCurrentPosition().equals(currentItemLocation) || roomHabbo.getCurrentPosition().equals(inFrontTile)) {
             // set state 1 and walk on item
             this.roomUnitID = roomHabbo.getVirtualId();
-            this.setExtradata("1");
+            this.setExtraData("1");
             room.updateItemState(this);
             roomHabbo.setGoalLocation(inFrontTile);
 
@@ -115,7 +116,7 @@ public class InteractionTeleport extends RoomItem {
             onFail.add(() -> {
                 this.walkable = this.getBaseItem().allowWalk();
                 room.updateTile(currentItemLocation);
-                this.setExtradata("0");
+                this.setExtraData("0");
                 room.updateItemState(this);
                 this.roomUnitID = -1;
                 roomHabbo.removeOverrideTile(currentItemLocation);
@@ -155,8 +156,8 @@ public class InteractionTeleport extends RoomItem {
 
     @Override
     public void run() {
-        if (!this.getExtradata().equals("0")) {
-            this.setExtradata("0");
+        if (!this.getExtraData().equals("0")) {
+            this.setExtraData("0");
 
             Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
             if (room != null) {
@@ -171,7 +172,7 @@ public class InteractionTeleport extends RoomItem {
         this.targetId = 0;
         this.targetRoomId = 0;
         this.roomUnitID = -1;
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
     public int getTargetId() {
