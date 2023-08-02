@@ -53,7 +53,7 @@ public class RoomAvatar extends RoomUnit {
     @Override
     public void cycle() {
         this.handleSignStatus();
-        this.processWalking();
+        super.cycle();
     }
 
     @Override

@@ -108,13 +108,18 @@ public abstract class RoomUnit extends RoomEntity {
         //RoomHabbo
         this.isKicked = false;
         this.overridableTiles = new THashSet<>();
+        this.statusUpdateNeeded = false;
     }
 
     public RoomItem getCurrentItem() {
         return this.room.getRoomItemManager().getTopItemAt(this.currentPosition);
     }
 
-    public abstract void cycle();
+    public void cycle() {
+        if(this.isWalking()) {
+            this.processWalking();
+        }
+    };
 
     @Override
     public RoomUnit setCurrentPosition(RoomTile tile) {
@@ -291,7 +296,7 @@ public abstract class RoomUnit extends RoomEntity {
         RoomItem item = this.room.getRoomItemManager().getTopItemAt(this.currentPosition.getX(), this.currentPosition.getY());
         if (item == null || !item.getBaseItem().allowSit() || !item.getBaseItem().allowLay()) {
             this.cmdStandEnabled = true;
-            this.setBodyRotation(RoomRotation.values()[this.getBodyRotation().getValue() - this.getBodyRotation().getValue() % 2]);
+            this.bodyRotation = RoomRotation.values()[this.getBodyRotation().getValue() - this.getBodyRotation().getValue() % 2];
             this.removeStatus(RoomUnitStatus.SIT);
             this.instantUpdate();
         }
@@ -303,7 +308,7 @@ public abstract class RoomUnit extends RoomEntity {
         }
 
         this.cmdSitEnabled = true;
-        this.setBodyRotation(RoomRotation.values()[this.getBodyRotation().getValue() - this.getBodyRotation().getValue() % 2]);
+        this.bodyRotation = RoomRotation.values()[this.getBodyRotation().getValue() - this.getBodyRotation().getValue() % 2];
         this.addStatus(RoomUnitStatus.SIT, "0.5");
 
         if(this instanceof RoomAvatar roomAvatar) {
@@ -474,42 +479,40 @@ public abstract class RoomUnit extends RoomEntity {
      * Note: This method is typically called in a loop to facilitate continuous character movement.
     */
     public void processWalking() {
-        if(this.isWalking()) {
-            this.statuses.entrySet().removeIf(entry -> entry.getKey().isRemoveWhenWalking());
+        this.statuses.entrySet().removeIf(entry -> entry.getKey().isRemoveWhenWalking());
 
-            if(this.getNextPosition() != null) {
-                this.currentPosition = this.getNextPosition();
-                this.currentZ = this.getNextZ();
+        if(this.getNextPosition() != null) {
+            this.currentPosition = this.getNextPosition();
+            this.currentZ = this.getNextZ();
+        }
+
+        if(!this.path.isEmpty()) {
+            RoomTile next = this.path.poll();
+
+            if(this.path.size() > 1 && this.cmdFastWalkEnabled) {
+                next = this.path.poll();
             }
 
-            if(!this.path.isEmpty()) {
-                RoomTile next = this.path.poll();
+            if(next == null || !this.isValidTile(next)) {
+                this.path.clear();
+                this.findPath();
 
-                if(this.path.size() > 1 && this.cmdFastWalkEnabled) {
-                    next = this.path.poll();
+                if(this.path.isEmpty()) {
+                    return;
                 }
 
-                if(next == null || !this.isValidTile(next)) {
-                    this.path.clear();
-                    this.findPath();
-
-                    if(this.path.isEmpty()) {
-                        return;
-                    }
-
-                    next = this.path.poll();
-                }
-
-                RoomRotation nextRotation = this.handleNextRotation(next);
-                double nextHeight = this.handleNextHeight(next);
-
-                this.setRotation(nextRotation);
-                this.addStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + nextHeight);
-                this.nextPosition = next;
-                this.nextZ = nextHeight;
-            } else {
-                this.stopWalking();
+                next = this.path.poll();
             }
+
+            RoomRotation nextRotation = this.handleNextRotation(next);
+            double nextHeight = this.handleNextHeight(next);
+
+            this.setRotation(nextRotation);
+            this.addStatus(RoomUnitStatus.MOVE, next.getX() + "," + next.getY() + "," + nextHeight);
+            this.nextPosition = next;
+            this.nextZ = nextHeight;
+        } else {
+            this.stopWalking();
         }
     }
 
