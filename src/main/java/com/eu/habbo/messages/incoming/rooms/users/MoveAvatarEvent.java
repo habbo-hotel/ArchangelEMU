@@ -19,6 +19,8 @@ public class MoveAvatarEvent extends MessageHandler {
         int x = this.packet.readInt();
         int y = this.packet.readInt();
 
+        log.info("CLICKED ON TILE [x]: {} [y]: {}", x, y);
+
         Habbo habbo = this.client.getHabbo();
 
         if(habbo == null) {
@@ -37,7 +39,8 @@ public class MoveAvatarEvent extends MessageHandler {
             return;
         }
 
-        if (roomHabbo.getCurrentPosition().equals(x,y)) {
+
+        if (roomHabbo.getCurrentPosition().equals(x,y) && roomHabbo.isAtGoal()) {
             return;
         }
 
@@ -60,7 +63,6 @@ public class MoveAvatarEvent extends MessageHandler {
                 return;
             }
 
-            log.info("CLICKED ON TILE [x]: {} [y]: {}", tile.getX(), tile.getY());
             roomHabbo.walkTo(tile);
         }
     }
