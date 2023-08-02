@@ -39,7 +39,6 @@ public class MoveAvatarEvent extends MessageHandler {
             return;
         }
 
-
         if (roomHabbo.getCurrentPosition().equals(x,y) && roomHabbo.isAtGoal()) {
             return;
         }
@@ -62,6 +61,9 @@ public class MoveAvatarEvent extends MessageHandler {
             if (tile == null) {
                 return;
             }
+
+            //STANKMAN EASTER EGG
+            roomHabbo.setTemporalFastWalkEnabled(roomHabbo.getTargetPosition() != null && roomHabbo.getTargetPosition().equals(tile));
 
             roomHabbo.walkTo(tile);
         }

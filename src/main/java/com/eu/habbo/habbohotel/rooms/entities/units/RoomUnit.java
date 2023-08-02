@@ -57,6 +57,8 @@ public abstract class RoomUnit extends RoomEntity {
     private boolean isSwimming = false;
     @Setter
     private boolean cmdFastWalkEnabled;
+    @Setter
+    private boolean temporalFastWalkEnabled;
     private final ConcurrentHashMap<RoomUnitStatus, String> statuses;
     @Setter
     private boolean statusUpdateNeeded;
@@ -118,6 +120,8 @@ public abstract class RoomUnit extends RoomEntity {
     public void cycle() {
         if(this.isWalking()) {
             this.processWalking();
+        } else {
+            this.stopWalking();
         }
     };
 
@@ -144,12 +148,18 @@ public abstract class RoomUnit extends RoomEntity {
 
     public void stopWalking() {
         synchronized (this.statuses) {
-            this.path.clear();
+            if(this.path != null) {
+                this.path.clear();
+            }
+
             this.nextPosition = null;
             this.targetPosition = null;
+
             this.removeStatus(RoomUnitStatus.MOVE);
             this.handleSitStatus();
             this.handleLayStatus();
+
+            this.temporalFastWalkEnabled = false;
         }
     }
 
@@ -489,7 +499,7 @@ public abstract class RoomUnit extends RoomEntity {
         if(!this.path.isEmpty()) {
             RoomTile next = this.path.poll();
 
-            if(this.path.size() > 1 && this.cmdFastWalkEnabled) {
+            if(this.path.size() > 1 && (this.cmdFastWalkEnabled || this.temporalFastWalkEnabled)) {
                 next = this.path.poll();
             }
 
