@@ -100,7 +100,7 @@ public class InteractionTeleport extends RoomItem {
             this.roomUnitID = roomHabbo.getVirtualId();
             this.setExtraData("1");
             room.updateItemState(this);
-            roomHabbo.setGoalLocation(inFrontTile);
+            roomHabbo.walkTo(inFrontTile);
 
             List<Runnable> onSuccess = new ArrayList<>();
             List<Runnable> onFail = new ArrayList<>();
@@ -127,7 +127,7 @@ public class InteractionTeleport extends RoomItem {
 
             room.updateTile(currentItemLocation);
             roomHabbo.addOverrideTile(currentItemLocation);
-            roomHabbo.setGoalLocation(currentItemLocation);
+            roomHabbo.walkTo(currentItemLocation);
             roomHabbo.setCanLeaveRoomByDoor(false);
 
             Emulator.getThreading().run(new RoomUnitWalkToLocation(roomHabbo, currentItemLocation, room, onSuccess, onFail));
@@ -138,7 +138,7 @@ public class InteractionTeleport extends RoomItem {
 
             onSuccess.add(() -> tryTeleport(client, room));
 
-            roomHabbo.setGoalLocation(inFrontTile);
+            roomHabbo.walkTo(inFrontTile);
             Emulator.getThreading().run(new RoomUnitWalkToLocation(roomHabbo, inFrontTile, room, onSuccess, onFail));
         }
     }
@@ -204,13 +204,13 @@ public class InteractionTeleport extends RoomItem {
             return false;
         }
 
-        RoomUnit unit = habbo.getRoomUnit();
+        RoomHabbo roomHabbo = habbo.getRoomUnit();
 
-        if (unit == null) {
+        if (roomHabbo == null) {
             return false;
         }
 
-        return habbo.getHabboInfo().getRiding() == null;
+        return !roomHabbo.isRiding();
     }
 
     public void startTeleport(Room room, Habbo habbo) {

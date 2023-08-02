@@ -37,7 +37,7 @@ public class RespectPetEvent extends MessageHandler {
 
             RoomTile tile = habbo.getRoomUnit().getClosestAdjacentTile(pet.getRoomUnit().getCurrentPosition().getX(), pet.getRoomUnit().getCurrentPosition().getY(), true);
             if(tile != null) {
-                habbo.getRoomUnit().setGoalLocation(tile);
+                habbo.getRoomUnit().walkTo(tile);
             }
 
             Emulator.getThreading().run(new RoomUnitWalkToLocation(habbo.getRoomUnit(), tile, room, tasks, tasks));

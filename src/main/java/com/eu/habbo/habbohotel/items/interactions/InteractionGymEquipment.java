@@ -131,7 +131,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
         super.setRotation(rotation);
 
         if (this.forceRotation() && this.roomUnitId != -1) {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
+            Room room = this.getRoom();
             if (room != null) {
                 RoomUnit roomUnit = this.getCurrentRoomUnit(room);
 

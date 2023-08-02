@@ -33,7 +33,7 @@ public class EnableCommand extends Command {
             }
             if (target == gameClient.getHabbo() || gameClient.getHabbo().hasPermissionRight(Permission.ACC_ENABLE_OTHERS)) {
                 try {
-                    if (target.getRoomUnit().getRoom() != null && target.getHabboInfo().getRiding() == null) {
+                    if (target.getRoomUnit().getRoom() != null && !target.getRoomUnit().isRiding()) {
                         if (Emulator.getGameEnvironment().getPermissionsManager().isEffectBlocked(effectId, target.getHabboInfo().getPermissionGroup().getId())) {
                             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_enable.not_allowed"), RoomChatMessageBubbles.ALERT);
                             return true;

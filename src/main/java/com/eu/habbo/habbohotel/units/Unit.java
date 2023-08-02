@@ -6,6 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Unit {
+public abstract class Unit {
     private RoomUnit roomUnit;
 }

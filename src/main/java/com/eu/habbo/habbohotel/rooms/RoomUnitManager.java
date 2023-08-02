@@ -14,7 +14,6 @@ import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.outgoing.hotelview.CloseConnectionMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
@@ -67,10 +66,11 @@ public class RoomUnitManager {
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     Bot bot = Emulator.getGameEnvironment().getBotManager().loadBot(set);
-
+                    //TODO IMPROVE THIS
                     if (bot != null) {
                         bot.setRoom(this.room);
                         bot.setRoomUnit(new RoomBot());
+                        bot.getRoomUnit().setUnit(bot);
                         bot.getRoomUnit().setRoom(this.room);
                         bot.getRoomUnit().setLocation(this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y")));
                         if (bot.getRoomUnit().getCurrentPosition() == null || bot.getRoomUnit().getCurrentPosition().getState() == RoomTileState.INVALID) {
@@ -79,7 +79,6 @@ public class RoomUnitManager {
                             bot.getRoomUnit().setRotation(RoomRotation.fromValue(this.room.getLayout().getDoorDirection()));
                         } else {
                             bot.getRoomUnit().setCurrentZ(set.getDouble("z"));
-                            bot.getRoomUnit().setPreviousLocationZ(set.getDouble("z"));
                             bot.getRoomUnit().setRotation(RoomRotation.values()[set.getInt("rot")]);
                         }
                         bot.getRoomUnit().setRoomUnitType(RoomUnitType.BOT);
@@ -110,6 +109,7 @@ public class RoomUnitManager {
 
                     pet.setRoom(this.room);
                     pet.setRoomUnit(new RoomPet());
+                    pet.getRoomUnit().setUnit(pet);
                     pet.getRoomUnit().setRoom(this.room);
                     pet.getRoomUnit().setLocation(this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y")));
                     if (pet.getRoomUnit().getCurrentPosition() == null || pet.getRoomUnit().getCurrentPosition().getState() == RoomTileState.INVALID) {
@@ -227,15 +227,13 @@ public class RoomUnitManager {
             }
 
             pet.setRoomUnit(new RoomPet());
+            pet.getRoomUnit().setUnit(pet);
             pet.setRoom(room);
-            pet.getRoomUnit()
-                    .setGoalLocation(tile)
-                    .setLocation(tile)
+            pet.getRoomUnit().walkTo(tile);
+            pet.getRoomUnit().setLocation(tile)
                     .setRoomUnitType(RoomUnitType.PET)
                     .setCanWalk(true)
-                    .setPreviousLocationZ(z)
-                    .setCurrentZ(z)
-                    .setRoom(room);
+                    .setCurrentZ(z);
 
             if (pet.getRoomUnit().getCurrentPosition() == null) {
                 pet.getRoomUnit()
@@ -291,11 +289,7 @@ public class RoomUnitManager {
             return;
         }
 
-        RoomUnit roomUnit = habbo.getRoomUnit();
-
-        if(roomUnit == null || !(roomUnit instanceof RoomHabbo roomHabbo)) {
-            return;
-        }
+        RoomHabbo roomHabbo = habbo.getRoomUnit();
 
         if(roomHabbo.getCurrentPosition() != null) {
             roomHabbo.getCurrentPosition().removeUnit(habbo.getRoomUnit());
@@ -308,6 +302,7 @@ public class RoomUnitManager {
 
         roomHabbo.getRoom().sendComposer(new UserRemoveMessageComposer(roomHabbo).compose());
 
+        //MOVE THIS TO RoomTile.java -> removeUnit()
         RoomItem item = roomHabbo.getRoom().getRoomItemManager().getTopItemAt(roomHabbo.getCurrentPosition());
 
         if (item != null) {
@@ -333,7 +328,6 @@ public class RoomUnitManager {
         }
 
         roomHabbo.getRoom().updateDatabaseUserCount();
-
         roomHabbo.clear();
     }
 
@@ -414,10 +408,8 @@ public class RoomUnitManager {
 
     public void dispose() {
         for(Habbo habbo : this.currentHabbos.values()) {
-            Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room);
+            Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room, true);
         }
-
-        this.room.sendComposer(new CloseConnectionMessageComposer().compose());
 
         this.currentHabbos.clear();
 
@@ -450,7 +442,6 @@ public class RoomUnitManager {
         }
 
         this.currentPets.clear();
-
         this.currentRoomUnits.clear();
     }
 }

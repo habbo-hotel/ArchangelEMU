@@ -74,7 +74,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
     }
 
     public boolean inSquare(RoomTile location) {
-        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
+        Room room = this.getRoom();
 
         if(!this.values.get("state").equals("1"))
             return false;

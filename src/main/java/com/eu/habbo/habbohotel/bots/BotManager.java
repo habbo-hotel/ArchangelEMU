@@ -126,13 +126,10 @@ public class BotManager {
                     return;
                 }
 
-                bot.setRoomUnit(new RoomBot());
-
                 RoomBot roomBot = bot.getRoomUnit();
                 roomBot.setRotation(RoomRotation.SOUTH);
                 roomBot.setLocation(location);
                 double stackHeight = room.getRoomItemManager().getTopHeightAt(location.getX(), location.getY());
-                roomBot.setPreviousLocationZ(stackHeight);
                 roomBot.setCurrentZ(stackHeight);
                 roomBot.setRoom(room);
                 roomBot.setRoomUnitType(RoomUnitType.BOT);

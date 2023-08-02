@@ -40,7 +40,7 @@ public class PushCommand extends Command {
                         gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_push.invalid"), params[1]));
                         return true;
                     }
-                    habbo.getRoomUnit().setGoalLocation(tFrontTarget);
+                    habbo.getRoomUnit().walkTo(tFrontTarget);
                     gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(
                             new ChatMessageComposer(
                                     new RoomChatMessage(

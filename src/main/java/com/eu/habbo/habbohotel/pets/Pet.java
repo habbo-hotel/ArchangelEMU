@@ -5,6 +5,7 @@ import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ISerialize;
@@ -126,6 +127,10 @@ public class Pet extends Unit implements ISerialize, Runnable {
     @Setter
     @Getter
     private boolean muted = false;
+
+    @Getter
+    @Setter
+    private RoomPet roomUnit;
 
     /**
      * Creates a new pet using the given result set, which should contain data retrieved from a
@@ -359,7 +364,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
                     RoomTile tile = this.room.getRandomWalkableTile();
 
                     if (tile != null) {
-                        this.getRoomUnit().setGoalLocation(tile);
+                        this.getRoomUnit().walkTo(tile);
                     }
                 }
 
@@ -376,7 +381,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
                     if (this.energy == PetManager.maxEnergy(this.level)) {
                         this.getRoomUnit().removeStatus(RoomUnitStatus.LAY);
                         this.getRoomUnit().setCanWalk(true);
-                        this.getRoomUnit().setGoalLocation(this.room.getRandomWalkableTile());
+                        this.getRoomUnit().walkTo(this.room.getRandomWalkableTile());
                         this.task = null;
                         this.getRoomUnit().addStatus(RoomUnitStatus.GESTURE, PetGestures.ENERGY.getKey());
                         this.gestureTickTimeout = currentTime;
@@ -578,7 +583,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
         RoomItem item = this.petData.randomNest(this.room.getRoomSpecialTypes().getNests());
         this.getRoomUnit().setCanWalk(true);
         if (item != null) {
-            this.getRoomUnit().setGoalLocation(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
+            this.getRoomUnit().walkTo(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
         } else {
             if(this instanceof HorsePet horsePet && horsePet.hasSaddle()) {
                 return;
@@ -603,7 +608,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
                 } catch (Exception ignored) {
                 }
             } else {
-                this.getRoomUnit().setGoalLocation(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
+                this.getRoomUnit().walkTo(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
             }
         }
         return item != null;
@@ -616,7 +621,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
         RoomItem item = this.petData.randomFoodItem(this.room.getRoomSpecialTypes().getPetFoods());
         if (item != null) {
             this.getRoomUnit().setCanWalk(true);
-            this.getRoomUnit().setGoalLocation(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
+            this.getRoomUnit().walkTo(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
         }
     }
 
@@ -636,7 +641,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
                 }
                 return true;
             }
-            this.getRoomUnit().setGoalLocation(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
+            this.getRoomUnit().walkTo(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
             return true;
         }
 
@@ -663,7 +668,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
                 }
                 return true;
             }
-            this.getRoomUnit().setGoalLocation(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
+            this.getRoomUnit().walkTo(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
             return true;
         }
         return false;
@@ -768,7 +773,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
      */
     public void freeCommand() {
         this.task = null;
-        this.getRoomUnit().setGoalLocation(this.getRoomUnit().getCurrentPosition());
+        this.getRoomUnit().walkTo(this.getRoomUnit().getCurrentPosition());
         this.getRoomUnit().clearStatuses();
         this.getRoomUnit().setCanWalk(true);
         this.say(this.petData.randomVocal(PetVocalsType.GENERIC_NEUTRAL));

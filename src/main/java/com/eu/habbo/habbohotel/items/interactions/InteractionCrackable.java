@@ -64,14 +64,14 @@ public class InteractionCrackable extends RoomItem {
 
         super.onClick(client, room, objects);
         synchronized (this.lock) {
-            if (this.getRoomId() == 0)
+            if (this.getRoom() == null)
                 return;
 
             if (this.cracked)
                 return;
 
             if (this.userRequiredToBeAdjacent() && client.getHabbo().getRoomUnit().getCurrentPosition().distance(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY())) > 1.5) {
-                client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), Rotation.Calculate(client.getHabbo().getRoomUnit().getCurrentPosition().getX(), client.getHabbo().getRoomUnit().getCurrentPosition().getY(), this.getCurrentPosition().getX(), this.getCurrentPosition().getY())));
+                client.getHabbo().getRoomUnit().walkTo(room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), Rotation.Calculate(client.getHabbo().getRoomUnit().getCurrentPosition().getX(), client.getHabbo().getRoomUnit().getCurrentPosition().getY(), this.getCurrentPosition().getX(), this.getCurrentPosition().getY())));
                 return;
             }
 

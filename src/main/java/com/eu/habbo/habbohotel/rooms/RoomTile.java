@@ -57,6 +57,7 @@ public class RoomTile {
         if (this.state == RoomTileState.INVALID) {
             this.allowStack = false;
         }
+
         this.roomUnits = tile.roomUnits;
         this.roomItems = tile.roomItems;
     }
@@ -104,6 +105,10 @@ public class RoomTile {
         return o instanceof RoomTile &&
                 ((RoomTile) o).x == this.x &&
                 ((RoomTile) o).y == this.y;
+    }
+
+    public boolean equals(int x, int y) {
+        return this.x == x && this.y == y;
     }
 
     public RoomTile copy() {
@@ -162,9 +167,7 @@ public class RoomTile {
 
     public void addRoomUnit(RoomUnit roomUnit) {
         synchronized (this.roomUnits) {
-            if (!this.roomUnits.contains(roomUnit)) {
-                this.roomUnits.add(roomUnit);
-            }
+            this.roomUnits.add(roomUnit);
         }
     }
 

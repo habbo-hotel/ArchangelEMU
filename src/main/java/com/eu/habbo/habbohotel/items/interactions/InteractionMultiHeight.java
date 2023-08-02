@@ -91,7 +91,6 @@ public class InteractionMultiHeight extends RoomItem {
                 }
 
                 if (this.getBaseItem().allowSit() || unit.hasStatus(RoomUnitStatus.SIT)) {
-                    unit.setSitUpdate(true);
                     unit.setStatusUpdateNeeded(true);
                 } else {
                     unit.setCurrentZ(unit.getCurrentPosition().getStackHeight());

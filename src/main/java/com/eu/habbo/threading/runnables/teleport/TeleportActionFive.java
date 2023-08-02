@@ -49,7 +49,7 @@ class TeleportActionFive implements Runnable {
             });
 
             unit.setCanLeaveRoomByDoor(false);
-            unit.setGoalLocation(tile);
+            unit.walkTo(tile);
             unit.setStatusUpdateNeeded(true);
             unit.setLeavingTeleporter(true);
             Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onSuccess, onSuccess));

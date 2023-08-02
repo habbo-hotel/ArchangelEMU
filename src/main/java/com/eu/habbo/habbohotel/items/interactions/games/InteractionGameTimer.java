@@ -322,11 +322,6 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
     }
 
     @Override
-    public String getDatabaseExtraData() {
-        return this.getExtraData();
-    }
-
-    @Override
     public boolean allowWiredResetState() {
         return true;
     }

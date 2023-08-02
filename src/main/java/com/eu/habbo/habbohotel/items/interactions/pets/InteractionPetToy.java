@@ -65,7 +65,7 @@ public class InteractionPetToy extends InteractionDefault {
                 }
 
                 pet.setTask(PetTasks.PLAY);
-                pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
+                pet.getRoomUnit().walkTo(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
                 pet.getRoomUnit().setRotation(RoomRotation.values()[this.getRotation()]);
                 pet.getRoomUnit().clearStatuses();
                 pet.getRoomUnit().addStatus(RoomUnitStatus.PLAY, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");

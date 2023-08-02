@@ -19,6 +19,12 @@ public interface IRoomEntity {
     double getCurrentZ();
     RoomEntity setCurrentZ(double currentZ);
 
+    RoomTile getNextPosition();
+    RoomEntity setNextPosition(RoomTile nextPosition);
+
+    double getNextZ();
+    RoomEntity setNextZ(double nextZ);
+
     RoomTile getTargetPosition();
     RoomEntity setTargetPosition(RoomTile targetPosition);
 

@@ -72,7 +72,7 @@ public class InteractionNest extends RoomItem {
             return;
 
         pet.setTask(PetTasks.NEST);
-        pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
+        pet.getRoomUnit().walkTo(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
         pet.getRoomUnit().clearStatuses();
         pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
         pet.getRoomUnit().addStatus(RoomUnitStatus.LAY, room.getStackHeight(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), false) + "");

@@ -16,7 +16,7 @@ public class ActionHere extends PetAction {
 
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
-        pet.getRoomUnit().setGoalLocation(pet.getRoom().getLayout().getTileInFront(habbo.getRoomUnit().getCurrentPosition(), habbo.getRoomUnit().getBodyRotation().getValue()));
+        pet.getRoomUnit().walkTo(pet.getRoom().getLayout().getTileInFront(habbo.getRoomUnit().getCurrentPosition(), habbo.getRoomUnit().getBodyRotation().getValue()));
         pet.getRoomUnit().setCanWalk(true);
 
         if (pet.getHappiness() > 50) {

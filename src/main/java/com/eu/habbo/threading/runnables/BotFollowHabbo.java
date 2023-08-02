@@ -40,7 +40,7 @@ public class BotFollowHabbo implements Runnable {
                                 }
 
                                 if (target.getX() >= 0 && target.getY() >= 0) {
-                                    this.bot.getRoomUnit().setGoalLocation(target);
+                                    this.bot.getRoomUnit().walkTo(target);
                                     this.bot.getRoomUnit().setCanWalk(true);
                                     Emulator.getThreading().run(this, 500);
                                 }

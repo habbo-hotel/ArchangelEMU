@@ -50,7 +50,7 @@ public class InteractionPuzzleBox extends RoomItem {
         if (rotation == null) {
             RoomTile nearestTile = client.getHabbo().getRoomUnit().getClosestAdjacentTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), false);
 
-            if (nearestTile != null) client.getHabbo().getRoomUnit().setGoalLocation(nearestTile);
+            if (nearestTile != null) client.getHabbo().getRoomUnit().walkTo(nearestTile);
             return;
         }
 
@@ -77,9 +77,9 @@ public class InteractionPuzzleBox extends RoomItem {
 
         room.scheduledComposers.add(new FloorItemOnRollerComposer(this, null, tile, 0, room).compose());
         room.scheduledTasks.add(() -> {
-            client.getHabbo().getRoomUnit().setGoalLocation(boxLocation);
+            client.getHabbo().getRoomUnit().walkTo(boxLocation);
 
-            room.scheduledTasks.add(() -> client.getHabbo().getRoomUnit().setGoalLocation(boxLocation));
+            room.scheduledTasks.add(() -> client.getHabbo().getRoomUnit().walkTo(boxLocation));
         });
         this.needsUpdate(true);
     }

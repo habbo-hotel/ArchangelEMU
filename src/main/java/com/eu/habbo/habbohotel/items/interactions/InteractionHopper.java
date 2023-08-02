@@ -62,7 +62,7 @@ public class InteractionHopper extends RoomItem {
 
                     Emulator.getThreading().run(new HopperActionOne(this, room, client), 500);
                 } else {
-                    client.getHabbo().getRoomUnit().setGoalLocation(loc);
+                    client.getHabbo().getRoomUnit().walkTo(loc);
                 }
             }
         }
@@ -78,7 +78,7 @@ public class InteractionHopper extends RoomItem {
         if (!this.getExtraData().equals("0")) {
             this.setExtraData("0");
 
-            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
+            Room room = this.getRoom();
             if (room != null) {
                 room.updateItemState(this);
             }

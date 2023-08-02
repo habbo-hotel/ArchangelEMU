@@ -574,7 +574,6 @@ public class RoomManager {
         RoomHabbo roomHabbo = habbo.getRoomUnit();
 
         roomHabbo.clear();
-        roomHabbo.clearWalking();
 
         if (roomHabbo.getCurrentPosition() == null) {
             RoomTile spawnTile = spawnLocation == null ? room.getLayout().getDoorTile() : spawnLocation;
@@ -622,7 +621,7 @@ public class RoomManager {
 
         habbo.getClient().sendResponse(new RoomRatingComposer(room.getRoomInfo().getScore(), !this.hasVotedForRoom(habbo, room)));
 
-        roomHabbo.setFastWalkEnabled(roomHabbo.isFastWalkEnabled() && habbo.canExecuteCommand("cmd_fastwalk", room.getRoomRightsManager().hasRights(habbo)));
+        roomHabbo.setCmdFastWalkEnabled(roomHabbo.isCmdFastWalkEnabled() && habbo.canExecuteCommand("cmd_fastwalk", room.getRoomRightsManager().hasRights(habbo)));
 
         if (room.isPromoted()) {
             habbo.getClient().sendResponse(new RoomEventComposer(room, room.getPromotion()));
@@ -875,9 +874,8 @@ public class RoomManager {
     }
 
     public void leaveRoom(Habbo habbo, Room room, boolean redirectToHotelView) {
-        if (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom() == room) {
+        if (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom().equals(room)) {
             this.logExit(habbo);
-
             room.getRoomUnitManager().removeHabbo(habbo, true);
 
             if (redirectToHotelView) {
@@ -885,9 +883,8 @@ public class RoomManager {
             }
 
             habbo.getRoomUnit().setPreviousRoom(room);
-            habbo.getRoomUnit().setRoom(null);
 
-            if (room.getRoomInfo().getOwnerInfo().getId() != habbo.getHabboInfo().getId()) {
+            if (!room.getRoomInfo().isRoomOwner(habbo)) {
                 AchievementManager.progressAchievement(room.getRoomInfo().getOwnerInfo().getId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"), (int) Math.floor((Emulator.getIntUnixTimestamp() - habbo.getHabboStats().roomEnterTimestamp) / 60000.0));
             }
 
@@ -902,13 +899,13 @@ public class RoomManager {
             control.getRoomUnit().getCacheable().remove("controller");
         }
 
-        if (habbo.getHabboInfo().getRiding() != null) {
-            if (habbo.getHabboInfo().getRiding().getRoomUnit() != null) {
-                habbo.getHabboInfo().getRiding().getRoomUnit().setGoalLocation(habbo.getHabboInfo().getRiding().getRoomUnit().getCurrentPosition());
+        if (habbo.getRoomUnit().isRiding()) {
+            if (habbo.getRoomUnit().getRidingPet().getRoomUnit() != null) {
+                habbo.getRoomUnit().getRidingPet().getRoomUnit().walkTo(habbo.getRoomUnit().getRidingPet().getRoomUnit().getCurrentPosition());
             }
-            habbo.getHabboInfo().getRiding().setTask(PetTasks.FREE);
-            habbo.getHabboInfo().getRiding().setRider(null);
-            habbo.getHabboInfo().setRiding(null);
+            habbo.getRoomUnit().getRidingPet().setTask(PetTasks.FREE);
+            habbo.getRoomUnit().getRidingPet().setRider(null);
+            habbo.getRoomUnit().setRidingPet(null);
         }
 
         Room room = habbo.getRoomUnit().getRoom();

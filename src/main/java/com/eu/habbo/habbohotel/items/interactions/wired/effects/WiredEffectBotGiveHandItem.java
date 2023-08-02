@@ -58,7 +58,7 @@ public class WiredEffectBotGiveHandItem extends InteractionWiredEffect {
             RoomTile tile = bot.getRoomUnit().getClosestAdjacentTile(roomAvatar.getCurrentPosition().getX(), roomAvatar.getCurrentPosition().getY(), true);
 
             if(tile != null) {
-                bot.getRoomUnit().setGoalLocation(tile);
+                bot.getRoomUnit().walkTo(tile);
             }
 
             Emulator.getThreading().run(new RoomUnitGiveHanditem(bot.getRoomUnit(), room, itemId));

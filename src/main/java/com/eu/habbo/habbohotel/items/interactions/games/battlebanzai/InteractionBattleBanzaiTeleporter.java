@@ -64,7 +64,7 @@ public class InteractionBattleBanzaiTeleporter extends RoomItem {
             this.setExtraData("1");
             room.updateItemState(this);
             roomUnit.removeStatus(RoomUnitStatus.MOVE);
-            roomUnit.setGoalLocation(roomUnit.getCurrentPosition());
+            roomUnit.walkTo(roomUnit.getCurrentPosition());
             roomUnit.setCanWalk(false);
             Emulator.getThreading().run(new BanzaiRandomTeleport(this, target, roomUnit, room), 500);
         }

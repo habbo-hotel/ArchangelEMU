@@ -19,7 +19,7 @@ class HopperActionFive implements Runnable {
         this.client.getHabbo().getRoomUnit().setTeleporting(false);
         RoomTile tile = this.room.getLayout().getTileInFront(this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY()), this.currentTeleport.getRotation());
         if (tile != null) {
-            this.client.getHabbo().getRoomUnit().setGoalLocation(tile);
+            this.client.getHabbo().getRoomUnit().walkTo(tile);
         }
 
         Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), 1000);

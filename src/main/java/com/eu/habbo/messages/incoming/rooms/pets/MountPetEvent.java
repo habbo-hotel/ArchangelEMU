@@ -29,8 +29,8 @@ public class MountPetEvent extends MessageHandler {
         }
 
         //dismount
-        if (habbo.getHabboInfo().getRiding() != null) {
-            boolean mountAnotherPet = petId != habbo.getHabboInfo().getRiding().getId();
+        if (habbo.getRoomUnit().isRiding()) {
+            boolean mountAnotherPet = petId != habbo.getRoomUnit().getRidingPet().getId();
 
             habbo.getRoomUnit().dismountPet(false);
 
@@ -57,8 +57,8 @@ public class MountPetEvent extends MessageHandler {
         }
 
         RoomTile goalTile = availableTiles.get(0);
-        habbo.getRoomUnit().setGoalLocation(goalTile);
-        habbo.getRoomUnit().setRideLock(true);
+        habbo.getRoomUnit().walkTo(goalTile);
+        habbo.getRoomUnit().setRideLocked(true);
         Emulator.getThreading().run(new RoomUnitRidePet(rideablePet, habbo, goalTile));
         rideablePet.getRoomUnit().setWalkTimeOut(3 + Emulator.getIntUnixTimestamp());
         rideablePet.getRoomUnit().stopWalking();

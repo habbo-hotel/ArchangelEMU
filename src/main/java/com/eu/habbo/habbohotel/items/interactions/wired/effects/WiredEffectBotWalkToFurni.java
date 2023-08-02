@@ -56,7 +56,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
             if (item.getRoomId() != 0) {
                 Room room1 = bot.getRoom();
                 if (item.getRoomId() == room1.getRoomInfo().getId()) {
-                    bot.getRoomUnit().setGoalLocation(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
+                    bot.getRoomUnit().walkTo(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
                 }
             }
         }

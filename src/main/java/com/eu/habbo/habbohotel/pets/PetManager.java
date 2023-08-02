@@ -444,6 +444,7 @@ public class PetManager {
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
         pet.setRoomUnit(new RoomPet());
+        pet.getRoomUnit().setUnit(pet);
         pet.getRoomUnit().setRoom(room);
         pet.setNeedsUpdate(true);
         pet.run();
@@ -463,6 +464,7 @@ public class PetManager {
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
         pet.setRoomUnit(new RoomPet());
+        pet.getRoomUnit().setUnit(pet);
         pet.getRoomUnit().setRoom(room);
         pet.setNeedsUpdate(true);
         pet.run();
@@ -483,6 +485,7 @@ public class PetManager {
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
         pet.setRoomUnit(new RoomPet());
+        pet.getRoomUnit().setUnit(pet);
         pet.getRoomUnit().setRoom(room);
         pet.setNeedsUpdate(true);
         pet.run();

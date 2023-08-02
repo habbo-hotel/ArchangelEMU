@@ -143,7 +143,7 @@ public class InteractionVendingMachine extends RoomItem {
 
                 onSuccess.add(() -> tryInteract(client, room, unit));
 
-                unit.setGoalLocation(tileToWalkTo);
+                unit.walkTo(tileToWalkTo);
                 Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tileToWalkTo, room, onSuccess, onFail));
             }
         }

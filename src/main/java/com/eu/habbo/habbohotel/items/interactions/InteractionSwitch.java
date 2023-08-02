@@ -62,7 +62,7 @@ public class InteractionSwitch extends InteractionDefault {
                     }
                 });
 
-                client.getHabbo().getRoomUnit().setGoalLocation(closestTile);
+                client.getHabbo().getRoomUnit().walkTo(closestTile);
                 Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), closestTile, room, onSuccess, new ArrayList<>()));
             }
         }

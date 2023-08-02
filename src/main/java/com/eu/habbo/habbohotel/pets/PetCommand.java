@@ -59,7 +59,7 @@ public class PetCommand implements Comparable<PetCommand> {
         if (this.action != null && pet.energy > this.energyCost && pet.happiness > this.happinessCost && Emulator.getRandom().nextInt((pet.level - this.level <= 0 ? 2 : pet.level - this.level) + 2) == 0) {
             if (this.action.petTask != pet.getTask()) {
                 if (this.action.stopsPetWalking) {
-                    pet.getRoomUnit().setGoalLocation(pet.getRoomUnit().getCurrentPosition());
+                    pet.getRoomUnit().walkTo(pet.getRoomUnit().getCurrentPosition());
                 }
                 if (this.action.apply(pet, habbo, data)) {
                     for (RoomUnitStatus status : this.action.statusToRemove) {

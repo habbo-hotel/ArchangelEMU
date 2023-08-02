@@ -24,7 +24,9 @@ public class ClearRentedSpace implements Runnable {
             for (RoomItem i : this.room.getRoomItemManager().getItemsAt(t)) {
                 if (i.getOwnerInfo().getId() == this.item.getRenterId()) {
                     items.add(i);
+                    //Deprecated
                     i.setRoomId(0);
+                    i.setRoom(null);
                     i.needsUpdate(true);
                 }
             }

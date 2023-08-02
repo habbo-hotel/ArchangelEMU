@@ -24,7 +24,7 @@ public class ActionDip extends PetAction {
 
         RoomItem waterPatch = (RoomItem) waterItems.toArray()[Emulator.getRandom().nextInt(waterItems.size())];
 
-        pet.getRoomUnit().setGoalLocation(pet.getRoom().getLayout().getTile(waterPatch.getCurrentPosition().getX(), waterPatch.getCurrentPosition().getY()));
+        pet.getRoomUnit().walkTo(pet.getRoom().getLayout().getTile(waterPatch.getCurrentPosition().getX(), waterPatch.getCurrentPosition().getY()));
 
         if (pet.getHappiness() > 70) {
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));

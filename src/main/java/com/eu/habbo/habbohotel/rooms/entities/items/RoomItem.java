@@ -53,15 +53,20 @@ import java.util.List;
 public abstract class RoomItem extends RoomEntity implements Runnable, IEventTriggers {
     private final int id;
     private HabboInfo ownerInfo;
+    /**
+     * TODO FINISH GET RID OF THIS
+     */
+    @Deprecated
     private int roomId;
+
     private final Item baseItem;
     private String wallPosition;
     private int rotation;
     private String extraData;
     private int limitedStack;
     private int limitedSells;
-    private boolean needsUpdate = false;
-    private boolean needsDelete = false;
+    private boolean sqlUpdateNeeded = false;
+    private boolean sqlDeleteNeeded = false;
     private boolean isFromGift = false;
 
     @SuppressWarnings("rawtypes")
@@ -75,6 +80,7 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
     public RoomItem(ResultSet set, Item baseItem) throws SQLException {
         this.id = set.getInt("id");
         this.ownerInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(set.getInt(DatabaseConstants.USER_ID));
+
         this.roomId = set.getInt("room_id");
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(set.getInt("room_id"));
@@ -84,8 +90,14 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
         this.wallPosition = set.getString("wall_pos");
 
         if(room != null) {
-            this.setCurrentPosition(room.getLayout().getTile(set.getShort("x"), set.getShort("y")));
-            this.setCurrentZ(set.getDouble("z"));
+            RoomTile itemTile = room.getLayout().getTile(set.getShort("x"), set.getShort("y"));
+
+            if(itemTile == null) {
+                this.setRoom(null);
+            } else {
+                this.setCurrentPosition(itemTile);
+                this.setCurrentZ(set.getDouble("z"));
+            }
         }
 
         this.rotation = set.getInt("rot");
@@ -96,8 +108,6 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
             this.limitedStack = Integer.parseInt(set.getString("limited_data").split(":")[0]);
             this.limitedSells = Integer.parseInt(set.getString("limited_data").split(":")[1]);
         }
-
-        this.setRoom(Emulator.getGameEnvironment().getRoomManager().getRoom(set.getInt("room_id")));
     }
 
     public RoomItem(int id, HabboInfo ownerInfo, Item item, String extraData, int limitedStack, int limitedSells) {
@@ -171,19 +181,19 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
     }
 
     public boolean needsUpdate() {
-        return this.needsUpdate;
+        return this.sqlUpdateNeeded;
     }
 
     public boolean needsDelete() {
-        return needsDelete;
+        return sqlDeleteNeeded;
     }
 
     public void needsUpdate(boolean value) {
-        this.needsUpdate = value;
+        this.sqlUpdateNeeded = value;
     }
 
     public void needsDelete(boolean value) {
-        this.needsDelete = value;
+        this.sqlDeleteNeeded = value;
     }
 
     public boolean isLimited() {
@@ -195,24 +205,24 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
     @Override
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            if (this.needsDelete) {
-                this.needsUpdate = false;
-                this.needsDelete = false;
+            if (this.sqlDeleteNeeded) {
+                this.sqlUpdateNeeded = false;
+                this.sqlDeleteNeeded = false;
 
                 try (PreparedStatement statement = connection.prepareStatement("DELETE FROM items WHERE id = ?")) {
                     statement.setInt(1, this.getId());
                     statement.execute();
                 }
-            } else if (this.needsUpdate) {
+            } else if (this.sqlUpdateNeeded) {
                 try (PreparedStatement statement = connection.prepareStatement("UPDATE items SET user_id = ?, room_id = ?, wall_pos = ?, x = ?, y = ?, z = ?, rot = ?, extra_data = ?, limited_data = ? WHERE id = ?")) {
                     statement.setInt(1, this.ownerInfo.getId());
-                    statement.setInt(2, this.roomId);
+                    statement.setInt(2, (this.getRoom() == null) ? 0 : this.getRoom().getRoomInfo().getId());
                     statement.setString(3, this.wallPosition);
                     statement.setInt(4, this.getCurrentPosition().getX());
                     statement.setInt(5, this.getCurrentPosition().getY());
                     statement.setDouble(6, Math.max(-9999, Math.min(9999, Math.round(this.getCurrentZ() * Math.pow(10, 6)) / Math.pow(10, 6))));
                     statement.setInt(7, this.rotation);
-                    statement.setString(8, this instanceof InteractionGuildGate ? "" : this.getDatabaseExtraData());
+                    statement.setString(8, this instanceof InteractionGuildGate ? "" : this.extraData);
                     statement.setString(9, this.limitedStack + ":" + this.limitedSells);
                     statement.setInt(10, this.id);
                     statement.execute();
@@ -221,7 +231,7 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
                     log.error("SQLException trying to save HabboItem: " + this);
                 }
 
-                this.needsUpdate = false;
+                this.sqlUpdateNeeded = false;
             }
 
         } catch (SQLException e) {
@@ -259,7 +269,7 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
             if (this.getBaseItem().getEffectF() > 0 || this.getBaseItem().getEffectM() > 0) {
                 Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomAvatar);
 
-                if (habbo != null && habbo.getHabboInfo().getRiding() == null) {
+                if (habbo != null && !habbo.getRoomUnit().isRiding()) {
                     if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0) {
                         roomAvatar.giveEffect(this.getBaseItem().getEffectM(), -1);
                         return;
@@ -299,7 +309,7 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
 
             Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomAvatar);
 
-            if (habbo != null && habbo.getHabboInfo().getRiding() == null) {
+            if (habbo != null && !habbo.getRoomUnit().isRiding()) {
                 if (habbo.getHabboInfo().getGender().equals(HabboGender.M) && this.getBaseItem().getEffectM() > 0) {
                     roomAvatar.giveEffect(0, -1);
                 }
@@ -457,10 +467,6 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
                 }
             });
         }
-    }
-
-    public String getDatabaseExtraData() {
-        return this.getExtraData();
     }
 
     @Override

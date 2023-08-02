@@ -35,7 +35,9 @@ public class CustomizeAvatarWithFurniEvent extends MessageHandler {
 
                     if (clothing != null) {
                         if (!this.client.getHabbo().getInventory().getWardrobeComponent().getClothing().contains(clothing.getId())) {
+                            //Deprecated
                             item.setRoomId(0);
+                            item.setRoom(null);
                             RoomTile tile = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
                             this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(item);
                             this.client.getHabbo().getRoomUnit().getRoom().updateTile(tile);

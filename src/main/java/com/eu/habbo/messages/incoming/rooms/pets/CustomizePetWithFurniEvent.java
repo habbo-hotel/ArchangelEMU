@@ -85,7 +85,9 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
 
                 room.getRoomItemManager().removeRoomItem(item);
                 room.sendComposer(new RemoveFloorItemComposer(item, true).compose());
+                //Deprecated
                 item.setRoomId(0);
+                item.setRoom(null);
                 Emulator.getGameEnvironment().getItemManager().deleteItem(item);
             }
         } else if (pet instanceof MonsterplantPet) {

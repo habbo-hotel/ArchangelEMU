@@ -46,9 +46,7 @@ public class RoomUnitTeleport implements Runnable {
         }
         this.roomUnit.setPath(new LinkedList<>());
         this.roomUnit.setCurrentPosition(newLocation);
-        this.roomUnit.setPreviousLocation(newLocation);
         this.roomUnit.setCurrentZ(this.z);
-        this.roomUnit.setPreviousLocationZ(this.z);
         this.roomUnit.removeStatus(RoomUnitStatus.MOVE);
         //ServerMessage teleportMessage = new RoomUnitOnRollerComposer(this.roomUnit, newLocation, this.room).compose();
         this.roomUnit.setLocation(newLocation);

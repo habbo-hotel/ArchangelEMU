@@ -41,7 +41,7 @@ public class PullCommand extends Command {
                 gameClient.getHabbo().whisper(replaceUsername(getTextsValue("commands.error.cmd_pull.invalid"), params[1]));
                 return true;
             }
-            habbo.getRoomUnit().setGoalLocation(tile);
+            habbo.getRoomUnit().walkTo(tile);
             gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new ChatMessageComposer(new RoomChatMessage(replaceUser(getTextsValue("commands.succes.cmd_pull.pull"), params[1]).replace("%gender_name%", (gameClient.getHabbo().getHabboInfo().getGender().equals(HabboGender.M) ? getTextsValue("gender.him") : getTextsValue("gender.her"))), gameClient.getHabbo(), gameClient.getHabbo(), RoomChatMessageBubbles.NORMAL)).compose());
         }
 

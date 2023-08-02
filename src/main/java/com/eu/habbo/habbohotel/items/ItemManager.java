@@ -687,7 +687,7 @@ public class ItemManager {
                 Constructor<? extends RoomItem> c = itemClass.getConstructor(ResultSet.class, Item.class);
                 c.setAccessible(true);
 
-                RoomItem item = (RoomItem) c.newInstance(set, baseItem);
+                RoomItem item = c.newInstance(set, baseItem);
 
                 if (item instanceof InteractionWired interactionWired) {
                     interactionWired.loadWiredSettings(set);

@@ -1,11 +1,17 @@
 package com.eu.habbo.habbohotel.rooms.entities.units.types;
 
+import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.DanceType;
+import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.SleepMessageComposer;
+import com.eu.habbo.plugin.events.users.UserIdleEvent;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,8 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Accessors(chain = true)
 public class RoomHabbo extends RoomAvatar {
+    private Habbo unit;
     private Room loadingRoom;
     private Room previousRoom;
+
+    private boolean cmdTeleportEnabled;
 
 //    @Setter
 //    private boolean isKicked;
@@ -28,13 +37,50 @@ public class RoomHabbo extends RoomAvatar {
 
     public RoomHabbo() {
         super();
-
+        this.cmdTeleportEnabled = false;
 //        this.isKicked = false;
 //        this.overridableTiles = new HashSet<>();
     }
 
-    public boolean cycle(Room room) {
-        return super.cycle(room);
+    @Override
+    public void cycle() {
+        super.cycle();
+    }
+
+    @Override
+    public boolean walkTo(RoomTile goalLocation) {
+        if(this.rideLocked || this.isTeleporting() || this.isKicked()) {
+            return false;
+        }
+
+        if(this.cmdTeleportEnabled) {
+            if (this.isRiding()) {
+                this.room.sendComposer(new RoomUnitOnRollerComposer(this, null, this.currentPosition, this.currentZ, goalLocation, goalLocation.getStackHeight() + 1.0D, this.room).compose());
+                this.room.sendComposer(new RoomUnitOnRollerComposer(this.ridingPet.getRoomUnit(), goalLocation, this.room).compose());
+            } else {
+                this.room.sendComposer(new RoomUnitOnRollerComposer(this, goalLocation, this.room).compose());
+            }
+
+            return false;
+        }
+
+        if (this.isRiding() && this.ridingPet.getTask() != null && this.ridingPet.getTask().equals(PetTasks.JUMP)) {
+            return false;
+        }
+
+        // Reset idle status
+        if (this.isIdle()) {
+            UserIdleEvent event = new UserIdleEvent(this.unit, UserIdleEvent.IdleReason.WALKED, false);
+            Emulator.getPluginManager().fireEvent(event);
+
+            if (!event.isCancelled()) {
+                if (!event.isIdle()) {
+                    this.unIdle();
+                }
+            }
+        }
+
+        return super.walkTo(goalLocation);
     }
 
     public boolean isLoadingRoom() {
@@ -56,17 +102,17 @@ public class RoomHabbo extends RoomAvatar {
             this.setDance(DanceType.NONE);
         }
 
-        this.getRoom().sendComposer(new SleepMessageComposer(this).compose());
+        this.room.sendComposer(new SleepMessageComposer(this).compose());
 
-        WiredHandler.handle(WiredTriggerType.IDLES, this, this.getRoom(), new Object[]{this});
+        WiredHandler.handle(WiredTriggerType.IDLES, this, this.room, new Object[]{this});
     }
 
     public void unIdle() {
         this.resetIdleTicks();
 
-        this.getRoom().sendComposer(new SleepMessageComposer(this).compose());
+        this.room.sendComposer(new SleepMessageComposer(this).compose());
 
-        WiredHandler.handle(WiredTriggerType.UNIDLES, this, this.getRoom(), new Object[]{this});
+        WiredHandler.handle(WiredTriggerType.UNIDLES, this, this.room, new Object[]{this});
     }
 
     public boolean isIdle() {
@@ -92,5 +138,6 @@ public class RoomHabbo extends RoomAvatar {
     @Override
     public void clear() {
         super.clear();
+        this.cmdTeleportEnabled = false;
     }
 }

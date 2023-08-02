@@ -128,7 +128,9 @@ public class RoomItemManager {
             try {
                 this.currentItems.put(item.getId(), item);
                 this.sortItem(item);
+                //Deprecated
                 item.setRoomId(this.room.getRoomInfo().getId());
+                item.setRoom(room);
             } catch (Exception ignored) {
 
             }
@@ -344,7 +346,9 @@ public class RoomItemManager {
         this.room.sendComposer(new ItemAddMessageComposer(item, this.room.getFurniOwnerName(item.getOwnerInfo().getId())).compose());
         item.needsUpdate(true);
         this.addRoomItem(item);
+        //Deprecated
         item.setRoomId(this.room.getRoomInfo().getId());
+        item.setRoom(this.room);
         item.onPlace(this.room);
         Emulator.getThreading().run(item);
         return FurnitureMovementError.NONE;
@@ -543,7 +547,9 @@ public class RoomItemManager {
 
         this.removeRoomItem(item);
         item.onPickUp(this.room);
+        //Deprecated
         item.setRoomId(0);
+        item.setRoom(null);
         item.needsUpdate(true);
 
         if (item.getBaseItem().getType() == FurnitureType.FLOOR) {

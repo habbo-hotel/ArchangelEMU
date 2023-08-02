@@ -38,7 +38,7 @@ public class InteractionPetFood extends InteractionDefault {
             if (pet.getPetData().haveFoodItem(this)) {
                 if (pet.levelHunger >= 35) {
                     pet.setTask(PetTasks.EAT);
-                    pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
+                    pet.getRoomUnit().walkTo(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
                     pet.getRoomUnit().setRotation(RoomRotation.values()[this.getRotation()]);
                     pet.getRoomUnit().clearStatuses();
                     pet.getRoomUnit().removeStatus(RoomUnitStatus.MOVE);

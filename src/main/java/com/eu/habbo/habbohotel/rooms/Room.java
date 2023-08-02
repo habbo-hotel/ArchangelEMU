@@ -401,6 +401,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             return;
         }
 
+        //Improve this
         for (Habbo habbo : habbos) {
             double z = habbo.getRoomUnit().getCurrentPosition().getStackHeight();
 
@@ -413,12 +414,16 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
 
             if (item != null && (item.getBaseItem().allowSit() || item.getBaseItem().allowLay())) {
+                if(item.getBaseItem().allowSit()) {
+                    habbo.getRoomUnit().addStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(item)));
+                } else if(item.getBaseItem().allowLay()) {
+                    habbo.getRoomUnit().addStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(item)));
+                }
+
                 habbo.getRoomUnit().setCurrentZ(item.getCurrentZ());
-                habbo.getRoomUnit().setPreviousLocationZ(item.getCurrentZ());
                 habbo.getRoomUnit().setRotation(RoomRotation.fromValue(item.getRotation()));
             } else {
                 habbo.getRoomUnit().setCurrentZ(z);
-                habbo.getRoomUnit().setPreviousLocationZ(z);
             }
         }
     }
@@ -437,7 +442,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             if (topItem != null) {
                 if (topItem.getBaseItem().allowSit()) {
                     bot.getRoomUnit().setCurrentZ(topItem.getCurrentZ());
-                    bot.getRoomUnit().setPreviousLocationZ(topItem.getCurrentZ());
                     bot.getRoomUnit().setRotation(RoomRotation.fromValue(topItem.getRotation()));
                 } else {
                     bot.getRoomUnit().setCurrentZ(topItem.getCurrentZ() + Item.getCurrentHeight(topItem));
@@ -448,7 +452,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 }
             } else {
                 bot.getRoomUnit().setCurrentZ(bot.getRoomUnit().getCurrentPosition().getStackHeight());
-                bot.getRoomUnit().setPreviousLocationZ(bot.getRoomUnit().getCurrentPosition().getStackHeight());
             }
             roomUnits.add(bot.getRoomUnit());
         });
@@ -590,7 +593,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                         habbo.getHabboStats().getChatCounter().decrementAndGet();
                     }
 
-                    habbo.getRoomUnit().cycle(this);
+                    habbo.getRoomUnit().cycle();
 
                     if(habbo.getRoomUnit().isStatusUpdateNeeded()) {
                         habbo.getRoomUnit().setStatusUpdateNeeded(false);
@@ -622,7 +625,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 continue;
                             }
 
-                            bot.getRoomUnit().cycle(this);
+                            bot.getRoomUnit().cycle();
 
                             if(bot.getRoomUnit().isStatusUpdateNeeded()) {
                                 bot.getRoomUnit().setStatusUpdateNeeded(false);
@@ -647,7 +650,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                             break;
                         }
 
-                        pet.getRoomUnit().cycle(this);
+                        pet.getRoomUnit().cycle();
                         pet.cycle();
 
                         if(pet.getRoomUnit().isStatusUpdateNeeded()) {
@@ -804,9 +807,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                 if (roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
                                     Habbo rollingHabbo = this.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
                                     if (rollingHabbo != null && rollingHabbo.getHabboInfo() != null) {
-                                        RideablePet riding = rollingHabbo.getHabboInfo().getRiding();
-                                        if (riding != null) {
-                                            RoomUnit ridingUnit = riding.getRoomUnit();
+                                        RideablePet ridingPet = rollingHabbo.getRoomUnit().getRidingPet();
+                                        if (ridingPet != null) {
+                                            RoomUnit ridingUnit = ridingPet.getRoomUnit();
                                             newZ = ridingUnit.getCurrentZ() + zOffset;
                                             rolledUnitIds.add(ridingUnit.getVirtualId());
                                             updatedUnit.remove(ridingUnit);
@@ -835,10 +838,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                                             }
                                         }, this.roomInfo.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
                                     }
-                                }
-
-                                if (roomUnit.hasStatus(RoomUnitStatus.SIT)) {
-                                    roomUnit.setSitUpdate(true);
                                 }
                             }
                         }
@@ -1261,7 +1260,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         habbo.getRoomUnit().setKicked(true);
-        habbo.getRoomUnit().setGoalLocation(this.layout.getDoorTile());
+        habbo.getRoomUnit().walkTo(this.layout.getDoorTile());
 
         if (habbo.getRoomUnit().getPath() == null || habbo.getRoomUnit().getPath().size() <= 1 || this.roomInfo.isPublicRoom()) {
             habbo.getRoomUnit().setCanWalk(true);
@@ -1318,9 +1317,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             }
 
             roomUnit.setLocation(tile);
-            roomUnit.setGoalLocation(tile);
+            roomUnit.walkTo(tile);
             roomUnit.setCurrentZ(z);
-            roomUnit.setPreviousLocationZ(z);
             this.updateRoomUnit(roomUnit);
 
 
@@ -1351,8 +1349,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void habboEntered(Habbo habbo) {
-        habbo.getRoomUnit().setAnimateWalk(false);
-
         synchronized (this.roomUnitManager.getCurrentBots()) {
             if (habbo.getHabboInfo().getId() != this.roomInfo.getOwnerInfo().getId())
                 return;
@@ -1742,6 +1738,10 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public double getStackHeight(short x, short y, boolean calculateHeightmap) {
         return this.getStackHeight(x, y, calculateHeightmap, null);
+    }
+
+    public boolean canSitOrLayAt(RoomTile tile) {
+        return this.canSitOrLayAt(tile.getX(), tile.getY());
     }
 
     public boolean canSitOrLayAt(int x, int y) {

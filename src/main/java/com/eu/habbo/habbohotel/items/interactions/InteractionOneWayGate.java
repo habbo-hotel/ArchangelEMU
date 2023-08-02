@@ -85,7 +85,7 @@ public class InteractionOneWayGate extends RoomItem {
                     unit.setCanLeaveRoomByDoor(false);
                     walkable = this.getBaseItem().allowWalk();
                     RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), this.getRotation() + 4);
-                    unit.setGoalLocation(tile);
+                    unit.walkTo(tile);
                     Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
 
                     Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, unit, room, new Object[]{this}), 500);
@@ -102,7 +102,7 @@ public class InteractionOneWayGate extends RoomItem {
                 walkable = true;
                 room.updateTile(currentLocation);
                 unit.addOverrideTile(currentLocation);
-                unit.setGoalLocation(currentLocation);
+                unit.walkTo(currentLocation);
                 Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
                 room.sendComposer(new DiceValueMessageComposer(this.getId(), 1).compose());
 

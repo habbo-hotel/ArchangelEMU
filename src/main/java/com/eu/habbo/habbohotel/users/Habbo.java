@@ -70,6 +70,8 @@ public class Habbo extends Unit implements Runnable {
         this.messenger.loadFriendRequests(this);
 
         this.roomUnit = new RoomHabbo();
+        this.roomUnit.setUnit(this);
+
         this.update = false;
     }
 

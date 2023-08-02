@@ -121,6 +121,7 @@ public class Bot extends Unit implements Runnable {
         this.bubbleId = set.getInt("bubble_id");
 
         this.roomUnit = new RoomBot();
+        this.roomUnit.setUnit(this);
     }
 
     public Bot(Bot bot) {
@@ -185,48 +186,6 @@ public class Bot extends Unit implements Runnable {
                 this.needsUpdate = false;
             } catch (SQLException e) {
                 log.error("Caught SQL exception", e);
-            }
-        }
-    }
-
-    public void cycle(boolean allowBotsWalk) {
-        if (this.getRoomUnit() != null) {
-            if (allowBotsWalk && this.canWalk) {
-                if (!this.getRoomUnit().isWalking()) {
-                    if (this.getRoomUnit().getWalkTimeOut() < Emulator.getIntUnixTimestamp() && this.followingHabboId == 0) {
-                        this.getRoomUnit().setGoalLocation(Emulator.getConfig().getBoolean("hotel.bot.limit.walking.distance", true) ? this.room.getLayout().getRandomWalkableTilesAround(this.getRoomUnit(), this.room.getLayout().getTile(this.getRoomUnit().getBotStartLocation().getX(), this.getRoomUnit().getBotStartLocation().getY()), this.room, Emulator.getConfig().getInt("hotel.bot.limit.walking.distance.radius", 5)) : this.room.getRandomWalkableTile());
-
-                        int timeOut = Emulator.getRandom().nextInt(20) * 2;
-                        this.getRoomUnit().setWalkTimeOut((timeOut < 10 ? 5 : timeOut) + Emulator.getIntUnixTimestamp());
-                    }
-                }/* else {
-                    for (RoomTile t : this.room.getLayout().getTilesAround(this.room.getLayout().getTile(this.getRoomUnit().getX(), this.getRoomUnit().getY()))) {
-                        WiredHandler.handle(WiredTriggerType.BOT_REACHED_STF, this.getRoomUnit(), this.room, this.room.getItemsAt(t).toArray());
-                    }
-                }*/
-            }
-
-            if (!this.chatLines.isEmpty() && this.chatTimeOut <= Emulator.getIntUnixTimestamp() && this.chatAuto) {
-                if (this.room != null) {
-                    this.lastChatIndex = (this.chatRandom ? (short) Emulator.getRandom().nextInt(this.chatLines.size()) : (this.lastChatIndex == (this.chatLines.size() - 1) ? 0 : this.lastChatIndex++));
-
-                    if (this.lastChatIndex >= this.chatLines.size()) {
-                        this.lastChatIndex = 0;
-                    }
-
-                    String message = this.chatLines.get(this.lastChatIndex)
-                            .replace(Emulator.getTexts().getValue("wired.variable.owner", "%owner%"), this.room.getRoomInfo().getOwnerInfo().getUsername())
-                            .replace(Emulator.getTexts().getValue("wired.variable.item_count", "%item_count%"), this.room.getRoomItemManager().getCurrentItems().size() + "")
-                            .replace(Emulator.getTexts().getValue("wired.variable.name", "%name%"), this.name)
-                            .replace(Emulator.getTexts().getValue("wired.variable.roomname", "%roomname%"), this.room.getRoomInfo().getName())
-                            .replace(Emulator.getTexts().getValue("wired.variable.user_count", "%user_count%"), this.room.getRoomUnitManager().getRoomHabbosCount() + "");
-
-                    if(!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), room, new Object[]{ message })) {
-                        this.talk(message);
-                    }
-
-                    this.chatTimeOut = Emulator.getIntUnixTimestamp() + this.chatDelay;
-                }
             }
         }
     }

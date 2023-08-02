@@ -58,7 +58,7 @@ public class InteractionRentableSpace extends RoomItem {
                         }
                     }
                 } else {
-                    if (this.getRoomId() > 0) {
+                    if (this.getRoom() != null) {
                         Emulator.getThreading().run(new ClearRentedSpace(this, Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId())));
                         this.renterId = 0;
                     }
@@ -152,7 +152,7 @@ public class InteractionRentableSpace extends RoomItem {
     public void endRent() {
         this.setEndTimestamp(0);
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
+        Room room = this.getRoom();
 
         if (room == null)
             return;

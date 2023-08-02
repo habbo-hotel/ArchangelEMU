@@ -42,7 +42,7 @@ class TeleportInteraction extends Thread {
                 this.room.updateItem(this.teleportOne);
                 RoomTile tile = RoomItem.getSquareInFront(this.room.getLayout(), this.teleportTwo);
                 if (tile != null) {
-                    this.client.getHabbo().getRoomUnit().setGoalLocation(tile);
+                    this.client.getHabbo().getRoomUnit().walkTo(tile);
                 }
                 Emulator.getThreading().run(this.teleportTwo, 500);
                 Emulator.getThreading().run(this.teleportOne, 500);
@@ -95,7 +95,7 @@ class TeleportInteraction extends Thread {
                 this.state = 4;
                 Emulator.getThreading().run(this, 500);
             } else if (this.state == 2) {
-                this.client.getHabbo().getRoomUnit().setGoalLocation(this.room.getLayout().getTile(this.teleportOne.getCurrentPosition().getX(), this.teleportOne.getCurrentPosition().getY()));
+                this.client.getHabbo().getRoomUnit().walkTo(this.room.getLayout().getTile(this.teleportOne.getCurrentPosition().getX(), this.teleportOne.getCurrentPosition().getY()));
                 this.client.getHabbo().getRoomUnit().setRotation(RoomRotation.values()[this.newRotation(this.teleportOne.getRotation())]);
                 this.client.getHabbo().getRoomUnit().addStatus(RoomUnitStatus.MOVE, this.teleportOne.getCurrentPosition().getX() + "," + this.teleportOne.getCurrentPosition().getY() + "," + this.teleportOne.getCurrentZ());
                 //room.sendComposer(new RoomUserStatusComposer(this.client.getHabbo().getRoomUnit()));

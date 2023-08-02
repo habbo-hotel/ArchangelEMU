@@ -21,13 +21,9 @@ public class OneWayGateActionOne implements Runnable {
 
         RoomTile t = this.room.getLayout().getTileInFront(this.room.getLayout().getTile(this.oneWayGate.getCurrentPosition().getX(), this.oneWayGate.getCurrentPosition().getY()), (this.oneWayGate.getRotation() + 4) % 8);
 
-        if (this.client.getHabbo().getRoomUnit().isAnimateWalk()) {
-            this.client.getHabbo().getRoomUnit().setAnimateWalk(false);
-        }
-
         if (t.isWalkable()) {
             if (this.room.getLayout().tileWalkable(t) && this.client.getHabbo().getRoomUnit().getCurrentPosition().getX() == this.oneWayGate.getCurrentPosition().getX() && this.client.getHabbo().getRoomUnit().getCurrentPosition().getY() == this.oneWayGate.getCurrentPosition().getY()) {
-                this.client.getHabbo().getRoomUnit().setGoalLocation(t);
+                this.client.getHabbo().getRoomUnit().walkTo(t);
 
                 if (!this.oneWayGate.getExtraData().equals("0")) {
                     Emulator.getThreading().run(new HabboItemNewState(this.oneWayGate, this.room, "0"), 1000);

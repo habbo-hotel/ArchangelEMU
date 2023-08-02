@@ -24,13 +24,11 @@ public class RoomUnitRidePet implements Runnable {
         if (habbo.getRoomUnit().getCurrentPosition().distance(pet.getRoomUnit().getCurrentPosition()) <= 1) {
             habbo.getRoomUnit().stopWalking();
             habbo.getRoomUnit().giveEffect(77, -1);
-            habbo.getHabboInfo().setRiding(pet);
+            habbo.getRoomUnit().setRidingPet(pet);
             habbo.getRoomUnit().setCurrentPosition(this.pet.getRoomUnit().getCurrentPosition());
-            habbo.getRoomUnit().setPreviousLocation(this.pet.getRoomUnit().getCurrentPosition());
             habbo.getRoomUnit().setCurrentZ(this.pet.getRoomUnit().getCurrentZ() + 1);
-            habbo.getRoomUnit().setPreviousLocationZ(this.pet.getRoomUnit().getCurrentZ() + 1);
             habbo.getRoomUnit().setRotation(this.pet.getRoomUnit().getBodyRotation());
-            habbo.getRoomUnit().setRideLock(false);
+            habbo.getRoomUnit().setRideLocked(false);
             pet.setRider(habbo);
             habbo.getRoomUnit().getRoom().sendComposer(new UserUpdateComposer(habbo.getRoomUnit()).compose());
             habbo.getRoomUnit().getRoom().sendComposer(new AvatarEffectMessageComposer(habbo.getRoomUnit()).compose());
@@ -38,7 +36,7 @@ public class RoomUnitRidePet implements Runnable {
         } else {
             pet.getRoomUnit().setWalkTimeOut(3 + Emulator.getIntUnixTimestamp());
             pet.getRoomUnit().stopWalking();
-            habbo.getRoomUnit().setGoalLocation(goalTile);
+            habbo.getRoomUnit().walkTo(goalTile);
             Emulator.getThreading().run(this, 500);
         }
     }

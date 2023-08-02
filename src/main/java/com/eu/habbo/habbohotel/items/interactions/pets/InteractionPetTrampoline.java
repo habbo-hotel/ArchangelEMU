@@ -69,7 +69,7 @@ public class InteractionPetTrampoline extends InteractionDefault {
                 pet.getRoomUnit().addStatus(RoomUnitStatus.JUMP, "");
                 Emulator.getThreading().run(() -> {
                     new PetClearPosture(pet, RoomUnitStatus.JUMP, null, false);
-                    pet.getRoomUnit().setGoalLocation(room.getRandomWalkableTile());
+                    pet.getRoomUnit().walkTo(room.getRandomWalkableTile());
                     this.setExtraData("0");
                     room.updateItemState(this);
                 }, 4000);

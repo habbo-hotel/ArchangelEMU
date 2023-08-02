@@ -30,7 +30,7 @@ public class PetFollowHabbo implements Runnable {
 
                             if (target.getX() >= 0 && target.getY() >= 0) {
                                 if (this.pet.getRoom().getLayout().tileWalkable(target)) {
-                                    this.pet.getRoomUnit().setGoalLocation(target);
+                                    this.pet.getRoomUnit().walkTo(target);
                                     this.pet.getRoomUnit().setCanWalk(true);
                                     this.pet.setTask(PetTasks.FOLLOW);
                                 }

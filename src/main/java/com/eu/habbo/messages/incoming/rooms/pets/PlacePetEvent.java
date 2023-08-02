@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -17,6 +16,7 @@ import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 public class PlacePetEvent extends MessageHandler {
     @Override
     public void handle() {
+        //TODO Improve This
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
@@ -74,22 +74,23 @@ public class PlacePetEvent extends MessageHandler {
         }
 
         pet.setRoom(room);
-        RoomUnit roomUnit = pet.getRoomUnit();
+        RoomPet roomPet = pet.getRoomUnit();
 
-        if (roomUnit == null) {
-            roomUnit = new RoomPet();
+        if (roomPet == null) {
+            roomPet = new RoomPet();
+            roomPet.setUnit(pet);
         }
 
-        roomUnit.setRoom(room);
+        roomPet.setRoom(room);
 
-        roomUnit.setLocation(tile);
-        roomUnit.setCurrentZ(tile.getStackHeight());
-        roomUnit.addStatus(RoomUnitStatus.SIT, "0");
-        roomUnit.setRoomUnitType(RoomUnitType.PET);
+        roomPet.setLocation(tile);
+        roomPet.setCurrentZ(tile.getStackHeight());
+        roomPet.addStatus(RoomUnitStatus.SIT, "0");
+        roomPet.setRoomUnitType(RoomUnitType.PET);
         if (playerTile != null) {
-            roomUnit.lookAtPoint(playerTile);
+            roomPet.lookAtPoint(playerTile);
         }
-        pet.setRoomUnit(roomUnit);
+        pet.setRoomUnit(roomPet);
         room.getRoomUnitManager().addRoomUnit(pet);
         pet.setNeedsUpdate(true);
         Emulator.getThreading().run(pet);

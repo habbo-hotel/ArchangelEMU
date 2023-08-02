@@ -28,9 +28,7 @@ public class QuitEvent extends MessageHandler {
             this.client.sendResponse(new CloseConnectionMessageComposer());
         }
 
-        if (roomHabbo != null) {
-            roomHabbo.clearWalking();
-            roomHabbo.setInRoom(false);
-        }
+        roomHabbo.clear();
+        roomHabbo.setInRoom(false);
     }
 }

@@ -103,15 +103,15 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
                 if (roomUnit.getBodyRotation().getValue() % 2 == 0) {
                     if (this.getRotation() == 2) {
                         if (roomUnit.getBodyRotation().equals(RoomRotation.WEST)) {
-                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile((short) (roomUnit.getCurrentPosition().getX() - 3), roomUnit.getCurrentPosition().getY()));
+                            ((HorsePet) pet).getRider().getRoomUnit().walkTo(room.getLayout().getTile((short) (roomUnit.getCurrentPosition().getX() - 3), roomUnit.getCurrentPosition().getY()));
                         } else if (roomUnit.getBodyRotation().equals(RoomRotation.EAST)) {
-                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile((short) (roomUnit.getCurrentPosition().getX() + 3), roomUnit.getCurrentPosition().getY()));
+                            ((HorsePet) pet).getRider().getRoomUnit().walkTo(room.getLayout().getTile((short) (roomUnit.getCurrentPosition().getX() + 3), roomUnit.getCurrentPosition().getY()));
                         }
                     } else if (this.getRotation() == 4) {
                         if (roomUnit.getBodyRotation().equals(RoomRotation.NORTH)) {
-                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile(roomUnit.getCurrentPosition().getX(), (short) (roomUnit.getCurrentPosition().getY() - 3)));
+                            ((HorsePet) pet).getRider().getRoomUnit().walkTo(room.getLayout().getTile(roomUnit.getCurrentPosition().getX(), (short) (roomUnit.getCurrentPosition().getY() - 3)));
                         } else if (roomUnit.getBodyRotation().equals(RoomRotation.SOUTH)) {
-                            ((HorsePet) pet).getRider().getRoomUnit().setGoalLocation(room.getLayout().getTile(roomUnit.getCurrentPosition().getX(), (short) (roomUnit.getCurrentPosition().getY() + 3)));
+                            ((HorsePet) pet).getRider().getRoomUnit().walkTo(room.getLayout().getTile(roomUnit.getCurrentPosition().getX(), (short) (roomUnit.getCurrentPosition().getY() + 3)));
                         }
                     }
                 }
@@ -191,12 +191,12 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
 
                     RoomTile tileInfront = room.getLayout().getTileInFront(roomUnit.getCurrentPosition(), roomUnit.getBodyRotation().getValue());
                     if(tileInfront.getState() != RoomTileState.INVALID && tileInfront.getState() != RoomTileState.BLOCKED && room.getRoomUnitManager().getRoomUnitsAt(tileInfront).size() == 0) {
-                        roomUnit.setGoalLocation(tileInfront);
+                        roomUnit.walkTo(tileInfront);
                     }
                     else {
                         RoomTile tileBehind = room.getLayout().getTileInFront(roomUnit.getCurrentPosition(), Objects.requireNonNull(roomUnit.getBodyRotation().getOpposite()).getValue());
                         if(tileBehind.getState() != RoomTileState.INVALID && tileBehind.getState() != RoomTileState.BLOCKED && room.getRoomUnitManager().getRoomUnitsAt(tileBehind).size() == 0) {
-                            roomUnit.setGoalLocation(tileBehind);
+                            roomUnit.walkTo(tileBehind);
                         }
                     }
                 }

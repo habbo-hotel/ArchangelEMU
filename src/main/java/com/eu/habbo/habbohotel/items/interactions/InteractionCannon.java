@@ -65,7 +65,7 @@ public class InteractionCannon extends RoomItem {
         if ((client == null || (tiles.contains(client.getHabbo().getRoomUnit().getCurrentPosition())) && client.getHabbo().getRoomUnit().isCanWalk()) && !this.cooldown) {
             if (client != null) {
                 client.getHabbo().getRoomUnit().setCanWalk(false);
-                client.getHabbo().getRoomUnit().setGoalLocation(client.getHabbo().getRoomUnit().getCurrentPosition());
+                client.getHabbo().getRoomUnit().walkTo(client.getHabbo().getRoomUnit().getCurrentPosition());
                 client.getHabbo().getRoomUnit().lookAtPoint(fuseTile);
                 client.getHabbo().getRoomUnit().setStatusUpdateNeeded(true);
             }

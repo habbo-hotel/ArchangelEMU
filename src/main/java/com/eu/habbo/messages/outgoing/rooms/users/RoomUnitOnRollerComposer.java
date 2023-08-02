@@ -83,7 +83,6 @@ public class RoomUnitOnRollerComposer extends MessageComposer {
 
                     this.roomUnit.setLocation(this.newLocation);
                     this.roomUnit.setCurrentZ(this.newLocation.getStackHeight());
-                    this.roomUnit.setPreviousLocationZ(this.newLocation.getStackHeight());
 
                     if (topItemNewLocation != null && topItemNewLocation != roller && oldTopItem != topItemNewLocation) {
                         try {

@@ -41,6 +41,8 @@ public class SummonCommand extends Command {
         }
 
         Room room = habbo.getRoomUnit().getRoom();
+
+        //WHY? Why not just roomManager -> leaveRoom()
         if (room != null) {
             Emulator.getGameEnvironment().getRoomManager().logExit(habbo);
 

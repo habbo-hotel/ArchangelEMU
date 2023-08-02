@@ -58,7 +58,7 @@ public class InteractionPetDrink extends InteractionDefault {
                 List<Runnable> onSuccess = new ArrayList<>();
                 onSuccess.add(() -> this.change(room, this.getBaseItem().getStateCount() - 1));
 
-                client.getHabbo().getRoomUnit().setGoalLocation(closestTile);
+                client.getHabbo().getRoomUnit().walkTo(closestTile);
                 Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), closestTile, room, onSuccess, new ArrayList<>()));
             }
         }
@@ -76,7 +76,7 @@ public class InteractionPetDrink extends InteractionDefault {
 
         if (pet != null && pet.getPetData().haveDrinkItem(this) && pet.levelThirst >= 35) {
             pet.clearPosture();
-            pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
+            pet.getRoomUnit().walkTo(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
             pet.getRoomUnit().setRotation(RoomRotation.values()[this.getRotation()]);
             pet.getRoomUnit().clearStatuses();
             pet.getRoomUnit().addStatus(RoomUnitStatus.EAT, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");

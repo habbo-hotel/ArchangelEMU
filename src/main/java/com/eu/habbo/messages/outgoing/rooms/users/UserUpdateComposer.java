@@ -1,6 +1,5 @@
 package com.eu.habbo.messages.outgoing.rooms.users;
 
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
@@ -9,7 +8,6 @@ import com.eu.habbo.messages.outgoing.Outgoing;
 import gnu.trove.set.hash.THashSet;
 
 import java.util.Collection;
-import java.util.Map;
 
 public class UserUpdateComposer extends MessageComposer {
     private Collection<Habbo> habbos;
@@ -41,42 +39,29 @@ public class UserUpdateComposer extends MessageComposer {
             this.response.appendInt(this.roomUnits.size());
             for (RoomUnit roomUnit : this.roomUnits) {
                 this.response.appendInt(roomUnit.getVirtualId());
-                this.response.appendInt(roomUnit.getPreviousPosition().getX());
-                this.response.appendInt(roomUnit.getPreviousPosition().getY());
-                this.response.appendString((this.overrideZ != -1 ? this.overrideZ : roomUnit.getPreviousLocationZ()) + "");
-
+                this.response.appendInt(roomUnit.getCurrentPosition().getX());
+                this.response.appendInt(roomUnit.getCurrentPosition().getY());
+                this.response.appendString(String.valueOf(this.overrideZ != -1 ? this.overrideZ : roomUnit.getCurrentZ()));
 
                 this.response.appendInt(roomUnit.getHeadRotation().getValue());
                 this.response.appendInt(roomUnit.getBodyRotation().getValue());
 
-                StringBuilder status = new StringBuilder("/");
-                for (Map.Entry<RoomUnitStatus, String> entry : roomUnit.getStatuses().entrySet()) {
-                    status.append(entry.getKey()).append(" ").append(entry.getValue()).append("/");
-                }
-
-                this.response.appendString(status.toString());
-                roomUnit.setPreviousLocation(roomUnit.getCurrentPosition());
+                this.response.appendString(roomUnit.getCurrentStatuses());
             }
         } else {
             synchronized (this.habbos) {
                 this.response.appendInt(this.habbos.size());
                 for (Habbo habbo : this.habbos) {
                     this.response.appendInt(habbo.getRoomUnit().getVirtualId());
-                    this.response.appendInt(habbo.getRoomUnit().getPreviousPosition().getX());
-                    this.response.appendInt(habbo.getRoomUnit().getPreviousPosition().getY());
-                    this.response.appendString(habbo.getRoomUnit().getPreviousLocationZ() + "");
+                    this.response.appendInt(habbo.getRoomUnit().getCurrentPosition().getX());
+                    this.response.appendInt(habbo.getRoomUnit().getCurrentPosition().getY());
+                    this.response.appendString(String.valueOf(habbo.getRoomUnit().getCurrentZ()));
 
 
                     this.response.appendInt(habbo.getRoomUnit().getHeadRotation().getValue());
                     this.response.appendInt(habbo.getRoomUnit().getBodyRotation().getValue());
 
-                    StringBuilder status = new StringBuilder("/");
-
-                    for (Map.Entry<RoomUnitStatus, String> entry : habbo.getRoomUnit().getStatuses().entrySet()) {
-                        status.append(entry.getKey()).append(" ").append(entry.getValue()).append("/");
-                    }
-                    this.response.appendString(status.toString());
-                    habbo.getRoomUnit().setPreviousLocation(habbo.getRoomUnit().getCurrentPosition());
+                    this.response.appendString(habbo.getRoomUnit().getCurrentStatuses());
                 }
             }
         }

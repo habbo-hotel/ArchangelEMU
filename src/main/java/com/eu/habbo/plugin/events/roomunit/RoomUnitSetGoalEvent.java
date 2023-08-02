@@ -16,6 +16,6 @@ public class RoomUnitSetGoalEvent extends RoomUnitEvent {
 
 
     public void setGoal(RoomTile t) {
-        super.roomUnit.setGoalLocation(t);
+        super.roomUnit.walkTo(t);
     }
 }

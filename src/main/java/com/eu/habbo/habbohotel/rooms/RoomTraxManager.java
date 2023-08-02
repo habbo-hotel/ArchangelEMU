@@ -266,7 +266,9 @@ public class RoomTraxManager implements Disposable {
 
             this.room.sendComposer(new JukeboxSongDisksMessageComposer(this.songs, this.totalLength).compose());
 
+            //Deprecated
             musicDisc.setRoomId(-1);
+            musicDisc.setRoom(null);
             musicDisc.needsUpdate(true);
             Emulator.getThreading().run(musicDisc);
 
@@ -293,8 +295,9 @@ public class RoomTraxManager implements Disposable {
             }
 
             this.room.sendComposer(new JukeboxSongDisksMessageComposer(this.songs, this.totalLength).compose());
-
+            //Deprecated
             musicDisc.setRoomId(0);
+            musicDisc.setRoom(null);
             musicDisc.needsUpdate(true);
             Emulator.getThreading().run(musicDisc);
 
@@ -324,7 +327,9 @@ public class RoomTraxManager implements Disposable {
 
                     if (musicDisc != null) {
                         if (musicDisc instanceof InteractionMusicDisc && musicDisc.getRoomId() == -1) {
+                            //Deprecated
                             musicDisc.setRoomId(0);
+                            musicDisc.setRoom(null);
                             musicDisc.needsUpdate(true);
                             Emulator.getThreading().run(musicDisc);
 

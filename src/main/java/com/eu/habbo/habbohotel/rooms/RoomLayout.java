@@ -210,7 +210,7 @@ public class RoomLayout {
 
         if(this.tileExists(x, y)) {
             RoomTile tile = this.getTile(x, y);
-            walkable = tile.getState().equals(RoomTileState.OPEN) && tile.isWalkable() && (this.room.getRoomUnitManager().areRoomUnitsAt(tile) && !this.room.getRoomInfo().isAllowWalkthrough());
+            walkable = tile.isWalkable() && (this.room.getRoomUnitManager().areRoomUnitsAt(tile) && !this.room.getRoomInfo().isAllowWalkthrough());
         }
 
         return walkable;
