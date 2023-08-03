@@ -201,8 +201,8 @@ public abstract class RoomUnit extends RoomEntity {
         }
 
         if(this.nextPosition != null) {
-            this.currentPosition = this.nextPosition;
-            this.currentZ = this.nextZ;
+            this.setCurrentPosition(this.nextPosition);
+            this.setCurrentZ(this.nextZ);
         }
 
         this.targetPosition = goalLocation;
@@ -212,7 +212,7 @@ public abstract class RoomUnit extends RoomEntity {
 
     public RoomUnit setLocation(RoomTile location) {
         if (location != null) {
-            this.currentPosition = location;
+            this.setCurrentPosition(location);
             this.targetPosition = location;
         }
         return this;
@@ -492,8 +492,8 @@ public abstract class RoomUnit extends RoomEntity {
         this.statuses.entrySet().removeIf(entry -> entry.getKey().isRemoveWhenWalking());
 
         if(this.getNextPosition() != null) {
-            this.currentPosition = this.getNextPosition();
-            this.currentZ = this.getNextZ();
+            this.setCurrentPosition(this.getNextPosition());
+            this.setCurrentZ(this.getNextZ());
         }
 
         if(!this.path.isEmpty()) {
@@ -563,12 +563,14 @@ public abstract class RoomUnit extends RoomEntity {
     */
     private boolean isValidTile(RoomTile tile) {
         boolean canOverrideTile = this.canOverrideTile(tile);
+
         if (canOverrideTile) {
             return true;
         }
 
         double heightDifference = tile.getStackHeight() - this.currentZ;
 
+        //TODO Why bots are not being detected?
         boolean areRoomUnitsAtTile = this.room.getRoomUnitManager().areRoomUnitsAt(tile);
         boolean isAboveMaximumStepHeight = (!RoomLayout.ALLOW_FALLING && heightDifference < -RoomLayout.MAXIMUM_STEP_HEIGHT);
         boolean isOpenTileAboveMaxHeight = (tile.getState() == RoomTileState.OPEN && heightDifference > RoomLayout.MAXIMUM_STEP_HEIGHT);

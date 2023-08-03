@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
@@ -14,9 +15,14 @@ import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
+import com.eu.habbo.messages.outgoing.inventory.BotRemovedFromInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
+import com.eu.habbo.plugin.Event;
+import com.eu.habbo.plugin.events.bots.BotPlacedEvent;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -218,19 +224,66 @@ public class RoomUnitManager {
         return this.currentBots.values().stream().filter(bot -> bot.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
     }
 
+    public void placeBot(Bot bot, Habbo habbo, int x, int y) {
+        synchronized (this.currentBots) {
+            RoomTile spawnTile = room.getLayout().getTile((short) x, (short) y);
+
+            if(spawnTile == null) {
+                spawnTile = room.getLayout().getDoorTile();
+            }
+
+            if (Emulator.getPluginManager().isRegistered(BotPlacedEvent.class, false)) {
+                Event event = new BotPlacedEvent(bot, spawnTile, habbo);
+                Emulator.getPluginManager().fireEvent(event);
+
+                if (event.isCancelled()) {
+                    return;
+                }
+            }
+
+            if(this.currentBots.size() >= Room.MAXIMUM_BOTS && !habbo.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS)) {
+                habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_MAX_BOTS));
+                return;
+            }
+
+            if((!spawnTile.isWalkable() && !this.room.canSitOrLayAt(spawnTile)) || this.areRoomUnitsAt(spawnTile)) {
+                habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_BOTS_SELECTED_TILE_NOT_FREE));
+                return;
+            }
+
+            RoomBot roomBot = bot.getRoomUnit();
+
+            roomBot.setRoom(this.room);
+            roomBot.setCurrentPosition(spawnTile);
+            roomBot.setCurrentZ(spawnTile.getZ());
+            roomBot.setRotation(RoomRotation.SOUTH);
+            roomBot.setCanWalk(this.room.isAllowBotsWalk());
+
+            this.addRoomUnit(bot);
+
+            this.room.sendComposer(new RoomUsersComposer(bot).compose());
+
+            roomBot.instantUpdate();
+
+            habbo.getInventory().getBotsComponent().removeBot(bot);
+            habbo.getClient().sendResponse(new BotRemovedFromInventoryComposer(bot));
+            bot.onPlace(habbo, room);
+        }
+    }
+
     public void placePet(Pet pet, Room room, short x, short y, double z) {
         synchronized (this.currentPets) {
-            RoomTile tile = room.getLayout().getTile(x, y);
+            RoomTile spawnTile = room.getLayout().getTile(x, y);
 
-            if (tile == null) {
-                tile = room.getLayout().getDoorTile();
+            if (spawnTile == null) {
+                spawnTile = room.getLayout().getDoorTile();
             }
 
             pet.setRoomUnit(new RoomPet());
             pet.getRoomUnit().setUnit(pet);
             pet.setRoom(room);
-            pet.getRoomUnit().walkTo(tile);
-            pet.getRoomUnit().setLocation(tile)
+            pet.getRoomUnit().walkTo(spawnTile);
+            pet.getRoomUnit().setLocation(spawnTile)
                     .setRoomUnitType(RoomUnitType.PET)
                     .setCanWalk(true)
                     .setCurrentZ(z);
@@ -343,8 +396,8 @@ public class RoomUnitManager {
 
                 bot.getRoomUnit().setInRoom(false);
                 bot.setRoom(null);
-                bot.getRoomUnit().getRoom().sendComposer(new UserRemoveMessageComposer(bot.getRoomUnit()).compose());
-                bot.setRoomUnit(null);
+
+                this.room.sendComposer(new UserRemoveMessageComposer(bot.getRoomUnit()).compose());
                 return true;
             }
         }

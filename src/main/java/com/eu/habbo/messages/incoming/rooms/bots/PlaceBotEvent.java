@@ -1,6 +1,5 @@
 package com.eu.habbo.messages.incoming.rooms.bots;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
@@ -23,6 +22,6 @@ public class PlaceBotEvent extends MessageHandler {
         int x = this.packet.readInt();
         int y = this.packet.readInt();
 
-        Emulator.getGameEnvironment().getBotManager().placeBot(bot, this.client.getHabbo(), room, room.getLayout().getTile((short) x, (short) y));
+        room.getRoomUnitManager().placeBot(bot, this.client.getHabbo(), x, y);
     }
 }

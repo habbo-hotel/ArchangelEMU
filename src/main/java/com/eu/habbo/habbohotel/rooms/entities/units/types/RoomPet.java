@@ -18,7 +18,9 @@ public class RoomPet extends RoomUnit {
     }
 
     @Override
-    public void cycle() {}
+    public void cycle() {
+        super.cycle();
+    }
 
     public boolean handleRider(Pet pet, Room room) {
         Habbo rider = null;
