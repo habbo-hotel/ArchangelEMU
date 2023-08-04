@@ -318,8 +318,8 @@ public class RoomItemManager {
         this.room.sendComposer(new ObjectAddMessageComposer(item, this.room.getFurniOwnerName(item.getOwnerInfo().getId())).compose());
 
         for (RoomTile t : occupiedTiles) {
-            this.room.updateHabbosAt(t);
-            this.room.updateBotsAt(t);
+            this.room.getRoomUnitManager().updateHabbosAt(t);
+            this.room.getRoomUnitManager().updateBotsAt(t);
         }
 
         Emulator.getThreading().run(item);
@@ -514,8 +514,8 @@ public class RoomItemManager {
 
         //Update Habbos at old position
         for (RoomTile t : occupiedTiles) {
-            this.room.updateHabbosAt(t);
-            this.room.updateBotsAt(t);
+            this.room.getRoomUnitManager().updateHabbosAt(t);
+            this.room.getRoomUnitManager().updateBotsAt(t);
         }
 
         if (Emulator.getConfig().getBoolean("wired.place.under", false)) {
@@ -572,8 +572,8 @@ public class RoomItemManager {
             this.room.sendComposer(new HeightMapUpdateMessageComposer(this.room, updatedTiles).compose());
             this.room.updateTiles(updatedTiles);
             updatedTiles.forEach(tile -> {
-                this.room.updateHabbosAt(tile);
-                this.room.updateBotsAt(tile.getX(), tile.getY());
+                this.room.getRoomUnitManager().updateHabbosAt(tile);
+                this.room.getRoomUnitManager().updateBotsAt(tile);
             });
         } else if (item.getBaseItem().getType() == FurnitureType.WALL) {
             this.room.sendComposer(new ItemRemoveMessageComposer(item).compose());

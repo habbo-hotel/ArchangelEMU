@@ -2,7 +2,6 @@ package com.eu.habbo.habbohotel.rooms.entities.units.types;
 
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
-import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
@@ -19,13 +18,15 @@ public class RoomPet extends RoomUnit {
 
     @Override
     public void cycle() {
-        super.cycle();
+        if (!this.handleRider()) {
+            super.cycle();
+        }
     }
 
-    public boolean handleRider(Pet pet, Room room) {
+    public boolean handleRider() {
         Habbo rider = null;
 
-        if (pet instanceof RideablePet rideablePet) {
+        if (this.unit instanceof RideablePet rideablePet) {
             rider = rideablePet.getRider();
         }
 
@@ -38,7 +39,7 @@ public class RoomPet extends RoomUnit {
             this.removeStatus(RoomUnitStatus.MOVE);
         }
 
-        if (!this.getCurrentPosition().equals(rider.getRoomUnit().getCurrentPosition())) {
+        if (!this.currentPosition.equals(rider.getRoomUnit().getCurrentPosition())) {
             this.addStatus(RoomUnitStatus.MOVE, rider.getRoomUnit().getCurrentPosition().getX() + "," + rider.getRoomUnit().getCurrentPosition().getY() + "," + (rider.getRoomUnit().getCurrentPosition().getStackHeight()));
             this.setCurrentPosition(rider.getRoomUnit().getCurrentPosition());
             this.setCurrentZ(rider.getRoomUnit().getCurrentPosition().getStackHeight());

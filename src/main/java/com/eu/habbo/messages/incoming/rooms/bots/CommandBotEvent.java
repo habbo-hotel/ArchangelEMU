@@ -26,13 +26,14 @@ public class CommandBotEvent extends MessageHandler {
         if (room == null)
             return;
 
-        if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getRoomInfo().isRoomOwner(this.client.getHabbo()) || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             int botId = this.packet.readInt();
 
             Bot bot = room.getRoomUnitManager().getRoomBotById(Math.abs(botId));
 
-            if (bot == null)
+            if (bot == null) {
                 return;
+            }
 
             int settingId = this.packet.readInt();
 
@@ -45,10 +46,11 @@ public class CommandBotEvent extends MessageHandler {
                     Emulator.getPluginManager().fireEvent(lookEvent);
                     if (lookEvent.isCancelled())
                         break;
+
                     bot.setFigure(lookEvent.getNewLook());
                     bot.setGender(lookEvent.getGender());
                     bot.setEffect(lookEvent.getEffect(), -1);
-                    bot.needsUpdate(true);
+                    bot.setSqlUpdateNeeded(true);
                 }
                 case 2 -> {
                     String messageString = this.packet.readString();
@@ -102,16 +104,16 @@ public class CommandBotEvent extends MessageHandler {
                     bot.setChatDelay((short) chatEvent.getChatDelay());
                     bot.clearChat();
                     bot.addChatLines(chat);
-                    bot.needsUpdate(true);
+                    bot.setSqlUpdateNeeded(true);
                 }
                 case 3 -> {
                     bot.setCanWalk(!bot.canWalk());
-                    bot.needsUpdate(true);
+                    bot.setSqlUpdateNeeded(true);
                 }
                 case 4 -> {
                     bot.getRoomUnit().setDanceType(DanceType.values()[(bot.getRoomUnit().getDanceType().getType() + 1) % DanceType.values().length]);
                     room.sendComposer(new DanceMessageComposer(bot.getRoomUnit()).compose());
-                    bot.needsUpdate(true);
+                    bot.setSqlUpdateNeeded(true);
                 }
                 case 5 -> {
                     String name = this.packet.readString();
@@ -128,7 +130,7 @@ public class CommandBotEvent extends MessageHandler {
                                 break;
 
                             bot.setName(nameEvent.getName());
-                            bot.needsUpdate(true);
+                            bot.setSqlUpdateNeeded(true);
                             room.sendComposer(new UserNameChangedMessageComposer(bot.getRoomUnit().getVirtualId(), bot.getRoomUnit().getVirtualId(), nameEvent.getName()).compose());
                         }
                     }
@@ -140,12 +142,12 @@ public class CommandBotEvent extends MessageHandler {
                     String motto = this.packet.readString();
                     if (motto.length() > Emulator.getConfig().getInt("motto.max_length", 38)) break;
                     bot.setMotto(motto);
-                    bot.needsUpdate(true);
+                    bot.setSqlUpdateNeeded(true);
                     room.sendComposer(new RoomUsersComposer(bot).compose());
                 }
             }
 
-            if (bot.needsUpdate()) {
+            if (bot.isSqlUpdateNeeded()) {
                 Emulator.getThreading().run(bot);
             }
         }

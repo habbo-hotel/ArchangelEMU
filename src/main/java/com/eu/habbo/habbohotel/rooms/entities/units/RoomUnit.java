@@ -5,11 +5,13 @@ import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
+import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
@@ -32,59 +34,57 @@ import java.util.concurrent.ConcurrentHashMap;
 @Accessors(chain = true)
 public abstract class RoomUnit extends RoomEntity {
     @Setter
-    private int virtualId;
+    protected int virtualId;
     @Setter
-    private Unit unit;
+    protected Unit unit;
     @Setter
-    private RoomUnitType roomUnitType;
+    protected RoomUnitType roomUnitType;
     @Setter
-    private RoomRotation bodyRotation;
+    protected RoomRotation bodyRotation;
     @Setter
-    private RoomRotation headRotation;
+    protected RoomRotation headRotation;
     @Setter
-    private boolean canWalk;
+    protected boolean canWalk;
     @Setter
-    private boolean canRotate;
+    protected boolean canRotate;
     @Setter
-    private boolean isTeleporting;
+    protected boolean isTeleporting;
     @Setter
-    private boolean cmdSitEnabled = false;
+    protected boolean cmdSitEnabled = false;
     @Setter
-    private boolean cmdStandEnabled = false;
+    protected boolean cmdStandEnabled = false;
     @Setter
-    private boolean cmdLayEnabled = false;
+    protected boolean cmdLayEnabled = false;
     @Setter
-    private boolean isSwimming = false;
+    protected boolean isSwimming = false;
     @Setter
-    private boolean cmdFastWalkEnabled;
+    protected boolean cmdFastWalkEnabled;
     @Setter
-    private boolean temporalFastWalkEnabled;
-    private final ConcurrentHashMap<RoomUnitStatus, String> statuses;
+    protected boolean temporalFastWalkEnabled;
+    protected final ConcurrentHashMap<RoomUnitStatus, String> statuses;
     @Setter
-    private boolean statusUpdateNeeded;
+    protected boolean statusUpdateNeeded;
     @Setter
-    private boolean isWiredTeleporting = false;
+    protected boolean isWiredTeleporting = false;
     @Setter
-    private boolean isLeavingTeleporter = false;
-    private final THashMap<String, Object> cacheable;
+    protected boolean isLeavingTeleporter = false;
+    protected final THashMap<String, Object> cacheable;
     @Setter
-    private boolean isKicked;
+    protected boolean isKicked;
     @Setter
-    private int kickCount = 0;
+    protected int kickCount = 0;
     @Setter
-    private boolean inRoom;
+    protected boolean inRoom;
     @Setter
     @Accessors(chain = true)
-    private boolean invisible = false;
+    protected boolean invisible = false;
     @Setter
-    private boolean canLeaveRoomByDoor = true;
+    protected boolean canLeaveRoomByDoor = true;
     @Setter
-    private int walkTimeOut;
-    private int previousEffectId;
-    private int previousEffectEndTimestamp;
-    private int timeInRoom;
-    private RoomRightLevels rightsLevel = RoomRightLevels.NONE;
-    private final THashSet<Integer> overridableTiles;
+    protected int walkTimeOut;
+    protected int timeInRoom;
+    protected RoomRightLevels rightsLevel = RoomRightLevels.NONE;
+    protected final THashSet<Integer> overridableTiles;
 
     public RoomUnit() {
         this.virtualId = 0;
@@ -102,10 +102,6 @@ public abstract class RoomUnit extends RoomEntity {
         this.roomUnitType = RoomUnitType.UNKNOWN;
         this.walkTimeOut = Emulator.getIntUnixTimestamp();
         this.timeInRoom = 0;
-
-        //RoomAvatar
-        this.previousEffectId = 0;
-        this.previousEffectEndTimestamp = -1;
 
         //RoomHabbo
         this.isKicked = false;
@@ -170,7 +166,7 @@ public abstract class RoomUnit extends RoomEntity {
         if (this.room != null) {
             Bot bot = this.room.getRoomUnitManager().getRoomBotById(getVirtualId());
             if (bot != null) {
-                bot.needsUpdate(true);
+                bot.setSqlUpdateNeeded(true);
             }
         }
 
@@ -243,7 +239,7 @@ public abstract class RoomUnit extends RoomEntity {
         boolean hasValidLayout = hasValidRoom && this.room.getLayout() != null;
         boolean hasValidTargetPosition = this.targetPosition != null;
         boolean isTargetPositionWalkable = hasValidTargetPosition && this.targetPosition.isWalkable();
-        boolean canSitOrLayAtTarget = hasValidTargetPosition && hasValidRoom && this.room.canSitOrLayAt(this.targetPosition.getX(), this.targetPosition.getY());
+        boolean canSitOrLayAtTarget = hasValidTargetPosition && hasValidRoom && this.room.canSitOrLayAt(this.targetPosition);
         boolean canOverrideTile = hasValidTargetPosition && this.canOverrideTile(this.targetPosition);
 
         if (hasValidLayout && (isTargetPositionWalkable || canSitOrLayAtTarget || canOverrideTile)) {
@@ -496,7 +492,7 @@ public abstract class RoomUnit extends RoomEntity {
             this.setCurrentZ(this.getNextZ());
         }
 
-        if(!this.path.isEmpty()) {
+        if(this.path != null && !this.path.isEmpty()) {
             RoomTile next = this.path.poll();
 
             if(this.path.size() > 1 && (this.cmdFastWalkEnabled || this.temporalFastWalkEnabled)) {
@@ -570,8 +566,18 @@ public abstract class RoomUnit extends RoomEntity {
 
         double heightDifference = tile.getStackHeight() - this.currentZ;
 
-        //TODO Why bots are not being detected?
         boolean areRoomUnitsAtTile = this.room.getRoomUnitManager().areRoomUnitsAt(tile);
+
+        if(this instanceof RoomAvatar roomAvatar && roomAvatar.isRiding()) {
+            areRoomUnitsAtTile = this.room.getRoomUnitManager().areRoomUnitsAt(tile, roomAvatar.getRidingPet().getRoomUnit());
+        }
+
+        if(this instanceof RoomPet roomPet) {
+            if(roomPet.getUnit() instanceof RideablePet rideablePet && rideablePet.hasRider()) {
+                areRoomUnitsAtTile = this.room.getRoomUnitManager().areRoomUnitsAt(tile, rideablePet.getRider().getRoomUnit());
+            }
+        }
+
         boolean isAboveMaximumStepHeight = (!RoomLayout.ALLOW_FALLING && heightDifference < -RoomLayout.MAXIMUM_STEP_HEIGHT);
         boolean isOpenTileAboveMaxHeight = (tile.getState() == RoomTileState.OPEN && heightDifference > RoomLayout.MAXIMUM_STEP_HEIGHT);
         boolean isTileBlocked = tile.getState().equals(RoomTileState.BLOCKED) || tile.getState().equals(RoomTileState.INVALID);
@@ -579,14 +585,13 @@ public abstract class RoomUnit extends RoomEntity {
         if(isTileBlocked || isAboveMaximumStepHeight || isOpenTileAboveMaxHeight) {
             return false;
         } else {
-            if(this.room.getRoomInfo().isAllowWalkthrough()) {
-                if(areRoomUnitsAtTile && !this.targetPosition.equals(tile)) {
-                    return false;
-                }
-            } else {
-                if(areRoomUnitsAtTile) {
-                    return false;
-                }
+            if(areRoomUnitsAtTile && this.targetPosition.equals(tile)) {
+                this.stopWalking();
+                return false;
+            }
+
+            if(areRoomUnitsAtTile && !this.room.getRoomInfo().isAllowWalkthrough()) {
+                return false;
             }
         }
 
@@ -606,8 +611,6 @@ public abstract class RoomUnit extends RoomEntity {
         this.canRotate = true;
         this.cmdFastWalkEnabled = false;
         this.clearStatuses();
-        this.previousEffectId = 0;
-        this.previousEffectEndTimestamp = -1;
         this.isKicked = false;
         this.cacheable.clear();
     }

@@ -2,25 +2,11 @@ package com.eu.habbo.habbohotel.bots;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomTileState;
-import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
-import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
-import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
-import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
-import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
-import com.eu.habbo.messages.outgoing.inventory.BotRemovedFromInventoryComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.events.bots.BotPickUpEvent;
-import com.eu.habbo.plugin.events.bots.BotPlacedEvent;
 import gnu.trove.map.hash.THashMap;
 import lombok.extern.slf4j.Slf4j;
 
@@ -103,71 +89,6 @@ public class BotManager {
         return bot;
     }
 
-    public void placeBot(Bot bot, Habbo habbo, Room room, RoomTile location) {
-        BotPlacedEvent event = new BotPlacedEvent(bot, location, habbo);
-
-        Emulator.getPluginManager().fireEvent(event);
-
-        if (event.isCancelled())
-            return;
-
-        if (room != null && bot != null && habbo != null) {
-            if (room.getRoomInfo().isRoomOwner(habbo) || habbo.hasPermissionRight(Permission.ACC_ANYROOMOWNER) || habbo.hasPermissionRight(Permission.ACC_PLACEFURNI)) {
-                if (room.getRoomUnitManager().getCurrentBots().size() >= Room.MAXIMUM_BOTS && !habbo.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS)) {
-                    habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_MAX_BOTS));
-                    return;
-                }
-
-                if (room.getRoomUnitManager().hasHabbosAt(location) || (!location.isWalkable() && location.getState() != RoomTileState.SIT && location.getState() != RoomTileState.LAY))
-                    return;
-
-                if (!room.getRoomUnitManager().getBotsAt(location).isEmpty()) {
-                    habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_BOTS_SELECTED_TILE_NOT_FREE));
-                    return;
-                }
-
-                RoomBot roomBot = bot.getRoomUnit();
-                roomBot.setRotation(RoomRotation.SOUTH);
-                roomBot.setLocation(location);
-                double stackHeight = room.getRoomItemManager().getTopHeightAt(location.getX(), location.getY());
-                roomBot.setCurrentZ(stackHeight);
-                roomBot.setRoom(room);
-                roomBot.setRoomUnitType(RoomUnitType.BOT);
-                roomBot.setCanWalk(room.isAllowBotsWalk());
-
-                bot.setRoom(room);
-
-                bot.onPlaceUpdate();
-
-                room.getRoomUnitManager().addRoomUnit(bot);
-                Emulator.getThreading().run(bot);
-                room.sendComposer(new RoomUsersComposer(bot).compose());
-                room.sendComposer(new UserUpdateComposer(bot.getRoomUnit()).compose());
-                habbo.getInventory().getBotsComponent().removeBot(bot);
-                habbo.getClient().sendResponse(new BotRemovedFromInventoryComposer(bot));
-                bot.onPlace(habbo, room);
-
-                RoomItem topItem = room.getRoomItemManager().getTopItemAt(location.getX(), location.getY());
-
-                if (topItem != null) {
-                    try {
-                        topItem.onWalkOn(bot.getRoomUnit(), room, null);
-                    } catch (Exception e) {
-                        log.error("Caught exception", e);
-                    }
-                }
-            } else {
-                habbo.getClient().sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
-            }
-        }
-    }
-
-    public void pickUpBot(int botId, Habbo habbo, Room room) {
-        if (habbo.getRoomUnit().getRoom() != null) {
-            this.pickUpBot(habbo.getRoomUnit().getRoom().getRoomUnitManager().getRoomBotById(Math.abs(botId)), habbo, room);
-        }
-    }
-
     public void pickUpBot(Bot bot, Habbo habbo, Room room) {
         HabboInfo botOwnerInfo = habbo == null ? Emulator.getGameEnvironment().getHabboManager().getHabboInfo(bot.getOwnerId()) : habbo.getHabboInfo();
 
@@ -190,7 +111,7 @@ public class BotManager {
                 bot.setFollowingHabboId(0);
                 bot.setOwnerId(botOwnerInfo.getId());
                 bot.setOwnerName(botOwnerInfo.getUsername());
-                bot.needsUpdate(true);
+                bot.setSqlUpdateNeeded(true);
                 Emulator.getThreading().run(bot);
 
                 Habbo receiver = habbo == null ? Emulator.getGameEnvironment().getHabboManager().getHabbo(botOwnerInfo.getId()) : habbo;

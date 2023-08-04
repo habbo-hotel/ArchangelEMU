@@ -1,6 +1,6 @@
 package com.eu.habbo.messages.incoming.rooms.bots;
 
-import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
@@ -11,9 +11,18 @@ public class RemoveBotFromFlatEvent extends MessageHandler {
     public void handle() {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if (room == null)
+        if (room == null) {
             return;
+        }
 
-        Emulator.getGameEnvironment().getBotManager().pickUpBot(this.packet.readInt(), this.client.getHabbo(), room);
+        int botId = this.packet.readInt();
+
+        Bot bot = room.getRoomUnitManager().getRoomBotById(Math.abs(botId));
+
+        if(bot == null) {
+            return;
+        }
+
+        room.getRoomUnitManager().pickUpBot(bot, this.client.getHabbo());
     }
 }

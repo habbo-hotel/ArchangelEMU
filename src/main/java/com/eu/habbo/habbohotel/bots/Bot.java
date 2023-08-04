@@ -1,17 +1,18 @@
 package com.eu.habbo.habbohotel.bots;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
-import com.eu.habbo.habbohotel.units.Unit;
+import com.eu.habbo.habbohotel.units.type.Avatar;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
+import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.*;
 import com.eu.habbo.plugin.events.bots.BotChatEvent;
 import com.eu.habbo.plugin.events.bots.BotShoutEvent;
@@ -28,77 +29,39 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
-public class Bot extends Unit implements Runnable {
-    @Getter
-    @Setter
+@Getter
+@Setter
+@Accessors(chain = true)
+public class Bot extends Avatar implements Runnable {
     private transient int id;
-    @Getter
     private String name;
-    @Getter
     private String motto;
-    @Getter
     private String figure;
-    @Getter
     private HabboGender gender;
-    @Getter
     private int ownerId;
-    @Getter
     private String ownerName;
-    @Getter
-    @Setter
-    private Room room;
-    @Getter
+
+    private HabboInfo ownerInfo;
+
     private boolean chatAuto;
-    @Getter
     private boolean chatRandom;
-    @Getter
     private short chatDelay;
-    @Getter
-    @Setter
     private int chatTimeOut;
     private int chatTimestamp;
-    @Getter
-    @Setter
     private short lastChatIndex;
-    @Getter
     private final int bubbleId;
-    @Getter
     private final String type;
-    @Getter
     private int effect;
-    private transient boolean canWalk = true;
-    private boolean needsUpdate;
-    @Getter
-    @Setter
+    private transient boolean canWalk;
+    private boolean sqlUpdateNeeded;
+    private boolean xyzUpdateNeeded;
     private transient int followingHabboId;
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    private RoomBot roomUnit;
+    protected final RoomBot roomUnit;
     public static final String NO_CHAT_SET = "${bot.skill.chatter.configuration.text.placeholder}";
     public static String[] PLACEMENT_MESSAGES = "Yo!;Hello I'm a real party animal!;Hello!".split(";");
-    @Getter
     private final ArrayList<String> chatLines;
-
-    public Bot(int id, String name, String motto, String figure, HabboGender gender, int ownerId, String ownerName) {
-        this.id = id;
-        this.name = name;
-        this.motto = motto;
-        this.figure = figure;
-        this.gender = gender;
-        this.ownerId = ownerId;
-        this.ownerName = ownerName;
-        this.chatAuto = false;
-        this.chatRandom = false;
-        this.chatDelay = 1000;
-        this.chatLines = new ArrayList<>();
-        this.type = "generic_bot";
-        this.room = null;
-        this.bubbleId = RoomChatMessageBubbles.BOT_RENTABLE.getType();
-    }
 
     public Bot(ResultSet set) throws SQLException {
         this.id = set.getInt("id");
@@ -106,8 +69,13 @@ public class Bot extends Unit implements Runnable {
         this.motto = set.getString("motto");
         this.figure = set.getString("figure");
         this.gender = HabboGender.valueOf(set.getString("gender"));
-        this.ownerId = set.getInt(DatabaseConstants.USER_ID);
+
+        //@Deprecated
+        this.ownerId = set.getInt("owner_id");
         this.ownerName = set.getString("owner_name");
+
+        this.ownerInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(set.getInt("owner_id"));
+
         this.chatAuto = set.getString("chat_auto").equals("1");
         this.chatRandom = set.getString("chat_random").equals("1");
         this.chatDelay = set.getShort("chat_delay");
@@ -115,61 +83,30 @@ public class Bot extends Unit implements Runnable {
         this.type = set.getString("type");
         this.effect = set.getInt("effect");
         this.canWalk = set.getString("freeroam").equals("1");
-        this.room = null;
         this.chatTimeOut = Emulator.getIntUnixTimestamp() + this.chatDelay;
-        this.needsUpdate = false;
+        this.sqlUpdateNeeded = false;
         this.bubbleId = set.getInt("bubble_id");
 
         this.roomUnit = new RoomBot();
         this.roomUnit.setUnit(this);
     }
 
-    public Bot(Bot bot) {
-        this.name = bot.getName();
-        this.motto = bot.getMotto();
-        this.figure = bot.getFigure();
-        this.gender = bot.getGender();
-        this.ownerId = bot.getOwnerId();
-        this.ownerName = bot.getOwnerName();
-        this.chatAuto = true;
-        this.chatRandom = false;
-        this.chatDelay = 10;
-        this.chatTimeOut = Emulator.getIntUnixTimestamp() + this.chatDelay;
-        this.chatLines = new ArrayList<>(List.of("Default Message :D"));
-        this.type = bot.getType();
-        this.effect = bot.getEffect();
-        this.bubbleId = bot.getBubbleId();
-        this.needsUpdate = false;
-    }
+    public static void initialise() {}
 
-    public static void initialise() {
-
-    }
-
-    public static void dispose() {
-
-    }
-
-    public void needsUpdate(boolean needsUpdate) {
-        this.needsUpdate = needsUpdate;
-    }
-
-    public boolean needsUpdate() {
-        return this.needsUpdate;
-    }
+    public static void dispose() {}
 
     @Override
     public void run() {
-    if (this.needsUpdate) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bots SET name = ?, motto = ?, figure = ?, gender = ?, user_id = ?, room_id = ?, rot = ?, dance = ?, freeroam = ?, chat_lines = ?, chat_auto = ?, chat_random = ?, chat_delay = ?, effect = ?, bubble_id = ? WHERE id = ?")) {
+    if (this.sqlUpdateNeeded) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bots SET name = ?, motto = ?, figure = ?, gender = ?, owner_id = ?, room_id = ?, rot = ?, dance = ?, freeroam = ?, chat_lines = ?, chat_auto = ?, chat_random = ?, chat_delay = ?, effect = ?, bubble_id = ? WHERE id = ?")) {
                 statement.setString(1, this.name);
                 statement.setString(2, this.motto);
                 statement.setString(3, this.figure);
                 statement.setString(4, this.gender.toString());
-                statement.setInt(5, this.ownerId);
-                statement.setInt(6, this.room == null ? 0 : this.room.getRoomInfo().getId());
-                statement.setInt(7, this.getRoomUnit() == null ? 0 : this.getRoomUnit().getBodyRotation().getValue());
-                statement.setInt(8, this.getRoomUnit() == null ? 0 : this.getRoomUnit().getDanceType().getType());
+                statement.setInt(5, this.ownerInfo.getId());
+                statement.setInt(6, this.roomUnit.getRoom() == null ? 0 : this.roomUnit.getRoom().getRoomInfo().getId());
+                statement.setInt(7, this.roomUnit.getBodyRotation().getValue());
+                statement.setInt(8, this.roomUnit.getDanceType().getType());
                 statement.setString(9, this.canWalk ? "1" : "0");
                 StringBuilder text = new StringBuilder();
                 for (String s : this.chatLines) {
@@ -183,7 +120,7 @@ public class Bot extends Unit implements Runnable {
                 statement.setInt(15, this.bubbleId);
                 statement.setInt(16, this.id);
                 statement.execute();
-                this.needsUpdate = false;
+                this.sqlUpdateNeeded = false;
             } catch (SQLException e) {
                 log.error("Caught SQL exception", e);
             }
@@ -191,122 +128,108 @@ public class Bot extends Unit implements Runnable {
     }
 
     public void talk(String message) {
-        if (this.room != null) {
+        if (this.roomUnit.getRoom() != null) {
             BotChatEvent event = new BotTalkEvent(this, message);
             if (Emulator.getPluginManager().fireEvent(event).isCancelled())
                 return;
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
-            this.room.botChat(new ChatMessageComposer(new RoomChatMessage(event.getMessage(), this.getRoomUnit(), RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
+            this.roomUnit.getRoom().botChat(new ChatMessageComposer(new RoomChatMessage(event.getMessage(), this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
 
             if (message.equals("o/") || message.equals("_o/")) {
-                this.room.sendComposer(new ExpressionMessageComposer(this.getRoomUnit(), RoomUserAction.WAVE).compose());
+                this.roomUnit.getRoom().sendComposer(new ExpressionMessageComposer(this.roomUnit, RoomUserAction.WAVE).compose());
             }
         }
     }
 
     public void shout(String message) {
-        if (this.room != null) {
+        if (this.roomUnit.getRoom() != null) {
             BotChatEvent event = new BotShoutEvent(this, message);
             if (Emulator.getPluginManager().fireEvent(event).isCancelled())
                 return;
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
-            this.room.botChat(new ShoutMessageComposer(new RoomChatMessage(event.getMessage(), this.getRoomUnit(), RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
+            this.roomUnit.getRoom().botChat(new ShoutMessageComposer(new RoomChatMessage(event.getMessage(), this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))).compose());
 
             if (message.equals("o/") || message.equals("_o/")) {
-                this.room.sendComposer(new ExpressionMessageComposer(this.getRoomUnit(), RoomUserAction.WAVE).compose());
+                this.roomUnit.getRoom().sendComposer(new ExpressionMessageComposer(this.roomUnit, RoomUserAction.WAVE).compose());
             }
         }
     }
 
     public void whisper(String message, Habbo habbo) {
-        if (this.room != null && habbo != null) {
+        if (this.roomUnit.getRoom() != null && habbo != null) {
             BotWhisperEvent event = new BotWhisperEvent(this, message, habbo);
             if (Emulator.getPluginManager().fireEvent(event).isCancelled())
                 return;
 
             this.chatTimestamp = Emulator.getIntUnixTimestamp();
-            event.getTarget().getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(event.getMessage(), this.getRoomUnit(), RoomChatMessageBubbles.getBubble(this.getBubbleId()))));
+            event.getTarget().getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(event.getMessage(), this.roomUnit, RoomChatMessageBubbles.getBubble(this.getBubbleId()))));
         }
     }
 
     public void onPlace(Habbo habbo, Room room) {
-        if (this.getRoomUnit() != null) {
-            this.getRoomUnit().giveEffect(this.effect, -1);
+        if (this.roomUnit != null) {
+            this.roomUnit.giveEffect(this.effect, -1);
         }
 
         if(PLACEMENT_MESSAGES.length > 0) {
             String message = PLACEMENT_MESSAGES[Emulator.getRandom().nextInt(PLACEMENT_MESSAGES.length)];
-            if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.getRoomUnit(), room, new Object[]{message})) {
+            if (!WiredHandler.handle(WiredTriggerType.SAY_SOMETHING, this.roomUnit, room, new Object[]{message})) {
                 this.talk(message);
             }
         }
     }
 
-    public void onPickUp(Habbo habbo, Room room) {
-
-    }
+    public void onPickUp(Habbo habbo, Room room) {}
 
     public void onUserSay(final RoomChatMessage message) {}
 
-    public int getBubbleId() {
-        return bubbleId;
-    }
-
     public void setName(String name) {
         this.name = name;
-        this.needsUpdate = true;
+        this.sqlUpdateNeeded = true;
 
         //if(this.room != null)
-        //this.room.sendComposer(new ChangeNameUpdatedComposer(this.getRoomUnit(), this.getName()).compose());
+        //this.roomUnit.getRoom().sendComposer(new ChangeNameUpdatedComposer(this.roomUnit, this.getName()).compose());
     }
 
     public void setMotto(String motto) {
         this.motto = motto;
-        this.needsUpdate = true;
+        this.sqlUpdateNeeded = true;
     }
 
     public void setFigure(String figure) {
         this.figure = figure;
-        this.needsUpdate = true;
-
-        if (this.room != null)
-            this.room.sendComposer(new RoomUsersComposer(this).compose());
+        this.sqlUpdateNeeded = true;
+        this.roomUnit.getRoom().sendComposer(new RoomUsersComposer(this).compose());
     }
 
     public void setGender(HabboGender gender) {
         this.gender = gender;
-        this.needsUpdate = true;
-
-        if (this.room != null)
-            this.room.sendComposer(new RoomUsersComposer(this).compose());
+        this.sqlUpdateNeeded = true;
+        this.roomUnit.getRoom().sendComposer(new RoomUsersComposer(this).compose());
     }
 
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
-        this.needsUpdate = true;
-
-        if (this.room != null)
-            this.room.sendComposer(new RoomUsersComposer(this).compose());
+        this.sqlUpdateNeeded = true;
+        this.roomUnit.getRoom().sendComposer(new RoomUsersComposer(this).compose());
     }
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
-        this.needsUpdate = true;
-
-        if (this.room != null)
-            this.room.sendComposer(new RoomUsersComposer(this).compose());
+        this.sqlUpdateNeeded = true;
+        this.roomUnit.getRoom().sendComposer(new RoomUsersComposer(this).compose());
     }
 
     public void setChatAuto(boolean chatAuto) {
         this.chatAuto = chatAuto;
-        this.needsUpdate = true;
+        this.sqlUpdateNeeded = true;
     }
 
     public void setChatRandom(boolean chatRandom) {
         this.chatRandom = chatRandom;
-        this.needsUpdate = true;
+        this.sqlUpdateNeeded = true;
     }
 
     public boolean hasChat() {
@@ -315,28 +238,24 @@ public class Bot extends Unit implements Runnable {
 
     public void setChatDelay(short chatDelay) {
         this.chatDelay = (short) Math.min(Math.max(chatDelay, BotManager.MINIMUM_CHAT_SPEED), BotManager.MAXIMUM_CHAT_SPEED);
-        this.needsUpdate = true;
+        this.sqlUpdateNeeded = true;
         this.chatTimeOut = Emulator.getIntUnixTimestamp() + this.chatDelay;
-    }
-
-    public int getChatTimestamp() {
-        return this.chatTimestamp;
     }
 
     public void clearChat() {
         synchronized (this.chatLines) {
             this.chatLines.clear();
-            this.needsUpdate = true;
+            this.sqlUpdateNeeded = true;
         }
     }
 
     public void setEffect(int effect, int duration) {
         this.effect = effect;
-        this.needsUpdate = true;
+        this.sqlUpdateNeeded = true;
 
-        if (this.getRoomUnit() != null) {
-            if (this.room != null) {
-                this.getRoomUnit().giveEffect(this.effect, duration);
+        if (this.roomUnit != null) {
+            if (this.roomUnit.getRoom() != null) {
+                this.roomUnit.giveEffect(this.effect, duration);
             }
         }
     }
@@ -344,14 +263,14 @@ public class Bot extends Unit implements Runnable {
     public void addChatLines(ArrayList<String> chatLines) {
         synchronized (this.chatLines) {
             this.chatLines.addAll(chatLines);
-            this.needsUpdate = true;
+            this.sqlUpdateNeeded = true;
         }
     }
 
     public void addChatLine(String chatLine) {
         synchronized (this.chatLines) {
             this.chatLines.add(chatLine);
-            this.needsUpdate = true;
+            this.sqlUpdateNeeded = true;
         }
     }
 
@@ -363,42 +282,39 @@ public class Bot extends Unit implements Runnable {
         this.canWalk = canWalk;
     }
 
-    public void onPlaceUpdate() {
-        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bots SET name = ?, motto = ?, figure = ?, gender = ?, user_id = ?, room_id = ?, x = ?, y = ?, z = ?, rot = ?, dance = ?, freeroam = ?, chat_lines = ?, chat_auto = ?, chat_random = ?, chat_delay = ?, effect = ?, bubble_id = ? WHERE id = ?")) {
-            statement.setString(1, this.name);
-            statement.setString(2, this.motto);
-            statement.setString(3, this.figure);
-            statement.setString(4, this.gender.toString());
-            statement.setInt(5, this.ownerId);
-            statement.setInt(6, this.room == null ? 0 : this.room.getRoomInfo().getId());
-            statement.setInt(7, this.getRoomUnit() == null ? 0 : this.getRoomUnit().getCurrentPosition().getX());
-            statement.setInt(8, this.getRoomUnit() == null ? 0 : this.getRoomUnit().getCurrentPosition().getY());
-            statement.setDouble(9, this.getRoomUnit() == null ? 0 : this.getRoomUnit().getCurrentZ());
-            statement.setInt(10, this.getRoomUnit() == null ? 0 : this.getRoomUnit().getBodyRotation().getValue());
-            statement.setInt(11, this.getRoomUnit() == null ? 0 : this.getRoomUnit().getDanceType().getType());
-            statement.setString(12, this.canWalk ? "1" : "0");
-            StringBuilder text = new StringBuilder();
-            for (String s : this.chatLines) {
-                text.append(s).append("\r");
-            }
-            statement.setString(13, text.toString());
-            statement.setString(14, this.chatAuto ? "1" : "0");
-            statement.setString(15, this.chatRandom ? "1" : "0");
-            statement.setInt(16, this.chatDelay);
-            statement.setInt(17, this.effect);
-            statement.setInt(18, this.bubbleId);
-            statement.setInt(19, this.id);
-            statement.execute();
-        } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
-        }
-    }
-
     public void incrementLastChatIndex() {
         this.lastChatIndex++;
     }
 
     public void resetLastChatIndex() {
         this.lastChatIndex = 0;
+    }
+
+    @Override
+    public void serialize(ServerMessage message) {
+        message.appendInt(-this.id);
+        message.appendString(this.name);
+        message.appendString(this.motto);
+        message.appendString(this.figure);
+        message.appendInt(this.roomUnit.getVirtualId());
+        message.appendInt(this.roomUnit.getCurrentPosition().getX());
+        message.appendInt(this.roomUnit.getCurrentPosition().getY());
+        message.appendString(String.valueOf(this.roomUnit.getCurrentZ()));
+        message.appendInt(this.roomUnit.getBodyRotation().getValue());
+        message.appendInt(4);
+        message.appendString(this.gender.name().toUpperCase());
+        message.appendInt(this.ownerId);
+        message.appendString(this.ownerName);
+        message.appendInt(10);
+        message.appendShort(0);
+        message.appendShort(1);
+        message.appendShort(2);
+        message.appendShort(3);
+        message.appendShort(4);
+        message.appendShort(5);
+        message.appendShort(6);
+        message.appendShort(7);
+        message.appendShort(8);
+        message.appendShort(9);
     }
 }

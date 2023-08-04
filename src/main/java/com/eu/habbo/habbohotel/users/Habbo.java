@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.catalog.ClothItem;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
+import com.eu.habbo.habbohotel.guilds.Guild;
 import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
@@ -14,8 +15,9 @@ import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
-import com.eu.habbo.habbohotel.units.Unit;
+import com.eu.habbo.habbohotel.units.type.Avatar;
 import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
+import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.generic.alerts.*;
 import com.eu.habbo.messages.outgoing.inventory.*;
 import com.eu.habbo.messages.outgoing.rooms.FloodControlMessageComposer;
@@ -40,7 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class Habbo extends Unit implements Runnable {
+public class Habbo extends Avatar implements Runnable {
     @Getter
     private RoomHabbo roomUnit;
     @Getter
@@ -345,7 +347,7 @@ public class Habbo extends Unit implements Runnable {
 
     public void deleteBot(Bot bot) {
         this.removeBot(bot);
-        bot.getRoom().getRoomUnitManager().removeBot(bot);
+        bot.getRoomUnit().getRoom().getRoomUnitManager().removeBot(bot);
         Emulator.getGameEnvironment().getBotManager().deleteBot(bot);
     }
 
@@ -466,5 +468,35 @@ public class Habbo extends Unit implements Runnable {
                 .map(ClothItem::getSetId)
                 .flatMap(c -> Arrays.stream(c).boxed())
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void serialize(ServerMessage message) {
+        message.appendInt(this.habboInfo.getId());
+        message.appendString(this.habboInfo.getUsername());
+        message.appendString(this.habboInfo.getMotto());
+        message.appendString(this.habboInfo.getLook());
+        message.appendInt(this.roomUnit.getVirtualId());
+        message.appendInt(this.roomUnit.getCurrentPosition().getX());
+        message.appendInt(this.roomUnit.getCurrentPosition().getY());
+        message.appendString(String.valueOf(this.roomUnit.getCurrentZ()));
+        message.appendInt(this.roomUnit.getBodyRotation().getValue());
+        message.appendInt(1);
+        message.appendString(this.habboInfo.getGender().name().toUpperCase());
+        message.appendInt(this.habboStats.getGuild() != 0 ? this.habboStats.getGuild() : -1);
+        message.appendInt(this.habboStats.getGuild() != 0 ? 1 : -1);
+
+        String name = "";
+        if (this.habboStats.getGuild() != 0) {
+            Guild g = Emulator.getGameEnvironment().getGuildManager().getGuild(this.habboStats.getGuild());
+
+            if (g != null)
+                name = g.getName();
+        }
+        message.appendString(name);
+
+        message.appendString("");
+        message.appendInt(this.habboStats.getAchievementScore());
+        message.appendBoolean(true);
     }
 }

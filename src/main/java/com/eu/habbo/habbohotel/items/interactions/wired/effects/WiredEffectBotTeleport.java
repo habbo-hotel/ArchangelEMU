@@ -51,7 +51,7 @@ public class WiredEffectBotTeleport extends InteractionWiredEffect {
 
         for (RoomItem item : this.getWiredSettings().getItems(room)) {
             if (item.getRoomId() != 0) {
-                Room room1 = bot.getRoom();
+                Room room1 = bot.getRoomUnit().getRoom();
                 if (item.getRoomId() == room1.getRoomInfo().getId()) {
                     if (i == j) {
                         teleportUnitToTile(bot.getRoomUnit(), room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));

@@ -16,7 +16,6 @@ import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
-import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
@@ -390,75 +389,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         this.sendComposer(new UserUpdateComposer(roomUnit).compose());
-    }
-
-    public void updateHabbosAt(RoomTile tile) {
-        RoomItem item = this.roomItemManager.getTopItemAt(tile.getX(), tile.getY());
-
-        Collection<Habbo> habbos = this.roomUnitManager.getHabbosAt(tile);
-
-        if(habbos == null || habbos.isEmpty()) {
-            return;
-        }
-
-        //Improve this
-        for (Habbo habbo : habbos) {
-            double z = habbo.getRoomUnit().getCurrentPosition().getStackHeight();
-
-            if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.SIT) && ((item == null && !habbo.getRoomUnit().isCmdSitEnabled()) || (item != null && !item.getBaseItem().allowSit()))) {
-                habbo.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
-            }
-
-            if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.LAY) && ((item == null && !habbo.getRoomUnit().isCmdLayEnabled()) || (item != null && !item.getBaseItem().allowLay()))) {
-                habbo.getRoomUnit().removeStatus(RoomUnitStatus.LAY);
-            }
-
-            if (item != null && (item.getBaseItem().allowSit() || item.getBaseItem().allowLay())) {
-                if(item.getBaseItem().allowSit()) {
-                    habbo.getRoomUnit().addStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(item)));
-                } else if(item.getBaseItem().allowLay()) {
-                    habbo.getRoomUnit().addStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(item)));
-                }
-
-                habbo.getRoomUnit().setCurrentZ(item.getCurrentZ());
-                habbo.getRoomUnit().setRotation(RoomRotation.fromValue(item.getRotation()));
-            } else {
-                habbo.getRoomUnit().setCurrentZ(z);
-            }
-        }
-    }
-
-    public void updateBotsAt(RoomTile tile) {
-        this.updateBotsAt(tile.getX(), tile.getY());
-    }
-
-    public void updateBotsAt(short x, short y) {
-        RoomItem topItem = this.roomItemManager.getTopItemAt(x, y);
-
-        THashSet<RoomUnit> roomUnits = new THashSet<>();
-
-        RoomTile tile = this.layout.getTile(x, y);
-        this.roomUnitManager.getBotsAt(tile).forEach(bot -> {
-            if (topItem != null) {
-                if (topItem.getBaseItem().allowSit()) {
-                    bot.getRoomUnit().setCurrentZ(topItem.getCurrentZ());
-                    bot.getRoomUnit().setRotation(RoomRotation.fromValue(topItem.getRotation()));
-                } else {
-                    bot.getRoomUnit().setCurrentZ(topItem.getCurrentZ() + Item.getCurrentHeight(topItem));
-
-                    if (topItem.getBaseItem().allowLay()) {
-                        bot.getRoomUnit().addStatus(RoomUnitStatus.LAY, String.valueOf(topItem.getCurrentZ() + topItem.getBaseItem().getHeight()));
-                    }
-                }
-            } else {
-                bot.getRoomUnit().setCurrentZ(bot.getRoomUnit().getCurrentPosition().getStackHeight());
-            }
-            roomUnits.add(bot.getRoomUnit());
-        });
-
-        if (!roomUnits.isEmpty()) {
-            this.sendComposer(new UserUpdateComposer(roomUnits).compose());
-        }
     }
 
     public void startTrade(Habbo userOne, Habbo userTwo) {
@@ -1741,12 +1671,6 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public boolean canSitOrLayAt(RoomTile tile) {
-        return this.canSitOrLayAt(tile.getX(), tile.getY());
-    }
-
-    public boolean canSitOrLayAt(int x, int y) {
-        RoomTile tile = this.layout.getTile((short) x, (short) y);
-
         if(tile == null) {
             return false;
         }
@@ -1754,7 +1678,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (this.roomUnitManager.hasHabbosAt(tile))
             return false;
 
-        THashSet<RoomItem> items = this.roomItemManager.getItemsAt(x, y);
+        THashSet<RoomItem> items = this.roomItemManager.getItemsAt(tile);
 
         return this.canSitAt(items) || this.canLayAt(items);
     }
@@ -1769,7 +1693,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         if (this.roomUnitManager.hasHabbosAt(tile))
             return false;
 
-        return this.canSitAt(this.roomItemManager.getItemsAt(x, y));
+        return this.canSitAt(this.roomItemManager.getItemsAt(tile));
     }
 
     boolean canSitAt(THashSet<RoomItem> items) {

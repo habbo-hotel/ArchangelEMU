@@ -78,4 +78,17 @@ public class RoomWordFilterManager {
             }
         }
     }
+
+    public void removeAllWords() {
+        synchronized (this.filteredWords) {
+            this.filteredWords.clear();
+
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM room_wordfilter WHERE room_id = ?")) {
+                statement.setInt(1, this.room.getRoomInfo().getId());
+                statement.execute();
+            } catch (SQLException e) {
+                log.error(CAUGHT_SQL_EXCEPTION, e);
+            }
+        }
+    }
 }

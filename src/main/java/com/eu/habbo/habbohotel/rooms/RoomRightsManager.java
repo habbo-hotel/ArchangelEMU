@@ -87,14 +87,14 @@ public class RoomRightsManager {
             return;
         }
 
-        if (this.rights.add(habbo.getHabboInfo().getId())) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_rights VALUES (?, ?)")) {
-                statement.setInt(1, this.room.getRoomInfo().getId());
-                statement.setInt(2, habbo.getHabboInfo().getId());
-                statement.execute();
-            } catch (SQLException e) {
-                log.error(CAUGHT_SQL_EXCEPTION, e);
-            }
+        this.rights.add(habbo.getHabboInfo().getId());
+
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO room_rights VALUES (?, ?)")) {
+            statement.setInt(1, this.room.getRoomInfo().getId());
+            statement.setInt(2, habbo.getHabboInfo().getId());
+            statement.execute();
+        } catch (SQLException e) {
+            log.error(CAUGHT_SQL_EXCEPTION, e);
         }
 
         this.room.getRoomRightsManager().refreshRightsForHabbo(habbo);

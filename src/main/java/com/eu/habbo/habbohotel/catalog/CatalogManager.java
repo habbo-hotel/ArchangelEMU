@@ -902,7 +902,7 @@ public class CatalogManager {
                                 if (bot != null) {
                                     bot.setOwnerId(habbo.getClient().getHabbo().getHabboInfo().getId());
                                     bot.setOwnerName(habbo.getClient().getHabbo().getHabboInfo().getUsername());
-                                    bot.needsUpdate(true);
+                                    bot.setSqlUpdateNeeded(true);
                                     Emulator.getThreading().run(bot);
                                     habbo.getClient().getHabbo().getInventory().getBotsComponent().addBot(bot);
                                     habbo.getClient().sendResponse(new BotAddedToInventoryComposer(bot));

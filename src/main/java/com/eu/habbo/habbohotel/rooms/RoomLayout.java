@@ -1,6 +1,7 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
@@ -562,8 +563,9 @@ public class RoomLayout {
     public RoomTile getRandomWalkableTilesAround(RoomUnit roomUnit, RoomTile tile, Room room, int radius) {
          if(!this.tileExists(tile.getX(), tile.getY())) {
              tile = this.getTile(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
-             room.getRoomUnitManager().getRoomBotById(roomUnit.getVirtualId()).needsUpdate(true);
-        }
+             Bot bot = room.getRoomUnitManager().getRoomBotById(roomUnit.getVirtualId());
+             bot.setSqlUpdateNeeded(true);
+         }
 
         List<RoomTile> newTiles = new ArrayList<>();
 

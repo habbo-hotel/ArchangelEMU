@@ -20,10 +20,6 @@ public class VisitorBot extends Bot {
         super(set);
     }
 
-    public VisitorBot(Bot bot) {
-        super(bot);
-    }
-
     public static void initialise() {
         DATE_FORMAT = new SimpleDateFormat(Emulator.getConfig().getValue("bots.visitor.dateformat"));
     }

@@ -26,7 +26,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class RoomAvatar extends RoomUnit {
+public abstract class RoomAvatar extends RoomUnit {
     protected RideablePet ridingPet;
     protected boolean rideLocked;
     protected DanceType danceType;
@@ -91,8 +91,6 @@ public class RoomAvatar extends RoomUnit {
         this.ridingPet.setRider(null);
         this.ridingPet.setTask(PetTasks.FREE);
 
-        this.ridingPet = null;
-
         this.giveEffect(0, -1);
         this.setCurrentZ(this.ridingPet.getRoomUnit().getCurrentZ());
         this.stopWalking();
@@ -101,6 +99,8 @@ public class RoomAvatar extends RoomUnit {
 
         this.instantUpdate();
         this.ridingPet.getRoomUnit().instantUpdate();
+
+        this.ridingPet = null;
 
         List<RoomTile> availableTiles = isRemoving ? new ArrayList<>() : this.room.getLayout().getWalkableTilesAround(this.getCurrentPosition());
 
@@ -184,6 +184,7 @@ public class RoomAvatar extends RoomUnit {
         super.clear();
 
         this.ridingPet = null;
+        this.rideLocked = false;
         this.danceType = DanceType.NONE;
         this.handItem = 0;
         this.handItemTimestamp = 0;

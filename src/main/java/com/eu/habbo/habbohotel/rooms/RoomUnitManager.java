@@ -2,6 +2,8 @@ package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
+import com.eu.habbo.habbohotel.bots.BotManager;
+import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetManager;
@@ -15,13 +17,16 @@ import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
+import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.BotRemovedFromInventoryComposer;
 import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
 import com.eu.habbo.plugin.Event;
+import com.eu.habbo.plugin.events.bots.BotPickUpEvent;
 import com.eu.habbo.plugin.events.bots.BotPlacedEvent;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
@@ -67,28 +72,31 @@ public class RoomUnitManager {
     private synchronized void loadBots(Connection connection) {
         this.currentBots.clear();
 
-        try (PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots INNER JOIN users ON bots.user_id = users.id WHERE room_id = ?")) {
+        try (PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots INNER JOIN users ON bots.owner_id = users.id WHERE room_id = ?")) {
             statement.setInt(1, this.room.getRoomInfo().getId());
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     Bot bot = Emulator.getGameEnvironment().getBotManager().loadBot(set);
                     //TODO IMPROVE THIS
                     if (bot != null) {
-                        bot.setRoom(this.room);
-                        bot.setRoomUnit(new RoomBot());
-                        bot.getRoomUnit().setUnit(bot);
                         bot.getRoomUnit().setRoom(this.room);
-                        bot.getRoomUnit().setLocation(this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y")));
-                        if (bot.getRoomUnit().getCurrentPosition() == null || bot.getRoomUnit().getCurrentPosition().getState() == RoomTileState.INVALID) {
+
+                        RoomTile spawnTile = this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y"));
+
+                        if(spawnTile == null) {
+                            bot.getRoomUnit().setCurrentPosition(this.room.getLayout().getDoorTile());
                             bot.getRoomUnit().setCurrentZ(this.room.getLayout().getDoorTile().getStackHeight());
-                            bot.getRoomUnit().setLocation(this.room.getLayout().getDoorTile());
                             bot.getRoomUnit().setRotation(RoomRotation.fromValue(this.room.getLayout().getDoorDirection()));
                         } else {
+
+                            bot.getRoomUnit().setCurrentPosition(spawnTile);
                             bot.getRoomUnit().setCurrentZ(set.getDouble("z"));
                             bot.getRoomUnit().setRotation(RoomRotation.values()[set.getInt("rot")]);
                         }
-                        bot.getRoomUnit().setRoomUnitType(RoomUnitType.BOT);
+
                         bot.getRoomUnit().setDanceType(DanceType.values()[set.getInt("dance")]);
+
+                        //@DEPRECATED
                         bot.getRoomUnit().setInRoom(true);
 
                         bot.getRoomUnit().giveEffect(set.getInt("effect"), Integer.MAX_VALUE, false);
@@ -150,7 +158,9 @@ public class RoomUnitManager {
                     this.currentHabbos.put(((Habbo) unit).getHabboInfo().getId(), (Habbo) unit);
                     unit.getRoomUnit().getRoom().updateDatabaseUserCount();
                 }
-                case BOT -> this.currentBots.put(((Bot) unit).getId(), (Bot) unit);
+                case BOT -> {
+                    this.currentBots.put(((Bot) unit).getId(), (Bot) unit);
+                }
                 case PET -> {
                     this.currentPets.put(((Pet) unit).getId(), (Pet) unit);
                     Habbo habbo = this.getRoomHabboById(((Pet) unit).getUserId());
@@ -168,6 +178,10 @@ public class RoomUnitManager {
 
     public boolean areRoomUnitsAt(RoomTile tile) {
         return this.currentRoomUnits.values().stream().anyMatch(roomUnit -> roomUnit.getCurrentPosition().equals(tile));
+    }
+
+    public boolean areRoomUnitsAt(RoomTile tile, RoomUnit skippedRoomUnit) {
+        return this.currentRoomUnits.values().stream().filter(roomUnit -> !roomUnit.equals(skippedRoomUnit)).anyMatch(roomUnit -> roomUnit.getCurrentPosition().equals(tile));
     }
 
     public List<RoomUnit> getAvatarsAt(RoomTile tile) {
@@ -202,6 +216,41 @@ public class RoomUnitManager {
         return this.currentHabbos.values().stream().filter(habbo -> habbo.getRoomUnit() == roomUnit).findFirst().orElse(null);
     }
 
+    public void updateHabbosAt(RoomTile tile) {
+        Collection<Habbo> habbos = this.getHabbosAt(tile);
+
+        if(habbos == null || habbos.isEmpty()) {
+            return;
+        }
+
+        RoomItem item = this.room.getRoomItemManager().getTopItemAt(tile.getX(), tile.getY());
+
+        for (Habbo habbo : habbos) {
+            double z = habbo.getRoomUnit().getCurrentPosition().getStackHeight();
+
+            if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.SIT) && ((item == null && !habbo.getRoomUnit().isCmdSitEnabled()) || (item != null && !item.getBaseItem().allowSit()))) {
+                habbo.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
+            }
+
+            if (habbo.getRoomUnit().hasStatus(RoomUnitStatus.LAY) && ((item == null && !habbo.getRoomUnit().isCmdLayEnabled()) || (item != null && !item.getBaseItem().allowLay()))) {
+                habbo.getRoomUnit().removeStatus(RoomUnitStatus.LAY);
+            }
+
+            if (item != null && (item.getBaseItem().allowSit() || item.getBaseItem().allowLay())) {
+                if(item.getBaseItem().allowSit()) {
+                    habbo.getRoomUnit().addStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(item)));
+                } else if(item.getBaseItem().allowLay()) {
+                    habbo.getRoomUnit().addStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(item)));
+                }
+
+                habbo.getRoomUnit().setCurrentZ(item.getCurrentZ());
+                habbo.getRoomUnit().setRotation(RoomRotation.fromValue(item.getRotation()));
+            } else {
+                habbo.getRoomUnit().setCurrentZ(z);
+            }
+        }
+    }
+
     public Bot getRoomBotById(int botId) {
         return this.currentBots.get(botId);
     }
@@ -224,16 +273,17 @@ public class RoomUnitManager {
         return this.currentBots.values().stream().filter(bot -> bot.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
     }
 
-    public void placeBot(Bot bot, Habbo habbo, int x, int y) {
+    public void placeBot(Bot bot, Habbo botOwner, int x, int y) {
         synchronized (this.currentBots) {
             RoomTile spawnTile = room.getLayout().getTile((short) x, (short) y);
 
-            if(spawnTile == null) {
-                spawnTile = room.getLayout().getDoorTile();
+            if(spawnTile == null || (!spawnTile.isWalkable() && !this.room.canSitOrLayAt(spawnTile)) || this.areRoomUnitsAt(spawnTile)) {
+                botOwner.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_BOTS_SELECTED_TILE_NOT_FREE));
+                return;
             }
 
             if (Emulator.getPluginManager().isRegistered(BotPlacedEvent.class, false)) {
-                Event event = new BotPlacedEvent(bot, spawnTile, habbo);
+                Event event = new BotPlacedEvent(bot, spawnTile, botOwner);
                 Emulator.getPluginManager().fireEvent(event);
 
                 if (event.isCancelled()) {
@@ -241,13 +291,8 @@ public class RoomUnitManager {
                 }
             }
 
-            if(this.currentBots.size() >= Room.MAXIMUM_BOTS && !habbo.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS)) {
-                habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_MAX_BOTS));
-                return;
-            }
-
-            if((!spawnTile.isWalkable() && !this.room.canSitOrLayAt(spawnTile)) || this.areRoomUnitsAt(spawnTile)) {
-                habbo.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_BOTS_SELECTED_TILE_NOT_FREE));
+            if(this.currentBots.size() >= Room.MAXIMUM_BOTS && !botOwner.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS)) {
+                botOwner.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_MAX_BOTS));
                 return;
             }
 
@@ -259,15 +304,92 @@ public class RoomUnitManager {
             roomBot.setRotation(RoomRotation.SOUTH);
             roomBot.setCanWalk(this.room.isAllowBotsWalk());
 
+            bot.setSqlUpdateNeeded(true);
+            Emulator.getThreading().run(bot);
+
             this.addRoomUnit(bot);
 
             this.room.sendComposer(new RoomUsersComposer(bot).compose());
 
             roomBot.instantUpdate();
 
-            habbo.getInventory().getBotsComponent().removeBot(bot);
-            habbo.getClient().sendResponse(new BotRemovedFromInventoryComposer(bot));
-            bot.onPlace(habbo, room);
+            botOwner.getInventory().getBotsComponent().removeBot(bot);
+            botOwner.getClient().sendResponse(new BotRemovedFromInventoryComposer(bot));
+            bot.onPlace(botOwner, room);
+        }
+    }
+
+    public void updateBotsAt(RoomTile tile) {
+        Collection<Bot> bots = this.getBotsAt(tile);
+
+        if(bots == null || bots.isEmpty()) {
+            return;
+        }
+
+        RoomItem item = this.room.getRoomItemManager().getTopItemAt(tile.getX(), tile.getY());
+
+        bots.forEach(bot -> {
+            double z = bot.getRoomUnit().getCurrentPosition().getStackHeight();
+
+            if (bot.getRoomUnit().hasStatus(RoomUnitStatus.SIT) && ((item == null && !bot.getRoomUnit().isCmdSitEnabled()) || (item != null && !item.getBaseItem().allowSit()))) {
+                bot.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
+            }
+
+            if (bot.getRoomUnit().hasStatus(RoomUnitStatus.LAY) && ((item == null && !bot.getRoomUnit().isCmdLayEnabled()) || (item != null && !item.getBaseItem().allowLay()))) {
+                bot.getRoomUnit().removeStatus(RoomUnitStatus.LAY);
+            }
+
+            if (item != null && (item.getBaseItem().allowSit() || item.getBaseItem().allowLay())) {
+                if(item.getBaseItem().allowSit()) {
+                    bot.getRoomUnit().addStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(item)));
+                } else if(item.getBaseItem().allowLay()) {
+                    bot.getRoomUnit().addStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(item)));
+                }
+
+                bot.getRoomUnit().setCurrentZ(item.getCurrentZ());
+                bot.getRoomUnit().setRotation(RoomRotation.fromValue(item.getRotation()));
+            } else {
+                bot.getRoomUnit().setCurrentZ(z);
+            }
+        });
+    }
+
+    public void pickUpBot(Bot bot, Habbo picker) {
+        HabboInfo botOwnerInfo = picker == null ? bot.getOwnerInfo() : picker.getHabboInfo();
+
+        BotPickUpEvent pickedUpEvent = new BotPickUpEvent(bot, picker);
+        Emulator.getPluginManager().fireEvent(pickedUpEvent);
+
+        if (pickedUpEvent.isCancelled())
+            return;
+
+        if (picker == null || (bot.getOwnerInfo().getId() == picker.getHabboInfo().getId() || picker.hasPermissionRight(Permission.ACC_ANYROOMOWNER))) {
+            if (picker != null && !picker.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS) && picker.getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
+                picker.alert(Emulator.getTexts().getValue("error.bots.max.inventory").replace("%amount%", String.valueOf(BotManager.MAXIMUM_BOT_INVENTORY_SIZE)));
+                return;
+            }
+
+            bot.onPickUp(picker, this.room);
+
+            bot.setFollowingHabboId(0);
+
+            //@DEPRECATED
+            bot.setOwnerId(botOwnerInfo.getId());
+            bot.setOwnerName(botOwnerInfo.getUsername());
+
+            bot.setOwnerInfo(botOwnerInfo);
+
+            this.removeBot(bot);
+
+            bot.setSqlUpdateNeeded(true);
+            Emulator.getThreading().run(bot);
+
+            Habbo receiver = picker == null ? Emulator.getGameEnvironment().getHabboManager().getHabbo(botOwnerInfo.getId()) : picker;
+
+            if (receiver != null) {
+                receiver.getInventory().getBotsComponent().addBot(bot);
+                receiver.getClient().sendResponse(new BotAddedToInventoryComposer(bot));
+            }
         }
     }
 
@@ -384,9 +506,10 @@ public class RoomUnitManager {
         roomHabbo.clear();
     }
 
-    public boolean removeBot(Bot bot) {
+    public void removeBot(Bot bot) {
         synchronized (this.currentBots) {
             if (this.currentBots.containsKey(bot.getId())) {
+                //TODO gotta do a method to removeUnit and clear tile
                 if (bot.getRoomUnit() != null && bot.getRoomUnit().getCurrentPosition() != null) {
                     bot.getRoomUnit().getCurrentPosition().removeUnit(bot.getRoomUnit());
                 }
@@ -394,15 +517,13 @@ public class RoomUnitManager {
                 this.currentBots.remove(bot.getId());
                 this.currentRoomUnits.remove(bot.getRoomUnit().getVirtualId());
 
+                //@DEPRECATED
                 bot.getRoomUnit().setInRoom(false);
-                bot.setRoom(null);
+                bot.getRoomUnit().setRoom(null);
 
                 this.room.sendComposer(new UserRemoveMessageComposer(bot.getRoomUnit()).compose());
-                return true;
             }
         }
-
-        return false;
     }
 
     public Pet removePet(int petId) {
@@ -471,7 +592,7 @@ public class RoomUnitManager {
         while(botIterator.hasNext()) {
             try {
                 Bot bot = botIterator.next();
-                bot.needsUpdate(true);
+                bot.setSqlUpdateNeeded(true);
                 Emulator.getThreading().run(bot);
             } catch (NoSuchElementException e) {
                 log.error("Caught Exception", e);

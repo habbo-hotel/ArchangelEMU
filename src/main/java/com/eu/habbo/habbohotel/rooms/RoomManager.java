@@ -710,7 +710,7 @@ public class RoomManager {
         }
 
 
-        habbo.getClient().sendResponse(new RoomUsersComposer(room.getRoomUnitManager().getCurrentBots().values(), true));
+        habbo.getClient().sendResponse(new RoomUsersComposer(room.getRoomUnitManager().getCurrentBots().values()));
 
         if (!room.getRoomUnitManager().getCurrentBots().isEmpty()) {
             room.getRoomUnitManager().getCurrentBots().values().stream()

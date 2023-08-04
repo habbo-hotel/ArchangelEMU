@@ -25,7 +25,7 @@ public class BotsComponent {
 
     private void loadBots(Habbo habbo) {
         synchronized (this.bots) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots INNER JOIN users ON users.id = bots.user_id WHERE user_id = ? AND room_id = 0 ORDER BY id ASC")) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots INNER JOIN users ON users.id = bots.owner_id WHERE owner_id = ? AND room_id = 0 ORDER BY id ASC")) {
                 statement.setInt(1, habbo.getHabboInfo().getId());
                 try (ResultSet set = statement.executeQuery()) {
                     while (set.next()) {
@@ -60,7 +60,7 @@ public class BotsComponent {
     public void dispose() {
         synchronized (this.bots) {
             for (Map.Entry<Integer, Bot> map : this.bots.entrySet()) {
-                if (map.getValue().needsUpdate()) {
+                if (map.getValue().isSqlUpdateNeeded()) {
                     Emulator.getThreading().run(map.getValue());
                 }
             }
