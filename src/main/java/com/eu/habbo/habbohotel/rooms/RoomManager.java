@@ -594,6 +594,7 @@ public class RoomManager {
 
         habbo.getClient().sendResponse(new OpenConnectionMessageComposer());
 
+        //@Deprecated
         roomHabbo.setInRoom(true);
 
         if (!habbo.getHabboStats().isBlockFollowing() && roomHabbo.getRoom() == null) {

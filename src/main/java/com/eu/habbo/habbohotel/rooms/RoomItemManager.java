@@ -137,83 +137,89 @@ public class RoomItemManager {
         }
     }
 
-    public void removeRoomItem(RoomItem item) {
-        if (item != null) {
+    public void removeRoomItem(RoomItem roomItem) {
+        if (roomItem != null) {
 
-            RoomItem i;
+            RoomItem removedItem;
             synchronized (this.currentItems) {
-                i = this.currentItems.remove(item.getId());
+                removedItem = this.currentItems.remove(roomItem.getId());
             }
 
-            if (i != null) {
-                if (item instanceof ICycleable) {
-                    this.removeCycleTask((ICycleable) item);
+            if(removedItem.getBaseItem().getType().equals(FurnitureType.FLOOR)) {
+                this.floorItems.remove(removedItem.getId());
+            } else if (removedItem.getBaseItem().getType().equals(FurnitureType.WALL)) {
+                this.wallItems.remove(removedItem.getId());
+            }
+
+            if (removedItem != null) {
+                if (roomItem instanceof ICycleable) {
+                    this.removeCycleTask((ICycleable) roomItem);
                 }
 
-                if (item instanceof InteractionWired wired) {
+                if (roomItem instanceof InteractionWired wired) {
                     this.wiredManager.removeWired(wired);
-                } else if (item instanceof InteractionBattleBanzaiTeleporter) {
-                    this.removeBanzaiTeleporter((InteractionBattleBanzaiTeleporter) item);
-                } else if (item instanceof InteractionRoller) {
-                    this.removeRoller((InteractionRoller) item);
-                } else if (item instanceof InteractionGameScoreboard) {
-                    this.removeScoreboard((InteractionGameScoreboard) item);
-                } else if (item instanceof InteractionGameGate) {
-                    this.removeGameGate((InteractionGameGate) item);
-                } else if (item instanceof InteractionGameTimer) {
-                    this.removeGameTimer((InteractionGameTimer) item);
-                } else if (item instanceof InteractionFreezeExitTile) {
-                    this.removeFreezeExitTile((InteractionFreezeExitTile) item);
-                } else if (item instanceof InteractionNest) {
-                    this.removeNest((InteractionNest) item);
-                } else if (item instanceof InteractionPetDrink) {
-                    this.removePetDrink((InteractionPetDrink) item);
-                } else if (item instanceof InteractionPetFood) {
-                    this.removePetFood((InteractionPetFood) item);
-                } else if (item instanceof InteractionPetToy) {
-                    this.removePetToy((InteractionPetToy) item);
-                } else if (item instanceof InteractionPetTree) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionPetTrampoline) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionMoodLight) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionPyramid) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionMusicDisc) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionBattleBanzaiSphere) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionTalkingFurniture) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionWaterItem) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionWater) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionMuteArea) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionTagPole) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionTagField) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionJukeBox) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionPetBreedingNest) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionBlackHole) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionWiredHighscore) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionStickyPole) {
-                    this.removeUndefined(item);
-                } else if (item instanceof WiredBlob) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionTent) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionSnowboardSlope) {
-                    this.removeUndefined(item);
-                } else if (item instanceof InteractionBuildArea) {
-                    this.removeUndefined(item);
+                } else if (roomItem instanceof InteractionBattleBanzaiTeleporter) {
+                    this.removeBanzaiTeleporter((InteractionBattleBanzaiTeleporter) roomItem);
+                } else if (roomItem instanceof InteractionRoller) {
+                    this.removeRoller((InteractionRoller) roomItem);
+                } else if (roomItem instanceof InteractionGameScoreboard) {
+                    this.removeScoreboard((InteractionGameScoreboard) roomItem);
+                } else if (roomItem instanceof InteractionGameGate) {
+                    this.removeGameGate((InteractionGameGate) roomItem);
+                } else if (roomItem instanceof InteractionGameTimer) {
+                    this.removeGameTimer((InteractionGameTimer) roomItem);
+                } else if (roomItem instanceof InteractionFreezeExitTile) {
+                    this.removeFreezeExitTile((InteractionFreezeExitTile) roomItem);
+                } else if (roomItem instanceof InteractionNest) {
+                    this.removeNest((InteractionNest) roomItem);
+                } else if (roomItem instanceof InteractionPetDrink) {
+                    this.removePetDrink((InteractionPetDrink) roomItem);
+                } else if (roomItem instanceof InteractionPetFood) {
+                    this.removePetFood((InteractionPetFood) roomItem);
+                } else if (roomItem instanceof InteractionPetToy) {
+                    this.removePetToy((InteractionPetToy) roomItem);
+                } else if (roomItem instanceof InteractionPetTree) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionPetTrampoline) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionMoodLight) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionPyramid) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionMusicDisc) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionBattleBanzaiSphere) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionTalkingFurniture) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionWaterItem) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionWater) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionMuteArea) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionTagPole) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionTagField) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionJukeBox) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionPetBreedingNest) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionBlackHole) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionWiredHighscore) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionStickyPole) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof WiredBlob) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionTent) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionSnowboardSlope) {
+                    this.removeUndefined(roomItem);
+                } else if (roomItem instanceof InteractionBuildArea) {
+                    this.removeUndefined(roomItem);
                 }
             }
         }
@@ -533,30 +539,31 @@ public class RoomItemManager {
         return FurnitureMovementError.NONE;
     }
 
-    public void pickUpItem(RoomItem item, Habbo picker) {
-        if (item == null)
+    public void pickUpItem(RoomItem roomItem, Habbo picker) {
+        if (roomItem == null) {
             return;
+        }
 
         if (Emulator.getPluginManager().isRegistered(FurniturePickedUpEvent.class, true)) {
-            Event furniturePickedUpEvent = new FurniturePickedUpEvent(item, picker);
+            Event furniturePickedUpEvent = new FurniturePickedUpEvent(roomItem, picker);
             Emulator.getPluginManager().fireEvent(furniturePickedUpEvent);
 
             if (furniturePickedUpEvent.isCancelled())
                 return;
         }
 
-        this.removeRoomItem(item);
-        item.onPickUp(this.room);
+        this.removeRoomItem(roomItem);
+        roomItem.onPickUp(this.room);
         //Deprecated
-        item.setRoomId(0);
-        item.setRoom(null);
-        item.needsUpdate(true);
+        roomItem.setRoomId(0);
+        roomItem.setRoom(null);
+        roomItem.needsUpdate(true);
 
-        if (item.getBaseItem().getType() == FurnitureType.FLOOR) {
-            this.room.sendComposer(new RemoveFloorItemComposer(item).compose());
+        if (roomItem.getBaseItem().getType() == FurnitureType.FLOOR) {
+            this.room.sendComposer(new RemoveFloorItemComposer(roomItem).compose());
 
             THashSet<RoomTile> updatedTiles = new THashSet<>();
-            Rectangle rectangle = RoomLayout.getRectangle(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+            Rectangle rectangle = RoomLayout.getRectangle(roomItem.getCurrentPosition().getX(), roomItem.getCurrentPosition().getY(), roomItem.getBaseItem().getWidth(), roomItem.getBaseItem().getLength(), roomItem.getRotation());
 
             for (short x = (short) rectangle.x; x < rectangle.x + rectangle.getWidth(); x++) {
                 for (short y = (short) rectangle.y; y < rectangle.y + rectangle.getHeight(); y++) {
@@ -569,24 +576,26 @@ public class RoomItemManager {
                     }
                 }
             }
+
             this.room.sendComposer(new HeightMapUpdateMessageComposer(this.room, updatedTiles).compose());
             this.room.updateTiles(updatedTiles);
+
             updatedTiles.forEach(tile -> {
                 this.room.getRoomUnitManager().updateHabbosAt(tile);
                 this.room.getRoomUnitManager().updateBotsAt(tile);
             });
-        } else if (item.getBaseItem().getType() == FurnitureType.WALL) {
-            this.room.sendComposer(new ItemRemoveMessageComposer(item).compose());
+        } else if (roomItem.getBaseItem().getType() == FurnitureType.WALL) {
+            this.room.sendComposer(new ItemRemoveMessageComposer(roomItem).compose());
         }
 
         Habbo habbo;
-        habbo = picker != null && picker.getHabboInfo().getId() == item.getId() ? (picker) : (Emulator.getGameServer().getGameClientManager().getHabbo(item.getOwnerInfo().getId()));
+        habbo = picker != null && picker.getHabboInfo().getId() == roomItem.getId() ? (picker) : (Emulator.getGameServer().getGameClientManager().getHabbo(roomItem.getOwnerInfo().getId()));
         if (habbo != null) {
-            habbo.getInventory().getItemsComponent().addItem(item);
-            habbo.getClient().sendResponse(new UnseenItemsComposer(item));
+            habbo.getInventory().getItemsComponent().addItem(roomItem);
+            habbo.getClient().sendResponse(new UnseenItemsComposer(roomItem));
             habbo.getClient().sendResponse(new FurniListInvalidateComposer());
         }
-        Emulator.getThreading().run(item);
+        Emulator.getThreading().run(roomItem);
     }
 
     public void ejectUserItem(RoomItem item) {
@@ -1097,6 +1106,9 @@ public class RoomItemManager {
                     roomItem.run();
                     this.currentItems.remove(roomItem.getId());
                 });
+
+        this.floorItems.clear();
+        this.wallItems.clear();
 
         this.currentItems.clear();
     }
