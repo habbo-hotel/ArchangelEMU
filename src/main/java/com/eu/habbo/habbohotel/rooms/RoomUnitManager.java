@@ -77,21 +77,24 @@ public class RoomUnitManager {
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     Bot bot = Emulator.getGameEnvironment().getBotManager().loadBot(set);
-                    //TODO IMPROVE THIS
+
                     if (bot != null) {
                         bot.getRoomUnit().setRoom(this.room);
 
                         RoomTile spawnTile = this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y"));
 
                         if(spawnTile == null) {
-                            bot.getRoomUnit().setCurrentPosition(this.room.getLayout().getDoorTile());
-                            bot.getRoomUnit().setCurrentZ(this.room.getLayout().getDoorTile().getStackHeight());
-                            bot.getRoomUnit().setRotation(RoomRotation.fromValue(this.room.getLayout().getDoorDirection()));
+                            bot.getRoomUnit().setCanWalk(false);
                         } else {
+                            if(spawnTile.getState().equals(RoomTileState.INVALID)) {
+                                bot.getRoomUnit().setCanWalk(false);
+                            }
 
                             bot.getRoomUnit().setCurrentPosition(spawnTile);
                             bot.getRoomUnit().setCurrentZ(set.getDouble("z"));
                             bot.getRoomUnit().setRotation(RoomRotation.values()[set.getInt("rot")]);
+                            bot.getRoomUnit().setSpawnTile(spawnTile);
+                            bot.getRoomUnit().setSpawnHeight(spawnTile.getState().equals(RoomTileState.INVALID) ? 0 : spawnTile.getStackHeight());
                         }
 
                         bot.getRoomUnit().setDanceType(DanceType.values()[set.getInt("dance")]);
@@ -300,9 +303,10 @@ public class RoomUnitManager {
 
             roomBot.setRoom(this.room);
             roomBot.setCurrentPosition(spawnTile);
-            roomBot.setCurrentZ(spawnTile.getZ());
+            roomBot.setCurrentZ(spawnTile.getStackHeight());
             roomBot.setRotation(RoomRotation.SOUTH);
-            roomBot.setCanWalk(this.room.isAllowBotsWalk());
+            roomBot.setSpawnTile(spawnTile);
+            roomBot.setSpawnHeight(spawnTile.getState().equals(RoomTileState.INVALID) ? 0 : spawnTile.getStackHeight());
 
             bot.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(bot);

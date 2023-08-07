@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
@@ -24,16 +25,19 @@ import lombok.extern.slf4j.Slf4j;
 public class RoomBot extends RoomAvatar {
     private Bot unit;
 
+    private RoomTile spawnTile;
+    private double spawnHeight;
+
     public RoomBot() {
         super();
     }
 
     @Override
     public void cycle() {
-        if(this.room.isAllowBotsWalk() && this.unit.canWalk()) {
+        if (this.room.isAllowBotsWalk() && this.isCanWalk()) {
             if (!this.isWalking()) {
                 if (this.getWalkTimeOut() < Emulator.getIntUnixTimestamp() && this.unit.getFollowingHabboId() == 0) {
-                    this.walkTo(Emulator.getConfig().getBoolean("hotel.bot.limit.walking.distance", true) ? this.getRoom().getLayout().getRandomWalkableTilesAround(this, this.currentPosition, this.getRoom(), Emulator.getConfig().getInt("hotel.bot.limit.walking.distance.radius", 5)) : this.getRoom().getRandomWalkableTile());
+                    this.walkTo(Emulator.getConfig().getBoolean("hotel.bot.limit.walking.distance", true) ? this.getRoom().getLayout().getRandomWalkableTilesAround(this, this.currentPosition, Emulator.getConfig().getInt("hotel.bot.limit.walking.distance.radius", 5)) : this.getRoom().getRandomWalkableTile());
                     int timeOut = Emulator.getRandom().nextInt(20) * 2;
                     this.setWalkTimeOut((timeOut < 10 ? 5 : timeOut) + Emulator.getIntUnixTimestamp());
                 }

@@ -58,6 +58,10 @@ public abstract class RoomAvatar extends RoomUnit {
 
     @Override
     public boolean walkTo(RoomTile goalLocation) {
+        if(goalLocation == null) {
+            return false;
+        }
+
         if (this.hasStatus(RoomUnitStatus.LAY)) {
             if (this.room.getLayout().getTilesInFront(this.getCurrentPosition(), this.getBodyRotation().getValue(), 2).contains(goalLocation))
                 return false;

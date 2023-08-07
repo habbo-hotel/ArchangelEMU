@@ -54,9 +54,7 @@ public class Bot extends Avatar implements Runnable {
     private final int bubbleId;
     private final String type;
     private int effect;
-    private transient boolean canWalk;
     private boolean sqlUpdateNeeded;
-    private boolean xyzUpdateNeeded;
     private transient int followingHabboId;
     protected final RoomBot roomUnit;
     public static final String NO_CHAT_SET = "${bot.skill.chatter.configuration.text.placeholder}";
@@ -82,13 +80,14 @@ public class Bot extends Avatar implements Runnable {
         this.chatLines = new ArrayList<>(Arrays.asList(set.getString("chat_lines").split("\r")));
         this.type = set.getString("type");
         this.effect = set.getInt("effect");
-        this.canWalk = set.getString("freeroam").equals("1");
         this.chatTimeOut = Emulator.getIntUnixTimestamp() + this.chatDelay;
         this.sqlUpdateNeeded = false;
         this.bubbleId = set.getInt("bubble_id");
 
         this.roomUnit = new RoomBot();
         this.roomUnit.setUnit(this);
+
+        this.roomUnit.setCanWalk(set.getString("freeroam").equals("1"));
     }
 
     public static void initialise() {}
@@ -97,8 +96,8 @@ public class Bot extends Avatar implements Runnable {
 
     @Override
     public void run() {
-    if (this.sqlUpdateNeeded) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bots SET name = ?, motto = ?, figure = ?, gender = ?, owner_id = ?, room_id = ?, rot = ?, dance = ?, freeroam = ?, chat_lines = ?, chat_auto = ?, chat_random = ?, chat_delay = ?, effect = ?, bubble_id = ? WHERE id = ?")) {
+        if (this.sqlUpdateNeeded) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE bots SET name = ?, motto = ?, figure = ?, gender = ?, owner_id = ?, room_id = ?, rot = ?, dance = ?, freeroam = ?, chat_lines = ?, chat_auto = ?, chat_random = ?, chat_delay = ?, effect = ?, bubble_id = ?, x = ?, y = ?, z = ? WHERE id = ?")) {
                 statement.setString(1, this.name);
                 statement.setString(2, this.motto);
                 statement.setString(3, this.figure);
@@ -107,7 +106,7 @@ public class Bot extends Avatar implements Runnable {
                 statement.setInt(6, this.roomUnit.getRoom() == null ? 0 : this.roomUnit.getRoom().getRoomInfo().getId());
                 statement.setInt(7, this.roomUnit.getBodyRotation().getValue());
                 statement.setInt(8, this.roomUnit.getDanceType().getType());
-                statement.setString(9, this.canWalk ? "1" : "0");
+                statement.setString(9, this.roomUnit.isCanWalk() ? "1" : "0");
                 StringBuilder text = new StringBuilder();
                 for (String s : this.chatLines) {
                     text.append(s).append("\r");
@@ -118,7 +117,10 @@ public class Bot extends Avatar implements Runnable {
                 statement.setInt(13, this.chatDelay);
                 statement.setInt(14, this.effect);
                 statement.setInt(15, this.bubbleId);
-                statement.setInt(16, this.id);
+                statement.setInt(16, this.roomUnit.getSpawnTile() == null ? 0 : this.roomUnit.getSpawnTile().getX());
+                statement.setInt(17, this.roomUnit.getSpawnTile() == null ? 0 : this.roomUnit.getSpawnTile().getY());
+                statement.setDouble(18, this.roomUnit.getSpawnHeight());
+                statement.setInt(19, this.id);
                 statement.execute();
                 this.sqlUpdateNeeded = false;
             } catch (SQLException e) {
@@ -213,13 +215,19 @@ public class Bot extends Avatar implements Runnable {
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
         this.sqlUpdateNeeded = true;
-        this.roomUnit.getRoom().sendComposer(new RoomUsersComposer(this).compose());
+
+        if(this.roomUnit.getRoom() != null) {
+            this.roomUnit.getRoom().sendComposer(new RoomUsersComposer(this).compose());
+        }
     }
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
         this.sqlUpdateNeeded = true;
-        this.roomUnit.getRoom().sendComposer(new RoomUsersComposer(this).compose());
+
+        if(this.roomUnit.getRoom() != null) {
+            this.roomUnit.getRoom().sendComposer(new RoomUsersComposer(this).compose());
+        }
     }
 
     public void setChatAuto(boolean chatAuto) {
@@ -253,10 +261,8 @@ public class Bot extends Avatar implements Runnable {
         this.effect = effect;
         this.sqlUpdateNeeded = true;
 
-        if (this.roomUnit != null) {
-            if (this.roomUnit.getRoom() != null) {
-                this.roomUnit.giveEffect(this.effect, duration);
-            }
+        if (this.roomUnit.getRoom() != null) {
+            this.roomUnit.giveEffect(this.effect, duration);
         }
     }
 
@@ -274,14 +280,6 @@ public class Bot extends Avatar implements Runnable {
         }
     }
 
-    public boolean canWalk() {
-        return this.canWalk;
-    }
-
-    public void setCanWalk(boolean canWalk) {
-        this.canWalk = canWalk;
-    }
-
     public void incrementLastChatIndex() {
         this.lastChatIndex++;
     }
@@ -297,8 +295,8 @@ public class Bot extends Avatar implements Runnable {
         message.appendString(this.motto);
         message.appendString(this.figure);
         message.appendInt(this.roomUnit.getVirtualId());
-        message.appendInt(this.roomUnit.getCurrentPosition().getX());
-        message.appendInt(this.roomUnit.getCurrentPosition().getY());
+        message.appendInt(this.roomUnit.getCurrentPosition() == null ? 0 : this.roomUnit.getCurrentPosition().getX());
+        message.appendInt(this.roomUnit.getCurrentPosition() == null ? 0 : this.roomUnit.getCurrentPosition().getY());
         message.appendString(String.valueOf(this.roomUnit.getCurrentZ()));
         message.appendInt(this.roomUnit.getBodyRotation().getValue());
         message.appendInt(4);

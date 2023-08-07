@@ -1,8 +1,8 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
@@ -560,27 +560,33 @@ public class RoomLayout {
         return availableTiles;
     }
 
-    public RoomTile getRandomWalkableTilesAround(RoomUnit roomUnit, RoomTile tile, Room room, int radius) {
-         if(!this.tileExists(tile.getX(), tile.getY())) {
-             tile = this.getTile(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
-             Bot bot = room.getRoomUnitManager().getRoomBotById(roomUnit.getVirtualId());
-             bot.setSqlUpdateNeeded(true);
+    public RoomTile getRandomWalkableTilesAround(RoomBot roomBot, RoomTile tile, int radius) {
+         if(tile == null || !this.tileExists(tile.getX(), tile.getY()) || tile.getState().equals(RoomTileState.INVALID)) {
+             roomBot.setCanWalk(false);
+             return null;
          }
 
         List<RoomTile> newTiles = new ArrayList<>();
 
         int minX = Math.max(0, tile.getX() - radius);
         int minY = Math.max(0, tile.getY() - radius);
-        int maxX = Math.min(room.getLayout().getMapSizeX(), tile.getX() + radius);
-        int maxY = Math.min(room.getLayout().getMapSizeY(), tile.getY() + radius);
+        int maxX = Math.min(this.room.getLayout().getMapSizeX(), tile.getX() + radius);
+        int maxY = Math.min(this.room.getLayout().getMapSizeY(), tile.getY() + radius);
 
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
-                RoomTile tile2 = room.getLayout().getTile((short) x, (short) y);
-                if (tile2 != null && tile.getState() != RoomTileState.BLOCKED && tile.getState() != RoomTileState.INVALID)
+                RoomTile tile2 = this.room.getLayout().getTile((short) x, (short) y);
+                if (tile2 != null && tile2.getState() != RoomTileState.BLOCKED && tile2.getState() != RoomTileState.INVALID) {
                     newTiles.add(tile2);
+                }
             }
         }
+
+        if(newTiles.isEmpty()) {
+            log.debug("No Random tiles found.");
+            return null;
+        }
+
         Collections.shuffle(newTiles);
         return newTiles.get(0);
     }

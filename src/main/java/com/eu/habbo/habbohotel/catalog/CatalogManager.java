@@ -900,8 +900,12 @@ public class CatalogManager {
                                 Bot bot = Emulator.getGameEnvironment().getBotManager().createBot(data, type);
 
                                 if (bot != null) {
+                                    //TODO @Deprecated
                                     bot.setOwnerId(habbo.getClient().getHabbo().getHabboInfo().getId());
                                     bot.setOwnerName(habbo.getClient().getHabbo().getHabboInfo().getUsername());
+
+                                    bot.setOwnerInfo(habbo.getHabboInfo());
+
                                     bot.setSqlUpdateNeeded(true);
                                     Emulator.getThreading().run(bot);
                                     habbo.getClient().getHabbo().getInventory().getBotsComponent().addBot(bot);

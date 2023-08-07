@@ -8,7 +8,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.DanceMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserNameChangedMessageComposer;
 import com.eu.habbo.plugin.events.bots.BotSavedChatEvent;
@@ -50,7 +49,6 @@ public class CommandBotEvent extends MessageHandler {
                     bot.setFigure(lookEvent.getNewLook());
                     bot.setGender(lookEvent.getGender());
                     bot.setEffect(lookEvent.getEffect(), -1);
-                    bot.setSqlUpdateNeeded(true);
                 }
                 case 2 -> {
                     String messageString = this.packet.readString();
@@ -107,12 +105,11 @@ public class CommandBotEvent extends MessageHandler {
                     bot.setSqlUpdateNeeded(true);
                 }
                 case 3 -> {
-                    bot.setCanWalk(!bot.canWalk());
+                    bot.getRoomUnit().setCanWalk(!bot.getRoomUnit().isCanWalk());
                     bot.setSqlUpdateNeeded(true);
                 }
                 case 4 -> {
-                    bot.getRoomUnit().setDanceType(DanceType.values()[(bot.getRoomUnit().getDanceType().getType() + 1) % DanceType.values().length]);
-                    room.sendComposer(new DanceMessageComposer(bot.getRoomUnit()).compose());
+                    bot.getRoomUnit().setDance(DanceType.values()[(bot.getRoomUnit().getDanceType().getType() + 1) % DanceType.values().length]);
                     bot.setSqlUpdateNeeded(true);
                 }
                 case 5 -> {
@@ -142,7 +139,6 @@ public class CommandBotEvent extends MessageHandler {
                     String motto = this.packet.readString();
                     if (motto.length() > Emulator.getConfig().getInt("motto.max_length", 38)) break;
                     bot.setMotto(motto);
-                    bot.setSqlUpdateNeeded(true);
                     room.sendComposer(new RoomUsersComposer(bot).compose());
                 }
             }
