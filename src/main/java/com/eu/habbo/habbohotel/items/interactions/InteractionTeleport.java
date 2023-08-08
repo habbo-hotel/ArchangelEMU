@@ -232,9 +232,4 @@ public class InteractionTeleport extends RoomItem {
     public boolean isUsable() {
         return true;
     }
-
-    @Override
-    public boolean invalidatesToRoomKick() {
-        return true;
-    }
 }

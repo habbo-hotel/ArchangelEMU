@@ -51,7 +51,7 @@ public class InteractionOneWayGate extends RoomItem {
     public void serializeExtradata(ServerMessage serverMessage) {
         if (this.getExtraData().length() == 0) {
             this.setExtraData("0");
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
         }
 
         serverMessage.appendInt((this.isLimited() ? 256 : 0));

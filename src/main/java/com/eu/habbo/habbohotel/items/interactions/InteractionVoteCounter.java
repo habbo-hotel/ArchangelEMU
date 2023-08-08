@@ -80,7 +80,7 @@ public class InteractionVoteCounter extends RoomItem {
         }
 
         updateExtradata();
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         room.updateItem(this);
     }
 
@@ -100,7 +100,7 @@ public class InteractionVoteCounter extends RoomItem {
 
         votes += vote;
         updateExtradata();
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         room.updateItem(this);
     }
 }

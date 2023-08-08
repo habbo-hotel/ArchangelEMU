@@ -5,13 +5,11 @@ import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
-import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
-import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
@@ -74,8 +72,6 @@ public abstract class RoomUnit extends RoomEntity {
     @Setter
     protected int kickCount = 0;
     @Setter
-    protected boolean inRoom;
-    @Setter
     @Accessors(chain = true)
     protected boolean invisible = false;
     @Setter
@@ -97,7 +93,6 @@ public abstract class RoomUnit extends RoomEntity {
         this.statuses = new ConcurrentHashMap<>();
         this.statusUpdateNeeded = false;
 
-        this.inRoom = false;
         this.cacheable = new THashMap<>();
         this.roomUnitType = RoomUnitType.UNKNOWN;
         this.walkTimeOut = Emulator.getIntUnixTimestamp();
@@ -120,6 +115,10 @@ public abstract class RoomUnit extends RoomEntity {
             this.stopWalking();
         }
     };
+
+    public boolean isInRoom() {
+        return this.room != null;
+    }
 
     @Override
     public RoomUnit setCurrentPosition(RoomTile tile) {
@@ -529,6 +528,10 @@ public abstract class RoomUnit extends RoomEntity {
     private double handleNextHeight(RoomTile next) {
         double height = 0.0D;
 
+        if(this instanceof RoomAvatar roomAvatar && roomAvatar.isRiding()) {
+            height += 1.0D;
+        }
+
         RoomItem nextTileItem = this.room.getRoomItemManager().getTopItemAt(next);
 
         if(nextTileItem != null) {
@@ -566,17 +569,13 @@ public abstract class RoomUnit extends RoomEntity {
 
         double heightDifference = tile.getStackHeight() - this.currentZ;
 
-        boolean areRoomUnitsAtTile = this.room.getRoomUnitManager().areRoomUnitsAt(tile);
+        RoomUnit exception = null;
 
         if(this instanceof RoomAvatar roomAvatar && roomAvatar.isRiding()) {
-            areRoomUnitsAtTile = this.room.getRoomUnitManager().areRoomUnitsAt(tile, roomAvatar.getRidingPet().getRoomUnit());
+            exception = roomAvatar.getRidingPet().getRoomUnit();
         }
 
-        if(this instanceof RoomPet roomPet) {
-            if(roomPet.getUnit() instanceof RideablePet rideablePet && rideablePet.hasRider()) {
-                areRoomUnitsAtTile = this.room.getRoomUnitManager().areRoomUnitsAt(tile, rideablePet.getRider().getRoomUnit());
-            }
-        }
+        boolean areRoomUnitsAtTile = this.room.getRoomUnitManager().areRoomUnitsAt(tile, exception);
 
         boolean isAboveMaximumStepHeight = (!RoomLayout.ALLOW_FALLING && heightDifference < -RoomLayout.MAXIMUM_STEP_HEIGHT);
         boolean isOpenTileAboveMaxHeight = (tile.getState() == RoomTileState.OPEN && heightDifference > RoomLayout.MAXIMUM_STEP_HEIGHT);

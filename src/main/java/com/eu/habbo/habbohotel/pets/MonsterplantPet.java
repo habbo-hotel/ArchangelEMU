@@ -119,7 +119,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
 
     @Override
     public void run() {
-        if (this.isNeedsUpdate()) {
+        if (this.isSqlUpdateNeeded()) {
             super.run();
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET mp_type = ?, mp_color = ?, mp_nose = ?, mp_eyes = ?, mp_mouth = ?, mp_nose_color = ?, mp_eyes_color = ?, mp_mouth_color = ?, mp_death_timestamp = ?, mp_breedable = ?, mp_allow_breed = ?, mp_is_dead = ? WHERE id = ?")) {
@@ -153,7 +153,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                     AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantGardenOfDeath"));
 
                     this.hasDied = true;
-                    this.setNeedsUpdate(true);
+                    this.setSqlUpdateNeeded(true);
                 }
 
                 this.getRoomUnit().clearStatuses();

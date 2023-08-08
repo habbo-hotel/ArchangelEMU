@@ -54,7 +54,7 @@ public class InteractionSwitchRemoteControl extends InteractionDefault {
                         }
 
                         this.setExtraData("" + (currentState + 1) % this.getBaseItem().getStateCount());
-                        this.needsUpdate(true);
+                        this.setSqlUpdateNeeded(true);
 
                         room.updateItemState(this);
                     }

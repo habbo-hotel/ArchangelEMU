@@ -44,7 +44,7 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                     raceType = 0;
 
                 pet.setRace(raceType);
-                pet.setNeedsUpdate(true);
+                pet.setSqlUpdateNeeded(true);
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_hairdye")) {
                 int splittedHairdye = Integer.parseInt(item.getBaseItem().getName().toLowerCase().split("_")[2]);
                 int newHairdye = 48;
@@ -60,7 +60,7 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                 }
 
                 ((HorsePet) pet).setHairColor(newHairdye);
-                pet.setNeedsUpdate(true);
+                pet.setSqlUpdateNeeded(true);
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_hairstyle")) {
                 int splittedHairstyle = Integer.parseInt(item.getBaseItem().getName().toLowerCase().split("_")[2]);
                 int newHairstyle = 100;
@@ -72,14 +72,14 @@ public class CustomizePetWithFurniEvent extends MessageHandler {
                 }
 
                 ((HorsePet) pet).setHairStyle(newHairstyle);
-                pet.setNeedsUpdate(true);
+                pet.setSqlUpdateNeeded(true);
             } else if (item.getBaseItem().getName().toLowerCase().startsWith("horse_saddle")) {
                 ((HorsePet) pet).hasSaddle(true);
                 ((HorsePet) pet).setSaddleItemId(item.getBaseItem().getId());
-                pet.setNeedsUpdate(true);
+                pet.setSqlUpdateNeeded(true);
             }
 
-            if (pet.isNeedsUpdate()) {
+            if (pet.isSqlUpdateNeeded()) {
                 Emulator.getThreading().run(pet);
                 this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new PetFigureUpdateComposer((HorsePet) pet).compose());
 

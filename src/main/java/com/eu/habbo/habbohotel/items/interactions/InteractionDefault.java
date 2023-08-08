@@ -88,7 +88,7 @@ public class InteractionDefault extends RoomItem {
                         }
 
                         this.setExtraData("" + (currentState + 1) % this.getBaseItem().getStateCount());
-                        this.needsUpdate(true);
+                        this.setSqlUpdateNeeded(true);
 
                         room.updateItemState(this);
                     }

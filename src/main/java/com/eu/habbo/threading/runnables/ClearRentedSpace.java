@@ -27,7 +27,7 @@ public class ClearRentedSpace implements Runnable {
                     //Deprecated
                     i.setRoomId(0);
                     i.setRoom(null);
-                    i.needsUpdate(true);
+                    i.setSqlUpdateNeeded(true);
                 }
             }
         }

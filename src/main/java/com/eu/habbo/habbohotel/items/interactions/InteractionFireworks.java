@@ -135,7 +135,7 @@ public class InteractionFireworks extends InteractionDefault {
 
         Emulator.getThreading().run(() -> {
             this.setExtraData(STATE_CHARGED);
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
             room.updateItemState(this);
         }, explodeDuration);
     }

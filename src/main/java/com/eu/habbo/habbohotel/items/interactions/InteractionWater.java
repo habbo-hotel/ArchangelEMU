@@ -284,7 +284,7 @@ public class InteractionWater extends InteractionDefault {
 
         if (!this.getExtraData().equals(updatedData)) {
             this.setExtraData(updatedData);
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
             room.updateItem(this);
         }
     }

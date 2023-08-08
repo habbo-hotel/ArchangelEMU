@@ -62,7 +62,7 @@ public class InteractionMultiHeight extends RoomItem {
                 return;
             }
 
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
 
             if (this.getExtraData().length() == 0) {
                 this.setExtraData("0");
@@ -70,7 +70,7 @@ public class InteractionMultiHeight extends RoomItem {
 
             if (this.getBaseItem().getMultiHeights().length > 0) {
                 this.setExtraData(String.valueOf((Integer.parseInt(this.getExtraData()) + 1) % (this.getBaseItem().getMultiHeights().length)));
-                this.needsUpdate(true);
+                this.setSqlUpdateNeeded(true);
                 room.updateTiles(room.getLayout().getTilesAt(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation()));
                 room.updateItemState(this);
             }

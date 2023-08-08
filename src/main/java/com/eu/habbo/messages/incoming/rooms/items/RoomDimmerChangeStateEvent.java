@@ -32,7 +32,7 @@ public class RoomDimmerChangeStateEvent extends MessageHandler {
             if (RoomMoodlightData.fromString(moodLight.getExtraData()).isEnabled()) adjusted.disable();
             moodLight.setExtraData(adjusted.toString());
 
-            moodLight.needsUpdate(true);
+            moodLight.setSqlUpdateNeeded(true);
             room.updateItem(moodLight);
             Emulator.getThreading().run(moodLight);
         }

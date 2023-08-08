@@ -145,7 +145,7 @@ public class InteractionRentableSpace extends RoomItem {
 
         habbo.getHabboStats().setRentedItemId(this.getId());
         habbo.getHabboStats().setRentedTimeEnd(this.endTimestamp);
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         this.run();
     }
 
@@ -192,7 +192,7 @@ public class InteractionRentableSpace extends RoomItem {
 
         this.setRenterId(0);
         this.setRenterName("");
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         this.run();
     }
 

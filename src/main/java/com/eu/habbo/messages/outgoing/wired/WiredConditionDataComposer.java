@@ -37,7 +37,7 @@ public class WiredConditionDataComposer extends MessageComposer {
         this.response.appendInt(this.condition.getWiredSettings().getSelectionType());
         this.response.appendInt(this.condition.getType().getCode());
 
-        this.condition.needsUpdate(true);
+        this.condition.setSqlUpdateNeeded(true);
         return this.response;
     }
 }

@@ -28,7 +28,7 @@ public class UpdateActionEvent extends MessageHandler {
 
                     effect.saveWiredSettings(this.packet, room);
                     this.client.sendResponse(new WiredSavedComposer());
-                    effect.needsUpdate(true);
+                    effect.setSqlUpdateNeeded(true);
                     Emulator.getThreading().run(effect);
                 }
                 catch (WiredSaveException e) {

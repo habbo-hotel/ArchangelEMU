@@ -26,7 +26,7 @@ public class UpdateTriggerEvent extends MessageHandler {
 
                     trigger.saveWiredSettings(this.packet, room);
                     this.client.sendResponse(new WiredSavedComposer());
-                    trigger.needsUpdate(true);
+                    trigger.setSqlUpdateNeeded(true);
                     Emulator.getThreading().run(trigger);
                 }
                 catch (WiredSaveException e) {

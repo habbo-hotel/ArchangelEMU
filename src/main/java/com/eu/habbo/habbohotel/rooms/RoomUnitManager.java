@@ -13,7 +13,6 @@ import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
-import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -99,9 +98,6 @@ public class RoomUnitManager {
 
                         bot.getRoomUnit().setDanceType(DanceType.values()[set.getInt("dance")]);
 
-                        //@DEPRECATED
-                        bot.getRoomUnit().setInRoom(true);
-
                         bot.getRoomUnit().giveEffect(set.getInt("effect"), Integer.MAX_VALUE, false);
 
                         this.addRoomUnit(bot);
@@ -125,8 +121,6 @@ public class RoomUnitManager {
                     Pet pet = PetManager.loadPet(set);
 
                     pet.setRoom(this.room);
-                    pet.setRoomUnit(new RoomPet());
-                    pet.getRoomUnit().setUnit(pet);
                     pet.getRoomUnit().setRoom(this.room);
                     pet.getRoomUnit().setLocation(this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y")));
                     if (pet.getRoomUnit().getCurrentPosition() == null || pet.getRoomUnit().getCurrentPosition().getState() == RoomTileState.INVALID) {
@@ -152,6 +146,8 @@ public class RoomUnitManager {
 
     public void addRoomUnit(Unit unit) {
         synchronized (this.roomUnitLock) {
+            //TODO Maybe set the room in this method
+
             unit.getRoomUnit().setVirtualId(this.roomUnitCounter);
             this.currentRoomUnits.put(unit.getRoomUnit().getVirtualId(), unit.getRoomUnit());
             this.roomUnitCounter++;
@@ -184,6 +180,10 @@ public class RoomUnitManager {
     }
 
     public boolean areRoomUnitsAt(RoomTile tile, RoomUnit skippedRoomUnit) {
+        if(skippedRoomUnit == null) {
+            return this.areRoomUnitsAt(tile);
+        }
+        
         return this.currentRoomUnits.values().stream().filter(roomUnit -> !roomUnit.equals(skippedRoomUnit)).anyMatch(roomUnit -> roomUnit.getCurrentPosition().equals(tile));
     }
 
@@ -405,8 +405,6 @@ public class RoomUnitManager {
                 spawnTile = room.getLayout().getDoorTile();
             }
 
-            pet.setRoomUnit(new RoomPet());
-            pet.getRoomUnit().setUnit(pet);
             pet.setRoom(room);
             pet.getRoomUnit().walkTo(spawnTile);
             pet.getRoomUnit().setLocation(spawnTile)
@@ -420,7 +418,7 @@ public class RoomUnitManager {
                         .setRotation(RoomRotation.fromValue(room.getLayout().getDoorDirection()));
             }
 
-            pet.setNeedsUpdate(true);
+            pet.setSqlUpdateNeeded(true);
             room.getFurniOwnerNames().put(pet.getUserId(), this.getRoomHabboById(pet.getUserId()).getHabboInfo().getUsername());
             this.addRoomUnit(pet);
             room.sendComposer(new RoomPetComposer(pet).compose());
@@ -511,22 +509,18 @@ public class RoomUnitManager {
     }
 
     public void removeBot(Bot bot) {
-        synchronized (this.currentBots) {
-            if (this.currentBots.containsKey(bot.getId())) {
-                //TODO gotta do a method to removeUnit and clear tile
-                if (bot.getRoomUnit() != null && bot.getRoomUnit().getCurrentPosition() != null) {
-                    bot.getRoomUnit().getCurrentPosition().removeUnit(bot.getRoomUnit());
-                }
-
-                this.currentBots.remove(bot.getId());
-                this.currentRoomUnits.remove(bot.getRoomUnit().getVirtualId());
-
-                //@DEPRECATED
-                bot.getRoomUnit().setInRoom(false);
-                bot.getRoomUnit().setRoom(null);
-
-                this.room.sendComposer(new UserRemoveMessageComposer(bot.getRoomUnit()).compose());
+        if (this.currentBots.containsKey(bot.getId())) {
+            //TODO gotta do a method to removeUnit and clear tile
+            if (bot.getRoomUnit().getCurrentPosition() != null) {
+                bot.getRoomUnit().getCurrentPosition().removeUnit(bot.getRoomUnit());
             }
+
+            this.currentBots.remove(bot.getId());
+            this.currentRoomUnits.remove(bot.getRoomUnit().getVirtualId());
+
+            bot.getRoomUnit().setRoom(null);
+
+            this.room.sendComposer(new UserRemoveMessageComposer(bot.getRoomUnit()).compose());
         }
     }
 
@@ -564,7 +558,7 @@ public class RoomUnitManager {
                 habbo.getClient().sendResponse(new PetAddedToInventoryComposer(pet));
             }
 
-            pet.setNeedsUpdate(true);
+            pet.setSqlUpdateNeeded(true);
             pet.run();
         }
 
@@ -611,7 +605,7 @@ public class RoomUnitManager {
         while(petIterator.hasNext()) {
             try {
                 Pet pet = petIterator.next();
-                pet.setNeedsUpdate(true);
+                pet.setSqlUpdateNeeded(true);
                 Emulator.getThreading().run(pet);
             } catch (NoSuchElementException e) {
                 log.error("Caught Exception", e);

@@ -159,7 +159,8 @@ public class ItemsComponent {
                     } catch (NoSuchElementException e) {
                         break;
                     }
-                    if (items.value().needsUpdate())
+                    RoomItem roomItem = items.value();
+                    if (roomItem.isSqlUpdateNeeded())
                         Emulator.getThreading().run(items.value());
                 }
             }

@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
@@ -276,7 +277,13 @@ public class RoomLayout {
                     continue;
                 }
 
-                if (this.room.getRoomUnitManager().areRoomUnitsAt(currentAdj) && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
+                RoomUnit exception = null;
+
+                if(roomUnit instanceof RoomAvatar roomAvatar && roomAvatar.isRiding()) {
+                    exception = roomAvatar.getRidingPet().getRoomUnit();
+                }
+
+                if (this.room.getRoomUnitManager().areRoomUnitsAt(currentAdj, exception) && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
                     closedList.add(currentAdj);
                     openList.remove(currentAdj);
                     continue;

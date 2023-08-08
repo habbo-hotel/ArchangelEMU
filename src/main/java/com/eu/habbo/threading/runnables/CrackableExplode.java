@@ -56,7 +56,7 @@ public class CrackableExplode implements Runnable {
                     //Deprecated
                     newItem.setRoomId(this.room.getRoomInfo().getId());
                     newItem.setRoom(this.room);
-                    newItem.needsUpdate(true);
+                    newItem.setSqlUpdateNeeded(true);
                     this.room.getRoomItemManager().addRoomItem(newItem);
                     this.room.updateItem(newItem);
                     this.room.sendComposer(new ObjectAddMessageComposer(newItem, this.room.getFurniOwnerNames().get(newItem.getOwnerInfo().getId())).compose());

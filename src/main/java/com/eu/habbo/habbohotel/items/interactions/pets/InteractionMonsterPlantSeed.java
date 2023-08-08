@@ -18,7 +18,7 @@ public class InteractionMonsterPlantSeed extends RoomItem {
 
         if (this.getExtraData().isEmpty()) {
             this.setExtraData("" + randomRarityLevel());
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
         }
     }
 
@@ -27,7 +27,7 @@ public class InteractionMonsterPlantSeed extends RoomItem {
 
         if (this.getExtraData().isEmpty()) {
             this.setExtraData("" + randomRarityLevel());
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
         }
     }
 

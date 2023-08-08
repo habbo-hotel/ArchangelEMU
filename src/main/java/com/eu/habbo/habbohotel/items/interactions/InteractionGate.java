@@ -55,7 +55,7 @@ public class InteractionGate extends RoomItem {
 
         this.setExtraData((Integer.parseInt(this.getExtraData()) + 1) % 2 + "");
         room.updateTile(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         room.updateItemState(this);
 
         super.onClick(client, room, new Object[]{"TOGGLE_OVERRIDE"});

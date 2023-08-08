@@ -30,6 +30,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
+
 @Slf4j
 @Getter
 @Setter
@@ -124,7 +126,7 @@ public class Bot extends Avatar implements Runnable {
                 statement.execute();
                 this.sqlUpdateNeeded = false;
             } catch (SQLException e) {
-                log.error("Caught SQL exception", e);
+                log.error(CAUGHT_SQL_EXCEPTION, e);
             }
         }
     }

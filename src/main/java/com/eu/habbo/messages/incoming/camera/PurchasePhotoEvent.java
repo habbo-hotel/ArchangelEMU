@@ -40,7 +40,7 @@ public class PurchasePhotoEvent extends MessageHandler {
 
         if (photoItem != null) {
             photoItem.setExtraData(photoItem.getExtraData().replace("%id%", photoItem.getId() + ""));
-            photoItem.needsUpdate(true);
+            photoItem.setSqlUpdateNeeded(true);
 
             this.client.getHabbo().getInventory().getItemsComponent().addItem(photoItem);
 

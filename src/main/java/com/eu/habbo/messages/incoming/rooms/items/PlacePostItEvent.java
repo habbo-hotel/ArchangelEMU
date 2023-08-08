@@ -34,7 +34,7 @@ public class PlacePostItEvent extends MessageHandler {
                         item.setRoom(this.client.getHabbo().getRoomUnit().getRoom());
                         item.setWallPosition(location);
                         item.setOwnerInfo(this.client.getHabbo().getHabboInfo());
-                        item.needsUpdate(true);
+                        item.setSqlUpdateNeeded(true);
                         room.sendComposer(new ItemAddMessageComposer(item, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
                         this.client.sendResponse(new FurniListRemoveComposer(item.getGiftAdjustedId()));

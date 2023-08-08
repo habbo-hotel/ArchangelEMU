@@ -54,7 +54,7 @@ public class FloorItemOnRollerComposer extends MessageComposer {
 
             this.item.setCurrentPosition(this.newLocation);
             this.item.setCurrentZ(this.item.getCurrentZ() + this.heightOffset);
-            this.item.needsUpdate(true);
+            this.item.setSqlUpdateNeeded(true);
 
             //TODO This is bad
             //

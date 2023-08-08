@@ -1010,7 +1010,7 @@ public class CatalogManager {
                                     if (guild != null && Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo) != null) {
                                         InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(habbo.getClient().getHabbo().getHabboInfo().getId(), baseItem, limitedStack, limitedNumber, extradata);
                                         habboItem.setExtraData("");
-                                        habboItem.needsUpdate(true);
+                                        habboItem.setSqlUpdateNeeded(true);
 
                                         Emulator.getThreading().run(habboItem);
                                         Emulator.getGameEnvironment().getGuildManager().setGuild(habboItem, guildId);
@@ -1031,7 +1031,7 @@ public class CatalogManager {
                                     }
 
                                     InteractionMusicDisc habboItem = (InteractionMusicDisc) Emulator.getGameEnvironment().getItemManager().createItem(habbo.getClient().getHabbo().getHabboInfo().getId(), baseItem, limitedStack, limitedNumber, habbo.getClient().getHabbo().getHabboInfo().getUsername() + "\n" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "\n" + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "\n" + Calendar.getInstance().get(Calendar.YEAR) + "\n" + track.getLength() + "\n" + track.getName() + "\n" + track.getId());
-                                    habboItem.needsUpdate(true);
+                                    habboItem.setSqlUpdateNeeded(true);
 
                                     Emulator.getThreading().run(habboItem);
                                     itemsList.add(habboItem);

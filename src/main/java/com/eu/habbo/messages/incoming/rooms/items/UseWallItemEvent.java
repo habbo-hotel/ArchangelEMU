@@ -32,7 +32,7 @@ public class UseWallItemEvent extends MessageHandler {
         if (item.getBaseItem().getName().equalsIgnoreCase("poster"))
             return;
 
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
         item.onClick(this.client, room, new Object[]{state});
         room.updateItem(item);
         Emulator.getThreading().run(item);

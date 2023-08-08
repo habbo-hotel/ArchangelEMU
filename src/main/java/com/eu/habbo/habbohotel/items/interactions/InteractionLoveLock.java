@@ -111,7 +111,7 @@ public class InteractionLoveLock extends RoomItem {
             data += Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-" + Calendar.getInstance().get(Calendar.YEAR);
 
             this.setExtraData(data);
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(this);
             room.updateItem(this);
 

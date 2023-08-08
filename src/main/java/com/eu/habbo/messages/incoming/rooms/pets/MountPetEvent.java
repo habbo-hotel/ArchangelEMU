@@ -28,10 +28,8 @@ public class MountPetEvent extends MessageHandler {
             return;
         }
 
-        //dismount
         if (habbo.getRoomUnit().isRiding()) {
             boolean mountAnotherPet = petId != habbo.getRoomUnit().getRidingPet().getId();
-
             habbo.getRoomUnit().dismountPet(false);
 
             if(!mountAnotherPet) {
@@ -39,12 +37,10 @@ public class MountPetEvent extends MessageHandler {
             }
         }
 
-        // someone is already on it
         if (rideablePet.getRider() != null) {
             return;
         }
 
-        // check if able to ride
         if (!rideablePet.anyoneCanRide() && habbo.getHabboInfo().getId() != rideablePet.getUserId()) {
             return;
         }

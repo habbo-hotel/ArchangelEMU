@@ -50,7 +50,7 @@ public class RoomDimmerSavePresetEvent extends MessageHandler {
 
                 for (RoomItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionMoodLight.class)) {
                     item.setExtraData(data.toString());
-                    item.needsUpdate(true);
+                    item.setSqlUpdateNeeded(true);
                     room.updateItem(item);
                     Emulator.getThreading().run(item);
                 }

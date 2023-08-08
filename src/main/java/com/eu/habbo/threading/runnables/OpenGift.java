@@ -34,7 +34,7 @@ public class OpenGift implements Runnable {
                     inside = i;
 
                 i.setOwnerInfo(this.habbo.getHabboInfo());
-                i.needsUpdate(true);
+                i.setSqlUpdateNeeded(true);
                 i.run();
             }
 

@@ -49,7 +49,7 @@ public class AddSpamWallPostItEvent extends MessageHandler {
 
                 sticky.setOwnerInfo(room.getRoomInfo().getOwnerInfo());
                 sticky.setExtraData(color + " " + text);
-                sticky.needsUpdate(true);
+                sticky.setSqlUpdateNeeded(true);
                 room.updateItem(sticky);
                 Emulator.getThreading().run(sticky);
             }

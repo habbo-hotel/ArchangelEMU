@@ -71,7 +71,7 @@ public class InteractionPuzzleBox extends RoomItem {
             return;
 
         this.setCurrentZ(room.getStackHeight(tile.getX(), tile.getY(), false));
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
 
         room.updateItem(this);
 
@@ -81,7 +81,7 @@ public class InteractionPuzzleBox extends RoomItem {
 
             room.scheduledTasks.add(() -> client.getHabbo().getRoomUnit().walkTo(boxLocation));
         });
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
     }
 
     @Override

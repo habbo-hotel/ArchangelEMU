@@ -44,7 +44,7 @@ public class WiredEffectDataComposer extends MessageComposer {
             this.response.appendInt(blockedTrigger);
         }
 
-        this.effect.needsUpdate(true);
+        this.effect.setSqlUpdateNeeded(true);
 
         return this.response;
     }

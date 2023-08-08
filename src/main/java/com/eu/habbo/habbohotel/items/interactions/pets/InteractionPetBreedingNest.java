@@ -153,7 +153,7 @@ public class InteractionPetBreedingNest extends RoomItem {
 
 
             habbo.getRoomUnit().getRoom().getRoomUnitManager().placePet(offspring, habbo.getRoomUnit().getRoom(), box.getCurrentPosition().getX(), box.getCurrentPosition().getY(), box.getCurrentZ());
-            offspring.setNeedsUpdate(true);
+            offspring.setSqlUpdateNeeded(true);
             offspring.run();
             InteractionPetBreedingNest.this.freePets();
             habbo.getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(box);

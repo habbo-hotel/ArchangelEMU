@@ -995,6 +995,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     for (Game game : this.games) {
                         game.dispose();
                     }
+
                     this.games.clear();
 
                     this.roomUnitManager.removeAllPetsExceptRoomOwner();

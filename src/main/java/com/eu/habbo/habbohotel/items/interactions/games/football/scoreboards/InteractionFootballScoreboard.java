@@ -60,7 +60,7 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard {
         }
 
         this.setExtraData(this.score + "");
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
         if (room != null) {
@@ -86,7 +86,7 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard {
         }
 
         this.setExtraData(this.score + "");
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
 
         Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
         if (room != null) {

@@ -36,7 +36,7 @@ public class MoveWallItemEvent extends MessageHandler {
             return;
 
         item.setWallPosition(wallPosition);
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
         room.updateItem(item);
     }
 }

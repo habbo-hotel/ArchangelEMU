@@ -23,7 +23,7 @@ public class CloseGate implements Runnable {
                 if (!this.room.getRoomUnitManager().hasHabbosAt(tile)) {
                     this.gate.setExtraData("0");
                     this.room.updateItem(this.gate);
-                    this.gate.needsUpdate(true);
+                    this.gate.setSqlUpdateNeeded(true);
                 }
             }
         }

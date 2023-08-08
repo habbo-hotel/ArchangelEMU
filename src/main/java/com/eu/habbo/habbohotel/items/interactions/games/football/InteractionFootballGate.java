@@ -78,7 +78,7 @@ public class InteractionFootballGate extends RoomItem {
         this.figureM = look;
 
         this.setExtraData(this.figureM + ";" + this.figureF);
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(this);
     }
 
@@ -86,7 +86,7 @@ public class InteractionFootballGate extends RoomItem {
         this.figureF = look;
 
         this.setExtraData(this.figureM + ";" + this.figureF);
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(this);
     }
 

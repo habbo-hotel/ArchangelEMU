@@ -20,7 +20,7 @@ public class TogglePetRidingPermissionEvent extends MessageHandler {
             return;
 
         rideablePet.setAnyoneCanRide(!rideablePet.anyoneCanRide());
-        rideablePet.setNeedsUpdate(true);
+        rideablePet.setSqlUpdateNeeded(true);
 
         if (!rideablePet.anyoneCanRide() && rideablePet.getRider() != null && rideablePet.getRider().getHabboInfo().getId() != this.client.getHabbo().getHabboInfo().getId()) {
             rideablePet.getRider().getRoomUnit().dismountPet(false);

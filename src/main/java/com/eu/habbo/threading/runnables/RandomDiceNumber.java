@@ -31,7 +31,7 @@ public class RandomDiceNumber implements Runnable {
             this.result = (Emulator.getRandom().nextInt(this.maxNumber) + 1);
 
         this.item.setExtraData(this.result + "");
-        this.item.needsUpdate(true);
+        this.item.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(this.item);
 
         this.room.updateItem(this.item);

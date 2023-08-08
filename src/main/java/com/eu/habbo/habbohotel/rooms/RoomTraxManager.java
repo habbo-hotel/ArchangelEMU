@@ -269,7 +269,7 @@ public class RoomTraxManager implements Disposable {
             //Deprecated
             musicDisc.setRoomId(-1);
             musicDisc.setRoom(null);
-            musicDisc.needsUpdate(true);
+            musicDisc.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(musicDisc);
 
             habbo.getInventory().getItemsComponent().removeHabboItem(musicDisc);
@@ -298,7 +298,7 @@ public class RoomTraxManager implements Disposable {
             //Deprecated
             musicDisc.setRoomId(0);
             musicDisc.setRoom(null);
-            musicDisc.needsUpdate(true);
+            musicDisc.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(musicDisc);
 
             Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getOwnerInfo().getId());
@@ -330,7 +330,7 @@ public class RoomTraxManager implements Disposable {
                             //Deprecated
                             musicDisc.setRoomId(0);
                             musicDisc.setRoom(null);
-                            musicDisc.needsUpdate(true);
+                            musicDisc.setSqlUpdateNeeded(true);
                             Emulator.getThreading().run(musicDisc);
 
                             Habbo owner = Emulator.getGameEnvironment().getHabboManager().getHabbo(musicDisc.getOwnerInfo().getId());

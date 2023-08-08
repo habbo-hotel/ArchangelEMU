@@ -25,8 +25,7 @@ public class InvisibleCommand extends Command {
 
             new RoomUnitTeleport(roomUnit, roomUnit.getRoom(), roomLayout.getDoorTile().getX(), roomLayout.getDoorTile().getY(), roomLayout.getDoorTile().getZ(), 0).run();
 
-            roomUnit.setInvisible(false)
-                    .setInRoom(true);
+            roomUnit.setInvisible(false);
 
             roomUnit.getRoom().sendComposer(new RoomUsersComposer(gameClient.getHabbo()).compose());
             roomUnit.getRoom().sendComposer(new UserUpdateComposer(roomUnit).compose());

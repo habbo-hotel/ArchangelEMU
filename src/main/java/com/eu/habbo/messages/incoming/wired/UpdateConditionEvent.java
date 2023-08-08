@@ -26,7 +26,7 @@ public class UpdateConditionEvent extends MessageHandler {
 
                     condition.saveWiredSettings(this.packet, room);
                     this.client.sendResponse(new WiredSavedComposer());
-                    condition.needsUpdate(true);
+                    condition.setSqlUpdateNeeded(true);
                     Emulator.getThreading().run(condition);
                 }
                 catch (WiredSaveException e) {

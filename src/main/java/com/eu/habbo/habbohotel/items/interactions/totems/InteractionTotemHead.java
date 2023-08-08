@@ -70,7 +70,7 @@ public class InteractionTotemHead extends InteractionDefault {
     public void updateTotemState(Room room, RoomTile tile) {
         this.setExtraData(getTotemType().getType() - 1 + "");
         update(room, tile);
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         room.updateItem(this);
     }
 

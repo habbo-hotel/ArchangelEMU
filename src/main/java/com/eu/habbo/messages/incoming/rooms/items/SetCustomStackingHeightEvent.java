@@ -48,7 +48,7 @@ public class SetCustomStackingHeightEvent extends MessageHandler {
 
                 item.setCurrentZ(height);
                 item.setExtraData(String.valueOf((int) (height * 100)));
-                item.needsUpdate(true);
+                item.setSqlUpdateNeeded(true);
 
                 this.client.getHabbo().getRoomUnit().getRoom().updateItem(item);
                 this.client.getHabbo().getRoomUnit().getRoom().updateTiles(tiles);

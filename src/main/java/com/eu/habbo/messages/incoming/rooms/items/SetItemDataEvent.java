@@ -52,7 +52,7 @@ public class SetItemDataEvent extends MessageHandler {
             color = PostItColor.YELLOW.hexColor;
 
         item.setExtraData(color + " " + text);
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
         room.updateItem(item);
         Emulator.getThreading().run(item);
     }

@@ -49,7 +49,7 @@ public class RequestRoomPropertySet extends MessageHandler {
             this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
             room.setNeedsUpdate(true);
             room.sendComposer(new RoomPropertyMessageComposer(item.getBaseItem().getName(), item.getExtraData()).compose());
-            item.needsDelete(true);
+            item.setSqlDeleteNeeded(true);
             Emulator.getThreading().run(item);
             this.client.sendResponse(new FurniListRemoveComposer(itemId));
         }

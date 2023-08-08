@@ -57,7 +57,7 @@ public class InteractionColorPlate extends InteractionDefault {
         }
 
         this.setExtraData(state + "");
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         room.updateItemState(this);
     }
 }

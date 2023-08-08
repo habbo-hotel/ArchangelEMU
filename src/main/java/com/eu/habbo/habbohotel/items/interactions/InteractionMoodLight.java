@@ -51,7 +51,7 @@ public class InteractionMoodLight extends RoomItem {
             for (RoomMoodlightData data : ((TIntObjectMap<RoomMoodlightData>) room.getRoomInfo().getMoodLightData()).valueCollection()) {
                 if (data.isEnabled()) {
                     this.setExtraData(data.toString());
-                    this.needsUpdate(true);
+                    this.setSqlUpdateNeeded(true);
                     room.updateItem(this);
                     Emulator.getThreading().run(this);
                 }

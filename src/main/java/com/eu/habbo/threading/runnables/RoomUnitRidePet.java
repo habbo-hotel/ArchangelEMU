@@ -7,19 +7,34 @@ import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.rooms.users.AvatarEffectMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
-import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class RoomUnitRidePet implements Runnable {
+    private final int MAX_RETRIES = 3;
     private final RideablePet pet;
     private final Habbo habbo;
     private final RoomTile goalTile;
+    private int retries;
 
+    public RoomUnitRidePet(RideablePet pet, Habbo rider, RoomTile petTile) {
+        this.pet = pet;
+        this.habbo = rider;
+        this.goalTile = petTile;
+        this.retries = 0;
+    }
 
     @Override
     public void run() {
-        if (this.habbo.getRoomUnit() == null || this.pet.getRoomUnit() == null || this.pet.getRoom() != this.habbo.getRoomUnit().getRoom() || this.goalTile == null || this.habbo.getRoomUnit().getTargetPosition() != this.goalTile)
+        if (this.pet.getRoom() != this.habbo.getRoomUnit().getRoom()) {
+            this.habbo.getRoomUnit().setRideLocked(false);
             return;
+        }
+
+        if(this.retries >= MAX_RETRIES) {
+            this.habbo.getRoomUnit().setRideLocked(false);
+            return;
+        }
+
+        this.retries++;
 
         if (habbo.getRoomUnit().getCurrentPosition().distance(pet.getRoomUnit().getCurrentPosition()) <= 1) {
             habbo.getRoomUnit().stopWalking();

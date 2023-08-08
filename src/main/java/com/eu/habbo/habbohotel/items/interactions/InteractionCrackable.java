@@ -107,7 +107,7 @@ public class InteractionCrackable extends RoomItem {
                 }
                 this.ticks++;
                 this.setExtraData("" + (this.ticks));
-                this.needsUpdate(true);
+                this.setSqlUpdateNeeded(true);
                 room.updateItem(this);
 
                 if (!rewardData.getAchievementTick().isEmpty()) {

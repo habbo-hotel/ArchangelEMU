@@ -29,6 +29,5 @@ public class QuitEvent extends MessageHandler {
         }
 
         roomHabbo.clear();
-        roomHabbo.setInRoom(false);
     }
 }

@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.rooms;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -173,7 +174,15 @@ public class RoomTile {
 
     public void removeUnit(RoomUnit roomUnit) {
         synchronized (this.roomUnits) {
+            if(!this.roomUnits.contains(roomUnit)) {
+                return;
+            }
+
             this.roomUnits.remove(roomUnit);
+
+            if(roomUnit instanceof RoomAvatar roomAvatar && roomAvatar.isRiding()) {
+                this.roomUnits.remove(roomAvatar.getRidingPet().getRoomUnit());
+            }
         }
     }
 

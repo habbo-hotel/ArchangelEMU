@@ -49,7 +49,7 @@ public class InteractionMannequin extends RoomItem {
             serverMessage.appendString("OUTFIT_NAME");
             serverMessage.appendString("My Look");
             this.setExtraData("m: :My look");
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(this);
         }
         super.serializeExtradata(serverMessage);

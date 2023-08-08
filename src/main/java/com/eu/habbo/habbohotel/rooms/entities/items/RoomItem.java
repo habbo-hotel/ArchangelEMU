@@ -142,7 +142,6 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
             serverMessage.appendInt(this.getCurrentPosition().getY());
             serverMessage.appendInt(this.getRotation());
             serverMessage.appendString(Double.toString(this.getCurrentZ()));
-
             serverMessage.appendString((this.getBaseItem().getInteractionType().getType() == InteractionTrophy.class || this.getBaseItem().getInteractionType().getType() == InteractionCrackable.class || this.getBaseItem().getName().equalsIgnoreCase("gnome_box")) ? "1.0" : ((this.getBaseItem().allowWalk() || this.getBaseItem().allowSit() && this.roomId != 0) ? String.valueOf(Item.getCurrentHeight(this)) : ""));
         } catch (Exception e) {
             log.error("Caught exception", e);
@@ -178,22 +177,6 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
 
     public void setRotation(int rotation) {
         this.rotation = (byte) (rotation % 8);
-    }
-
-    public boolean needsUpdate() {
-        return this.sqlUpdateNeeded;
-    }
-
-    public boolean needsDelete() {
-        return sqlDeleteNeeded;
-    }
-
-    public void needsUpdate(boolean value) {
-        this.sqlUpdateNeeded = value;
-    }
-
-    public void needsDelete(boolean value) {
-        this.sqlDeleteNeeded = value;
     }
 
     public boolean isLimited() {
@@ -486,8 +469,6 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
         return true;
     }
 
-    public boolean invalidatesToRoomKick() { return false; }
-
     public List<RoomTile> getOccupyingTiles(RoomLayout layout) {
         List<RoomTile> tiles = new ArrayList<>();
 
@@ -500,10 +481,6 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
         }
 
         return tiles;
-    }
-
-    public RoomTile getOverrideGoalTile(RoomUnit unit, Room room, RoomTile tile) {
-        return tile;
     }
 
     public RoomTileState getOverrideTileState(RoomTile tile, Room room) {

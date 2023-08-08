@@ -32,7 +32,7 @@ public class InteractionWaterItem extends InteractionMultiHeight {
     public void onPickUp(Room room) {
         super.onPickUp(room);
         this.setExtraData("0");
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class InteractionWaterItem extends InteractionMultiHeight {
 
         if (!this.getExtraData().equals(updatedData)) {
             this.setExtraData(updatedData);
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
             room.updateItemState(this);
         }
     }

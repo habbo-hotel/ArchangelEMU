@@ -141,7 +141,7 @@ public abstract class InteractionWired extends InteractionDefault implements IWi
      */
     @Override
     public void run() {
-        if (this.needsUpdate()) {
+        if (this.isSqlUpdateNeeded()) {
             //TODO HERE IS WHERE WIRED_SAVE_EXCEPTION WILL BE THROWN
             //EXAMPLE: if StringParam should be number, throw error here, maybe activating a flag in wiredSettings that string params are numbers
             this.loadDefaultIntegerParams();

@@ -314,7 +314,7 @@ public class RoomItemManager {
         item.setCurrentPosition(tile);
         item.setCurrentZ(height);
         item.setRotation(rotation);
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
 
         this.addRoomItem(item);
 
@@ -350,7 +350,7 @@ public class RoomItemManager {
             this.room.getFurniOwnerNames().put(item.getOwnerInfo().getId(), owner.getHabboInfo().getUsername());
         }
         this.room.sendComposer(new ItemAddMessageComposer(item, this.room.getFurniOwnerName(item.getOwnerInfo().getId())).compose());
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
         this.addRoomItem(item);
         //Deprecated
         item.setRoomId(this.room.getRoomInfo().getId());
@@ -504,7 +504,7 @@ public class RoomItemManager {
 
         //Update Furniture
         item.onMove(this.room, oldLocation, targetTile);
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
 
         Emulator.getThreading().run(item);
 
@@ -557,7 +557,7 @@ public class RoomItemManager {
         //Deprecated
         roomItem.setRoomId(0);
         roomItem.setRoom(null);
-        roomItem.needsUpdate(true);
+        roomItem.setSqlUpdateNeeded(true);
 
         if (roomItem.getBaseItem().getType() == FurnitureType.FLOOR) {
             this.room.sendComposer(new RemoveFloorItemComposer(roomItem).compose());
@@ -1101,7 +1101,7 @@ public class RoomItemManager {
 
     public void dispose() {
         this.currentItems.values().parallelStream()
-                .filter(RoomItem::needsUpdate)
+                .filter(roomItem1 -> roomItem1.isSqlUpdateNeeded())
                 .forEach(roomItem -> {
                     roomItem.run();
                     this.currentItems.remove(roomItem.getId());

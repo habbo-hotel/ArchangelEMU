@@ -73,27 +73,31 @@ public class PlacePetEvent extends MessageHandler {
             return;
         }
 
+        //TODO REMOVE THIS
         pet.setRoom(room);
-        RoomPet roomPet = pet.getRoomUnit();
 
-        if (roomPet == null) {
-            roomPet = new RoomPet();
-            roomPet.setUnit(pet);
-        }
+        RoomPet roomPet = pet.getRoomUnit();
 
         roomPet.setRoom(room);
 
         roomPet.setLocation(tile);
         roomPet.setCurrentZ(tile.getStackHeight());
+
         roomPet.addStatus(RoomUnitStatus.SIT, "0");
+
+        //TODO I dont think I need this anymore
         roomPet.setRoomUnitType(RoomUnitType.PET);
+
         if (playerTile != null) {
             roomPet.lookAtPoint(playerTile);
         }
-        pet.setRoomUnit(roomPet);
+
         room.getRoomUnitManager().addRoomUnit(pet);
-        pet.setNeedsUpdate(true);
+
+        //This to update room on DB
+        pet.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(pet);
+
         room.sendComposer(new RoomPetComposer(pet).compose());
         this.client.getHabbo().getInventory().getPetsComponent().removePet(pet);
         this.client.sendResponse(new PetRemovedFromInventoryComposer(pet));

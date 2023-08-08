@@ -43,7 +43,7 @@ public class SetObjectDataEvent extends MessageHandler {
             }
 
             item.setExtraData(((InteractionCustomValues) item).toExtraData());
-            item.needsUpdate(true);
+            item.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(item);
             room.updateItem(item);
             ((InteractionCustomValues) item).onCustomValuesSaved(room, this.client, oldValues);

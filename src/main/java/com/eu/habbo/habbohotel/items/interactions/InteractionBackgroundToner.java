@@ -39,7 +39,7 @@ public class InteractionBackgroundToner extends RoomItem {
             serverMessage.appendInt(126);
             serverMessage.appendInt(126);
             this.setExtraData("0:126:126:126");
-            this.needsUpdate(true);
+            this.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(this);
         }
 
@@ -86,7 +86,7 @@ public class InteractionBackgroundToner extends RoomItem {
             this.setExtraData("0:126:126:126");
             room.updateItem(this);
         }
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(this);
     }
 

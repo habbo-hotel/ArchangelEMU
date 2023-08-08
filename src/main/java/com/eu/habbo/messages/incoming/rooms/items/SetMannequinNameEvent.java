@@ -29,7 +29,7 @@ public class SetMannequinNameEvent extends MessageHandler {
         } else {
             item.setExtraData(this.client.getHabbo().getHabboInfo().getGender().name().toUpperCase() + ":" + this.client.getHabbo().getHabboInfo().getLook() + ":" + name);
         }
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(item);
         room.updateItem(item);
     }

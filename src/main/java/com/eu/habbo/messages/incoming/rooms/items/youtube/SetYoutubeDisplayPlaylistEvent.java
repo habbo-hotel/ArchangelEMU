@@ -43,7 +43,7 @@ public class SetYoutubeDisplayPlaylistEvent extends YoutubeEvent {
             room.sendComposer(new YoutubeDisplayVideoMessageComposer(itemId, video, true, 0).compose());
             ((InteractionYoutubeTV) item).autoAdvance = Emulator.getThreading().run(new YoutubeAdvanceVideo((InteractionYoutubeTV) item), video.getDuration() * 1000L);
 
-            item.needsUpdate(true);
+            item.setSqlUpdateNeeded(true);
         }
     }
 }

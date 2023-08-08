@@ -155,7 +155,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
 
     @Override
     public void run() {
-        if (this.needsUpdate() || this.needsDelete()) {
+        if (this.isSqlUpdateNeeded() || this.isSqlDeleteNeeded()) {
             super.run();
         }
     }
@@ -165,7 +165,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
         this.endGame(room);
 
         this.setExtraData(this.baseTime + "\t" + this.baseTime);
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
     }
 
     @Override
@@ -178,7 +178,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
 
         this.setExtraData(this.timeNow + "\t" + this.baseTime);
         room.updateItem(this);
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
 
         super.onPlace(room);
     }
@@ -318,7 +318,7 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
 
         this.timeNow = this.baseTime;
         room.updateItem(this);
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
     }
 
     @Override

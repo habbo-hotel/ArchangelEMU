@@ -19,9 +19,13 @@ import com.eu.habbo.plugin.events.pets.PetTalkEvent;
 import gnu.trove.map.hash.THashMap;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.TimeZone;
@@ -29,108 +33,39 @@ import java.util.TimeZone;
 import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
 
 @Slf4j
+@Getter
+@Setter
+@Accessors(chain = true)
 public class Pet extends Unit implements ISerialize, Runnable {
-
-    @Getter
-    @Setter
-    public int levelThirst;
-    @Getter
-    @Setter
-    public int levelHunger;
-
-    @Setter
-    @Getter
-    private boolean needsUpdate = false;
-
-    @Setter
-    @Getter
-    private boolean packetUpdate = false;
-    @Getter
-    protected int id;
-    @Getter
-    @Setter
+    protected final int id;
     protected int userId;
-    @Getter
-    @Setter
     protected Room room;
-    @Getter
-    @Setter
     protected String name;
-    @Setter
-    @Getter
     protected PetData petData;
-    @Setter
-    @Getter
     protected int race;
-    @Getter
-    @Setter
     protected String color;
-    @Getter
-    @Setter
     protected int happiness;
-    @Getter
-    @Setter
     protected int experience;
-    @Setter
-    @Getter
     protected int energy;
-
-    /**
-     * The respect points of the pet.
-     */
     protected int respect;
-    @Getter
-    @Setter
     protected int created;
-    @Getter
-    @Setter
     protected int level;
-
-    /**
-     * The chat timeout of the pet.
-     */
     private int chatTimeout;
-
-    /**
-     * The tick timeout of the pet.
-     */
     private int tickTimeout = Emulator.getIntUnixTimestamp();
     private int happinessDelay = Emulator.getIntUnixTimestamp();
     private int gestureTickTimeout = Emulator.getIntUnixTimestamp();
-
-    /**
-     * The random action tick timeout of the pet.
-     */
     private int randomActionTickTimeout = Emulator.getIntUnixTimestamp();
-
-    /**
-     * The posture timeout of the pet.
-     */
     private int postureTimeout = Emulator.getIntUnixTimestamp();
-    @Getter
-    @Setter
     private int stayStartedAt = 0;
-    /**
-     * The number of ticks that the pet has spent idle while waiting for a command.
-     */
     private int idleCommandTicks = 0;
-
-    /**
-     * The number of ticks that the pet has spent free after completing a command.
-     */
     private int freeCommandTicks = -1;
-
-    @Getter
-    @Setter
     private PetTasks task = PetTasks.FREE;
-
-    @Setter
-    @Getter
     private boolean muted = false;
-
-    @Getter
-    @Setter
-    private RoomPet roomUnit;
+    private final RoomPet roomUnit;
+    public int levelThirst;
+    public int levelHunger;
+    private boolean sqlUpdateNeeded = false;
+    private boolean packetUpdate = false;
 
     /**
      * Creates a new pet using the given result set, which should contain data retrieved from a
@@ -159,6 +94,9 @@ public class Pet extends Unit implements ISerialize, Runnable {
         this.levelThirst = set.getInt("thirst");
         this.levelHunger = set.getInt("hunger");
         this.level = PetManager.getLevel(this.experience);
+
+        this.roomUnit = new RoomPet();
+        this.roomUnit.setUnit(this);
     }
 
     /**
@@ -191,6 +129,9 @@ public class Pet extends Unit implements ISerialize, Runnable {
         this.levelHunger = 0;
         this.created = Emulator.getIntUnixTimestamp();
         this.level = 1;
+
+        this.roomUnit = new RoomPet();
+        this.roomUnit.setUnit(this);
     }
 
     /**
@@ -283,52 +224,26 @@ public class Pet extends Unit implements ISerialize, Runnable {
      */
     @Override
     public void run() {
-        if (this.isNeedsUpdate()) {
-            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-                if (this.id > 0) {
-                    try (PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET room_id = ?, experience = ?, energy = ?, respect = ?, x = ?, y = ?, z = ?, rot = ?, hunger = ?, thirst = ?, happiness = ?, created = ? WHERE id = ?")) {
-                        statement.setInt(1, (this.room == null ? 0 : this.room.getRoomInfo().getId()));
-                        statement.setInt(2, this.experience);
-                        statement.setInt(3, this.energy);
-                        statement.setInt(4, this.respect);
-                        statement.setInt(5, this.getRoomUnit() != null ? this.getRoomUnit().getCurrentPosition().getX() : 0);
-                        statement.setInt(6, this.getRoomUnit() != null ? this.getRoomUnit().getCurrentPosition().getY() : 0);
-                        statement.setDouble(7, this.getRoomUnit() != null ? this.getRoomUnit().getCurrentZ() : 0.0);
-                        statement.setInt(8, this.getRoomUnit() != null ? this.getRoomUnit().getBodyRotation().getValue() : 0);
-                        statement.setInt(9, this.levelHunger);
-                        statement.setInt(10, this.levelThirst);
-                        statement.setInt(11, this.happiness);
-                        statement.setInt(12, this.created);
-                        statement.setInt(13, this.id);
-                        statement.execute();
-                    }
-                } else if (this.id == 0) {
-                    try (PreparedStatement statement = connection.prepareStatement("INSERT INTO users_pets (user_id, room_id, name, race, type, color, experience, energy, respect, created) VALUES (?, 0, ?, ?, ?, ?, 0, 0, 0, ?)", Statement.RETURN_GENERATED_KEYS)) {
-                        statement.setInt(1, this.userId);
-                        statement.setString(2, this.name);
-                        statement.setInt(3, this.race);
-                        statement.setInt(4, 0);
-
-                        if (this.petData != null) {
-                            statement.setInt(4, this.petData.getType());
-                        }
-
-                        statement.setString(5, this.color);
-                        statement.setInt(6, this.created);
-                        statement.execute();
-
-                        try (ResultSet set = statement.getGeneratedKeys()) {
-                            if (set.next()) {
-                                this.id = set.getInt(1);
-                            }
-                        }
-                    }
-                }
+        if (this.sqlUpdateNeeded) {
+            try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET room_id = ?, experience = ?, energy = ?, respect = ?, x = ?, y = ?, z = ?, rot = ?, hunger = ?, thirst = ?, happiness = ?, created = ? WHERE id = ?")) {
+                statement.setInt(1, (this.room == null ? 0 : this.room.getRoomInfo().getId()));
+                statement.setInt(2, this.experience);
+                statement.setInt(3, this.energy);
+                statement.setInt(4, this.respect);
+                statement.setInt(5, this.getRoomUnit() != null ? this.getRoomUnit().getCurrentPosition().getX() : 0);
+                statement.setInt(6, this.getRoomUnit() != null ? this.getRoomUnit().getCurrentPosition().getY() : 0);
+                statement.setDouble(7, this.getRoomUnit() != null ? this.getRoomUnit().getCurrentZ() : 0.0);
+                statement.setInt(8, this.getRoomUnit() != null ? this.getRoomUnit().getBodyRotation().getValue() : 0);
+                statement.setInt(9, this.levelHunger);
+                statement.setInt(10, this.levelThirst);
+                statement.setInt(11, this.happiness);
+                statement.setInt(12, this.created);
+                statement.setInt(13, this.id);
+                statement.execute();
+                this.sqlUpdateNeeded = false;
             } catch (SQLException e) {
                 log.error(CAUGHT_SQL_EXCEPTION, e);
             }
-
-            this.setNeedsUpdate(false);
         }
     }
 
@@ -788,7 +703,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
         this.addHappiness(10);
         this.addExperience(10);
         this.addRespect();
-        this.setNeedsUpdate(true);
+        this.setSqlUpdateNeeded(true);
 
         if (habbo != null) {
             habbo.getHabboStats().decreasePetRespectPointsToGive();
@@ -825,9 +740,9 @@ public class Pet extends Unit implements ISerialize, Runnable {
             room.getRoomUnitManager().removePet(this.id);
         }
 
-        this.setRoomUnit(null);
+        this.roomUnit.setRoom(null);
         this.room = null;
-        this.setNeedsUpdate(true);
+        this.setSqlUpdateNeeded(true);
     }
 
 }

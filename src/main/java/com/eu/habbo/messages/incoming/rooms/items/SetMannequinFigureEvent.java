@@ -41,7 +41,7 @@ public class SetMannequinFigureEvent extends MessageHandler {
             item.setExtraData(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + habbo.getHabboInfo().getUsername() + "'s look.");
         }
 
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(item);
         room.updateItem(item);
     }

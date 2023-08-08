@@ -42,7 +42,7 @@ public class WiredTriggerDataComposer extends MessageComposer {
             this.response.appendInt(blockedTrigger);
         }
 
-        this.trigger.needsUpdate(true);
+        this.trigger.setSqlUpdateNeeded(true);
         return this.response;
     }
 }

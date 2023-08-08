@@ -11,9 +11,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
@@ -285,7 +285,7 @@ public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
                                     } else if (baseItem.getInteractionType().getType() == InteractionGuildFurni.class || baseItem.getInteractionType().getType() == InteractionGuildGate.class) {
                                         InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
                                         habboItem.setExtraData("");
-                                        habboItem.needsUpdate(true);
+                                        habboItem.setSqlUpdateNeeded(true);
                                         int guildId;
                                         try {
                                             guildId = Integer.parseInt(extraData);
