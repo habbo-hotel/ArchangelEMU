@@ -17,12 +17,12 @@ public class RemoveBotFromFlatEvent extends MessageHandler {
 
         int botId = this.packet.readInt();
 
-        Bot bot = room.getRoomUnitManager().getRoomBotById(Math.abs(botId));
+        Bot bot = room.getRoomUnitManager().getRoomBotManager().getRoomBotById(Math.abs(botId));
 
         if(bot == null) {
             return;
         }
 
-        room.getRoomUnitManager().pickUpBot(bot, this.client.getHabbo());
+        room.getRoomUnitManager().getRoomBotManager().pickUpBot(bot, this.client.getHabbo());
     }
 }

@@ -711,14 +711,14 @@ public class RoomManager {
         }
 
 
-        habbo.getClient().sendResponse(new RoomUsersComposer(room.getRoomUnitManager().getCurrentBots().values()));
+        habbo.getClient().sendResponse(new RoomUsersComposer(room.getRoomUnitManager().getRoomBotManager().getCurrentBots().values()));
 
-        if (!room.getRoomUnitManager().getCurrentBots().isEmpty()) {
-            room.getRoomUnitManager().getCurrentBots().values().stream()
+        if (!room.getRoomUnitManager().getRoomBotManager().getCurrentBots().isEmpty()) {
+            room.getRoomUnitManager().getRoomBotManager().getCurrentBots().values().stream()
                     .filter(b -> !b.getRoomUnit().getDanceType().equals(DanceType.NONE))
                     .forEach(b -> habbo.getClient().sendResponse(new DanceMessageComposer(b.getRoomUnit())));
 
-            room.getRoomUnitManager().getCurrentBots().values()
+            room.getRoomUnitManager().getRoomBotManager().getCurrentBots().values()
                     .forEach(b -> habbo.getClient().sendResponse(new UserUpdateComposer(b.getRoomUnit(), b.getRoomUnit().getCurrentZ())));
         }
 

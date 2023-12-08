@@ -55,7 +55,7 @@ public class RoomUnitTeleport implements Runnable {
         roomUnit.setWiredTeleporting(false);
 
         this.room.getRoomUnitManager().updateHabbosAt(newLocation);
-        this.room.getRoomUnitManager().updateBotsAt(newLocation);
+        this.room.getRoomUnitManager().getRoomBotManager().updateBotsAt(newLocation);
 
         topItem = room.getRoomItemManager().getTopItemAt(x, y);
         if (topItem != null && roomUnit.getCurrentPosition().equals(room.getLayout().getTile((short) x, (short) y))) {

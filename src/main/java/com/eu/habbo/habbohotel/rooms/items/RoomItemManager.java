@@ -263,7 +263,7 @@ public class RoomItemManager {
 
         for (RoomTile t : occupiedTiles) {
             this.room.getRoomUnitManager().updateHabbosAt(t);
-            this.room.getRoomUnitManager().updateBotsAt(t);
+            this.room.getRoomUnitManager().getRoomBotManager().updateBotsAt(t);
         }
 
         Emulator.getThreading().run(item);
@@ -343,7 +343,7 @@ public class RoomItemManager {
                         if (checkForUnits && !magicTile) {
                             if (this.room.getRoomUnitManager().hasHabbosAt(t))
                                 return FurnitureMovementError.TILE_HAS_HABBOS;
-                            if (!this.room.getRoomUnitManager().getBotsAt(t).isEmpty())
+                            if (!this.room.getRoomUnitManager().getRoomBotManager().getBotsAt(t).isEmpty())
                                 return FurnitureMovementError.TILE_HAS_BOTS;
                             if (this.room.getRoomUnitManager().hasPetsAt(t))
                                 return FurnitureMovementError.TILE_HAS_PETS;
@@ -459,7 +459,7 @@ public class RoomItemManager {
         //Update Habbos at old position
         for (RoomTile t : occupiedTiles) {
             this.room.getRoomUnitManager().updateHabbosAt(t);
-            this.room.getRoomUnitManager().updateBotsAt(t);
+            this.room.getRoomUnitManager().getRoomBotManager().updateBotsAt(t);
         }
 
         if (Emulator.getConfig().getBoolean("wired.place.under", false)) {
@@ -520,7 +520,7 @@ public class RoomItemManager {
 
             updatedTiles.forEach(tile -> {
                 this.room.getRoomUnitManager().updateHabbosAt(tile);
-                this.room.getRoomUnitManager().updateBotsAt(tile);
+                this.room.getRoomUnitManager().getRoomBotManager().updateBotsAt(tile);
             });
         } else if (roomItem.getBaseItem().getType() == FurnitureType.WALL) {
             this.room.sendComposer(new ItemRemoveMessageComposer(roomItem).compose());
@@ -606,7 +606,7 @@ public class RoomItemManager {
             if (!Emulator.getConfig().getBoolean("wired.place.under", false) || (Emulator.getConfig().getBoolean("wired.place.under", false) && !item.isWalkable() && !item.getBaseItem().allowSit() && !item.getBaseItem().allowLay())) {
                 if (checkForUnits && this.room.getRoomUnitManager().hasHabbosAt(occupiedTile))
                     return FurnitureMovementError.TILE_HAS_HABBOS;
-                if (checkForUnits && this.room.getRoomUnitManager().hasBotsAt(occupiedTile))
+                if (checkForUnits && this.room.getRoomUnitManager().getRoomBotManager().hasBotsAt(occupiedTile))
                     return FurnitureMovementError.TILE_HAS_BOTS;
                 if (checkForUnits && this.room.getRoomUnitManager().hasPetsAt(occupiedTile))
                     return FurnitureMovementError.TILE_HAS_PETS;

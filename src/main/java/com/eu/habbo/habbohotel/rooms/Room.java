@@ -516,8 +516,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     }
                 }
 
-                if (!this.roomUnitManager.getCurrentBots().isEmpty()) {
-                    Iterator<Bot> botIterator = this.roomUnitManager.getCurrentBots().values().iterator();
+                if (!this.roomUnitManager.getRoomBotManager().getCurrentBots().isEmpty()) {
+                    Iterator<Bot> botIterator = this.roomUnitManager.getRoomBotManager().getCurrentBots().values().iterator();
 
                     while(botIterator.hasNext()) {
                         try {
@@ -1196,7 +1196,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         for (short x = item.getCurrentPosition().getX(); x < item.getCurrentPosition().getX() + item.getBaseItem().getLength(); x++) {
             for (short y = item.getCurrentPosition().getY(); y < item.getCurrentPosition().getY() + item.getBaseItem().getWidth(); y++) {
                 RoomTile tile = this.layout.getTile(x, y);
-                bots.addAll(this.roomUnitManager.getBotsAt(tile));
+                bots.addAll(this.roomUnitManager.getRoomBotManager().getBotsAt(tile));
             }
         }
 
@@ -1260,11 +1260,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public void habboEntered(Habbo habbo) {
-        synchronized (this.roomUnitManager.getCurrentBots()) {
+        synchronized (this.roomUnitManager.getRoomBotManager().getCurrentBots()) {
             if (habbo.getHabboInfo().getId() != this.roomInfo.getOwnerInfo().getId())
                 return;
 
-            Iterator<Bot> botIterator = this.roomUnitManager.getCurrentBots().values().iterator();
+            Iterator<Bot> botIterator = this.roomUnitManager.getRoomBotManager().getCurrentBots().values().iterator();
 
             while (botIterator.hasNext()) {
                 try {
@@ -1494,8 +1494,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         if (chatType == RoomChatType.TALK || chatType == RoomChatType.SHOUT) {
-            synchronized (this.roomUnitManager.getCurrentBots()) {
-                Iterator<Bot> botIterator = this.roomUnitManager.getCurrentBots().values().iterator();
+            synchronized (this.roomUnitManager.getRoomBotManager().getCurrentBots()) {
+                Iterator<Bot> botIterator = this.roomUnitManager.getRoomBotManager().getCurrentBots().values().iterator();
 
                 while (botIterator.hasNext()) {
                     try {

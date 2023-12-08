@@ -60,7 +60,7 @@ public class InteractionEffectTile extends InteractionPressurePlate {
                 this.giveEffect(room, roomUnit, habbo.getHabboInfo().getGender());
             }
         } else if (roomUnit.getRoomUnitType() == RoomUnitType.BOT) {
-            Bot bot = room.getRoomUnitManager().getRoomBotById(roomUnit.getVirtualId());
+            Bot bot = room.getRoomUnitManager().getRoomBotManager().getRoomBotById(roomUnit.getVirtualId());
 
             if (bot != null) {
                 this.giveEffect(room, roomUnit, bot.getGender());

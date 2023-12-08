@@ -107,7 +107,7 @@ public class BotManager {
                 }
 
                 bot.onPickUp(habbo, room);
-                room.getRoomUnitManager().removeBot(bot);
+                room.getRoomUnitManager().getRoomBotManager().removeBot(bot);
                 bot.setFollowingHabboId(0);
                 bot.setOwnerId(botOwnerInfo.getId());
                 bot.setOwnerName(botOwnerInfo.getUsername());

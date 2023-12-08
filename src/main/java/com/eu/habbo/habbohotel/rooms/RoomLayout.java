@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
-import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
+import com.eu.habbo.habbohotel.rooms.bots.entities.RoomBot;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
