@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
@@ -108,5 +109,15 @@ public class InteractionPetToy extends InteractionDefault {
     @Override
     public boolean allowWiredResetState() {
         return false;
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getPetToys().remove(getId());
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getPetToys().put(getId(), this);
     }
 }

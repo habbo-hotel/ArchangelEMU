@@ -8,6 +8,7 @@ import com.eu.habbo.habbohotel.games.wired.WiredGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboInfo;
@@ -324,6 +325,16 @@ public class InteractionGameTimer extends RoomItem implements Runnable {
     @Override
     public boolean allowWiredResetState() {
         return true;
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getGameTimers().remove(getId());
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getGameTimers().put(getId(), this);
     }
 
     public void reduceTime() {

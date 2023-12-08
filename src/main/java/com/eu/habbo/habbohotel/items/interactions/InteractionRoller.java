@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
@@ -84,5 +85,19 @@ public class InteractionRoller extends RoomItem {
         }
 
         return true;
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getRollers()) {
+            roomItemManager.getRollers().remove(getId());
+        }
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getRollers()) {
+            roomItemManager.getRollers().put(getId(), this);
+        }
     }
 }

@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
@@ -50,6 +51,15 @@ public class InteractionPetFood extends InteractionDefault {
         }
     }
 
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getPetFoods().remove(getId());
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getPetFoods().put(getId(), this);
+    }
 
     @Override
     public boolean allowWiredResetState() {

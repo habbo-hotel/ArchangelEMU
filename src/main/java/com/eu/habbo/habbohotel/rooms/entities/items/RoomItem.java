@@ -11,10 +11,7 @@ import com.eu.habbo.habbohotel.items.IEventTriggers;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
@@ -508,4 +505,6 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
                 this.getBaseItem().getLength() + (marginY * 2),
                 this.getRotation());
     }
+    public void removeThisItem(RoomItemManager roomItemManager){}
+    public void addThisItem(RoomItemManager roomItemManager){}
 }

@@ -6,10 +6,7 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -125,6 +122,16 @@ public class InteractionPetDrink extends InteractionDefault {
         this.setExtraData(state + "");
         this.setSqlUpdateNeeded(true);
         room.updateItemState(this);
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getPetDrinks().remove(getId());
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getPetDrinks().put(getId(), this);
     }
 
 }

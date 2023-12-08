@@ -5,6 +5,7 @@ import com.eu.habbo.habbohotel.achievements.Achievement;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 
@@ -43,5 +44,18 @@ public class InteractionBlackHole extends InteractionGate {
         }
 
         super.onPlace(room);
+    }
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().remove(getId());
+        }
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().put(getId(), this);
+        }
     }
 }

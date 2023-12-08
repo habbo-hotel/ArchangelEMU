@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.items.interactions.games.battlebanzai;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboInfo;
@@ -41,5 +42,19 @@ public class InteractionBattleBanzaiSphere extends RoomItem {
 
     @Override
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().remove(getId());
+        }
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().put(getId(), this);
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
@@ -143,6 +144,19 @@ public class InteractionMuteArea extends InteractionCustomValues {
                     client.sendResponse(new RemoveFloorItemComposer(item, true));
                 }
             }, 3000);
+        }
+    }
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().remove(getId());
+        }
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().put(getId(), this);
         }
     }
 }

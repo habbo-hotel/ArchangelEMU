@@ -3,10 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
@@ -315,4 +312,17 @@ public class InteractionWater extends InteractionDefault {
         return false;
     }
 
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().remove(getId());
+        }
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().put(getId(), this);
+        }
+    }
 }

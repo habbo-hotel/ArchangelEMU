@@ -4,6 +4,7 @@ import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.tag.TagGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -79,5 +80,19 @@ public abstract class InteractionTagField extends RoomItem {
         serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().remove(getId());
+        }
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().put(getId(), this);
+        }
     }
 }

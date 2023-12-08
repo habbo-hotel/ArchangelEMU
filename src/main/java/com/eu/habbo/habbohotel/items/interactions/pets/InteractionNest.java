@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
@@ -51,6 +52,16 @@ public class InteractionNest extends RoomItem {
     @Override
     public void onWalk(RoomUnit roomUnit, Room room, Object[] objects) {
 
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getNests().remove(getId());
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getNests().put(getId(), this);
     }
 
     @Override

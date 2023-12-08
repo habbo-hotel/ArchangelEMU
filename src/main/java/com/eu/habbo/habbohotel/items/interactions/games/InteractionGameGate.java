@@ -4,6 +4,7 @@ import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
@@ -52,5 +53,15 @@ public abstract class InteractionGameGate extends InteractionGameTeamItem {
         }
         this.setExtraData(memberCount + "");
         game.getRoom().updateItem(this);
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getGameGates().remove(getId());
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getGameGates().put(getId(), this);
     }
 }

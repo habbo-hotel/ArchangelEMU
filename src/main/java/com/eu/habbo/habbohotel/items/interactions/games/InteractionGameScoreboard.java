@@ -3,6 +3,7 @@ package com.eu.habbo.habbohotel.items.interactions.games;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomItemManager;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 
@@ -31,5 +32,14 @@ public abstract class InteractionGameScoreboard extends InteractionGameTeamItem 
     @Override
     public void onPickUp(Room room) {
         this.setExtraData("0");
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getGameScoreboards().remove(getId());
+    }
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getGameScoreboards().put(getId(), this);
     }
 }
