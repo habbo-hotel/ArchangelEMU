@@ -7,6 +7,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 
 import java.sql.ResultSet;
@@ -19,13 +20,13 @@ public class InteractionSwitch extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionSwitch(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionSwitch(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public boolean canToggle(Habbo habbo, Room room) {
-        return RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getX(), this.getY()), habbo.getRoomUnit().getCurrentLocation());
+        return RoomLayout.tilesAdjecent(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), habbo.getRoomUnit().getCurrentPosition());
     }
 
     @Override
@@ -45,13 +46,13 @@ public class InteractionSwitch extends InteractionDefault {
 
         if (!this.canToggle(client.getHabbo(), room)) {
             RoomTile closestTile = null;
-            for (RoomTile tile : room.getLayout().getTilesAround(room.getLayout().getTile(this.getX(), this.getY()))) {
-                if (tile.isWalkable() && (closestTile == null || closestTile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()) > tile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()))) {
+            for (RoomTile tile : room.getLayout().getTilesAround(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()))) {
+                if (tile.isWalkable() && (closestTile == null || closestTile.distance(client.getHabbo().getRoomUnit().getCurrentPosition()) > tile.distance(client.getHabbo().getRoomUnit().getCurrentPosition()))) {
                     closestTile = tile;
                 }
             }
 
-            if (closestTile != null && !closestTile.equals(client.getHabbo().getRoomUnit().getCurrentLocation())) {
+            if (closestTile != null && !closestTile.equals(client.getHabbo().getRoomUnit().getCurrentPosition())) {
                 List<Runnable> onSuccess = new ArrayList<>();
                 onSuccess.add(() -> {
                     try {
@@ -61,7 +62,7 @@ public class InteractionSwitch extends InteractionDefault {
                     }
                 });
 
-                client.getHabbo().getRoomUnit().setGoalLocation(closestTile);
+                client.getHabbo().getRoomUnit().walkTo(closestTile);
                 Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), closestTile, room, onSuccess, new ArrayList<>()));
             }
         }

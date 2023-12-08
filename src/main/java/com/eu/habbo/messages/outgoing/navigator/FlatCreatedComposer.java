@@ -13,8 +13,8 @@ public class FlatCreatedComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.flatCreatedComposer);
-        this.response.appendInt(this.room.getId());
-        this.response.appendString(this.room.getName());
+        this.response.appendInt(this.room.getRoomInfo().getId());
+        this.response.appendString(this.room.getRoomInfo().getName());
         return this.response;
     }
 }

@@ -12,12 +12,12 @@ public abstract class YoutubeEvent extends MessageHandler {
             return false;
         }
 
-        Room room = habbo.getHabboInfo().getCurrentRoom();
+        Room room = habbo.getRoomUnit().getRoom();
 
         if (room == null) {
             return false;
         }
-        if (!room.isOwner(habbo) && !habbo.hasRight(Permission.ACC_ANYROOMOWNER)) {
+        if (!room.getRoomInfo().isRoomOwner(habbo) && !habbo.hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             return false;
         }
 

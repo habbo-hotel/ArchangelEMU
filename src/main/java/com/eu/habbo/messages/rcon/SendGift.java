@@ -3,7 +3,7 @@ package com.eu.habbo.messages.rcon;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +70,7 @@ public class SendGift extends RCONMessage<SendGift.SendGiftJSON> {
             return;
         }
 
-        HabboItem item = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, 0, 0, "");
+        RoomItem item = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, 0, 0, "");
         Item giftItem = Emulator.getGameEnvironment().getItemManager().getItem((Integer) Emulator.getGameEnvironment().getCatalogManager().giftFurnis.values().toArray()[Emulator.getRandom().nextInt(Emulator.getGameEnvironment().getCatalogManager().giftFurnis.size())]);
 
         String extraData = "1\t" + item.getId();

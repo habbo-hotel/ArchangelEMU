@@ -6,7 +6,8 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectDataUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
@@ -39,8 +40,8 @@ public class InteractionMuteArea extends InteractionCustomValues {
         tiles = new THashSet<>();
     }
 
-    public InteractionMuteArea(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, defaultValues);
+    public InteractionMuteArea(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, defaultValues);
         tiles = new THashSet<>();
     }
 
@@ -48,7 +49,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if((objects.length >= 2 && objects[1] instanceof WiredEffectType) || (client != null && room.hasRights(client.getHabbo()))) {
+        if((objects.length >= 2 && objects[1] instanceof WiredEffectType) || (client != null && room.getRoomRightsManager().hasRights(client.getHabbo()))) {
             this.values.put("state", this.values.get("state").equals("0") ? "1" : "0");
             room.sendComposer(new ObjectDataUpdateMessageComposer(this).compose());
         }
@@ -73,7 +74,7 @@ public class InteractionMuteArea extends InteractionCustomValues {
     }
 
     public boolean inSquare(RoomTile location) {
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = this.getRoom();
 
         if(!this.values.get("state").equals("1"))
             return false;
@@ -96,10 +97,10 @@ public class InteractionMuteArea extends InteractionCustomValues {
     }
 
     private void regenAffectedTiles(Room room) {
-        int minX = Math.max(0, this.getX() - Integer.parseInt(this.values.get("tilesBack")));
-        int minY = Math.max(0, this.getY() - Integer.parseInt(this.values.get("tilesRight")));
-        int maxX = Math.min(room.getLayout().getMapSizeX(), this.getX() + Integer.parseInt(this.values.get("tilesFront")));
-        int maxY = Math.min(room.getLayout().getMapSizeY(), this.getY() + Integer.parseInt(this.values.get("tilesLeft")));
+        int minX = Math.max(0, this.getCurrentPosition().getX() - Integer.parseInt(this.values.get("tilesBack")));
+        int minY = Math.max(0, this.getCurrentPosition().getY() - Integer.parseInt(this.values.get("tilesRight")));
+        int maxX = Math.min(room.getLayout().getMapSizeX(), this.getCurrentPosition().getX() + Integer.parseInt(this.values.get("tilesFront")));
+        int maxY = Math.min(room.getLayout().getMapSizeY(), this.getCurrentPosition().getY() + Integer.parseInt(this.values.get("tilesLeft")));
 
         this.tiles.clear();
 
@@ -124,21 +125,21 @@ public class InteractionMuteArea extends InteractionCustomValues {
         if(effectItem != null) {
             TIntObjectMap<String> ownerNames = TCollections.synchronizedMap(new TIntObjectHashMap<>(0));
             ownerNames.put(-1, "System");
-            THashSet<HabboItem> items = new THashSet<>();
+            THashSet<RoomItem> items = new THashSet<>();
 
             int id = 0;
             for(RoomTile tile : this.tiles) {
                 id--;
-                HabboItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
-                item.setX(tile.getX());
-                item.setY(tile.getY());
-                item.setZ(tile.relativeHeight());
+                RoomItem item = new InteractionDefault(id, null, effectItem, "1", 0, 0);
+
+                item.setCurrentPosition(tile);
+                item.setCurrentZ(tile.relativeHeight());
                 items.add(item);
             }
 
             client.sendResponse(new ObjectsMessageComposer(ownerNames, items));
             Emulator.getThreading().run(() -> {
-                for(HabboItem item : items) {
+                for(RoomItem item : items) {
                     client.sendResponse(new RemoveFloorItemComposer(item, true));
                 }
             }, 3000);

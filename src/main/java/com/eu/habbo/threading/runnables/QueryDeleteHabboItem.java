@@ -1,7 +1,7 @@
 package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +16,7 @@ public class QueryDeleteHabboItem implements Runnable {
     private final int itemId;
 
 
-    public QueryDeleteHabboItem(HabboItem item) {
+    public QueryDeleteHabboItem(RoomItem item) {
         this.itemId = item.getId();
     }
 

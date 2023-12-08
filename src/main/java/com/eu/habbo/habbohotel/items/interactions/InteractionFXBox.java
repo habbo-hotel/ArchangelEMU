@@ -4,8 +4,9 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 
@@ -18,15 +19,15 @@ public class InteractionFXBox extends InteractionDefault {
      //   this.setExtradata("0");
     }
 
-    public InteractionFXBox(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionFXBox(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
        // this.setExtradata("0");
     }
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) {
-        if (client != null && this.getUserId() == client.getHabbo().getHabboInfo().getId()) {
-            if(this.getExtradata().equals("1"))
+        if (client != null && this.getOwnerInfo().getId() == client.getHabbo().getHabboInfo().getId()) {
+            if (this.getExtraData().equals("1"))
                 return;
 
             int effectId = -1;
@@ -43,23 +44,23 @@ public class InteractionFXBox extends InteractionDefault {
                 }
             }
 
-            if(effectId < 0)
+            if (effectId < 0)
                 return;
 
-            if(client.getHabbo().getInventory().getEffectsComponent().ownsEffect(effectId))
+            if (client.getHabbo().getInventory().getEffectsComponent().ownsEffect(effectId))
                 return;
 
             client.getHabbo().getInventory().getEffectsComponent().createEffect(effectId, 0);
             client.getHabbo().getInventory().getEffectsComponent().enableEffect(effectId);
 
-            this.setExtradata("1");
+            this.setExtraData("1");
             room.updateItemState(this);
-            room.removeHabboItem(this);
-            HabboItem item = this;
+            room.getRoomItemManager().removeRoomItem(this);
+            RoomItem item = this;
             Emulator.getThreading().run(() -> {
                 new QueryDeleteHabboItem(item.getId()).run();
                 room.sendComposer(new RemoveFloorItemComposer(item).compose());
-                room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
+                room.updateTile(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
             }, 500);
         }
     }

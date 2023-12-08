@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.RoomUserRotation;
+import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 
 import java.util.stream.IntStream;
@@ -19,24 +19,24 @@ public class LayCommand extends Command {
         if (gameClient.getHabbo().getRoomUnit() == null || !gameClient.getHabbo().getRoomUnit().canForcePosture())
             return true;
 
-        gameClient.getHabbo().getRoomUnit().setCmdLay(true);
-        gameClient.getHabbo().getHabboInfo().getCurrentRoom().updateHabbo(gameClient.getHabbo());
-        gameClient.getHabbo().getRoomUnit().setCmdSit(true);
-        gameClient.getHabbo().getRoomUnit().setBodyRotation(RoomUserRotation.values()[gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() - gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() % 2]);
+        gameClient.getHabbo().getRoomUnit().setCmdLayEnabled(true);
+        gameClient.getHabbo().getRoomUnit().getRoom().updateRoomUnit(gameClient.getHabbo().getRoomUnit());
+        gameClient.getHabbo().getRoomUnit().setCmdSitEnabled(true);
+        gameClient.getHabbo().getRoomUnit().setBodyRotation(RoomRotation.values()[gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() - gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() % 2]);
 
-        RoomTile tile = gameClient.getHabbo().getRoomUnit().getCurrentLocation();
+        RoomTile tile = gameClient.getHabbo().getRoomUnit().getCurrentPosition();
         if (tile == null) {
             return false;
         }
 
         if (IntStream.range(0, 3)
-                .mapToObj(i -> gameClient.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTileInFront(tile, gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue(), i))
+                .mapToObj(i -> gameClient.getHabbo().getRoomUnit().getRoom().getLayout().getTileInFront(tile, gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue(), i))
                 .anyMatch(t -> t == null || !t.isWalkable())) {
             return false;
         }
 
-        gameClient.getHabbo().getRoomUnit().setStatus(RoomUnitStatus.LAY, 0.5 + "");
-        gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserUpdateComposer(gameClient.getHabbo().getRoomUnit()).compose());
+        gameClient.getHabbo().getRoomUnit().addStatus(RoomUnitStatus.LAY, 0.5 + "");
+        gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserUpdateComposer(gameClient.getHabbo().getRoomUnit()).compose());
         return true;
     }
 }

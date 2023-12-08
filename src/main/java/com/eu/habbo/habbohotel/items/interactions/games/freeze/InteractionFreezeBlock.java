@@ -8,24 +8,26 @@ import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.games.freeze.FreezeGamePlayer;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionFreezeBlock extends HabboItem {
+public class InteractionFreezeBlock extends RoomItem {
     public InteractionFreezeBlock(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionFreezeBlock(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionFreezeBlock(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
@@ -33,12 +35,13 @@ public class InteractionFreezeBlock extends HabboItem {
         if (client == null)
             return;
 
-        HabboItem item = null;
-        THashSet<HabboItem> items = room.getItemsAt(room.getLayout().getTile(this.getX(), this.getY()));
+        RoomItem item = null;
+        RoomTile tile = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
+        THashSet<RoomItem> items = room.getRoomItemManager().getItemsAt(tile);
 
-        for (HabboItem i : items) {
+        for (RoomItem i : items) {
             if (i instanceof InteractionFreezeTile) {
-                if (item == null || i.getZ() <= item.getZ()) {
+                if (item == null || i.getCurrentZ() <= item.getCurrentZ()) {
                     item = i;
                 }
             }
@@ -56,11 +59,11 @@ public class InteractionFreezeBlock extends HabboItem {
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
-        if (this.getExtradata().length() == 0) {
-            this.setExtradata("0");
+        if (this.getExtraData().length() == 0) {
+            this.setExtraData("0");
         }
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -72,7 +75,7 @@ public class InteractionFreezeBlock extends HabboItem {
 
     @Override
     public boolean isWalkable() {
-        return !this.getExtradata().isEmpty() && !this.getExtradata().equals("0");
+        return !this.getExtraData().isEmpty() && !this.getExtraData().equals("0");
     }
 
     @Override
@@ -84,14 +87,14 @@ public class InteractionFreezeBlock extends HabboItem {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        if (this.getExtradata().isEmpty() || this.getExtradata().equalsIgnoreCase("0"))
+        if (this.getExtraData().isEmpty() || this.getExtraData().equalsIgnoreCase("0"))
             return;
 
         FreezeGame game = (FreezeGame) room.getGame(FreezeGame.class);
         if (game == null || !game.state.equals(GameState.RUNNING))
             return;
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo == null || habbo.getHabboInfo().getCurrentGame() != FreezeGame.class)
             return;
@@ -103,7 +106,7 @@ public class InteractionFreezeBlock extends HabboItem {
 
         int powerUp;
         try {
-            powerUp = Integer.parseInt(this.getExtradata()) / 1000;
+            powerUp = Integer.parseInt(this.getExtraData()) / 1000;
         } catch (NumberFormatException e) {
             powerUp = 0;
         }
@@ -112,7 +115,7 @@ public class InteractionFreezeBlock extends HabboItem {
             if (powerUp == 6 && !player.canPickupLife())
                 return;
 
-            this.setExtradata((powerUp + 10) * 1000 + "");
+            this.setExtraData((powerUp + 10) * 1000 + "");
 
             room.updateItem(this);
 
@@ -124,6 +127,6 @@ public class InteractionFreezeBlock extends HabboItem {
 
     @Override
     public void onPickUp(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 }

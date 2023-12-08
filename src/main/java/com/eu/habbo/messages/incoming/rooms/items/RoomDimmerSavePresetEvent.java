@@ -6,9 +6,10 @@ import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomMoodlightData;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.RoomDimmerPresetsComposer;
+import gnu.trove.map.TIntObjectMap;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,9 +20,9 @@ public class RoomDimmerSavePresetEvent extends MessageHandler {
 
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if ((room.getGuildId() <= 0 && room.getGuildRightLevel(this.client.getHabbo()).isLessThan(RoomRightLevels.GUILD_RIGHTS)) && !room.hasRights(this.client.getHabbo()))
+        if ((room.getRoomInfo().getGuild().getId() <= 0 && room.getGuildRightLevel(this.client.getHabbo()).isLessThan(RoomRightLevels.GUILD_RIGHTS)) && !room.getRoomRightsManager().hasRights(this.client.getHabbo()))
             return;
 
         int id = this.packet.readInt();
@@ -40,16 +41,16 @@ public class RoomDimmerSavePresetEvent extends MessageHandler {
             return;
         }
 
-        for (RoomMoodlightData data : room.getMoodlightData().valueCollection()) {
+        for (RoomMoodlightData data : ((TIntObjectMap<RoomMoodlightData>) room.getRoomInfo().getMoodLightData()).valueCollection()) {
             if (data.getId() == id) {
                 data.setBackgroundOnly(backgroundOnly == 2);
                 data.setColor(color);
                 data.setIntensity(brightness);
                 if (apply) data.enable();
 
-                for (HabboItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionMoodLight.class)) {
-                    item.setExtradata(data.toString());
-                    item.needsUpdate(true);
+                for (RoomItem item : room.getRoomSpecialTypes().getItemsOfType(InteractionMoodLight.class)) {
+                    item.setExtraData(data.toString());
+                    item.setSqlUpdateNeeded(true);
                     room.updateItem(item);
                     Emulator.getThreading().run(item);
                 }
@@ -59,6 +60,6 @@ public class RoomDimmerSavePresetEvent extends MessageHandler {
         }
 
         room.setNeedsUpdate(true);
-        this.client.sendResponse(new RoomDimmerPresetsComposer(room.getMoodlightData()));
+        this.client.sendResponse(new RoomDimmerPresetsComposer((TIntObjectMap<RoomMoodlightData>) room.getRoomInfo().getMoodLightData()));
     }
 }

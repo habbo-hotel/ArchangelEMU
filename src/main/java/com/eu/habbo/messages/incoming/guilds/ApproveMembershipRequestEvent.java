@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.guilds.GuildRank;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.guilds.GuildMemberMgmtFailedMessageComposer;
 import com.eu.habbo.messages.outgoing.guilds.GuildMembershipRejectedMessageComposer;
@@ -26,11 +25,11 @@ public class ApproveMembershipRequestEvent extends MessageHandler {
         GuildMember groupMember = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
 
         Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
-        if (habbo == null) userInfo = HabboManager.getOfflineHabboInfo(userId);
+        if (habbo == null) userInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(userId);
         else userInfo = habbo.getHabboInfo();
 
 
-        if (userInfo == null || groupMember == null || userId == this.client.getHabbo().getHabboInfo().getId() || (!this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN) && guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId() && !groupMember.getRank().equals(GuildRank.ADMIN) && !groupMember.getRank().equals(GuildRank.OWNER)))
+        if (userInfo == null || groupMember == null || userId == this.client.getHabbo().getHabboInfo().getId() || (!this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN) && guild.getOwnerId() != this.client.getHabbo().getHabboInfo().getId() && !groupMember.getRank().equals(GuildRank.ADMIN) && !groupMember.getRank().equals(GuildRank.OWNER)))
             return;
 
         if (!userInfo.getHabboStats().hasGuild(guild.getId())) {
@@ -56,9 +55,11 @@ public class ApproveMembershipRequestEvent extends MessageHandler {
         guild.increaseMemberCount();
         this.client.sendResponse(new GuildMembershipRejectedMessageComposer(guild, userId));
 
-        if (habbo != null && userInfo.isOnline() && userInfo.getCurrentRoom() != null && userInfo.getCurrentRoom().getGuildId() == guildId) {
-            habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, userId)));
-            userInfo.getCurrentRoom().refreshRightsForHabbo(habbo);
+        if (habbo != null && userInfo.isOnline() && habbo.getRoomUnit().getRoom() != null) {
+            if (habbo.getRoomUnit().getRoom().getRoomInfo().getGuild().getId() == guildId) {
+                habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, userId)));
+                habbo.getRoomUnit().getRoom().getRoomRightsManager().refreshRightsForHabbo(habbo);
+            }
         }
     }
 }

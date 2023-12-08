@@ -217,7 +217,7 @@ public class SSOTicketEvent extends MessageHandler {
 
                 messages.add(new ScrSendUserInfoComposer(this.client.getHabbo(), SubscriptionHabboClub.HABBO_CLUB, ScrSendUserInfoComposer.RESPONSE_TYPE_LOGIN).compose());
 
-                if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+                if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
                     messages.add(new ModeratorInitMessageComposer(this.client.getHabbo()).compose());
                 }
 

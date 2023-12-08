@@ -15,13 +15,13 @@ public class GuideSessionOnDutyUpdateEvent extends MessageHandler {
             boolean helperRequests = this.packet.readBoolean();
             boolean bullyReports = this.packet.readBoolean();
 
-            if (!this.client.getHabbo().hasRight(Permission.ACC_HELPER_USE_GUIDE_TOOL))
+            if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_HELPER_USE_GUIDE_TOOL))
                 return;
 
-            if (helperRequests && !this.client.getHabbo().hasRight(Permission.ACC_HELPER_GIVE_GUIDE_TOURS))
+            if (helperRequests && !this.client.getHabbo().hasPermissionRight(Permission.ACC_HELPER_GIVE_GUIDE_TOURS))
                 helperRequests = false;
 
-            if (bullyReports && !this.client.getHabbo().hasRight(Permission.ACC_HELPER_JUDGE_CHAT_REVIEWS))
+            if (bullyReports && !this.client.getHabbo().hasPermissionRight(Permission.ACC_HELPER_JUDGE_CHAT_REVIEWS))
                 bullyReports = false;
 
             if (helperRequests) {

@@ -15,7 +15,7 @@ public class Easter {
         if (Emulator.getConfig().getBoolean("easter_eggs.enabled") && event.getNewMotto().equalsIgnoreCase("crickey!")) {
             event.habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(event.getNewMotto(), event.habbo, event.habbo, RoomChatMessageBubbles.ALERT)));
 
-            Room room = event.habbo.getHabboInfo().getCurrentRoom();
+            Room room = event.habbo.getRoomUnit().getRoom();
 
             room.sendComposer(new UserRemoveMessageComposer(event.habbo.getRoomUnit()).compose());
             room.sendComposer(new RoomUserPetComposer(2, 1, "FFFFFF", event.habbo).compose());

@@ -24,7 +24,7 @@ public class GamePlayer {
     }
 
     public synchronized void addScore(int amount, boolean isWired) {
-        if (habbo.getHabboInfo().getGamePlayer() != null && this.habbo.getHabboInfo().getCurrentGame() != null && this.habbo.getHabboInfo().getCurrentRoom().getGame(this.habbo.getHabboInfo().getCurrentGame()).getTeamForHabbo(this.habbo) != null) {
+        if (habbo.getHabboInfo().getGamePlayer() != null && this.habbo.getHabboInfo().getCurrentGame() != null && this.habbo.getRoomUnit().getRoom().getGame(this.habbo.getHabboInfo().getCurrentGame()).getTeamForHabbo(this.habbo) != null) {
             this.score += amount;
 
             if (this.score < 0) this.score = 0;
@@ -33,7 +33,7 @@ public class GamePlayer {
                 this.wiredScore += amount;
             }
 
-            WiredHandler.handle(WiredTriggerType.SCORE_ACHIEVED, this.habbo.getRoomUnit(), this.habbo.getHabboInfo().getCurrentRoom(), new Object[]{this.habbo.getHabboInfo().getCurrentRoom().getGame(this.habbo.getHabboInfo().getCurrentGame()).getTeamForHabbo(this.habbo).getTotalScore(), amount});
+            WiredHandler.handle(WiredTriggerType.SCORE_ACHIEVED, this.habbo.getRoomUnit(), this.habbo.getRoomUnit().getRoom(), new Object[]{this.habbo.getRoomUnit().getRoom().getGame(this.habbo.getHabboInfo().getCurrentGame()).getTeamForHabbo(this.habbo).getTotalScore(), amount});
         }
     }
 

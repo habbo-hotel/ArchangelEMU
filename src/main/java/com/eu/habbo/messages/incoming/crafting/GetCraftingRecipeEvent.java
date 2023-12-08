@@ -2,7 +2,7 @@ package com.eu.habbo.messages.incoming.crafting;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.crafting.CraftingAltar;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.crafting.CraftableProductsComposer;
 
@@ -10,7 +10,7 @@ public class GetCraftingRecipeEvent extends MessageHandler {
     @Override
     public void handle() {
         int itemId = this.packet.readInt();
-        HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
         if (item != null) {
             CraftingAltar altar = Emulator.getGameEnvironment().getCraftingManager().getAltar(item.getBaseItem());

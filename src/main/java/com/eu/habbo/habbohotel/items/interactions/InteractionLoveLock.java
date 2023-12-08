@@ -6,9 +6,10 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.lovelock.FriendFurniStartConfirmationMessageComposer;
 
@@ -16,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-public class InteractionLoveLock extends HabboItem {
+public class InteractionLoveLock extends RoomItem {
     public int userOneId;
     public int userTwoId;
 
@@ -24,8 +25,8 @@ public class InteractionLoveLock extends HabboItem {
         super(set, baseItem);
     }
 
-    public InteractionLoveLock(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionLoveLock(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -33,7 +34,7 @@ public class InteractionLoveLock extends HabboItem {
         serverMessage.appendInt(2 + (this.isLimited() ? 256 : 0));
         serverMessage.appendInt(6);
 
-        String[] data = this.getExtradata().split("\t");
+        String[] data = this.getExtraData().split("\t");
 
         if (data.length == 6) {
             serverMessage.appendString("1");
@@ -71,19 +72,19 @@ public class InteractionLoveLock extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) {
-        if (this.getExtradata().contains("\t"))
+        if (this.getExtraData().contains("\t"))
             return;
 
         if (client == null)
             return;
 
-        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentLocation(), room.getLayout().getTile(this.getX(), this.getY()))) {
+        if (RoomLayout.tilesAdjecent(client.getHabbo().getRoomUnit().getCurrentPosition(), room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()))) {
             if (this.userOneId == 0) {
                 this.userOneId = client.getHabbo().getHabboInfo().getId();
                 client.sendResponse(new FriendFurniStartConfirmationMessageComposer(this));
             } else {
                 if (this.userOneId != client.getHabbo().getHabboInfo().getId()) {
-                    Habbo habbo = room.getHabbo(this.userOneId);
+                    Habbo habbo = room.getRoomUnitManager().getRoomHabboById(this.userOneId);
 
                     if (habbo != null) {
                         this.userTwoId = client.getHabbo().getHabboInfo().getId();
@@ -95,8 +96,8 @@ public class InteractionLoveLock extends HabboItem {
     }
 
     public boolean lock(Habbo userOne, Habbo userTwo, Room room) {
-        RoomTile tile = room.getLayout().getTile(this.getX(), this.getY());
-        if (RoomLayout.tilesAdjecent(userOne.getRoomUnit().getCurrentLocation(), tile) && RoomLayout.tilesAdjecent(userTwo.getRoomUnit().getCurrentLocation(), tile)) {
+        RoomTile tile = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
+        if (RoomLayout.tilesAdjecent(userOne.getRoomUnit().getCurrentPosition(), tile) && RoomLayout.tilesAdjecent(userTwo.getRoomUnit().getCurrentPosition(), tile)) {
             String data = "1";
             data += "\t";
             data += userOne.getHabboInfo().getUsername();
@@ -109,8 +110,8 @@ public class InteractionLoveLock extends HabboItem {
             data += "\t";
             data += Calendar.getInstance().get(Calendar.DAY_OF_MONTH) + "-" + (Calendar.getInstance().get(Calendar.MONTH) + 1) + "-" + Calendar.getInstance().get(Calendar.YEAR);
 
-            this.setExtradata(data);
-            this.needsUpdate(true);
+            this.setExtraData(data);
+            this.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(this);
             room.updateItem(this);
 

@@ -3,8 +3,8 @@ package com.eu.habbo.threading.runnables;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
@@ -33,17 +33,17 @@ public class RoomUnitWalkToLocation implements Runnable {
 
     @Override
     public void run() {
-        if (this.goalTile == null || this.walker == null || this.room == null || this.walker.getRoom() == null || this.walker.getRoom().getId() != this.room.getId()) {
+        if (this.goalTile == null || this.walker == null || this.room == null || this.walker.getRoom() == null || this.walker.getRoom().getRoomInfo().getId() != this.room.getRoomInfo().getId()) {
             onFail();
             return;
         }
 
-        if (this.walker.getCurrentLocation().equals(this.goalTile)) {
+        if (this.walker.getCurrentPosition().equals(this.goalTile)) {
             onSuccess();
             return;
         }
 
-        if (!this.walker.getGoalLocation().equals(this.goalTile) || (this.walker.getPath().isEmpty() && !this.walker.hasStatus(RoomUnitStatus.MOVE))) {
+        if (!this.walker.getTargetPosition().equals(this.goalTile) || (this.walker.getPath().isEmpty() && !this.walker.hasStatus(RoomUnitStatus.MOVE))) {
             onFail();
             return;
         }

@@ -21,7 +21,7 @@ public class ActionHang extends PetAction {
         boolean findTree = pet.findPetItem(PetTasks.HANG, InteractionPetTree.class);
         if (!findTree && pet.getPetData().getToyItems().stream().noneMatch(item -> item.getInteractionType().getType() == InteractionPetTree.class)) {
             pet.getRoomUnit().setCanWalk(false);
-            pet.getRoomUnit().setStatus(RoomUnitStatus.HANG, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+            pet.getRoomUnit().addStatus(RoomUnitStatus.HANG, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
 
             Emulator.getThreading().run(() -> {
                 pet.getRoomUnit().setCanWalk(true);

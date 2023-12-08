@@ -19,7 +19,7 @@ public class MessengerInitComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
 
         this.response.init(Outgoing.messengerInitComposer);
-        if (this.habbo.hasRight(Permission.ACC_INFINITE_FRIENDS)) {
+        if (this.habbo.hasPermissionRight(Permission.ACC_INFINITE_FRIENDS)) {
             this.response.appendInt(Integer.MAX_VALUE);
             this.response.appendInt(1337);
             this.response.appendInt(Integer.MAX_VALUE);

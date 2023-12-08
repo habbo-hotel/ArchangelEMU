@@ -18,8 +18,8 @@ public class GuildCreationInfoMessageComposer extends MessageComposer {
         this.response.appendInt(this.rooms.size());
 
         for (Room room : this.rooms) {
-            this.response.appendInt(room.getId());
-            this.response.appendString(room.getName());
+            this.response.appendInt(room.getRoomInfo().getId());
+            this.response.appendString(room.getRoomInfo().getName());
             this.response.appendBoolean(false);
         }
 

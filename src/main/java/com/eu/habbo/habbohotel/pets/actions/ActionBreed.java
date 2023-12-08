@@ -4,8 +4,8 @@ import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetBreedingNes
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetAction;
 import com.eu.habbo.habbohotel.pets.PetTasks;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.pets.breeding.GoToBreedingNestFailureComposer;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,7 +17,7 @@ public class ActionBreed extends PetAction {
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         InteractionPetBreedingNest nest = null;
-        for (HabboItem item : pet.getRoom().getRoomSpecialTypes().getItemsOfType(InteractionPetBreedingNest.class)) {
+        for (RoomItem item : pet.getRoom().getRoomSpecialTypes().getItemsOfType(InteractionPetBreedingNest.class)) {
             if (StringUtils.containsIgnoreCase(item.getBaseItem().getName(), pet.getPetData().getName()) && !((InteractionPetBreedingNest) item).boxFull()) {
                 nest = (InteractionPetBreedingNest) item;
                 break;
@@ -25,7 +25,7 @@ public class ActionBreed extends PetAction {
         }
 
         if (nest != null) {
-            pet.getRoomUnit().setGoalLocation(pet.getRoom().getLayout().getTile(nest.getX(), nest.getY()));
+            pet.getRoomUnit().walkTo(pet.getRoom().getLayout().getTile(nest.getCurrentPosition().getX(), nest.getCurrentPosition().getY()));
 
             return true;
         } else {

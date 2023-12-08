@@ -19,7 +19,7 @@ import com.eu.habbo.habbohotel.items.interactions.pets.InteractionNest;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetDrink;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetFood;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionPetToy;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredConditionType;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -27,10 +27,8 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RoomSpecialTypes {
     private final THashMap<Integer, InteractionBattleBanzaiTeleporter> banzaiTeleporters;
@@ -40,7 +38,7 @@ public class RoomSpecialTypes {
     private final THashMap<Integer, InteractionPetToy> petToys;
     private final THashMap<Integer, InteractionRoller> rollers;
 
-    private final THashMap<WiredTriggerType, THashSet<InteractionWiredTrigger>> wiredTriggers;
+    private final HashMap<WiredTriggerType, List<InteractionWiredTrigger>> wiredTriggers;
     private final THashMap<WiredEffectType, THashSet<InteractionWiredEffect>> wiredEffects;
     private final THashMap<WiredConditionType, THashSet<InteractionWiredCondition>> wiredConditions;
     private final THashMap<Integer, InteractionWiredExtra> wiredExtras;
@@ -50,7 +48,7 @@ public class RoomSpecialTypes {
     private final THashMap<Integer, InteractionGameTimer> gameTimers;
 
     private final THashMap<Integer, InteractionFreezeExitTile> freezeExitTile;
-    private final THashMap<Integer, HabboItem> undefined;
+    private final THashMap<Integer, RoomItem> undefined;
     private final THashSet<ICycleable> cycleTasks;
 
     public RoomSpecialTypes() {
@@ -61,7 +59,7 @@ public class RoomSpecialTypes {
         this.petToys = new THashMap<>(0);
         this.rollers = new THashMap<>(0);
 
-        this.wiredTriggers = new THashMap<>(0);
+        this.wiredTriggers = new HashMap<>(0);
         this.wiredEffects = new THashMap<>(0);
         this.wiredConditions = new THashMap<>(0);
         this.wiredExtras = new THashMap<>(0);
@@ -229,7 +227,7 @@ public class RoomSpecialTypes {
 
     public InteractionWiredTrigger getTrigger(int itemId) {
         synchronized (this.wiredTriggers) {
-            for (Map.Entry<WiredTriggerType, THashSet<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
+            for (Map.Entry<WiredTriggerType, List<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
                 for (InteractionWiredTrigger trigger : map.getValue()) {
                     if (trigger.getId() == itemId)
                         return trigger;
@@ -244,7 +242,7 @@ public class RoomSpecialTypes {
         synchronized (this.wiredTriggers) {
             THashSet<InteractionWiredTrigger> triggers = new THashSet<>();
 
-            for (Map.Entry<WiredTriggerType, THashSet<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
+            for (Map.Entry<WiredTriggerType, List<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
                 triggers.addAll(map.getValue());
             }
 
@@ -252,7 +250,7 @@ public class RoomSpecialTypes {
         }
     }
 
-    public THashSet<InteractionWiredTrigger> getTriggers(WiredTriggerType type) {
+    public List<InteractionWiredTrigger> getTriggers(WiredTriggerType type) {
         return this.wiredTriggers.get(type);
     }
 
@@ -260,10 +258,9 @@ public class RoomSpecialTypes {
         synchronized (this.wiredTriggers) {
             THashSet<InteractionWiredTrigger> triggers = new THashSet<>();
 
-            for (Map.Entry<WiredTriggerType, THashSet<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
+            for (Map.Entry<WiredTriggerType, List<InteractionWiredTrigger>> map : this.wiredTriggers.entrySet()) {
                 for (InteractionWiredTrigger trigger : map.getValue()) {
-                    if (trigger.getX() == x && trigger.getY() == y)
-                        triggers.add(trigger);
+                    if (trigger.getCurrentPosition().getX() == x && trigger.getCurrentPosition().getY() == y) triggers.add(trigger);
                 }
             }
 
@@ -274,7 +271,7 @@ public class RoomSpecialTypes {
     public void addTrigger(InteractionWiredTrigger trigger) {
         synchronized (this.wiredTriggers) {
             if (!this.wiredTriggers.containsKey(trigger.getType()))
-                this.wiredTriggers.put(trigger.getType(), new THashSet<>());
+                this.wiredTriggers.put(trigger.getType(), new ArrayList<>());
 
             this.wiredTriggers.get(trigger.getType()).add(trigger);
         }
@@ -326,8 +323,7 @@ public class RoomSpecialTypes {
 
             for (Map.Entry<WiredEffectType, THashSet<InteractionWiredEffect>> map : this.wiredEffects.entrySet()) {
                 for (InteractionWiredEffect effect : map.getValue()) {
-                    if (effect.getX() == x && effect.getY() == y)
-                        effects.add(effect);
+                    if (effect.getCurrentPosition().getX() == x && effect.getCurrentPosition().getY() == y) effects.add(effect);
                 }
             }
 
@@ -353,7 +349,6 @@ public class RoomSpecialTypes {
             }
         }
     }
-
 
     public InteractionWiredCondition getCondition(int itemId) {
         synchronized (this.wiredConditions) {
@@ -392,7 +387,7 @@ public class RoomSpecialTypes {
 
             for (Map.Entry<WiredConditionType, THashSet<InteractionWiredCondition>> map : this.wiredConditions.entrySet()) {
                 for (InteractionWiredCondition condition : map.getValue()) {
-                    if (condition.getX() == x && condition.getY() == y)
+                    if (condition.getCurrentPosition().getX() == x && condition.getCurrentPosition().getY() == y)
                         conditions.add(condition);
                 }
             }
@@ -438,7 +433,7 @@ public class RoomSpecialTypes {
             THashSet<InteractionWiredExtra> extras = new THashSet<>();
 
             for (Map.Entry<Integer, InteractionWiredExtra> map : this.wiredExtras.entrySet()) {
-                if (map.getValue().getX() == x && map.getValue().getY() == y) {
+                if (map.getValue().getCurrentPosition().getX() == x && map.getValue().getCurrentPosition().getY() == y) {
                     extras.add(map.getValue());
                 }
             }
@@ -462,7 +457,7 @@ public class RoomSpecialTypes {
     public boolean hasExtraType(short x, short y, Class<? extends InteractionWiredExtra> type) {
         synchronized (this.wiredExtras) {
             for (Map.Entry<Integer, InteractionWiredExtra> map : this.wiredExtras.entrySet()) {
-                if (map.getValue().getX() == x && map.getValue().getY() == y && map.getValue().getClass().isAssignableFrom(type)) {
+                if (map.getValue().getCurrentPosition().getX() == x && map.getValue().getCurrentPosition().getY() == y && map.getValue().getClass().isAssignableFrom(type)) {
                     return true;
                 }
             }
@@ -639,12 +634,12 @@ public class RoomSpecialTypes {
         }
     }
 
-    public void addFreezeExitTile(InteractionFreezeExitTile freezeExitTile) {
-        this.freezeExitTile.put(freezeExitTile.getId(), freezeExitTile);
-    }
-
     public THashMap<Integer, InteractionFreezeExitTile> getFreezeExitTiles() {
         return this.freezeExitTile;
+    }
+
+    public void addFreezeExitTile(InteractionFreezeExitTile freezeExitTile) {
+        this.freezeExitTile.put(freezeExitTile.getId(), freezeExitTile);
     }
 
     public void removeFreezeExitTile(InteractionFreezeExitTile freezeExitTile) {
@@ -655,22 +650,22 @@ public class RoomSpecialTypes {
         return !this.freezeExitTile.isEmpty();
     }
 
-    public void addUndefined(HabboItem item) {
+    public void addUndefined(RoomItem item) {
         synchronized (this.undefined) {
             this.undefined.put(item.getId(), item);
         }
     }
 
-    public void removeUndefined(HabboItem item) {
+    public void removeUndefined(RoomItem item) {
         synchronized (this.undefined) {
             this.undefined.remove(item.getId());
         }
     }
 
-    public THashSet<HabboItem> getItemsOfType(Class<? extends HabboItem> type) {
-        THashSet<HabboItem> items = new THashSet<>();
+    public THashSet<RoomItem> getItemsOfType(Class<? extends RoomItem> type) {
+        THashSet<RoomItem> items = new THashSet<>();
         synchronized (this.undefined) {
-            for (HabboItem item : this.undefined.values()) {
+            for (RoomItem item : this.undefined.values()) {
                 if (item.getClass() == type)
                     items.add(item);
             }
@@ -679,11 +674,11 @@ public class RoomSpecialTypes {
         return items;
     }
 
-    public HabboItem getLowestItemsOfType(Class<? extends HabboItem> type) {
-        HabboItem i = null;
+    public RoomItem getLowestItemsOfType(Class<? extends RoomItem> type) {
+        RoomItem i = null;
         synchronized (this.undefined) {
-            for (HabboItem item : this.undefined.values()) {
-                if (i == null || item.getZ() < i.getZ()) {
+            for (RoomItem item : this.undefined.values()) {
+                if (i == null || item.getCurrentZ() < i.getCurrentZ()) {
                     if (item.getClass().isAssignableFrom(type)) {
                         i = item;
                     }
@@ -727,8 +722,8 @@ public class RoomSpecialTypes {
     }
 
     public Rectangle tentAt(RoomTile location) {
-        for (HabboItem item : this.getItemsOfType(InteractionTent.class)) {
-            Rectangle rectangle = RoomLayout.getRectangle(item.getX(), item.getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
+        for (RoomItem item : this.getItemsOfType(InteractionTent.class)) {
+            Rectangle rectangle = RoomLayout.getRectangle(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getBaseItem().getWidth(), item.getBaseItem().getLength(), item.getRotation());
             if (RoomLayout.tileInSquare(rectangle, location)) {
                 return rectangle;
             }

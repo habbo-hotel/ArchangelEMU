@@ -5,25 +5,26 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionCustomValues;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRoomAds;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import gnu.trove.map.hash.THashMap;
 
 public class SetObjectDataEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
         if (room == null)
             return;
 
-        if (!room.hasRights(this.client.getHabbo()))
+        if (!room.getRoomRightsManager().hasRights(this.client.getHabbo()))
             return;
 
-        HabboItem item = room.getHabboItem(this.packet.readInt());
+        int id = this.packet.readInt();
+        RoomItem item = room.getRoomItemManager().getRoomItemById(id);
         if (item == null)
             return;
 
-        if (item instanceof InteractionRoomAds && !this.client.getHabbo().hasRight(Permission.ACC_ADS_BACKGROUND)) {
+        if (item instanceof InteractionRoomAds && !this.client.getHabbo().hasPermissionRight(Permission.ACC_ADS_BACKGROUND)) {
             this.client.getHabbo().alert(Emulator.getTexts().getValue("hotel.error.roomads.nopermission"));
             return;
         }
@@ -41,8 +42,8 @@ public class SetObjectDataEvent extends MessageHandler {
                 ((InteractionCustomValues) item).values.put(key, value);
             }
 
-            item.setExtradata(((InteractionCustomValues) item).toExtraData());
-            item.needsUpdate(true);
+            item.setExtraData(((InteractionCustomValues) item).toExtraData());
+            item.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(item);
             room.updateItem(item);
             ((InteractionCustomValues) item).onCustomValuesSaved(room, this.client, oldValues);

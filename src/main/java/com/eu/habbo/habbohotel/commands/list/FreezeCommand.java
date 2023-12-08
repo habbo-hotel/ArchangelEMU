@@ -18,7 +18,7 @@ public class FreezeCommand extends Command {
             if (habbo == null) {
                 gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_freeze.not_found"), params[1]), RoomChatMessageBubbles.ALERT);
             } else {
-                if (habbo.getRoomUnit().canWalk()) {
+                if (habbo.getRoomUnit().isCanWalk()) {
                     habbo.getRoomUnit().setCanWalk(false);
                     habbo.whisper(getTextsValue("commands.succes.cmd_freeze.frozen"), RoomChatMessageBubbles.ALERT);
                     gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_freeze.user_frozen"), params[1]), RoomChatMessageBubbles.ALERT);

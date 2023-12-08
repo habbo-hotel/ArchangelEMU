@@ -10,23 +10,25 @@ import com.eu.habbo.messages.outgoing.rooms.FlatAccessibleMessageComposer;
 public class LetUserInEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null && this.client.getHabbo().getHabboInfo().getCurrentRoom().hasRights(this.client.getHabbo())) {
+        if (this.client.getHabbo().getRoomUnit().getRoom() != null && this.client.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(this.client.getHabbo())) {
             String username = this.packet.readString();
             boolean accepted = this.packet.readBoolean();
 
             Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(username);
 
-            if (habbo != null && habbo.getHabboInfo().getRoomQueueId() == this.client.getHabbo().getHabboInfo().getCurrentRoom().getId()) {
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().removeFromQueue(habbo);
+            if (habbo != null) {
+                if (habbo.getHabboInfo().getRoomQueueId() == this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId()) {
+                    this.client.getHabbo().getRoomUnit().getRoom().removeFromQueue(habbo);
 
-                if (accepted) {
-                    habbo.getClient().sendResponse(new FlatAccessibleMessageComposer(""));
-                    Emulator.getGameEnvironment().getRoomManager().enterRoom(habbo, this.client.getHabbo().getHabboInfo().getCurrentRoom().getId(), "", true);
-                } else {
-                    habbo.getClient().sendResponse(new FlatAccessDeniedMessageComposer(""));
-                    habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
+                    if (accepted) {
+                        habbo.getClient().sendResponse(new FlatAccessibleMessageComposer(""));
+                        Emulator.getGameEnvironment().getRoomManager().enterRoom(habbo, this.client.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId(), "", true);
+                    } else {
+                        habbo.getClient().sendResponse(new FlatAccessDeniedMessageComposer(""));
+                        habbo.getClient().sendResponse(new CloseConnectionMessageComposer());
+                    }
+                    habbo.getHabboInfo().setRoomQueueId(0);
                 }
-                habbo.getHabboInfo().setRoomQueueId(0);
             }
 
         }

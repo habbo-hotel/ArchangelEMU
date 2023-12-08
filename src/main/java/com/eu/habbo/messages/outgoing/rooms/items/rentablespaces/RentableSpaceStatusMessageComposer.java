@@ -3,7 +3,7 @@ package com.eu.habbo.messages.outgoing.rooms.items.rentablespaces;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRentableSpace;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -27,7 +27,7 @@ public class RentableSpaceStatusMessageComposer extends MessageComposer {
     //:test 194 b:1 i:101 i:1 s:Admin i:10 i:10
 
     private final Habbo habbo;
-    private final HabboItem item;
+    private final RoomItem item;
     private int errorCode = 0;
 
     @Override

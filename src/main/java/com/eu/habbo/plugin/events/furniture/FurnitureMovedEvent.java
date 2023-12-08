@@ -2,7 +2,7 @@ package com.eu.habbo.plugin.events.furniture;
 
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 
 public class FurnitureMovedEvent extends FurnitureUserEvent {
 
@@ -11,7 +11,7 @@ public class FurnitureMovedEvent extends FurnitureUserEvent {
     private boolean pluginHelper;
 
 
-    public FurnitureMovedEvent(HabboItem furniture, Habbo habbo, RoomTile oldPosition, RoomTile newPosition) {
+    public FurnitureMovedEvent(RoomItem furniture, Habbo habbo, RoomTile oldPosition, RoomTile newPosition) {
         super(furniture, habbo);
 
         this.oldPosition = oldPosition;

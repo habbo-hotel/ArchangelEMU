@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.commands.list;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
@@ -25,8 +25,7 @@ public class InvisibleCommand extends Command {
 
             new RoomUnitTeleport(roomUnit, roomUnit.getRoom(), roomLayout.getDoorTile().getX(), roomLayout.getDoorTile().getY(), roomLayout.getDoorTile().getZ(), 0).run();
 
-            roomUnit.setInvisible(false)
-                    .setInRoom(true);
+            roomUnit.setInvisible(false);
 
             roomUnit.getRoom().sendComposer(new RoomUsersComposer(gameClient.getHabbo()).compose());
             roomUnit.getRoom().sendComposer(new UserUpdateComposer(roomUnit).compose());
@@ -41,7 +40,7 @@ public class InvisibleCommand extends Command {
 
         roomUnit.setInvisible(true);
         gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_invisible.updated"));
-        gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserRemoveMessageComposer(roomUnit).compose());
+        gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRemoveMessageComposer(roomUnit).compose());
 
         return true;
     }

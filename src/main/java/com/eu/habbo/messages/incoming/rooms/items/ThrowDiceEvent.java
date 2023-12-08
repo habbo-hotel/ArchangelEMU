@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDice;
 import com.eu.habbo.habbohotel.items.interactions.InteractionSpinningBottle;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class ThrowDiceEvent extends MessageHandler {
@@ -12,17 +12,17 @@ public class ThrowDiceEvent extends MessageHandler {
     public void handle() throws Exception {
         int itemId = this.packet.readInt();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null) {
             return;
         }
 
-        HabboItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (item != null) {
             if (item instanceof InteractionDice || item instanceof InteractionSpinningBottle) {
-                if (RoomLayout.tilesAdjecent(room.getLayout().getTile(item.getX(), item.getY()), this.client.getHabbo().getRoomUnit().getCurrentLocation())) {
+                if (RoomLayout.tilesAdjecent(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), this.client.getHabbo().getRoomUnit().getCurrentPosition())) {
                     item.onClick(this.client, room, new Object[]{});
                 }
             }

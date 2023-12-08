@@ -4,11 +4,12 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRentableSpace;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
-import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
+
+import java.util.HashSet;
 
 @AllArgsConstructor
 public class ClearRentedSpace implements Runnable {
@@ -17,14 +18,16 @@ public class ClearRentedSpace implements Runnable {
 
     @Override
     public void run() {
-        THashSet<HabboItem> items = new THashSet<>();
+        HashSet<RoomItem> items = new HashSet<>();
 
-        for (RoomTile t : this.room.getLayout().getTilesAt(this.room.getLayout().getTile(this.item.getX(), this.item.getY()), this.item.getBaseItem().getWidth(), this.item.getBaseItem().getLength(), this.item.getRotation())) {
-            for (HabboItem i : this.room.getItemsAt(t)) {
-                if (i.getUserId() == this.item.getRenterId()) {
+        for (RoomTile t : this.room.getLayout().getTilesAt(this.room.getLayout().getTile(this.item.getCurrentPosition().getX(), this.item.getCurrentPosition().getY()), this.item.getBaseItem().getWidth(), this.item.getBaseItem().getLength(), this.item.getRotation())) {
+            for (RoomItem i : this.room.getRoomItemManager().getItemsAt(t)) {
+                if (i.getOwnerInfo().getId() == this.item.getRenterId()) {
                     items.add(i);
+                    //Deprecated
                     i.setRoomId(0);
-                    i.needsUpdate(true);
+                    i.setRoom(null);
+                    i.setSqlUpdateNeeded(true);
                 }
             }
         }
@@ -36,7 +39,7 @@ public class ClearRentedSpace implements Runnable {
             owner.getHabboStats().setRentedItemId(0);
             owner.getHabboStats().setRentedTimeEnd(0);
         } else {
-            for (HabboItem i : items) {
+            for (RoomItem i : items) {
                 i.run();
             }
         }

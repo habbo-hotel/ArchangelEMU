@@ -14,7 +14,7 @@ public class FloorHeightMapComposer extends MessageComposer {
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.floorHeightMapComposer);
         this.response.appendBoolean(true);
-        this.response.appendInt(this.room.getWallHeight()); //FixedWallsHeight
+        this.response.appendInt(this.room.getRoomInfo().getWallThickness()); //FixedWallsHeight
         this.response.appendString(this.room.getLayout().getRelativeMap());
         return this.response;
     }

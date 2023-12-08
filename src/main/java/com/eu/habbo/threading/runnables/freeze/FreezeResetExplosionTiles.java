@@ -2,7 +2,7 @@ package com.eu.habbo.threading.runnables.freeze;
 
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeTile;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import gnu.trove.set.hash.THashSet;
 import lombok.AllArgsConstructor;
 
@@ -14,8 +14,8 @@ class FreezeResetExplosionTiles implements Runnable {
 
     @Override
     public void run() {
-        for (HabboItem item : this.tiles) {
-            item.setExtradata("0");
+        for (RoomItem item : this.tiles) {
+            item.setExtraData("0");
             this.room.updateItem(item);
         }
     }

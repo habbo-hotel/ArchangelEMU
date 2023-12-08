@@ -139,8 +139,8 @@ public class EffectsComponent {
 
             this.activatedEffect = effectId;
 
-            if (this.habbo.getHabboInfo().getCurrentRoom() != null) {
-                this.habbo.getHabboInfo().getCurrentRoom().giveEffect(this.habbo, effectId, effect.remainingTime());
+            if (this.habbo.getRoomUnit().getRoom() != null) {
+                this.habbo.getRoomUnit().giveEffect(effectId, effect.remainingTime());
             }
 
             this.habbo.getClient().sendResponse(new AvatarEffectActivatedMessageComposer(effect));

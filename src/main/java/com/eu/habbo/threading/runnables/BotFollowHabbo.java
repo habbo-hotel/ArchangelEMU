@@ -20,16 +20,16 @@ public class BotFollowHabbo implements Runnable {
     public void run() {
         if (this.bot != null) {
             if (this.habbo != null && this.bot.getFollowingHabboId() == this.habbo.getHabboInfo().getId()) {
-                if (this.habbo.getHabboInfo().getCurrentRoom() != null && this.habbo.getHabboInfo().getCurrentRoom() == this.room) {
+                if (this.habbo.getRoomUnit().getRoom() != null && this.habbo.getRoomUnit().getRoom() == this.room) {
                     if (this.habbo.getRoomUnit() != null) {
                         if (this.bot.getRoomUnit() != null) {
-                            RoomTile target = this.room.getLayout().getTileInFront(this.habbo.getRoomUnit().getCurrentLocation(), Math.abs((this.habbo.getRoomUnit().getBodyRotation().getValue() + 4)) % 8);
+                            RoomTile target = this.room.getLayout().getTileInFront(this.habbo.getRoomUnit().getCurrentPosition(), Math.abs((this.habbo.getRoomUnit().getBodyRotation().getValue() + 4)) % 8);
 
                             if (target != null) {
                                 if (target.getX() < 0 || target.getY() < 0)
-                                    target = this.room.getLayout().getTileInFront(this.habbo.getRoomUnit().getCurrentLocation(), this.habbo.getRoomUnit().getBodyRotation().getValue());
+                                    target = this.room.getLayout().getTileInFront(this.habbo.getRoomUnit().getCurrentPosition(), this.habbo.getRoomUnit().getBodyRotation().getValue());
 
-                                if(this.habbo.getRoomUnit().getCurrentLocation().distance(this.bot.getRoomUnit().getCurrentLocation()) < 2) {
+                                if(this.habbo.getRoomUnit().getCurrentPosition().distance(this.bot.getRoomUnit().getCurrentPosition()) < 2) {
                                     if(!hasReached) {
                                         WiredHandler.handle(WiredTriggerType.BOT_REACHED_AVTR, bot.getRoomUnit(), room, new Object[]{});
                                         hasReached = true;
@@ -40,7 +40,7 @@ public class BotFollowHabbo implements Runnable {
                                 }
 
                                 if (target.getX() >= 0 && target.getY() >= 0) {
-                                    this.bot.getRoomUnit().setGoalLocation(target);
+                                    this.bot.getRoomUnit().walkTo(target);
                                     this.bot.getRoomUnit().setCanWalk(true);
                                     Emulator.getThreading().run(this, 500);
                                 }

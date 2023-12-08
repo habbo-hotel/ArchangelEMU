@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.outgoing.rooms.items;
 
 import com.eu.habbo.habbohotel.items.interactions.*;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 @AllArgsConstructor
 public class ObjectsMessageComposer extends MessageComposer {
     private final TIntObjectMap<String> furniOwnerNames;
-    private final THashSet<? extends HabboItem> items;
+    private final THashSet<? extends RoomItem> items;
 
 
     @Override
@@ -37,13 +37,13 @@ public class ObjectsMessageComposer extends MessageComposer {
 
         this.response.appendInt(this.items.size());
 
-        for (HabboItem item : this.items) {
+        for (RoomItem item : this.items) {
             item.serializeFloorData(this.response);
             this.response.appendInt(item instanceof InteractionGift ? ((((InteractionGift) item).getColorId() * 1000) + ((InteractionGift) item).getRibbonId()) : (item instanceof InteractionMusicDisc ? ((InteractionMusicDisc) item).getSongId() : 1));
             item.serializeExtradata(this.response);
             this.response.appendInt(-1);
             this.response.appendInt(item instanceof InteractionTeleport || item instanceof InteractionSwitch || item instanceof InteractionSwitchRemoteControl || item instanceof InteractionVendingMachine || item instanceof InteractionInformationTerminal || item instanceof InteractionPostIt || item instanceof InteractionSpinningBottle || item instanceof InteractionPuzzleBox ? 2 : item.isUsable() ? 1 : 0);
-            this.response.appendInt(item.getUserId());
+            this.response.appendInt(item.getOwnerInfo().getId());
         }
         return this.response;
     }

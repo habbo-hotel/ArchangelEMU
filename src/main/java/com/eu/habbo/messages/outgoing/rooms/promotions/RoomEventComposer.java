@@ -30,11 +30,11 @@ public class RoomEventComposer extends MessageComposer {
             this.response.appendInt(0);
             this.response.appendInt(0);
         } else {
-            this.response.appendInt(this.room.getId()); // promotion id
-            this.response.appendInt(this.room.getOwnerId());
-            this.response.appendString(this.room.getOwnerName());
+            this.response.appendInt(this.room.getRoomInfo().getId()); // promotion id
+            this.response.appendInt(this.room.getRoomInfo().getOwnerInfo().getId());
+            this.response.appendString(this.room.getRoomInfo().getOwnerInfo().getUsername());
 
-            this.response.appendInt(this.room.getId()); // room id
+            this.response.appendInt(this.room.getRoomInfo().getId()); // room id
             this.response.appendInt(1); // "type"
 
             this.response.appendString(this.roomPromotion.getTitle());

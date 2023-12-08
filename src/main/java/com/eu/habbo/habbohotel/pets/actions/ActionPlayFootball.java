@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetAction;
 import com.eu.habbo.habbohotel.pets.PetVocalsType;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 
 public class ActionPlayFootball extends PetAction {
     public ActionPlayFootball() {
@@ -21,9 +21,9 @@ public class ActionPlayFootball extends PetAction {
         if(room == null || room.getLayout() == null)
             return false;
 
-        HabboItem foundBall = null;
+        RoomItem foundBall = null;
 
-        for(HabboItem item : room.getFloorItems()) {
+        for(RoomItem item : room.getRoomItemManager().getFloorItems().values()) {
             if(item instanceof InteractionPushable) {
                 foundBall = item;
             }
@@ -32,7 +32,7 @@ public class ActionPlayFootball extends PetAction {
         if(foundBall == null)
             return false;
 
-        pet.getRoomUnit().setGoalLocation(room.getLayout().getTile(foundBall.getX(), foundBall.getY()));
+        pet.getRoomUnit().walkTo(room.getLayout().getTile(foundBall.getCurrentPosition().getX(), foundBall.getCurrentPosition().getY()));
 
         if (pet.getHappiness() > 75)
             pet.say(pet.getPetData().randomVocal(PetVocalsType.PLAYFUL));

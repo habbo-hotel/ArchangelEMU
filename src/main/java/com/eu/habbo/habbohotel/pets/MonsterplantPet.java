@@ -4,8 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
@@ -19,7 +19,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -120,7 +119,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
 
     @Override
     public void run() {
-        if (this.isNeedsUpdate()) {
+        if (this.isSqlUpdateNeeded()) {
             super.run();
 
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE users_pets SET mp_type = ?, mp_color = ?, mp_nose = ?, mp_eyes = ?, mp_mouth = ?, mp_nose_color = ?, mp_eyes_color = ?, mp_mouth_color = ?, mp_death_timestamp = ?, mp_breedable = ?, mp_allow_breed = ?, mp_is_dead = ? WHERE id = ?")) {
@@ -146,26 +145,26 @@ public class MonsterplantPet extends Pet implements IPetLook {
 
     @Override
     public void cycle() {
-        if (this.room != null && this.roomUnit != null) {
+        if (this.room != null && this.getRoomUnit() != null) {
             if (this.isDead()) {
-                this.roomUnit.removeStatus(RoomUnitStatus.GESTURE);
+                this.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
 
                 if (!this.hasDied) {
                     AchievementManager.progressAchievement(Emulator.getGameEnvironment().getHabboManager().getHabbo(this.userId), Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantGardenOfDeath"));
 
                     this.hasDied = true;
-                    this.setNeedsUpdate(true);
+                    this.setSqlUpdateNeeded(true);
                 }
 
-                this.roomUnit.clearStatus();
-                this.roomUnit.setStatus(RoomUnitStatus.RIP, "");
+                this.getRoomUnit().clearStatuses();
+                this.getRoomUnit().addStatus(RoomUnitStatus.RIP, "");
                 this.setPacketUpdate(true);
             } else {
                 int difference = Emulator.getIntUnixTimestamp() - this.created + 1;
                 if (difference >= GROW_TIME) {
                     this.growthStage = 7;
                     boolean clear = false;
-                    for (RoomUnitStatus s : this.roomUnit.getStatus().keySet()) {
+                    for (RoomUnitStatus s : this.getRoomUnit().getStatuses().keySet()) {
                         if (s.equals(RoomUnitStatus.GROW)) {
                             clear = true;
                             break;
@@ -173,7 +172,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
                     }
 
                     if (clear) {
-                        this.roomUnit.clearStatus();
+                        this.getRoomUnit().clearStatuses();
                         this.setPacketUpdate(true);
                     }
                 } else {
@@ -181,8 +180,8 @@ public class MonsterplantPet extends Pet implements IPetLook {
 
                     if (g > this.growthStage) {
                         this.growthStage = g;
-                        this.roomUnit.clearStatus();
-                        this.roomUnit.setStatus(RoomUnitStatus.fromString("grw" + this.growthStage), "");
+                        this.getRoomUnit().clearStatuses();
+                        this.getRoomUnit().addStatus(RoomUnitStatus.fromString("grw" + this.growthStage), "");
                         this.setPacketUpdate(true);
                     }
                 }
@@ -306,8 +305,8 @@ public class MonsterplantPet extends Pet implements IPetLook {
             this.room.sendComposer(new PetStatusUpdateComposer(pet).compose());
             this.room.sendComposer(new PetStatusUpdateComposer(this).compose());
 
-            this.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "reb");
-            pet.getRoomUnit().setStatus(RoomUnitStatus.GESTURE, "reb");
+            this.getRoomUnit().addStatus(RoomUnitStatus.GESTURE, "reb");
+            pet.getRoomUnit().addStatus(RoomUnitStatus.GESTURE, "reb");
 
             this.room.sendComposer(new UserUpdateComposer(this.getRoomUnit()).compose());
             this.room.sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
@@ -315,11 +314,11 @@ public class MonsterplantPet extends Pet implements IPetLook {
             this.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
             pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
 
-            Habbo ownerOne = this.room.getHabbo(this.getUserId());
+            Habbo ownerOne = this.room.getRoomUnitManager().getRoomHabboById(this.getUserId());
             Habbo ownerTwo = null;
 
             if (this.getUserId() != pet.getUserId()) {
-                ownerTwo = this.room.getHabbo(pet.getUserId());
+                ownerTwo = this.room.getRoomUnitManager().getRoomHabboById(pet.getUserId());
             }
 
             Item seedBase;
@@ -331,7 +330,7 @@ public class MonsterplantPet extends Pet implements IPetLook {
             }
 
             if (seedBase != null) {
-                HabboItem seed;
+                RoomItem seed;
                 if (ownerOne != null) {
                     AchievementManager.progressAchievement(ownerOne, Emulator.getGameEnvironment().getAchievementManager().getAchievement("MonsterPlantBreeder"), 1);
                     seed = Emulator.getGameEnvironment().getItemManager().createItem(ownerOne.getHabboInfo().getId(), seedBase, 0, 0, "");

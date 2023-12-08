@@ -24,8 +24,8 @@ public class RoomAdPurchaseInfoComposer extends MessageComposer {
         this.response.appendBoolean(true);
         this.response.appendInt(this.rooms.size());
         for (Room room : this.rooms) {
-            this.response.appendInt(room.getId());
-            this.response.appendString(room.getName());
+            this.response.appendInt(room.getRoomInfo().getId());
+            this.response.appendString(room.getRoomInfo().getName());
             this.response.appendBoolean(true); //IDK what the fuck this is.
         }
         return this.response;

@@ -16,38 +16,45 @@ public class MountPetEvent extends MessageHandler {
     public void handle() {
         int petId = this.packet.readInt();
         Habbo habbo = this.client.getHabbo();
-        Room room = habbo.getHabboInfo().getCurrentRoom();
+        Room room = habbo.getRoomUnit().getRoom();
 
-        if (room == null)
-            return;
-
-        Pet pet = room.getPet(petId);
-
-        if (!(pet instanceof RideablePet rideablePet))
-            return;
-
-        //dismount
-        if (habbo.getHabboInfo().getRiding() != null) {
-            habbo.getHabboInfo().dismountPet();
+        if (room == null) {
             return;
         }
 
-        // someone is already on it
-        if (rideablePet.getRider() != null)
-            return;
+        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
 
-        // check if able to ride
-        if (!rideablePet.anyoneCanRide() && habbo.getHabboInfo().getId() != rideablePet.getUserId())
+        if (!(pet instanceof RideablePet rideablePet)) {
             return;
+        }
 
-        List<RoomTile> availableTiles = room.getLayout().getWalkableTilesAround(pet.getRoomUnit().getCurrentLocation());
+        if (habbo.getRoomUnit().isRiding()) {
+            boolean mountAnotherPet = petId != habbo.getRoomUnit().getRidingPet().getId();
+            habbo.getRoomUnit().dismountPet(false);
+
+            if(!mountAnotherPet) {
+                return;
+            }
+        }
+
+        if (rideablePet.getRider() != null) {
+            return;
+        }
+
+        if (!rideablePet.anyoneCanRide() && habbo.getHabboInfo().getId() != rideablePet.getUserId()) {
+            return;
+        }
+
+        List<RoomTile> availableTiles = room.getLayout().getWalkableTilesAround(pet.getRoomUnit().getCurrentPosition());
 
         // if cant reach it then cancel
-        if (availableTiles.isEmpty())
+        if (availableTiles.isEmpty()) {
             return;
+        }
 
         RoomTile goalTile = availableTiles.get(0);
-        habbo.getRoomUnit().setGoalLocation(goalTile);
+        habbo.getRoomUnit().walkTo(goalTile);
+        habbo.getRoomUnit().setRideLocked(true);
         Emulator.getThreading().run(new RoomUnitRidePet(rideablePet, habbo, goalTile));
         rideablePet.getRoomUnit().setWalkTimeOut(3 + Emulator.getIntUnixTimestamp());
         rideablePet.getRoomUnit().stopWalking();

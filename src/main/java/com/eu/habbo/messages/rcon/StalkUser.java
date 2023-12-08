@@ -23,7 +23,7 @@ public class StalkUser extends RCONMessage<StalkUser.StalkUserJSON> {
                 return;
             }
 
-            if (target.getHabboInfo().getCurrentRoom() == null) {
+            if (target.getRoomUnit().getRoom() == null) {
                 this.message = Emulator.getTexts().getValue("commands.error.cmd_stalk.not_room").replace("%user%", json.user_id + "");
                 this.status = STATUS_ERROR;
                 return;
@@ -35,14 +35,14 @@ public class StalkUser extends RCONMessage<StalkUser.StalkUserJSON> {
                 return;
             }
 
-            if (target.getHabboInfo().getCurrentRoom() == habbo.getHabboInfo().getCurrentRoom()) {
+            if (target.getRoomUnit().getRoom() == habbo.getRoomUnit().getRoom()) {
                 this.message = Emulator.getTexts().getValue("commands.generic.cmd_stalk.same_room").replace("%user%", json.user_id + "");
                 this.status = STATUS_ERROR;
                 return;
             }
 
             if (this.status == 0) {
-                habbo.getClient().sendResponse(new RoomForwardMessageComposer(target.getHabboInfo().getCurrentRoom().getId()));
+                habbo.getClient().sendResponse(new RoomForwardMessageComposer(target.getRoomUnit().getRoom().getRoomInfo().getId()));
             }
         }
     }

@@ -16,7 +16,7 @@ public class GetGuildCreationInfoEvent extends MessageHandler {
         THashSet<Room> roomList = new THashSet<>();
 
         for (Room room : rooms) {
-            if (room.getGuildId() == 0)
+            if (room.getRoomInfo().getGuild().getId() == 0)
                 roomList.add(room);
         }
 

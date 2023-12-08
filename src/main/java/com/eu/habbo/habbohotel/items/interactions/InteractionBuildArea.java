@@ -6,10 +6,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboItem;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectsMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import gnu.trove.TCollections;
@@ -39,8 +38,8 @@ public class InteractionBuildArea extends InteractionCustomValues {
         tiles = new THashSet<>();
     }
 
-    public InteractionBuildArea(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, defaultValues);
+    public InteractionBuildArea(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, defaultValues);
         defaultValues.put("tilesLeft", "0");
         defaultValues.put("tilesRight", "0");
         defaultValues.put("tilesFront", "0");
@@ -69,7 +68,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
             if (builder != null) {
                 builderInfo = builder.getHabboInfo();
             } else {
-                builderInfo = HabboManager.getOfflineHabboInfo(builderName);
+                builderInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(builderName);
             }
             if (builderInfo != null) {
                 canBuild.add(builderInfo.getId());
@@ -78,10 +77,10 @@ public class InteractionBuildArea extends InteractionCustomValues {
 
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : this.tiles) {
-                THashSet<HabboItem> tileItems = room.getItemsAt(tile);
-                for (HabboItem tileItem : tileItems) {
-                    if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
-                        room.pickUpItem(tileItem, null);
+                THashSet<RoomItem> tileItems = room.getRoomItemManager().getItemsAt(tile);
+                for (RoomItem tileItem : tileItems) {
+                    if (canBuild.contains(tileItem.getOwnerInfo().getId()) && tileItem != this) {
+                        room.getRoomItemManager().pickUpItem(tileItem, null);
                     }
                 }
             }
@@ -103,7 +102,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
             if (builder != null) {
                 builderInfo = builder.getHabboInfo();
             } else {
-                builderInfo = HabboManager.getOfflineHabboInfo(builderName);
+                builderInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(builderName);
             }
             if (builderInfo != null) {
                 canBuild.add(builderInfo.getId());
@@ -127,11 +126,11 @@ public class InteractionBuildArea extends InteractionCustomValues {
 
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : this.tiles) {
-                THashSet<HabboItem> tileItems = room.getItemsAt(tile);
+                THashSet<RoomItem> tileItems = room.getRoomItemManager().getItemsAt(tile);
                 if (newTiles.contains(tile)) continue;
-                for (HabboItem tileItem : tileItems) {
-                    if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
-                        room.pickUpItem(tileItem, null);
+                for (RoomItem tileItem : tileItems) {
+                    if (canBuild.contains(tileItem.getOwnerInfo().getId()) && tileItem != this) {
+                        room.getRoomItemManager().pickUpItem(tileItem, null);
                     }
                 }
             }
@@ -140,7 +139,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
     }
 
     public boolean inSquare(RoomTile location) {
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = this.getRoom();
 
         if (room != null && this.tiles.size() == 0) {
             regenAffectedTiles(room);
@@ -151,10 +150,10 @@ public class InteractionBuildArea extends InteractionCustomValues {
     }
 
     private void regenAffectedTiles(Room room) {
-        int minX = Math.max(0, this.getX() - Integer.parseInt(this.values.get("tilesBack")));
-        int minY = Math.max(0, this.getY() - Integer.parseInt(this.values.get("tilesRight")));
-        int maxX = Math.min(room.getLayout().getMapSizeX(), this.getX() + Integer.parseInt(this.values.get("tilesFront")));
-        int maxY = Math.min(room.getLayout().getMapSizeY(), this.getY() + Integer.parseInt(this.values.get("tilesLeft")));
+        int minX = Math.max(0, this.getCurrentPosition().getX() - Integer.parseInt(this.values.get("tilesBack")));
+        int minY = Math.max(0, this.getCurrentPosition().getY() - Integer.parseInt(this.values.get("tilesRight")));
+        int maxX = Math.min(room.getLayout().getMapSizeX(), this.getCurrentPosition().getX() + Integer.parseInt(this.values.get("tilesFront")));
+        int maxY = Math.min(room.getLayout().getMapSizeY(), this.getCurrentPosition().getY() + Integer.parseInt(this.values.get("tilesLeft")));
 
         this.tiles.clear();
 
@@ -179,7 +178,7 @@ public class InteractionBuildArea extends InteractionCustomValues {
             if (builder != null) {
                 builderInfo = builder.getHabboInfo();
             } else {
-                builderInfo = HabboManager.getOfflineHabboInfo(builderName);
+                builderInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(builderName);
             }
             if (builderInfo != null) {
                 canBuild.add(builderInfo.getId());
@@ -188,10 +187,10 @@ public class InteractionBuildArea extends InteractionCustomValues {
 
         THashSet<RoomTile> oldTiles = new THashSet<>();
 
-        int minX = Math.max(0, this.getX() - Integer.parseInt(oldValues.get("tilesBack")));
-        int minY = Math.max(0, this.getY() - Integer.parseInt(oldValues.get("tilesRight")));
-        int maxX = Math.min(room.getLayout().getMapSizeX(), this.getX() + Integer.parseInt(oldValues.get("tilesFront")));
-        int maxY = Math.min(room.getLayout().getMapSizeY(), this.getY() + Integer.parseInt(oldValues.get("tilesLeft")));
+        int minX = Math.max(0, this.getCurrentPosition().getX() - Integer.parseInt(oldValues.get("tilesBack")));
+        int minY = Math.max(0, this.getCurrentPosition().getY() - Integer.parseInt(oldValues.get("tilesRight")));
+        int maxX = Math.min(room.getLayout().getMapSizeX(), this.getCurrentPosition().getX() + Integer.parseInt(oldValues.get("tilesFront")));
+        int maxY = Math.min(room.getLayout().getMapSizeY(), this.getCurrentPosition().getY() + Integer.parseInt(oldValues.get("tilesLeft")));
 
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
@@ -202,10 +201,10 @@ public class InteractionBuildArea extends InteractionCustomValues {
         }
         if (!canBuild.isEmpty()) {
             for (RoomTile tile : oldTiles) {
-                THashSet<HabboItem> tileItems = room.getItemsAt(tile);
-                for (HabboItem tileItem : tileItems) {
-                    if (canBuild.contains(tileItem.getUserId()) && tileItem != this) {
-                        room.pickUpItem(tileItem, null);
+                THashSet<RoomItem> tileItems = room.getRoomItemManager().getItemsAt(tile);
+                for (RoomItem tileItem : tileItems) {
+                    if (canBuild.contains(tileItem.getOwnerInfo().getId()) && tileItem != this) {
+                        room.getRoomItemManager().pickUpItem(tileItem, null);
                     }
                 }
             }
@@ -217,21 +216,21 @@ public class InteractionBuildArea extends InteractionCustomValues {
         if (effectItem != null) {
             TIntObjectMap<String> ownerNames = TCollections.synchronizedMap(new TIntObjectHashMap<>(0));
             ownerNames.put(-1, "System");
-            THashSet<HabboItem> items = new THashSet<>();
+            THashSet<RoomItem> items = new THashSet<>();
 
             int id = 0;
             for (RoomTile tile : this.tiles) {
                 id--;
-                HabboItem item = new InteractionDefault(id, -1, effectItem, "1", 0, 0);
-                item.setX(tile.getX());
-                item.setY(tile.getY());
-                item.setZ(tile.relativeHeight());
+                RoomItem item = new InteractionDefault(id, null, effectItem, "1", 0, 0);
+
+                item.setCurrentPosition(tile);
+                item.setCurrentZ(tile.relativeHeight());
                 items.add(item);
             }
 
             client.sendResponse(new ObjectsMessageComposer(ownerNames, items));
             Emulator.getThreading().run(() -> {
-                for (HabboItem item : items) {
+                for (RoomItem item : items) {
                     client.sendResponse(new RemoveFloorItemComposer(item, true));
                 }
             }, 3000);

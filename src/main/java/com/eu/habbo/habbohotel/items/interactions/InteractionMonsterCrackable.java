@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,8 +19,8 @@ public class InteractionMonsterCrackable extends InteractionCrackable implements
         super(set, baseItem);
     }
 
-    public InteractionMonsterCrackable(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionMonsterCrackable(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -33,7 +34,7 @@ public class InteractionMonsterCrackable extends InteractionCrackable implements
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        if (room.isPublicRoom()) this.respawn = true;
+        if (room.getRoomInfo().isPublicRoom()) this.respawn = true;
 
         super.onClick(client, room, objects);
     }
@@ -46,9 +47,10 @@ public class InteractionMonsterCrackable extends InteractionCrackable implements
     @Override
     public void reset(Room room) {
         RoomTile tile = room.getRandomWalkableTile();
-        this.setX(tile.getX());
-        this.setY(tile.getY());
-        this.setZ(room.getStackHeight(tile.getX(), tile.getY(), false));
+
+        this.setCurrentPosition(tile);
+        this.setCurrentZ(room.getStackHeight(tile.getX(), tile.getY(), false));
+
         super.reset(room);
     }
 

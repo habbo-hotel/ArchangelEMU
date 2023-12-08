@@ -5,7 +5,9 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.interfaces.ConditionalGate;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.threading.runnables.CloseGate;
 
 import java.sql.ResultSet;
@@ -28,12 +30,12 @@ public class InteractionEffectGate extends InteractionDefault implements Conditi
 
     public InteractionEffectGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionEffectGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionEffectGate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
@@ -43,17 +45,16 @@ public class InteractionEffectGate extends InteractionDefault implements Conditi
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        if (roomUnit == null || room == null)
+        if (roomUnit == null || room == null || !(roomUnit instanceof RoomHabbo roomHabbo))
             return false;
 
         String customparams = this.getBaseItem().getCustomParams().trim();
 
         if (!customparams.isEmpty()) {
-            return Arrays.asList(customparams.split(";"))
-                    .contains(String.valueOf(roomUnit.getEffectId()));
+            return Arrays.asList(customparams.split(";")).contains(String.valueOf(roomHabbo.getEffectId()));
         }
 
-        return defaultAllowedEnables.contains(roomUnit.getEffectId());
+        return defaultAllowedEnables.contains(roomHabbo.getEffectId());
     }
 
     @Override
@@ -61,7 +62,7 @@ public class InteractionEffectGate extends InteractionDefault implements Conditi
         super.onWalkOn(roomUnit, room, objects);
 
         if (this.canWalkOn(roomUnit, room, objects)) {
-            this.setExtradata("1");
+            this.setExtraData("1");
             room.updateItemState(this);
         }
     }

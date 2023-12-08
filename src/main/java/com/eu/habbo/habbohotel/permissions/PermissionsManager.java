@@ -10,12 +10,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 @Slf4j
 public class PermissionsManager {
-    private final Map<Integer, PermissionGroup> permissionGroups;
+    private final ConcurrentHashMap<Integer, PermissionGroup> permissionGroups;
     private final Map<String, PermissionCommand> permissionCommands;
     private final Map<String, PermissionCommand> fixedCommands;
     private final Map<String, PermissionRight> permissionRights;
@@ -23,7 +25,7 @@ public class PermissionsManager {
 
     public PermissionsManager() {
         long millis = System.currentTimeMillis();
-        this.permissionGroups = new HashMap<>();
+        this.permissionGroups = new ConcurrentHashMap<>();
         this.permissionCommands = new HashMap<>();
         this.fixedCommands = new HashMap<>();
         this.permissionRights = new HashMap<>();
@@ -37,21 +39,35 @@ public class PermissionsManager {
         this.loadPermissionRights();
         this.loadPermissionGroups();
         this.loadEnables();
+
         log.info(this.permissionGroups.size() + " ranks, " + this.permissionCommands.size() + " commands " + this.permissionRights.size() + " rights -> Loaded!");
     }
 
+    /**
+     * Load permission groups information, commands and rights
+     */
     private void loadPermissionGroups() {
+        HashSet<Integer> currentGroupIds = new HashSet<>();
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permission_groups ORDER BY id ASC")) {
             while (set.next()) {
-                PermissionGroup permissionGroup = new PermissionGroup(set, this.permissionCommands);
+                PermissionGroup permissionGroup = new PermissionGroup(set, this.permissionCommands, this.permissionRights);
                 this.permissionGroups.put(permissionGroup.getId(), permissionGroup);
+                currentGroupIds.add(permissionGroup.getId());
             }
         } catch (SQLException e) {
             log.error("Caught SQL exception", e);
         }
+
+        //TODO if Group is eliminated every user that has this rank must update to lowest Rank
+        this.permissionGroups.entrySet().removeIf(entry -> !currentGroupIds.contains(entry.getKey()));
     }
 
+    /**
+     * Load every available command in the database
+     */
     private void loadPermissionCommands() {
+        this.permissionCommands.clear();
+
         this.loadFixedCommands();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permission_commands")) {
@@ -62,8 +78,14 @@ public class PermissionsManager {
         } catch (SQLException e) {
             log.error("Caught SQL exception", e);
         }
+
+        log.info("Loaded {} available commands!", this.permissionCommands.size());
     }
 
+    /**
+     * Load fixed commands, any command that doesn't require a permission
+     * these commands are always available for any user
+    */
     private void loadFixedCommands() {
         String[] fixedCommandNames = {
                 "cmd_about",
@@ -75,7 +97,8 @@ public class PermissionsManager {
                 "cmd_mute_pets",
                 "cmd_plugins",
                 "cmd_sit",
-                "cmd_stand"
+                "cmd_stand",
+                "cmd_test"
         };
 
         for(String command : fixedCommandNames) {
@@ -86,11 +109,19 @@ public class PermissionsManager {
         }
     }
 
+    /**
+     * Add a fixed command through plugins if you want to include a fixed command
+     * on main source make use of `loadFixedCommands()` instead
+     *
+     * @param fixedCommand A command that will be always available to any user
+     */
     public void addFixedCommand(PermissionCommand fixedCommand) {
         this.fixedCommands.put(fixedCommand.getName(), fixedCommand);
     }
 
     private void loadPermissionRights() {
+        this.permissionRights.clear();
+
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); Statement statement = connection.createStatement(); ResultSet set = statement.executeQuery("SELECT * FROM permission_rights")) {
             while (set.next()) {
                 PermissionRight permissionRight = new PermissionRight(set);
@@ -99,6 +130,8 @@ public class PermissionsManager {
         } catch (SQLException e) {
             log.error("Caught SQL exception", e);
         }
+
+        log.info("Loaded {} available rights!", this.permissionRights.size());
     }
 
     private void loadEnables() {
@@ -140,8 +173,8 @@ public class PermissionsManager {
                 .orElseGet(() -> null);
     }
 
-    public Collection<PermissionCommand> getFixedCommands() {
-        return this.fixedCommands.values();
+    public Collection<String> getFixedCommands() {
+        return this.fixedCommands.keySet();
     }
 
     public boolean isFixedCommand(String name) {

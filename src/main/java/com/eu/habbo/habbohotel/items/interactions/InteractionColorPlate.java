@@ -2,7 +2,8 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
@@ -15,8 +16,8 @@ public class InteractionColorPlate extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionColorPlate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionColorPlate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -36,12 +37,12 @@ public class InteractionColorPlate extends InteractionDefault {
     private void change(Room room, int amount) {
         int state = 0;
 
-        if (this.getExtradata() == null || this.getExtradata().isEmpty()) {
-            this.setExtradata("0");
+        if (this.getExtraData() == null || this.getExtraData().isEmpty()) {
+            this.setExtraData("0");
         }
 
         try {
-            state = Integer.parseInt(this.getExtradata());
+            state = Integer.parseInt(this.getExtraData());
         } catch (Exception e) {
             log.error("Caught exception", e);
         }
@@ -55,8 +56,8 @@ public class InteractionColorPlate extends InteractionDefault {
             state = 0;
         }
 
-        this.setExtradata(state + "");
-        this.needsUpdate(true);
+        this.setExtraData(state + "");
+        this.setSqlUpdateNeeded(true);
         room.updateItemState(this);
     }
 }

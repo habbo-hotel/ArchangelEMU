@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.catalog.recycler;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.items.ItemManager;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.PurchaseErrorMessageComposer;
 import com.eu.habbo.messages.outgoing.catalog.RecyclerFinishedComposer;
@@ -24,13 +24,13 @@ public class RecycleItemsEvent extends MessageHandler {
         }
 
         if (Emulator.getGameEnvironment().getCatalogManager().ecotronItem != null && ItemManager.RECYCLER_ENABLED) {
-            THashSet<HabboItem> items = new THashSet<>();
+            THashSet<RoomItem> items = new THashSet<>();
 
             int count = this.packet.readInt();
             if (count < Emulator.getConfig().getInt("recycler.value", 8)) return;
 
             for (int i = 0; i < count; i++) {
-                HabboItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(this.packet.readInt());
+                RoomItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(this.packet.readInt());
 
                 if (item == null)
                     return;
@@ -41,7 +41,7 @@ public class RecycleItemsEvent extends MessageHandler {
             }
 
             if (items.size() == count) {
-                for (HabboItem item : items) {
+                for (RoomItem item : items) {
                     this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
                     this.client.sendResponse(new FurniListRemoveComposer(item.getGiftAdjustedId()));
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
@@ -51,7 +51,7 @@ public class RecycleItemsEvent extends MessageHandler {
                 return;
             }
 
-            HabboItem reward = Emulator.getGameEnvironment().getItemManager().handleRecycle(this.client.getHabbo(), Emulator.getGameEnvironment().getCatalogManager().getRandomRecyclerPrize().getId() + "");
+            RoomItem reward = Emulator.getGameEnvironment().getItemManager().handleRecycle(this.client.getHabbo(), Emulator.getGameEnvironment().getCatalogManager().getRandomRecyclerPrize().getId() + "");
             if (reward == null) {
                 this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
                 return;

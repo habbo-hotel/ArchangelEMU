@@ -37,7 +37,7 @@ public class ModerateMessageEvent extends MessageHandler {
             return;
         }
 
-        boolean hasStaffPermissions = this.client.getHabbo().hasRight(Permission.ACC_MODTOOL_TICKET_Q);
+        boolean hasStaffPermissions = this.client.getHabbo().hasPermissionRight(Permission.ACC_MODTOOL_TICKET_Q);
 
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
         if (member == null) {

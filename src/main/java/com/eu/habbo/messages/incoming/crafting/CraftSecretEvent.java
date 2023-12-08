@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.crafting.CraftingAltar;
 import com.eu.habbo.habbohotel.crafting.CraftingRecipe;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.LimitedEditionSoldOutComposer;
 import com.eu.habbo.messages.outgoing.crafting.CraftingResultComposer;
@@ -25,30 +25,30 @@ public class CraftSecretEvent extends MessageHandler {
         int altarId = this.packet.readInt();
         int count = this.packet.readInt();
 
-        HabboItem craftingAltar = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(altarId);
+        RoomItem craftingAltar = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(altarId);
 
         if (craftingAltar != null) {
             CraftingAltar altar = Emulator.getGameEnvironment().getCraftingManager().getAltar(craftingAltar.getBaseItem());
 
             if (altar != null) {
-                Set<HabboItem> habboItems = new THashSet<>();
+                Set<RoomItem> roomItems = new THashSet<>();
                 Map<Item, Integer> items = new THashMap<>();
 
                 for (int i = 0; i < count; i++) {
-                    HabboItem habboItem = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(this.packet.readInt());
+                    RoomItem roomItem = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(this.packet.readInt());
 
-                    if (habboItem == null) {
+                    if (roomItem == null) {
                         this.client.sendResponse(new CraftingResultComposer(null));
                         return;
                     }
 
-                    habboItems.add(habboItem);
+                    roomItems.add(roomItem);
 
-                    if (!items.containsKey(habboItem.getBaseItem())) {
-                        items.put(habboItem.getBaseItem(), 0);
+                    if (!items.containsKey(roomItem.getBaseItem())) {
+                        items.put(roomItem.getBaseItem(), 0);
                     }
 
-                    items.put(habboItem.getBaseItem(), items.get(habboItem.getBaseItem()) + 1);
+                    items.put(roomItem.getBaseItem(), items.get(roomItem.getBaseItem()) + 1);
                 }
 
                 CraftingRecipe recipe = altar.getRecipe(items);
@@ -59,7 +59,7 @@ public class CraftSecretEvent extends MessageHandler {
                         return;
                     }
 
-                    HabboItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(this.client.getHabbo().getHabboInfo().getId(), recipe.getReward(), 0, 0, "");
+                    RoomItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(this.client.getHabbo().getHabboInfo().getId(), recipe.getReward(), 0, 0, "");
 
                     if (rewardItem != null) {
                         if (recipe.isLimited()) {
@@ -77,7 +77,7 @@ public class CraftSecretEvent extends MessageHandler {
                         }
                         this.client.getHabbo().getInventory().getItemsComponent().addItem(rewardItem);
                         this.client.sendResponse(new UnseenItemsComposer(rewardItem));
-                        for (HabboItem item : habboItems) {
+                        for (RoomItem item : roomItems) {
                             this.client.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
                             this.client.sendResponse(new FurniListRemoveComposer(item.getGiftAdjustedId()));
                             Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));

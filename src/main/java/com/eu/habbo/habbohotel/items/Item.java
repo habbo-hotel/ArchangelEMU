@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionMultiHeight;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.list.array.TIntArrayList;
@@ -12,7 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Item implements ISerialize {
-
     @Getter
     private int id;
     @Getter
@@ -33,7 +32,7 @@ public class Item implements ISerialize {
     private boolean allowWalk;
     private boolean allowSit;
     private boolean allowLay;
-    private boolean allowRecyle;
+    private boolean allowRecycle;
     private boolean allowTrade;
     private boolean allowMarketplace;
     private boolean allowGift;
@@ -52,7 +51,6 @@ public class Item implements ISerialize {
     private String customParams;
     @Getter
     private String clothingOnWalk;
-
     @Getter
     private ItemInteraction interactionType;
     @Getter
@@ -66,15 +64,15 @@ public class Item implements ISerialize {
         return item.getName().toLowerCase().startsWith("a0 pet");
     }
 
-    public static double getCurrentHeight(HabboItem item) {
+    public static double getCurrentHeight(RoomItem item) {
         if (item instanceof InteractionMultiHeight && item.getBaseItem().getMultiHeights().length > 0) {
-            if (item.getExtradata().isEmpty()) {
-                item.setExtradata("0");
+            if (item.getExtraData().isEmpty()) {
+                item.setExtraData("0");
             }
 
             try {
-                int index = Integer.parseInt(item.getExtradata()) % (item.getBaseItem().getMultiHeights().length);
-                return item.getBaseItem().getMultiHeights()[(item.getExtradata().isEmpty() ? 0 : index)];
+                int index = Integer.parseInt(item.getExtraData()) % (item.getBaseItem().getMultiHeights().length);
+                return item.getBaseItem().getMultiHeights()[(item.getExtraData().isEmpty() ? 0 : index)];
             } catch (NumberFormatException ignored) {
 
             }
@@ -103,7 +101,7 @@ public class Item implements ISerialize {
         this.allowWalk = set.getBoolean("allow_walk");
         this.allowSit = set.getBoolean("allow_sit");
         this.allowLay = set.getBoolean("allow_lay");
-        this.allowRecyle = set.getBoolean("allow_recycle");
+        this.allowRecycle = set.getBoolean("allow_recycle");
         this.allowTrade = set.getBoolean("allow_trade");
         this.allowMarketplace = set.getBoolean("allow_marketplace_sell");
         this.allowGift = set.getBoolean("allow_gift");
@@ -164,7 +162,7 @@ public class Item implements ISerialize {
     }
 
     public boolean allowRecyle() {
-        return this.allowRecyle;
+        return this.allowRecycle;
     }
 
     public boolean allowTrade() {

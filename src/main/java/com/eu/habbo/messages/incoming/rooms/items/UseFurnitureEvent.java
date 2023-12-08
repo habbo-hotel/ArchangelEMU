@@ -3,11 +3,10 @@ package com.eu.habbo.messages.incoming.rooms.items;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDice;
 import com.eu.habbo.habbohotel.items.interactions.InteractionSpinningBottle;
-import com.eu.habbo.habbohotel.items.interactions.InteractionWired;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionMonsterPlantSeed;
 import com.eu.habbo.habbohotel.pets.MonsterplantPet;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.OpenPetPackageRequestedMessageComposer;
@@ -27,7 +26,7 @@ public class UseFurnitureEvent extends MessageHandler {
     @Override
     public void handle() {
         try {
-            Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+            Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
             if (room == null)
                 return;
@@ -35,7 +34,7 @@ public class UseFurnitureEvent extends MessageHandler {
             int itemId = this.packet.readInt();
             int state = this.packet.readInt();
 
-            HabboItem item = room.getHabboItem(itemId);
+            RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
             if (item == null || item instanceof InteractionDice || item instanceof InteractionSpinningBottle)
                 return;
@@ -50,33 +49,31 @@ public class UseFurnitureEvent extends MessageHandler {
             if (handleMonsterPlantSeed(room, item)) return;
 
 
-            if (PET_PRESENTS.contains(item.getBaseItem().getName().toLowerCase()) && room.getCurrentPets().size() < Room.MAXIMUM_PETS) {
-                this.client.sendResponse(new OpenPetPackageRequestedMessageComposer(item));
-                return;
+            if (PET_PRESENTS.contains(item.getBaseItem().getName().toLowerCase())) {
+                if (room.getRoomUnitManager().getCurrentPets().size() < Room.MAXIMUM_PETS) {
+                    this.client.sendResponse(new OpenPetPackageRequestedMessageComposer(item));
+                    return;
+                }
             }
 
             item.onClick(this.client, room, new Object[]{state});
-
-            if (item instanceof InteractionWired) {
-                this.client.getHabbo().getRoomUnit().setGoalLocation(this.client.getHabbo().getRoomUnit().getCurrentLocation());
-            }
         } catch (Exception e) {
             log.error("Caught exception", e);
         }
     }
 
-    private boolean handleMonsterPlantSeed(Room room, HabboItem item) {
+    private boolean handleMonsterPlantSeed(Room room, RoomItem item) {
         if (item instanceof InteractionMonsterPlantSeed) {
             Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 
             boolean isRare = item.getBaseItem().getName().contains("rare");
             int rarity = getRarity(item, isRare);
 
-            MonsterplantPet pet = Emulator.getGameEnvironment().getPetManager().createMonsterplant(room, this.client.getHabbo(), isRare, room.getLayout().getTile(item.getX(), item.getY()), rarity);
+            MonsterplantPet pet = Emulator.getGameEnvironment().getPetManager().createMonsterplant(room, this.client.getHabbo(), isRare, room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()), rarity);
             room.sendComposer(new RemoveFloorItemComposer(item, true).compose());
-            room.removeHabboItem(item);
-            room.updateTile(room.getLayout().getTile(item.getX(), item.getY()));
-            room.placePet(pet, item.getX(), item.getY(), item.getZ());
+            room.getRoomItemManager().removeRoomItem(item);
+            room.updateTile(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
+            room.getRoomUnitManager().placePet(pet, room, item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getCurrentZ());
             pet.cycle();
             room.sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
             return true;
@@ -84,12 +81,12 @@ public class UseFurnitureEvent extends MessageHandler {
         return false;
     }
 
-    private int getRarity(HabboItem item, boolean isRare) {
-        if (item.getExtradata().isEmpty() || Integer.parseInt(item.getExtradata()) - 1 < 0) {
+    private int getRarity(RoomItem item, boolean isRare) {
+        if (item.getExtraData().isEmpty() || Integer.parseInt(item.getExtraData()) - 1 < 0) {
             return isRare ? InteractionMonsterPlantSeed.randomGoldenRarityLevel() : InteractionMonsterPlantSeed.randomRarityLevel();
         } else {
             try {
-                return Integer.parseInt(item.getExtradata()) - 1;
+                return Integer.parseInt(item.getExtraData()) - 1;
             } catch (Exception ignored) {
                 return 0;
             }

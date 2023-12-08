@@ -7,9 +7,10 @@ import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.pets.PerkAllowancesComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.breeding.ConfirmBreedingRequestComposer;
@@ -19,7 +20,7 @@ import com.eu.habbo.threading.runnables.QueryDeleteHabboItem;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionPetBreedingNest extends HabboItem {
+public class InteractionPetBreedingNest extends RoomItem {
     private Pet petOne = null;
     private Pet petTwo = null;
 
@@ -27,13 +28,13 @@ public class InteractionPetBreedingNest extends HabboItem {
         super(set, baseItem);
     }
 
-    public InteractionPetBreedingNest(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionPetBreedingNest(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        return room.getPet(roomUnit) != null && !this.boxFull();
+        return room.getRoomUnitManager().getPetByRoomUnit(roomUnit) != null && !this.boxFull();
     }
 
     @Override
@@ -45,7 +46,7 @@ public class InteractionPetBreedingNest extends HabboItem {
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -57,18 +58,18 @@ public class InteractionPetBreedingNest extends HabboItem {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Pet pet = room.getPet(roomUnit);
+        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null && !this.boxFull()) {
             this.addPet(pet);
 
             if (this.boxFull()) {
-                Habbo ownerPetOne = room.getHabbo(this.petOne.getUserId());
-                Habbo ownerPetTwo = room.getHabbo(this.petTwo.getUserId());
+                Habbo ownerPetOne = room.getRoomUnitManager().getRoomHabboById(this.petOne.getUserId());
+                Habbo ownerPetTwo = room.getRoomUnitManager().getRoomHabboById(this.petTwo.getUserId());
 
                 if (ownerPetOne != null && ownerPetTwo != null && this.petOne.getPetData().getType() == this.petTwo.getPetData().getType() && this.petOne.getPetData().getOffspringType() != -1) {
                     ownerPetTwo.getClient().sendResponse(new ConfirmBreedingRequestComposer(this.getId(), this.petOne.getPetData().getOffspringType(), this.petOne, ownerPetOne.getHabboInfo().getUsername(), this.petTwo, ownerPetTwo.getHabboInfo().getUsername()));
-                    this.setExtradata("1");
+                    this.setExtraData("1");
                     room.updateItem(this);
                 }
             }
@@ -98,7 +99,7 @@ public class InteractionPetBreedingNest extends HabboItem {
         if (this.petOne != null && this.petOne.getRoomUnit() == roomUnit) this.petOne = null;
         if (this.petTwo != null && this.petTwo.getRoomUnit() == roomUnit) this.petTwo = null;
 
-        this.setExtradata("0");
+        this.setExtraData("0");
         room.updateItem(this);
     }
 
@@ -108,14 +109,14 @@ public class InteractionPetBreedingNest extends HabboItem {
     }
 
     public void stopBreeding(Habbo habbo) {
-        this.setExtradata("0");
-        habbo.getHabboInfo().getCurrentRoom().updateItem(this);
+        this.setExtraData("0");
+        habbo.getRoomUnit().getRoom().updateItem(this);
 
         if (this.petOne != null) {
             habbo.getClient().sendResponse(new PerkAllowancesComposer(this.getId(), PerkAllowancesComposer.CLOSE_WIDGET, ""));
         }
         if (this.petTwo.getUserId() != habbo.getHabboInfo().getId()) {
-            Habbo owner = this.petTwo.getRoom().getHabbo(this.petTwo.getUserId());
+            Habbo owner = this.petTwo.getRoom().getRoomUnitManager().getRoomHabboById(this.petTwo.getUserId());
             if (owner != null) {
                 owner.getClient().sendResponse(new PerkAllowancesComposer(this.getId(), PerkAllowancesComposer.CLOSE_WIDGET, ""));
             }
@@ -142,19 +143,20 @@ public class InteractionPetBreedingNest extends HabboItem {
     public void breed(Habbo habbo, String name) {
         Emulator.getThreading().run(new QueryDeleteHabboItem(this.getId()));
 
-        this.setExtradata("2");
-        habbo.getHabboInfo().getCurrentRoom().updateItem(this);
+        this.setExtraData("2");
+        habbo.getRoomUnit().getRoom().updateItem(this);
 
-        HabboItem box = this;
+        RoomItem box = this;
 
         Emulator.getThreading().run(() -> {
             Pet offspring = Emulator.getGameEnvironment().getPetManager().createPet(petOne.getPetData().getOffspringType(), (int) Math.min(Math.round(Math.max(1d, PetManager.getNormalDistributionForBreeding(petOne.getLevel(), petTwo.getLevel()).sample())), 20), name, habbo.getClient());
 
-            habbo.getHabboInfo().getCurrentRoom().placePet(offspring, box.getX(), box.getY(), box.getZ());
-            offspring.setNeedsUpdate(true);
+
+            habbo.getRoomUnit().getRoom().getRoomUnitManager().placePet(offspring, habbo.getRoomUnit().getRoom(), box.getCurrentPosition().getX(), box.getCurrentPosition().getY(), box.getCurrentZ());
+            offspring.setSqlUpdateNeeded(true);
             offspring.run();
             InteractionPetBreedingNest.this.freePets();
-            habbo.getHabboInfo().getCurrentRoom().removeHabboItem(box);
+            habbo.getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(box);
             habbo.getClient().sendResponse(new NestBreedingSuccessComposer(offspring.getId(), Emulator.getGameEnvironment().getPetManager().getRarityForOffspring(offspring)));
 
             if (box.getBaseItem().getName().startsWith("pet_breeding_")) {

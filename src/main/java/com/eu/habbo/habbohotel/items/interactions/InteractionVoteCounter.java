@@ -3,8 +3,9 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.messages.ServerMessage;
 
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InteractionVoteCounter extends HabboItem {
+public class InteractionVoteCounter extends RoomItem {
 
     private boolean frozen;
     private int votes;
@@ -21,18 +22,18 @@ public class InteractionVoteCounter extends HabboItem {
 
     public InteractionVoteCounter(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        if(!this.getExtradata().contains(",")) {
-            this.setExtradata("1,0"); // frozen,votes
+        if(!this.getExtraData().contains(",")) {
+            this.setExtraData("1,0"); // frozen,votes
         }
 
-        String[] bits = this.getExtradata().split(",");
+        String[] bits = this.getExtraData().split(",");
         frozen = bits[0].equals("1");
         votes = Integer.parseInt(bits[1]);
         votedUsers = new ArrayList<>();
     }
 
-    public InteractionVoteCounter(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionVoteCounter(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         if(!extradata.contains(",")) {
             extradata = "1,0";
@@ -63,12 +64,12 @@ public class InteractionVoteCounter extends HabboItem {
     }
 
     private void updateExtradata() {
-        this.setExtradata((this.frozen ? "1" : "0") + "," + this.votes);
+        this.setExtraData((this.frozen ? "1" : "0") + "," + this.votes);
     }
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) {
-        if (room == null || !((client != null && room.hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
+        if (room == null || !((client != null && room.getRoomRightsManager().hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
             return;
 
         this.frozen = !this.frozen;
@@ -79,7 +80,7 @@ public class InteractionVoteCounter extends HabboItem {
         }
 
         updateExtradata();
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         room.updateItem(this);
     }
 
@@ -99,7 +100,7 @@ public class InteractionVoteCounter extends HabboItem {
 
         votes += vote;
         updateExtradata();
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         room.updateItem(this);
     }
 }

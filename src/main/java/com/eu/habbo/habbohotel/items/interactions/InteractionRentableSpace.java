@@ -5,9 +5,10 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.items.rentablespaces.RentableSpaceStatusMessageComposer;
 import com.eu.habbo.threading.runnables.ClearRentedSpace;
@@ -21,7 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Slf4j
-public class InteractionRentableSpace extends HabboItem {
+public class InteractionRentableSpace extends RoomItem {
 
     private int renterId;
     private String renterName;
@@ -57,8 +58,8 @@ public class InteractionRentableSpace extends HabboItem {
                         }
                     }
                 } else {
-                    if (this.getRoomId() > 0) {
-                        Emulator.getThreading().run(new ClearRentedSpace(this, Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId())));
+                    if (this.getRoom() != null) {
+                        Emulator.getThreading().run(new ClearRentedSpace(this, Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId())));
                         this.renterId = 0;
                     }
                 }
@@ -66,23 +67,23 @@ public class InteractionRentableSpace extends HabboItem {
         }
     }
 
-    public InteractionRentableSpace(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionRentableSpace(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         this.renterName = "";
     }
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        if (this.getExtradata().isEmpty())
+        if (this.getExtraData().isEmpty())
             return false;
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo == null)
             return true;
 
-        if (habbo.getHabboInfo().getId() == room.getId())
+        if (habbo.getHabboInfo().getId() == room.getRoomInfo().getId())
             return true;
 
         if (this.endTimestamp > Emulator.getIntUnixTimestamp()) {
@@ -109,8 +110,8 @@ public class InteractionRentableSpace extends HabboItem {
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
-        if (this.getExtradata().isEmpty())
-            this.setExtradata("0:0");
+        if (this.getExtraData().isEmpty())
+            this.setExtraData("0:0");
 
         serverMessage.appendInt(1 + (this.isLimited() ? 256 : 0));
 
@@ -144,30 +145,30 @@ public class InteractionRentableSpace extends HabboItem {
 
         habbo.getHabboStats().setRentedItemId(this.getId());
         habbo.getHabboStats().setRentedTimeEnd(this.endTimestamp);
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         this.run();
     }
 
     public void endRent() {
         this.setEndTimestamp(0);
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = this.getRoom();
 
         if (room == null)
             return;
 
-        Rectangle rect = RoomLayout.getRectangle(this.getX(), this.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
+        Rectangle rect = RoomLayout.getRectangle(this.getCurrentPosition().getX(), this.getCurrentPosition().getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
 
-        THashSet<HabboItem> items = new THashSet<>();
+        THashSet<RoomItem> items = new THashSet<>();
         for (int i = rect.x; i < rect.x + rect.getWidth(); i++) {
             for (int j = rect.y; j < rect.y + rect.getHeight(); j++) {
-                items.addAll(room.getItemsAt(i, j, this.getZ()));
+                items.addAll(room.getRoomItemManager().getItemsAt(i, j, this.getCurrentZ()));
             }
         }
 
-        for (HabboItem item : items) {
-            if (item.getUserId() == this.renterId) {
-                room.pickUpItem(item, null);
+        for (RoomItem item : items) {
+            if (item.getOwnerInfo().getId() == this.renterId) {
+                room.getRoomItemManager().pickUpItem(item, null);
             }
         }
 
@@ -191,12 +192,12 @@ public class InteractionRentableSpace extends HabboItem {
 
         this.setRenterId(0);
         this.setRenterName("");
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         this.run();
     }
 
     @Override
-    public String getExtradata() {
+    public String getExtraData() {
         return this.renterId + ":" + this.endTimestamp;
     }
 

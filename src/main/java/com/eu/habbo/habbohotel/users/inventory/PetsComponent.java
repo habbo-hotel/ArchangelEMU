@@ -81,7 +81,7 @@ public class PetsComponent {
                 } catch (NoSuchElementException e) {
                     break;
                 }
-                if (petIterator.value().isNeedsUpdate())
+                if (petIterator.value().isSqlUpdateNeeded())
                     Emulator.getThreading().run(petIterator.value());
             }
         }

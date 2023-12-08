@@ -44,7 +44,7 @@ public class PointsScheduler extends Scheduler {
 
             try {
                 if (habbo != null) {
-                    if (habbo.getHabboInfo().getCurrentRoom() == null && IGNORE_HOTEL_VIEW)
+                    if (habbo.getRoomUnit().getRoom() == null && IGNORE_HOTEL_VIEW)
                         continue;
 
                     if (habbo.getRoomUnit().isIdle() && IGNORE_IDLED)

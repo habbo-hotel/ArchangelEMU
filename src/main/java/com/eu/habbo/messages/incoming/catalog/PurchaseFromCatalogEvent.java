@@ -100,11 +100,11 @@ public class PurchaseFromCatalogEvent extends PurchaseEvent {
                        return;
                     }
                         ((RoomBundleLayout) page).buyRoom(this.client.getHabbo());
-                        if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_CREDITS)) { //if the player has this perm disabled
+                        if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_CREDITS)) { //if the player has this perm disabled
                             this.client.getHabbo().getHabboInfo().addCredits(-roomBundleItem.getCredits()); // takes their credits away
                             this.client.sendResponse(new CreditBalanceComposer(this.client.getHabbo())); // Sends the updated currency composer window
                         }
-                        if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_POINTS)) { //if the player has this perm disabled
+                        if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_POINTS)) { //if the player has this perm disabled
                             this.client.getHabbo().getHabboInfo().addCurrencyAmount(roomBundleItem.getPointsType(), -roomBundleItem.getPoints()); // takes their points away
                             this.client.sendResponse(new ActivityPointsMessageComposer(this.client.getHabbo())); // Sends the updated currency composer window
                         }
@@ -172,13 +172,13 @@ public class PurchaseFromCatalogEvent extends PurchaseEvent {
                 item = page.getCatalogItem(itemId);
             // temp patch, can a dev with better knowledge than me look into this asap pls.
             if (page instanceof  BotsLayout) {
-                if (!this.client.getHabbo().hasRight(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
+                if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_UNLIMITED_BOTS) && this.client.getHabbo().getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
                     this.client.getHabbo().alert(Emulator.getTexts().getValue("error.bots.max.inventory").replace("%amount%", BotManager.MAXIMUM_BOT_INVENTORY_SIZE + ""));
                     return;
                 }
             }
             if (page instanceof PetsLayout) { // checks it's the petlayout
-                if (!this.client.getHabbo().hasRight(Permission.ACC_UNLIMITED_PETS) && this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= PetManager.MAXIMUM_PET_INVENTORY_SIZE) {
+                if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_UNLIMITED_PETS) && this.client.getHabbo().getInventory().getPetsComponent().getPets().size() >= PetManager.MAXIMUM_PET_INVENTORY_SIZE) {
                     this.client.getHabbo().alert(Emulator.getTexts().getValue("error.pets.max.inventory").replace("%amount%", PetManager.MAXIMUM_PET_INVENTORY_SIZE + ""));
                     return;
                 }

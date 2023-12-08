@@ -5,8 +5,8 @@ import com.eu.habbo.core.RoomUserPetComposer;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.pets.PetData;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.messages.outgoing.generic.alerts.MOTDNotificationComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
 
@@ -57,8 +57,8 @@ public class TransformCommand extends Command {
                 gameClient.getHabbo().getHabboStats().getCache().put("pet_type", petData);
                 gameClient.getHabbo().getHabboStats().getCache().put("pet_race", race);
                 gameClient.getHabbo().getHabboStats().getCache().put("pet_color", color);
-                gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserRemoveMessageComposer(gameClient.getHabbo().getRoomUnit()).compose());
-                gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RoomUserPetComposer(petData.getType(), race, color, gameClient.getHabbo()).compose());
+                gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserRemoveMessageComposer(gameClient.getHabbo().getRoomUnit()).compose());
+                gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new RoomUserPetComposer(petData.getType(), race, color, gameClient.getHabbo()).compose());
             } else {
                 //Pet Not Found
                 return true;

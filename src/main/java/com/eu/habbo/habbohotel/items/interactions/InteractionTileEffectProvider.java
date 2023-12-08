@@ -3,7 +3,9 @@ package com.eu.habbo.habbohotel.items.interactions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import gnu.trove.map.hash.THashMap;
 
 import java.sql.ResultSet;
@@ -19,8 +21,8 @@ public class InteractionTileEffectProvider extends InteractionCustomValues {
         super(set, baseItem, defaultValues);
     }
 
-    public InteractionTileEffectProvider(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, defaultValues);
+    public InteractionTileEffectProvider(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, defaultValues);
     }
 
     @Override
@@ -37,9 +39,13 @@ public class InteractionTileEffectProvider extends InteractionCustomValues {
     public void onWalkOn(RoomUnit roomUnit, final Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
+        if(!(roomUnit instanceof RoomHabbo roomHabbo)) {
+            return;
+        }
+
         int effectId = Integer.parseInt(this.values.get("effectId"));
 
-        if (roomUnit.getEffectId() == effectId) {
+        if (roomHabbo.getEffectId() == effectId) {
             effectId = 0;
         }
 
@@ -52,6 +58,6 @@ public class InteractionTileEffectProvider extends InteractionCustomValues {
             room.updateItem(proxy);
         }, 500);
 
-        room.giveEffect(roomUnit, effectId, -1);
+        roomHabbo.giveEffect(effectId, -1);
     }
 }

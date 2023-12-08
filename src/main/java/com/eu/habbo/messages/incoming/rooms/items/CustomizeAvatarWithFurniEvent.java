@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.catalog.ClothItem;
 import com.eu.habbo.habbohotel.items.interactions.InteractionClothing;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
@@ -26,22 +26,23 @@ public class CustomizeAvatarWithFurniEvent extends MessageHandler {
     public void handle() {
         int itemId = this.packet.readInt();
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null &&
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().hasRights(this.client.getHabbo())) {
-            HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
+        if (this.client.getHabbo().getRoomUnit().getRoom() != null && this.client.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(this.client.getHabbo())) {
+            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
-            if (item != null && item.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {
+            if (item != null && item.getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId()) {
                 if (item instanceof InteractionClothing) {
                     ClothItem clothing = Emulator.getGameEnvironment().getCatalogManager().getClothing(item.getBaseItem().getName());
 
                     if (clothing != null) {
                         if (!this.client.getHabbo().getInventory().getWardrobeComponent().getClothing().contains(clothing.getId())) {
+                            //Deprecated
                             item.setRoomId(0);
-                            RoomTile tile = this.client.getHabbo().getHabboInfo().getCurrentRoom().getLayout().getTile(item.getX(), item.getY());
-                            this.client.getHabbo().getHabboInfo().getCurrentRoom().removeHabboItem(item);
-                            this.client.getHabbo().getHabboInfo().getCurrentRoom().updateTile(tile);
-                            this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new HeightMapUpdateMessageComposer(tile.getX(), tile.getY(), tile.getZ(), tile.relativeHeight()).compose());
-                            this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new RemoveFloorItemComposer(item, true).compose());
+                            item.setRoom(null);
+                            RoomTile tile = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
+                            this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().removeRoomItem(item);
+                            this.client.getHabbo().getRoomUnit().getRoom().updateTile(tile);
+                            this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new HeightMapUpdateMessageComposer(tile.getX(), tile.getY(), tile.getZ(), tile.relativeHeight()).compose());
+                            this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new RemoveFloorItemComposer(item, true).compose());
                             Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 
                             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO users_clothing (user_id, clothing_id) VALUES (?, ?)")) {

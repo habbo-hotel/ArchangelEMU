@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.threading.runnables.QueryDeleteHabboItems;
 import gnu.trove.map.TIntIntMap;
@@ -20,17 +20,17 @@ public class RedeemCommand extends Command {
 
     @Override
     public boolean handle(final GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getActiveTradeForHabbo(gameClient.getHabbo()) != null)
+        if (gameClient.getHabbo().getRoomUnit().getRoom().getActiveTradeForHabbo(gameClient.getHabbo()) != null)
             return false;
-        ArrayList<HabboItem> items = new ArrayList<>();
+        ArrayList<RoomItem> items = new ArrayList<>();
 
         int credits = 0;
         int pixels = 0;
 
         TIntIntMap points = new TIntIntHashMap();
 
-        for (HabboItem item : gameClient.getHabbo().getInventory().getItemsComponent().getItemsAsValueCollection()) {
-            if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_")) && item.getUserId() == gameClient.getHabbo().getHabboInfo().getId()) {
+        for (RoomItem item : gameClient.getHabbo().getInventory().getItemsComponent().getItemsAsValueCollection()) {
+            if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_") || item.getBaseItem().getName().startsWith("DF_") || item.getBaseItem().getName().startsWith("PF_")) && item.getOwnerInfo().getId() == gameClient.getHabbo().getHabboInfo().getId()) {
                 items.add(item);
                 if ((item.getBaseItem().getName().startsWith("CF_") || item.getBaseItem().getName().startsWith("CFC_")) && !item.getBaseItem().getName().contains("_diamond_")) {
                     try {
@@ -63,7 +63,7 @@ public class RedeemCommand extends Command {
             }
         }
 
-        TIntObjectHashMap<HabboItem> deleted = new TIntObjectHashMap<>();
+        TIntObjectHashMap<RoomItem> deleted = new TIntObjectHashMap<>();
         items.forEach(item -> {
             gameClient.getHabbo().getInventory().getItemsComponent().removeHabboItem(item);
             deleted.put(item.getId(), item);

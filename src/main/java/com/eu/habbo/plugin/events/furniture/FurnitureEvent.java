@@ -1,14 +1,14 @@
 package com.eu.habbo.plugin.events.furniture;
 
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.plugin.Event;
 
 public abstract class FurnitureEvent extends Event {
 
-    public final HabboItem furniture;
+    public final RoomItem furniture;
 
 
-    public FurnitureEvent(HabboItem furniture) {
+    public FurnitureEvent(RoomItem furniture) {
         this.furniture = furniture;
     }
 }

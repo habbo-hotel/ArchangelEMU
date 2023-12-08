@@ -81,19 +81,19 @@ public class YouAreAPirate implements Runnable {
         this.habbo = habbo;
         this.room = room;
         this.oldEffect = this.habbo.getRoomUnit().getEffectId();
-        this.room.giveEffect(this.habbo, 161, -1);
+        this.habbo.getRoomUnit().giveEffect(161, -1);
     }
 
     @Override
     public void run() {
-        if (this.room == this.habbo.getHabboInfo().getCurrentRoom()) {
+        if (this.room == this.habbo.getRoomUnit().getRoom()) {
             if (!iamapirate[this.index].isEmpty()) {
                 this.room.talk(this.habbo, new RoomChatMessage(iamapirate[this.index], this.habbo, RoomChatMessageBubbles.PIRATE), RoomChatType.SHOUT);
             }
             this.index++;
 
             if (this.index == iamapirate.length) {
-                this.room.giveEffect(this.habbo, this.oldEffect, -1);
+                this.habbo.getRoomUnit().giveEffect(this.oldEffect, -1);
                 return;
             }
 

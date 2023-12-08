@@ -15,7 +15,7 @@ public class UpdateGuildColorsEvent extends MessageHandler {
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
         if (guild != null) {
-            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN)) {
+            if (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN)) {
                 GuildChangedColorsEvent colorsEvent = new GuildChangedColorsEvent(guild, this.packet.readInt(), this.packet.readInt());
                 Emulator.getPluginManager().fireEvent(colorsEvent);
 
@@ -26,12 +26,14 @@ public class UpdateGuildColorsEvent extends MessageHandler {
                     guild.setColorOne(colorsEvent.getColorOne());
                     guild.setColorTwo(colorsEvent.getColorTwo());
 
-                    Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
+                    Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(guild.getRoomId());
 
-                    if (room != null && room.getUserCount() > 0) {
-                        room.refreshGuild(guild);
+                    if (room != null) {
+                        if (room.getRoomUnitManager().getRoomHabbosCount() > 0) {
+                            room.refreshGuild(guild);
 
-                        room.refreshGuildColors(guild);
+                            room.refreshGuildColors(guild);
+                        }
                     }
                     guild.needsUpdate = true;
                     Emulator.getThreading().run(guild);

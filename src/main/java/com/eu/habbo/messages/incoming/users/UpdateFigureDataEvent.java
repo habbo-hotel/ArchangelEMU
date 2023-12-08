@@ -39,8 +39,8 @@ public class UpdateFigureDataEvent extends MessageHandler {
         this.client.getHabbo().getHabboInfo().setGender(lookEvent.getGender());
         Emulator.getThreading().run(this.client.getHabbo().getHabboInfo());
         this.client.sendResponse(new FigureUpdateComposer(this.client.getHabbo()));
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(this.client.getHabbo()).compose());
+        if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
+            this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(this.client.getHabbo()).compose());
         }
 
         AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("AvatarLooks"));

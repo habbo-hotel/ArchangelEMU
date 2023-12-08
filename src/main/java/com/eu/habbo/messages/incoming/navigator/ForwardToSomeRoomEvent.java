@@ -6,7 +6,6 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.RoomForwardMessageComposer;
 import com.eu.habbo.messages.outgoing.users.NavigatorSettingsComposer;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class ForwardToSomeRoomEvent extends MessageHandler {
             List<Room> rooms = Emulator.getGameEnvironment().getRoomManager().getActiveRooms();
             if (!rooms.isEmpty()) {
                 Collections.shuffle(rooms);
-                this.client.sendResponse(new RoomForwardMessageComposer(rooms.get(0).getId()));
+                this.client.sendResponse(new RoomForwardMessageComposer(rooms.get(0).getRoomInfo().getId()));
             }
         } else if (data.equalsIgnoreCase("predefined_noob_lobby")) {
             this.client.sendResponse(new RoomForwardMessageComposer(Emulator.getConfig().getInt("hotel.room.nooblobby")));

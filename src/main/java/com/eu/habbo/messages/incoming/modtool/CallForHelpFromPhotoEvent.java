@@ -6,8 +6,8 @@ import com.eu.habbo.habbohotel.modtool.CfhTopic;
 import com.eu.habbo.habbohotel.modtool.ModToolIssue;
 import com.eu.habbo.habbohotel.modtool.ModToolTicketType;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.modtool.CallForHelpResultMessageComposer;
 import com.eu.habbo.threading.runnables.InsertModToolIssue;
@@ -32,15 +32,15 @@ public class CallForHelpFromPhotoEvent extends MessageHandler {
 
         if (topic == null) return;
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
         if (room == null) return;
 
-        HabboItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (!(item instanceof InteractionExternalImage)) return;
 
-        HabboInfo photoOwner = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(item.getUserId());
+        HabboInfo photoOwner = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(item.getOwnerInfo().getId());
 
         if (photoOwner == null) return;
 

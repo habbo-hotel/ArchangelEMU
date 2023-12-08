@@ -57,7 +57,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
                 Habbo habbo = Emulator.getGameServer().getGameClientManager().getHabbo(this.username);
 
                 if (habbo != null) {
-                    this.inRoom = habbo.getHabboInfo().getCurrentRoom() != null;
+                    this.inRoom = habbo.getRoomUnit().getRoom() != null;
                 }
             }
         } catch (SQLException e) {
@@ -98,7 +98,7 @@ public class MessengerBuddy implements Runnable, ISerialize {
         this.look = habbo.getHabboInfo().getLook();
         this.relation = 0;
         this.userOne = userOne;
-        this.inRoom = habbo.getHabboInfo().getCurrentRoom() != null;
+        this.inRoom = habbo.getRoomUnit().getRoom() != null;
     }
 
     public void setOnline(boolean value) {

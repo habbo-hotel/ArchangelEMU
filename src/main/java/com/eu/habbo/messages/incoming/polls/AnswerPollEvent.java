@@ -29,7 +29,7 @@ public class AnswerPollEvent extends MessageHandler {
         if(answer.length() <= 0) return;
 
         if (pollId == 0 && questionId <= 0) {
-            this.client.getHabbo().getHabboInfo().getCurrentRoom().handleWordQuiz(this.client.getHabbo(), answer.toString());
+            this.client.getHabbo().getRoomUnit().getRoom().handleWordQuiz(this.client.getHabbo(), answer.toString());
             return;
         }
 

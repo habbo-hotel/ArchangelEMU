@@ -56,7 +56,7 @@ public class NavigatorManager {
                         NavigatorPublicCategory category = this.publicCategories.get(set.getInt("public_cat_id"));
 
                         if (category != null) {
-                            Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(set.getInt("room_id"));
+                            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(set.getInt("room_id"));
 
                             if (room != null) {
                                 category.addRoom(room);

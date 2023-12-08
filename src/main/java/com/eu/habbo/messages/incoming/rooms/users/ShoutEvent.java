@@ -13,7 +13,7 @@ public class ShoutEvent extends MessageHandler {
 
     @Override
     public void handle() {
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (this.client.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
         if (!this.client.getHabbo().getHabboStats().allowTalk())
@@ -27,7 +27,7 @@ public class ShoutEvent extends MessageHandler {
                 return;
             }
 
-            this.client.getHabbo().getHabboInfo().getCurrentRoom().talk(this.client.getHabbo(), message, RoomChatType.SHOUT);
+            this.client.getHabbo().getRoomUnit().getRoom().talk(this.client.getHabbo(), message, RoomChatType.SHOUT);
 
             if (!message.isCommand) {
                 if (RoomChatMessage.SAVE_ROOM_CHATS) {

@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.pets.actions.*;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.THashMap;
@@ -407,7 +406,7 @@ public class PetManager {
                         client.getHabbo().getHabboInfo().getId()
                 );
 
-            pet.setNeedsUpdate(true);
+            pet.setSqlUpdateNeeded(true);
             pet.run();
             return pet;
         }
@@ -421,7 +420,7 @@ public class PetManager {
     public Pet createPet(int type, int race, String name, GameClient client) {
         if (this.petData.containsKey(type)) {
             Pet pet = new Pet(type, race, "FFFFFF", name, client.getHabbo().getHabboInfo().getId());
-            pet.setNeedsUpdate(true);
+            pet.setSqlUpdateNeeded(true);
             pet.run();
             return pet;
         }
@@ -443,9 +442,8 @@ public class PetManager {
 
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
-        pet.setRoomUnit(new RoomUnit());
-        pet.getRoomUnit().setPathFinderRoom(room);
-        pet.setNeedsUpdate(true);
+        pet.getRoomUnit().setRoom(room);
+        pet.setSqlUpdateNeeded(true);
         pet.run();
         return pet;
     }
@@ -462,9 +460,8 @@ public class PetManager {
 
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
-        pet.setRoomUnit(new RoomUnit());
-        pet.getRoomUnit().setPathFinderRoom(room);
-        pet.setNeedsUpdate(true);
+        pet.getRoomUnit().setRoom(room);
+        pet.setSqlUpdateNeeded(true);
         pet.run();
 
         return pet;
@@ -482,9 +479,8 @@ public class PetManager {
 
         pet.setUserId(habbo.getHabboInfo().getId());
         pet.setRoom(room);
-        pet.setRoomUnit(new RoomUnit());
-        pet.getRoomUnit().setPathFinderRoom(room);
-        pet.setNeedsUpdate(true);
+        pet.getRoomUnit().setRoom(room);
+        pet.setSqlUpdateNeeded(true);
         pet.run();
 
         return pet;

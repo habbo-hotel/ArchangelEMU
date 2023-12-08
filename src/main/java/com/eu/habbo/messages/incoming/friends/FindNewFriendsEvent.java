@@ -17,13 +17,13 @@ public class FindNewFriendsEvent extends MessageHandler {
         Collections.shuffle(roomCategories);
 
         for (RoomCategory category : roomCategories) {
-            List<Room> rooms = Emulator.getGameEnvironment().getRoomManager().getActiveRooms(category.getId());
+            List<Room> rooms = Emulator.getGameEnvironment().getRoomManager().getActiveRoomsByCategoryId(category.getId());
 
             if (!rooms.isEmpty()) {
                 Room room = rooms.get(0);
 
-                if (room.getUserCount() > 0) {
-                    this.client.sendResponse(new RoomForwardMessageComposer(room.getId()));
+                if (room.getRoomUnitManager().getRoomHabbosCount() > 0) {
+                    this.client.sendResponse(new RoomForwardMessageComposer(room.getRoomInfo().getId()));
                     return;
                 }
             }

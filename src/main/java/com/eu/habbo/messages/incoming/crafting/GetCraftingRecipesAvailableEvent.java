@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.crafting.CraftingAltar;
 import com.eu.habbo.habbohotel.crafting.CraftingRecipe;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.crafting.CraftingRecipesAvailableComposer;
 import gnu.trove.map.hash.THashMap;
@@ -16,7 +16,7 @@ public class GetCraftingRecipesAvailableEvent extends MessageHandler {
     public void handle() {
         int altarId = this.packet.readInt();
 
-        HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(altarId);
+        RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(altarId);
 
         CraftingAltar altar = Emulator.getGameEnvironment().getCraftingManager().getAltar(item.getBaseItem());
 
@@ -25,14 +25,14 @@ public class GetCraftingRecipesAvailableEvent extends MessageHandler {
 
             int count = this.packet.readInt();
             for (int i = 0; i < count; i++) {
-                HabboItem habboItem = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(this.packet.readInt());
+                RoomItem roomItem = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(this.packet.readInt());
 
-                if (habboItem != null) {
-                    if (!items.containsKey(habboItem.getBaseItem())) {
-                        items.put(habboItem.getBaseItem(), 0);
+                if (roomItem != null) {
+                    if (!items.containsKey(roomItem.getBaseItem())) {
+                        items.put(roomItem.getBaseItem(), 0);
                     }
 
-                    items.put(habboItem.getBaseItem(), items.get(habboItem.getBaseItem()) + 1);
+                    items.put(roomItem.getBaseItem(), items.get(roomItem.getBaseItem()) + 1);
                 }
             }
 

@@ -7,9 +7,10 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import gnu.trove.set.hash.THashSet;
 
 import java.awt.*;
@@ -17,8 +18,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class InteractionSnowboardSlope extends InteractionMultiHeight {
-    public InteractionSnowboardSlope(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionSnowboardSlope(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     public InteractionSnowboardSlope(ResultSet set, Item baseItem) throws SQLException {
@@ -26,42 +27,38 @@ public class InteractionSnowboardSlope extends InteractionMultiHeight {
     }
 
     @Override
-    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        room.giveEffect(roomUnit, 97, -1);
+    public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
+        super.onWalkOn(roomUnit, room, objects);
     }
 
     @Override
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
-
-        if (roomUnit.getEffectId() == 97) {
-            room.giveEffect(roomUnit, 0, -1);
-        }
     }
 
     @Override
     public void onPlace(Room room) {
         super.onPlace(room);
-        THashSet<HabboItem> items = room.getRoomSpecialTypes().getItemsOfType(InteractionSnowboardSlope.class);
+        THashSet<RoomItem> items = room.getRoomSpecialTypes().getItemsOfType(InteractionSnowboardSlope.class);
 
         Achievement snowboardBuild = Emulator.getGameEnvironment().getAchievementManager().getAchievement("snowBoardBuild");
 
         if (snowboardBuild == null) return;
         int progress;
-        Habbo habbo = room.getHabbo(room.getOwnerId());
+        Habbo habbo = room.getRoomUnitManager().getRoomHabboById(room.getRoomInfo().getOwnerInfo().getId());
 
         if (habbo != null) {
             progress = habbo.getHabboStats().getAchievementProgress(snowboardBuild);
 
 
         } else {
-            progress = AchievementManager.getAchievementProgressForHabbo(room.getOwnerId(), snowboardBuild);
+            progress = AchievementManager.getAchievementProgressForHabbo(room.getRoomInfo().getOwnerInfo().getId(), snowboardBuild);
         }
 
         progress = Math.max(items.size() - progress, 0);
 
         if (progress > 0) {
-            AchievementManager.progressAchievement(room.getOwnerId(), snowboardBuild);
+            AchievementManager.progressAchievement(room.getRoomInfo().getOwnerInfo().getId(), snowboardBuild);
         }
     }
 
@@ -69,7 +66,7 @@ public class InteractionSnowboardSlope extends InteractionMultiHeight {
     public void onPickUp(Room room) {
         for (Habbo habbo : room.getHabbosOnItem(this)) {
             if (habbo.getRoomUnit().getEffectId() == 97) {
-                room.giveEffect(habbo, 0, -1);
+                habbo.getRoomUnit().giveEffect(0, -1);
             }
         }
     }
@@ -79,8 +76,8 @@ public class InteractionSnowboardSlope extends InteractionMultiHeight {
         Rectangle newRect = RoomLayout.getRectangle(newLocation.getX(), newLocation.getY(), this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation());
 
         for (Habbo habbo : room.getHabbosOnItem(this)) {
-            if (habbo.getRoomUnit().getEffectId() == 97 && !newRect.contains(habbo.getRoomUnit().getCurrentLocation().getX(), habbo.getRoomUnit().getCurrentLocation().getY())) {
-                room.giveEffect(habbo, 0, -1);
+            if (habbo.getRoomUnit().getEffectId() == 97 && !newRect.contains(habbo.getRoomUnit().getCurrentPosition().getX(), habbo.getRoomUnit().getCurrentPosition().getY())) {
+                habbo.getRoomUnit().giveEffect(0, -1);
             }
         }
     }

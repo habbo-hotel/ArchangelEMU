@@ -11,25 +11,26 @@ import com.eu.habbo.plugin.events.users.UserRightsGivenEvent;
 public class AssignRightsEvent extends MessageHandler {
     @Override
     public void handle() {
-        int userId = this.packet.readInt();
+        int targetId = this.packet.readInt();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-        if (room == null)
+        if (room == null) {
             return;
+        }
 
-        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
-            Habbo target = room.getHabbo(userId);
+        if (room.getRoomInfo().isRoomOwner(this.client.getHabbo())  || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
+            Habbo target = room.getRoomUnitManager().getRoomHabboById(targetId);
 
             if (target != null) {
                 if (!Emulator.getPluginManager().fireEvent(new UserRightsGivenEvent(this.client.getHabbo(), target)).isCancelled()) {
-                    room.giveRights(target);
+                    room.getRoomRightsManager().giveRights(target);
                 }
             } else {
-                MessengerBuddy buddy = this.client.getHabbo().getMessenger().getFriend(userId);
+                MessengerBuddy buddy = this.client.getHabbo().getMessenger().getFriend(targetId);
 
                 if (buddy != null) {
-                    room.giveRights(userId);
+                    room.getRoomRightsManager().giveRights(buddy);
                 }
             }
         }

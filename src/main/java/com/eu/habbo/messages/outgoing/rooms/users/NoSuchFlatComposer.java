@@ -15,7 +15,7 @@ public class NoSuchFlatComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.noSuchFlatComposer);
-        this.response.appendInt(this.room.getId());
+        this.response.appendInt(this.room.getRoomInfo().getId());
         this.response.appendInt(this.habboId);
         return this.response;
     }

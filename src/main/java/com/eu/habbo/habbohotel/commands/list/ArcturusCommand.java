@@ -11,7 +11,7 @@ public class ArcturusCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() != null) {
             gameClient.getHabbo().whisper("This hotel is powered by Arcturus Emulator! \r" +
                             "Cet hôtel est alimenté par Arcturus émulateur! \r" +
                             "Dit hotel draait op Arcturus Emulator! \r" +

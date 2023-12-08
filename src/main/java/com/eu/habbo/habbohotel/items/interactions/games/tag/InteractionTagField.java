@@ -4,15 +4,16 @@ import com.eu.habbo.habbohotel.games.Game;
 import com.eu.habbo.habbohotel.games.tag.TagGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class InteractionTagField extends HabboItem {
+public abstract class InteractionTagField extends RoomItem {
     public Class<? extends Game> gameClazz;
 
     public InteractionTagField(ResultSet set, Item baseItem, Class<? extends Game> gameClazz) throws SQLException {
@@ -21,15 +22,15 @@ public abstract class InteractionTagField extends HabboItem {
         this.gameClazz = gameClazz;
     }
 
-    public InteractionTagField(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, Class<? extends Game> gameClazz) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionTagField(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells, Class<? extends Game> gameClazz) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         this.gameClazz = gameClazz;
     }
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             return habbo.getHabboInfo().getCurrentGame() == null || habbo.getHabboInfo().getCurrentGame() == this.gameClazz;
@@ -50,7 +51,7 @@ public abstract class InteractionTagField extends HabboItem {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo != null) {
             if (habbo.getHabboInfo().getCurrentGame() == null) {
@@ -75,7 +76,7 @@ public abstract class InteractionTagField extends HabboItem {
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }

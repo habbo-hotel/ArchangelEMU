@@ -30,7 +30,7 @@ public class RoomBundleCommand extends Command {
             return true;
         }
 
-        if (Emulator.getGameEnvironment().getCatalogManager().getCatalogPage("room_bundle_" + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId()) != null) {
+        if (Emulator.getGameEnvironment().getCatalogManager().getCatalogPage("room_bundle_" + gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId()) != null) {
             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_bundle.duplicate"), RoomChatMessageBubbles.ALERT);
             return true;
         }
@@ -40,7 +40,7 @@ public class RoomBundleCommand extends Command {
         points = Integer.parseInt(params[3]);
         pointsType = Integer.parseInt(params[4]);
 
-        CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().createCatalogPage("Room Bundle: " + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getName(), "room_bundle_" + gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), 0, CatalogPageLayouts.room_bundle, gameClient.getHabbo().getHabboInfo().getPermissionGroup().getId(), parentId);
+        CatalogPage page = Emulator.getGameEnvironment().getCatalogManager().createCatalogPage("Room Bundle: " + gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getName(), "room_bundle_" + gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId(), gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId(), 0, CatalogPageLayouts.room_bundle, gameClient.getHabbo().getHabboInfo().getPermissionGroup().getId(), parentId);
 
         if (page instanceof RoomBundleLayout roomBundleLayout) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO catalog_items (page_id, item_ids, catalog_name, cost_credits, cost_points, points_type ) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
@@ -67,7 +67,7 @@ public class RoomBundleCommand extends Command {
             } catch (SQLException e) {
                 log.error("Caught SQL exception", e);
             }
-            roomBundleLayout.loadItems(gameClient.getHabbo().getHabboInfo().getCurrentRoom());
+            roomBundleLayout.loadItems(gameClient.getHabbo().getRoomUnit().getRoom());
 
             gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_bundle").replace("%id%", roomBundleLayout.getId() + ""), RoomChatMessageBubbles.ALERT);
         }

@@ -19,7 +19,7 @@ public class UpdateItemsCommand extends Command {
 
         synchronized (Emulator.getGameEnvironment().getRoomManager().getActiveRooms()) {
             Emulator.getGameEnvironment().getRoomManager().getActiveRooms().stream()
-                    .filter(room -> room.isLoaded() && room.getUserCount() > 0 && room.getLayout() != null)
+                    .filter(room -> room.isLoaded() && room.getRoomUnitManager().getRoomHabbosCount() > 0 && room.getLayout() != null)
                     .forEach(room -> room.sendComposer(new HeightMapComposer(room).compose()));
         }
 

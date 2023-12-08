@@ -13,7 +13,7 @@ public class FacelessCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() == null) {
             return false;
         }
 
@@ -34,7 +34,7 @@ public class FacelessCommand extends Command {
 
                     gameClient.getHabbo().getHabboInfo().setLook(gameClient.getHabbo().getHabboInfo().getLook().replace(part, newHead));
                     gameClient.sendResponse(new FigureUpdateComposer(gameClient.getHabbo()));
-                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(gameClient.getHabbo()).compose());
+                    gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(gameClient.getHabbo()).compose());
                     return true;
                 }
             }

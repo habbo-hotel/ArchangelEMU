@@ -1,27 +1,27 @@
 package com.eu.habbo.messages.outgoing.inventory;
 
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
-import gnu.trove.set.hash.THashSet;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 public class UnseenItemsComposer extends MessageComposer {
-    private THashSet<HabboItem> itemsList;
-    private HabboItem item;
+    private HashSet<RoomItem> itemsList;
+    private RoomItem item;
     private int[] ids;
     private AddHabboItemCategory category;
     private Map<AddHabboItemCategory, List<Integer>> entries;
 
-    public UnseenItemsComposer(THashSet<HabboItem> itemsList) {
+    public UnseenItemsComposer(HashSet<RoomItem> itemsList) {
         this.itemsList = itemsList;
         this.category = AddHabboItemCategory.OWNED_FURNI;
     }
 
-    public UnseenItemsComposer(HabboItem item) {
+    public UnseenItemsComposer(RoomItem item) {
         this.item = item;
         this.category = AddHabboItemCategory.OWNED_FURNI;
     }
@@ -67,8 +67,8 @@ public class UnseenItemsComposer extends MessageComposer {
             this.response.appendInt(1);
             this.response.appendInt(1);
             this.response.appendInt(this.itemsList.size());
-            for (HabboItem habboItem : this.itemsList) {
-                this.response.appendInt(habboItem.getId());
+            for (RoomItem roomItem : this.itemsList) {
+                this.response.appendInt(roomItem.getId());
             }
         } else {
             this.response.appendInt(1);

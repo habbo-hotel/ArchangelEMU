@@ -164,8 +164,8 @@ public class SubscriptionHabboClub extends Subscription {
                 habbo.getClient().sendResponse(new FigureUpdateComposer(habbo));
             }
 
-            if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
+            if (habbo.getRoomUnit().getRoom() != null) {
+                habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
             }
         }
 

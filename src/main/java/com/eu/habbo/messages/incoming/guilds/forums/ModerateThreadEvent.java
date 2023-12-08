@@ -33,7 +33,7 @@ public class ModerateThreadEvent extends MessageHandler {
         }
 
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guildId, this.client.getHabbo().getHabboInfo().getId());
-        boolean hasStaffPerms = this.client.getHabbo().hasRight(Permission.ACC_MODTOOL_TICKET_Q); // check for if they have staff perm
+        boolean hasStaffPerms = this.client.getHabbo().hasPermissionRight(Permission.ACC_MODTOOL_TICKET_Q); // check for if they have staff perm
         boolean isGuildAdmin = (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN));
 
 

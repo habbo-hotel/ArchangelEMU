@@ -12,22 +12,21 @@ public class HabboGiveHandItemToHabbo implements Runnable {
 
     @Override
     public void run() {
-        if (this.from.getHabboInfo().getCurrentRoom() == null || this.target.getHabboInfo().getCurrentRoom() == null)
+        if (this.from.getRoomUnit().getRoom() == null || this.target.getRoomUnit().getRoom() == null)
             return;
 
-        if (this.from.getHabboInfo().getCurrentRoom() != this.target.getHabboInfo().getCurrentRoom())
+        if (this.from.getRoomUnit().getRoom() != this.target.getRoomUnit().getRoom())
             return;
 
         int itemId = this.from.getRoomUnit().getHandItem();
 
         if (itemId > 0) {
             this.from.getRoomUnit().setHandItem(0);
-            this.from.getHabboInfo().getCurrentRoom().sendComposer(new CarryObjectMessageComposer(this.from.getRoomUnit()).compose());
-            this.target.getRoomUnit().lookAtPoint(this.from.getRoomUnit().getCurrentLocation());
-            this.target.getRoomUnit().statusUpdate(true);
+            this.from.getRoomUnit().getRoom().sendComposer(new CarryObjectMessageComposer(this.from.getRoomUnit()).compose());
+            this.target.getRoomUnit().lookAtPoint(this.from.getRoomUnit().getCurrentPosition());
             this.target.getClient().sendResponse(new HandItemReceivedMessageComposer(this.from.getRoomUnit(), itemId));
             this.target.getRoomUnit().setHandItem(itemId);
-            this.target.getHabboInfo().getCurrentRoom().sendComposer(new CarryObjectMessageComposer(this.target.getRoomUnit()).compose());
+            this.target.getRoomUnit().getRoom().sendComposer(new CarryObjectMessageComposer(this.target.getRoomUnit()).compose());
         }
     }
 }

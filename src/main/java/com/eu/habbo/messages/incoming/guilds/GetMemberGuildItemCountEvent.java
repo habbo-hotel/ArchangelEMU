@@ -19,8 +19,8 @@ public class GetMemberGuildItemCountEvent extends MessageHandler {
 
         if (guild == null) return;
         GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
-        if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || (member != null && (member.getRank().equals(GuildRank.OWNER) || member.getRank().equals(GuildRank.ADMIN))) || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN)) {
-            Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());
+        if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || (member != null && (member.getRank().equals(GuildRank.OWNER) || member.getRank().equals(GuildRank.ADMIN))) || this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN)) {
+            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
             int count = 0;
             if (room != null) {
                 count = room.getUserFurniCount(userId);

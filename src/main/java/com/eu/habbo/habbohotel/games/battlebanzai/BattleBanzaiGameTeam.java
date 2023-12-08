@@ -7,10 +7,10 @@ import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
 
 public class BattleBanzaiGameTeam extends GameTeam {
     public BattleBanzaiGameTeam(GameTeamColors teamColor) {
@@ -20,25 +20,27 @@ public class BattleBanzaiGameTeam extends GameTeam {
     @Override
     public void addMember(GamePlayer gamePlayer) {
         super.addMember(gamePlayer);
-        RoomUnit roomUnit = gamePlayer.getHabbo().getRoomUnit();
-        if (roomUnit.getEffectId() > 0)
-            roomUnit.setPreviousEffectId(roomUnit.getEffectId(), roomUnit.getPreviousEffectEndTimestamp());
+        RoomHabbo roomHabbo = gamePlayer.getHabbo().getRoomUnit();
+        if (roomHabbo.getEffectId() > 0) {
+            roomHabbo.setPreviousEffectId(roomHabbo.getEffectId());
+            roomHabbo.setPreviousEffectEndTimestamp(roomHabbo.getPreviousEffectEndTimestamp());
+        }
 
-        gamePlayer.getHabbo().getHabboInfo().getCurrentRoom().giveEffect(gamePlayer.getHabbo(), BattleBanzaiGame.effectId + this.teamColor.type, -1, true);
+        gamePlayer.getHabbo().getRoomUnit().giveEffect(BattleBanzaiGame.effectId + this.teamColor.type, -1, true);
     }
 
     @Override
     public void removeMember(GamePlayer gamePlayer) {
         super.removeMember(gamePlayer);
-        if (gamePlayer == null || gamePlayer.getHabbo() == null || gamePlayer.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (gamePlayer == null || gamePlayer.getHabbo() == null || gamePlayer.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
         Habbo habbo = gamePlayer.getHabbo();
-        Game game = habbo.getHabboInfo().getCurrentRoom().getGame(FreezeGame.class);
-        RoomUnit roomUnit = habbo.getRoomUnit();
-        Room room = roomUnit.getRoom();
+        Game game = habbo.getRoomUnit().getRoom().getGame(FreezeGame.class);
+        RoomHabbo roomHabbo = habbo.getRoomUnit();
+        Room room = roomHabbo.getRoom();
         if(room == null) return;
-        HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().getX(), roomUnit.getCurrentLocation().getY());
+        RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomHabbo.getCurrentPosition().getX(), roomHabbo.getCurrentPosition().getY());
         int nextEffectM = 0;
         int nextEffectF = 0;
         int nextEffectDuration = -1;
@@ -46,22 +48,22 @@ public class BattleBanzaiGameTeam extends GameTeam {
         if (topItem != null) {
             nextEffectM = topItem.getBaseItem().getEffectM();
             nextEffectF = topItem.getBaseItem().getEffectF();
-        } else if (roomUnit.getPreviousEffectId() > 0) {
-            nextEffectF = roomUnit.getPreviousEffectId();
-            nextEffectM = roomUnit.getPreviousEffectId();
-            nextEffectDuration = roomUnit.getPreviousEffectEndTimestamp();
+        } else if (roomHabbo.getPreviousEffectId() > 0) {
+            nextEffectF = roomHabbo.getPreviousEffectId();
+            nextEffectM = roomHabbo.getPreviousEffectId();
+            nextEffectDuration = roomHabbo.getPreviousEffectEndTimestamp();
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-            room.giveEffect(habbo, nextEffectM, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectM, nextEffectDuration, true);
             return;
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-            room.giveEffect(habbo, nextEffectF, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectF, nextEffectDuration, true);
         }
 
-        roomUnit.setCanWalk(true);
+        roomHabbo.setCanWalk(true);
 
 
         if (room.getRoomSpecialTypes() != null) {

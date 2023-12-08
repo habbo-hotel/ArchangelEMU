@@ -1,8 +1,8 @@
 package com.eu.habbo.messages.incoming.rooms.items.lovelock;
 
 import com.eu.habbo.habbohotel.items.interactions.InteractionLoveLock;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.lovelock.FriendFurniCancelLockMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.lovelock.FriendFurniOtherLockConfirmedMessageComposer;
@@ -13,10 +13,10 @@ public class FriendFurniConfirmLockEvent extends MessageHandler {
         int itemId = this.packet.readInt();
 
         if (this.packet.readBoolean()) {
-            if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
+            if (this.client.getHabbo().getRoomUnit().getRoom() == null)
                 return;
 
-            HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
+            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
             if (item == null)
                 return;
@@ -31,7 +31,7 @@ public class FriendFurniConfirmLockEvent extends MessageHandler {
                 }
 
                 if (userId > 0) {
-                    Habbo habbo = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabbo(userId);
+                    Habbo habbo = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboById(userId);
 
                     if (habbo != null) {
                         habbo.getClient().sendResponse(new FriendFurniOtherLockConfirmedMessageComposer((InteractionLoveLock) item));
@@ -39,7 +39,7 @@ public class FriendFurniConfirmLockEvent extends MessageHandler {
                         habbo.getClient().sendResponse(new FriendFurniCancelLockMessageComposer((InteractionLoveLock) item));
                         this.client.sendResponse(new FriendFurniCancelLockMessageComposer((InteractionLoveLock) item));
 
-                        ((InteractionLoveLock) item).lock(habbo, this.client.getHabbo(), this.client.getHabbo().getHabboInfo().getCurrentRoom());
+                        ((InteractionLoveLock) item).lock(habbo, this.client.getHabbo(), this.client.getHabbo().getRoomUnit().getRoom());
                     }
                 }
             }

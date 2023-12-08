@@ -11,9 +11,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.permissions.Permission;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
@@ -192,7 +192,7 @@ public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
                         limitedStack = limitedConfiguration.getTotalSet();
                     }
 
-                    THashSet<HabboItem> itemsList = new THashSet<>();
+                    THashSet<RoomItem> itemsList = new THashSet<>();
 
                     boolean badgeFound = false;
                     for (Item baseItem : item.getBaseItems()) {
@@ -271,21 +271,21 @@ public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
                                     }
 
                                     if (baseItem.getInteractionType().getType() == InteractionTeleport.class || baseItem.getInteractionType().getType() == InteractionTeleportTile.class) {
-                                        HabboItem teleportOne = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
-                                        HabboItem teleportTwo = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
+                                        RoomItem teleportOne = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
+                                        RoomItem teleportTwo = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
                                         Emulator.getGameEnvironment().getItemManager().insertTeleportPair(teleportOne.getId(), teleportTwo.getId());
                                         itemsList.add(teleportOne);
                                         itemsList.add(teleportTwo);
                                     } else if (baseItem.getInteractionType().getType() == InteractionHopper.class) {
-                                        HabboItem hopper = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedNumber, limitedNumber, extraData);
+                                        RoomItem hopper = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedNumber, limitedNumber, extraData);
 
                                         Emulator.getGameEnvironment().getItemManager().insertHopper(hopper);
 
                                         itemsList.add(hopper);
                                     } else if (baseItem.getInteractionType().getType() == InteractionGuildFurni.class || baseItem.getInteractionType().getType() == InteractionGuildGate.class) {
                                         InteractionGuildFurni habboItem = (InteractionGuildFurni) Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
-                                        habboItem.setExtradata("");
-                                        habboItem.needsUpdate(true);
+                                        habboItem.setExtraData("");
+                                        habboItem.setSqlUpdateNeeded(true);
                                         int guildId;
                                         try {
                                             guildId = Integer.parseInt(extraData);
@@ -298,8 +298,8 @@ public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
                                         Emulator.getGameEnvironment().getGuildManager().setGuild(habboItem, guildId);
                                         itemsList.add(habboItem);
                                     } else {
-                                        HabboItem habboItem = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
-                                        itemsList.add(habboItem);
+                                        RoomItem roomItem = Emulator.getGameEnvironment().getItemManager().createItem(0, baseItem, limitedStack, limitedNumber, extraData);
+                                        itemsList.add(roomItem);
                                     }
                                 }
                             } else {
@@ -312,13 +312,13 @@ public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
 
                     StringBuilder giftData = new StringBuilder(itemsList.size() + "\t");
 
-                    for (HabboItem i : itemsList) {
+                    for (RoomItem i : itemsList) {
                         giftData.append(i.getId()).append("\t");
                     }
 
                     giftData.append(color).append("\t").append(ribbonId).append("\t").append(showName ? "1" : "0").append("\t").append(message.replace("\t", "")).append("\t").append(this.client.getHabbo().getHabboInfo().getUsername()).append("\t").append(this.client.getHabbo().getHabboInfo().getLook());
 
-                    HabboItem gift = Emulator.getGameEnvironment().getItemManager().createGift(username, giftItem, giftData.toString(), 0, 0);
+                    RoomItem gift = Emulator.getGameEnvironment().getItemManager().createGift(username, giftItem, giftData.toString(), 0, 0);
 
                     if (gift == null) {
                         this.client.sendResponse(new PurchaseErrorMessageComposer(PurchaseErrorMessageComposer.SERVER_ERROR));
@@ -347,15 +347,15 @@ public class PurchaseFromCatalogAsGiftEvent extends MessageHandler {
                         AchievementManager.progressAchievement(userId, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GiftReceiver"));
                     }
 
-                    if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_CREDITS)) {
+                    if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_CREDITS)) {
                         if (totalCredits > 0) {
                             this.client.getHabbo().giveCredits(-totalCredits);
                         }
                     }
                     if (totalPoints > 0) {
-                        if (item.getPointsType() == 0 && !this.client.getHabbo().hasRight(Permission.ACC_INFINITE_PIXELS)) {
+                        if (item.getPointsType() == 0 && !this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_PIXELS)) {
                             this.client.getHabbo().givePixels(-totalPoints);
-                        } else if (!this.client.getHabbo().hasRight(Permission.ACC_INFINITE_POINTS)) {
+                        } else if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_POINTS)) {
                             this.client.getHabbo().givePoints(item.getPointsType(), -totalPoints);
                         }
                         this.client.sendResponse(new HabboActivityPointNotificationMessageComposer(this.client.getHabbo().getHabboInfo().getCurrencyAmount(item.getPointsType()), -totalPoints, item.getPointsType()));

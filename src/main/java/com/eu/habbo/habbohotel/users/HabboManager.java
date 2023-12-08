@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ModToolBan;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.permissions.PermissionGroup;
+import com.eu.habbo.habbohotel.users.cache.HabboInfoCache;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.catalog.*;
 import com.eu.habbo.messages.outgoing.catalog.marketplace.MarketplaceConfigurationComposer;
@@ -25,27 +26,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class HabboManager {
-
     //Configuration. Loaded from database & updated accordingly.
     public static String WELCOME_MESSAGE = "";
-    public static boolean NAMECHANGE_ENABLED = false;
 
     @Getter
     private final ConcurrentHashMap<Integer, Habbo> onlineHabbos;
+
+    @Getter
+    private final HabboInfoCache habboInfoCache;
+
+    public ScheduledFuture<?> infoCacheTask;
 
     public HabboManager() {
         long millis = System.currentTimeMillis();
 
         this.onlineHabbos = new ConcurrentHashMap<>();
 
+        this.habboInfoCache = new HabboInfoCache();
+
         log.info("Habbo Manager -> Loaded! (" + (System.currentTimeMillis() - millis) + " MS)");
+
+        this.infoCacheTask = Emulator.getThreading().getService().scheduleAtFixedRate(this.habboInfoCache, 500, 5, TimeUnit.MINUTES);
     }
 
-    public static HabboInfo getOfflineHabboInfo(int id) {
+    public HabboInfo getOfflineHabboInfo(int id) {
+        if(this.habboInfoCache.getData().containsKey(id)) {
+            return this.habboInfoCache.getData().get(id).getValue();
+        }
+
         HabboInfo info = null;
+
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE id = ? LIMIT 1")) {
             statement.setInt(1, id);
             try (ResultSet set = statement.executeQuery()) {
@@ -57,10 +72,14 @@ public class HabboManager {
             log.error("Caught SQL exception", e);
         }
 
+        if(info != null) {
+            this.habboInfoCache.add(info);
+        }
+
         return info;
     }
 
-    public static HabboInfo getOfflineHabboInfo(String username) {
+    public HabboInfo getOfflineHabboInfo(String username) {
         HabboInfo info = null;
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE username = ? LIMIT 1")) {
@@ -179,7 +198,7 @@ public class HabboManager {
     public void sendPacketToHabbosWithPermission(ServerMessage message, String perm) {
         synchronized (this.onlineHabbos) {
             for (Habbo habbo : this.onlineHabbos.values()) {
-                if (habbo.hasRight(perm)) {
+                if (habbo.hasPermissionRight(perm)) {
                     habbo.getClient().sendResponse(message);
                 }
             }
@@ -187,11 +206,7 @@ public class HabboManager {
     }
 
     public synchronized void dispose() {
-
-
-//
-
-
+        this.infoCacheTask.cancel(false);
         log.info("Habbo Manager -> Disposed!");
     }
 
@@ -264,7 +279,7 @@ public class HabboManager {
             habbo.getClient().sendResponse(new UserRightsMessageComposer(habbo));
             habbo.getClient().sendResponse(new UserPerksComposer(habbo));
 
-            if (habbo.hasRight(Permission.ACC_SUPPORTTOOL)) {
+            if (habbo.hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
                 habbo.getClient().sendResponse(new ModeratorInitMessageComposer(habbo));
             }
             habbo.getHabboInfo().run();

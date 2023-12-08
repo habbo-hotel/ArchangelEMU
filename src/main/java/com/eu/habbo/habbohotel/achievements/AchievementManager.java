@@ -2,9 +2,9 @@ package com.eu.habbo.habbohotel.achievements;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboBadge;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.achievements.AchievementComposer;
 import com.eu.habbo.messages.outgoing.achievements.AchievementUnlockedComposer;
 import com.eu.habbo.messages.outgoing.achievements.talenttrack.TalentLevelUpComposer;
@@ -17,7 +17,6 @@ import com.eu.habbo.plugin.Event;
 import com.eu.habbo.plugin.events.users.achievements.UserAchievementLeveledEvent;
 import com.eu.habbo.plugin.events.users.achievements.UserAchievementProgressEvent;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectIntProcedure;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
@@ -155,8 +154,8 @@ public class AchievementManager {
 
             Emulator.getThreading().run(badge);
 
-            if (badge.getSlot() > 0 && habbo.getHabboInfo().getCurrentRoom() != null) {
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserBadgesComposer(habbo.getInventory().getBadgesComponent().getWearingBadges(), habbo.getHabboInfo().getId()).compose());
+            if (badge.getSlot() > 0 && habbo.getRoomUnit().getRoom() != null) {
+                habbo.getRoomUnit().getRoom().sendComposer(new UserBadgesComposer(habbo.getInventory().getBadgesComponent().getWearingBadges(), habbo.getHabboInfo().getId()).compose());
             }
 
             habbo.getClient().sendResponse(new UnseenItemsComposer(badge.getId(), UnseenItemsComposer.AddHabboItemCategory.BADGE));
@@ -167,8 +166,8 @@ public class AchievementManager {
                 habbo.givePoints(newLevel.getRewardType(), newLevel.getRewardAmount());
             }
 
-            if (habbo.getHabboInfo().getCurrentRoom() != null) {
-                habbo.getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
+            if (habbo.getRoomUnit().getRoom() != null) {
+                habbo.getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(habbo).compose());
             }
         }
     }
@@ -339,7 +338,7 @@ public class AchievementManager {
                     if (level != null) {
                         if (level.items != null && !level.items.isEmpty()) {
                             for (Item item : level.items) {
-                                HabboItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), item, 0, 0, "");
+                                RoomItem rewardItem = Emulator.getGameEnvironment().getItemManager().createItem(habbo.getHabboInfo().getId(), item, 0, 0, "");
                                 habbo.getInventory().getItemsComponent().addItem(rewardItem);
                                 habbo.getClient().sendResponse(new UnseenItemsComposer(rewardItem));
                                 habbo.getClient().sendResponse(new FurniListInvalidateComposer());

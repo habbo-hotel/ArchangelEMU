@@ -7,7 +7,7 @@ import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
@@ -16,42 +16,33 @@ import com.eu.habbo.messages.outgoing.inventory.FurniListRemoveComposer;
 public class PlaceObjectEvent extends MessageHandler {
     @Override
     public void handle() {
-        String[] values = this.packet.readString().split(" ");
-
-        int itemId = -1;
-
-        if (values.length != 0) itemId = Integer.parseInt(values[0]);
-
         if (!this.client.getHabbo().getRoomUnit().isInRoom()) {
             this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
             return;
         }
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
+
         if (room == null) {
             return;
         }
 
-        HabboItem rentSpace = null;
-        if (this.client.getHabbo().getHabboStats().isRentingSpace()) {
-            rentSpace = room.getHabboItem(this.client.getHabbo().getHabboStats().getRentedItemId());
+        String[] values = this.packet.readString().split(" ");
+
+        int itemId = -1;
+
+        if (values.length != 0) {
+            itemId = Integer.parseInt(values[0]);
         }
 
-        HabboItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
+        RoomItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
 
-        if (item == null || item.getBaseItem().getInteractionType().getType() == InteractionPostIt.class)
-            return;
-
-        if (room.getId() != item.getRoomId() && item.getRoomId() != 0)
-            return;
-
-        //TODO move this to canStackAt() though find a way to handle the different bubble alert keys
-        if (item instanceof InteractionMoodLight && !room.getRoomSpecialTypes().getItemsOfType(InteractionMoodLight.class).isEmpty()) {
-            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.MAX_DIMMERS.getErrorCode()));
+        //PostIts have their own event
+        if (item == null || item.getBaseItem().getInteractionType().getType() == InteractionPostIt.class) {
             return;
         }
-        if (item instanceof InteractionJukeBox && !room.getRoomSpecialTypes().getItemsOfType(InteractionJukeBox.class).isEmpty()) {
-            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.MAX_SOUNDFURNI.getErrorCode()));
+
+        if (room.getRoomInfo().getId() != item.getRoomId() && item.getRoomId() != 0) {
             return;
         }
 
@@ -65,19 +56,26 @@ public class PlaceObjectEvent extends MessageHandler {
             if(tile == null)
             {
                 String userName  = this.client.getHabbo().getHabboInfo().getUsername();
-                int roomId = room.getId();
+                int roomId = room.getRoomInfo().getId();
                 ScripterManager.scripterDetected(this.client, "User [" + userName + "] tried to place a furni with itemId [" + itemId + "] at a tile which is not existing in room [" + roomId + "], tile: [" + x + "," + y + "]");
                 return;
             }
 
-            HabboItem buildArea = null;
-            for (HabboItem area : room.getRoomSpecialTypes().getItemsOfType(InteractionBuildArea.class)) {
+            RoomItem buildArea = null;
+
+            for (RoomItem area : room.getRoomSpecialTypes().getItemsOfType(InteractionBuildArea.class)) {
                 if (((InteractionBuildArea) area).inSquare(tile)) {
                     buildArea = area;
                 }
             }
 
-            if ((rentSpace != null || buildArea != null) && !room.hasRights(this.client.getHabbo())) {
+            RoomItem rentSpace = null;
+
+            if (this.client.getHabbo().getHabboStats().isRentingSpace()) {
+                rentSpace = room.getRoomItemManager().getRoomItemById(this.client.getHabbo().getHabboStats().getRentedItemId());
+            }
+
+            if ((rentSpace != null || buildArea != null) && !room.getRoomRightsManager().hasRights(this.client.getHabbo())) {
                 if (item instanceof InteractionRoller ||
                         item instanceof InteractionStackHelper ||
                         item instanceof InteractionWired ||
@@ -89,25 +87,21 @@ public class PlaceObjectEvent extends MessageHandler {
                     this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
                     return;
                 }
-                if (rentSpace != null && !RoomLayout.squareInSquare(RoomLayout.getRectangle(rentSpace.getX(), rentSpace.getY(), rentSpace.getBaseItem().getWidth(), rentSpace.getBaseItem().getLength(), rentSpace.getRotation()), RoomLayout.getRectangle(x, y, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))) {
+                if (rentSpace != null && !RoomLayout.squareInSquare(RoomLayout.getRectangle(rentSpace.getCurrentPosition().getX(), rentSpace.getCurrentPosition().getY(), rentSpace.getBaseItem().getWidth(), rentSpace.getBaseItem().getLength(), rentSpace.getRotation()), RoomLayout.getRectangle(x, y, item.getBaseItem().getWidth(), item.getBaseItem().getLength(), rotation))) {
                     this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
                     return;
                 }
             }
-            FurnitureMovementError error = room.canPlaceFurnitureAt(item, this.client.getHabbo(), tile, rotation);
+
+            FurnitureMovementError error = room.getRoomItemManager().placeFloorItemAt(item, tile, rotation, this.client.getHabbo());
 
             if (!error.equals(FurnitureMovementError.NONE)) {
                 this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
                 return;
             }
 
-            error = room.placeFloorFurniAt(item, tile, rotation, this.client.getHabbo());
-            if (!error.equals(FurnitureMovementError.NONE)) {
-                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
-                return;
-            }
         } else {
-            FurnitureMovementError error = room.placeWallFurniAt(item, values[1] + " " + values[2] + " " + values[3], this.client.getHabbo());
+            FurnitureMovementError error = room.getRoomItemManager().placeWallItemAt(item, values[1] + " " + values[2] + " " + values[3], this.client.getHabbo());
             if (!error.equals(FurnitureMovementError.NONE)) {
                 this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), error.getErrorCode()));
                 return;

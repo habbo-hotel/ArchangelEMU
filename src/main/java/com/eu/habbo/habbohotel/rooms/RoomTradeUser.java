@@ -1,15 +1,17 @@
 package com.eu.habbo.habbohotel.rooms;
 
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
-import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.HashSet;
 
 public class RoomTradeUser {
     @Getter
     private final Habbo habbo;
-    private final THashSet<HabboItem> items;
+    @Getter
+    private final HashSet<RoomItem> items;
     @Setter
     @Getter
     private int userId;
@@ -28,29 +30,25 @@ public class RoomTradeUser {
 
         this.accepted = false;
         this.confirmed = false;
-        this.items = new THashSet<>();
+        this.items = new HashSet<>();
     }
 
     public void confirm() {
         this.confirmed = true;
     }
 
-    public void addItem(HabboItem item) {
+    public void addItem(RoomItem item) {
         this.items.add(item);
     }
 
-    public HabboItem getItem(int itemId) {
-        for (HabboItem item : this.items) {
+    public RoomItem getItem(int itemId) {
+        for (RoomItem item : this.items) {
             if (item.getId() == itemId) {
                 return item;
             }
         }
 
         return null;
-    }
-
-    public THashSet<HabboItem> getItems() {
-        return this.items;
     }
 
     public void putItemsIntoInventory() {

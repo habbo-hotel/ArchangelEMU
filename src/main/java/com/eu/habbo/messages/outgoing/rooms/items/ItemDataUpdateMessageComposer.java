@@ -13,13 +13,13 @@ public class ItemDataUpdateMessageComposer extends MessageComposer {
 
     @Override
     protected ServerMessage composeInternal() {
-        if (this.postIt.getExtradata().isEmpty() || this.postIt.getExtradata().length() < 6) {
-            this.postIt.setExtradata("FFFF33");
+        if (this.postIt.getExtraData().isEmpty() || this.postIt.getExtraData().length() < 6) {
+            this.postIt.setExtraData("FFFF33");
         }
 
         this.response.init(Outgoing.itemDataUpdateMessageComposer);
         this.response.appendString(this.postIt.getId() + "");
-        this.response.appendString(this.postIt.getExtradata());
+        this.response.appendString(this.postIt.getExtraData());
         return this.response;
     }
 }

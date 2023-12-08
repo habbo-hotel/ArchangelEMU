@@ -8,8 +8,8 @@ import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.items.interactions.wired.triggers.WiredTriggerTeamLoses;
 import com.eu.habbo.habbohotel.items.interactions.wired.triggers.WiredTriggerTeamWins;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.highscores.WiredHighscoreDataEntry;
 import com.eu.habbo.messages.outgoing.guides.YouArePlayingGameMessageComposer;
@@ -120,7 +120,7 @@ public abstract class Game implements Runnable {
             Emulator.getPluginManager().fireEvent(gameStartedEvent);
         }
 
-        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
+        for (RoomItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
             ((WiredBlob) item).onGameStart(this.room);
         }
 
@@ -136,7 +136,7 @@ public abstract class Game implements Runnable {
 
         int totalPointsGained = this.teams.values().stream().mapToInt(GameTeam::getTotalScore).sum();
 
-        Habbo roomOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.room.getOwnerId());
+        Habbo roomOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.room.getRoomInfo().getOwnerInfo().getId());
         if (roomOwner != null) {
             AchievementManager.progressAchievement(roomOwner, Emulator.getGameEnvironment().getAchievementManager().getAchievement("GameAuthorExperience"), totalPointsGained);
         }
@@ -161,7 +161,7 @@ public abstract class Game implements Runnable {
             }
 
             if (winningTeam.getMembers().size() > 0) {
-                for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
+                for (RoomItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
                     Emulator.getGameEnvironment().getItemManager().getHighscoreManager().addHighscoreData(new WiredHighscoreDataEntry(item.getId(), winningTeam.getMembers().stream().map(m -> m.getHabbo().getHabboInfo().getId()).collect(Collectors.toList()), winningTeam.getTotalScore(), true, Emulator.getIntUnixTimestamp()));
                 }
             }
@@ -174,19 +174,19 @@ public abstract class Game implements Runnable {
                 }
 
                 if (team.getMembers().size() > 0 && team.getTotalScore() > 0) {
-                    for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
+                    for (RoomItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
                         Emulator.getGameEnvironment().getItemManager().getHighscoreManager().addHighscoreData(new WiredHighscoreDataEntry(item.getId(), team.getMembers().stream().map(m -> m.getHabbo().getHabboInfo().getId()).collect(Collectors.toList()), team.getTotalScore(), false, Emulator.getIntUnixTimestamp()));
                     }
                 }
             }
         }
 
-        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
+        for (RoomItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionWiredHighscore.class)) {
             ((InteractionWiredHighscore) item).reloadData();
             this.room.updateItem(item);
         }
 
-        for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
+        for (RoomItem item : this.room.getRoomSpecialTypes().getItemsOfType(WiredBlob.class)) {
             ((WiredBlob) item).onGameEnd(this.room);
         }
     }
@@ -209,7 +209,7 @@ public abstract class Game implements Runnable {
         this.state = GameState.IDLE;
 
         boolean gamesActive = false;
-        for (HabboItem timer : room.getFloorItems()) {
+        for (RoomItem timer : room.getRoomItemManager().getFloorItems().values()) {
             if (timer instanceof InteractionGameTimer) {
                 if (((InteractionGameTimer) timer).isRunning())
                     gamesActive = true;

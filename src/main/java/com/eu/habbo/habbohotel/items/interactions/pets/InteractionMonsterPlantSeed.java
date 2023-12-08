@@ -4,29 +4,30 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionMonsterPlantSeed extends HabboItem {
+public class InteractionMonsterPlantSeed extends RoomItem {
     public InteractionMonsterPlantSeed(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
 
-        if (this.getExtradata().isEmpty()) {
-            this.setExtradata("" + randomRarityLevel());
-            this.needsUpdate(true);
+        if (this.getExtraData().isEmpty()) {
+            this.setExtraData("" + randomRarityLevel());
+            this.setSqlUpdateNeeded(true);
         }
     }
 
-    public InteractionMonsterPlantSeed(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionMonsterPlantSeed(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
-        if (this.getExtradata().isEmpty()) {
-            this.setExtradata("" + randomRarityLevel());
-            this.needsUpdate(true);
+        if (this.getExtraData().isEmpty()) {
+            this.setExtraData("" + randomRarityLevel());
+            this.setSqlUpdateNeeded(true);
         }
     }
 
@@ -78,7 +79,7 @@ public class InteractionMonsterPlantSeed extends HabboItem {
         serverMessage.appendInt(1 + (this.isLimited() ? 256 : 0));
         serverMessage.appendInt(1);
         serverMessage.appendString("rarity");
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }

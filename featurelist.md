@@ -132,7 +132,7 @@ If you wish to contribute to this list, features are laid out in the following f
 > [`Habbo.getHabboStats()`](https://git.krews.org/morningstar/Arcturus-Community/-/blob/dev/src/main/java/com/eu/habbo/habbohotel/users/Habbo.java#L94)  
 > [`Habbo.getRoomUnit()`](https://git.krews.org/morningstar/Arcturus-Community/-/blob/dev/src/main/java/com/eu/habbo/habbohotel/users/Habbo.java#L102)  
 > [`HabboManager`](https://git.krews.org/morningstar/Arcturus-Community/-/blob/dev/src/main/java/com/eu/habbo/habbohotel/users/HabboManager.java)  
-> [`HabboManager.getOfflineHabboInfo()`](https://git.krews.org/morningstar/Arcturus-Community/-/blob/dev/src/main/java/com/eu/habbo/habbohotel/users/HabboManager.java#L47)  
+> [`Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo()`](https://git.krews.org/morningstar/Arcturus-Community/-/blob/dev/src/main/java/com/eu/habbo/habbohotel/users/HabboManager.java#L47)  
 > [`HabboManager.getCloneAccounts()`](https://git.krews.org/morningstar/Arcturus-Community/-/blob/dev/src/main/java/com/eu/habbo/habbohotel/users/HabboManager.java#L203)  
 > [`HabboManager.setRank()`](https://git.krews.org/morningstar/Arcturus-Community/-/blob/dev/src/main/java/com/eu/habbo/habbohotel/users/HabboManager.java#L243)   
 > [`HabboInfo`](https://git.krews.org/morningstar/Arcturus-Community/-/blob/dev/src/main/java/com/eu/habbo/habbohotel/users/HabboManager.java)  

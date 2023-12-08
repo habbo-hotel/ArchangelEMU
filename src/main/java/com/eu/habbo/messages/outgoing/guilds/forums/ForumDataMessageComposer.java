@@ -107,7 +107,7 @@ public class ForumDataMessageComposer extends MessageComposer {
 
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, habbo);
             boolean isAdmin = member != null && (member.getRank().getType() < GuildRank.MEMBER.getType() || guild.getOwnerId() == this.habbo.getHabboInfo().getId());
-            boolean isStaff = this.habbo.hasRight(Permission.ACC_MODTOOL_TICKET_Q);
+            boolean isStaff = this.habbo.hasPermissionRight(Permission.ACC_MODTOOL_TICKET_Q);
 
             String errorRead = "";
             String errorPost = "";

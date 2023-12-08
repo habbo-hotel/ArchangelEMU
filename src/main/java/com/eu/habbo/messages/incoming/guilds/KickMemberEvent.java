@@ -24,7 +24,7 @@ public class KickMemberEvent extends MessageHandler {
 
         if (guild != null) {
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
-            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.OWNER) || member.getRank().equals(GuildRank.ADMIN) || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN)) {
+            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.OWNER) || member.getRank().equals(GuildRank.ADMIN) || this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN)) {
                 Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
                 GuildRemovedMemberEvent removedMemberEvent = new GuildRemovedMemberEvent(guild, userId, habbo);
                 Emulator.getPluginManager().fireEvent(removedMemberEvent);
@@ -38,7 +38,7 @@ public class KickMemberEvent extends MessageHandler {
                     this.client.sendResponse(new GuildMembershipRejectedMessageComposer(guild, userId));
                 }
 
-                Room room = Emulator.getGameEnvironment().getRoomManager().loadRoom(guild.getRoomId());
+                Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(guild.getRoomId());
 
                 if (habbo != null) {
                     habbo.getHabboStats().removeGuild(guild.getId());
@@ -46,18 +46,18 @@ public class KickMemberEvent extends MessageHandler {
                         habbo.getHabboStats().setGuild(0);
 
                     if (room != null) {
-                        if (habbo.getHabboInfo().getCurrentRoom() != null && habbo.getRoomUnit() != null)
-                            habbo.getHabboInfo().getCurrentRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(habbo.getRoomUnit(), null).compose());
-                        if (habbo.getHabboInfo().getCurrentRoom() == room)
-                            room.refreshRightsForHabbo(habbo);
+                        if (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit() != null)
+                            habbo.getRoomUnit().getRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(habbo.getRoomUnit(), null).compose());
+                        if (habbo.getRoomUnit().getRoom() == room)
+                            room.getRoomRightsManager().refreshRightsForHabbo(habbo);
                     }
 
                     habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
                 }
 
                 if (room != null) {
-                    if (room.getGuildId() == guildId) {
-                        room.ejectUserFurni(userId);
+                    if (room.getRoomInfo().getGuild().getId() == guildId) {
+                        room.getRoomItemManager().ejectUserFurni(userId);
                     }
                 }
             }

@@ -16,19 +16,19 @@ public class OpenTradingEvent extends MessageHandler {
             this.client.getHabbo().getHabboStats().setLastTradeTimestamp(Emulator.getIntUnixTimestamp());
             int userId = this.packet.readInt();
 
-            Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+            Room room = this.client.getHabbo().getRoomUnit().getRoom();
             if (room != null) {
-                if (userId >= 0 && userId != this.client.getHabbo().getRoomUnit().getId()) {
-                    Habbo targetUser = room.getHabboByRoomUnitId(userId);
+                if (userId >= 0 && userId != this.client.getHabbo().getRoomUnit().getVirtualId()) {
+                    Habbo targetUser = room.getRoomUnitManager().getHabboByVirtualId(userId);
 
-                    boolean tradeAnywhere = this.client.getHabbo().hasRight(Permission.ACC_TRADE_ANYWHERE);
+                    boolean tradeAnywhere = this.client.getHabbo().hasPermissionRight(Permission.ACC_TRADE_ANYWHERE);
 
                     if (!RoomTrade.TRADING_ENABLED && !tradeAnywhere) {
                         this.client.sendResponse(new TradingOpenFailedComposer(TradingOpenFailedComposer.HOTEL_TRADING_NOT_ALLOWED));
                         return;
                     }
 
-                    if ((room.getTradeMode() == 0 || (room.getTradeMode() == 1 && this.client.getHabbo().getHabboInfo().getId() != room.getOwnerId())) && !tradeAnywhere) {
+                    if ((room.getRoomInfo().getTradeMode() == 0 || (room.getRoomInfo().getTradeMode() == 1 && this.client.getHabbo().getHabboInfo().getId() != room.getRoomInfo().getOwnerInfo().getId())) && !tradeAnywhere) {
                         this.client.sendResponse(new TradingOpenFailedComposer(TradingOpenFailedComposer.ROOM_TRADING_NOT_ALLOWED));
                         return;
                     }

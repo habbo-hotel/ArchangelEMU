@@ -5,8 +5,9 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
 import com.eu.habbo.messages.ServerMessage;
@@ -18,17 +19,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InteractionOneWayGate extends HabboItem {
+public class InteractionOneWayGate extends RoomItem {
     private boolean walkable = false;
 
     public InteractionOneWayGate(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionOneWayGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionOneWayGate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
@@ -48,13 +49,13 @@ public class InteractionOneWayGate extends HabboItem {
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
-        if (this.getExtradata().length() == 0) {
-            this.setExtradata("0");
-            this.needsUpdate(true);
+        if (this.getExtraData().length() == 0) {
+            this.setExtraData("0");
+            this.setSqlUpdateNeeded(true);
         }
 
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -64,11 +65,11 @@ public class InteractionOneWayGate extends HabboItem {
         super.onClick(client, room, objects);
 
         if (client != null) {
-            RoomTile tileInfront = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation());
+            RoomTile tileInfront = room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), this.getRotation());
             if (tileInfront == null)
                 return;
 
-            RoomTile currentLocation = room.getLayout().getTile(this.getX(), this.getY());
+            RoomTile currentLocation = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
             if (currentLocation == null)
                 return;
 
@@ -76,62 +77,60 @@ public class InteractionOneWayGate extends HabboItem {
             if (unit == null)
                 return;
 
-            if (tileInfront.getX() == unit.getX() && tileInfront.getY() == unit.getY()) {
-                if (!currentLocation.hasUnits()) {
-                    List<Runnable> onSuccess = new ArrayList<>();
-                    List<Runnable> onFail = new ArrayList<>();
+            if (tileInfront.equals(unit.getCurrentPosition()) && !room.getRoomUnitManager().areRoomUnitsAt(currentLocation)) {
+                List<Runnable> onSuccess = new ArrayList<>();
+                List<Runnable> onFail = new ArrayList<>();
 
-                    onSuccess.add(() -> {
-                        unit.setCanLeaveRoomByDoor(false);
-                        walkable = this.getBaseItem().allowWalk();
-                        RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getX(), this.getY()), this.getRotation() + 4);
-                        unit.setGoalLocation(tile);
-                        Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
+                onSuccess.add(() -> {
+                    unit.setCanLeaveRoomByDoor(false);
+                    walkable = this.getBaseItem().allowWalk();
+                    RoomTile tile = room.getLayout().getTileInFront(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()), this.getRotation() + 4);
+                    unit.walkTo(tile);
+                    Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onFail, onFail));
 
-                        Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, unit, room, new Object[]{this}), 500);
-                    });
+                    Emulator.getThreading().run(() -> WiredHandler.handle(WiredTriggerType.WALKS_ON_FURNI, unit, room, new Object[]{this}), 500);
+                });
 
-                    onFail.add(() -> {
-                        unit.setCanLeaveRoomByDoor(true);
-                        walkable = this.getBaseItem().allowWalk();
-                        room.updateTile(currentLocation);
-                        room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
-                        unit.removeOverrideTile(currentLocation);
-                    });
-
-                    walkable = true;
+                onFail.add(() -> {
+                    unit.setCanLeaveRoomByDoor(true);
+                    walkable = this.getBaseItem().allowWalk();
                     room.updateTile(currentLocation);
-                    unit.addOverrideTile(currentLocation);
-                    unit.setGoalLocation(currentLocation);
-                    Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
-                    room.sendComposer(new DiceValueMessageComposer(this.getId(), 1).compose());
+                    room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
+                    unit.removeOverrideTile(currentLocation);
+                });
 
-                    /*
-                    room.scheduledTasks.add(new Runnable()
+                walkable = true;
+                room.updateTile(currentLocation);
+                unit.addOverrideTile(currentLocation);
+                unit.walkTo(currentLocation);
+                Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, currentLocation, room, onSuccess, onFail));
+                room.sendComposer(new DiceValueMessageComposer(this.getId(), 1).compose());
+
+                /*
+                room.scheduledTasks.add(new Runnable()
+                {
+                    @Override
+                    public void run()
                     {
-                        @Override
-                        public void run()
-                        {
-                            gate.roomUnitID = client.getHabbo().getRoomUnit().getId();
-                            room.updateTile(gatePosition);
-                            client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(InteractionOneWayGate.this.getX(), InteractionOneWayGate.this.getY()), InteractionOneWayGate.this.getRotation() + 4));
-                        }
-                    });
-                    */
-                }
+                        gate.roomUnitID = client.getHabbo().getRoomUnit().getId();
+                        room.updateTile(gatePosition);
+                        client.getHabbo().getRoomUnit().setGoalLocation(room.getLayout().getTileInFront(room.getLayout().getTile(InteractionOneWayGate.this.getX(), InteractionOneWayGate.this.getY()), InteractionOneWayGate.this.getRotation() + 4));
+                    }
+                });
+                */
             }
         }
     }
 
     private void refresh(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
         room.sendComposer(new DiceValueMessageComposer(this.getId(), 0).compose());
-        room.updateTile(room.getLayout().getTile(this.getX(), this.getY()));
+        room.updateTile(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
     }
 
     @Override
     public void onPickUp(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
         this.refresh(room);
     }
 

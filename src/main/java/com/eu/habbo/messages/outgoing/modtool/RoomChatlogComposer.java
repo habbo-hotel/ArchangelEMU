@@ -23,10 +23,10 @@ public class RoomChatlogComposer extends MessageComposer {
         this.response.appendShort(2);
         this.response.appendString("roomName");
         this.response.appendByte(2);
-        this.response.appendString(this.room.getName());
+        this.response.appendString(this.room.getRoomInfo().getName());
         this.response.appendString("roomId");
         this.response.appendByte(1);
-        this.response.appendInt(this.room.getId());
+        this.response.appendInt(this.room.getRoomInfo().getId());
 
         SimpleDateFormat formatDate = new SimpleDateFormat("HH:mm");
 

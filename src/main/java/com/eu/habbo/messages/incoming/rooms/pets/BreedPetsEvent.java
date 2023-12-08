@@ -10,8 +10,10 @@ public class BreedPetsEvent extends MessageHandler {
         int unknownInt = this.packet.readInt(); //Something state. 2 = accept
 
         if (unknownInt == 0) {
-            Pet petOne = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(this.packet.readInt());
-            Pet petTwo = this.client.getHabbo().getHabboInfo().getCurrentRoom().getPet(this.packet.readInt());
+            int petId1 = this.packet.readInt();
+            Pet petOne = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetById(petId1);
+            int petId = this.packet.readInt();
+            Pet petTwo = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetById(petId);
 
             if (petOne == null || petTwo == null || petOne == petTwo) {
                 //TODO Add error

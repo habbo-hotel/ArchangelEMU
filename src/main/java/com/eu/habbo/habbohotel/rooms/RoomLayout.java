@@ -1,14 +1,18 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
 import gnu.trove.set.hash.THashSet;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @Slf4j
 public class RoomLayout {
@@ -17,16 +21,30 @@ public class RoomLayout {
     public static double MAXIMUM_STEP_HEIGHT = 1.1;
     public static boolean ALLOW_FALLING = true;
     public boolean CANMOVEDIAGONALY = true;
+    @Getter
     private String name;
+    @Getter
+    @Setter
     private short doorX;
+    @Getter
+    @Setter
     private short doorY;
+    @Getter
     private short doorZ;
+    @Getter
+    @Setter
     private int doorDirection;
+    @Getter
+    @Setter
     private String heightmap;
+    @Getter
     private int mapSize;
+    @Getter
     private int mapSizeX;
+    @Getter
     private int mapSizeY;
     private RoomTile[][] roomTiles;
+    @Getter
     private RoomTile doorTile;
     private final Room room;
 
@@ -143,62 +161,6 @@ public class RoomLayout {
         }
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public short getDoorX() {
-        return this.doorX;
-    }
-
-    public void setDoorX(short doorX) {
-        this.doorX = doorX;
-    }
-
-    public short getDoorY() {
-        return this.doorY;
-    }
-
-    public void setDoorY(short doorY) {
-        this.doorY = doorY;
-    }
-
-    public int getDoorZ() {
-        return this.doorZ;
-    }
-
-    public RoomTile getDoorTile() {
-        return this.doorTile;
-    }
-
-    public int getDoorDirection() {
-        return this.doorDirection;
-    }
-
-    public void setDoorDirection(int doorDirection) {
-        this.doorDirection = doorDirection;
-    }
-
-    public String getHeightmap() {
-        return this.heightmap;
-    }
-
-    public void setHeightmap(String heightMap) {
-        this.heightmap = heightMap;
-    }
-
-    public int getMapSize() {
-        return this.mapSize;
-    }
-
-    public int getMapSizeX() {
-        return this.mapSizeX;
-    }
-
-    public int getMapSizeY() {
-        return this.mapSizeY;
-    }
-
     public short getHeightAtSquare(int x, int y) {
         if (x < 0 ||
                 y < 0 ||
@@ -241,8 +203,19 @@ public class RoomLayout {
         return !(x < 0 || y < 0 || x >= this.getMapSizeX() || y >= this.getMapSizeY());
     }
 
+    public boolean tileWalkable(RoomTile tile) {
+        return this.tileWalkable(tile.getX(), tile.getY());
+    }
+
     public boolean tileWalkable(short x, short y) {
-        return this.tileExists(x, y) && this.roomTiles[x][y].getState() == RoomTileState.OPEN && this.roomTiles[x][y].isWalkable();
+        boolean walkable = false;
+
+        if(this.tileExists(x, y)) {
+            RoomTile tile = this.getTile(x, y);
+            walkable = tile.isWalkable() && (this.room.getRoomUnitManager().areRoomUnitsAt(tile) && !this.room.getRoomInfo().isAllowWalkthrough());
+        }
+
+        return walkable;
     }
 
     public boolean isVoidTile(short x, short y) {
@@ -304,7 +277,13 @@ public class RoomLayout {
                     continue;
                 }
 
-                if (currentAdj.hasUnits() && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
+                RoomUnit exception = null;
+
+                if(roomUnit instanceof RoomAvatar roomAvatar && roomAvatar.isRiding()) {
+                    exception = roomAvatar.getRidingPet().getRoomUnit();
+                }
+
+                if (this.room.getRoomUnitManager().areRoomUnitsAt(currentAdj, exception) && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
                     closedList.add(currentAdj);
                     openList.remove(currentAdj);
                     continue;
@@ -322,7 +301,7 @@ public class RoomLayout {
             }
         }
 
-        if (this.room.isAllowWalkthrough() && !isWalktroughRetry) {
+        if (this.room.getRoomInfo().isAllowWalkthrough() && !isWalktroughRetry) {
             return this.findPath(oldTile, newTile, goalLocation, roomUnit, true);
         }
 
@@ -588,26 +567,33 @@ public class RoomLayout {
         return availableTiles;
     }
 
-    public RoomTile getRandomWalkableTilesAround(RoomUnit roomUnit, RoomTile tile, Room room, int radius) {
-         if(!this.tileExists(tile.getX(), tile.getY())) {
-             tile = this.getTile(roomUnit.getX(), roomUnit.getY());
-             room.getBot(roomUnit).needsUpdate(true);
-        }
+    public RoomTile getRandomWalkableTilesAround(RoomBot roomBot, RoomTile tile, int radius) {
+         if(tile == null || !this.tileExists(tile.getX(), tile.getY()) || tile.getState().equals(RoomTileState.INVALID)) {
+             roomBot.setCanWalk(false);
+             return null;
+         }
 
         List<RoomTile> newTiles = new ArrayList<>();
 
         int minX = Math.max(0, tile.getX() - radius);
         int minY = Math.max(0, tile.getY() - radius);
-        int maxX = Math.min(room.getLayout().getMapSizeX(), tile.getX() + radius);
-        int maxY = Math.min(room.getLayout().getMapSizeY(), tile.getY() + radius);
+        int maxX = Math.min(this.room.getLayout().getMapSizeX(), tile.getX() + radius);
+        int maxY = Math.min(this.room.getLayout().getMapSizeY(), tile.getY() + radius);
 
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
-                RoomTile tile2 = room.getLayout().getTile((short) x, (short) y);
-                if (tile2 != null && tile.getState() != RoomTileState.BLOCKED && tile.getState() != RoomTileState.INVALID)
+                RoomTile tile2 = this.room.getLayout().getTile((short) x, (short) y);
+                if (tile2 != null && tile2.getState() != RoomTileState.BLOCKED && tile2.getState() != RoomTileState.INVALID) {
                     newTiles.add(tile2);
+                }
             }
         }
+
+        if(newTiles.isEmpty()) {
+            log.debug("No Random tiles found.");
+            return null;
+        }
+
         Collections.shuffle(newTiles);
         return newTiles.get(0);
     }

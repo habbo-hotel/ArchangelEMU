@@ -2,9 +2,9 @@ package com.eu.habbo.habbohotel.users.inventory;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInventory;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.plugin.events.inventory.InventoryItemAddedEvent;
 import com.eu.habbo.plugin.events.inventory.InventoryItemRemovedEvent;
 import com.eu.habbo.plugin.events.inventory.InventoryItemsAddedEvent;
@@ -21,13 +21,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 
 @Slf4j
 public class ItemsComponent {
 
     @Getter
-    private final TIntObjectMap<HabboItem> items = TCollections.synchronizedMap(new TIntObjectHashMap<>());
+    private final TIntObjectMap<RoomItem> items = TCollections.synchronizedMap(new TIntObjectHashMap<>());
 
     private final HabboInventory inventory;
 
@@ -36,8 +37,8 @@ public class ItemsComponent {
         this.items.putAll(loadItems(habbo));
     }
 
-    public static THashMap<Integer, HabboItem> loadItems(Habbo habbo) {
-        THashMap<Integer, HabboItem> itemsList = new THashMap<>();
+    public static THashMap<Integer, RoomItem> loadItems(Habbo habbo) {
+        THashMap<Integer, RoomItem> itemsList = new THashMap<>();
 
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM items WHERE room_id = ? AND user_id = ?")) {
             statement.setInt(1, 0);
@@ -45,7 +46,7 @@ public class ItemsComponent {
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
                     try {
-                        HabboItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set);
+                        RoomItem item = Emulator.getGameEnvironment().getItemManager().loadHabboItem(set);
 
                         if (item != null) {
                             itemsList.put(set.getInt("id"), item);
@@ -64,7 +65,7 @@ public class ItemsComponent {
         return itemsList;
     }
 
-    public void addItem(HabboItem item) {
+    public void addItem(RoomItem item) {
         if (item == null) {
             return;
         }
@@ -79,14 +80,14 @@ public class ItemsComponent {
         }
     }
 
-    public void addItems(THashSet<HabboItem> items) {
+    public void addItems(HashSet<RoomItem> items) {
         InventoryItemsAddedEvent event = new InventoryItemsAddedEvent(this.inventory, items);
         if (Emulator.getPluginManager().fireEvent(event).isCancelled()) {
             return;
         }
 
         synchronized (this.items) {
-            for (HabboItem item : event.items) {
+            for (RoomItem item : event.items) {
                 if (item == null) {
                     continue;
                 }
@@ -96,31 +97,31 @@ public class ItemsComponent {
         }
     }
 
-    public HabboItem getHabboItem(int itemId) {
+    public RoomItem getHabboItem(int itemId) {
         return this.items.get(Math.abs(itemId));
     }
 
-    public HabboItem getAndRemoveHabboItem(final Item item) {
-        final HabboItem[] habboItem = {null};
+    public RoomItem getAndRemoveHabboItem(final Item item) {
+        final RoomItem[] roomItem = {null};
         synchronized (this.items) {
             this.items.forEachValue(object -> {
                 if (object.getBaseItem() == item) {
-                    habboItem[0] = object;
+                    roomItem[0] = object;
                     return false;
                 }
 
                 return true;
             });
         }
-        this.removeHabboItem(habboItem[0]);
-        return habboItem[0];
+        this.removeHabboItem(roomItem[0]);
+        return roomItem[0];
     }
 
     public void removeHabboItem(int itemId) {
         this.items.remove(itemId);
     }
 
-    public void removeHabboItem(HabboItem item) {
+    public void removeHabboItem(RoomItem item) {
         InventoryItemRemovedEvent event = new InventoryItemRemovedEvent(this.inventory, item);
         if (Emulator.getPluginManager().fireEvent(event).isCancelled()) {
             return;
@@ -131,8 +132,8 @@ public class ItemsComponent {
         }
     }
 
-    public THashSet<HabboItem> getItemsAsValueCollection() {
-        THashSet<HabboItem> items = new THashSet<>();
+    public THashSet<RoomItem> getItemsAsValueCollection() {
+        THashSet<RoomItem> items = new THashSet<>();
         items.addAll(this.items.valueCollection());
 
         return items;
@@ -144,7 +145,7 @@ public class ItemsComponent {
 
     public void dispose() {
         synchronized (this.items) {
-            TIntObjectIterator<HabboItem> items = this.items.iterator();
+            TIntObjectIterator<RoomItem> items = this.items.iterator();
 
             if (items == null) {
                 log.error("Items is NULL!");
@@ -158,7 +159,8 @@ public class ItemsComponent {
                     } catch (NoSuchElementException e) {
                         break;
                     }
-                    if (items.value().needsUpdate())
+                    RoomItem roomItem = items.value();
+                    if (roomItem.isSqlUpdateNeeded())
                         Emulator.getThreading().run(items.value());
                 }
             }

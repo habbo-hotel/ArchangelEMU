@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.items.rentablespace;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRentableSpace;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class RentableSpaceCancelRentEvent extends MessageHandler {
@@ -11,15 +11,15 @@ public class RentableSpaceCancelRentEvent extends MessageHandler {
     public void handle() {
         int itemId = this.packet.readInt();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
-        HabboItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
-        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() ||
-                this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() ||
+                this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             if (item instanceof InteractionRentableSpace) {
                 ((InteractionRentableSpace) item).endRent();
 

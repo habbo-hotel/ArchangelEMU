@@ -1,12 +1,13 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.habbohotel.items.Item;
-import gnu.trove.set.hash.THashSet;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 public class RoomTile {
     @Getter
@@ -15,10 +16,12 @@ public class RoomTile {
     private final short y;
     @Getter
     private final short z;
-    private final THashSet<RoomUnit> units;
+    private final HashSet<RoomUnit> roomUnits;
+    private final HashSet<RoomItem> roomItems;
     @Setter
     @Getter
     private RoomTileState state;
+    @Getter
     private double stackHeight;
     private boolean allowStack = true;
     @Getter
@@ -37,7 +40,8 @@ public class RoomTile {
         this.stackHeight = z;
         this.state = state;
         this.setAllowStack(allowStack);
-        this.units = new THashSet<>();
+        this.roomUnits = new HashSet<>();
+        this.roomItems = new HashSet<>();
     }
 
     public RoomTile(RoomTile tile) {
@@ -54,24 +58,9 @@ public class RoomTile {
         if (this.state == RoomTileState.INVALID) {
             this.allowStack = false;
         }
-        this.units = tile.units;
-    }
 
-    public RoomTile() {
-        x = 0;
-        y = 0;
-        z = 0;
-        this.stackHeight = 0;
-        this.state = RoomTileState.INVALID;
-        this.allowStack = false;
-        this.diagonally = false;
-        this.gCosts = 0;
-        this.hCosts = 0;
-        this.units = null;
-    }
-
-    public double getStackHeight() {
-        return this.stackHeight;
+        this.roomUnits = tile.roomUnits;
+        this.roomItems = tile.roomItems;
     }
 
     public void setStackHeight(double stackHeight) {
@@ -117,6 +106,10 @@ public class RoomTile {
         return o instanceof RoomTile &&
                 ((RoomTile) o).x == this.x &&
                 ((RoomTile) o).y == this.y;
+    }
+
+    public boolean equals(int x, int y) {
+        return this.x == x && this.y == y;
     }
 
     public RoomTile copy() {
@@ -173,33 +166,36 @@ public class RoomTile {
         return this.x == x && this.y == y;
     }
 
-    public List<RoomUnit> getUnits() {
-        synchronized (this.units) {
-            return new ArrayList<>(this.units);
+    public void addRoomUnit(RoomUnit roomUnit) {
+        synchronized (this.roomUnits) {
+            this.roomUnits.add(roomUnit);
         }
     }
 
-    public void addUnit(RoomUnit unit) {
-        synchronized (this.units) {
-            if (!this.units.contains(unit)) {
-                this.units.add(unit);
+    public void removeUnit(RoomUnit roomUnit) {
+        synchronized (this.roomUnits) {
+            if(!this.roomUnits.contains(roomUnit)) {
+                return;
+            }
+
+            this.roomUnits.remove(roomUnit);
+
+            if(roomUnit instanceof RoomAvatar roomAvatar && roomAvatar.isRiding()) {
+                this.roomUnits.remove(roomAvatar.getRidingPet().getRoomUnit());
             }
         }
     }
 
-    public void removeUnit(RoomUnit unit) {
-        synchronized (this.units) {
-            this.units.remove(unit);
+    //TODO Move this to RoomUnit
+    public boolean unitIsOnFurniOnTile(RoomUnit roomUnit, Item item) {
+        if ((roomUnit.getCurrentPosition().getX() < this.x || roomUnit.getCurrentPosition().getX() >= this.x + item.getLength())) {
+            return false;
         }
-    }
 
-    public boolean hasUnits() {
-        synchronized (this.units) {
-            return this.units.size() > 0;
+        if (roomUnit.getCurrentPosition().getY() < this.y) {
+            return false;
         }
-    }
 
-    public boolean unitIsOnFurniOnTile(RoomUnit unit, Item item) {
-        return (unit.getX() >= this.x && unit.getX() < this.x + item.getLength()) && (unit.getY() >= this.y && unit.getY() < this.y + item.getWidth());
+        return roomUnit.getCurrentPosition().getY() < this.y + item.getWidth();
     }
 }

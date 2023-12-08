@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum RoomUnitStatus {
-    MOVE("mv", true),
+    MOVE("mv"),
 
     // SIT
     SIT_IN("sit-in"),

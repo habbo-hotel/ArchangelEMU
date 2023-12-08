@@ -6,7 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionTeleport;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.sql.SQLException;
 @AllArgsConstructor
 class TeleportActionTwo implements Runnable {
 
-    private final HabboItem currentTeleport;
+    private final RoomItem currentTeleport;
     private final Room room;
     private final GameClient client;
     
@@ -34,14 +34,15 @@ class TeleportActionTwo implements Runnable {
             delayOffset = 0;
         }
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != this.room)
+        if (this.client.getHabbo().getRoomUnit().getRoom() != this.room)
             return;
 
         this.client.getHabbo().getRoomUnit().removeStatus(RoomUnitStatus.MOVE);
         this.room.sendComposer(new UserUpdateComposer(this.client.getHabbo().getRoomUnit()).compose());
 
         if (((InteractionTeleport) this.currentTeleport).getTargetRoomId() > 0 && ((InteractionTeleport) this.currentTeleport).getTargetId() > 0) {
-            HabboItem item = this.room.getHabboItem(((InteractionTeleport) this.currentTeleport).getTargetId());
+            int id = ((InteractionTeleport) this.currentTeleport).getTargetId();
+            RoomItem item = this.room.getRoomItemManager().getRoomItemById(id);
             if (item == null) {
                 ((InteractionTeleport) this.currentTeleport).setTargetRoomId(0);
                 ((InteractionTeleport) this.currentTeleport).setTargetId(0);
@@ -76,7 +77,7 @@ class TeleportActionTwo implements Runnable {
             }
         }
 
-        this.currentTeleport.setExtradata("0");
+        this.currentTeleport.setExtraData("0");
         this.room.updateItem(this.currentTeleport);
 
         if (((InteractionTeleport) this.currentTeleport).getTargetRoomId() == 0) {

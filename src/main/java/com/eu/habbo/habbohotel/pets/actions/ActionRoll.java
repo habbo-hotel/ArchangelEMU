@@ -21,7 +21,7 @@ public class ActionRoll extends PetAction {
         boolean findTree = pet.findPetItem(PetTasks.ROLL, InteractionPetTree.class);
         if (!findTree && pet.getPetData().getToyItems().stream().noneMatch(item -> item.getInteractionType().getType() == InteractionPetTree.class)) {
             pet.getRoomUnit().setCanWalk(false);
-            pet.getRoomUnit().setStatus(RoomUnitStatus.ROLL, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+            pet.getRoomUnit().addStatus(RoomUnitStatus.ROLL, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
 
             Emulator.getThreading().run(() -> {
                 pet.getRoomUnit().setCanWalk(true);

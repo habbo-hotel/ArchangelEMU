@@ -21,11 +21,11 @@ public class ActionSit extends PetAction {
     @Override
     public boolean apply(Pet pet, Habbo habbo, String[] data) {
         if (pet.getTask() != PetTasks.SIT && !pet.getRoomUnit().hasStatus(RoomUnitStatus.SIT)) {
-            pet.getRoomUnit().setCmdSit(true);
-            pet.getRoomUnit().setStatus(RoomUnitStatus.SIT, pet.getRoomUnit().getCurrentLocation().getStackHeight() + "");
+            pet.getRoomUnit().setCmdSitEnabled(true);
+            pet.getRoomUnit().addStatus(RoomUnitStatus.SIT, pet.getRoomUnit().getCurrentPosition().getStackHeight() + "");
 
             Emulator.getThreading().run(() -> {
-                pet.getRoomUnit().setCmdSit(false);
+                pet.getRoomUnit().setCmdSitEnabled(false);
                 pet.clearPosture();
             }, this.minimumActionDuration);
 

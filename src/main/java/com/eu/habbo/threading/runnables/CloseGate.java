@@ -1,22 +1,29 @@
 package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class CloseGate implements Runnable {
-    private final HabboItem gate;
+    private final RoomItem gate;
     private final Room room;
 
     @Override
     public void run() {
-        if (this.gate.getRoomId() == this.room.getId()) {
+        if (this.gate.getRoomId() == this.room.getRoomInfo().getId()) {
             if (this.room.isLoaded()) {
-                if (this.room.getHabbosAt(this.gate.getX(), this.gate.getY()).isEmpty()) {
-                    this.gate.setExtradata("0");
+                RoomTile tile = this.room.getLayout().getTile(this.gate.getCurrentPosition().getX(), this.gate.getCurrentPosition().getY());
+
+                if(tile == null) {
+                    return;
+                }
+
+                if (!this.room.getRoomUnitManager().hasHabbosAt(tile)) {
+                    this.gate.setExtraData("0");
                     this.room.updateItem(this.gate);
-                    this.gate.needsUpdate(true);
+                    this.gate.setSqlUpdateNeeded(true);
                 }
             }
         }

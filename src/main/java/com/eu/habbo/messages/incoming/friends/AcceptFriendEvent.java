@@ -14,8 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.eu.habbo.habbohotel.users.HabboManager.getOfflineHabboInfo;
-
 @Slf4j
 public class AcceptFriendEvent extends MessageHandler {
 
@@ -38,7 +36,7 @@ public class AcceptFriendEvent extends MessageHandler {
             Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
             if(target == null) {
-                HabboInfo habboInfo = getOfflineHabboInfo(userId);
+                HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(userId);
 
                 if(habboInfo == null) {
                     this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.TARGET_NOT_FOUND));
@@ -65,12 +63,12 @@ public class AcceptFriendEvent extends MessageHandler {
                 continue;
             }
 
-            if(this.client.getHabbo().getMessenger().getFriends().size() >= this.client.getHabbo().getHabboStats().getMaxFriends() && !this.client.getHabbo().hasRight(Permission.ACC_INFINITE_FRIENDS)) {
+            if(this.client.getHabbo().getMessenger().getFriends().size() >= this.client.getHabbo().getHabboStats().getMaxFriends() && !this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_FRIENDS)) {
                 this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_OWN_FULL));
                 break;
             }
 
-            if(target.getMessenger().getFriends().size() >= target.getHabboStats().getMaxFriends() && !target.hasRight(Permission.ACC_INFINITE_FRIENDS)) {
+            if(target.getMessenger().getFriends().size() >= target.getHabboStats().getMaxFriends() && !target.hasPermissionRight(Permission.ACC_INFINITE_FRIENDS)) {
                 this.client.sendResponse(new MessengerErrorComposer(MessengerErrorComposer.FRIEND_LIST_TARGET_FULL));
                 continue;
             }

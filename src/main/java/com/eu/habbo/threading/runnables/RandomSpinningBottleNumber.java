@@ -2,22 +2,22 @@ package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 
 public class RandomSpinningBottleNumber implements Runnable {
-    private final HabboItem item;
+    private final RoomItem item;
     private final Room room;
     private final int maxNumber;
     private int result;
 
-    public RandomSpinningBottleNumber(HabboItem item, Room room, int maxNumber) {
+    public RandomSpinningBottleNumber(RoomItem item, Room room, int maxNumber) {
         this.item = item;
         this.room = room;
         this.maxNumber = maxNumber;
         this.result = -1;
     }
 
-    public RandomSpinningBottleNumber(Room room, HabboItem item, int result) {
+    public RandomSpinningBottleNumber(Room room, RoomItem item, int result) {
         this.item = item;
         this.room = room;
         this.maxNumber = -1;
@@ -29,8 +29,8 @@ public class RandomSpinningBottleNumber implements Runnable {
         if (this.result <= 0)
             this.result = Emulator.getRandom().nextInt(this.maxNumber);
 
-        this.item.setExtradata(this.result + "");
-        this.item.needsUpdate(true);
+        this.item.setExtraData(this.result + "");
+        this.item.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(this.item);
 
         this.room.updateItem(this.item);

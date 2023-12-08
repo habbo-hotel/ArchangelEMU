@@ -31,15 +31,15 @@ public class EnableCommand extends Command {
             if (target == null) {
                 return true;
             }
-            if (target == gameClient.getHabbo() || gameClient.getHabbo().hasRight(Permission.ACC_ENABLE_OTHERS)) {
+            if (target == gameClient.getHabbo() || gameClient.getHabbo().hasPermissionRight(Permission.ACC_ENABLE_OTHERS)) {
                 try {
-                    if (target.getHabboInfo().getCurrentRoom() != null && target.getHabboInfo().getRiding() == null) {
+                    if (target.getRoomUnit().getRoom() != null && !target.getRoomUnit().isRiding()) {
                         if (Emulator.getGameEnvironment().getPermissionsManager().isEffectBlocked(effectId, target.getHabboInfo().getPermissionGroup().getId())) {
                             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_enable.not_allowed"), RoomChatMessageBubbles.ALERT);
                             return true;
                         }
 
-                        target.getHabboInfo().getCurrentRoom().giveEffect(target, effectId, -1);
+                        target.getRoomUnit().giveEffect(effectId, -1);
                     }
                 } catch (Exception e) {
                     log.error("Caught exception", e);

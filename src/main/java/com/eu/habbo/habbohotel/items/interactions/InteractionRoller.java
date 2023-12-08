@@ -4,8 +4,9 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import gnu.trove.set.hash.THashSet;
 import org.apache.commons.math3.util.Pair;
@@ -14,24 +15,24 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class InteractionRoller extends HabboItem {
+public class InteractionRoller extends RoomItem {
     public static boolean NO_RULES = false;
     public static final int DELAY = 400;
 
     public InteractionRoller(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionRoller(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionRoller(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -68,11 +69,11 @@ public class InteractionRoller extends HabboItem {
 
 
     @Override
-    public boolean canStackAt(Room room, List<Pair<RoomTile, THashSet<HabboItem>>> itemsAtLocation) {
+    public boolean canStackAt(List<Pair<RoomTile, THashSet<RoomItem>>> itemsAtLocation) {
         if (NO_RULES) return true;
         if (itemsAtLocation.isEmpty()) return false;
 
-        for (Pair<RoomTile, THashSet<HabboItem>> set : itemsAtLocation) {
+        for (Pair<RoomTile, THashSet<RoomItem>> set : itemsAtLocation) {
             if (set.getValue() != null && !set.getValue().isEmpty()) {
                 if (set.getValue().size() > 1) {
                     return false;

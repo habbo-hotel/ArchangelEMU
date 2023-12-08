@@ -9,8 +9,8 @@ import com.eu.habbo.messages.incoming.MessageHandler;
 public class ModerateRoomEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.packet.readInt());
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.packet.readInt());
 
             if (room != null) {
                 final boolean lockDoor = this.packet.readInt() == 1;

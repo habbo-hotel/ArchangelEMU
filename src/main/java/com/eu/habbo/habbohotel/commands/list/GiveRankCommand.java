@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.permissions.PermissionGroup;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import org.apache.commons.lang3.StringUtils;
 
 public class GiveRankCommand extends Command {
@@ -40,7 +39,7 @@ public class GiveRankCommand extends Command {
                         return true;
                     }
 
-                    HabboInfo habbo = HabboManager.getOfflineHabboInfo(params[1]);
+                    HabboInfo habbo = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(params[1]);
 
                     if (habbo != null) {
                         if (habbo.getPermissionGroup().getId() > gameClient.getHabbo().getHabboInfo().getPermissionGroup().getId()) {

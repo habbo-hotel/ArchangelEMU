@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.furniture.FurnitureRoomTonerEvent;
 
@@ -12,12 +12,12 @@ public class SetRoomBackgroundColorDataEvent extends MessageHandler {
     public void handle() {
         int itemId = this.packet.readInt();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
         if (room == null)
             return;
 
-        if (room.hasRights(this.client.getHabbo()) || this.client.getHabbo().hasRight(Permission.ACC_PLACEFURNI)) {
-            HabboItem item = room.getHabboItem(itemId);
+        if (room.getRoomRightsManager().hasRights(this.client.getHabbo()) || this.client.getHabbo().hasPermissionRight(Permission.ACC_PLACEFURNI)) {
+            RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
             if (item == null)
                 return;
@@ -35,8 +35,8 @@ public class SetRoomBackgroundColorDataEvent extends MessageHandler {
             saturation = event.getSaturation() % 256;
             brightness = event.getBrightness() % 256;
 
-            item.setExtradata(item.getExtradata().split(":")[0] + ":" + hue + ":" + saturation + ":" + brightness);
-            item.needsUpdate(true);
+            item.setExtraData(item.getExtraData().split(":")[0] + ":" + hue + ":" + saturation + ":" + brightness);
+            item.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(item);
             room.updateItem(item);
         }

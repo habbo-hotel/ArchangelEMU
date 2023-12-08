@@ -1,10 +1,11 @@
 package com.eu.habbo.habbohotel.commands.list;
 
-import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+
+import java.util.Map;
+import java.util.Set;
 
 public class TestCommand extends Command {
     public TestCommand() {
@@ -13,35 +14,17 @@ public class TestCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo() != null || !gameClient.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL) || !Emulator.debugging)
-            return false;
+        StringBuilder message = new StringBuilder("RoomUnit Statuses");
 
-        int header = Integer.parseInt(params[1]);
+        Set<Map.Entry<RoomUnitStatus, String>> statuses = gameClient.getHabbo().getRoomUnit().getStatuses().entrySet();
 
-        ServerMessage message = new ServerMessage(header);
+        message.append("(").append(statuses.size()).append("):\r\n");
 
-        for (int i = 1; i < params.length; i++) {
-            String[] data = params[i].split(":");
-
-            if (data[0].equalsIgnoreCase("b")) {
-                message.appendBoolean(data[1].equalsIgnoreCase("1"));
-            } else if (data[0].equalsIgnoreCase("s")) {
-                if (data.length > 1) {
-                    message.appendString(data[1]);
-                } else {
-                    message.appendString("");
-                }
-            } else if (data[0].equals("i")) {
-                message.appendInt(Integer.parseInt(data[1]));
-            } else if (data[0].equalsIgnoreCase("by")) {
-                message.appendByte(Integer.parseInt(data[1]));
-            } else if (data[0].equalsIgnoreCase("sh")) {
-                message.appendShort(Integer.parseInt(data[1]));
-            }
+        for(Map.Entry<RoomUnitStatus, String> status : statuses) {
+            message.append(status.getKey().toString()).append("\r");
         }
 
-        gameClient.sendResponse(message);
-
+        gameClient.getHabbo().alert(new String[]{message.toString()});
         return true;
     }
 }

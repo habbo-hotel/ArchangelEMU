@@ -17,7 +17,7 @@ public class SetPollCommand extends Command {
             return true;
         }
 
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() != null) {
             int pollId = -1;
             try {
                 pollId = Integer.parseInt(params[1]);
@@ -25,7 +25,7 @@ public class SetPollCommand extends Command {
 
             if (pollId >= 0) {
                 if (Emulator.getGameEnvironment().getPollManager().getPoll(pollId) != null) {
-                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().setPollId(pollId);
+                    gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().setPollId(pollId);
                     gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_set_poll"), RoomChatMessageBubbles.ALERT);
                 } else {
                     gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_set_poll.not_found"), RoomChatMessageBubbles.ALERT);

@@ -16,12 +16,12 @@ public class PetInfoCommand extends Command {
             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_pet_info.pet_not_found"), RoomChatMessageBubbles.ALERT);
             return true;
         }
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (gameClient.getHabbo().getRoomUnit().getRoom() == null)
             return false;
 
         String name = params[1];
 
-        gameClient.getHabbo().getHabboInfo().getCurrentRoom().getCurrentPets().forEachEntry((a, pet) -> {
+        gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentPets().forEach((a, pet) -> {
             if (pet.getName().equalsIgnoreCase(name)) {
                 gameClient.getHabbo().alert("" +
                         getTextsValue("commands.generic.cmd_pet_info.title") + ": " + pet.getName() + "\r\n" +
@@ -37,11 +37,9 @@ public class PetInfoCommand extends Command {
                         getTextsValue("generic.pet.level.thirst") + ": " + pet.levelThirst + "\r" +
                         getTextsValue("generic.pet.level.hunger") + ": " + pet.levelHunger + "\r" +
                         getTextsValue("generic.pet.current_action") + ": " + (pet.getTask() == null ? getTextsValue("generic.nothing") : pet.getTask().name()) + "\r" +
-                        getTextsValue("generic.can.walk") + ": " + (pet.getRoomUnit().canWalk() ? getTextsValue("generic.yes") : getTextsValue("generic.no")) + ""
+                        getTextsValue("generic.can.walk") + ": " + (pet.getRoomUnit().isCanWalk() ? getTextsValue("generic.yes") : getTextsValue("generic.no")) + ""
                 );
             }
-
-            return true;
         });
         return true;
     }

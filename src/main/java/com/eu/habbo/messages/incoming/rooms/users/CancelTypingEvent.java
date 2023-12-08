@@ -6,7 +6,7 @@ import com.eu.habbo.messages.outgoing.rooms.users.UserTypingMessageComposer;
 public class CancelTypingEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null) {
+        if (this.client.getHabbo().getRoomUnit().getRoom() == null) {
             return;
         }
 
@@ -14,6 +14,6 @@ public class CancelTypingEvent extends MessageHandler {
             return;
         }
 
-        this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserTypingMessageComposer(this.client.getHabbo().getRoomUnit(), false).compose());
+        this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new UserTypingMessageComposer(this.client.getHabbo().getRoomUnit(), false).compose());
     }
 }

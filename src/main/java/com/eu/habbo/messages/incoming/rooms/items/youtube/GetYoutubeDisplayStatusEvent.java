@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.items.youtube;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.YoutubeManager;
 import com.eu.habbo.habbohotel.items.interactions.InteractionYoutubeTV;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.handshake.ErrorReportComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.youtube.YoutubeDisplayPlaylistsComposer;
@@ -19,8 +19,8 @@ public class GetYoutubeDisplayStatusEvent extends MessageHandler {
     public void handle() {
         int itemId = this.packet.readInt();
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            HabboItem item = this.client.getHabbo().getHabboInfo().getCurrentRoom().getHabboItem(itemId);
+        if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
+            RoomItem item = this.client.getHabbo().getRoomUnit().getRoom().getRoomItemManager().getRoomItemById(itemId);
 
             if (item instanceof InteractionYoutubeTV tv) {
 

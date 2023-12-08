@@ -27,7 +27,7 @@ public class CallForHelpEvent extends MessageHandler {
         int roomId = this.packet.readInt();
         int messageCount = this.packet.readInt();
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
         List<ModToolIssue> issues = Emulator.getGameEnvironment().getModToolManager().openTicketsForHabbo(this.client.getHabbo());
         if (!issues.isEmpty()) {
             //this.client.sendResponse(new GenericAlertComposer("You've got still a pending ticket. Wait till the moderators are done reviewing your ticket."));
@@ -87,7 +87,7 @@ public class CallForHelpEvent extends MessageHandler {
                 }
             }
         } else {
-            ModToolIssue issue = new ModToolIssue(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getUsername(), room != null ? room.getOwnerId() : 0, room != null ? room.getOwnerName() : "", roomId, message, ModToolTicketType.ROOM);
+            ModToolIssue issue = new ModToolIssue(this.client.getHabbo().getHabboInfo().getId(), this.client.getHabbo().getHabboInfo().getUsername(), room != null ? room.getRoomInfo().getOwnerInfo().getId() : 0, room != null ? room.getRoomInfo().getOwnerInfo().getUsername() : "", roomId, message, ModToolTicketType.ROOM);
             issue.category = topic;
             new InsertModToolIssue(issue).run();
 

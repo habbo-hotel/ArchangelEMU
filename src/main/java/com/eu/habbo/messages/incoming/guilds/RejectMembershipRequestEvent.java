@@ -23,7 +23,7 @@ public class RejectMembershipRequestEvent extends MessageHandler {
 
         if (guild != null) {
             GuildMember member = Emulator.getGameEnvironment().getGuildManager().getGuildMember(guild, this.client.getHabbo());
-            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN)|| member.getRank().equals(GuildRank.OWNER) || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN)) {
+            if (userId == this.client.getHabbo().getHabboInfo().getId() || guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || member.getRank().equals(GuildRank.ADMIN)|| member.getRank().equals(GuildRank.OWNER) || this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN)) {
                 guild.decreaseRequestCount();
                 Emulator.getGameEnvironment().getGuildManager().removeMember(guild, userId);
                 this.client.sendResponse(new GuildMembersComposer(guild, Emulator.getGameEnvironment().getGuildManager().getGuildMembers(guild, 0, 0, ""), this.client.getHabbo(), 0, 0, "", true, Emulator.getGameEnvironment().getGuildManager().getGuildMembersCount(guild, 0, "")));
@@ -33,9 +33,9 @@ public class RejectMembershipRequestEvent extends MessageHandler {
                 Emulator.getPluginManager().fireEvent(new GuildDeclinedMembershipEvent(guild, userId, habbo, this.client.getHabbo()));
 
                 if (habbo != null) {
-                    Room room = habbo.getHabboInfo().getCurrentRoom();
+                    Room room = habbo.getRoomUnit().getRoom();
                     if (room != null) {
-                        if (room.getGuildId() == guildId) {
+                        if (room.getRoomInfo().getGuild().getId() == guildId) {
                             habbo.getClient().sendResponse(new HabboGroupDetailsMessageComposer(guild, habbo.getClient(), false, null));
                         }
                     }

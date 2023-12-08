@@ -2,7 +2,8 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import gnu.trove.map.hash.THashMap;
 
 import java.sql.ResultSet;
@@ -22,8 +23,8 @@ public class InteractionRoomAds extends InteractionCustomValues {
         super(set, baseItem, defaultValues);
     }
 
-    public InteractionRoomAds(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, defaultValues);
+    public InteractionRoomAds(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, defaultValues);
     }
 
     @Override

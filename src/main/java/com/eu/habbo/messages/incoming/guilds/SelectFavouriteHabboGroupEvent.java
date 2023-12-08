@@ -24,10 +24,10 @@ public class SelectFavouriteHabboGroupEvent extends MessageHandler {
 
             this.client.getHabbo().getHabboStats().setGuild(guildId);
 
-            if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+            if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
                 if (guild != null) {
-                    this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new HabboAddGroupBadgesMessageComposer(guild).compose());
-                    this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(this.client.getHabbo().getRoomUnit(), guild).compose());
+                    this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new HabboAddGroupBadgesMessageComposer(guild).compose());
+                    this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new FavoriteMembershipUpdateMessageComposer(this.client.getHabbo().getRoomUnit(), guild).compose());
                 }
             }
 

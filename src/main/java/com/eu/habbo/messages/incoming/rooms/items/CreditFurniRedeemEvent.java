@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
@@ -20,12 +20,12 @@ public class CreditFurniRedeemEvent extends MessageHandler {
     public void handle() {
         int itemId = this.packet.readInt();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
-            HabboItem item = room.getHabboItem(itemId);
+            RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
-            if (item != null && this.client.getHabbo().getHabboInfo().getId() == item.getUserId()) {
+            if (item != null && this.client.getHabbo().getHabboInfo().getId() == item.getOwnerInfo().getId()) {
                 boolean furnitureRedeemEventRegistered = Emulator.getPluginManager().isRegistered(FurnitureRedeemedEvent.class, true);
                 FurnitureRedeemedEvent furniRedeemEvent = new FurnitureRedeemedEvent(item, this.client.getHabbo(), 0, FurnitureRedeemedEvent.CREDITS);
 
@@ -93,15 +93,15 @@ public class CreditFurniRedeemEvent extends MessageHandler {
                     if (furniRedeemEvent.amount < 1)
                         return;
 
-                    if (room.getHabboItem(item.getId()) == null) // plugins may cause a lag between which time the item can be removed from the room
+                    if (room.getRoomItemManager().getRoomItemById(item.getId()) == null) // plugins may cause a lag between which time the item can be removed from the room
                         return;
 
-                    room.removeHabboItem(item);
+                    room.getRoomItemManager().removeRoomItem(item);
                     room.sendComposer(new RemoveFloorItemComposer(item).compose());
-                    RoomTile t = room.getLayout().getTile(item.getX(), item.getY());
-                    t.setStackHeight(room.getStackHeight(item.getX(), item.getY(), false));
+                    RoomTile t = room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY());
+                    t.setStackHeight(room.getStackHeight(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), false));
                     room.updateTile(t);
-                    room.sendComposer(new HeightMapUpdateMessageComposer(item.getX(), item.getY(), t.getZ(), t.relativeHeight()).compose());
+                    room.sendComposer(new HeightMapUpdateMessageComposer(item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), t.getZ(), t.relativeHeight()).compose());
                     Emulator.getThreading().run(new QueryDeleteHabboItem(item.getId()));
 
                     switch (furniRedeemEvent.currencyID) {

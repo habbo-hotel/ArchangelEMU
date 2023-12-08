@@ -9,7 +9,8 @@ import com.eu.habbo.habbohotel.games.freeze.FreezeGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,8 +20,8 @@ public class InteractionFreezeGate extends InteractionGameGate {
         super(set, baseItem, teamColor);
     }
 
-    public InteractionFreezeGate(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, teamColor);
+    public InteractionFreezeGate(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, teamColor);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class InteractionFreezeGate extends InteractionGameGate {
 
     @Override
     public boolean isWalkable() {
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
 
         if (room == null) return false;
 
@@ -52,12 +53,12 @@ public class InteractionFreezeGate extends InteractionGameGate {
             room.addGame(game);
         }
 
-        GameTeam team = game.getTeamForHabbo(room.getHabbo(roomUnit));
+        GameTeam team = game.getTeamForHabbo(room.getRoomUnitManager().getHabboByRoomUnit(roomUnit));
 
         if (team != null) {
-            game.removeHabbo(room.getHabbo(roomUnit));
+            game.removeHabbo(room.getRoomUnitManager().getHabboByRoomUnit(roomUnit));
         } else {
-            game.addHabbo(room.getHabbo(roomUnit), this.teamColor);
+            game.addHabbo(room.getRoomUnitManager().getHabboByRoomUnit(roomUnit), this.teamColor);
         }
 
         updateState(game, 5);

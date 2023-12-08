@@ -5,7 +5,6 @@ import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.HabboStats;
 import com.eu.habbo.habbohotel.users.subscriptions.Subscription;
 
@@ -45,7 +44,7 @@ public class SubscriptionCommand extends Command {
             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_subscription.invalid_params", "Invalid command format"), RoomChatMessageBubbles.ALERT);
             return true;
         }
-        HabboInfo info = HabboManager.getOfflineHabboInfo(params[1]);
+        HabboInfo info = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(params[1]);
 
         if (info == null) {
             gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_subscription.user_not_found", "%user% was not found"), params[1]), RoomChatMessageBubbles.ALERT);

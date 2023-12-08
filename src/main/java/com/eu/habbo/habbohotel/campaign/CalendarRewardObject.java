@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.campaign;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.subscriptions.SubscriptionHabboClub;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
@@ -71,14 +71,14 @@ public class CalendarRewardObject {
             Item item = getItem();
 
             if (item != null) {
-                HabboItem habboItem = Emulator.getGameEnvironment().getItemManager().createItem(
+                RoomItem roomItem = Emulator.getGameEnvironment().getItemManager().createItem(
                         habbo.getHabboInfo().getId(),
                         item,
                         0,
                         0,
                         "");
-                habbo.getInventory().getItemsComponent().addItem(habboItem);
-                habbo.getClient().sendResponse(new UnseenItemsComposer(habboItem));
+                habbo.getInventory().getItemsComponent().addItem(roomItem);
+                habbo.getClient().sendResponse(new UnseenItemsComposer(roomItem));
                 habbo.getClient().sendResponse(new FurniListInvalidateComposer());
             }
         }

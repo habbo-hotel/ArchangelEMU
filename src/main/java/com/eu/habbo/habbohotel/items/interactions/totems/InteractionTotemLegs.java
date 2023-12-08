@@ -5,7 +5,8 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 
 import java.sql.ResultSet;
@@ -16,14 +17,14 @@ public class InteractionTotemLegs extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionTotemLegs(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionTotemLegs(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     public TotemType getTotemType() {
         int extraData;
         try {
-            extraData = Integer.parseInt(this.getExtradata());
+            extraData = Integer.parseInt(this.getExtraData());
         } catch(NumberFormatException ex) {
             extraData = 0;
         }
@@ -33,7 +34,7 @@ public class InteractionTotemLegs extends InteractionDefault {
     public TotemColor getTotemColor() {
         int extraData;
         try {
-            extraData = Integer.parseInt(this.getExtradata());
+            extraData = Integer.parseInt(this.getExtraData());
         } catch(NumberFormatException ex) {
             extraData = 0;
         }
@@ -41,9 +42,10 @@ public class InteractionTotemLegs extends InteractionDefault {
     }
 
     private void updateHead(Room room, RoomTile tile) {
-        for(HabboItem item : room.getItemsAt(tile)) {
-            if(item instanceof InteractionTotemHead && item.getZ() > this.getZ())
-                ((InteractionTotemHead)item).updateTotemState(room);
+        for(RoomItem item : room.getRoomItemManager().getItemsAt(tile)) {
+            if(item instanceof InteractionTotemHead) {
+                if (item.getCurrentZ() > this.getCurrentZ()) ((InteractionTotemHead) item).updateTotemState(room);
+            }
         }
     }
 
@@ -51,10 +53,10 @@ public class InteractionTotemLegs extends InteractionDefault {
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
         super.onClick(client, room, objects);
 
-        if (room == null || !((client != null && room.hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
+        if (room == null || !((client != null && room.getRoomRightsManager().hasRights(client.getHabbo())) || (objects.length >= 2 && objects[1] instanceof WiredEffectType)))
             return;
 
-        updateHead(room, room.getLayout().getTile(this.getX(), this.getY()));
+        updateHead(room, room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()));
     }
 
     @Override

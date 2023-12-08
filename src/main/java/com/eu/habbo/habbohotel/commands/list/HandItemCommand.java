@@ -13,10 +13,10 @@ public class HandItemCommand extends Command {
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 2) {
             try {
-                if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
+                if (gameClient.getHabbo().getRoomUnit().getRoom() != null) {
                     int effectId = Integer.parseInt(params[1]);
                     gameClient.getHabbo().getRoomUnit().setHandItem(effectId);
-                    gameClient.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new CarryObjectMessageComposer(gameClient.getHabbo().getRoomUnit()).compose());
+                    gameClient.getHabbo().getRoomUnit().getRoom().sendComposer(new CarryObjectMessageComposer(gameClient.getHabbo().getRoomUnit()).compose());
                 }
             } catch (Exception e) {
                 //Don't handle incorrect parse exceptions :P

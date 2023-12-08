@@ -11,16 +11,16 @@ import com.eu.habbo.messages.outgoing.modtool.RoomChatlogComposer;
 public class ModToolRequestRoomUserChatlogEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             int userId = this.packet.readInt();
 
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
             if (habbo != null) {
-                Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+                Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
                 if (room != null) {
-                    this.client.sendResponse(new RoomChatlogComposer(room, Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(room.getId())));
+                    this.client.sendResponse(new RoomChatlogComposer(room, Emulator.getGameEnvironment().getModToolManager().getRoomChatlog(room.getRoomInfo().getId())));
                 }
             }
         } else {

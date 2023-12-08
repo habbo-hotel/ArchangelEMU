@@ -23,7 +23,7 @@ public class HabboGroupDetailsMessageComposer extends MessageComposer {
     private final GuildMember member;
     @Override
     protected ServerMessage composeInternal() {
-            boolean adminPermissions = this.client.getHabbo().getHabboStats().hasGuild(this.guild.getId()) && this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN) || Emulator.getGameEnvironment().getGuildManager().getOnlyAdmins(guild).get(this.client.getHabbo().getHabboInfo().getId()) != null;
+            boolean adminPermissions = this.client.getHabbo().getHabboStats().hasGuild(this.guild.getId()) && this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN) || Emulator.getGameEnvironment().getGuildManager().getOnlyAdmins(guild).get(this.client.getHabbo().getHabboInfo().getId()) != null;
             this.response.init(Outgoing.habboGroupDetailsMessageComposer);
             this.response.appendInt(this.guild.getId());
             this.response.appendBoolean(true);

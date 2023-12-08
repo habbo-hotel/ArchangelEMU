@@ -26,16 +26,18 @@ public class WiredExecuteTask implements Runnable {
     @Override
     public void run() {
         if (!Emulator.isShuttingDown && Emulator.isReady) {
-            if (this.room != null && this.room.getId() == this.task.getRoomId()) {
-                if (this.task instanceof WiredTriggerAtSetTime) {
-                    if (((WiredTriggerAtSetTime) this.task).taskId != this.taskId)
-                        return;
+            if (this.room != null) {
+                if (this.room.getRoomInfo().getId() == this.task.getRoomId()) {
+                    if (this.task instanceof WiredTriggerAtSetTime) {
+                        if (((WiredTriggerAtSetTime) this.task).taskId != this.taskId)
+                            return;
+                    }
+                    if (this.task instanceof WiredTriggerAtTimeLong) {
+                        if (((WiredTriggerAtTimeLong) this.task).taskId != this.taskId)
+                            return;
+                    }
+                    WiredHandler.handle(this.task, null, this.room, null);
                 }
-                if (this.task instanceof WiredTriggerAtTimeLong) {
-                    if (((WiredTriggerAtTimeLong) this.task).taskId != this.taskId)
-                        return;
-                }
-                WiredHandler.handle(this.task, null, this.room, null);
             }
         }
     }

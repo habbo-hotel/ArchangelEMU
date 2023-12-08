@@ -10,7 +10,7 @@ import com.eu.habbo.plugin.events.users.UserIdleEvent;
 public class DanceEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (this.client.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
         int danceId = this.packet.readInt();
@@ -22,7 +22,7 @@ public class DanceEvent extends MessageHandler {
                 if (this.client.getHabbo().getRoomUnit().getCacheable().get("control") != null) {
                     habbo = (Habbo) this.client.getHabbo().getRoomUnit().getCacheable().get("control");
 
-                    if (habbo.getHabboInfo().getCurrentRoom() != this.client.getHabbo().getHabboInfo().getCurrentRoom()) {
+                    if (habbo.getRoomUnit().getRoom() != this.client.getHabbo().getRoomUnit().getRoom()) {
                         habbo.getRoomUnit().getCacheable().remove("controller");
                         this.client.getHabbo().getRoomUnit().getCacheable().remove("control");
                         habbo = this.client.getHabbo();
@@ -36,11 +36,11 @@ public class DanceEvent extends MessageHandler {
 
                 if (!event.isCancelled()) {
                     if (!event.isIdle()) {
-                        this.client.getHabbo().getHabboInfo().getCurrentRoom().unIdle(habbo);
+                        this.client.getHabbo().getRoomUnit().unIdle();
                     }
                 }
 
-                this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new DanceMessageComposer(habbo.getRoomUnit()).compose());
+                this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new DanceMessageComposer(habbo.getRoomUnit()).compose());
             }
         }
     }

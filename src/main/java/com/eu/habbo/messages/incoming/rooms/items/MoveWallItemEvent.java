@@ -4,7 +4,7 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomRightLevels;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
 import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageComposer;
@@ -12,14 +12,16 @@ import com.eu.habbo.messages.outgoing.generic.alerts.NotificationDialogMessageCo
 public class MoveWallItemEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
-        if (!room.hasRights(this.client.getHabbo()) && !this.client.getHabbo().hasRight(Permission.ACC_PLACEFURNI) && !(room.getGuildId() > 0 && room.getGuildRightLevel(this.client.getHabbo()).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
-            this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
-            return;
+        if (!room.getRoomRightsManager().hasRights(this.client.getHabbo()) && !this.client.getHabbo().hasPermissionRight(Permission.ACC_PLACEFURNI)) {
+            if (!(room.getRoomInfo().getGuild().getId() > 0 && room.getGuildRightLevel(this.client.getHabbo()).isEqualOrGreaterThan(RoomRightLevels.GUILD_RIGHTS))) {
+                this.client.sendResponse(new NotificationDialogMessageComposer(BubbleAlertKeys.FURNITURE_PLACEMENT_ERROR.getKey(), FurnitureMovementError.NO_RIGHTS.getErrorCode()));
+                return;
+            }
         }
 
         int itemId = this.packet.readInt();
@@ -28,13 +30,13 @@ public class MoveWallItemEvent extends MessageHandler {
         if (itemId <= 0 || wallPosition.length() <= 13)
             return;
 
-        HabboItem item = room.getHabboItem(itemId);
+        RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
         if (item == null)
             return;
 
         item.setWallPosition(wallPosition);
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
         room.updateItem(item);
     }
 }

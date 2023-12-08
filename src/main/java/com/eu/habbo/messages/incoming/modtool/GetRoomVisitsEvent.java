@@ -9,7 +9,7 @@ import com.eu.habbo.messages.outgoing.modtool.RoomVisitsComposer;
 public class GetRoomVisitsEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             int userId = this.packet.readInt();
 
             HabboInfo habboInfo = Emulator.getGameEnvironment().getHabboManager().getHabboInfo(userId);

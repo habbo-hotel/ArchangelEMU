@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.pets.MonsterplantPet;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.ObjectAddMessageComposer;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,8 @@ public class CompostPlantEvent extends MessageHandler {
     public void handle() {
         int petId = this.packet.readInt();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
-        Pet pet = room.getPet(petId);
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
+        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
 
         if (pet != null) {
             if (pet instanceof MonsterplantPet) {
@@ -32,12 +32,13 @@ public class CompostPlantEvent extends MessageHandler {
                         Item baseItem = Emulator.getGameEnvironment().getItemManager().getItem("mnstr_compost");
 
                         if (baseItem != null) {
-                            HabboItem compost = Emulator.getGameEnvironment().getItemManager().createItem(pet.getUserId(), baseItem, 0, 0, "");
-                            compost.setX(pet.getRoomUnit().getX());
-                            compost.setY(pet.getRoomUnit().getY());
-                            compost.setZ(pet.getRoomUnit().getZ());
+                            RoomItem compost = Emulator.getGameEnvironment().getItemManager().createItem(pet.getUserId(), baseItem, 0, 0, "");;
+
+                            compost.setCurrentPosition(pet.getRoomUnit().getCurrentPosition());
+                            compost.setCurrentZ(pet.getRoomUnit().getCurrentZ());
                             compost.setRotation(pet.getRoomUnit().getBodyRotation().getValue());
-                            room.addHabboItem(compost);
+
+                            room.getRoomItemManager().addRoomItem(compost);
                             room.sendComposer(new ObjectAddMessageComposer(compost, this.client.getHabbo().getHabboInfo().getUsername()).compose());
                         }
 

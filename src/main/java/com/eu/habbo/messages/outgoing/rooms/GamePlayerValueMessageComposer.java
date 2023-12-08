@@ -13,7 +13,7 @@ public class GamePlayerValueMessageComposer extends MessageComposer {
     @Override
     protected ServerMessage composeInternal() {
         this.response.init(Outgoing.gamePlayerValueMessageComposer);
-        this.response.appendInt(this.gamePlayer.getHabbo().getRoomUnit().getId());
+        this.response.appendInt(this.gamePlayer.getHabbo().getRoomUnit().getVirtualId());
         this.response.appendInt(this.gamePlayer.getLives());
         return this.response;
     }

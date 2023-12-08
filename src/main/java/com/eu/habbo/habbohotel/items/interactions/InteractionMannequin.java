@@ -4,8 +4,9 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.rooms.users.UserChangeMessageComposer;
@@ -14,13 +15,13 @@ import com.eu.habbo.messages.outgoing.users.UserObjectComposer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionMannequin extends HabboItem {
+public class InteractionMannequin extends RoomItem {
     public InteractionMannequin(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionMannequin(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionMannequin(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -32,8 +33,8 @@ public class InteractionMannequin extends HabboItem {
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt(1 + (this.isLimited() ? 256 : 0));
         serverMessage.appendInt(3);
-        if (this.getExtradata().split(":").length >= 2) {
-            String[] data = this.getExtradata().split(":");
+        if (this.getExtraData().split(":").length >= 2) {
+            String[] data = this.getExtraData().split(":");
             serverMessage.appendString("GENDER");
             serverMessage.appendString(data[0].toLowerCase());
             serverMessage.appendString("FIGURE");
@@ -47,8 +48,8 @@ public class InteractionMannequin extends HabboItem {
             serverMessage.appendString("");
             serverMessage.appendString("OUTFIT_NAME");
             serverMessage.appendString("My Look");
-            this.setExtradata("m: :My look");
-            this.needsUpdate(true);
+            this.setExtraData("m: :My look");
+            this.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(this);
         }
         super.serializeExtradata(serverMessage);
@@ -66,7 +67,7 @@ public class InteractionMannequin extends HabboItem {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) {
-        String[] data = this.getExtradata().split(":");
+        String[] data = this.getExtraData().split(":");
 
         if(data.length < 2)
             return;

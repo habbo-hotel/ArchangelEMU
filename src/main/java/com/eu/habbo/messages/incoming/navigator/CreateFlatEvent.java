@@ -45,11 +45,11 @@ public class CreateFlatEvent extends MessageHandler {
         if (description.length() > 128 || !Emulator.getGameEnvironment().getWordFilter().filter(description, this.client.getHabbo()).equals(description))
             return;
 
-        int count = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()).size();
-        int max = this.client.getHabbo().getHabboStats().hasActiveClub() ? RoomManager.MAXIMUM_ROOMS_HC : RoomManager.MAXIMUM_ROOMS_USER;
+        int totalRoomsCount = Emulator.getGameEnvironment().getRoomManager().getRoomsForHabbo(this.client.getHabbo()).size();
+        int maxRoomsCount = this.client.getHabbo().getHabboStats().hasActiveClub() ? RoomManager.MAXIMUM_ROOMS_HC : RoomManager.MAXIMUM_ROOMS_USER;
 
-        if (count >= max) {
-            this.client.sendResponse(new CanCreateRoomComposer(count, max));
+        if (totalRoomsCount >= maxRoomsCount) {
+            this.client.sendResponse(new CanCreateRoomComposer(totalRoomsCount, maxRoomsCount));
             return;
         }
 

@@ -38,7 +38,7 @@ public class SearchResultList implements ISerialize, Comparable<SearchResultList
             if (!this.showInvisible) {
                 List<Room> toRemove = new ArrayList<>();
                 for (Room room : this.rooms) {
-                    if (room.getState() == RoomState.INVISIBLE) {
+                    if (room.getRoomInfo().getState() == RoomState.INVISIBLE) {
                         toRemove.add(room);
                     }
                 }

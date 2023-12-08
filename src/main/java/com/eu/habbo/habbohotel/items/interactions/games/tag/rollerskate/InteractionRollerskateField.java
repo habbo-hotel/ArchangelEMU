@@ -6,8 +6,9 @@ import com.eu.habbo.habbohotel.games.tag.RollerskateGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,15 +21,15 @@ public class InteractionRollerskateField extends InteractionTagField {
         super(set, baseItem, RollerskateGame.class);
     }
 
-    public InteractionRollerskateField(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, RollerskateGame.class);
+    public InteractionRollerskateField(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, RollerskateGame.class);
     }
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
         if (habbo != null)
             this.stepTimes.put(habbo, Emulator.getIntUnixTimestamp());
     }
@@ -37,7 +38,7 @@ public class InteractionRollerskateField extends InteractionTagField {
     public void onWalkOff(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOff(roomUnit, room, objects);
 
-        Habbo habbo = room.getHabbo(roomUnit);
+        Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
         if (habbo != null && this.stepTimes.containsKey(habbo)) {
             AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RbTagC"), (Emulator.getIntUnixTimestamp() - this.stepTimes.get(habbo)) / 60);
             this.stepTimes.remove(habbo);
@@ -48,7 +49,7 @@ public class InteractionRollerskateField extends InteractionTagField {
     public void onPlace(Room room) {
         super.onPlace(room);
 
-        Habbo itemOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getUserId());
+        Habbo itemOwner = Emulator.getGameEnvironment().getHabboManager().getHabbo(this.getOwnerInfo().getId());
 
         if (itemOwner != null) {
             AchievementManager.progressAchievement(itemOwner, Emulator.getGameEnvironment().getAchievementManager().getAchievement("RbTagA"));

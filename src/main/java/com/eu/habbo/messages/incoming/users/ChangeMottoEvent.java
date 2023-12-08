@@ -21,8 +21,8 @@ public class ChangeMottoEvent extends MessageHandler {
             this.client.getHabbo().getHabboInfo().run();
         }
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-            this.client.getHabbo().getHabboInfo().getCurrentRoom().sendComposer(new UserChangeMessageComposer(this.client.getHabbo()).compose());
+        if (this.client.getHabbo().getRoomUnit().getRoom() != null) {
+            this.client.getHabbo().getRoomUnit().getRoom().sendComposer(new UserChangeMessageComposer(this.client.getHabbo()).compose());
         } else {
             this.client.sendResponse(new UserChangeMessageComposer(this.client.getHabbo()));
         }

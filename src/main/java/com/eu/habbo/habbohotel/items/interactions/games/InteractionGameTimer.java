@@ -8,8 +8,9 @@ import com.eu.habbo.habbohotel.games.wired.WiredGame;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -24,7 +25,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 @Slf4j
-public class InteractionGameTimer extends HabboItem implements Runnable {
+public class InteractionGameTimer extends RoomItem implements Runnable {
 
     private int[] TIMER_INTERVAL_STEPS = new int[] { 30, 60, 120, 180, 300, 600 };
 
@@ -76,7 +77,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
             }
 
             if (data.length >= 1) {
-                this.setExtradata(data[0] + "\t0");
+                this.setExtraData(data[0] + "\t0");
             }
         }
         catch (Exception e) {
@@ -85,8 +86,8 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
         }
     }
 
-    public InteractionGameTimer(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionGameTimer(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
 
         parseCustomParams(item);
     }
@@ -154,7 +155,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
 
     @Override
     public void run() {
-        if (this.needsUpdate() || this.needsDelete()) {
+        if (this.isSqlUpdateNeeded() || this.isSqlDeleteNeeded()) {
             super.run();
         }
     }
@@ -163,8 +164,8 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
     public void onPickUp(Room room) {
         this.endGame(room);
 
-        this.setExtradata(this.baseTime + "\t" + this.baseTime);
-        this.needsUpdate(true);
+        this.setExtraData(this.baseTime + "\t" + this.baseTime);
+        this.setSqlUpdateNeeded(true);
     }
 
     @Override
@@ -175,9 +176,9 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
 
         this.timeNow = this.baseTime;
 
-        this.setExtradata(this.timeNow + "\t" + this.baseTime);
+        this.setExtraData(this.timeNow + "\t" + this.baseTime);
         room.updateItem(this);
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
 
         super.onPlace(room);
     }
@@ -202,8 +203,8 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
 
     @Override
     public void onClick(GameClient client, Room room, Object[] objects) throws Exception {
-        if (this.getExtradata().isEmpty()) {
-            this.setExtradata("0\t" + this.TIMER_INTERVAL_STEPS[0]);
+        if (this.getExtraData().isEmpty()) {
+            this.setExtraData("0\t" + this.TIMER_INTERVAL_STEPS[0]);
         }
 
         // if wired triggered it
@@ -232,7 +233,7 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
                 Emulator.getThreading().run(new GameTimer(this), 1000);
             }
         } else if (client != null) {
-            if (!(room.hasRights(client.getHabbo()) || client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)))
+            if (!(room.getRoomRightsManager().hasRights(client.getHabbo()) || client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)))
                 return;
 
             InteractionGameTimerAction state = InteractionGameTimerAction.START_STOP;
@@ -313,16 +314,11 @@ public class InteractionGameTimer extends HabboItem implements Runnable {
         }
 
         this.baseTime = baseTime;
-        this.setExtradata(this.timeNow + "\t" + this.baseTime);
+        this.setExtraData(this.timeNow + "\t" + this.baseTime);
 
         this.timeNow = this.baseTime;
         room.updateItem(this);
-        this.needsUpdate(true);
-    }
-
-    @Override
-    public String getDatabaseExtraData() {
-        return this.getExtradata();
+        this.setSqlUpdateNeeded(true);
     }
 
     @Override

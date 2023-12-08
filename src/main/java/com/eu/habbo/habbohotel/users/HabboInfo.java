@@ -8,12 +8,6 @@ import com.eu.habbo.habbohotel.games.GamePlayer;
 import com.eu.habbo.habbohotel.messenger.MessengerCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.PermissionGroup;
-import com.eu.habbo.habbohotel.pets.PetTasks;
-import com.eu.habbo.habbohotel.pets.RideablePet;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import gnu.trove.map.hash.TIntIntHashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,100 +20,68 @@ import java.util.List;
 
 @Slf4j
 @Getter
+@Setter
+@Accessors(chain = true)
 public class HabboInfo implements Runnable {
-    
-    public boolean firstVisit = false;
-    @Setter
+    private final int id;
     private String username;
-    @Setter
     private String motto;
-    @Setter
-    @Accessors(chain = true)
     private String look;
-    @Setter
     private HabboGender gender;
-    @Setter
     private String mail;
-    @Setter
     private String sso;
-    @Setter
     private String ipRegister;
-    @Setter
     private String ipLogin;
-    private int id;
-    @Setter
     private int accountCreated;
-    @Setter
     private PermissionGroup permissionGroup;
     private int credits;
-    @Setter
     private int lastOnline;
-    @Setter
     private int homeRoom;
-    @Setter
     private boolean online;
-    @Setter
-    @Accessors(chain = true)
-    private int loadingRoom;
-    @Setter
-    private Room currentRoom;
-    @Setter
     private int roomQueueId;
-    @Setter
-    private RideablePet riding;
-    @Setter
     private Class<? extends Game> currentGame;
     private TIntIntHashMap currencies;
-    @Setter
     private GamePlayer gamePlayer;
-    @Setter
     private int photoRoomId;
-    @Setter
     private int photoTimestamp;
-    @Setter
     private String photoURL;
-    @Setter
     private String photoJSON;
-    @Setter
     private int webPublishTimestamp;
-    @Setter
     private String machineID;
     private List<NavigatorSavedSearch> savedSearches = new ArrayList<>();
     private List<MessengerCategory> messengerCategories = new ArrayList<>();
+    public boolean firstVisit = false;
 
-    public HabboInfo(ResultSet set) {
-        try {
-            this.id = set.getInt("id");
-            this.username = set.getString("username");
-            this.motto = set.getString("motto");
-            this.look = set.getString("look");
-            this.gender = HabboGender.valueOf(set.getString("gender"));
-            this.mail = set.getString("mail");
-            this.sso = set.getString("auth_ticket");
-            this.ipRegister = set.getString("ip_register");
-            this.ipLogin = set.getString("ip_current");
-            this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(set.getInt("rank"));
+    public HabboInfo(ResultSet set) throws SQLException {
+        this.id = set.getInt("id");
+        this.username = set.getString("username");
+        this.motto = set.getString("motto");
+        this.look = set.getString("look");
+        this.gender = HabboGender.valueOf(set.getString("gender"));
+        this.mail = set.getString("mail");
+        this.sso = set.getString("auth_ticket");
+        this.ipRegister = set.getString("ip_register");
+        this.ipLogin = set.getString("ip_current");
+        this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(set.getInt("rank"));
 
-            if (this.permissionGroup == null) {
-                log.error("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
-                log.warn(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
-                this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(1);
-            }
-
-            this.accountCreated = set.getInt("account_created");
-            this.credits = set.getInt("credits");
-            this.homeRoom = set.getInt("home_room");
-            this.lastOnline = set.getInt("last_online");
-            this.machineID = set.getString("machine_id");
-            this.online = false;
-            this.currentRoom = null;
-        } catch (SQLException e) {
-            log.error("Caught SQL exception", e);
+        if (this.permissionGroup == null) {
+            log.error("No existing rank found with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+            log.warn(this.username + " has an invalid rank with id " + set.getInt("rank") + ". Make sure an entry in the permissions table exists.");
+            this.permissionGroup = Emulator.getGameEnvironment().getPermissionsManager().getGroup(1);
         }
+
+        this.accountCreated = set.getInt("account_created");
+        this.credits = set.getInt("credits");
+        this.homeRoom = set.getInt("home_room");
+        this.lastOnline = set.getInt("last_online");
+        this.machineID = set.getString("machine_id");
+        this.online = false;
 
         this.loadCurrencies();
         this.loadSavedSearches();
         this.loadMessengerCategories();
+
+        Emulator.getGameEnvironment().getHabboManager().getHabboInfoCache().getData().remove(this.id);
     }
 
     private void loadCurrencies() {
@@ -302,45 +264,6 @@ public class HabboInfo implements Runnable {
     public void addPixels(int pixels) {
         this.addCurrencyAmount(0, pixels);
         this.run();
-    }
-
-    public void dismountPet() {
-        this.dismountPet(false);
-    }
-
-    public void dismountPet(boolean isRemoving) {
-        if (this.getRiding() == null)
-            return;
-
-        Habbo habbo = this.getCurrentRoom().getHabbo(this.getId());
-        if (habbo == null)
-            return;
-
-        RideablePet riding = this.getRiding();
-
-        riding.setRider(null);
-        riding.setTask(PetTasks.FREE);
-        this.setRiding(null);
-
-        Room room = this.getCurrentRoom();
-        if (room != null)
-            room.giveEffect(habbo, 0, -1);
-
-        RoomUnit roomUnit = habbo.getRoomUnit();
-        if (roomUnit == null)
-            return;
-
-        roomUnit.setZ(riding.getRoomUnit().getZ());
-        roomUnit.setPreviousLocationZ(riding.getRoomUnit().getZ());
-        roomUnit.stopWalking();
-        if (room != null)
-            room.sendComposer(new UserUpdateComposer(roomUnit).compose());
-
-        List<RoomTile> availableTiles = isRemoving ? new ArrayList<>() : this.getCurrentRoom().getLayout().getWalkableTilesAround(roomUnit.getCurrentLocation());
-
-        RoomTile tile = availableTiles.isEmpty() ? roomUnit.getCurrentLocation() : availableTiles.get(0);
-        roomUnit.setGoalLocation(tile);
-        roomUnit.statusUpdate(true);
     }
 
     public boolean isInGame() {

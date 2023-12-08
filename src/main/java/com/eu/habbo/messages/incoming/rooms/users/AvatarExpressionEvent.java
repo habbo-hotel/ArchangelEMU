@@ -11,7 +11,7 @@ import com.eu.habbo.plugin.events.users.UserIdleEvent;
 public class AvatarExpressionEvent extends MessageHandler {
     @Override
     public void handle() {
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
         if (room == null) {
             return;
         }
@@ -21,7 +21,7 @@ public class AvatarExpressionEvent extends MessageHandler {
         if (this.client.getHabbo().getRoomUnit().getCacheable().get("control") != null) {
             habbo = (Habbo) this.client.getHabbo().getRoomUnit().getCacheable().get("control");
 
-            if (habbo.getHabboInfo().getCurrentRoom() != room) {
+            if (habbo.getRoomUnit().getRoom() != room) {
                 habbo.getRoomUnit().getCacheable().remove("controller");
                 this.client.getHabbo().getRoomUnit().getCacheable().remove("control");
                 habbo = this.client.getHabbo();
@@ -36,9 +36,9 @@ public class AvatarExpressionEvent extends MessageHandler {
 
             if (!event.isCancelled()) {
                 if (event.isIdle()) {
-                    room.idle(habbo);
+                    habbo.getRoomUnit().idle();
                 } else {
-                    room.unIdle(habbo);
+                    habbo.getRoomUnit().unIdle();
                 }
             }
         } else {
@@ -46,7 +46,7 @@ public class AvatarExpressionEvent extends MessageHandler {
             Emulator.getPluginManager().fireEvent(event);
 
             if (!event.isCancelled() && !event.isIdle()) {
-                room.unIdle(habbo);
+                habbo.getRoomUnit().unIdle();
             }
 
         }

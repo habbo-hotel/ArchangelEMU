@@ -21,7 +21,7 @@ public class UserRightsMessageComposer extends MessageComposer {
         this.response.init(Outgoing.userRightsMessageComposer);
         this.response.appendInt(this.clubLevel);
         this.response.appendInt(this.habbo.getHabboInfo().getPermissionGroup().getLevel());
-        this.response.appendBoolean(this.habbo.hasRight(Permission.ACC_AMBASSADOR));
+        this.response.appendBoolean(this.habbo.hasPermissionRight(Permission.ACC_AMBASSADOR));
         return this.response;
     }
 }

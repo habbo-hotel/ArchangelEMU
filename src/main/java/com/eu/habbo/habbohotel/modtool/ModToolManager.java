@@ -7,7 +7,6 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomState;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.ClientMessage;
 import com.eu.habbo.messages.outgoing.modtool.IssueCloseNotificationMessageComposer;
 import com.eu.habbo.messages.outgoing.modtool.IssueInfoMessageComposer;
@@ -320,7 +319,7 @@ public class ModToolManager {
                 "DESC LIMIT ?) x " +
                 (groupUser ? "GROUP BY user_id" : "") +
                 ";")) {
-            statement.setInt(1, room.getId());
+            statement.setInt(1, room.getRoomInfo().getId());
 
             if (fromTimestamp > 0)
                 statement.setInt(2, fromTimestamp);
@@ -386,7 +385,7 @@ public class ModToolManager {
     }
 
     public void alert(Habbo moderator, Habbo target, String message, SupportUserAlertedReason reason) {
-        if (!moderator.hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (!moderator.hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             ScripterManager.scripterDetected(moderator.getClient(), Emulator.getTexts().getValue("scripter.warning.modtools.alert").replace("%username%", moderator.getHabboInfo().getUsername()).replace("%message%", message));
             return;
         }
@@ -401,9 +400,9 @@ public class ModToolManager {
     }
 
     public void kick(Habbo moderator, Habbo target, String message) {
-        if (moderator.hasRight(Permission.ACC_SUPPORTTOOL) && !target.hasRight(Permission.ACC_UNKICKABLE)) {
-            if (target.getHabboInfo().getCurrentRoom() != null) {
-                Emulator.getGameEnvironment().getRoomManager().leaveRoom(target, target.getHabboInfo().getCurrentRoom());
+        if (moderator.hasPermissionRight(Permission.ACC_SUPPORTTOOL) && !target.hasPermissionRight(Permission.ACC_UNKICKABLE)) {
+            if (target.getRoomUnit().getRoom() != null) {
+                Emulator.getGameEnvironment().getRoomManager().leaveRoom(target, target.getRoomUnit().getRoom());
             }
             this.alert(moderator, target, message, SupportUserAlertedReason.KICKED);
         }
@@ -415,7 +414,7 @@ public class ModToolManager {
 
         List<ModToolBan> bans = new ArrayList<>();
         Habbo target = Emulator.getGameEnvironment().getHabboManager().getHabbo(targetUserId);
-        HabboInfo offlineInfo = target != null ? target.getHabboInfo() : HabboManager.getOfflineHabboInfo(targetUserId);
+        HabboInfo offlineInfo = target != null ? target.getHabboInfo() : Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(targetUserId);
 
         if (moderator.getHabboInfo().getPermissionGroup().getId() < offlineInfo.getPermissionGroup().getId()) {
             return bans;
@@ -472,18 +471,19 @@ public class ModToolManager {
         Emulator.getPluginManager().fireEvent(roomActionEvent);
 
         if (roomActionEvent.isChangeTitle()) {
-            room.setName(Emulator.getTexts().getValue("hotel.room.inappropriate.title"));
+            String name = Emulator.getTexts().getValue("hotel.room.inappropriate.title");
+            room.getRoomInfo().setName(name);
             room.setNeedsUpdate(true);
         }
 
         if (roomActionEvent.isLockDoor()) {
-            room.setState(RoomState.LOCKED);
+            room.getRoomInfo().setState(RoomState.LOCKED);
             room.setNeedsUpdate(true);
         }
 
         if (roomActionEvent.isKickUsers()) {
-            for (Habbo habbo : room.getHabbos()) {
-                if (!(habbo.hasRight(Permission.ACC_UNKICKABLE) || habbo.hasRight(Permission.ACC_SUPPORTTOOL) || room.isOwner(habbo))) {
+            for (Habbo habbo : room.getRoomUnitManager().getCurrentHabbos().values()) {
+                if (!(habbo.hasPermissionRight(Permission.ACC_UNKICKABLE) || habbo.hasPermissionRight(Permission.ACC_SUPPORTTOOL) || room.getRoomInfo().isRoomOwner(habbo))) {
                     room.kickHabbo(habbo, false);
                 }
             }

@@ -15,7 +15,7 @@ public class SummonCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (gameClient.getHabbo().getRoomUnit().getRoom() == null)
             return true;
 
         if (params.length < 2) {
@@ -35,23 +35,23 @@ public class SummonCommand extends Command {
             return true;
         }
 
-        if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() == habbo.getHabboInfo().getCurrentRoom()) {
+        if (gameClient.getHabbo().getRoomUnit().getRoom() == habbo.getRoomUnit().getRoom()) {
             gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.generic.cmd_summon.same_room"), params[1]), RoomChatMessageBubbles.ALERT);
             return true;
         }
 
-        Room room = habbo.getHabboInfo().getCurrentRoom();
+        Room room = habbo.getRoomUnit().getRoom();
+
+        //WHY? Why not just roomManager -> leaveRoom()
         if (room != null) {
             Emulator.getGameEnvironment().getRoomManager().logExit(habbo);
 
-            room.removeHabbo(habbo, true);
-
-            habbo.getHabboInfo().setCurrentRoom(null);
+            room.getRoomUnitManager().removeHabbo(habbo, true);
         }
 
-        Emulator.getGameEnvironment().getRoomManager().enterRoom(habbo, gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId(), "", true);
+        Emulator.getGameEnvironment().getRoomManager().enterRoom(habbo, gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId(), "", true);
 
-        habbo.getClient().sendResponse(new RoomForwardMessageComposer(gameClient.getHabbo().getHabboInfo().getCurrentRoom().getId()));
+        habbo.getClient().sendResponse(new RoomForwardMessageComposer(gameClient.getHabbo().getRoomUnit().getRoom().getRoomInfo().getId()));
 
         gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_summon.summoned"), params[1]), RoomChatMessageBubbles.ALERT);
 

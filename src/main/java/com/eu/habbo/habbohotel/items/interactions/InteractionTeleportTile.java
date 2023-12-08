@@ -2,8 +2,9 @@ package com.eu.habbo.habbohotel.items.interactions;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,8 +14,8 @@ public class InteractionTeleportTile extends InteractionTeleport {
         super(set, baseItem);
     }
 
-    public InteractionTeleportTile(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionTeleportTile(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -30,14 +31,14 @@ public class InteractionTeleportTile extends InteractionTeleport {
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         if (roomUnit != null && this.canWalkOn(roomUnit, room, objects)) {
-            Habbo habbo = room.getHabbo(roomUnit);
+            Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
             if (habbo != null) {
                 if (!canUseTeleport(habbo.getClient(), room))
                     return;
 
                 if (!habbo.getRoomUnit().isTeleporting()) {
-                    habbo.getRoomUnit().setGoalLocation(habbo.getRoomUnit().getCurrentLocation());
+                    habbo.getRoomUnit().walkTo(habbo.getRoomUnit().getCurrentPosition());
                     this.startTeleport(room, habbo, 1000);
                 }
             }

@@ -2,7 +2,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.habbohotel.items.interactions.InteractionRandomState;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,9 +15,9 @@ public class SetRandomStateEvent extends MessageHandler {
             int itemId = this.packet.readInt();
             int state = this.packet.readInt();
 
-            Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+            Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
-            HabboItem item = room.getHabboItem(itemId);
+            RoomItem item = room.getRoomItemManager().getRoomItemById(itemId);
 
             if (!(item instanceof InteractionRandomState randomStateItem))
                 return;

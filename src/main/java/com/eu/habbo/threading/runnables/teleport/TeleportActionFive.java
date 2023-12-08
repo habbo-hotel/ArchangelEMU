@@ -5,8 +5,8 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.interactions.InteractionTeleportTile;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.threading.runnables.HabboItemNewState;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @AllArgsConstructor
 class TeleportActionFive implements Runnable {
-    private final HabboItem currentTeleport;
+    private final RoomItem currentTeleport;
     private final Room room;
     private final GameClient client;
 
@@ -30,14 +30,14 @@ class TeleportActionFive implements Runnable {
         unit.setTeleporting(false);
         unit.setCanWalk(true);
 
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() != this.room)
+        if (this.client.getHabbo().getRoomUnit().getRoom() != this.room)
             return;
 
         //if (!(this.currentTeleport instanceof InteractionTeleportTile))
 
         if (this.room.getLayout() == null || this.currentTeleport == null) return;
 
-        RoomTile currentLocation = this.room.getLayout().getTile(this.currentTeleport.getX(), this.currentTeleport.getY());
+        RoomTile currentLocation = this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY());
         RoomTile tile = this.room.getLayout().getTileInFront(currentLocation, this.currentTeleport.getRotation());
 
         if (tile != null) {
@@ -49,18 +49,18 @@ class TeleportActionFive implements Runnable {
             });
 
             unit.setCanLeaveRoomByDoor(false);
-            unit.setGoalLocation(tile);
-            unit.statusUpdate(true);
+            unit.walkTo(tile);
+            unit.setStatusUpdateNeeded(true);
             unit.setLeavingTeleporter(true);
             Emulator.getThreading().run(new RoomUnitWalkToLocation(unit, tile, room, onSuccess, onSuccess));
         }
 
-        this.currentTeleport.setExtradata("1");
+        this.currentTeleport.setExtraData("1");
         this.room.updateItem(this.currentTeleport);
 
         Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), 1000);
 
-        HabboItem teleportTile = this.room.getTopItemAt(unit.getX(), unit.getY());
+        RoomItem teleportTile = this.room.getRoomItemManager().getTopItemAt(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY());
 
         if (teleportTile instanceof InteractionTeleportTile && teleportTile != this.currentTeleport) {
             try {

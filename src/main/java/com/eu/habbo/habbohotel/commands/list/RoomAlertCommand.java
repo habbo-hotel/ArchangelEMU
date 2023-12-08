@@ -28,7 +28,7 @@ public class RoomAlertCommand extends Command {
             return true;
         }
 
-        Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = gameClient.getHabbo().getRoomUnit().getRoom();
         if (room != null) {
             room.sendComposer(new IssueCloseNotificationMessageComposer(message).compose());
             return true;

@@ -6,7 +6,6 @@ import com.eu.habbo.habbohotel.modtool.ModToolIssue;
 import com.eu.habbo.habbohotel.modtool.ModToolTicketType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.modtool.CallForHelpDisabledNotifyMessageComposer;
 import com.eu.habbo.threading.runnables.InsertModToolIssue;
@@ -32,7 +31,7 @@ public class CallForHelpFromIMEvent extends MessageHandler {
         if (target != null) {
             info = target.getHabboInfo();
         } else {
-            info = HabboManager.getOfflineHabboInfo(userId);
+            info = Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(userId);
         }
 
         if (info == null) return;

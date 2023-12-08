@@ -10,10 +10,10 @@ public class UnbanUserFromRoomEvent extends MessageHandler {
         int userId = this.packet.readInt();
         int roomId = this.packet.readInt();
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
         if (room != null) {
-            if (room.isOwner(this.client.getHabbo())) {
+            if (room.getRoomInfo().isRoomOwner(this.client.getHabbo())) {
                 room.unbanHabbo(userId);
             }
         }

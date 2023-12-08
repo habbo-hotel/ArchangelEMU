@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.catalog;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,7 @@ public class CatalogLimitedConfiguration implements Runnable {
         }
     }
 
-    public void limitedSold(int catalogItemId, Habbo habbo, HabboItem item) {
+    public void limitedSold(int catalogItemId, Habbo habbo, RoomItem item) {
         synchronized (lock) {
             try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE catalog_items_limited SET user_id = ?, timestamp = ?, item_id = ? WHERE catalog_item_id = ? AND number = ? AND user_id = 0 LIMIT 1")) {
                 statement.setInt(1, habbo.getHabboInfo().getId());

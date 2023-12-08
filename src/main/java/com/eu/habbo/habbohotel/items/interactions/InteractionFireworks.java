@@ -7,8 +7,9 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 import com.eu.habbo.threading.runnables.RoomUnitWalkToLocation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +31,8 @@ public class InteractionFireworks extends InteractionDefault {
         super(set, baseItem);
     }
 
-    public InteractionFireworks(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionFireworks(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -53,10 +54,10 @@ public class InteractionFireworks extends InteractionDefault {
 
         // Wireds can always detonate fireworks if charged
         if (objects.length >= 2 && objects[1] instanceof WiredEffectType && objects[1] == WiredEffectType.TOGGLE_STATE) {
-            if (this.getExtradata().equalsIgnoreCase(STATE_CHARGED)) {
+            if (this.getExtraData().equalsIgnoreCase(STATE_CHARGED)) {
                 super.onClick(client, room, objects);
 
-                if (this.getExtradata().equalsIgnoreCase(STATE_EXPLOSION)) {
+                if (this.getExtraData().equalsIgnoreCase(STATE_EXPLOSION)) {
                     this.reCharge(room);
                 }
             }
@@ -70,13 +71,13 @@ public class InteractionFireworks extends InteractionDefault {
         // Habbos without rights have to walk to an adjecent tile to be able to detonate the fireworks
         if (!this.canToggle(client.getHabbo(), room)) {
             RoomTile closestTile = null;
-            for (RoomTile tile : room.getLayout().getTilesAround(room.getLayout().getTile(this.getX(), this.getY()))) {
-                if (tile.isWalkable() && (closestTile == null || closestTile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()) > tile.distance(client.getHabbo().getRoomUnit().getCurrentLocation()))) {
+            for (RoomTile tile : room.getLayout().getTilesAround(room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()))) {
+                if (tile.isWalkable() && (closestTile == null || closestTile.distance(client.getHabbo().getRoomUnit().getCurrentPosition()) > tile.distance(client.getHabbo().getRoomUnit().getCurrentPosition()))) {
                     closestTile = tile;
                 }
             }
 
-            if (closestTile != null && !closestTile.equals(client.getHabbo().getRoomUnit().getCurrentLocation())) {
+            if (closestTile != null && !closestTile.equals(client.getHabbo().getRoomUnit().getCurrentPosition())) {
                 List<Runnable> onSuccess = new ArrayList<>();
                 onSuccess.add(() -> {
                     try {
@@ -86,15 +87,15 @@ public class InteractionFireworks extends InteractionDefault {
                     }
                 });
 
-                client.getHabbo().getRoomUnit().setGoalLocation(closestTile);
+                client.getHabbo().getRoomUnit().walkTo(closestTile);
                 Emulator.getThreading().run(new RoomUnitWalkToLocation(client.getHabbo().getRoomUnit(), closestTile, room, onSuccess, new ArrayList<>()));
             }
         }
 
-        if (this.getExtradata().equalsIgnoreCase(STATE_CHARGED)) {
+        if (this.getExtraData().equalsIgnoreCase(STATE_CHARGED)) {
             super.onClick(client, room, objects);
 
-            if (this.getExtradata().equalsIgnoreCase(STATE_EXPLOSION))
+            if (this.getExtraData().equalsIgnoreCase(STATE_EXPLOSION))
             {
                 this.reCharge(room);
                 AchievementManager.progressAchievement(client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("FireworksCharger"));
@@ -110,14 +111,14 @@ public class InteractionFireworks extends InteractionDefault {
     @Override
     public void onPlace(Room room) {
         super.onPlace(room);
-        this.setExtradata(STATE_CHARGED);
+        this.setExtraData(STATE_CHARGED);
     }
 
     @Override
     public boolean canToggle(Habbo habbo, Room room) {
-        return room.hasRights(habbo) || RoomLayout.tilesAdjecent(
-                room.getLayout().getTile(this.getX(), this.getY()),
-                habbo.getRoomUnit().getCurrentLocation()
+        return room.getRoomRightsManager().hasRights(habbo) || RoomLayout.tilesAdjecent(
+                room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY()),
+                habbo.getRoomUnit().getCurrentPosition()
         );
     }
 
@@ -133,8 +134,8 @@ public class InteractionFireworks extends InteractionDefault {
         }
 
         Emulator.getThreading().run(() -> {
-            this.setExtradata(STATE_CHARGED);
-            this.needsUpdate(true);
+            this.setExtraData(STATE_CHARGED);
+            this.setSqlUpdateNeeded(true);
             room.updateItemState(this);
         }, explodeDuration);
     }

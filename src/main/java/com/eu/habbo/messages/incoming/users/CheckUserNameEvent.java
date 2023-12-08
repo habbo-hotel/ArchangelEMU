@@ -1,7 +1,6 @@
 package com.eu.habbo.messages.incoming.users;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.users.CheckUserNameResultMessageComposer;
 
@@ -25,7 +24,7 @@ public class CheckUserNameEvent extends MessageHandler {
             errorCode = CheckUserNameResultMessageComposer.TOO_SHORT;
         } else if (name.length() > 15) {
             errorCode = CheckUserNameResultMessageComposer.TOO_LONG;
-        } else if (name.equalsIgnoreCase(this.client.getHabbo().getHabboInfo().getUsername()) || HabboManager.getOfflineHabboInfo(name) != null || ChangeUserNameEvent.changingUsernames.contains(name.toLowerCase())) {
+        } else if (name.equalsIgnoreCase(this.client.getHabbo().getHabboInfo().getUsername()) || Emulator.getGameEnvironment().getHabboManager().getOfflineHabboInfo(name) != null || ChangeUserNameEvent.changingUsernames.contains(name.toLowerCase())) {
             errorCode = CheckUserNameResultMessageComposer.TAKEN_WITH_SUGGESTIONS;
             suggestions.add(name + Emulator.getRandom().nextInt(9999));
             suggestions.add(name + Emulator.getRandom().nextInt(9999));

@@ -12,18 +12,19 @@ import com.eu.habbo.messages.outgoing.rooms.GetGuestRoomResultComposer;
 public class SubmitRoomToCompetitionEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasRight(Permission.ACC_STAFF_PICK)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_STAFF_PICK)) {
             int roomId = this.packet.readInt();
 
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
             if (room != null) {
-                room.setStaffPromotedRoom(!room.isStaffPromotedRoom());
+                boolean staffPromotedRoom = !room.getRoomInfo().isStaffPicked();
+                room.getRoomInfo().setStaffPicked(staffPromotedRoom);
                 room.setNeedsUpdate(true);
 
                 NavigatorPublicCategory publicCategory = Emulator.getGameEnvironment().getNavigatorManager().publicCategories.get(Emulator.getConfig().getInt("hotel.navigator.staffpicks.categoryid"));
-                if (room.isStaffPromotedRoom()) {
-                    Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(room.getOwnerId());
+                if (room.getRoomInfo().isStaffPicked()) {
+                    Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(room.getRoomInfo().getOwnerInfo().getId());
 
                     if (habbo != null) {
                         AchievementManager.progressAchievement(habbo, Emulator.getGameEnvironment().getAchievementManager().getAchievement("Spr"));

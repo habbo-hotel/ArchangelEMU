@@ -13,7 +13,7 @@ public class WhisperEvent extends MessageHandler {
 
     @Override
     public void handle() {
-        if (this.client.getHabbo().getHabboInfo().getCurrentRoom() == null)
+        if (this.client.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
         RoomChatMessage chatMessage = new RoomChatMessage(this);
@@ -26,7 +26,7 @@ public class WhisperEvent extends MessageHandler {
                 return;
             }
 
-            this.client.getHabbo().getHabboInfo().getCurrentRoom().talk(this.client.getHabbo(), chatMessage, RoomChatType.WHISPER, true);
+            this.client.getHabbo().getRoomUnit().getRoom().talk(this.client.getHabbo(), chatMessage, RoomChatType.WHISPER, true);
 
             if (RoomChatMessage.SAVE_ROOM_CHATS) {
                 Emulator.getThreading().run(chatMessage);

@@ -15,15 +15,15 @@ public class PassCarryItemEvent extends MessageHandler {
     public void handle() {
         int userId = this.packet.readInt();
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room != null) {
-            Habbo target = room.getHabbo(userId);
+            Habbo target = room.getRoomUnitManager().getRoomHabboById(userId);
 
             if (target != null) {
                 List<Runnable> executable = new ArrayList<>();
                 executable.add(new HabboGiveHandItemToHabbo(this.client.getHabbo(), target));
-                Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(this.client.getHabbo().getRoomUnit(), target.getRoomUnit(), this.client.getHabbo().getHabboInfo().getCurrentRoom(), executable, executable));
+                Emulator.getThreading().run(new RoomUnitWalkToRoomUnit(this.client.getHabbo().getRoomUnit(), target.getRoomUnit(), this.client.getHabbo().getRoomUnit().getRoom(), executable, executable));
             }
         }
     }

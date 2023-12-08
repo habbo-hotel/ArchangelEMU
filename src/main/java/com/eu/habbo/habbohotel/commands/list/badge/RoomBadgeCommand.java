@@ -20,7 +20,7 @@ public class RoomBadgeCommand extends BaseBadgeCommand {
             if (!badge.isEmpty()) {
                 ServerMessage message = createServerMessage(badge);
 
-                gameClient.getHabbo().getRoomUnit().getRoom().getHabbos()
+                gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getCurrentHabbos().values()
                         .forEach(habbo -> sendBadgeToClient(badge, message, habbo));
             }
             return true;

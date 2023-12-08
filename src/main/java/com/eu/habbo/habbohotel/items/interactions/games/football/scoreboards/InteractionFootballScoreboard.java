@@ -6,7 +6,8 @@ import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameScoreboard;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredEffectType;
 
 import java.sql.ResultSet;
@@ -20,14 +21,14 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard {
         super(set, baseItem, teamColor);
 
         try {
-            this.score = Integer.parseInt(this.getExtradata());
+            this.score = Integer.parseInt(this.getExtraData());
         } catch (Exception e) {
             this.score = 0;
         }
     }
 
-    public InteractionFootballScoreboard(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
-        super(id, userId, item, extradata, limitedStack, limitedSells, teamColor);
+    public InteractionFootballScoreboard(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells, GameTeamColors teamColor) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells, teamColor);
 
         try {
             this.score = Integer.parseInt(extradata);
@@ -58,10 +59,10 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard {
             this.score = 99;
         }
 
-        this.setExtradata(this.score + "");
-        this.needsUpdate(true);
+        this.setExtraData(this.score + "");
+        this.setSqlUpdateNeeded(true);
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
         if (room != null) {
             room.updateItem(this);
         }
@@ -84,10 +85,10 @@ public class InteractionFootballScoreboard extends InteractionGameScoreboard {
             this.score = 99;
         }
 
-        this.setExtradata(this.score + "");
-        this.needsUpdate(true);
+        this.setExtraData(this.score + "");
+        this.setSqlUpdateNeeded(true);
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
         if (room != null) {
             room.updateItem(this);
         }

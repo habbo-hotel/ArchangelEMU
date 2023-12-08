@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.outgoing.rooms.items;
 
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -10,14 +10,13 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.THashMap;
 import lombok.AllArgsConstructor;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 public class ItemsComposer extends MessageComposer {
     private final Room room;
-
 
     @Override
     protected ServerMessage composeInternal() {
@@ -42,10 +41,10 @@ public class ItemsComposer extends MessageComposer {
             this.response.appendString(set.getValue());
         }
 
-        List<HabboItem> items = this.room.getWallItems();
+        Collection<RoomItem> items = this.room.getRoomItemManager().getWallItems().values();
 
         this.response.appendInt(items.size());
-        for (HabboItem item : items) {
+        for (RoomItem item : items) {
             item.serializeWallData(this.response);
         }
         return this.response;

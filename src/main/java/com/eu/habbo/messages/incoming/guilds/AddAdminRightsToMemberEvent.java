@@ -18,7 +18,7 @@ public class AddAdminRightsToMemberEvent extends MessageHandler {
 
         Guild guild = Emulator.getGameEnvironment().getGuildManager().getGuild(guildId);
 
-        if (guild != null && (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_GUILD_ADMIN))) {
+        if (guild != null && (guild.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_GUILD_ADMIN))) {
             Emulator.getGameEnvironment().getGuildManager().setAdmin(guild, userId);
 
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
@@ -29,9 +29,11 @@ public class AddAdminRightsToMemberEvent extends MessageHandler {
                 return;
 
             if (habbo != null) {
-                Room room = habbo.getHabboInfo().getCurrentRoom();
-                if (room != null && room.getGuildId() == guildId) {
-                    room.refreshRightsForHabbo(habbo);
+                Room room = habbo.getRoomUnit().getRoom();
+                if (room != null) {
+                    if (room.getRoomInfo().getGuild().getId() == guildId) {
+                        room.getRoomRightsManager().refreshRightsForHabbo(habbo);
+                    }
                 }
             }
 

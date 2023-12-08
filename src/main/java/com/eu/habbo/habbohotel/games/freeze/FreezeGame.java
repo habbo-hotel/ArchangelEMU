@@ -13,8 +13,8 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUserAction;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.outgoing.rooms.users.ExpressionMessageComposer;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.emulator.EmulatorConfigUpdatedEvent;
@@ -78,9 +78,9 @@ public class FreezeGame extends Game {
     }
 
     synchronized void resetMap() {
-        for (HabboItem item : this.room.getFloorItems()) {
+        for (RoomItem item : this.room.getRoomItemManager().getFloorItems().values()) {
             if (item instanceof InteractionFreezeBlock || item instanceof InteractionFreezeScoreboard) {
-                item.setExtradata("0");
+                item.setExtraData("0");
                 this.room.updateItemState(item);
             }
         }
@@ -90,10 +90,10 @@ public class FreezeGame extends Game {
         if (!this.state.equals(GameState.RUNNING) || !habbo.getHabboInfo().isInGame() || habbo.getHabboInfo().getCurrentGame() != this.getClass())
             return;
 
-        if (!item.getExtradata().equalsIgnoreCase("0") && !item.getExtradata().isEmpty())
+        if (!item.getExtraData().equalsIgnoreCase("0") && !item.getExtraData().isEmpty())
             return;
 
-        if (RoomLayout.tilesAdjecent(habbo.getRoomUnit().getCurrentLocation(), this.room.getLayout().getTile(item.getX(), item.getY()))) {
+        if (RoomLayout.tilesAdjecent(habbo.getRoomUnit().getCurrentPosition(), this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()))) {
             if (((FreezeGamePlayer) habbo.getHabboInfo().getGamePlayer()).canThrowSnowball()) {
                 Emulator.getThreading().run(new FreezeThrowSnowball(habbo, item, this.room));
             }
@@ -147,7 +147,7 @@ public class FreezeGame extends Game {
             powerUp += Emulator.getRandom().nextInt(6) + 1;
         }
 
-        block.setExtradata((powerUp + 1) + String.format("%3d", delay));
+        block.setExtraData((powerUp + 1) + String.format("%3d", delay));
 
         this.room.updateItemState(block);
     }
@@ -173,7 +173,7 @@ public class FreezeGame extends Game {
         Emulator.getThreading().run(new FreezeClearEffects(player.getHabbo()), 1000);
         if (this.room.getRoomSpecialTypes().hasFreezeExitTile()) {
             InteractionFreezeExitTile tile = this.room.getRoomSpecialTypes().getRandomFreezeExitTile();
-            tile.setExtradata("1");
+            tile.setExtraData("1");
             this.room.updateItemState(tile);
             this.room.teleportHabboToItem(player.getHabbo(), tile);
         }
@@ -189,12 +189,12 @@ public class FreezeGame extends Game {
         super.start();
 
         if (this.room.getRoomSpecialTypes().hasFreezeExitTile()) {
-            for (Habbo habbo : this.room.getHabbos()) {
+            for (Habbo habbo : this.room.getRoomUnitManager().getCurrentHabbos().values()) {
                 if (this.getTeamForHabbo(habbo) == null) {
-                    for (HabboItem item : this.room.getItemsAt(habbo.getRoomUnit().getCurrentLocation())) {
+                    for (RoomItem item : this.room.getRoomItemManager().getItemsAt(habbo.getRoomUnit().getCurrentPosition())) {
                         if (item instanceof InteractionFreezeTile) {
-                            HabboItem exitTile = this.room.getRoomSpecialTypes().getRandomFreezeExitTile();
-                            WiredEffectTeleport.teleportUnitToTile(habbo.getRoomUnit(), this.room.getLayout().getTile(exitTile.getX(), exitTile.getY()));
+                            RoomItem exitTile = this.room.getRoomSpecialTypes().getRandomFreezeExitTile();
+                            WiredEffectTeleport.teleportUnitToTile(habbo.getRoomUnit(), this.room.getLayout().getTile(exitTile.getCurrentPosition().getX(), exitTile.getCurrentPosition().getY()));
                         }
                     }
                 }
@@ -227,16 +227,16 @@ public class FreezeGame extends Game {
                 THashMap<Integer, InteractionFreezeScoreboard> scoreBoards = this.room.getRoomSpecialTypes().getFreezeScoreboards(team.teamColor);
 
                 for (InteractionFreezeScoreboard scoreboard : scoreBoards.values()) {
-                    if (scoreboard.getExtradata().isEmpty()) {
-                        scoreboard.setExtradata("0");
+                    if (scoreboard.getExtraData().isEmpty()) {
+                        scoreboard.setExtraData("0");
                     }
 
-                    int oldScore = Integer.parseInt(scoreboard.getExtradata());
+                    int oldScore = Integer.parseInt(scoreboard.getExtraData());
 
                     if (oldScore == totalScore)
                         continue;
 
-                    scoreboard.setExtradata(totalScore + "");
+                    scoreboard.setExtraData(totalScore + "");
                     this.room.updateItemState(scoreboard);
                 }
             }
@@ -282,7 +282,7 @@ public class FreezeGame extends Game {
         for (Map.Entry<Integer, InteractionFreezeGate> set : this.room.getRoomSpecialTypes().getFreezeGates().entrySet()) {
             if (teamMemberCount.containsKey(set.getValue().teamColor)) {
                 int amount = Math.min(teamMemberCount.get(set.getValue().teamColor), 5);
-                set.getValue().setExtradata(amount + "");
+                set.getValue().setExtraData(amount + "");
                 teamMemberCount.put(set.getValue().teamColor, teamMemberCount.get(set.getValue().teamColor) - amount);
                 this.room.updateItemState(set.getValue());
             }
@@ -295,7 +295,7 @@ public class FreezeGame extends Game {
 
     public void setFreezeTileState(String state) {
         this.room.getRoomSpecialTypes().getFreezeExitTiles().forEachValue(object -> {
-            object.setExtradata(state);
+            object.setExtraData(state);
             FreezeGame.this.room.updateItemState(object);
             return true;
         });
@@ -304,8 +304,8 @@ public class FreezeGame extends Game {
 
     private void refreshGates() {
         THashSet<RoomTile> tilesToUpdate = new THashSet<>();
-        for (HabboItem item : this.room.getRoomSpecialTypes().getFreezeGates().values()) {
-            tilesToUpdate.add(this.room.getLayout().getTile(item.getX(), item.getY()));
+        for (RoomItem item : this.room.getRoomSpecialTypes().getFreezeGates().values()) {
+            tilesToUpdate.add(this.room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
         }
 
         this.room.updateTiles(tilesToUpdate);

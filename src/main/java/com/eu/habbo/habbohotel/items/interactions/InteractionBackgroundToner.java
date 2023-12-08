@@ -5,29 +5,30 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.BackgroundAnimation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionBackgroundToner extends HabboItem {
+public class InteractionBackgroundToner extends RoomItem {
     public InteractionBackgroundToner(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public InteractionBackgroundToner(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public InteractionBackgroundToner(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt(5 + (this.isLimited() ? 256 : 0));
         serverMessage.appendInt(4);
-        if (this.getExtradata().split(":").length == 4) {
-            String[] colorData = this.getExtradata().split(":");
+        if (this.getExtraData().split(":").length == 4) {
+            String[] colorData = this.getExtraData().split(":");
             serverMessage.appendInt(Integer.parseInt(colorData[0]));
             serverMessage.appendInt(Integer.parseInt(colorData[1]));
             serverMessage.appendInt(Integer.parseInt(colorData[2]));
@@ -37,8 +38,8 @@ public class InteractionBackgroundToner extends HabboItem {
             serverMessage.appendInt(126);
             serverMessage.appendInt(126);
             serverMessage.appendInt(126);
-            this.setExtradata("0:126:126:126");
-            this.needsUpdate(true);
+            this.setExtraData("0:126:126:126");
+            this.setSqlUpdateNeeded(true);
             Emulator.getThreading().run(this);
         }
 
@@ -61,31 +62,31 @@ public class InteractionBackgroundToner extends HabboItem {
 
         if(client != null)
         {
-            if (!client.getHabbo().getRoomUnit().getRoom().hasRights(client.getHabbo())) {
+            if (!client.getHabbo().getRoomUnit().getRoom().getRoomRightsManager().hasRights(client.getHabbo())) {
                 ScripterManager.scripterDetected(
                         client,
                         Emulator.getTexts().getValue("scripter.warning.item.bgtoner.permission").replace("%username%", client.getHabbo().getHabboInfo().getUsername())
-                                .replace("%room%", room.getName())
-                                .replace("%owner%", room.getOwnerName())
+                                .replace("%room%", room.getRoomInfo().getName())
+                                .replace("%owner%", room.getRoomInfo().getOwnerInfo().getUsername())
                 );
                 return;
             }
             
-            if (client.getHabbo().getRoomUnit().isCmdSit() && client.getHabbo().getRoomUnit().getEffectId() == 1337) {
+            if (client.getHabbo().getRoomUnit().isCmdSitEnabled() && client.getHabbo().getRoomUnit().getEffectId() == 1337) {
                 new BackgroundAnimation(this, room).run();
                 return;
             }
         }
 
-        if (this.getExtradata().split(":").length == 4) {
-            String[] data = this.getExtradata().split(":");
-            this.setExtradata((data[0].equals("0") ? "1" : "0") + ":" + data[1] + ":" + data[2] + ":" + data[3]);
+        if (this.getExtraData().split(":").length == 4) {
+            String[] data = this.getExtraData().split(":");
+            this.setExtraData((data[0].equals("0") ? "1" : "0") + ":" + data[1] + ":" + data[2] + ":" + data[3]);
             room.updateItem(this);
         } else {
-            this.setExtradata("0:126:126:126");
+            this.setExtraData("0:126:126:126");
             room.updateItem(this);
         }
-        this.needsUpdate(true);
+        this.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(this);
     }
 

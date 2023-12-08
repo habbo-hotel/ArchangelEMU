@@ -5,29 +5,30 @@ import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.threading.runnables.hopper.HopperActionOne;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class InteractionHopper extends HabboItem {
+public class InteractionHopper extends RoomItem {
     public InteractionHopper(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
-    public InteractionHopper(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
-        this.setExtradata("0");
+    public InteractionHopper(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
+        this.setExtraData("0");
     }
 
     @Override
     public void serializeExtradata(ServerMessage serverMessage) {
         serverMessage.appendInt((this.isLimited() ? 256 : 0));
-        serverMessage.appendString(this.getExtradata());
+        serverMessage.appendString(this.getExtraData());
 
         super.serializeExtradata(serverMessage);
     }
@@ -52,16 +53,16 @@ public class InteractionHopper extends HabboItem {
         super.onClick(client, room, objects);
 
         if (room != null) {
-            RoomTile loc = HabboItem.getSquareInFront(room.getLayout(), this);
+            RoomTile loc = RoomItem.getSquareInFront(room.getLayout(), this);
             if (loc != null) {
                 if (this.canUseTeleport(client, loc, room)) {
                     client.getHabbo().getRoomUnit().setTeleporting(true);
-                    this.setExtradata("1");
+                    this.setExtraData("1");
                     room.updateItemState(this);
 
                     Emulator.getThreading().run(new HopperActionOne(this, room, client), 500);
                 } else {
-                    client.getHabbo().getRoomUnit().setGoalLocation(loc);
+                    client.getHabbo().getRoomUnit().walkTo(loc);
                 }
             }
         }
@@ -69,15 +70,15 @@ public class InteractionHopper extends HabboItem {
 
     @Override
     public void onPickUp(Room room) {
-        this.setExtradata("0");
+        this.setExtraData("0");
     }
 
     @Override
     public void run() {
-        if (!this.getExtradata().equals("0")) {
-            this.setExtradata("0");
+        if (!this.getExtraData().equals("0")) {
+            this.setExtraData("0");
 
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+            Room room = this.getRoom();
             if (room != null) {
                 room.updateItemState(this);
             }
@@ -86,18 +87,24 @@ public class InteractionHopper extends HabboItem {
     }
 
     protected boolean canUseTeleport(GameClient client, RoomTile front, Room room) {
-        if (client.getHabbo().getRoomUnit().getX() != front.getX())
+        if (client.getHabbo().getRoomUnit().getCurrentPosition().getX() != front.getX())
             return false;
 
-        if (client.getHabbo().getRoomUnit().getY() != front.getY())
+        if (client.getHabbo().getRoomUnit().getCurrentPosition().getY() != front.getY())
             return false;
 
         if (client.getHabbo().getRoomUnit().isTeleporting())
             return false;
 
-        if (!room.getHabbosAt(this.getX(), this.getY()).isEmpty())
+        RoomTile tile = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
+
+        if(tile == null) {
+            return false;
+        }
+
+        if (room.getRoomUnitManager().hasHabbosAt(tile))
             return false;
 
-        return this.getExtradata().equals("0");
+        return this.getExtraData().equals("0");
     }
 }

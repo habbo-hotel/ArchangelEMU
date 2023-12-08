@@ -23,17 +23,17 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
 
     @Override
     public void handle() {
-        if (!this.client.getHabbo().hasRight(Permission.ACC_FLOORPLAN_EDITOR)) {
+        if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_FLOORPLAN_EDITOR)) {
             this.client.sendResponse(new HabboBroadcastMessageComposer(Emulator.getTexts().getValue("floorplan.permission")));
             return;
         }
 
-        Room room = this.client.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = this.client.getHabbo().getRoomUnit().getRoom();
 
         if (room == null)
             return;
 
-        if (room.getOwnerId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasRight(Permission.ACC_ANYROOMOWNER)) {
+        if (room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             StringJoiner errors = new StringJoiner("<br />");
             String map = this.packet.readString();
             map = map.replace("X", "x");
@@ -111,7 +111,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                     String square = String.valueOf(mapRows[y].charAt(x));
                     short height;
 
-                    if (square.equalsIgnoreCase("x") && room.getTopItemAt(x, y) != null) {
+                    if (square.equalsIgnoreCase("x") && room.getRoomItemManager().getTopItemAt(x, y) != null) {
                         errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
                         break blockingRoomItemScan;
                     } else {
@@ -124,7 +124,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                         }
                     }
 
-                    if (tile != null && tile.getState() != RoomTileState.INVALID && height != tile.getZ() && room.getTopItemAt(x, y) != null) {
+                    if (tile != null && tile.getState() != RoomTileState.INVALID && height != tile.getZ() && room.getRoomItemManager().getTopItemAt(x, y) != null) {
                         errors.add("${notification.floorplan_editor.error.message.change_blocked_by_room_item}");
                         break blockingRoomItemScan;
                     }
@@ -155,7 +155,7 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
                 if (layout.getDoorTile() == null) {
                     this.client.getHabbo().alert("Error");
                     ((CustomRoomLayout) layout).needsUpdate(false);
-                    Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
+                    room.dispose();
                     return;
                 }
                 ((CustomRoomLayout) layout).needsUpdate(true);
@@ -165,18 +165,18 @@ public class UpdateFloorPropertiesEvent extends MessageHandler {
             }
 
             if (layout != null) {
-                room.setHasCustomLayout(true);
+                room.getRoomInfo().setModelOverridden(true);
                 room.setNeedsUpdate(true);
                 room.setLayout(layout);
-                room.setWallSize(wallSize);
-                room.setFloorSize(floorSize);
-                room.setWallHeight(wallHeight);
+                room.getRoomInfo().setWallThickness(wallSize);
+                room.getRoomInfo().setFloorThickness(floorSize);
+                room.getRoomInfo().setWallHeight(wallHeight);
                 room.save();
-                Collection<Habbo> habbos = new ArrayList<>(room.getUserCount());
-                habbos.addAll(room.getHabbos());
-                Emulator.getGameEnvironment().getRoomManager().unloadRoom(room);
-                room = Emulator.getGameEnvironment().getRoomManager().loadRoom(room.getId());
-                ServerMessage message = new RoomForwardMessageComposer(room.getId()).compose();
+                Collection<Habbo> habbos = new ArrayList<>(room.getRoomUnitManager().getRoomHabbosCount());
+                habbos.addAll(room.getRoomUnitManager().getCurrentHabbos().values());
+                room.dispose();
+                room = Emulator.getGameEnvironment().getRoomManager().getRoom(room.getRoomInfo().getId());
+                ServerMessage message = new RoomForwardMessageComposer(room.getRoomInfo().getId()).compose();
                 for (Habbo habbo : habbos) {
                     habbo.getClient().sendResponse(message);
                 }

@@ -9,10 +9,10 @@ import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
 import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.plugin.EventHandler;
 import com.eu.habbo.plugin.events.roomunit.RoomUnitLookAtPointEvent;
 import com.eu.habbo.plugin.events.users.UserTakeStepEvent;
@@ -34,8 +34,8 @@ public abstract class TagGame extends Game {
     public static void onUserLookAtPoint(RoomUnitLookAtPointEvent event) {
         if (event.room == null || event.roomUnit == null || event.location == null) return;
 
-        if (RoomLayout.tilesAdjecent(event.roomUnit.getCurrentLocation(), event.location)) {
-            Habbo habbo = event.room.getHabbo(event.roomUnit);
+        if (RoomLayout.tilesAdjecent(event.roomUnit.getCurrentPosition(), event.location)) {
+            Habbo habbo = event.room.getRoomUnitManager().getHabboByRoomUnit(event.roomUnit);
 
             if (habbo != null) {
                 if (habbo.getHabboInfo().getCurrentGame() != null) {
@@ -44,7 +44,7 @@ public abstract class TagGame extends Game {
 
                         if (game != null) {
                             if (game.isTagger(habbo)) {
-                                for (Habbo tagged : event.room.getHabbosAt(event.location)) {
+                                for (Habbo tagged : event.room.getRoomUnitManager().getHabbosAt(event.location)) {
                                     if (tagged == habbo || tagged.getHabboInfo().getCurrentGame() == null || tagged.getHabboInfo().getCurrentGame() != habbo.getHabboInfo().getCurrentGame()) {
                                         continue;
                                     }
@@ -63,15 +63,15 @@ public abstract class TagGame extends Game {
     @EventHandler
     public static void onUserWalkEvent(UserTakeStepEvent event) {
         if (event.habbo.getHabboInfo().getCurrentGame() != null && TagGame.class.isAssignableFrom(event.habbo.getHabboInfo().getCurrentGame())) {
-            THashSet<HabboItem> items = event.habbo.getHabboInfo().getCurrentRoom().getItemsAt(event.toLocation);
+            THashSet<RoomItem> items = event.habbo.getRoomUnit().getRoom().getRoomItemManager().getItemsAt(event.toLocation);
 
-            TagGame game = (TagGame) event.habbo.getHabboInfo().getCurrentRoom().getGame(event.habbo.getHabboInfo().getCurrentGame());
+            TagGame game = (TagGame) event.habbo.getRoomUnit().getRoom().getGame(event.habbo.getHabboInfo().getCurrentGame());
 
             if (game != null) {
-                for (HabboItem item : items) {
+                for (RoomItem item : items) {
                     if (item instanceof InteractionTagField && ((InteractionTagField) item).gameClazz == event.habbo.getHabboInfo().getCurrentGame()) {
                         if (game.taggers.isEmpty()) {
-                            game.tagged(event.habbo.getHabboInfo().getCurrentRoom(), null, event.habbo);
+                            game.tagged(event.habbo.getRoomUnit().getRoom(), null, event.habbo);
                         }
                         return;
                     }
@@ -97,22 +97,22 @@ public abstract class TagGame extends Game {
             return;
         }
 
-        THashSet<HabboItem> poles = room.getRoomSpecialTypes().getItemsOfType(this.getTagPole());
+        THashSet<RoomItem> poles = room.getRoomSpecialTypes().getItemsOfType(this.getTagPole());
         InteractionTagPole pole = this.taggers.get(tagger);
-        room.giveEffect(tagged, this.getTaggedEffect(tagged), -1);
+        tagged.getRoomUnit().giveEffect(this.getTaggedEffect(tagged), -1);
 
         if (poles.size() > this.taggers.size()) {
             for (Map.Entry<Habbo, InteractionTagPole> set : this.taggers.entrySet()) {
                 poles.remove(set.getValue());
             }
 
-            for (HabboItem item : poles) {
-                tagged.getHabboInfo().getCurrentRoom().giveEffect(tagged, this.getTaggedEffect(tagged), -1);
+            for (RoomItem item : poles) {
+                tagged.getRoomUnit().giveEffect(this.getTaggedEffect(tagged), -1);
                 this.taggers.put(tagged, (InteractionTagPole) item);
             }
         } else {
             if (tagger != null) {
-                room.giveEffect(tagger, this.getEffect(tagger), -1);
+                tagger.getRoomUnit().giveEffect(this.getEffect(tagger), -1);
                 this.taggers.remove(tagger);
             }
 
@@ -120,7 +120,7 @@ public abstract class TagGame extends Game {
         }
 
         if (pole != null) {
-            pole.setExtradata("1");
+            pole.setExtraData("1");
             room.updateItemState(pole);
             Emulator.getThreading().run(new HabboItemNewState(pole, room, "0"), 1000);
         }
@@ -130,39 +130,39 @@ public abstract class TagGame extends Game {
     public synchronized boolean addHabbo(Habbo habbo, GameTeamColors teamColor) {
         super.addHabbo(habbo, GameTeamColors.RED);
 
-        RoomUnit roomUnit = habbo.getRoomUnit();
+        RoomHabbo roomHabbo = habbo.getRoomUnit();
         if (this.getTagPole() != null) {
-            THashSet<HabboItem> poles = habbo.getHabboInfo().getCurrentRoom().getRoomSpecialTypes().getItemsOfType(this.getTagPole());
+            THashSet<RoomItem> poles = habbo.getRoomUnit().getRoom().getRoomSpecialTypes().getItemsOfType(this.getTagPole());
 
             if (poles.size() > this.taggers.size()) {
                 for (Map.Entry<Habbo, InteractionTagPole> set : this.taggers.entrySet()) {
                     poles.remove(set.getValue());
                 }
 
-                TObjectHashIterator<HabboItem> iterator = poles.iterator();
+                TObjectHashIterator<RoomItem> iterator = poles.iterator();
                 if ((iterator.hasNext())) {
-                    HabboItem item = iterator.next();
-                    if (roomUnit.getEffectId() > 0)
-                        roomUnit.setPreviousEffectId(roomUnit.getEffectId(), roomUnit.getPreviousEffectEndTimestamp());
-                    habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1, true);
-                    this.room.scheduledTasks.add(() -> habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1, true));
+                    RoomItem item = iterator.next();
+                    if (roomHabbo.getEffectId() > 0)
+                        roomHabbo.setPreviousEffectId(roomHabbo.getEffectId(), roomHabbo.getPreviousEffectEndTimestamp());
+                    habbo.getRoomUnit().giveEffect(this.getEffect(habbo), -1, true);
+                    this.room.scheduledTasks.add(() -> habbo.getRoomUnit().giveEffect(this.getTaggedEffect(habbo), -1, true));
                     this.taggers.put(habbo, (InteractionTagPole) item);
                     return true;
                 }
             }
         } else {
             if (this.taggers.isEmpty()) {
-                if (roomUnit.getEffectId() > 0)
-                    roomUnit.setPreviousEffectId(roomUnit.getEffectId(), roomUnit.getPreviousEffectEndTimestamp());
-                habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1, true);
-                this.room.scheduledTasks.add(() -> habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getTaggedEffect(habbo), -1, true));
+                if (roomHabbo.getEffectId() > 0)
+                    roomHabbo.setPreviousEffectId(roomHabbo.getEffectId(), roomHabbo.getPreviousEffectEndTimestamp());
+                habbo.getRoomUnit().giveEffect(this.getEffect(habbo), -1, true);
+                this.room.scheduledTasks.add(() -> habbo.getRoomUnit().giveEffect(this.getTaggedEffect(habbo), -1, true));
                 this.taggers.put(habbo, null);
                 return true;
             }
         }
-        if (roomUnit.getEffectId() > 0)
-            roomUnit.setPreviousEffectId(roomUnit.getEffectId(), roomUnit.getPreviousEffectEndTimestamp());
-        habbo.getHabboInfo().getCurrentRoom().giveEffect(habbo, this.getEffect(habbo), -1, true);
+        if (roomHabbo.getEffectId() > 0)
+            roomHabbo.setPreviousEffectId(roomHabbo.getEffectId(), roomHabbo.getPreviousEffectEndTimestamp());
+        habbo.getRoomUnit().giveEffect(this.getEffect(habbo), -1, true);
 
         return true;
     }
@@ -172,11 +172,11 @@ public abstract class TagGame extends Game {
         super.removeHabbo(habbo);
         this.taggers.remove(habbo);
 
-        RoomUnit roomUnit = habbo.getRoomUnit();
-        Room room = roomUnit.getRoom();
+        RoomHabbo roomHabbo = habbo.getRoomUnit();
+        Room room = roomHabbo.getRoom();
         if (room == null) return;
 
-        HabboItem topItem = room.getTopItemAt(roomUnit.getCurrentLocation().getX(), roomUnit.getCurrentLocation().getY());
+        RoomItem topItem = room.getRoomItemManager().getTopItemAt(roomHabbo.getCurrentPosition().getX(), roomHabbo.getCurrentPosition().getY());
         int nextEffectM = 0;
         int nextEffectF = 0;
         int nextEffectDuration = -1;
@@ -184,19 +184,19 @@ public abstract class TagGame extends Game {
         if (topItem != null) {
             nextEffectM = topItem.getBaseItem().getEffectM();
             nextEffectF = topItem.getBaseItem().getEffectF();
-        } else if (roomUnit.getPreviousEffectId() > 0) {
-            nextEffectF = roomUnit.getPreviousEffectId();
-            nextEffectM = roomUnit.getPreviousEffectId();
-            nextEffectDuration = roomUnit.getPreviousEffectEndTimestamp();
+        } else if (roomHabbo.getPreviousEffectId() > 0) {
+            nextEffectF = roomHabbo.getPreviousEffectId();
+            nextEffectM = roomHabbo.getPreviousEffectId();
+            nextEffectDuration = roomHabbo.getPreviousEffectEndTimestamp();
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.M)) {
-            room.giveEffect(habbo, nextEffectM, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectM, nextEffectDuration, true);
             return;
         }
 
         if (habbo.getHabboInfo().getGender().equals(HabboGender.F)) {
-            room.giveEffect(habbo, nextEffectF, nextEffectDuration, true);
+            habbo.getRoomUnit().giveEffect(nextEffectF, nextEffectDuration, true);
         }
     }
 

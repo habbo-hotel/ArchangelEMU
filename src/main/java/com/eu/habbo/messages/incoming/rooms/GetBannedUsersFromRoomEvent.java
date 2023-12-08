@@ -11,7 +11,7 @@ public class GetBannedUsersFromRoomEvent extends MessageHandler {
     public void handle() {
         int roomId = this.packet.readInt();
 
-        Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(roomId);
+        Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(roomId);
 
         if (room != null) {
             this.client.sendResponse(new BannedUsersFromRoomComposer(room));

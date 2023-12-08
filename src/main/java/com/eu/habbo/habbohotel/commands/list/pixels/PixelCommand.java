@@ -21,7 +21,7 @@ public class PixelCommand extends BasePixelsCommand {
             try {
                 if (Integer.parseInt(params[2]) != 0) {
                     habbo.givePixels(Integer.parseInt(params[2]));
-                    if (habbo.getHabboInfo().getCurrentRoom() != null)
+                    if (habbo.getRoomUnit().getRoom() != null)
                         habbo.whisper(replaceAmount(getTextsValue("commands.generic.cmd_duckets.received"), params[2]), RoomChatMessageBubbles.ALERT);
                     else
                         habbo.alert(replaceAmount(getTextsValue("commands.generic.cmd_duckets.received"), params[2]));

@@ -19,7 +19,7 @@ public class ModTradingLockEvent extends MessageHandler {
         int duration = this.packet.readInt();
         int cfhTopic = this.packet.readInt();
 
-        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(userId);
 
             if (habbo != null) {

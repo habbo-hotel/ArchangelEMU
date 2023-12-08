@@ -19,8 +19,8 @@ public class EmptyBotsInventoryCommand extends Command {
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
         if (params.length == 1 || (params.length >= 2 && !params[1].equals(getTextsValue("generic.yes")))) {
-            if (gameClient.getHabbo().getHabboInfo().getCurrentRoom() != null) {
-                if (gameClient.getHabbo().getHabboInfo().getCurrentRoom().getUserCount() > 10) {
+            if (gameClient.getHabbo().getRoomUnit().getRoom() != null) {
+                if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabbosCount() > 10) {
                     gameClient.getHabbo().alert(getTextsValue("commands.succes.cmd_empty_bots.verify").replace("%generic.yes%", getTextsValue("generic.yes")));
                 } else {
                     gameClient.getHabbo().whisper(getTextsValue("commands.succes.cmd_empty_bots.verify").replace("%generic.yes%", getTextsValue("generic.yes")), RoomChatMessageBubbles.ALERT);
@@ -32,7 +32,7 @@ public class EmptyBotsInventoryCommand extends Command {
 
         if (params.length >= 2 && params[1].equalsIgnoreCase(getTextsValue("generic.yes"))) {
 
-            Habbo habbo = (params.length == 3 && gameClient.getHabbo().hasRight(Permission.ACC_EMPTY_OTHERS)) ? Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]) : gameClient.getHabbo();
+            Habbo habbo = (params.length == 3 && gameClient.getHabbo().hasPermissionRight(Permission.ACC_EMPTY_OTHERS)) ? Emulator.getGameEnvironment().getHabboManager().getHabbo(params[2]) : gameClient.getHabbo();
 
             if (habbo != null) {
                 TIntObjectHashMap<Bot> bots = new TIntObjectHashMap<>();

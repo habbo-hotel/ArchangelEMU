@@ -37,6 +37,10 @@ public class RideablePet extends Pet {
         this.hasSaddle = hasSaddle;
     }
 
+    public boolean hasRider() {
+        return this.rider != null;
+    }
+
     public boolean anyoneCanRide() {
         return this.anyoneCanRide;
     }

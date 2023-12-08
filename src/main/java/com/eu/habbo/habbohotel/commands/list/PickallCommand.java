@@ -11,18 +11,18 @@ public class PickallCommand extends Command {
 
     @Override
     public boolean handle(GameClient gameClient, String[] params) {
-        Room room = gameClient.getHabbo().getHabboInfo().getCurrentRoom();
+        Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
         if (room == null) {
             return true;
         }
 
-        if (room.isOwner(gameClient.getHabbo())) {
-            room.ejectAll();
+        if (room.getRoomInfo().isRoomOwner(gameClient.getHabbo())) {
+            room.getRoomItemManager().ejectAllFurni();
             return true;
         }
 
-        room.ejectUserFurni(gameClient.getHabbo().getHabboInfo().getId());
+        room.getRoomItemManager().ejectUserFurni(gameClient.getHabbo().getHabboInfo().getId());
 
         return true;
     }

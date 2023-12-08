@@ -8,10 +8,10 @@ public class RemoveJukeboxDiskEvent extends MessageHandler {
     public void handle() {
         int index = this.packet.readInt();
 
-        InteractionMusicDisc musicDisc = this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().getSongs().get(index);
+        InteractionMusicDisc musicDisc = this.client.getHabbo().getRoomUnit().getRoom().getRoomTraxManager().getSongs().get(index);
 
         if (musicDisc != null) {
-            this.client.getHabbo().getHabboInfo().getCurrentRoom().getTraxManager().removeSong(musicDisc.getId());
+            this.client.getHabbo().getRoomUnit().getRoom().getRoomTraxManager().removeSong(musicDisc.getId());
         }
     }
 }

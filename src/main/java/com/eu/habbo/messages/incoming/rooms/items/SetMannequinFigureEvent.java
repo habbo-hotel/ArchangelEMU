@@ -2,24 +2,25 @@ package com.eu.habbo.messages.incoming.rooms.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 
 public class SetMannequinFigureEvent extends MessageHandler {
     @Override
     public void handle() {
         Habbo habbo = this.client.getHabbo();
-        Room room = habbo.getHabboInfo().getCurrentRoom();
+        Room room = habbo.getRoomUnit().getRoom();
 
-        if (room == null || !room.isOwner(habbo))
+        if (room == null || !room.getRoomInfo().isRoomOwner(habbo))
             return;
 
-        HabboItem item = room.getHabboItem(this.packet.readInt());
+        int id = this.packet.readInt();
+        RoomItem item = room.getRoomItemManager().getRoomItemById(id);
         if (item == null)
             return;
 
-        String[] data = item.getExtradata().split(":");
+        String[] data = item.getExtraData().split(":");
         //TODO: Only clothing not whole body part.
 
         StringBuilder look = new StringBuilder();
@@ -35,12 +36,12 @@ public class SetMannequinFigureEvent extends MessageHandler {
         }
 
         if (data.length == 3) {
-            item.setExtradata(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + data[2]);
+            item.setExtraData(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + data[2]);
         } else {
-            item.setExtradata(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + habbo.getHabboInfo().getUsername() + "'s look.");
+            item.setExtraData(habbo.getHabboInfo().getGender().name().toLowerCase() + ":" + look + ":" + habbo.getHabboInfo().getUsername() + "'s look.");
         }
 
-        item.needsUpdate(true);
+        item.setSqlUpdateNeeded(true);
         Emulator.getThreading().run(item);
         room.updateItem(item);
     }

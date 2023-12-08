@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class GetCfhChatlogEvent extends MessageHandler {
     @Override
     public void handle() {
-        if (this.client.getHabbo().hasRight(Permission.ACC_SUPPORTTOOL)) {
+        if (this.client.getHabbo().hasPermissionRight(Permission.ACC_SUPPORTTOOL)) {
             ModToolIssue issue = Emulator.getGameEnvironment().getModToolManager().getTicket(this.packet.readInt());
 
             if (issue != null) {
@@ -61,11 +61,11 @@ public class GetCfhChatlogEvent extends MessageHandler {
                     }
                 }
 
-                Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(issue.roomId);
+                Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(issue.roomId);
                 String roomName = "";
 
                 if (room != null) {
-                    roomName = room.getName();
+                    roomName = room.getRoomInfo().getName();
                 }
                 this.client.sendResponse(new CfhChatlogComposer(issue, chatlog, roomName, chatlogType));
             }

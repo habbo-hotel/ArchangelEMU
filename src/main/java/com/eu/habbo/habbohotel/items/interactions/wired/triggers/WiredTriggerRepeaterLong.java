@@ -1,34 +1,32 @@
 package com.eu.habbo.habbohotel.items.interactions.wired.triggers;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.items.ICycleable;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredTrigger;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredSettings;
-import com.eu.habbo.habbohotel.items.interactions.wired.WiredTriggerReset;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredPeriodical;
+import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.WiredTriggerReset;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomUnit;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
+import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
-import com.eu.habbo.messages.ServerMessage;
+import lombok.Setter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements ICycleable, WiredTriggerReset {
-    public static final int DEFAULT_DELAY = 10 * 5000;
-    private static final WiredTriggerType type = WiredTriggerType.PERIODICALLY_LONG;
-    private int repeatTime = DEFAULT_DELAY;
-    private int counter = 0;
-
+public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements IWiredPeriodical, WiredTriggerReset {
+    public final int PARAM_REPEAT_TIME = 0;
+    protected int counter = 0;
+    @Setter
+    private int interval;
     public WiredTriggerRepeaterLong(ResultSet set, Item baseItem) throws SQLException {
         super(set, baseItem);
     }
 
-    public WiredTriggerRepeaterLong(int id, int userId, Item item, String extradata, int limitedStack, int limitedSells) {
-        super(id, userId, item, extradata, limitedStack, limitedSells);
+    public WiredTriggerRepeaterLong(int id, HabboInfo ownerInfo, Item item, String extradata, int limitedStack, int limitedSells) {
+        super(id, ownerInfo, item, extradata, limitedStack, limitedSells);
     }
 
     @Override
@@ -37,108 +35,53 @@ public class WiredTriggerRepeaterLong extends InteractionWiredTrigger implements
     }
 
     @Override
-    public String getWiredData() {
-        return WiredHandler.getGsonBuilder().create().toJson(new JsonData(
-            this.repeatTime
-        ));
+    public void loadDefaultIntegerParams() {
+        if(this.getWiredSettings().getIntegerParams().size() == 0) {
+            this.getWiredSettings().getIntegerParams().add(1);
+        }
     }
 
     @Override
-    public void loadWiredData(ResultSet set, Room room) throws SQLException {
-        String wiredData = set.getString("wired_data");
-
-        if (wiredData.startsWith("{")) {
-            JsonData data = WiredHandler.getGsonBuilder().create().fromJson(wiredData, JsonData.class);
-            this.repeatTime = data.repeatTime;
-        } else {
-            if (wiredData.length() >= 1) {
-                this.repeatTime = (Integer.parseInt(wiredData));
+    public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
+        if(room.getTriggersOnRoom().containsKey(oldLocation)) {
+            if(room.getTriggersOnRoom().get(oldLocation).getId() == this.getId()) {
+                room.getTriggersOnRoom().remove(oldLocation);
             }
         }
 
-        if (this.repeatTime < 5000) {
-            this.repeatTime = 20 * 5000;
-        }
+        super.onMove(room, oldLocation, newLocation);
     }
 
     @Override
-    public void onPickUp() {
-        this.repeatTime = DEFAULT_DELAY;
-    }
+    public void onPickUp(Room room) {
+        RoomTile oldLocation = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
 
-    @Override
-    public WiredTriggerType getType() {
-        return type;
-    }
-
-    @Override
-    public void serializeWiredData(ServerMessage message, Room room) {
-        message.appendBoolean(false);
-        message.appendInt(5);
-        message.appendInt(0);
-        message.appendInt(this.getBaseItem().getSpriteId());
-        message.appendInt(this.getId());
-        message.appendString("");
-        message.appendInt(1);
-        message.appendInt(this.repeatTime / 5000);
-        message.appendInt(0);
-        message.appendInt(this.getType().getCode());
-
-        if (!this.isTriggeredByRoomUnit()) {
-            List<Integer> invalidTriggers = new ArrayList<>();
-            room.getRoomSpecialTypes().getEffects(this.getX(), this.getY()).forEach(object -> {
-                if (object.requiresTriggeringUser()) {
-                    invalidTriggers.add(object.getBaseItem().getSpriteId());
-                }
-                return true;
-            });
-            message.appendInt(invalidTriggers.size());
-            for (Integer i : invalidTriggers) {
-                message.appendInt(i);
-            }
-        } else {
-            message.appendInt(0);
-        }
-    }
-
-    @Override
-    public boolean saveData(WiredSettings settings) {
-        if(settings.getIntParams().length < 1) return false;
-        this.repeatTime = settings.getIntParams()[0] * 5000;
-        this.counter = 0;
-        return true;
-    }
-
-
-    @Override
-    public void cycle(Room room) {
-        this.counter += 500;
-        if (this.counter >= this.repeatTime) {
-            this.counter = 0;
-            if (this.getRoomId() != 0) {
-                if (room.isLoaded()) {
-                    WiredHandler.handle(this, null, room, new Object[]{this});
-                }
+        if(room.getTriggersOnRoom().containsKey(oldLocation)) {
+            if(room.getTriggersOnRoom().get(oldLocation).getId() == this.getId()) {
+                room.getTriggersOnRoom().remove(oldLocation);
             }
         }
+
+        super.onPickUp(room);
+    }
+
+    public int getInterval() {
+        return this.getWiredSettings().getIntegerParams().get(PARAM_REPEAT_TIME) * 5000;
     }
 
     @Override
     public void resetTimer() {
         this.counter = 0;
         if (this.getRoomId() != 0) {
-            Room room = Emulator.getGameEnvironment().getRoomManager().getRoom(this.getRoomId());
+            Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getRoomId());
             if (room != null && room.isLoaded()) {
                 WiredHandler.handle(this, null, room, new Object[]{this});
             }
         }
     }
 
-    static class JsonData {
-        int repeatTime;
-
-        public JsonData(int repeatTime) {
-            this.repeatTime = repeatTime;
-        }
+    @Override
+    public WiredTriggerType getType() {
+        return WiredTriggerType.PERIODICALLY_LONG;
     }
 }

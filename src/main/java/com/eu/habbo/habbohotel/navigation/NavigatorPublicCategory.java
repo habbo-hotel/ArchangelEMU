@@ -31,6 +31,6 @@ public class NavigatorPublicCategory {
 
     public void removeRoom(Room room) {
         this.rooms.remove(room);
-        room.preventUncaching = room.isPublicRoom();
+        room.preventUncaching = room.getRoomInfo().isPublicRoom();
     }
 }

@@ -1,6 +1,6 @@
 package com.eu.habbo.messages.incoming.inventory;
 
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.inventory.FurniListComposer;
 import gnu.trove.iterator.TIntObjectIterator;
@@ -29,9 +29,9 @@ public class RequestFurniInventoryWhenNotInRoomEvent extends MessageHandler {
         }
 
         synchronized (this.client.getHabbo().getInventory().getItemsComponent().getItems()) {
-            TIntObjectMap<HabboItem> items = new TIntObjectHashMap<>();
+            TIntObjectMap<RoomItem> items = new TIntObjectHashMap<>();
 
-            TIntObjectIterator<HabboItem> iterator = this.client.getHabbo().getInventory().getItemsComponent().getItems().iterator();
+            TIntObjectIterator<RoomItem> iterator = this.client.getHabbo().getInventory().getItemsComponent().getItems().iterator();
 
             int count = 0;
             int fragmentNumber = 0;

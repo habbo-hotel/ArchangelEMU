@@ -4,14 +4,14 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiSphere;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.users.HabboItem;
+import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.messages.outgoing.rooms.items.ItemsDataUpdateComposer;
 import gnu.trove.set.hash.THashSet;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class BattleBanzaiTilesFlicker implements Runnable {
-    private final THashSet<HabboItem> items;
+    private final THashSet<RoomItem> items;
     private final GameTeamColors color;
     private final Room room;
 
@@ -32,15 +32,15 @@ public class BattleBanzaiTilesFlicker implements Runnable {
             this.on = true;
         }
 
-        for (HabboItem item : this.items) {
-            item.setExtradata(state + "");
+        for (RoomItem item : this.items) {
+            item.setExtraData(state + "");
         }
 
         this.room.sendComposer(new ItemsDataUpdateComposer(this.items).compose());
 
         if (this.count == 9) {
-            for (HabboItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
-                item.setExtradata("0");
+            for (RoomItem item : this.room.getRoomSpecialTypes().getItemsOfType(InteractionBattleBanzaiSphere.class)) {
+                item.setExtraData("0");
                 this.room.updateItemState(item);
             }
             return;

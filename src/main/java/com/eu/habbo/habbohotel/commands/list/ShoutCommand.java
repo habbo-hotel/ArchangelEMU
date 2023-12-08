@@ -29,7 +29,7 @@ public class ShoutCommand extends Command {
             gameClient.getHabbo().whisper(getTextsValue("commands.error.cmd_shout.user_not_found"), RoomChatMessageBubbles.ALERT);
             return true;
         } else {
-            if (target.getHabboInfo().getCurrentRoom() == null) {
+            if (target.getRoomUnit().getRoom() == null) {
                 gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.error.cmd_shout.hotel_view"), params[1]), RoomChatMessageBubbles.ALERT);
                 return true;
             }
@@ -40,7 +40,7 @@ public class ShoutCommand extends Command {
             message = IntStream.range(2, params.length).mapToObj(i -> params[i] + " ").collect(Collectors.joining());
         }
 
-        target.getHabboInfo().getCurrentRoom().sendComposer(new ShoutMessageComposer(new RoomChatMessage(message, target, RoomChatMessageBubbles.NORMAL)).compose());
+        target.getRoomUnit().getRoom().sendComposer(new ShoutMessageComposer(new RoomChatMessage(message, target, RoomChatMessageBubbles.NORMAL)).compose());
         gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_shout"), params[1]).replace("%message%", message), RoomChatMessageBubbles.ALERT);
         return true;
     }
