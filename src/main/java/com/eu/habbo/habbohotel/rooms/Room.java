@@ -92,7 +92,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private final RoomWordFilterManager roomWordFilterManager;
     @Getter
     private RoomTraxManager roomTraxManager;
-    private static final String CAUGHT_EXCEPTION = "Caught exception";
+    public static final String CAUGHT_EXCEPTION = "Caught exception";
     public static final Comparator<Room> SORT_SCORE = Comparator.comparingInt(room -> room.roomInfo.getScore());
     public static final Comparator<Room> SORT_ID = Comparator.comparingInt(room -> room.roomInfo.getId());
     public static final Comparator<Room> SORT_USERS_COUNT = Comparator
@@ -127,6 +127,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public volatile boolean preventUnloading = false;
     public volatile boolean preventUncaching = false;
     public final ConcurrentHashMap.KeySetView<ServerMessage, Boolean> scheduledComposers = ConcurrentHashMap.newKeySet();
+
     public ConcurrentHashMap.KeySetView<Runnable, Boolean> scheduledTasks = ConcurrentHashMap.newKeySet();
     @Getter
     private String wordQuiz = "";
@@ -155,9 +156,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private volatile boolean loaded;
     @Getter
     private volatile boolean preLoaded;
-    private int roomIdleCycles;
+
     private final int muteTime = Emulator.getConfig().getInt("hotel.flood.mute.time", 30);
-    private long rollerCycle = System.currentTimeMillis();
     @Getter
     @Setter
     private volatile int lastTimerReset = Emulator.getIntUnixTimestamp();
@@ -235,7 +235,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 this.roomUnitManager.load(connection);
                 this.roomWordFilterManager.load(connection);
 
-                this.roomIdleCycles = 0;
+
                 this.loaded = true;
 
                 this.roomCycleTask = Emulator.getThreading().getService().scheduleAtFixedRate(this, 500, 500, TimeUnit.MILLISECONDS);
@@ -431,7 +431,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private void cycle() {
         this.cycleOdd = !this.cycleOdd;
         this.cycleTimestamp = System.currentTimeMillis();
-        final boolean[] foundRightHolder = {false};
+        boolean foundRightHolder = false;
 
         boolean loaded;
         synchronized (this.loadLock) {
@@ -452,380 +452,11 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                 task.cycle(this);
             }
 
-            if (!this.roomUnitManager.getCurrentHabbos().isEmpty()) {
-                this.roomIdleCycles = 0;
-
-                THashSet<RoomUnit> updatedUnit = new THashSet<>();
-                ArrayList<Habbo> toKick = new ArrayList<>();
-
-                final long millis = System.currentTimeMillis();
-
-                for (Habbo habbo : this.roomUnitManager.getCurrentHabbos().values()) {
-                    if (!foundRightHolder[0]) {
-                        foundRightHolder[0] = habbo.getRoomUnit().getRightsLevel() != RoomRightLevels.NONE;
-                    }
-
-                    if (habbo.getRoomUnit().getEffectId() > 0 && millis / 1000 > habbo.getRoomUnit().getEffectEndTimestamp()) {
-                        habbo.getRoomUnit().giveEffect(0, -1);
-                    }
-
-                    if (habbo.getRoomUnit().isKicked()) {
-                        habbo.getRoomUnit().setKickCount(habbo.getRoomUnit().getKickCount() + 1);
-
-                        if (habbo.getRoomUnit().getKickCount() >= 5) {
-                            this.scheduledTasks.add(() -> Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this));
-                            continue;
-                        }
-                    }
-
-                    if (Emulator.getConfig().getBoolean("hotel.rooms.auto.idle")) {
-                        cycleIdle(this, habbo, toKick);
-                    }
-
-                    if (Emulator.getConfig().getBoolean("hotel.rooms.deco_hosting") && this.roomInfo.getOwnerInfo().getId() != habbo.getHabboInfo().getId()) {
-                        //Check if the time already have 1 minute (120 / 2 = 60s)
-                        if (habbo.getRoomUnit().getTimeInRoom() >= 120) {
-                            AchievementManager.progressAchievement(this.roomInfo.getOwnerInfo().getId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"));
-                            habbo.getRoomUnit().resetTimeInRoom();
-                        } else {
-                            habbo.getRoomUnit().increaseTimeInRoom();
-                        }
-                    }
-
-                    if (habbo.getHabboStats().isMutedBubbleTracker() && habbo.getHabboStats().allowTalk()) {
-                        habbo.getHabboStats().setMutedBubbleTracker(false);
-                        this.sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.UNIGNORED).compose());
-                    }
-
-                    // Substract 1 from the chatCounter every odd cycle, which is every (500ms * 2).
-                    if (this.cycleOdd && habbo.getHabboStats().getChatCounter().get() > 0) {
-                        habbo.getHabboStats().getChatCounter().decrementAndGet();
-                    }
-
-                    habbo.getRoomUnit().cycle();
-
-                    if(habbo.getRoomUnit().isStatusUpdateNeeded()) {
-                        habbo.getRoomUnit().setStatusUpdateNeeded(false);
-                        updatedUnit.add(habbo.getRoomUnit());
-                    }
-                }
-
-                if (!toKick.isEmpty()) {
-                    for (Habbo habbo : toKick) {
-                        Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this);
-                    }
-                }
-
-                if (!this.roomUnitManager.getRoomBotManager().getCurrentBots().isEmpty()) {
-                    Iterator<Bot> botIterator = this.roomUnitManager.getRoomBotManager().getCurrentBots().values().iterator();
-
-                    while(botIterator.hasNext()) {
-                        try {
-                            final Bot bot;
-                            try {
-                                bot = botIterator.next();
-                            } catch (Exception e) {
-                                break;
-                            }
-
-                            if (!this.allowBotsWalk && bot.getRoomUnit().isWalking()) {
-                                bot.getRoomUnit().stopWalking();
-                                updatedUnit.add(bot.getRoomUnit());
-                                continue;
-                            }
-
-                            bot.getRoomUnit().cycle();
-
-                            if(bot.getRoomUnit().isStatusUpdateNeeded()) {
-                                bot.getRoomUnit().setStatusUpdateNeeded(false);
-                                updatedUnit.add(bot.getRoomUnit());
-                            }
-
-
-                        } catch (NoSuchElementException e) {
-                            log.error(CAUGHT_EXCEPTION, e);
-                            break;
-                        }
-                    }
-                }
-
-                if (!this.roomUnitManager.getCurrentPets().isEmpty() && this.allowBotsWalk) {
-                    Iterator<Pet> petIterator = this.roomUnitManager.getCurrentPets().values().iterator();
-                    while(petIterator.hasNext()) {
-                        final Pet pet;
-                        try {
-                            pet = petIterator.next();
-                        } catch (Exception e) {
-                            break;
-                        }
-
-                        pet.getRoomUnit().cycle();
-                        pet.cycle();
-
-                        if(pet.getRoomUnit().isStatusUpdateNeeded()) {
-                            pet.getRoomUnit().setStatusUpdateNeeded(false);
-                            updatedUnit.add(pet.getRoomUnit());
-                        }
-
-                        if (pet.getRoomUnit().isWalking() && pet.getRoomUnit().getPath().size() == 1 && pet.getRoomUnit().hasStatus(RoomUnitStatus.GESTURE)) {
-                            pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
-                            updatedUnit.add(pet.getRoomUnit());
-                        }
-                    }
-                }
-
-
-                if (this.roomInfo.getRollerSpeed() != -1 && this.rollerCycle >= this.roomInfo.getRollerSpeed()) {
-                    this.rollerCycle = 0;
-
-                    THashSet<MessageComposer> messages = new THashSet<>();
-
-                    //Find alternative for this.
-                    //Reason is that tile gets updated after every roller.
-                    List<Integer> rollerFurniIds = new ArrayList<>();
-                    List<Integer> rolledUnitIds = new ArrayList<>();
-
-
-                    this.roomSpecialTypes.getRollers().forEachValue(roller -> {
-
-                        RoomItem newRoller = null;
-
-                        RoomTile rollerTile = this.layout.getTile(roller.getCurrentPosition().getX(), roller.getCurrentPosition().getY());
-
-                        if (rollerTile == null)
-                            return true;
-
-                        THashSet<RoomItem> itemsOnRoller = new THashSet<>();
-
-                        for (RoomItem item : this.roomItemManager.getItemsAt(rollerTile)) {
-                            if (item.getCurrentZ() >= roller.getCurrentZ() + Item.getCurrentHeight(roller)) {
-                                itemsOnRoller.add(item);
-                            }
-                        }
-
-                        itemsOnRoller.remove(roller);
-
-                        if (!this.roomUnitManager.areRoomUnitsAt(rollerTile) && itemsOnRoller.isEmpty())
-                            return true;
-
-                        RoomTile tileInFront = Room.this.layout.getTileInFront(Room.this.layout.getTile(roller.getCurrentPosition().getX(), roller.getCurrentPosition().getY()), roller.getRotation());
-
-                        if (tileInFront == null)
-                            return true;
-
-                        if (!Room.this.layout.tileExists(tileInFront.getX(), tileInFront.getY()))
-                            return true;
-
-                        if (tileInFront.getState() == RoomTileState.INVALID)
-                            return true;
-
-                        if (!tileInFront.getAllowStack() && !(tileInFront.isWalkable() || tileInFront.getState() == RoomTileState.SIT || tileInFront.getState() == RoomTileState.LAY))
-                            return true;
-
-                        if (this.roomUnitManager.areRoomUnitsAt(tileInFront))
-                            return true;
-
-                        THashSet<RoomItem> itemsNewTile = new THashSet<>();
-                        itemsNewTile.addAll(this.roomItemManager.getItemsAt(tileInFront));
-                        itemsNewTile.removeAll(itemsOnRoller);
-
-                        itemsOnRoller.removeIf(item -> item.getCurrentPosition().getX() != roller.getCurrentPosition().getX() || item.getCurrentPosition().getY() != roller.getCurrentPosition().getY() || rollerFurniIds.contains(item.getId()));
-
-                        RoomItem topItem = this.roomItemManager.getTopItemAt(tileInFront.getX(), tileInFront.getY());
-
-                        boolean allowUsers = true;
-                        boolean allowFurniture = true;
-                        boolean stackContainsRoller = false;
-
-                        for (RoomItem item : itemsNewTile) {
-                            if (!(item.getBaseItem().allowWalk() || item.getBaseItem().allowSit()) && !(item instanceof InteractionGate && item.getExtraData().equals("1"))) {
-                                allowUsers = false;
-                            }
-                            if (item instanceof InteractionRoller) {
-                                newRoller = item;
-                                stackContainsRoller = true;
-
-                                if ((item.getCurrentZ() != roller.getCurrentZ() || (itemsNewTile.size() > 1 && item != topItem)) && !InteractionRoller.NO_RULES) {
-                                    allowUsers = false;
-                                    allowFurniture = false;
-                                    continue;
-                                }
-
-                                break;
-                            } else {
-                                allowFurniture = false;
-                            }
-                        }
-
-                        if (allowFurniture) {
-                            allowFurniture = tileInFront.getAllowStack();
-                        }
-
-                        double zOffset = 0;
-                        if (newRoller != null) {
-                            if ((!itemsNewTile.isEmpty() && (itemsNewTile.size() > 1)) && !InteractionRoller.NO_RULES) {
-                                return true;
-                            }
-                        } else {
-                            zOffset = -Item.getCurrentHeight(roller) + tileInFront.getStackHeight() - rollerTile.getZ();
-                        }
-
-                        if (allowUsers) {
-                            Event roomUserRolledEvent = null;
-
-                            if (Emulator.getPluginManager().isRegistered(UserRolledEvent.class, true)) {
-                                roomUserRolledEvent = new UserRolledEvent(null, null, null);
-                            }
-
-                            ArrayList<RoomUnit> unitsOnTile = new ArrayList<>(this.roomUnitManager.getRoomUnitsAt(rollerTile));
-
-                            for (RoomUnit roomUnit : this.roomUnitManager.getRoomUnitsAt(rollerTile)) {
-                                if (roomUnit instanceof RoomPet) {
-                                    Pet pet = this.roomUnitManager.getPetByRoomUnit(roomUnit);
-                                    if (pet instanceof RideablePet rideablePet && rideablePet.getRider() != null) {
-                                        unitsOnTile.remove(roomUnit);
-                                    }
-                                }
-                            }
-
-                            THashSet<Integer> usersRolledThisTile = new THashSet<>();
-
-                            for (RoomUnit roomUnit : unitsOnTile) {
-                                if (rolledUnitIds.contains(roomUnit.getVirtualId())) continue;
-
-                                if (usersRolledThisTile.size() >= Room.ROLLERS_MAXIMUM_ROLL_AVATARS) break;
-
-                                if (stackContainsRoller && !allowFurniture && !(topItem != null && topItem.isWalkable()))
-                                    continue;
-
-                                if (roomUnit.hasStatus(RoomUnitStatus.MOVE))
-                                    continue;
-
-                                double newZ = roomUnit.getCurrentZ() + zOffset;
-
-                                if (roomUserRolledEvent != null && roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
-                                    roomUserRolledEvent = new UserRolledEvent(this.getRoomUnitManager().getHabboByRoomUnit(roomUnit), roller, tileInFront);
-                                    Emulator.getPluginManager().fireEvent(roomUserRolledEvent);
-
-                                    if (roomUserRolledEvent.isCancelled())
-                                        continue;
-                                }
-
-                                // horse riding
-                                boolean isRiding = false;
-                                if (roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
-                                    Habbo rollingHabbo = this.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
-                                    if (rollingHabbo != null && rollingHabbo.getHabboInfo() != null) {
-                                        RideablePet ridingPet = rollingHabbo.getRoomUnit().getRidingPet();
-                                        if (ridingPet != null) {
-                                            RoomUnit ridingUnit = ridingPet.getRoomUnit();
-                                            newZ = ridingUnit.getCurrentZ() + zOffset;
-                                            rolledUnitIds.add(ridingUnit.getVirtualId());
-                                            updatedUnit.remove(ridingUnit);
-                                            messages.add(new RoomUnitOnRollerComposer(ridingUnit, roller, ridingUnit.getCurrentPosition(), ridingUnit.getCurrentZ(), tileInFront, newZ, this));
-                                            isRiding = true;
-                                        }
-                                    }
-                                }
-
-                                usersRolledThisTile.add(roomUnit.getVirtualId());
-                                rolledUnitIds.add(roomUnit.getVirtualId());
-                                updatedUnit.remove(roomUnit);
-                                messages.add(new RoomUnitOnRollerComposer(roomUnit, roller, roomUnit.getCurrentPosition(), roomUnit.getCurrentZ() + (isRiding ? 1 : 0), tileInFront, newZ + (isRiding ? 1 : 0), this));
-
-                                if (itemsOnRoller.isEmpty()) {
-                                    RoomItem item = this.getRoomItemManager().getTopItemAt(tileInFront.getX(), tileInFront.getY());
-
-                                    if (item != null && itemsNewTile.contains(item) && !itemsOnRoller.contains(item)) {
-                                        Emulator.getThreading().run(() -> {
-                                            if (roomUnit.getTargetPosition() == rollerTile) {
-                                                try {
-                                                    item.onWalkOn(roomUnit, this, new Object[]{rollerTile, tileInFront});
-                                                } catch (Exception e) {
-                                                    log.error(CAUGHT_EXCEPTION, e);
-                                                }
-                                            }
-                                        }, this.roomInfo.getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!messages.isEmpty()) {
-                            for (MessageComposer message : messages) {
-                                this.sendComposer(message.compose());
-                            }
-                            messages.clear();
-                        }
-
-                        if (allowFurniture || !stackContainsRoller || InteractionRoller.NO_RULES) {
-                            Event furnitureRolledEvent = null;
-
-                            if (Emulator.getPluginManager().isRegistered(FurnitureRolledEvent.class, true)) {
-                                furnitureRolledEvent = new FurnitureRolledEvent(null, null, null);
-                            }
-
-                            if (newRoller == null || topItem == newRoller) {
-                                List<RoomItem> sortedItems = new ArrayList<>(itemsOnRoller);
-                                sortedItems.sort((o1, o2) -> {
-                                    return Double.compare(o2.getCurrentZ(), o1.getCurrentZ());
-                                });
-
-                                for (RoomItem item : sortedItems) {
-                                    if ((item.getCurrentPosition().getX() == roller.getCurrentPosition().getX() && item.getCurrentPosition().getY() == roller.getCurrentPosition().getY() && zOffset <= 0) && (item != roller)) {
-                                        if (furnitureRolledEvent != null) {
-                                            furnitureRolledEvent = new FurnitureRolledEvent(item, roller, tileInFront);
-                                            Emulator.getPluginManager().fireEvent(furnitureRolledEvent);
-
-                                            if (furnitureRolledEvent.isCancelled())
-                                                continue;
-                                        }
-
-                                        messages.add(new FloorItemOnRollerComposer(item, roller, tileInFront, zOffset, this));
-                                        rollerFurniIds.add(item.getId());
-                                    }
-                                }
-                            }
-                        }
-
-
-                        if (!messages.isEmpty()) {
-                            for (MessageComposer message : messages) {
-                                this.sendComposer(message.compose());
-                            }
-                            messages.clear();
-                        }
-
-                        return true;
-                    });
-
-
-                    int currentTime = (int) (this.cycleTimestamp / 1000);
-                    for (RoomItem pyramid : this.roomSpecialTypes.getItemsOfType(InteractionPyramid.class)) {
-                        if (pyramid instanceof InteractionPyramid interactionPyramid && interactionPyramid.getNextChange() < currentTime) {
-                            interactionPyramid.change(this);
-                        }
-                    }
-                } else {
-                    this.rollerCycle++;
-                }
-
-                if (!updatedUnit.isEmpty()) {
-                    this.sendComposer(new UserUpdateComposer(updatedUnit).compose());
-                }
-
-                this.roomTraxManager.cycle();
-            } else {
-
-                if (this.roomIdleCycles < 60)
-                    this.roomIdleCycles++;
-                else
-                    this.dispose();
-            }
+            foundRightHolder = roomUnitManager.cycle(cycleOdd);
         }
 
         synchronized (this.habboQueue) {
-            if (!this.habboQueue.isEmpty() && !foundRightHolder[0]) {
+            if (!this.habboQueue.isEmpty() && !foundRightHolder) {
                 this.habboQueue.forEachEntry((a, b) -> {
                     if (b.isOnline()) {
                         if (b.getHabboInfo().getRoomQueueId() == this.roomInfo.getId()) {
@@ -1042,7 +673,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
 
     public void setRollerSpeed(int rollerSpeed) {
         this.roomInfo.setRollerSpeed(rollerSpeed);
-        this.rollerCycle = 0;
+        roomUnitManager.setRollerCycle(0);
         this.needsUpdate = true;
     }
 
@@ -1652,7 +1283,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public boolean canSitOrLayAt(RoomTile tile) {
-        if(tile == null) {
+        if (tile == null) {
             return false;
         }
 
@@ -1667,7 +1298,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public boolean canSitAt(int x, int y) {
         RoomTile tile = this.layout.getTile((short) x, (short) y);
 
-        if(tile == null) {
+        if (tile == null) {
             return false;
         }
 
@@ -1753,7 +1384,9 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         }
 
         for (Habbo habbo : this.roomUnitManager.getCurrentHabbos().values()) {
-            if (habbo == null) { return ; }
+            if (habbo == null) {
+                return;
+            }
             if (!habbo.getHabboStats().isIgnoreBots())
                 habbo.getClient().sendResponse(message);
         }
@@ -1779,7 +1412,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     }
 
     public RoomRightLevels getGuildRightLevel(Habbo habbo) {
-        if(!this.roomInfo.hasGuild()) {
+        if (!this.roomInfo.hasGuild()) {
             return RoomRightLevels.NONE;
         }
 
@@ -1867,7 +1500,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
         THashSet<Item> items = new THashSet<>();
 
         for (RoomItem item : this.roomItemManager.getCurrentItems().values()) {
-            if (!items.contains(item.getBaseItem()) && item.getOwnerInfo().getId() == userId) items.add(item.getBaseItem());
+            if (!items.contains(item.getBaseItem()) && item.getOwnerInfo().getId() == userId)
+                items.add(item.getBaseItem());
         }
 
         return items.size();

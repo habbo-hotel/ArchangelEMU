@@ -33,14 +33,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
+import static com.eu.habbo.habbohotel.rooms.Room.CAUGHT_EXCEPTION;
 
 
 @Slf4j
@@ -284,5 +282,45 @@ public class RoomBotManager extends RoomUnitSubManager {
 
         this.currentBots.clear();
 
+    }
+
+    @Override
+    public List<RoomBot> cycle() {
+        List<RoomBot> updatedBots = new ArrayList<>();
+        if (!getCurrentBots().isEmpty()) {
+            Iterator<Bot> botIterator = getCurrentBots().values().iterator();
+
+            while(botIterator.hasNext()) {
+                try {
+                    final Bot bot;
+                    try {
+                        bot = botIterator.next();
+                    } catch (Exception e) {
+                        break;
+                    }
+
+                    if (!room.isAllowBotsWalk() && bot.getRoomUnit().isWalking()) {
+                        bot.getRoomUnit().stopWalking();
+                        updatedBots.add(bot.getRoomUnit());
+                        continue;
+                    }
+
+                    bot.getRoomUnit().cycle();
+
+                    if(bot.getRoomUnit().isStatusUpdateNeeded()) {
+                        bot.getRoomUnit().setStatusUpdateNeeded(false);
+                        updatedBots.add(bot.getRoomUnit());
+                    }
+
+
+                } catch (NoSuchElementException e) {
+                    log.error(CAUGHT_EXCEPTION, e);
+                    break;
+                }
+            }
+        }
+
+
+        return updatedBots;
     }
 }
