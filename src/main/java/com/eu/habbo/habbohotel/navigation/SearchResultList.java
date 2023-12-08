@@ -1,7 +1,7 @@
 package com.eu.habbo.habbohotel.navigation;
 
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomState;
+import com.eu.habbo.habbohotel.rooms.constants.RoomState;
 import com.eu.habbo.messages.ISerialize;
 import com.eu.habbo.messages.ServerMessage;
 import lombok.AllArgsConstructor;

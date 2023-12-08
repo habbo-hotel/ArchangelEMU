@@ -2,8 +2,8 @@ package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +55,7 @@ public class RoomUnitTeleport implements Runnable {
         roomUnit.setWiredTeleporting(false);
 
         this.room.getRoomUnitManager().updateHabbosAt(newLocation);
-        this.room.getRoomUnitManager().updateBotsAt(newLocation);
+        this.room.getRoomUnitManager().getRoomBotManager().updateBotsAt(newLocation);
 
         topItem = room.getRoomItemManager().getTopItemAt(x, y);
         if (topItem != null && roomUnit.getCurrentPosition().equals(room.getLayout().getTile((short) x, (short) y))) {

@@ -1,7 +1,7 @@
 package com.eu.habbo.habbohotel.commands.list.pixels;
 
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
 
 public class RoomPixelsCommand extends BasePixelsCommand {
     public RoomPixelsCommand() {

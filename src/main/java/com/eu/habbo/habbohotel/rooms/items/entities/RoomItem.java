@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.rooms.entities.items;
+package com.eu.habbo.habbohotel.rooms.items.entities;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;
@@ -11,13 +11,12 @@ import com.eu.habbo.habbohotel.items.IEventTriggers;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
-import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomLayout;
-import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
+import com.eu.habbo.habbohotel.rooms.items.RoomItemManager;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
@@ -368,7 +367,7 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
             }
 
             RoomTile tile = room.getLayout().getTile(this.getCurrentPosition().getX(), this.getCurrentPosition().getY());
-            for (Bot bot : room.getRoomUnitManager().getBotsAt(tile)) {
+            for (Bot bot : room.getRoomUnitManager().getRoomBotManager().getBotsAt(tile)) {
                 if (this.getBaseItem().getEffectM() > 0 && bot.getGender().equals(HabboGender.M) && bot.getRoomUnit().getEffectId() == this.getBaseItem().getEffectM()) {
                     bot.getRoomUnit().giveEffect(nextEffectM, -1);
                 }
@@ -398,12 +397,12 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
 
             for (RoomTile tile : room.getLayout().getTilesAt(oldLocation, this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation())) {
                 oldHabbos.addAll(room.getRoomUnitManager().getHabbosAt(tile));
-                oldBots.addAll(room.getRoomUnitManager().getBotsAt(tile));
+                oldBots.addAll(room.getRoomUnitManager().getRoomBotManager().getBotsAt(tile));
             }
 
             for (RoomTile tile : room.getLayout().getTilesAt(oldLocation, this.getBaseItem().getWidth(), this.getBaseItem().getLength(), this.getRotation())) {
                 newHabbos.addAll(room.getRoomUnitManager().getHabbosAt(tile));
-                newBots.addAll(room.getRoomUnitManager().getBotsAt(tile));
+                newBots.addAll(room.getRoomUnitManager().getRoomBotManager().getBotsAt(tile));
             }
 
             oldHabbos.removeAll(newHabbos);
@@ -508,4 +507,6 @@ public abstract class RoomItem extends RoomEntity implements Runnable, IEventTri
                 this.getBaseItem().getLength() + (marginY * 2),
                 this.getRotation());
     }
+    public void removeThisItem(RoomItemManager roomItemManager){}
+    public void addThisItem(RoomItemManager roomItemManager){}
 }

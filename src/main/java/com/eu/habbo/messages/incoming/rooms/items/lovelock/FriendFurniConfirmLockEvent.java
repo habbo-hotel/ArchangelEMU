@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.incoming.rooms.items.lovelock;
 
 import com.eu.habbo.habbohotel.items.interactions.InteractionLoveLock;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.lovelock.FriendFurniCancelLockMessageComposer;

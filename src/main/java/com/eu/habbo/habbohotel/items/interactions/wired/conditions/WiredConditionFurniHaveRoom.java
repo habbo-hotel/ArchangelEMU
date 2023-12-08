@@ -32,7 +32,7 @@ public class WiredConditionFurniHaveRoom extends InteractionWiredCondition {
         }
 
         Collection<Habbo> habbos = room.getRoomUnitManager().getCurrentHabbos().values();
-        Collection<Bot> bots = room.getRoomUnitManager().getCurrentBots().values();
+        Collection<Bot> bots = room.getRoomUnitManager().getRoomBotManager().getCurrentBots().values();
         Collection<Pet> pets = room.getRoomUnitManager().getCurrentPets().values();
 
         return this.getWiredSettings().getItems(room).stream().allMatch(item -> {

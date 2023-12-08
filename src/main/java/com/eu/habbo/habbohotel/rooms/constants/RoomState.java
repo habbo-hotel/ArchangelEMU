@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.rooms;
+package com.eu.habbo.habbohotel.rooms.constants;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

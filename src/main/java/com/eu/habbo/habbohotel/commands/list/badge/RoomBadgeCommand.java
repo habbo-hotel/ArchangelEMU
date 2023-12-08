@@ -1,7 +1,7 @@
 package com.eu.habbo.habbohotel.commands.list.badge;
 
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
 import com.eu.habbo.messages.ServerMessage;
 
 public class RoomBadgeCommand extends BaseBadgeCommand {

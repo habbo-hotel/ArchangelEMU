@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.commands.list;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
 
 public class SetPollCommand extends Command {
     public SetPollCommand() {

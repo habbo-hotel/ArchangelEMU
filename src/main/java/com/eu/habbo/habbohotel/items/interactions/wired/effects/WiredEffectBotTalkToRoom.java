@@ -47,7 +47,7 @@ public class WiredEffectBotTalkToRoom extends InteractionWiredEffect {
                     .replace(Emulator.getTexts().getValue("wired.variable.roomname", "%roomname%"), room.getRoomInfo().getName())
                     .replace(Emulator.getTexts().getValue("wired.variable.user_count", "%user_count%"), room.getRoomUnitManager().getRoomHabbosCount() + "");
 
-            List<Bot> bots = room.getRoomUnitManager().getBotsByName(botName);
+            List<Bot> bots = room.getRoomUnitManager().getRoomBotManager().getBotsByName(botName);
 
             if (bots.size() != 1) {
                 return false;

@@ -6,9 +6,12 @@ import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWater;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWaterItem;
 import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
+import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomEntity;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.DanceType;
@@ -163,7 +166,7 @@ public abstract class RoomUnit extends RoomEntity {
         super.setCurrentZ(currentZ);
 
         if (this.room != null) {
-            Bot bot = this.room.getRoomUnitManager().getRoomBotById(getVirtualId());
+            Bot bot = this.room.getRoomUnitManager().getRoomBotManager().getRoomBotById(getVirtualId());
             if (bot != null) {
                 bot.setSqlUpdateNeeded(true);
             }

@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.rooms.entities.items;
+package com.eu.habbo.habbohotel.rooms.items.entities;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
 package com.eu.habbo.habbohotel.pets;
 
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.util.ArrayList;

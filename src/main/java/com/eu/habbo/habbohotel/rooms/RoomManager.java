@@ -22,8 +22,11 @@ import com.eu.habbo.habbohotel.pets.PetData;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.polls.Poll;
 import com.eu.habbo.habbohotel.polls.PollManager;
+import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
+import com.eu.habbo.habbohotel.rooms.constants.RoomState;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.users.DanceType;
@@ -708,14 +711,14 @@ public class RoomManager {
         }
 
 
-        habbo.getClient().sendResponse(new RoomUsersComposer(room.getRoomUnitManager().getCurrentBots().values()));
+        habbo.getClient().sendResponse(new RoomUsersComposer(room.getRoomUnitManager().getRoomBotManager().getCurrentBots().values()));
 
-        if (!room.getRoomUnitManager().getCurrentBots().isEmpty()) {
-            room.getRoomUnitManager().getCurrentBots().values().stream()
+        if (!room.getRoomUnitManager().getRoomBotManager().getCurrentBots().isEmpty()) {
+            room.getRoomUnitManager().getRoomBotManager().getCurrentBots().values().stream()
                     .filter(b -> !b.getRoomUnit().getDanceType().equals(DanceType.NONE))
                     .forEach(b -> habbo.getClient().sendResponse(new DanceMessageComposer(b.getRoomUnit())));
 
-            room.getRoomUnitManager().getCurrentBots().values()
+            room.getRoomUnitManager().getRoomBotManager().getCurrentBots().values()
                     .forEach(b -> habbo.getClient().sendResponse(new UserUpdateComposer(b.getRoomUnit(), b.getRoomUnit().getCurrentZ())));
         }
 

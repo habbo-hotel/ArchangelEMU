@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.commands.list;
 
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 
 public class RoomSitCommand extends Command {
     public RoomSitCommand() {

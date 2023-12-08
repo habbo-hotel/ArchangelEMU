@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.commands.list;
 import com.eu.habbo.habbohotel.commands.Command;
 import com.eu.habbo.habbohotel.gameclients.GameClient;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 
 public class CoordsCommand extends Command {
     public CoordsCommand() {

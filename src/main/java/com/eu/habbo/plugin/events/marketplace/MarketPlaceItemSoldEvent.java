@@ -1,7 +1,7 @@
 package com.eu.habbo.plugin.events.marketplace;
 
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 
 public class MarketPlaceItemSoldEvent extends MarketPlaceEvent {
     public final Habbo seller;

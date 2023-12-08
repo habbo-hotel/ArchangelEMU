@@ -1,7 +1,7 @@
 package com.eu.habbo.threading.runnables;
 
 import com.eu.habbo.Emulator;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import gnu.trove.map.TIntObjectMap;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

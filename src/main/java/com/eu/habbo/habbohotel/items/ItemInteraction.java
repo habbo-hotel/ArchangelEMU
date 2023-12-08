@@ -1,6 +1,6 @@
 package com.eu.habbo.habbohotel.items;
 
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

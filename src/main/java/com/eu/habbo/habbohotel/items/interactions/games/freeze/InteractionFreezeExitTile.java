@@ -2,7 +2,8 @@ package com.eu.habbo.habbohotel.items.interactions.games.freeze;
 
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.RoomItemManager;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 import com.eu.habbo.messages.ServerMessage;
@@ -24,6 +25,16 @@ public class InteractionFreezeExitTile extends RoomItem {
     @Override
     public void onPickUp(Room room) {
         this.setExtraData("0");
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getFreezeExitTile().remove(getId());
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        roomItemManager.getFreezeExitTile().put(getId(), this);
     }
 
     @Override

@@ -7,8 +7,9 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionDefault;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.items.RoomItemManager;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
-import com.eu.habbo.habbohotel.rooms.RoomUnitStatus;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.HabboInfo;
@@ -29,7 +30,8 @@ public class InteractionPetTrampoline extends InteractionDefault {
     }
 
     @Override
-    public void onClick(GameClient client, Room room, Object[] objects) {}
+    public void onClick(GameClient client, Room room, Object[] objects) {
+    }
 
     @Override
     public void onMove(Room room, RoomTile oldLocation, RoomTile newLocation) {
@@ -104,5 +106,19 @@ public class InteractionPetTrampoline extends InteractionDefault {
     @Override
     public boolean allowWiredResetState() {
         return false;
+    }
+
+    @Override
+    public void removeThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().remove(getId());
+        }
+    }
+
+    @Override
+    public void addThisItem(RoomItemManager roomItemManager) {
+        synchronized (roomItemManager.getUndefinedSpecials()) {
+            roomItemManager.getUndefinedSpecials().put(getId(), this);
+        }
     }
 }

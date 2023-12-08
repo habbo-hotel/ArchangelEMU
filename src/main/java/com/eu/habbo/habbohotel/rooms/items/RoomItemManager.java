@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.rooms;
+package com.eu.habbo.habbohotel.rooms.items;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.FurnitureType;
@@ -8,15 +8,15 @@ import com.eu.habbo.habbohotel.items.interactions.*;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameGate;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameScoreboard;
 import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
-import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiSphere;
 import com.eu.habbo.habbohotel.items.interactions.games.battlebanzai.InteractionBattleBanzaiTeleporter;
 import com.eu.habbo.habbohotel.items.interactions.games.freeze.InteractionFreezeExitTile;
-import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagField;
-import com.eu.habbo.habbohotel.items.interactions.games.tag.InteractionTagPole;
 import com.eu.habbo.habbohotel.items.interactions.pets.*;
-import com.eu.habbo.habbohotel.items.interactions.wired.extra.WiredBlob;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.constants.FurnitureMovementError;
+import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
+import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.inventory.FurniListInvalidateComposer;
 import com.eu.habbo.messages.outgoing.inventory.UnseenItemsComposer;
@@ -145,82 +145,20 @@ public class RoomItemManager {
                 removedItem = this.currentItems.remove(roomItem.getId());
             }
 
-            if(removedItem.getBaseItem().getType().equals(FurnitureType.FLOOR)) {
+            if (removedItem.getBaseItem().getType().equals(FurnitureType.FLOOR)) {
                 this.floorItems.remove(removedItem.getId());
             } else if (removedItem.getBaseItem().getType().equals(FurnitureType.WALL)) {
                 this.wallItems.remove(removedItem.getId());
             }
 
-            if (removedItem != null) {
-                if (roomItem instanceof ICycleable) {
-                    this.removeCycleTask((ICycleable) roomItem);
-                }
+            if (roomItem instanceof ICycleable) {
+                this.removeCycleTask((ICycleable) roomItem);
+            }
 
-                if (roomItem instanceof InteractionWired wired) {
-                    this.wiredManager.removeWired(wired);
-                } else if (roomItem instanceof InteractionBattleBanzaiTeleporter) {
-                    this.removeBanzaiTeleporter((InteractionBattleBanzaiTeleporter) roomItem);
-                } else if (roomItem instanceof InteractionRoller) {
-                    this.removeRoller((InteractionRoller) roomItem);
-                } else if (roomItem instanceof InteractionGameScoreboard) {
-                    this.removeScoreboard((InteractionGameScoreboard) roomItem);
-                } else if (roomItem instanceof InteractionGameGate) {
-                    this.removeGameGate((InteractionGameGate) roomItem);
-                } else if (roomItem instanceof InteractionGameTimer) {
-                    this.removeGameTimer((InteractionGameTimer) roomItem);
-                } else if (roomItem instanceof InteractionFreezeExitTile) {
-                    this.removeFreezeExitTile((InteractionFreezeExitTile) roomItem);
-                } else if (roomItem instanceof InteractionNest) {
-                    this.removeNest((InteractionNest) roomItem);
-                } else if (roomItem instanceof InteractionPetDrink) {
-                    this.removePetDrink((InteractionPetDrink) roomItem);
-                } else if (roomItem instanceof InteractionPetFood) {
-                    this.removePetFood((InteractionPetFood) roomItem);
-                } else if (roomItem instanceof InteractionPetToy) {
-                    this.removePetToy((InteractionPetToy) roomItem);
-                } else if (roomItem instanceof InteractionPetTree) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionPetTrampoline) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionMoodLight) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionPyramid) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionMusicDisc) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionBattleBanzaiSphere) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionTalkingFurniture) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionWaterItem) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionWater) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionMuteArea) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionTagPole) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionTagField) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionJukeBox) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionPetBreedingNest) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionBlackHole) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionWiredHighscore) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionStickyPole) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof WiredBlob) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionTent) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionSnowboardSlope) {
-                    this.removeUndefined(roomItem);
-                } else if (roomItem instanceof InteractionBuildArea) {
-                    this.removeUndefined(roomItem);
-                }
+            if (roomItem instanceof InteractionWired wired) {
+                this.wiredManager.removeWired(wired);
+            } else {
+                roomItem.removeThisItem(this);
             }
         }
     }
@@ -271,7 +209,7 @@ public class RoomItemManager {
     public FurnitureMovementError placeFloorItemAt(RoomItem item, RoomTile tile, int rotation, Habbo actor) {
         FurnitureMovementError error = this.canPlaceFurnitureAt(item, actor, tile, rotation);
 
-        if(!error.equals(FurnitureMovementError.NONE)) {
+        if (!error.equals(FurnitureMovementError.NONE)) {
             return error;
         }
 
@@ -325,7 +263,7 @@ public class RoomItemManager {
 
         for (RoomTile t : occupiedTiles) {
             this.room.getRoomUnitManager().updateHabbosAt(t);
-            this.room.getRoomUnitManager().updateBotsAt(t);
+            this.room.getRoomUnitManager().getRoomBotManager().updateBotsAt(t);
         }
 
         Emulator.getThreading().run(item);
@@ -367,7 +305,7 @@ public class RoomItemManager {
     public FurnitureMovementError moveItemTo(RoomItem item, RoomTile targetTile, int rotation, Habbo actor, boolean sendUpdates, boolean checkForUnits) {
         FurnitureMovementError error = this.canPlaceFurnitureAt(item, actor, targetTile, rotation);
 
-        if(!error.equals(FurnitureMovementError.NONE)) {
+        if (!error.equals(FurnitureMovementError.NONE)) {
             return error;
         }
 
@@ -405,7 +343,7 @@ public class RoomItemManager {
                         if (checkForUnits && !magicTile) {
                             if (this.room.getRoomUnitManager().hasHabbosAt(t))
                                 return FurnitureMovementError.TILE_HAS_HABBOS;
-                            if (!this.room.getRoomUnitManager().getBotsAt(t).isEmpty())
+                            if (!this.room.getRoomUnitManager().getRoomBotManager().getBotsAt(t).isEmpty())
                                 return FurnitureMovementError.TILE_HAS_BOTS;
                             if (this.room.getRoomUnitManager().hasPetsAt(t))
                                 return FurnitureMovementError.TILE_HAS_PETS;
@@ -521,7 +459,7 @@ public class RoomItemManager {
         //Update Habbos at old position
         for (RoomTile t : occupiedTiles) {
             this.room.getRoomUnitManager().updateHabbosAt(t);
-            this.room.getRoomUnitManager().updateBotsAt(t);
+            this.room.getRoomUnitManager().getRoomBotManager().updateBotsAt(t);
         }
 
         if (Emulator.getConfig().getBoolean("wired.place.under", false)) {
@@ -582,7 +520,7 @@ public class RoomItemManager {
 
             updatedTiles.forEach(tile -> {
                 this.room.getRoomUnitManager().updateHabbosAt(tile);
-                this.room.getRoomUnitManager().updateBotsAt(tile);
+                this.room.getRoomUnitManager().getRoomBotManager().updateBotsAt(tile);
             });
         } else if (roomItem.getBaseItem().getType() == FurnitureType.WALL) {
             this.room.sendComposer(new ItemRemoveMessageComposer(roomItem).compose());
@@ -665,10 +603,13 @@ public class RoomItemManager {
                 return FurnitureMovementError.INVALID_MOVE;
             }
 
-            if(!Emulator.getConfig().getBoolean("wired.place.under", false) || (Emulator.getConfig().getBoolean("wired.place.under", false) && !item.isWalkable() && !item.getBaseItem().allowSit() && !item.getBaseItem().allowLay())) {
-                if (checkForUnits && this.room.getRoomUnitManager().hasHabbosAt(occupiedTile)) return FurnitureMovementError.TILE_HAS_HABBOS;
-                if (checkForUnits && this.room.getRoomUnitManager().hasBotsAt(occupiedTile)) return FurnitureMovementError.TILE_HAS_BOTS;
-                if (checkForUnits && this.room.getRoomUnitManager().hasPetsAt(occupiedTile)) return FurnitureMovementError.TILE_HAS_PETS;
+            if (!Emulator.getConfig().getBoolean("wired.place.under", false) || (Emulator.getConfig().getBoolean("wired.place.under", false) && !item.isWalkable() && !item.getBaseItem().allowSit() && !item.getBaseItem().allowLay())) {
+                if (checkForUnits && this.room.getRoomUnitManager().hasHabbosAt(occupiedTile))
+                    return FurnitureMovementError.TILE_HAS_HABBOS;
+                if (checkForUnits && this.room.getRoomUnitManager().getRoomBotManager().hasBotsAt(occupiedTile))
+                    return FurnitureMovementError.TILE_HAS_BOTS;
+                if (checkForUnits && this.room.getRoomUnitManager().hasPetsAt(occupiedTile))
+                    return FurnitureMovementError.TILE_HAS_PETS;
             }
         }
 
@@ -799,7 +740,7 @@ public class RoomItemManager {
     }
 
     public RoomItem getTopItemAt(RoomTile tile) {
-        if(tile == null) {
+        if (tile == null) {
             return null;
         }
 
@@ -916,111 +857,11 @@ public class RoomItemManager {
         this.cycleTasks.remove(task);
     }
 
-    public void addBanzaiTeleporter(InteractionBattleBanzaiTeleporter item) {
-        this.banzaiTeleporters.put(item.getId(), item);
-    }
-
-    public void removeBanzaiTeleporter(InteractionBattleBanzaiTeleporter item) {
-        this.banzaiTeleporters.remove(item.getId());
-    }
-
-    public void addRoller(InteractionRoller item) {
-        synchronized (this.rollers) {
-            this.rollers.put(item.getId(), item);
-        }
-    }
-
-    public void removeRoller(InteractionRoller roller) {
-        synchronized (this.rollers) {
-            this.rollers.remove(roller.getId());
-        }
-    }
-
-    public void addGameScoreboard(InteractionGameScoreboard scoreboard) {
-        this.gameScoreboards.put(scoreboard.getId(), scoreboard);
-    }
-
-    public void removeScoreboard(InteractionGameScoreboard scoreboard) {
-        this.gameScoreboards.remove(scoreboard.getId());
-    }
-
-    public void addGameGate(InteractionGameGate gameGate) {
-        this.gameGates.put(gameGate.getId(), gameGate);
-    }
-
-    public void removeGameGate(InteractionGameGate gameGate) {
-        this.gameGates.remove(gameGate.getId());
-    }
-
-    public void addGameTimer(InteractionGameTimer gameTimer) {
-        this.gameTimers.put(gameTimer.getId(), gameTimer);
-    }
-
-    public void removeGameTimer(InteractionGameTimer gameTimer) {
-        this.gameTimers.remove(gameTimer.getId());
-    }
-
-    public void addFreezeExitTile(InteractionFreezeExitTile freezeExitTile) {
-        this.freezeExitTile.put(freezeExitTile.getId(), freezeExitTile);
-    }
-
-    public void removeFreezeExitTile(InteractionFreezeExitTile freezeExitTile) {
-        this.freezeExitTile.remove(freezeExitTile.getId());
-    }
-
-    public void addNest(InteractionNest item) {
-        this.nests.put(item.getId(), item);
-    }
-
-    public void removeNest(InteractionNest item) {
-        this.nests.remove(item.getId());
-    }
-
-    public void addPetDrink(InteractionPetDrink item) {
-        this.petDrinks.put(item.getId(), item);
-    }
-
-    public void removePetDrink(InteractionPetDrink item) {
-        this.petDrinks.remove(item.getId());
-    }
-
-    public void addPetFood(InteractionPetFood item) {
-        this.petFoods.put(item.getId(), item);
-    }
-
-    public void removePetFood(InteractionPetFood petFood) {
-        this.petFoods.remove(petFood.getId());
-    }
-
-    public InteractionPetToy getPetToy(int itemId) {
-        return this.petToys.get(itemId);
-    }
-
-    public void addPetToy(InteractionPetToy item) {
-        this.petToys.put(item.getId(), item);
-    }
-
-    public void removePetToy(InteractionPetToy petToy) {
-        this.petToys.remove(petToy.getId());
-    }
-
-    public void addUndefined(RoomItem item) {
-        synchronized (this.undefinedSpecials) {
-            this.undefinedSpecials.put(item.getId(), item);
-        }
-    }
-
-    public void removeUndefined(RoomItem item) {
-        synchronized (this.undefinedSpecials) {
-            this.undefinedSpecials.remove(item.getId());
-        }
-    }
-
     private void sortItem(RoomItem item) {
-        if(item.getBaseItem().getType().equals(FurnitureType.FLOOR)) {
+        if (item.getBaseItem().getType().equals(FurnitureType.FLOOR)) {
             this.floorItems.put(item.getId(), item);
             this.sortFloorItem(item);
-        } else if(item.getBaseItem().getType().equals(FurnitureType.WALL)) {
+        } else if (item.getBaseItem().getType().equals(FurnitureType.WALL)) {
             this.wallItems.put(item.getId(), item);
         }
     }
@@ -1030,78 +871,16 @@ public class RoomItemManager {
             this.addCycleTask((ICycleable) item);
         }
 
-        if(item instanceof InteractionWired wired) {
+        if (item instanceof InteractionWired wired) {
             this.wiredManager.addWired(wired);
-        } else if (item instanceof InteractionBattleBanzaiTeleporter interactionBattleBanzaiTeleporter) {
-            this.addBanzaiTeleporter(interactionBattleBanzaiTeleporter);
-        } else if (item instanceof InteractionRoller interactionRoller) {
-            this.addRoller(interactionRoller);
-        } else if (item instanceof InteractionGameScoreboard interactionGameScoreboard) {
-            this.addGameScoreboard(interactionGameScoreboard);
-        } else if (item instanceof InteractionGameGate interactionGameGate) {
-            this.addGameGate(interactionGameGate);
-        } else if (item instanceof InteractionGameTimer interactionGameTimer) {
-            this.addGameTimer(interactionGameTimer);
-        } else if (item instanceof InteractionFreezeExitTile interactionFreezeExitTile) {
-            this.addFreezeExitTile(interactionFreezeExitTile);
-        } else if (item instanceof InteractionNest interactionNest) {
-            this.addNest(interactionNest);
-        } else if (item instanceof InteractionPetDrink interactionPetDrink) {
-            this.addPetDrink(interactionPetDrink);
-        } else if (item instanceof InteractionPetFood interactionPetFood) {
-            this.addPetFood(interactionPetFood);
-        } else if (item instanceof InteractionPetToy interactionPetToy) {
-            this.addPetToy(interactionPetToy);
-        } else if (item instanceof InteractionPetTree) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionPetTrampoline) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionMoodLight) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionPyramid) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionMusicDisc) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionBattleBanzaiSphere) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionTalkingFurniture) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionWater) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionWaterItem) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionMuteArea) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionBuildArea) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionTagPole) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionTagField) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionJukeBox) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionPetBreedingNest) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionBlackHole) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionWiredHighscore) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionStickyPole) {
-            this.addUndefined(item);
-        } else if (item instanceof WiredBlob) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionTent) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionSnowboardSlope) {
-            this.addUndefined(item);
-        } else if (item instanceof InteractionFireworks) {
-            this.addUndefined(item);
+        } else {
+            item.addThisItem(this);
         }
     }
 
     public void dispose() {
         this.currentItems.values().parallelStream()
-                .filter(roomItem1 -> roomItem1.isSqlUpdateNeeded())
+                .filter(RoomItem::isSqlUpdateNeeded)
                 .forEach(roomItem -> {
                     roomItem.run();
                     this.currentItems.remove(roomItem.getId());

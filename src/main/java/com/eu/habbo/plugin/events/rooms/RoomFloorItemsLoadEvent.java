@@ -1,7 +1,7 @@
 package com.eu.habbo.plugin.events.rooms;
 
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.plugin.events.users.UserEvent;
 import gnu.trove.set.hash.THashSet;
 

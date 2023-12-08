@@ -11,9 +11,9 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import com.eu.habbo.habbohotel.rooms.RoomUserAction;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUserAction;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
 import com.eu.habbo.habbohotel.units.type.Avatar;
 import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
@@ -347,7 +347,7 @@ public class Habbo extends Avatar implements Runnable {
 
     public void deleteBot(Bot bot) {
         this.removeBot(bot);
-        bot.getRoomUnit().getRoom().getRoomUnitManager().removeBot(bot);
+        bot.getRoomUnit().getRoom().getRoomUnitManager().getRoomBotManager().removeBot(bot);
         Emulator.getGameEnvironment().getBotManager().deleteBot(bot);
     }
 

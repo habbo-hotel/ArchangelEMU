@@ -22,6 +22,6 @@ public class PlaceBotEvent extends MessageHandler {
         int x = this.packet.readInt();
         int y = this.packet.readInt();
 
-        room.getRoomUnitManager().placeBot(bot, this.client.getHabbo(), x, y);
+        room.getRoomUnitManager().getRoomBotManager().placeBot(bot, this.client.getHabbo(), x, y);
     }
 }

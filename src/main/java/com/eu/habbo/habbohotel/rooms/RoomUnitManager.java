@@ -1,34 +1,42 @@
 package com.eu.habbo.habbohotel.rooms;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.bots.Bot;
-import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.permissions.Permission;
+import com.eu.habbo.habbohotel.items.interactions.InteractionGate;
+import com.eu.habbo.habbohotel.items.interactions.InteractionPyramid;
+import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.PetManager;
+import com.eu.habbo.habbohotel.pets.RideablePet;
+import com.eu.habbo.habbohotel.rooms.bots.RoomBotManager;
+import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
+import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
-import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.units.Unit;
-import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.habbohotel.users.HabboInfo;
-import com.eu.habbo.messages.outgoing.generic.alerts.BotErrorComposer;
-import com.eu.habbo.messages.outgoing.inventory.BotAddedToInventoryComposer;
-import com.eu.habbo.messages.outgoing.inventory.BotRemovedFromInventoryComposer;
+import com.eu.habbo.messages.ServerMessage;
+import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
+import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
 import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
-import com.eu.habbo.messages.outgoing.rooms.users.RoomUsersComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.IgnoreResultMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
+import com.eu.habbo.messages.outgoing.rooms.users.UserUpdateComposer;
 import com.eu.habbo.plugin.Event;
-import com.eu.habbo.plugin.events.bots.BotPickUpEvent;
-import com.eu.habbo.plugin.events.bots.BotPlacedEvent;
+import com.eu.habbo.plugin.events.furniture.FurnitureRolledEvent;
+import com.eu.habbo.plugin.events.users.UserRolledEvent;
 import gnu.trove.set.hash.THashSet;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
@@ -41,6 +49,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
+import static com.eu.habbo.habbohotel.rooms.Room.CAUGHT_EXCEPTION;
+import static com.eu.habbo.habbohotel.rooms.utils.cycle.CycleFunctions.cycleIdle;
 
 @Slf4j
 @Getter
@@ -48,68 +58,35 @@ public class RoomUnitManager {
     private final Room room;
     private final ConcurrentHashMap<Integer, RoomUnit> currentRoomUnits;
     private final ConcurrentHashMap<Integer, Habbo> currentHabbos;
-    private final ConcurrentHashMap<Integer, Bot> currentBots;
     private final ConcurrentHashMap<Integer, Pet> currentPets;
     private volatile int roomUnitCounter;
     public final Object roomUnitLock;
+
+    private final RoomBotManager roomBotManager;
+
+    private int roomIdleCycles;
+
+    @Setter
+    private long rollerCycle = System.currentTimeMillis();
+
 
     public RoomUnitManager(Room room) {
         this.room = room;
         this.currentRoomUnits = new ConcurrentHashMap<>();
         this.currentHabbos = new ConcurrentHashMap<>();
-        this.currentBots = new ConcurrentHashMap<>();
         this.currentPets = new ConcurrentHashMap<>();
         this.roomUnitCounter = 0;
         this.roomUnitLock = new Object();
+        roomBotManager = new RoomBotManager(this);
     }
 
     public synchronized void load(Connection connection) {
-        this.loadBots(connection);
+        this.roomIdleCycles = 0;
+        roomBotManager.loadBots(connection);
         this.loadPets(connection);
     }
 
-    private synchronized void loadBots(Connection connection) {
-        this.currentBots.clear();
 
-        try (PreparedStatement statement = connection.prepareStatement("SELECT users.username AS owner_name, bots.* FROM bots INNER JOIN users ON bots.owner_id = users.id WHERE room_id = ?")) {
-            statement.setInt(1, this.room.getRoomInfo().getId());
-            try (ResultSet set = statement.executeQuery()) {
-                while (set.next()) {
-                    Bot bot = Emulator.getGameEnvironment().getBotManager().loadBot(set);
-
-                    if (bot != null) {
-                        bot.getRoomUnit().setRoom(this.room);
-
-                        RoomTile spawnTile = this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y"));
-
-                        if(spawnTile == null) {
-                            bot.getRoomUnit().setCanWalk(false);
-                        } else {
-                            if(spawnTile.getState().equals(RoomTileState.INVALID)) {
-                                bot.getRoomUnit().setCanWalk(false);
-                            }
-
-                            bot.getRoomUnit().setCurrentPosition(spawnTile);
-                            bot.getRoomUnit().setCurrentZ(set.getDouble("z"));
-                            bot.getRoomUnit().setRotation(RoomRotation.values()[set.getInt("rot")]);
-                            bot.getRoomUnit().setSpawnTile(spawnTile);
-                            bot.getRoomUnit().setSpawnHeight(spawnTile.getState().equals(RoomTileState.INVALID) ? 0 : spawnTile.getStackHeight());
-                        }
-
-                        bot.getRoomUnit().setDanceType(DanceType.values()[set.getInt("dance")]);
-
-                        bot.getRoomUnit().giveEffect(set.getInt("effect"), Integer.MAX_VALUE, false);
-
-                        this.addRoomUnit(bot);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            log.error(CAUGHT_SQL_EXCEPTION, e);
-        } catch (Exception e) {
-            log.error("Caught Exception", e);
-        }
-    }
 
     private synchronized void loadPets(Connection connection) {
         this.currentPets.clear();
@@ -158,7 +135,7 @@ public class RoomUnitManager {
                     unit.getRoomUnit().getRoom().updateDatabaseUserCount();
                 }
                 case BOT -> {
-                    this.currentBots.put(((Bot) unit).getId(), (Bot) unit);
+                    roomBotManager.addBot((Bot)unit);
                 }
                 case PET -> {
                     this.currentPets.put(((Pet) unit).getId(), (Pet) unit);
@@ -188,7 +165,7 @@ public class RoomUnitManager {
     }
 
     public List<RoomUnit> getAvatarsAt(RoomTile tile) {
-        return Stream.concat(this.getHabbosAt(tile).stream(), this.getBotsAt(tile).stream()).map(Unit::getRoomUnit).collect(Collectors.toList());
+        return Stream.concat(this.getHabbosAt(tile).stream(), roomBotManager.getBotsAt(tile).stream()).map(Unit::getRoomUnit).collect(Collectors.toList());
     }
 
     public int getRoomHabbosCount() {
@@ -254,148 +231,9 @@ public class RoomUnitManager {
         }
     }
 
-    public Bot getRoomBotById(int botId) {
-        return this.currentBots.get(botId);
-    }
 
-    public List<Bot> getBotsByName(String name) {
-        synchronized (this.currentBots) {
-            return currentBots.values().stream().filter(bot -> bot.getName().equalsIgnoreCase(name)).toList();
-        }
-    }
 
-    public Bot getBotByRoomUnit(RoomUnit roomUnit) {
-        return this.currentBots.values().stream().filter(bot -> bot.getRoomUnit() == roomUnit).findFirst().orElse(null);
-    }
 
-    public boolean hasBotsAt(RoomTile tile) {
-        return this.currentBots.values().stream().anyMatch(bot -> bot.getRoomUnit().getCurrentPosition().equals(tile));
-    }
-
-    public Collection<Bot> getBotsAt(RoomTile tile) {
-        return this.currentBots.values().stream().filter(bot -> bot.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
-    }
-
-    public void placeBot(Bot bot, Habbo botOwner, int x, int y) {
-        synchronized (this.currentBots) {
-            RoomTile spawnTile = room.getLayout().getTile((short) x, (short) y);
-
-            if(spawnTile == null || (!spawnTile.isWalkable() && !this.room.canSitOrLayAt(spawnTile)) || this.areRoomUnitsAt(spawnTile)) {
-                botOwner.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_BOTS_SELECTED_TILE_NOT_FREE));
-                return;
-            }
-
-            if (Emulator.getPluginManager().isRegistered(BotPlacedEvent.class, false)) {
-                Event event = new BotPlacedEvent(bot, spawnTile, botOwner);
-                Emulator.getPluginManager().fireEvent(event);
-
-                if (event.isCancelled()) {
-                    return;
-                }
-            }
-
-            if(this.currentBots.size() >= Room.MAXIMUM_BOTS && !botOwner.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS)) {
-                botOwner.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_MAX_BOTS));
-                return;
-            }
-
-            RoomBot roomBot = bot.getRoomUnit();
-
-            roomBot.setRoom(this.room);
-            roomBot.setCurrentPosition(spawnTile);
-            roomBot.setCurrentZ(spawnTile.getStackHeight());
-            roomBot.setRotation(RoomRotation.SOUTH);
-            roomBot.setSpawnTile(spawnTile);
-            roomBot.setSpawnHeight(spawnTile.getState().equals(RoomTileState.INVALID) ? 0 : spawnTile.getStackHeight());
-
-            bot.setSqlUpdateNeeded(true);
-            Emulator.getThreading().run(bot);
-
-            this.addRoomUnit(bot);
-
-            this.room.sendComposer(new RoomUsersComposer(bot).compose());
-
-            roomBot.instantUpdate();
-
-            botOwner.getInventory().getBotsComponent().removeBot(bot);
-            botOwner.getClient().sendResponse(new BotRemovedFromInventoryComposer(bot));
-            bot.onPlace(botOwner, room);
-        }
-    }
-
-    public void updateBotsAt(RoomTile tile) {
-        Collection<Bot> bots = this.getBotsAt(tile);
-
-        if(bots == null || bots.isEmpty()) {
-            return;
-        }
-
-        RoomItem item = this.room.getRoomItemManager().getTopItemAt(tile.getX(), tile.getY());
-
-        bots.forEach(bot -> {
-            double z = bot.getRoomUnit().getCurrentPosition().getStackHeight();
-
-            if (bot.getRoomUnit().hasStatus(RoomUnitStatus.SIT) && ((item == null && !bot.getRoomUnit().isCmdSitEnabled()) || (item != null && !item.getBaseItem().allowSit()))) {
-                bot.getRoomUnit().removeStatus(RoomUnitStatus.SIT);
-            }
-
-            if (bot.getRoomUnit().hasStatus(RoomUnitStatus.LAY) && ((item == null && !bot.getRoomUnit().isCmdLayEnabled()) || (item != null && !item.getBaseItem().allowLay()))) {
-                bot.getRoomUnit().removeStatus(RoomUnitStatus.LAY);
-            }
-
-            if (item != null && (item.getBaseItem().allowSit() || item.getBaseItem().allowLay())) {
-                if(item.getBaseItem().allowSit()) {
-                    bot.getRoomUnit().addStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(item)));
-                } else if(item.getBaseItem().allowLay()) {
-                    bot.getRoomUnit().addStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(item)));
-                }
-
-                bot.getRoomUnit().setCurrentZ(item.getCurrentZ());
-                bot.getRoomUnit().setRotation(RoomRotation.fromValue(item.getRotation()));
-            } else {
-                bot.getRoomUnit().setCurrentZ(z);
-            }
-        });
-    }
-
-    public void pickUpBot(Bot bot, Habbo picker) {
-        HabboInfo botOwnerInfo = picker == null ? bot.getOwnerInfo() : picker.getHabboInfo();
-
-        BotPickUpEvent pickedUpEvent = new BotPickUpEvent(bot, picker);
-        Emulator.getPluginManager().fireEvent(pickedUpEvent);
-
-        if (pickedUpEvent.isCancelled())
-            return;
-
-        if (picker == null || (bot.getOwnerInfo().getId() == picker.getHabboInfo().getId() || picker.hasPermissionRight(Permission.ACC_ANYROOMOWNER))) {
-            if (picker != null && !picker.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS) && picker.getInventory().getBotsComponent().getBots().size() >= BotManager.MAXIMUM_BOT_INVENTORY_SIZE) {
-                picker.alert(Emulator.getTexts().getValue("error.bots.max.inventory").replace("%amount%", String.valueOf(BotManager.MAXIMUM_BOT_INVENTORY_SIZE)));
-                return;
-            }
-
-            bot.onPickUp(picker, this.room);
-
-            bot.setFollowingHabboId(0);
-
-            //@DEPRECATED
-            bot.setOwnerId(botOwnerInfo.getId());
-            bot.setOwnerName(botOwnerInfo.getUsername());
-
-            bot.setOwnerInfo(botOwnerInfo);
-
-            this.removeBot(bot);
-
-            bot.setSqlUpdateNeeded(true);
-            Emulator.getThreading().run(bot);
-
-            Habbo receiver = picker == null ? Emulator.getGameEnvironment().getHabboManager().getHabbo(botOwnerInfo.getId()) : picker;
-
-            if (receiver != null) {
-                receiver.getInventory().getBotsComponent().addBot(bot);
-                receiver.getClient().sendResponse(new BotAddedToInventoryComposer(bot));
-            }
-        }
-    }
 
     public void placePet(Pet pet, Room room, short x, short y, double z) {
         synchronized (this.currentPets) {
@@ -474,7 +312,7 @@ public class RoomUnitManager {
 
         synchronized (this.roomUnitLock) {
             this.currentHabbos.remove(habbo.getHabboInfo().getId());
-            this.currentRoomUnits.remove(roomHabbo.getVirtualId());
+            removeUnit(roomHabbo.getVirtualId());
         }
 
         roomHabbo.getRoom().sendComposer(new UserRemoveMessageComposer(roomHabbo).compose());
@@ -508,25 +346,10 @@ public class RoomUnitManager {
         roomHabbo.clear();
     }
 
-    public void removeBot(Bot bot) {
-        if (this.currentBots.containsKey(bot.getId())) {
-            //TODO gotta do a method to removeUnit and clear tile
-            if (bot.getRoomUnit().getCurrentPosition() != null) {
-                bot.getRoomUnit().getCurrentPosition().removeUnit(bot.getRoomUnit());
-            }
-
-            this.currentBots.remove(bot.getId());
-            this.currentRoomUnits.remove(bot.getRoomUnit().getVirtualId());
-
-            bot.getRoomUnit().setRoom(null);
-
-            this.room.sendComposer(new UserRemoveMessageComposer(bot.getRoomUnit()).compose());
-        }
-    }
 
     public Pet removePet(int petId) {
         Pet pet = this.currentPets.get(petId);
-        this.currentRoomUnits.remove(pet.getRoomUnit().getVirtualId());
+        removeUnit(pet.getRoomUnit().getVirtualId());
         return this.currentPets.remove(petId);
     }
 
@@ -564,7 +387,7 @@ public class RoomUnitManager {
 
         for (Pet pet : removedPets) {
             this.currentPets.remove(pet.getId());
-            this.currentRoomUnits.remove(pet.getRoomUnit().getVirtualId());
+            removeUnit(pet.getRoomUnit().getVirtualId());
         }
     }
 
@@ -572,7 +395,7 @@ public class RoomUnitManager {
         synchronized (this.roomUnitLock) {
             this.currentRoomUnits.clear();
             this.currentHabbos.clear();
-            this.currentBots.clear();
+            this.roomBotManager.clear();
             this.currentPets.clear();
             this.roomUnitCounter = 0;
         }
@@ -585,21 +408,7 @@ public class RoomUnitManager {
 
         this.currentHabbos.clear();
 
-        Iterator<Bot> botIterator = this.currentBots.values().iterator();
-
-        while(botIterator.hasNext()) {
-            try {
-                Bot bot = botIterator.next();
-                bot.setSqlUpdateNeeded(true);
-                Emulator.getThreading().run(bot);
-            } catch (NoSuchElementException e) {
-                log.error("Caught Exception", e);
-                break;
-            }
-        }
-
-        this.currentBots.clear();
-
+       roomBotManager.dispose();
         Iterator<Pet> petIterator = this.currentPets.values().iterator();
 
         while(petIterator.hasNext()) {
@@ -615,5 +424,357 @@ public class RoomUnitManager {
 
         this.currentPets.clear();
         this.currentRoomUnits.clear();
+    }
+
+    public void removeUnit(int virtualId) {
+        this.currentRoomUnits.remove(virtualId);
+    }
+
+    public boolean cycle(boolean cycleOdd){
+        boolean foundRightHolder = false;
+        if (!getCurrentHabbos().isEmpty()) {
+            this.roomIdleCycles = 0;
+
+            THashSet<RoomUnit> updatedUnit = new THashSet<>();
+            ArrayList<Habbo> toKick = new ArrayList<>();
+
+            final long millis = System.currentTimeMillis();
+
+            for (Habbo habbo : getCurrentHabbos().values()) {
+                if (!foundRightHolder) {
+                    foundRightHolder = habbo.getRoomUnit().getRightsLevel() != RoomRightLevels.NONE;
+                }
+
+                if (habbo.getRoomUnit().getEffectId() > 0 && millis / 1000 > habbo.getRoomUnit().getEffectEndTimestamp()) {
+                    habbo.getRoomUnit().giveEffect(0, -1);
+                }
+
+                if (habbo.getRoomUnit().isKicked()) {
+                    habbo.getRoomUnit().setKickCount(habbo.getRoomUnit().getKickCount() + 1);
+
+                    if (habbo.getRoomUnit().getKickCount() >= 5) {
+                        room.scheduledTasks.add(() -> Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, room));
+                        continue;
+                    }
+                }
+
+                if (Emulator.getConfig().getBoolean("hotel.rooms.auto.idle")) {
+                    cycleIdle(room, habbo, toKick);
+                }
+
+                if (Emulator.getConfig().getBoolean("hotel.rooms.deco_hosting") && room.getRoomInfo().getOwnerInfo().getId() != habbo.getHabboInfo().getId()) {
+                    //Check if the time already have 1 minute (120 / 2 = 60s)
+                    if (habbo.getRoomUnit().getTimeInRoom() >= 120) {
+                        AchievementManager.progressAchievement(room.getRoomInfo().getOwnerInfo().getId(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("RoomDecoHosting"));
+                        habbo.getRoomUnit().resetTimeInRoom();
+                    } else {
+                        habbo.getRoomUnit().increaseTimeInRoom();
+                    }
+                }
+
+                if (habbo.getHabboStats().isMutedBubbleTracker() && habbo.getHabboStats().allowTalk()) {
+                    habbo.getHabboStats().setMutedBubbleTracker(false);
+                    room.sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.UNIGNORED).compose());
+                }
+
+                // Substract 1 from the chatCounter every odd cycle, which is every (500ms * 2).
+                if (cycleOdd && habbo.getHabboStats().getChatCounter().get() > 0) {
+                    habbo.getHabboStats().getChatCounter().decrementAndGet();
+                }
+
+                habbo.getRoomUnit().cycle();
+
+                if(habbo.getRoomUnit().isStatusUpdateNeeded()) {
+                    habbo.getRoomUnit().setStatusUpdateNeeded(false);
+                    updatedUnit.add(habbo.getRoomUnit());
+                }
+            }
+
+            if (!toKick.isEmpty()) {
+                for (Habbo habbo : toKick) {
+                    Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, room);
+                }
+            }
+
+            updatedUnit.addAll(roomBotManager.cycle());
+            if (!getCurrentPets().isEmpty() && room.isAllowBotsWalk()) {
+                Iterator<Pet> petIterator = getCurrentPets().values().iterator();
+                while(petIterator.hasNext()) {
+                    final Pet pet;
+                    try {
+                        pet = petIterator.next();
+                    } catch (Exception e) {
+                        break;
+                    }
+
+                    pet.getRoomUnit().cycle();
+                    pet.cycle();
+
+                    if(pet.getRoomUnit().isStatusUpdateNeeded()) {
+                        pet.getRoomUnit().setStatusUpdateNeeded(false);
+                        updatedUnit.add(pet.getRoomUnit());
+                    }
+
+                    if (pet.getRoomUnit().isWalking() && pet.getRoomUnit().getPath().size() == 1 && pet.getRoomUnit().hasStatus(RoomUnitStatus.GESTURE)) {
+                        pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
+                        updatedUnit.add(pet.getRoomUnit());
+                    }
+                }
+            }
+
+
+            if (room.getRoomInfo().getRollerSpeed() != -1 && this.rollerCycle >= room.getRoomInfo().getRollerSpeed()) {
+                this.rollerCycle = 0;
+
+                THashSet<MessageComposer> messages = new THashSet<>();
+
+                //Find alternative for this.
+                //Reason is that tile gets updated after every roller.
+                List<Integer> rollerFurniIds = new ArrayList<>();
+                List<Integer> rolledUnitIds = new ArrayList<>();
+
+
+                room.getRoomSpecialTypes().getRollers().forEachValue(roller -> {
+
+                    RoomItem newRoller = null;
+
+                    RoomTile rollerTile = room.getLayout().getTile(roller.getCurrentPosition().getX(), roller.getCurrentPosition().getY());
+
+                    if (rollerTile == null)
+                        return true;
+
+                    THashSet<RoomItem> itemsOnRoller = new THashSet<>();
+
+                    for (RoomItem item : room.getRoomItemManager().getItemsAt(rollerTile)) {
+                        if (item.getCurrentZ() >= roller.getCurrentZ() + Item.getCurrentHeight(roller)) {
+                            itemsOnRoller.add(item);
+                        }
+                    }
+
+                    itemsOnRoller.remove(roller);
+
+                    if (!areRoomUnitsAt(rollerTile) && itemsOnRoller.isEmpty())
+                        return true;
+
+                    RoomTile tileInFront = room.getLayout().getTileInFront(room.getLayout().getTile(roller.getCurrentPosition().getX(), roller.getCurrentPosition().getY()), roller.getRotation());
+
+                    if (tileInFront == null)
+                        return true;
+
+                    if (!room.getLayout().tileExists(tileInFront.getX(), tileInFront.getY()))
+                        return true;
+
+                    if (tileInFront.getState() == RoomTileState.INVALID)
+                        return true;
+
+                    if (!tileInFront.getAllowStack() && !(tileInFront.isWalkable() || tileInFront.getState() == RoomTileState.SIT || tileInFront.getState() == RoomTileState.LAY))
+                        return true;
+
+                    if (areRoomUnitsAt(tileInFront))
+                        return true;
+
+                    THashSet<RoomItem> itemsNewTile = new THashSet<>();
+                    itemsNewTile.addAll(room.getRoomItemManager().getItemsAt(tileInFront));
+                    itemsNewTile.removeAll(itemsOnRoller);
+
+                    itemsOnRoller.removeIf(item -> item.getCurrentPosition().getX() != roller.getCurrentPosition().getX() || item.getCurrentPosition().getY() != roller.getCurrentPosition().getY() || rollerFurniIds.contains(item.getId()));
+
+                    RoomItem topItem = room.getRoomItemManager().getTopItemAt(tileInFront.getX(), tileInFront.getY());
+
+                    boolean allowUsers = true;
+                    boolean allowFurniture = true;
+                    boolean stackContainsRoller = false;
+
+                    for (RoomItem item : itemsNewTile) {
+                        if (!(item.getBaseItem().allowWalk() || item.getBaseItem().allowSit()) && !(item instanceof InteractionGate && item.getExtraData().equals("1"))) {
+                            allowUsers = false;
+                        }
+                        if (item instanceof InteractionRoller) {
+                            newRoller = item;
+                            stackContainsRoller = true;
+
+                            if ((item.getCurrentZ() != roller.getCurrentZ() || (itemsNewTile.size() > 1 && item != topItem)) && !InteractionRoller.NO_RULES) {
+                                allowUsers = false;
+                                allowFurniture = false;
+                                continue;
+                            }
+
+                            break;
+                        } else {
+                            allowFurniture = false;
+                        }
+                    }
+
+                    if (allowFurniture) {
+                        allowFurniture = tileInFront.getAllowStack();
+                    }
+
+                    double zOffset = 0;
+                    if (newRoller != null) {
+                        if ((!itemsNewTile.isEmpty() && (itemsNewTile.size() > 1)) && !InteractionRoller.NO_RULES) {
+                            return true;
+                        }
+                    } else {
+                        zOffset = -Item.getCurrentHeight(roller) + tileInFront.getStackHeight() - rollerTile.getZ();
+                    }
+
+                    if (allowUsers) {
+                        Event roomUserRolledEvent = null;
+
+                        if (Emulator.getPluginManager().isRegistered(UserRolledEvent.class, true)) {
+                            roomUserRolledEvent = new UserRolledEvent(null, null, null);
+                        }
+
+                        ArrayList<RoomUnit> unitsOnTile = new ArrayList<>(getRoomUnitsAt(rollerTile));
+
+                        for (RoomUnit roomUnit : getRoomUnitsAt(rollerTile)) {
+                            if (roomUnit instanceof RoomPet) {
+                                Pet pet = getPetByRoomUnit(roomUnit);
+                                if (pet instanceof RideablePet rideablePet && rideablePet.getRider() != null) {
+                                    unitsOnTile.remove(roomUnit);
+                                }
+                            }
+                        }
+
+                        THashSet<Integer> usersRolledThisTile = new THashSet<>();
+
+                        for (RoomUnit roomUnit : unitsOnTile) {
+                            if (rolledUnitIds.contains(roomUnit.getVirtualId())) continue;
+
+                            if (usersRolledThisTile.size() >= Room.ROLLERS_MAXIMUM_ROLL_AVATARS) break;
+
+                            if (stackContainsRoller && !allowFurniture && !(topItem != null && topItem.isWalkable()))
+                                continue;
+
+                            if (roomUnit.hasStatus(RoomUnitStatus.MOVE))
+                                continue;
+
+                            double newZ = roomUnit.getCurrentZ() + zOffset;
+
+                            if (roomUserRolledEvent != null && roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
+                                roomUserRolledEvent = new UserRolledEvent(getHabboByRoomUnit(roomUnit), roller, tileInFront);
+                                Emulator.getPluginManager().fireEvent(roomUserRolledEvent);
+
+                                if (roomUserRolledEvent.isCancelled())
+                                    continue;
+                            }
+
+                            // horse riding
+                            boolean isRiding = false;
+                            if (roomUnit.getRoomUnitType() == RoomUnitType.HABBO) {
+                                Habbo rollingHabbo = getHabboByRoomUnit(roomUnit);
+                                if (rollingHabbo != null && rollingHabbo.getHabboInfo() != null) {
+                                    RideablePet ridingPet = rollingHabbo.getRoomUnit().getRidingPet();
+                                    if (ridingPet != null) {
+                                        RoomUnit ridingUnit = ridingPet.getRoomUnit();
+                                        newZ = ridingUnit.getCurrentZ() + zOffset;
+                                        rolledUnitIds.add(ridingUnit.getVirtualId());
+                                        updatedUnit.remove(ridingUnit);
+                                        messages.add(new RoomUnitOnRollerComposer(ridingUnit, roller, ridingUnit.getCurrentPosition(), ridingUnit.getCurrentZ(), tileInFront, newZ, room));
+                                        isRiding = true;
+                                    }
+                                }
+                            }
+
+                            usersRolledThisTile.add(roomUnit.getVirtualId());
+                            rolledUnitIds.add(roomUnit.getVirtualId());
+                            updatedUnit.remove(roomUnit);
+                            messages.add(new RoomUnitOnRollerComposer(roomUnit, roller, roomUnit.getCurrentPosition(), roomUnit.getCurrentZ() + (isRiding ? 1 : 0), tileInFront, newZ + (isRiding ? 1 : 0), room));
+
+                            if (itemsOnRoller.isEmpty()) {
+                                RoomItem item = room.getRoomItemManager().getTopItemAt(tileInFront.getX(), tileInFront.getY());
+
+                                if (item != null && itemsNewTile.contains(item) && !itemsOnRoller.contains(item)) {
+                                    Emulator.getThreading().run(() -> {
+                                        if (roomUnit.getTargetPosition() == rollerTile) {
+                                            try {
+                                                item.onWalkOn(roomUnit, room, new Object[]{rollerTile, tileInFront});
+                                            } catch (Exception e) {
+                                                log.error(CAUGHT_EXCEPTION, e);
+                                            }
+                                        }
+                                    }, room.getRoomInfo().getRollerSpeed() == 0 ? 250 : InteractionRoller.DELAY);
+                                }
+                            }
+                        }
+                    }
+
+                    if (!messages.isEmpty()) {
+                        for (MessageComposer message : messages) {
+                            room.sendComposer(message.compose());
+                        }
+                        messages.clear();
+                    }
+
+                    if (allowFurniture || !stackContainsRoller || InteractionRoller.NO_RULES) {
+                        Event furnitureRolledEvent = null;
+
+                        if (Emulator.getPluginManager().isRegistered(FurnitureRolledEvent.class, true)) {
+                            furnitureRolledEvent = new FurnitureRolledEvent(null, null, null);
+                        }
+
+                        if (newRoller == null || topItem == newRoller) {
+                            List<RoomItem> sortedItems = new ArrayList<>(itemsOnRoller);
+                            sortedItems.sort((o1, o2) -> {
+                                return Double.compare(o2.getCurrentZ(), o1.getCurrentZ());
+                            });
+
+                            for (RoomItem item : sortedItems) {
+                                if ((item.getCurrentPosition().getX() == roller.getCurrentPosition().getX() && item.getCurrentPosition().getY() == roller.getCurrentPosition().getY() && zOffset <= 0) && (item != roller)) {
+                                    if (furnitureRolledEvent != null) {
+                                        furnitureRolledEvent = new FurnitureRolledEvent(item, roller, tileInFront);
+                                        Emulator.getPluginManager().fireEvent(furnitureRolledEvent);
+
+                                        if (furnitureRolledEvent.isCancelled())
+                                            continue;
+                                    }
+
+                                    messages.add(new FloorItemOnRollerComposer(item, roller, tileInFront, zOffset, room));
+                                    rollerFurniIds.add(item.getId());
+                                }
+                            }
+                        }
+                    }
+
+
+                    if (!messages.isEmpty()) {
+                        for (MessageComposer message : messages) {
+                            this.sendComposer(message.compose());
+                        }
+                        messages.clear();
+                    }
+
+                    return true;
+                });
+
+
+                int currentTime = (int) (room.getCycleTimestamp() / 1000);
+                for (RoomItem pyramid : room.getRoomSpecialTypes().getItemsOfType(InteractionPyramid.class)) {
+                    if (pyramid instanceof InteractionPyramid interactionPyramid && interactionPyramid.getNextChange() < currentTime) {
+                        interactionPyramid.change(room);
+                    }
+                }
+            } else {
+                this.rollerCycle++;
+            }
+
+            if (!updatedUnit.isEmpty()) {
+                this.sendComposer(new UserUpdateComposer(updatedUnit).compose());
+            }
+
+            room.getRoomTraxManager().cycle();
+        } else {
+
+            if (this.roomIdleCycles < 60)
+                this.roomIdleCycles++;
+            else
+                this.dispose();
+        }
+
+        return foundRightHolder;
+    }
+
+    private void sendComposer(ServerMessage serverMessage) {
+        room.sendComposer(serverMessage);
     }
 }
