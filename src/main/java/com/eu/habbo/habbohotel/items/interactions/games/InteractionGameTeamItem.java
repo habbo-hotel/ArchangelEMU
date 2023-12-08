@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.items.interactions.games;
 
 import com.eu.habbo.habbohotel.games.GameTeamColors;
 import com.eu.habbo.habbohotel.items.Item;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.HabboInfo;
 
 import java.sql.ResultSet;

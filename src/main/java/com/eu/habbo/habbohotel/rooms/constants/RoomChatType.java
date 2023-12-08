@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.rooms;
+package com.eu.habbo.habbohotel.rooms.constants;
 
 public enum RoomChatType {
     TALK,

@@ -2,7 +2,7 @@ package com.eu.habbo.habbohotel.items.interactions.wired;
 
 import com.eu.habbo.habbohotel.items.interactions.wired.interfaces.IWiredSettings;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.wired.WiredMatchFurniSetting;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

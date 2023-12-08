@@ -3,8 +3,8 @@ package com.eu.habbo.threading.runnables;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessageBubbles;
-import com.eu.habbo.habbohotel.rooms.RoomChatType;
+import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
+import com.eu.habbo.habbohotel.rooms.constants.RoomChatType;
 import com.eu.habbo.habbohotel.users.Habbo;
 
 public class YouAreAPirate implements Runnable {

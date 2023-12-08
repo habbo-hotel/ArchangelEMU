@@ -1,7 +1,7 @@
 package com.eu.habbo.plugin.events.users.catalog;
 
 import com.eu.habbo.habbohotel.catalog.CatalogItem;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
 
 import java.util.HashSet;

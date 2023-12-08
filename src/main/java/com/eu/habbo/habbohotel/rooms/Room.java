@@ -16,11 +16,12 @@ import com.eu.habbo.habbohotel.items.interactions.games.InteractionGameTimer;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
-import com.eu.habbo.habbohotel.rooms.entities.items.RoomItem;
+import com.eu.habbo.habbohotel.rooms.constants.*;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
-import com.eu.habbo.habbohotel.users.DanceType;
+import com.eu.habbo.habbohotel.rooms.items.RoomItemManager;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
 import com.eu.habbo.habbohotel.wired.WiredTriggerType;
@@ -47,7 +48,6 @@ import com.eu.habbo.plugin.events.furniture.FurnitureStackHeightEvent;
 import com.eu.habbo.plugin.events.rooms.RoomLoadedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUnloadedEvent;
 import com.eu.habbo.plugin.events.rooms.RoomUnloadingEvent;
-import com.eu.habbo.plugin.events.users.UserExitRoomEvent;
 import com.eu.habbo.plugin.events.users.UserIdleEvent;
 import com.eu.habbo.plugin.events.users.UserRolledEvent;
 import com.eu.habbo.plugin.events.users.UsernameTalkEvent;
@@ -76,6 +76,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
+import static com.eu.habbo.habbohotel.rooms.utils.cycle.CycleFunctions.cycleIdle;
 
 @Slf4j
 public class Room implements Comparable<Room>, ISerialize, Runnable {
@@ -302,8 +303,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     public void updateTiles(THashSet<RoomTile> tiles) {
         for (RoomTile tile : tiles) {
             this.tileCache.remove(tile);
-            tile.setStackHeight(this.getStackHeight(tile.getX(), tile.getY(), false));
-            tile.setState(this.calculateTileState(tile));
+            updateTile(tile);
         }
 
         this.sendComposer(new HeightMapUpdateMessageComposer(this, tiles).compose());
@@ -479,28 +479,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
                     }
 
                     if (Emulator.getConfig().getBoolean("hotel.rooms.auto.idle")) {
-                        if (!habbo.getRoomUnit().isIdle()) {
-                            habbo.getRoomUnit().incrementIdleTicks();
-
-                            if (habbo.getRoomUnit().isIdle()) {
-                                boolean danceIsNone = (habbo.getRoomUnit().getDanceType() == DanceType.NONE);
-                                if (danceIsNone)
-                                    this.sendComposer(new SleepMessageComposer(habbo.getRoomUnit()).compose());
-                                if (danceIsNone && !Emulator.getConfig().getBoolean("hotel.roomuser.idle.not_dancing.ignore.wired_idle"))
-                                    WiredHandler.handle(WiredTriggerType.IDLES, habbo.getRoomUnit(), this, new Object[]{habbo});
-                            }
-                        } else {
-                            habbo.getRoomUnit().incrementIdleTicks();
-
-                            if (!this.getRoomInfo().isRoomOwner(habbo) && habbo.getRoomUnit().getIdleTicks() >= Room.IDLE_CYCLES_KICK) {
-                                UserExitRoomEvent event = new UserExitRoomEvent(habbo, UserExitRoomEvent.UserExitRoomReason.KICKED_IDLE);
-                                Emulator.getPluginManager().fireEvent(event);
-
-                                if (!event.isCancelled()) {
-                                    toKick.add(habbo);
-                                }
-                            }
-                        }
+                        cycleIdle(this, habbo, toKick);
                     }
 
                     if (Emulator.getConfig().getBoolean("hotel.rooms.deco_hosting") && this.roomInfo.getOwnerInfo().getId() != habbo.getHabboInfo().getId()) {
@@ -868,6 +847,7 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
             this.scheduledComposers.clear();
         }
     }
+
 
     @Override
     public void run() {

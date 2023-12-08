@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.outgoing.rooms.users;
 
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
-import com.eu.habbo.habbohotel.rooms.RoomUserAction;
+import com.eu.habbo.habbohotel.rooms.constants.RoomUserAction;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
