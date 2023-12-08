@@ -29,7 +29,7 @@ public class WiredTriggerBotReachedFurni extends InteractionWiredTrigger {
         }
 
         if (stuff[0] instanceof RoomItem) {
-            return this.getWiredSettings().getItems(room).contains(stuff[0]) && room.getRoomUnitManager().getBotsByName(this.getWiredSettings().getStringParam()).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
+            return this.getWiredSettings().getItems(room).contains(stuff[0]) && room.getRoomUnitManager().getRoomBotManager().getBotsByName(this.getWiredSettings().getStringParam()).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
         }
 
         return false;

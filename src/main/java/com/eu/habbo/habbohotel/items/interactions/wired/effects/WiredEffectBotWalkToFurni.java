@@ -31,7 +31,7 @@ public class WiredEffectBotWalkToFurni extends InteractionWiredEffect {
         }
 
         String botName = this.getWiredSettings().getStringParam();
-        List<Bot> bots = room.getRoomUnitManager().getBotsByName(botName);
+        List<Bot> bots = room.getRoomUnitManager().getRoomBotManager().getBotsByName(botName);
 
         if (bots.size() == 0) {
             return false;

@@ -50,7 +50,7 @@ public class DeleteRoomEvent extends MessageHandler {
         room.getRoomItemManager().ejectAllFurni();
         room.getRoomItemManager().ejectUserFurni(room.getRoomInfo().getOwnerInfo().getId());
 
-        List<Bot> bots = new ArrayList<>(room.getRoomUnitManager().getCurrentBots().values());
+        List<Bot> bots = new ArrayList<>(room.getRoomUnitManager().getRoomBotManager().getCurrentBots().values());
         for (Bot bot : bots) {
             Emulator.getGameEnvironment().getBotManager().pickUpBot(bot, null, room);
         }

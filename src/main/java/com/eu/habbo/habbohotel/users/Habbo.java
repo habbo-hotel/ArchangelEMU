@@ -347,7 +347,7 @@ public class Habbo extends Avatar implements Runnable {
 
     public void deleteBot(Bot bot) {
         this.removeBot(bot);
-        bot.getRoomUnit().getRoom().getRoomUnitManager().removeBot(bot);
+        bot.getRoomUnit().getRoom().getRoomUnitManager().getRoomBotManager().removeBot(bot);
         Emulator.getGameEnvironment().getBotManager().deleteBot(bot);
     }
 

@@ -28,7 +28,7 @@ public class CommandBotEvent extends MessageHandler {
         if (room.getRoomInfo().isRoomOwner(this.client.getHabbo()) || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {
             int botId = this.packet.readInt();
 
-            Bot bot = room.getRoomUnitManager().getRoomBotById(Math.abs(botId));
+            Bot bot = room.getRoomUnitManager().getRoomBotManager().getRoomBotById(Math.abs(botId));
 
             if (bot == null) {
                 return;

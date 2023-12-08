@@ -29,7 +29,7 @@ public class WiredEffectBotClothes extends InteractionWiredEffect {
         String botName = stringParams[0].substring(0, Math.min(stringParams[0].length(), Emulator.getConfig().getInt("hotel.wired.message.max_length", 100)));
         String botLook = stringParams[1];
 
-        List<Bot> bots = room.getRoomUnitManager().getBotsByName(botName);
+        List<Bot> bots = room.getRoomUnitManager().getRoomBotManager().getBotsByName(botName);
 
         if(bots.size() == 0) {
             return false;

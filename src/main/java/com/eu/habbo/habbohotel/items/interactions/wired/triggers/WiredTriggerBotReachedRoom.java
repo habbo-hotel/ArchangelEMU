@@ -21,7 +21,7 @@ public class WiredTriggerBotReachedRoom extends InteractionWiredTrigger {
 
     @Override
     public boolean execute(RoomUnit roomUnit, Room room, Object[] stuff) {
-        return room.getRoomUnitManager().getBotsByName(this.getWiredSettings().getStringParam()).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
+        return room.getRoomUnitManager().getRoomBotManager().getBotsByName(this.getWiredSettings().getStringParam()).stream().anyMatch(bot -> bot.getRoomUnit() == roomUnit);
     }
 
     @Override

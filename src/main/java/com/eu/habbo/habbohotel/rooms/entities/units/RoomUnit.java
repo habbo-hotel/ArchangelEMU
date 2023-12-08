@@ -166,7 +166,7 @@ public abstract class RoomUnit extends RoomEntity {
         super.setCurrentZ(currentZ);
 
         if (this.room != null) {
-            Bot bot = this.room.getRoomUnitManager().getRoomBotById(getVirtualId());
+            Bot bot = this.room.getRoomUnitManager().getRoomBotManager().getRoomBotById(getVirtualId());
             if (bot != null) {
                 bot.setSqlUpdateNeeded(true);
             }

@@ -5,7 +5,7 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUserAction;
-import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomBot;
+import com.eu.habbo.habbohotel.rooms.bots.entities.RoomBot;
 import com.eu.habbo.habbohotel.units.type.Avatar;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboGender;
