@@ -137,7 +137,7 @@ public class InteractionGymEquipment extends InteractionEffectTile implements IC
 
                 if (roomUnit != null) {
                     roomUnit.setRotation(RoomRotation.fromValue(rotation));
-                    room.updateRoomUnit(roomUnit);
+                    room.getRoomUnitManager().updateRoomUnit(roomUnit);
                 }
             }
         }

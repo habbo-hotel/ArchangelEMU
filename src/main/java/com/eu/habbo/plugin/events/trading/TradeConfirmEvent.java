@@ -1,6 +1,6 @@
 package com.eu.habbo.plugin.events.trading;
 
-import com.eu.habbo.habbohotel.rooms.RoomTradeUser;
+import com.eu.habbo.habbohotel.rooms.trades.RoomTradeUser;
 import com.eu.habbo.plugin.Event;
 
 public class TradeConfirmEvent extends Event {

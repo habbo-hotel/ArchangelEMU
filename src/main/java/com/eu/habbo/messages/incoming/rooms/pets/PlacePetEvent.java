@@ -5,9 +5,10 @@ import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
-import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
+import com.eu.habbo.habbohotel.rooms.pets.entities.RoomPet;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.PetPlacingErrorComposer;
 import com.eu.habbo.messages.outgoing.inventory.PetRemovedFromInventoryComposer;
@@ -36,7 +37,7 @@ public class PlacePetEvent extends MessageHandler {
         if (pet == null) {
             return;
         }
-        if (room.getRoomUnitManager().getCurrentPets().size() >= Room.MAXIMUM_PETS && !this.client.getHabbo().hasPermissionRight(Permission.ACC_UNLIMITED_PETS)) {
+        if (room.getRoomUnitManager().getRoomPetManager().getCurrentPets().size() >= RoomConfiguration.MAXIMUM_PETS && !this.client.getHabbo().hasPermissionRight(Permission.ACC_UNLIMITED_PETS)) {
             this.client.sendResponse(new PetPlacingErrorComposer(PetPlacingErrorComposer.ROOM_ERROR_MAX_PETS));
             return;
         }

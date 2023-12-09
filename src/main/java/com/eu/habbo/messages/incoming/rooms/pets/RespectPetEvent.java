@@ -24,7 +24,7 @@ public class RespectPetEvent extends MessageHandler {
         final Room room = habbo.getRoomUnit().getRoom();
         if (room == null) { return; }
 
-        final Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
+        final Pet pet = room.getRoomUnitManager().getRoomPetManager().getRoomPetById(petId);
         if (pet == null) { return; }
 
         if (habbo.getHabboStats().getPetRespectPointsToGive() > 0 || pet instanceof MonsterplantPet) {

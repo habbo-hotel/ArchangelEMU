@@ -1,14 +1,14 @@
 package com.eu.habbo.messages.incoming.trading;
 
-import com.eu.habbo.habbohotel.rooms.RoomTrade;
+import com.eu.habbo.habbohotel.rooms.trades.RoomTrade;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.incoming.MessageHandler;
 
-public class UnacceptTradingEvent extends MessageHandler {
+public class UnacceptTradingEvent extends TradingEvent {
+
     @Override
     public void handle() {
         Habbo habbo = this.client.getHabbo();
-        RoomTrade trade = habbo.getRoomUnit().getRoom().getActiveTradeForHabbo(habbo);
+        RoomTrade trade = getActiveRoomTrade(habbo);
 
         if (trade == null)
             return;

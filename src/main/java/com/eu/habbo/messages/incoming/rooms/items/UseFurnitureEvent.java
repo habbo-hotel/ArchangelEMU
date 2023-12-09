@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionSpinningBottle;
 import com.eu.habbo.habbohotel.items.interactions.pets.InteractionMonsterPlantSeed;
 import com.eu.habbo.habbohotel.pets.MonsterplantPet;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.items.RemoveFloorItemComposer;
@@ -50,7 +51,7 @@ public class UseFurnitureEvent extends MessageHandler {
 
 
             if (PET_PRESENTS.contains(item.getBaseItem().getName().toLowerCase())) {
-                if (room.getRoomUnitManager().getCurrentPets().size() < Room.MAXIMUM_PETS) {
+                if (room.getRoomUnitManager().getRoomPetManager().getCurrentPets().size() < RoomConfiguration.MAXIMUM_PETS) {
                     this.client.sendResponse(new OpenPetPackageRequestedMessageComposer(item));
                     return;
                 }
@@ -73,7 +74,7 @@ public class UseFurnitureEvent extends MessageHandler {
             room.sendComposer(new RemoveFloorItemComposer(item, true).compose());
             room.getRoomItemManager().removeRoomItem(item);
             room.updateTile(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));
-            room.getRoomUnitManager().placePet(pet, room, item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getCurrentZ());
+            room.getRoomUnitManager().getRoomPetManager().placePet(pet, room, item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getCurrentZ());
             pet.cycle();
             room.sendComposer(new UserUpdateComposer(pet.getRoomUnit()).compose());
             return true;

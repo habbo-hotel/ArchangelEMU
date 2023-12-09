@@ -3,6 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.items;
 import com.eu.habbo.habbohotel.items.interactions.InteractionStackHelper;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.HeightMapUpdateMessageComposer;
@@ -34,7 +35,7 @@ public class SetCustomStackingHeightEvent extends MessageHandler {
                         }
                     }
                 } else {
-                    stackerHeight = Math.min(Math.max(stackerHeight, itemTile.getZ() * 100.0), Room.MAXIMUM_FURNI_HEIGHT * 100);
+                    stackerHeight = Math.min(Math.max(stackerHeight, itemTile.getZ() * 100.0), RoomConfiguration.MAXIMUM_FURNI_HEIGHT * 100);
                 }
 
                 double height = 0;

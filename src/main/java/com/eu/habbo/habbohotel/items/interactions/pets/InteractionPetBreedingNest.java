@@ -35,7 +35,7 @@ public class InteractionPetBreedingNest extends RoomItem {
 
     @Override
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        return room.getRoomUnitManager().getPetByRoomUnit(roomUnit) != null && !this.boxFull();
+        return room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit) != null && !this.boxFull();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class InteractionPetBreedingNest extends RoomItem {
 
     @Override
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
-        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null && !this.boxFull()) {
             this.addPet(pet);
@@ -153,7 +153,7 @@ public class InteractionPetBreedingNest extends RoomItem {
             Pet offspring = Emulator.getGameEnvironment().getPetManager().createPet(petOne.getPetData().getOffspringType(), (int) Math.min(Math.round(Math.max(1d, PetManager.getNormalDistributionForBreeding(petOne.getLevel(), petTwo.getLevel()).sample())), 20), name, habbo.getClient());
 
 
-            habbo.getRoomUnit().getRoom().getRoomUnitManager().placePet(offspring, habbo.getRoomUnit().getRoom(), box.getCurrentPosition().getX(), box.getCurrentPosition().getY(), box.getCurrentZ());
+            habbo.getRoomUnit().getRoom().getRoomUnitManager().getRoomPetManager().placePet(offspring, habbo.getRoomUnit().getRoom(), box.getCurrentPosition().getX(), box.getCurrentPosition().getY(), box.getCurrentZ());
             offspring.setSqlUpdateNeeded(true);
             offspring.run();
             InteractionPetBreedingNest.this.freePets();

@@ -1,7 +1,7 @@
 package com.eu.habbo.plugin.events.pets;
 
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.chat.RoomChatMessage;
 import lombok.Getter;
 
 @Getter

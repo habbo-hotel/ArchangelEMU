@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.promotions;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomPromotion;
+import com.eu.habbo.habbohotel.rooms.promotions.RoomPromotion;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.rooms.promotions.RoomEventComposer;
 
@@ -23,7 +23,7 @@ public class EditEventEvent extends MessageHandler {
             return;
         }
 
-        RoomPromotion roomPromotion = room.getPromotion();
+        RoomPromotion roomPromotion = room.getRoomPromotionManager().getPromotion();
 
         if (roomPromotion != null) {
 

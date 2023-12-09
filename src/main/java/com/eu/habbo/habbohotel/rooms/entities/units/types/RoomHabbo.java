@@ -4,6 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.pets.PetTasks;
 import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -116,11 +117,11 @@ public class RoomHabbo extends RoomAvatar {
     }
 
     public boolean isIdle() {
-        return this.idleTicks > Room.IDLE_CYCLES;
+        return this.idleTicks > RoomConfiguration.IDLE_CYCLES;
     }
 
     public void setIdle() {
-        this.idleTicks = Room.IDLE_CYCLES + 1;
+        this.idleTicks = RoomConfiguration.IDLE_CYCLES + 1;
     }
 
     public void incrementIdleTicks() {

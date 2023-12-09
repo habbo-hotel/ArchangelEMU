@@ -9,7 +9,7 @@ public class TogglePetBreedingPermissionEvent extends MessageHandler {
     public void handle() {
         int petId = this.packet.readInt();
 
-        Pet pet = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetById(petId);
+        Pet pet = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetManager().getRoomPetById(petId);
 
         if (pet != null) {
             if (pet.getUserId() == this.client.getHabbo().getHabboInfo().getId()) {

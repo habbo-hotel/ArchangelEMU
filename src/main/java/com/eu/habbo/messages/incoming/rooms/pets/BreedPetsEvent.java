@@ -11,9 +11,9 @@ public class BreedPetsEvent extends MessageHandler {
 
         if (unknownInt == 0) {
             int petId1 = this.packet.readInt();
-            Pet petOne = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetById(petId1);
+            Pet petOne = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetManager().getRoomPetById(petId1);
             int petId = this.packet.readInt();
-            Pet petTwo = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetById(petId);
+            Pet petTwo = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetManager().getRoomPetById(petId);
 
             if (petOne == null || petTwo == null || petOne == petTwo) {
                 //TODO Add error

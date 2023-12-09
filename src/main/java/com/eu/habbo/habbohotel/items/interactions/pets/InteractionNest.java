@@ -68,7 +68,7 @@ public class InteractionNest extends RoomItem {
     public void onWalkOn(RoomUnit roomUnit, Room room, Object[] objects) throws Exception {
         super.onWalkOn(roomUnit, room, objects);
 
-        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit);
 
         if (pet == null)
             return;

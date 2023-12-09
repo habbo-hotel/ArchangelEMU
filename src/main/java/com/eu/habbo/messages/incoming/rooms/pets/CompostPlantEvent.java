@@ -23,7 +23,7 @@ public class CompostPlantEvent extends MessageHandler {
         int petId = this.packet.readInt();
 
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
-        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getRoomPetById(petId);
 
         if (pet != null) {
             if (pet instanceof MonsterplantPet) {

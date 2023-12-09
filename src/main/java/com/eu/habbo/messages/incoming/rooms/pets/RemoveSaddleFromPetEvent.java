@@ -25,7 +25,7 @@ public class RemoveSaddleFromPetEvent extends MessageHandler {
     public void handle() {
         Room room = this.client.getHabbo().getRoomUnit().getRoom();
         int petId = this.packet.readInt();
-        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getRoomPetById(petId);
 
         if (!(pet instanceof HorsePet horse) || pet.getUserId() != this.client.getHabbo().getHabboInfo().getId()) return;
 

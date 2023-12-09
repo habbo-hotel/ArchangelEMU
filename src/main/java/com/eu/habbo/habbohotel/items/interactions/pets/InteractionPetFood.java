@@ -33,7 +33,7 @@ public class InteractionPetFood extends InteractionDefault {
         if (this.getExtraData().length() == 0)
             this.setExtraData("0");
 
-        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null) {
             if (pet.getPetData().haveFoodItem(this)) {

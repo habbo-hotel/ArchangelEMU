@@ -14,6 +14,7 @@ import com.eu.habbo.habbohotel.items.interactions.pets.*;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.*;
 import com.eu.habbo.habbohotel.rooms.constants.FurnitureMovementError;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
 import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
@@ -120,8 +121,8 @@ public class RoomItemManager {
     }
 
     public void addRoomItem(RoomItem item) {
-        if (this.currentItems.size() > Room.MAXIMUM_FURNI) {
-            log.error("Room ID: {} has exceeded the furniture limit ({} > {}).", this.room.getRoomInfo().getId(), this.currentItems.size(), Room.MAXIMUM_FURNI);
+        if (this.currentItems.size() > RoomConfiguration.MAXIMUM_FURNI) {
+            log.error("Room ID: {} has exceeded the furniture limit ({} > {}).", this.room.getRoomInfo().getId(), this.currentItems.size(), RoomConfiguration.MAXIMUM_FURNI);
         }
 
         synchronized (this.currentItems) {
@@ -170,7 +171,7 @@ public class RoomItemManager {
     }
 
     public FurnitureMovementError canPlaceFurnitureAt(RoomItem item, Habbo habbo, RoomTile tile, int rotation) {
-        if (this.currentItems.size() >= Room.MAXIMUM_FURNI) {
+        if (this.currentItems.size() >= RoomConfiguration.MAXIMUM_FURNI) {
             return FurnitureMovementError.MAX_ITEMS;
         } else if (item instanceof InteractionMoodLight && !this.getItemsOfType(InteractionMoodLight.class).isEmpty()) {
             return FurnitureMovementError.MAX_DIMMERS;
@@ -345,7 +346,7 @@ public class RoomItemManager {
                                 return FurnitureMovementError.TILE_HAS_HABBOS;
                             if (!this.room.getRoomUnitManager().getRoomBotManager().getBotsAt(t).isEmpty())
                                 return FurnitureMovementError.TILE_HAS_BOTS;
-                            if (this.room.getRoomUnitManager().hasPetsAt(t))
+                            if (this.room.getRoomUnitManager().getRoomPetManager().hasPetsAt(t))
                                 return FurnitureMovementError.TILE_HAS_PETS;
                         }
                     }
@@ -380,7 +381,7 @@ public class RoomItemManager {
                 }
             }
 
-            if ((stackHelper.isEmpty() && topItem != null && topItem != item && !topItem.getBaseItem().allowStack()) || (topItem != null && topItem != item && topItem.getCurrentZ() + Item.getCurrentHeight(topItem) + Item.getCurrentHeight(item) > Room.MAXIMUM_FURNI_HEIGHT)) {
+            if ((stackHelper.isEmpty() && topItem != null && topItem != item && !topItem.getBaseItem().allowStack()) || (topItem != null && topItem != item && topItem.getCurrentZ() + Item.getCurrentHeight(topItem) + Item.getCurrentHeight(item) > RoomConfiguration.MAXIMUM_FURNI_HEIGHT)) {
                 item.setRotation(oldRotation);
                 return FurnitureMovementError.CANT_STACK;
             }
@@ -405,7 +406,7 @@ public class RoomItemManager {
             }
         }
 
-        if (height > Room.MAXIMUM_FURNI_HEIGHT) {
+        if (height > RoomConfiguration.MAXIMUM_FURNI_HEIGHT) {
             return FurnitureMovementError.CANT_STACK;
         }
 
@@ -420,7 +421,7 @@ public class RoomItemManager {
             }
         }
 
-        if (height > Room.MAXIMUM_FURNI_HEIGHT) {
+        if (height > RoomConfiguration.MAXIMUM_FURNI_HEIGHT) {
             return FurnitureMovementError.CANT_STACK;
         }
 
@@ -436,8 +437,8 @@ public class RoomItemManager {
             item.setExtraData(String.valueOf(item.getCurrentZ() * 100));
         }
 
-        if (item.getCurrentZ() > Room.MAXIMUM_FURNI_HEIGHT) {
-            item.setCurrentZ(Room.MAXIMUM_FURNI_HEIGHT);
+        if (item.getCurrentZ() > RoomConfiguration.MAXIMUM_FURNI_HEIGHT) {
+            item.setCurrentZ(RoomConfiguration.MAXIMUM_FURNI_HEIGHT);
         }
 
         //Update Furniture
@@ -608,7 +609,7 @@ public class RoomItemManager {
                     return FurnitureMovementError.TILE_HAS_HABBOS;
                 if (checkForUnits && this.room.getRoomUnitManager().getRoomBotManager().hasBotsAt(occupiedTile))
                     return FurnitureMovementError.TILE_HAS_BOTS;
-                if (checkForUnits && this.room.getRoomUnitManager().hasPetsAt(occupiedTile))
+                if (checkForUnits && this.room.getRoomUnitManager().getRoomPetManager().hasPetsAt(occupiedTile))
                     return FurnitureMovementError.TILE_HAS_PETS;
             }
         }

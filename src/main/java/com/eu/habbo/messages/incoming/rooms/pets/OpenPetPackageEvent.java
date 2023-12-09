@@ -55,7 +55,7 @@ public class OpenPetPackageEvent extends MessageHandler {
                 }
 
                 if (pet != null) {
-                    room.getRoomUnitManager().placePet(pet, room, item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getCurrentZ());
+                    room.getRoomUnitManager().getRoomPetManager().placePet(pet, room, item.getCurrentPosition().getX(), item.getCurrentPosition().getY(), item.getCurrentZ());
                     pet.setUserId(this.client.getHabbo().getHabboInfo().getId());
                     pet.setSqlUpdateNeeded(true);
                     pet.getRoomUnit().setLocation(room.getLayout().getTile(item.getCurrentPosition().getX(), item.getCurrentPosition().getY()));

@@ -5,10 +5,10 @@ import com.eu.habbo.habbohotel.bots.Bot;
 import com.eu.habbo.habbohotel.bots.BotManager;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.RoomUnitManager;
 import com.eu.habbo.habbohotel.rooms.bots.entities.RoomBot;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
-import static com.eu.habbo.habbohotel.rooms.Room.CAUGHT_EXCEPTION;
+import static com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration.CAUGHT_EXCEPTION;
 
 
 @Slf4j
@@ -118,6 +118,15 @@ public class RoomBotManager extends RoomUnitSubManager {
     public Collection<Bot> getBotsAt(RoomTile tile) {
         return this.currentBots.values().stream().filter(bot -> bot.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
     }
+    public Collection<? extends Bot> getBotsOnItem(RoomItem item) {
+        return currentBots.values().stream()
+                .filter(bot ->
+                        bot.getRoomUnit().getCurrentPosition().getX() >= item.getCurrentPosition().getX() &&
+                                bot.getRoomUnit().getCurrentPosition().getX() < item.getCurrentPosition().getX() + item.getBaseItem().getLength() &&
+                                bot.getRoomUnit().getCurrentPosition().getY() >= item.getCurrentPosition().getY() &&
+                                bot.getRoomUnit().getCurrentPosition().getY() < item.getCurrentPosition().getY() + item.getBaseItem().getWidth())
+                .toList();
+    }
 
     public void placeBot(Bot bot, Habbo botOwner, int x, int y) {
         synchronized (this.currentBots) {
@@ -137,7 +146,7 @@ public class RoomBotManager extends RoomUnitSubManager {
                 }
             }
 
-            if (this.currentBots.size() >= Room.MAXIMUM_BOTS && !botOwner.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS)) {
+            if (this.currentBots.size() >= RoomConfiguration.MAXIMUM_BOTS && !botOwner.hasPermissionRight(Permission.ACC_UNLIMITED_BOTS)) {
                 botOwner.getClient().sendResponse(new BotErrorComposer(BotErrorComposer.ROOM_ERROR_MAX_BOTS));
                 return;
             }

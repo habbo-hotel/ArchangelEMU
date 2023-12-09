@@ -1,6 +1,7 @@
-package com.eu.habbo.habbohotel.rooms;
+package com.eu.habbo.habbohotel.rooms.trades;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -134,7 +135,7 @@ public class RoomTrade {
                 this.sendMessageToUsers(new TradingNotOpenComposer());
             }
 
-            this.room.stopTrade(this);
+            this.room.getRoomTradeManager().stopTrade(this);
         }
     }
 
@@ -285,12 +286,12 @@ public class RoomTrade {
     }
 
     private void closeWindow() {
-        this.removeStatusses();
+        this.removeStatuses();
         this.sendMessageToUsers(new TradeCloseWindowComposer());
     }
 
     public void stopTrade(Habbo habbo) {
-        this.removeStatusses();
+        this.removeStatuses();
         this.clearAccepted();
         this.returnItems();
         for (RoomTradeUser user : this.users) {
@@ -298,10 +299,10 @@ public class RoomTrade {
         }
         this.updateWindow();
         this.sendMessageToUsers(new TradingCloseComposer(habbo.getHabboInfo().getId(), TradingCloseComposer.USER_CANCEL_TRADE));
-        this.room.stopTrade(this);
+        this.room.getRoomTradeManager().stopTrade(this);
     }
 
-    private void removeStatusses() {
+    private void removeStatuses() {
         for (RoomTradeUser user : this.users) {
             Habbo habbo = user.getHabbo();
 

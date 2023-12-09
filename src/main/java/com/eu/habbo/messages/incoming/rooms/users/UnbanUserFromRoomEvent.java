@@ -14,7 +14,7 @@ public class UnbanUserFromRoomEvent extends MessageHandler {
 
         if (room != null) {
             if (room.getRoomInfo().isRoomOwner(this.client.getHabbo())) {
-                room.unbanHabbo(userId);
+                room.getRoomInfractionManager().unbanHabbo(userId);
             }
         }
 

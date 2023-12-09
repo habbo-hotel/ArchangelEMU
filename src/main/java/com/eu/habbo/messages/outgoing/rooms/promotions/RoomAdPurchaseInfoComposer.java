@@ -13,7 +13,7 @@ public class RoomAdPurchaseInfoComposer extends MessageComposer {
 
     public RoomAdPurchaseInfoComposer(List<Room> rooms) {
         for (Room room : rooms) {
-            if (!room.isPromoted())
+            if (!room.getRoomInfo().isPromoted())
                 this.rooms.add(room);
         }
     }

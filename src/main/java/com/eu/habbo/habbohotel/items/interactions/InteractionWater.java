@@ -83,7 +83,7 @@ public class InteractionWater extends InteractionDefault {
         if(roomUnit == null) return;
         roomUnit.setSwimming(true);
 
-        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit);
 
         if (pet == null)
             return;
@@ -100,7 +100,7 @@ public class InteractionWater extends InteractionDefault {
         super.onWalkOff(roomUnit, room, objects);
 
         if ( roomUnit.getRoomUnitType() != RoomUnitType.PET) return;
-        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit);
 
             if (pet == null) return;
 
@@ -133,7 +133,7 @@ public class InteractionWater extends InteractionDefault {
     public boolean canWalkOn(RoomUnit roomUnit, Room room, Object[] objects) {
         if (!super.canWalkOn(roomUnit, room, objects)) return false;
 
-        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit);
 
         return pet == null || pet.getPetData().isCanSwim();
     }

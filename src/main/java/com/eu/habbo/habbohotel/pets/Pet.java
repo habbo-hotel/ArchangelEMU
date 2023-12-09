@@ -4,10 +4,11 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;
 import com.eu.habbo.habbohotel.achievements.AchievementManager;
 import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.chat.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
-import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
+import com.eu.habbo.habbohotel.rooms.pets.entities.RoomPet;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ISerialize;
@@ -739,7 +740,7 @@ public class Pet extends Unit implements ISerialize, Runnable {
 
         if (!dontSendPackets) {
             room.sendComposer(new UserRemoveMessageComposer(this.getRoomUnit()).compose());
-            room.getRoomUnitManager().removePet(this.id);
+            room.getRoomUnitManager().getRoomPetManager().removePet(this.id);
         }
 
         this.roomUnit.setRoom(null);

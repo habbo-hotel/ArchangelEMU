@@ -55,7 +55,7 @@ public class DeleteRoomEvent extends MessageHandler {
             Emulator.getGameEnvironment().getBotManager().pickUpBot(bot, null, room);
         }
 
-        List<Pet> pets = new ArrayList<>(room.getRoomUnitManager().getCurrentPets().values());
+        List<Pet> pets = new ArrayList<>(room.getRoomUnitManager().getRoomPetManager().getCurrentPets().values());
         for (Pet pet : pets) {
             if (pet instanceof RideablePet rideablePet) {
                 if (rideablePet.getRider() != null) {

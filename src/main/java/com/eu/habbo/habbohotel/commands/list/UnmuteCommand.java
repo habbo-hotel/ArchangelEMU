@@ -25,13 +25,13 @@ public class UnmuteCommand extends Command {
             return true;
         }
 
-        if (!habbo.getHabboStats().allowTalk() || (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom().isMuted(habbo))) {
+        if (!habbo.getHabboStats().allowTalk() || (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom().getRoomInfractionManager().isMuted(habbo))) {
             if (!habbo.getHabboStats().allowTalk()) {
                 habbo.unMute();
             }
 
-            if (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom().isMuted(habbo)) {
-                habbo.getRoomUnit().getRoom().muteHabbo(habbo, 1);
+            if (habbo.getRoomUnit().getRoom() != null && habbo.getRoomUnit().getRoom().getRoomInfractionManager().isMuted(habbo)) {
+                habbo.getRoomUnit().getRoom().getRoomInfractionManager().muteHabbo(habbo, 1);
             }
 
             gameClient.getHabbo().whisper(replaceUser(getTextsValue("commands.succes.cmd_unmute"), params[1]), RoomChatMessageBubbles.ALERT);
