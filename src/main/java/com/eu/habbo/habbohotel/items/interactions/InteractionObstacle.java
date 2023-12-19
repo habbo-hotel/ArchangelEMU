@@ -97,7 +97,7 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
         Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo == null) {
-            Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
+            Pet pet = room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit);
 
             if (pet instanceof HorsePet && ((HorsePet) pet).getRider() != null) {
                 if (roomUnit.getBodyRotation().getValue() % 2 == 0) {
@@ -126,7 +126,7 @@ public class InteractionObstacle extends RoomItem implements ICycleable {
         Habbo habbo = room.getRoomUnitManager().getHabboByRoomUnit(roomUnit);
 
         if (habbo == null) {
-            Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
+            Pet pet = room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit);
 
             if (pet instanceof HorsePet && ((HorsePet) pet).getRider() != null) {
                 pet.getRoomUnit().removeStatus(RoomUnitStatus.JUMP);

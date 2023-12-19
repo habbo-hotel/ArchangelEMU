@@ -3,7 +3,7 @@ package com.eu.habbo.messages.incoming.rooms.users;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.chat.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.constants.RoomChatType;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.users.UserTalkEvent;
@@ -30,7 +30,7 @@ public class ChatEvent extends MessageHandler {
                 return;
             }
 
-            room.talk(this.client.getHabbo(), message, RoomChatType.TALK);
+            room.getRoomChatManager().talk(this.client.getHabbo(), message, RoomChatType.TALK);
 
             if (!message.isCommand) {
                 if (RoomChatMessage.SAVE_ROOM_CHATS) {

@@ -22,7 +22,7 @@ public class RoomUserMuteEvent extends MessageHandler {
                 Habbo habbo = room.getRoomUnitManager().getRoomHabboById(userId);
 
                 if (habbo != null) {
-                    room.muteHabbo(habbo, minutes);
+                    room.getRoomInfractionManager().muteHabbo(habbo, minutes);
                     habbo.getClient().sendResponse(new RemainingMutePeriodComposer(minutes * 60));
                     AchievementManager.progressAchievement(this.client.getHabbo(), Emulator.getGameEnvironment().getAchievementManager().getAchievement("SelfModMuteSeen"));
                 }

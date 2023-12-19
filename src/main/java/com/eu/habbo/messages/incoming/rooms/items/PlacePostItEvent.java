@@ -6,6 +6,7 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionPostIt;
 import com.eu.habbo.habbohotel.items.interactions.InteractionStickyPole;
 import com.eu.habbo.habbohotel.rooms.constants.FurnitureMovementError;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.messages.outgoing.generic.alerts.BubbleAlertKeys;
@@ -26,7 +27,7 @@ public class PlacePostItEvent extends MessageHandler {
                 RoomItem item = this.client.getHabbo().getInventory().getItemsComponent().getHabboItem(itemId);
 
                 if (item instanceof InteractionPostIt) {
-                    if (room.getPostItNotes().size() < Room.MAXIMUM_POSTITNOTES) {
+                    if (room.getPostItNotes().size() < RoomConfiguration.MAXIMUM_POSTITNOTES) {
                         room.getRoomItemManager().addRoomItem(item);
                         item.setExtraData("FFFF33");
                         //Deprecated

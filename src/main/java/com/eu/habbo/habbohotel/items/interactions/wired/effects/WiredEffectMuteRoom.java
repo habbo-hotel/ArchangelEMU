@@ -4,7 +4,7 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.items.Item;
 import com.eu.habbo.habbohotel.items.interactions.InteractionWiredEffect;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.chat.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.users.Habbo;
@@ -40,7 +40,7 @@ public class WiredEffectMuteRoom extends InteractionWiredEffect {
             if (room.getRoomRightsManager().hasRights(habbo))
                 return false;
 
-            room.muteHabbo(habbo, 60);
+            room.getRoomInfractionManager().muteHabbo(habbo, 60);
 
             habbo.getClient().sendResponse(new WhisperMessageComposer(new RoomChatMessage(message.replace("%user%", habbo.getHabboInfo().getUsername()).replace("%online_count%", Emulator.getGameEnvironment().getHabboManager().getOnlineCount() + "").replace("%room_count%", Emulator.getGameEnvironment().getRoomManager().getActiveRooms().size() + ""), habbo, habbo, RoomChatMessageBubbles.WIRED)));
         }

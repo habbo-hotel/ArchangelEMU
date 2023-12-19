@@ -20,7 +20,7 @@ public class LayCommand extends Command {
             return true;
 
         gameClient.getHabbo().getRoomUnit().setCmdLayEnabled(true);
-        gameClient.getHabbo().getRoomUnit().getRoom().updateRoomUnit(gameClient.getHabbo().getRoomUnit());
+        gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().updateRoomUnit(gameClient.getHabbo().getRoomUnit());
         gameClient.getHabbo().getRoomUnit().setCmdSitEnabled(true);
         gameClient.getHabbo().getRoomUnit().setBodyRotation(RoomRotation.values()[gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() - gameClient.getHabbo().getRoomUnit().getBodyRotation().getValue() % 2]);
 

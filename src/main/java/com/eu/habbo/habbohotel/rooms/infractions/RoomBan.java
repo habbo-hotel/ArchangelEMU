@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.rooms;
+package com.eu.habbo.habbohotel.rooms.infractions;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.database.DatabaseConstants;

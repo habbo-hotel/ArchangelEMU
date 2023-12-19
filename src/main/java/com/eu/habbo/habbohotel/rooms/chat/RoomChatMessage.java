@@ -1,4 +1,4 @@
-package com.eu.habbo.habbohotel.rooms;
+package com.eu.habbo.habbohotel.rooms.chat;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.core.DatabaseLoggable;

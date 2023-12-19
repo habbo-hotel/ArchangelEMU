@@ -1,6 +1,7 @@
-package com.eu.habbo.habbohotel.rooms;
+package com.eu.habbo.habbohotel.rooms.promotions;
 
 import com.eu.habbo.Emulator;
+import com.eu.habbo.habbohotel.rooms.Room;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

@@ -2,6 +2,7 @@ package com.eu.habbo.habbohotel.rooms.utils.cycle;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.users.DanceType;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.wired.WiredHandler;
@@ -27,7 +28,7 @@ public class CycleFunctions {
         } else {
             habbo.getRoomUnit().incrementIdleTicks();
 
-            if (!room.getRoomInfo().isRoomOwner(habbo) && habbo.getRoomUnit().getIdleTicks() >= Room.IDLE_CYCLES_KICK) {
+            if (!room.getRoomInfo().isRoomOwner(habbo) && habbo.getRoomUnit().getIdleTicks() >= RoomConfiguration.IDLE_CYCLES_KICK) {
                 UserExitRoomEvent event = new UserExitRoomEvent(habbo, UserExitRoomEvent.UserExitRoomReason.KICKED_IDLE);
                 Emulator.getPluginManager().fireEvent(event);
 

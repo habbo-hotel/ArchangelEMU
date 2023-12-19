@@ -1,10 +1,11 @@
-package com.eu.habbo.habbohotel.rooms.entities.units.types;
+package com.eu.habbo.habbohotel.rooms.pets.entities;
 
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
+import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomAvatar;
 import com.eu.habbo.habbohotel.users.Habbo;
 import lombok.Getter;
 import lombok.Setter;

@@ -20,7 +20,7 @@ public class RemovePetFromFlatEvent extends MessageHandler {
         if (room == null)
             return;
 
-        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getRoomPetById(petId);
 
         if (pet != null) {
             if (this.client.getHabbo().getHabboInfo().getId() == pet.getUserId() || room.getRoomInfo().getOwnerInfo().getId() == this.client.getHabbo().getHabboInfo().getId() || this.client.getHabbo().hasPermissionRight(Permission.ACC_ANYROOMOWNER)) {

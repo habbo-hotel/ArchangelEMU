@@ -149,11 +149,11 @@ public class CommandsManager {
 
         Room room = gameClient.getHabbo().getRoomUnit().getRoom();
 
-        if (room.getRoomUnitManager().getCurrentPets().isEmpty()) {
+        if (room.getRoomUnitManager().getRoomPetManager().getCurrentPets().isEmpty()) {
             return false;
         }
 
-        for(Pet pet : room.getRoomUnitManager().getCurrentPets().values()) {
+        for(Pet pet : room.getRoomUnitManager().getRoomPetManager().getCurrentPets().values()) {
             if (pet != null && pet.getName().equalsIgnoreCase(args[0])) {
                 StringBuilder commandBuilder = new StringBuilder();
 

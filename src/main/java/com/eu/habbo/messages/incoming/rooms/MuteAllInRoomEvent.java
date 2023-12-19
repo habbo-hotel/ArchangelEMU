@@ -11,7 +11,7 @@ public class MuteAllInRoomEvent extends MessageHandler {
 
         if (room != null) {
             if (room.getRoomInfo().isRoomOwner(this.client.getHabbo())) {
-                room.setMuted(!room.isMuted());
+                room.getRoomChatManager().setMuted(!room.getRoomChatManager().isMuted());
                 this.client.sendResponse(new MuteAllInRoomComposer(room));
             }
         }

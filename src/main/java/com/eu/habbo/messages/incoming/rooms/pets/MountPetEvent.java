@@ -22,7 +22,7 @@ public class MountPetEvent extends MessageHandler {
             return;
         }
 
-        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getRoomPetById(petId);
 
         if (!(pet instanceof RideablePet rideablePet)) {
             return;

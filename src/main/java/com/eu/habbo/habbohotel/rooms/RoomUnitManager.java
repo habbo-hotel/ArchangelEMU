@@ -8,9 +8,9 @@ import com.eu.habbo.habbohotel.items.interactions.InteractionGate;
 import com.eu.habbo.habbohotel.items.interactions.InteractionPyramid;
 import com.eu.habbo.habbohotel.items.interactions.InteractionRoller;
 import com.eu.habbo.habbohotel.pets.Pet;
-import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.pets.RideablePet;
 import com.eu.habbo.habbohotel.rooms.bots.RoomBotManager;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.rooms.constants.RoomRightLevels;
 import com.eu.habbo.habbohotel.rooms.constants.RoomTileState;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUnitStatus;
@@ -18,15 +18,15 @@ import com.eu.habbo.habbohotel.rooms.entities.RoomRotation;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnit;
 import com.eu.habbo.habbohotel.rooms.entities.units.RoomUnitType;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
-import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomPet;
 import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
+import com.eu.habbo.habbohotel.rooms.pets.RoomPetManager;
+import com.eu.habbo.habbohotel.rooms.pets.entities.RoomPet;
+import com.eu.habbo.habbohotel.rooms.trades.RoomTrade;
+import com.eu.habbo.habbohotel.rooms.types.IRoomManager;
 import com.eu.habbo.habbohotel.units.Unit;
 import com.eu.habbo.habbohotel.users.Habbo;
-import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
-import com.eu.habbo.messages.outgoing.inventory.PetAddedToInventoryComposer;
 import com.eu.habbo.messages.outgoing.rooms.items.FloorItemOnRollerComposer;
-import com.eu.habbo.messages.outgoing.rooms.pets.RoomPetComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.IgnoreResultMessageComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.RoomUnitOnRollerComposer;
 import com.eu.habbo.messages.outgoing.rooms.users.UserRemoveMessageComposer;
@@ -40,86 +40,48 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.eu.habbo.database.DatabaseConstants.CAUGHT_SQL_EXCEPTION;
-import static com.eu.habbo.habbohotel.rooms.Room.CAUGHT_EXCEPTION;
+import static com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration.CAUGHT_EXCEPTION;
 import static com.eu.habbo.habbohotel.rooms.utils.cycle.CycleFunctions.cycleIdle;
 
 @Slf4j
 @Getter
-public class RoomUnitManager {
-    private final Room room;
+public class RoomUnitManager extends IRoomManager {
     private final ConcurrentHashMap<Integer, RoomUnit> currentRoomUnits;
     private final ConcurrentHashMap<Integer, Habbo> currentHabbos;
-    private final ConcurrentHashMap<Integer, Pet> currentPets;
     private volatile int roomUnitCounter;
     public final Object roomUnitLock;
 
     private final RoomBotManager roomBotManager;
+    private final RoomPetManager roomPetManager;
 
     private int roomIdleCycles;
-
     @Setter
     private long rollerCycle = System.currentTimeMillis();
 
 
     public RoomUnitManager(Room room) {
-        this.room = room;
+        super(room);
         this.currentRoomUnits = new ConcurrentHashMap<>();
         this.currentHabbos = new ConcurrentHashMap<>();
-        this.currentPets = new ConcurrentHashMap<>();
         this.roomUnitCounter = 0;
         this.roomUnitLock = new Object();
         roomBotManager = new RoomBotManager(this);
+        roomPetManager = new RoomPetManager(this);
     }
 
     public synchronized void load(Connection connection) {
         this.roomIdleCycles = 0;
         roomBotManager.loadBots(connection);
-        this.loadPets(connection);
+        roomPetManager.loadPets(connection);
     }
 
-
-
-    private synchronized void loadPets(Connection connection) {
-        this.currentPets.clear();
-
-        try (PreparedStatement statement = connection.prepareStatement("SELECT users.username as pet_owner_name, users_pets.* FROM users_pets INNER JOIN users ON users_pets.user_id = users.id WHERE room_id = ?")) {
-            statement.setInt(1, this.room.getRoomInfo().getId());
-            try (ResultSet set = statement.executeQuery()) {
-                while (set.next()) {
-                    Pet pet = PetManager.loadPet(set);
-
-                    pet.setRoom(this.room);
-                    pet.getRoomUnit().setRoom(this.room);
-                    pet.getRoomUnit().setLocation(this.room.getLayout().getTile((short) set.getInt("x"), (short) set.getInt("y")));
-                    if (pet.getRoomUnit().getCurrentPosition() == null || pet.getRoomUnit().getCurrentPosition().getState() == RoomTileState.INVALID) {
-                        pet.getRoomUnit().setCurrentZ(this.room.getLayout().getDoorTile().getStackHeight());
-                        pet.getRoomUnit().setLocation(this.room.getLayout().getDoorTile());
-                        pet.getRoomUnit().setRotation(RoomRotation.fromValue(this.room.getLayout().getDoorDirection()));
-                    } else {
-                        pet.getRoomUnit().setCurrentZ(set.getDouble("z"));
-                        pet.getRoomUnit().setRotation(RoomRotation.values()[set.getInt("rot")]);
-                    }
-                    pet.getRoomUnit().setRoomUnitType(RoomUnitType.PET);
-                    pet.getRoomUnit().setCanWalk(true);
-                    this.addRoomUnit(pet);
-                    this.room.getFurniOwnerNames().put(pet.getUserId(), set.getString("pet_owner_name"));
-                }
-            }
-        } catch (SQLException e) {
-            log.error(CAUGHT_SQL_EXCEPTION, e);
-        } catch (Exception e) {
-            log.error("Caught Exception", e);
-        }
-    }
 
     public void addRoomUnit(Unit unit) {
         synchronized (this.roomUnitLock) {
@@ -135,10 +97,10 @@ public class RoomUnitManager {
                     unit.getRoomUnit().getRoom().updateDatabaseUserCount();
                 }
                 case BOT -> {
-                    roomBotManager.addBot((Bot)unit);
+                    roomBotManager.addBot((Bot) unit);
                 }
                 case PET -> {
-                    this.currentPets.put(((Pet) unit).getId(), (Pet) unit);
+                    roomPetManager.addPet((Pet) unit);
                     Habbo habbo = this.getRoomHabboById(((Pet) unit).getUserId());
                     if (habbo != null) {
                         unit.getRoomUnit().getRoom().getFurniOwnerNames().put(((Pet) unit).getUserId(), this.getRoomHabboById(((Pet) unit).getUserId()).getHabboInfo().getUsername());
@@ -157,10 +119,10 @@ public class RoomUnitManager {
     }
 
     public boolean areRoomUnitsAt(RoomTile tile, RoomUnit skippedRoomUnit) {
-        if(skippedRoomUnit == null) {
+        if (skippedRoomUnit == null) {
             return this.areRoomUnitsAt(tile);
         }
-        
+
         return this.currentRoomUnits.values().stream().filter(roomUnit -> !roomUnit.equals(skippedRoomUnit)).anyMatch(roomUnit -> roomUnit.getCurrentPosition().equals(tile));
     }
 
@@ -199,7 +161,7 @@ public class RoomUnitManager {
     public void updateHabbosAt(RoomTile tile) {
         Collection<Habbo> habbos = this.getHabbosAt(tile);
 
-        if(habbos == null || habbos.isEmpty()) {
+        if (habbos == null || habbos.isEmpty()) {
             return;
         }
 
@@ -217,9 +179,9 @@ public class RoomUnitManager {
             }
 
             if (item != null && (item.getBaseItem().allowSit() || item.getBaseItem().allowLay())) {
-                if(item.getBaseItem().allowSit()) {
+                if (item.getBaseItem().allowSit()) {
                     habbo.getRoomUnit().addStatus(RoomUnitStatus.SIT, String.valueOf(Item.getCurrentHeight(item)));
-                } else if(item.getBaseItem().allowLay()) {
+                } else if (item.getBaseItem().allowLay()) {
                     habbo.getRoomUnit().addStatus(RoomUnitStatus.LAY, String.valueOf(Item.getCurrentHeight(item)));
                 }
 
@@ -232,81 +194,14 @@ public class RoomUnitManager {
     }
 
 
-
-
-
-    public void placePet(Pet pet, Room room, short x, short y, double z) {
-        synchronized (this.currentPets) {
-            RoomTile spawnTile = room.getLayout().getTile(x, y);
-
-            if (spawnTile == null) {
-                spawnTile = room.getLayout().getDoorTile();
-            }
-
-            pet.setRoom(room);
-            pet.getRoomUnit().walkTo(spawnTile);
-            pet.getRoomUnit().setLocation(spawnTile)
-                    .setRoomUnitType(RoomUnitType.PET)
-                    .setCanWalk(true)
-                    .setCurrentZ(z);
-
-            if (pet.getRoomUnit().getCurrentPosition() == null) {
-                pet.getRoomUnit()
-                        .setLocation(room.getLayout().getDoorTile())
-                        .setRotation(RoomRotation.fromValue(room.getLayout().getDoorDirection()));
-            }
-
-            pet.setSqlUpdateNeeded(true);
-            room.getFurniOwnerNames().put(pet.getUserId(), this.getRoomHabboById(pet.getUserId()).getHabboInfo().getUsername());
-            this.addRoomUnit(pet);
-            room.sendComposer(new RoomPetComposer(pet).compose());
-        }
-    }
-
-    public boolean hasPetsAt(RoomTile tile) {
-        return this.currentPets.values().stream().anyMatch(pet -> pet.getRoomUnit().getCurrentPosition().equals(tile));
-    }
-
-    public Collection<Pet> getPetsAt(RoomTile tile) {
-        return this.currentPets.values().stream().filter(pet -> pet.getRoomUnit().getCurrentPosition().equals(tile)).collect(Collectors.toSet());
-    }
-
-    public Pet getRoomPetById(int petId) {
-        return this.currentPets.get(petId);
-    }
-
-    public Pet getPetByRoomUnit(RoomUnit roomUnit) {
-        return this.currentPets.values().stream().filter(pet -> pet.getRoomUnit() == roomUnit).findFirst().orElse(null);
-    }
-
-    public void pickUpMyPets(Habbo owner) {
-        THashSet<Pet> pets = new THashSet<>();
-
-        synchronized (this.currentPets) {
-            for (Pet pet : this.currentPets.values()) {
-                if (pet.getUserId() == owner.getHabboInfo().getId()) {
-                    pets.add(pet);
-                }
-            }
-        }
-
-        for (Pet pet : pets) {
-            pet.removeFromRoom();
-            Emulator.getThreading().run(pet);
-            owner.getInventory().getPetsComponent().addPet(pet);
-            owner.getClient().sendResponse(new PetAddedToInventoryComposer(pet));
-            this.currentPets.remove(pet.getId());
-        }
-    }
-
     public void removeHabbo(Habbo habbo, boolean sendRemovePacket) {
-        if(!this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
+        if (!this.currentHabbos.containsKey(habbo.getHabboInfo().getId())) {
             return;
         }
 
         RoomHabbo roomHabbo = habbo.getRoomUnit();
 
-        if(roomHabbo.getCurrentPosition() != null) {
+        if (roomHabbo.getCurrentPosition() != null) {
             roomHabbo.getCurrentPosition().removeUnit(habbo.getRoomUnit());
         }
 
@@ -315,7 +210,7 @@ public class RoomUnitManager {
             removeUnit(roomHabbo.getVirtualId());
         }
 
-        roomHabbo.getRoom().sendComposer(new UserRemoveMessageComposer(roomHabbo).compose());
+        sendComposer(new UserRemoveMessageComposer(roomHabbo).compose());
 
         //MOVE THIS TO RoomTile.java -> removeUnit()
         RoomItem item = roomHabbo.getRoom().getRoomItemManager().getTopItemAt(roomHabbo.getCurrentPosition());
@@ -332,63 +227,18 @@ public class RoomUnitManager {
             roomHabbo.getRoom().getGame(habbo.getHabboInfo().getCurrentGame()).removeHabbo(habbo);
         }
 
-        RoomTrade trade = roomHabbo.getRoom().getActiveTradeForHabbo(habbo);
+        RoomTrade trade = roomHabbo.getRoom().getRoomTradeManager().getActiveTradeForHabbo(habbo);
 
         if (trade != null) {
             trade.stopTrade(habbo);
         }
 
         if (!roomHabbo.getRoom().getRoomInfo().isRoomOwner(habbo)) {
-            this.pickUpMyPets(habbo);
+            roomPetManager.pickUpMyPets(habbo);
         }
 
         roomHabbo.getRoom().updateDatabaseUserCount();
         roomHabbo.clear();
-    }
-
-
-    public Pet removePet(int petId) {
-        Pet pet = this.currentPets.get(petId);
-        removeUnit(pet.getRoomUnit().getVirtualId());
-        return this.currentPets.remove(petId);
-    }
-
-    public void removeAllPetsExceptRoomOwner() {
-        ArrayList<Pet> toRemovePets = new ArrayList<>();
-        ArrayList<Pet> removedPets = new ArrayList<>();
-        synchronized (this.currentPets) {
-            for (Pet pet : this.currentPets.values()) {
-                try {
-                    if (pet.getUserId() != pet.getRoomUnit().getRoom().getRoomInfo().getOwnerInfo().getId()) {
-                        toRemovePets.add(pet);
-                    }
-
-                } catch (NoSuchElementException e) {
-                    log.error("Caught exception", e);
-                    break;
-                }
-            }
-        }
-
-        for (Pet pet : toRemovePets) {
-            removedPets.add(pet);
-
-            pet.removeFromRoom();
-
-            Habbo habbo = Emulator.getGameEnvironment().getHabboManager().getHabbo(pet.getUserId());
-            if (habbo != null) {
-                habbo.getInventory().getPetsComponent().addPet(pet);
-                habbo.getClient().sendResponse(new PetAddedToInventoryComposer(pet));
-            }
-
-            pet.setSqlUpdateNeeded(true);
-            pet.run();
-        }
-
-        for (Pet pet : removedPets) {
-            this.currentPets.remove(pet.getId());
-            removeUnit(pet.getRoomUnit().getVirtualId());
-        }
     }
 
     public void clear() {
@@ -396,33 +246,19 @@ public class RoomUnitManager {
             this.currentRoomUnits.clear();
             this.currentHabbos.clear();
             this.roomBotManager.clear();
-            this.currentPets.clear();
+            this.roomPetManager.clear();
             this.roomUnitCounter = 0;
         }
     }
 
     public void dispose() {
-        for(Habbo habbo : this.currentHabbos.values()) {
+        for (Habbo habbo : this.currentHabbos.values()) {
             Emulator.getGameEnvironment().getRoomManager().leaveRoom(habbo, this.room, true);
         }
-
         this.currentHabbos.clear();
 
-       roomBotManager.dispose();
-        Iterator<Pet> petIterator = this.currentPets.values().iterator();
-
-        while(petIterator.hasNext()) {
-            try {
-                Pet pet = petIterator.next();
-                pet.setSqlUpdateNeeded(true);
-                Emulator.getThreading().run(pet);
-            } catch (NoSuchElementException e) {
-                log.error("Caught Exception", e);
-                break;
-            }
-        }
-
-        this.currentPets.clear();
+        roomBotManager.dispose();
+        roomPetManager.dispose();
         this.currentRoomUnits.clear();
     }
 
@@ -430,7 +266,7 @@ public class RoomUnitManager {
         this.currentRoomUnits.remove(virtualId);
     }
 
-    public boolean cycle(boolean cycleOdd){
+    public boolean cycle(boolean cycleOdd) {
         boolean foundRightHolder = false;
         if (!getCurrentHabbos().isEmpty()) {
             this.roomIdleCycles = 0;
@@ -474,7 +310,7 @@ public class RoomUnitManager {
 
                 if (habbo.getHabboStats().isMutedBubbleTracker() && habbo.getHabboStats().allowTalk()) {
                     habbo.getHabboStats().setMutedBubbleTracker(false);
-                    room.sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.UNIGNORED).compose());
+                    sendComposer(new IgnoreResultMessageComposer(habbo, IgnoreResultMessageComposer.UNIGNORED).compose());
                 }
 
                 // Substract 1 from the chatCounter every odd cycle, which is every (500ms * 2).
@@ -484,7 +320,7 @@ public class RoomUnitManager {
 
                 habbo.getRoomUnit().cycle();
 
-                if(habbo.getRoomUnit().isStatusUpdateNeeded()) {
+                if (habbo.getRoomUnit().isStatusUpdateNeeded()) {
                     habbo.getRoomUnit().setStatusUpdateNeeded(false);
                     updatedUnit.add(habbo.getRoomUnit());
                 }
@@ -497,30 +333,7 @@ public class RoomUnitManager {
             }
 
             updatedUnit.addAll(roomBotManager.cycle());
-            if (!getCurrentPets().isEmpty() && room.isAllowBotsWalk()) {
-                Iterator<Pet> petIterator = getCurrentPets().values().iterator();
-                while(petIterator.hasNext()) {
-                    final Pet pet;
-                    try {
-                        pet = petIterator.next();
-                    } catch (Exception e) {
-                        break;
-                    }
-
-                    pet.getRoomUnit().cycle();
-                    pet.cycle();
-
-                    if(pet.getRoomUnit().isStatusUpdateNeeded()) {
-                        pet.getRoomUnit().setStatusUpdateNeeded(false);
-                        updatedUnit.add(pet.getRoomUnit());
-                    }
-
-                    if (pet.getRoomUnit().isWalking() && pet.getRoomUnit().getPath().size() == 1 && pet.getRoomUnit().hasStatus(RoomUnitStatus.GESTURE)) {
-                        pet.getRoomUnit().removeStatus(RoomUnitStatus.GESTURE);
-                        updatedUnit.add(pet.getRoomUnit());
-                    }
-                }
-            }
+            updatedUnit.addAll(roomPetManager.cycle());
 
 
             if (room.getRoomInfo().getRollerSpeed() != -1 && this.rollerCycle >= room.getRoomInfo().getRollerSpeed()) {
@@ -629,7 +442,7 @@ public class RoomUnitManager {
 
                         for (RoomUnit roomUnit : getRoomUnitsAt(rollerTile)) {
                             if (roomUnit instanceof RoomPet) {
-                                Pet pet = getPetByRoomUnit(roomUnit);
+                                Pet pet = roomPetManager.getPetByRoomUnit(roomUnit);
                                 if (pet instanceof RideablePet rideablePet && rideablePet.getRider() != null) {
                                     unitsOnTile.remove(roomUnit);
                                 }
@@ -641,7 +454,7 @@ public class RoomUnitManager {
                         for (RoomUnit roomUnit : unitsOnTile) {
                             if (rolledUnitIds.contains(roomUnit.getVirtualId())) continue;
 
-                            if (usersRolledThisTile.size() >= Room.ROLLERS_MAXIMUM_ROLL_AVATARS) break;
+                            if (usersRolledThisTile.size() >= RoomConfiguration.ROLLERS_MAXIMUM_ROLL_AVATARS) break;
 
                             if (stackContainsRoller && !allowFurniture && !(topItem != null && topItem.isWalkable()))
                                 continue;
@@ -701,7 +514,7 @@ public class RoomUnitManager {
 
                     if (!messages.isEmpty()) {
                         for (MessageComposer message : messages) {
-                            room.sendComposer(message.compose());
+                            sendComposer(message.compose());
                         }
                         messages.clear();
                     }
@@ -715,9 +528,7 @@ public class RoomUnitManager {
 
                         if (newRoller == null || topItem == newRoller) {
                             List<RoomItem> sortedItems = new ArrayList<>(itemsOnRoller);
-                            sortedItems.sort((o1, o2) -> {
-                                return Double.compare(o2.getCurrentZ(), o1.getCurrentZ());
-                            });
+                            sortedItems.sort((o1, o2) -> Double.compare(o2.getCurrentZ(), o1.getCurrentZ()));
 
                             for (RoomItem item : sortedItems) {
                                 if ((item.getCurrentPosition().getX() == roller.getCurrentPosition().getX() && item.getCurrentPosition().getY() == roller.getCurrentPosition().getY() && zOffset <= 0) && (item != roller)) {
@@ -739,7 +550,7 @@ public class RoomUnitManager {
 
                     if (!messages.isEmpty()) {
                         for (MessageComposer message : messages) {
-                            this.sendComposer(message.compose());
+                            sendComposer(message.compose());
                         }
                         messages.clear();
                     }
@@ -759,7 +570,7 @@ public class RoomUnitManager {
             }
 
             if (!updatedUnit.isEmpty()) {
-                this.sendComposer(new UserUpdateComposer(updatedUnit).compose());
+                sendComposer(new UserUpdateComposer(updatedUnit).compose());
             }
 
             room.getRoomTraxManager().cycle();
@@ -774,7 +585,32 @@ public class RoomUnitManager {
         return foundRightHolder;
     }
 
-    private void sendComposer(ServerMessage serverMessage) {
-        room.sendComposer(serverMessage);
+    public void updateRoomUnit(RoomUnit roomUnit) {
+        RoomItem item = room.getRoomItemManager().getTopItemAt(roomUnit.getCurrentPosition().getX(), roomUnit.getCurrentPosition().getY());
+
+        if ((item == null && !roomUnit.isCmdSitEnabled()) || (item != null && !item.getBaseItem().allowSit()))
+            roomUnit.removeStatus(RoomUnitStatus.SIT);
+
+        double oldZ = roomUnit.getCurrentZ();
+
+        if (item != null) {
+            if (item.getBaseItem().allowSit()) {
+                roomUnit.setCurrentZ(item.getCurrentZ());
+            } else {
+                roomUnit.setCurrentZ(item.getCurrentZ() + Item.getCurrentHeight(item));
+            }
+
+            if (oldZ != roomUnit.getCurrentZ()) {
+                room.scheduledTasks.add(() -> {
+                    try {
+                        item.onWalkOn(roomUnit, room, null);
+                    } catch (Exception ignored) {
+
+                    }
+                });
+            }
+        }
+
+        this.sendComposer(new UserUpdateComposer(roomUnit).compose());
     }
 }

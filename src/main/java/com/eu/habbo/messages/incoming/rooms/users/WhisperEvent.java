@@ -2,7 +2,7 @@ package com.eu.habbo.messages.incoming.rooms.users;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.modtool.ScripterManager;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.chat.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.constants.RoomChatType;
 import com.eu.habbo.messages.incoming.MessageHandler;
 import com.eu.habbo.plugin.events.users.UserTalkEvent;
@@ -26,7 +26,7 @@ public class WhisperEvent extends MessageHandler {
                 return;
             }
 
-            this.client.getHabbo().getRoomUnit().getRoom().talk(this.client.getHabbo(), chatMessage, RoomChatType.WHISPER, true);
+            this.client.getHabbo().getRoomUnit().getRoom().getRoomChatManager().talk(this.client.getHabbo(), chatMessage, RoomChatType.WHISPER, true);
 
             if (RoomChatMessage.SAVE_ROOM_CHATS) {
                 Emulator.getThreading().run(chatMessage);

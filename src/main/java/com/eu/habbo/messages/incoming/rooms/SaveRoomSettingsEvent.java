@@ -119,7 +119,7 @@ public class SaveRoomSettingsEvent extends MessageHandler {
                 room.getRoomInfo().setAllowPets(this.packet.readBoolean());
 
                 if(!room.getRoomInfo().isAllowPets()) {
-                    room.getRoomUnitManager().removeAllPetsExceptRoomOwner();
+                    room.getRoomUnitManager().getRoomPetManager().removeAllPetsExceptRoomOwner();
                 }
 
                 boolean allowPetsEat = this.packet.readBoolean();

@@ -15,7 +15,7 @@ public class GetPetInfoEvent extends MessageHandler {
         if (room == null)
             return;
 
-        Pet pet = room.getRoomUnitManager().getRoomPetById(petId);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getRoomPetById(petId);
 
         if (pet != null) {
             this.client.sendResponse(new PetInfoMessageComposer(pet, room, this.client.getHabbo()));

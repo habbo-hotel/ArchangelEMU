@@ -2,7 +2,7 @@ package com.eu.habbo.messages.outgoing.rooms;
 
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.rooms.Room;
-import com.eu.habbo.habbohotel.rooms.RoomBan;
+import com.eu.habbo.habbohotel.rooms.infractions.RoomBan;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;
@@ -22,9 +22,9 @@ public class BannedUsersFromRoomComposer extends MessageComposer {
 
         THashSet<RoomBan> roomBans = new THashSet<>();
 
-        TIntObjectIterator<RoomBan> iterator = this.room.getBannedHabbos().iterator();
+        TIntObjectIterator<RoomBan> iterator = this.room.getRoomInfractionManager().getBannedHabbos().iterator();
 
-        for (int i = this.room.getBannedHabbos().size(); i-- > 0; ) {
+        for (int i = this.room.getRoomInfractionManager().getBannedHabbos().size(); i-- > 0; ) {
             try {
                 iterator.advance();
 

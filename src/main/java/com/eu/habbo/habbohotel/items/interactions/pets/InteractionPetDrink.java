@@ -71,7 +71,7 @@ public class InteractionPetDrink extends InteractionDefault {
         if (this.getExtraData() == null || this.getExtraData().isEmpty())
             this.setExtraData("0");
 
-        Pet pet = room.getRoomUnitManager().getPetByRoomUnit(roomUnit);
+        Pet pet = room.getRoomUnitManager().getRoomPetManager().getPetByRoomUnit(roomUnit);
 
         if (pet != null && pet.getPetData().haveDrinkItem(this) && pet.levelThirst >= 35) {
             pet.clearPosture();

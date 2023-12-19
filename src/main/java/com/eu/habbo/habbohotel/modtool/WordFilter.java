@@ -3,7 +3,7 @@ package com.eu.habbo.habbohotel.modtool;
 import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.messenger.Message;
 import com.eu.habbo.habbohotel.permissions.Permission;
-import com.eu.habbo.habbohotel.rooms.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.chat.RoomChatMessage;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.outgoing.friends.NewConsoleMessageComposer;
 import com.eu.habbo.plugin.events.users.UserTriggerWordFilterEvent;

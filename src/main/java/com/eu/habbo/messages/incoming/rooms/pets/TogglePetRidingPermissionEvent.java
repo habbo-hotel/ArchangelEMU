@@ -14,7 +14,7 @@ public class TogglePetRidingPermissionEvent extends MessageHandler {
         if (this.client.getHabbo().getRoomUnit().getRoom() == null)
             return;
 
-        Pet pet = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetById(petId);
+        Pet pet = this.client.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomPetManager().getRoomPetById(petId);
 
         if (pet == null || pet.getUserId() != this.client.getHabbo().getHabboInfo().getId() || !(pet instanceof RideablePet rideablePet))
             return;

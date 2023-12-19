@@ -1,7 +1,7 @@
 package com.eu.habbo.messages.outgoing.trading;
 
-import com.eu.habbo.habbohotel.rooms.RoomTrade;
-import com.eu.habbo.habbohotel.rooms.RoomTradeUser;
+import com.eu.habbo.habbohotel.rooms.trades.RoomTrade;
+import com.eu.habbo.habbohotel.rooms.trades.RoomTradeUser;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
 import com.eu.habbo.messages.outgoing.Outgoing;

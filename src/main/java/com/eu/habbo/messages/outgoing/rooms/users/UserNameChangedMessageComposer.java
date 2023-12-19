@@ -1,6 +1,6 @@
 package com.eu.habbo.messages.outgoing.rooms.users;
 
-import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.messages.ServerMessage;
 import com.eu.habbo.messages.outgoing.MessageComposer;
@@ -21,7 +21,7 @@ public class UserNameChangedMessageComposer extends MessageComposer {
     public UserNameChangedMessageComposer(Habbo habbo, boolean includePrefix) {
         this.userId = habbo.getHabboInfo().getId();
         this.roomId = habbo.getRoomUnit().getVirtualId();
-        this.name = (includePrefix ? Room.PREFIX_FORMAT.replace("%color%", habbo.getHabboInfo().getPermissionGroup().getPrefixColor()).replace("%prefix%", habbo.getHabboInfo().getPermissionGroup().getPrefix()) : "") + habbo.getHabboInfo().getUsername();
+        this.name = (includePrefix ? RoomConfiguration.PREFIX_FORMAT.replace("%color%", habbo.getHabboInfo().getPermissionGroup().getPrefixColor()).replace("%prefix%", habbo.getHabboInfo().getPermissionGroup().getPrefix()) : "") + habbo.getHabboInfo().getUsername();
     }
 
     @Override

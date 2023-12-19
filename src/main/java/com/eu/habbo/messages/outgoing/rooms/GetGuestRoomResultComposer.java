@@ -31,7 +31,7 @@ public class GetGuestRoomResultComposer extends MessageComposer {
             this.response.appendBoolean(false);
         }
 
-        this.response.appendBoolean(this.room.isMuted()); // isroommuted
+        this.response.appendBoolean(this.room.getRoomChatManager().isMuted()); // isroommuted
 
         this.response.appendInt(this.room.getRoomInfo().getWhoCanMuteOption());
         this.response.appendInt(this.room.getRoomInfo().getWhoCanKickOption());

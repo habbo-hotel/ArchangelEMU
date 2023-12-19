@@ -20,7 +20,7 @@ public class RedeemCommand extends Command {
 
     @Override
     public boolean handle(final GameClient gameClient, String[] params) {
-        if (gameClient.getHabbo().getRoomUnit().getRoom().getActiveTradeForHabbo(gameClient.getHabbo()) != null)
+        if (gameClient.getHabbo().getRoomUnit().getRoom().getRoomTradeManager().getActiveTradeForHabbo(gameClient.getHabbo()) != null)
             return false;
         ArrayList<RoomItem> items = new ArrayList<>();
 

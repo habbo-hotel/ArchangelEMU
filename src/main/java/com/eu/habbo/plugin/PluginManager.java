@@ -20,6 +20,9 @@ import com.eu.habbo.habbohotel.navigation.EventCategory;
 import com.eu.habbo.habbohotel.navigation.NavigatorManager;
 import com.eu.habbo.habbohotel.pets.PetManager;
 import com.eu.habbo.habbohotel.rooms.*;
+import com.eu.habbo.habbohotel.rooms.chat.RoomChatMessage;
+import com.eu.habbo.habbohotel.rooms.constants.RoomConfiguration;
+import com.eu.habbo.habbohotel.rooms.trades.RoomTrade;
 import com.eu.habbo.habbohotel.users.HabboInventory;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
@@ -75,8 +78,8 @@ public class PluginManager {
         Messenger.SAVE_PRIVATE_CHATS = Emulator.getConfig().getBoolean("save.private.chats", false);
         PacketManager.DEBUG_SHOW_PACKETS = Emulator.getConfig().getBoolean("debug.show.packets");
         PacketManager.MULTI_THREADED_PACKET_HANDLING = Emulator.getConfig().getBoolean("io.client.multithreaded.handler");
-        Room.HABBO_CHAT_DELAY = Emulator.getConfig().getBoolean("room.chat.delay", false);
-        Room.MUTEAREA_CAN_WHISPER = Emulator.getConfig().getBoolean("room.chat.mutearea.allow_whisper", false);
+        RoomConfiguration.HABBO_CHAT_DELAY = Emulator.getConfig().getBoolean("room.chat.delay", false);
+        RoomConfiguration.MUTEAREA_CAN_WHISPER = Emulator.getConfig().getBoolean("room.chat.mutearea.allow_whisper", false);
         RoomChatMessage.SAVE_ROOM_CHATS = Emulator.getConfig().getBoolean("save.room.chats", false);
         RoomLayout.MAXIMUM_STEP_HEIGHT = Emulator.getConfig().getDouble("pathfinder.step.maximum.height", 1.1);
         RoomLayout.ALLOW_FALLING = Emulator.getConfig().getBoolean("pathfinder.step.allow.falling", true);
@@ -98,14 +101,14 @@ public class PluginManager {
         HabboInventory.MAXIMUM_ITEMS = Emulator.getConfig().getInt("hotel.inventory.max.items");
         Messenger.MAXIMUM_FRIENDS = Emulator.getConfig().getInt("hotel.users.max.friends", 300);
         Messenger.MAXIMUM_FRIENDS_HC = Emulator.getConfig().getInt("hotel.users.max.friends.hc", 1100);
-        Room.MAXIMUM_BOTS = Emulator.getConfig().getInt("hotel.max.bots.room");
-        Room.MAXIMUM_PETS = Emulator.getConfig().getInt("hotel.pets.max.room");
-        Room.MAXIMUM_FURNI = Emulator.getConfig().getInt("hotel.room.furni.max", 2500);
-        Room.MAXIMUM_POSTITNOTES = Emulator.getConfig().getInt("hotel.room.stickies.max", 200);
-        Room.HAND_ITEM_TIME = Emulator.getConfig().getInt("hotel.rooms.handitem.time");
-        Room.IDLE_CYCLES = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles", 240);
-        Room.IDLE_CYCLES_KICK = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles.kick", 480);
-        Room.ROLLERS_MAXIMUM_ROLL_AVATARS = Emulator.getConfig().getInt("hotel.room.rollers.roll_avatars.max", 1);
+        RoomConfiguration.MAXIMUM_BOTS = Emulator.getConfig().getInt("hotel.max.bots.room");
+        RoomConfiguration.MAXIMUM_PETS = Emulator.getConfig().getInt("hotel.pets.max.room");
+        RoomConfiguration.MAXIMUM_FURNI = Emulator.getConfig().getInt("hotel.room.furni.max", 2500);
+        RoomConfiguration.MAXIMUM_POSTITNOTES = Emulator.getConfig().getInt("hotel.room.stickies.max", 200);
+        RoomConfiguration.HAND_ITEM_TIME = Emulator.getConfig().getInt("hotel.rooms.handitem.time");
+        RoomConfiguration.IDLE_CYCLES = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles", 240);
+        RoomConfiguration.IDLE_CYCLES_KICK = Emulator.getConfig().getInt("hotel.roomuser.idle.cycles.kick", 480);
+        RoomConfiguration.ROLLERS_MAXIMUM_ROLL_AVATARS = Emulator.getConfig().getInt("hotel.room.rollers.roll_avatars.max", 1);
         RoomManager.MAXIMUM_ROOMS_USER = Emulator.getConfig().getInt("hotel.users.max.rooms", 50);
         RoomManager.MAXIMUM_ROOMS_HC = Emulator.getConfig().getInt("hotel.users.max.rooms.hc", 75);
         RoomManager.HOME_ROOM_ID = Emulator.getConfig().getInt("hotel.home.room");
@@ -128,7 +131,7 @@ public class PluginManager {
         }
 
         HabboManager.WELCOME_MESSAGE = Emulator.getConfig().getValue("hotel.welcome.alert.message").replace("<br>", "<br/>").replace("<br />", "<br/>").replace("\\r", "\r").replace("\\n", "\n").replace("\\t", "\t");
-        Room.PREFIX_FORMAT = Emulator.getConfig().getValue("room.chat.prefix.format");
+        RoomConfiguration.PREFIX_FORMAT = Emulator.getConfig().getValue("room.chat.prefix.format");
         UpdateFloorPropertiesEvent.MAXIMUM_FLOORPLAN_WIDTH_LENGTH = Emulator.getConfig().getInt("hotel.floorplan.max.widthlength");
         UpdateFloorPropertiesEvent.MAXIMUM_FLOORPLAN_SIZE = Emulator.getConfig().getInt("hotel.floorplan.max.totalarea");
 

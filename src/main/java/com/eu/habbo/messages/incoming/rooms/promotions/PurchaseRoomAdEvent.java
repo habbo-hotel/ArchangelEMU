@@ -42,13 +42,13 @@ public class PurchaseRoomAdEvent extends MessageHandler {
                     return;
                 }
 
-                if (room.isPromoted()) {
-                    room.getPromotion().addEndTimestamp(120 * 60);
+                if (room.getRoomPromotionManager().isPromoted()) {
+                    room.getRoomPromotionManager().getPromotion().addEndTimestamp(120 * 60);
                 } else {
-                    room.createPromotion(title, description, categoryId);
+                    room.getRoomPromotionManager().createPromotion(title, description, categoryId);
                 }
 
-                if (room.isPromoted()) {
+                if (room.getRoomPromotionManager().isPromoted()) {
                     if (!this.client.getHabbo().hasPermissionRight(Permission.ACC_INFINITE_CREDITS)) {
                         this.client.getHabbo().giveCredits(-item.getCredits());
                     }
@@ -58,7 +58,7 @@ public class PurchaseRoomAdEvent extends MessageHandler {
                     }
 
                     this.client.sendResponse(new PurchaseOKMessageComposer());
-                    room.sendComposer(new RoomEventComposer(room, room.getPromotion()).compose());
+                    room.sendComposer(new RoomEventComposer(room, room.getRoomPromotionManager().getPromotion()).compose());
 
                     if (!this.client.getHabbo().getInventory().getBadgesComponent().hasBadge(PurchaseRoomAdEvent.ROOM_PROMOTION_BADGE)) {
                         this.client.getHabbo().addBadge(PurchaseRoomAdEvent.ROOM_PROMOTION_BADGE);
