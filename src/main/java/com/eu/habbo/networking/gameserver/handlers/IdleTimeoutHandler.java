@@ -102,7 +102,7 @@ public class IdleTimeoutHandler extends ChannelDuplexHandler {
          * how to handle it if you are using multi revision?
          */
         if(msg instanceof ClientMessage packet) {
-            if(packet.getMessageId() == Incoming.pongEvent) {
+            if(packet.getMessageId() == Incoming.pongEvent.getMessageId()) {
                 this.lastPongTime = System.nanoTime();
             }
         }
