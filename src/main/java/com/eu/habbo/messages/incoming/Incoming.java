@@ -1,508 +1,917 @@
 package com.eu.habbo.messages.incoming;
 
-public class Incoming {
+import com.eu.habbo.messages.incoming.achievements.GetAchievementsEvent;
+import com.eu.habbo.messages.incoming.achievements.RequestAchievementConfigurationEvent;
+import com.eu.habbo.messages.incoming.ambassadors.AmbassadorAlertEvent;
+import com.eu.habbo.messages.incoming.ambassadors.FollowFriendEvent;
+import com.eu.habbo.messages.incoming.camera.*;
+import com.eu.habbo.messages.incoming.campaign.OpenCampaignCalendarDoorAsStaffEvent;
+import com.eu.habbo.messages.incoming.campaign.OpenCampaignCalendarDoorEvent;
+import com.eu.habbo.messages.incoming.catalog.*;
+import com.eu.habbo.messages.incoming.catalog.marketplace.*;
+import com.eu.habbo.messages.incoming.catalog.recycler.GetRecyclerPrizesEvent;
+import com.eu.habbo.messages.incoming.catalog.recycler.GetRecyclerStatusEvent;
+import com.eu.habbo.messages.incoming.catalog.recycler.PresentOpenEvent;
+import com.eu.habbo.messages.incoming.catalog.recycler.RecycleItemsEvent;
+import com.eu.habbo.messages.incoming.crafting.*;
+import com.eu.habbo.messages.incoming.floorplaneditor.GetOccupiedTilesEvent;
+import com.eu.habbo.messages.incoming.floorplaneditor.GetRoomEntryTileEvent;
+import com.eu.habbo.messages.incoming.floorplaneditor.UpdateFloorPropertiesEvent;
+import com.eu.habbo.messages.incoming.friends.*;
+import com.eu.habbo.messages.incoming.gamecenter.*;
+import com.eu.habbo.messages.incoming.guardians.ChatReviewGuideDecidesOnOfferEvent;
+import com.eu.habbo.messages.incoming.guardians.ChatReviewGuideDetachedEvent;
+import com.eu.habbo.messages.incoming.guardians.ChatReviewGuideVoteEvent;
+import com.eu.habbo.messages.incoming.guides.*;
+import com.eu.habbo.messages.incoming.guilds.*;
+import com.eu.habbo.messages.incoming.guilds.forums.*;
+import com.eu.habbo.messages.incoming.handshake.*;
+import com.eu.habbo.messages.incoming.helper.GetCfhStatusEvent;
+import com.eu.habbo.messages.incoming.helper.GetTalentTrackEvent;
+import com.eu.habbo.messages.incoming.hotelview.*;
+import com.eu.habbo.messages.incoming.inventory.*;
+import com.eu.habbo.messages.incoming.modtool.*;
+import com.eu.habbo.messages.incoming.navigator.*;
+import com.eu.habbo.messages.incoming.polls.AnswerPollEvent;
+import com.eu.habbo.messages.incoming.polls.PollRejectEvent;
+import com.eu.habbo.messages.incoming.polls.PollStartEvent;
+import com.eu.habbo.messages.incoming.rooms.*;
+import com.eu.habbo.messages.incoming.rooms.bots.CommandBotEvent;
+import com.eu.habbo.messages.incoming.rooms.bots.GetBotCommandConfigurationDataEvent;
+import com.eu.habbo.messages.incoming.rooms.bots.PlaceBotEvent;
+import com.eu.habbo.messages.incoming.rooms.bots.RemoveBotFromFlatEvent;
+import com.eu.habbo.messages.incoming.rooms.items.*;
+import com.eu.habbo.messages.incoming.rooms.items.jukebox.*;
+import com.eu.habbo.messages.incoming.rooms.items.lovelock.FriendFurniConfirmLockEvent;
+import com.eu.habbo.messages.incoming.rooms.items.rentablespace.RentableSpaceCancelRentEvent;
+import com.eu.habbo.messages.incoming.rooms.items.rentablespace.RentableSpaceRentEvent;
+import com.eu.habbo.messages.incoming.rooms.items.youtube.ControlYoutubeDisplayPlaybackEvent;
+import com.eu.habbo.messages.incoming.rooms.items.youtube.GetYoutubeDisplayStatusEvent;
+import com.eu.habbo.messages.incoming.rooms.items.youtube.SetYoutubeDisplayPlaylistEvent;
+import com.eu.habbo.messages.incoming.rooms.pets.*;
+import com.eu.habbo.messages.incoming.rooms.promotions.EditEventEvent;
+import com.eu.habbo.messages.incoming.rooms.promotions.GetRoomAdPurchaseInfoEvent;
+import com.eu.habbo.messages.incoming.rooms.promotions.PurchaseRoomAdEvent;
+import com.eu.habbo.messages.incoming.rooms.users.*;
+import com.eu.habbo.messages.incoming.trading.*;
+import com.eu.habbo.messages.incoming.unknown.GetResolutionAchievementsEvent;
+import com.eu.habbo.messages.incoming.unknown.UnknownEvent2;
+import com.eu.habbo.messages.incoming.users.*;
+import com.eu.habbo.messages.incoming.wired.ApplySnapshotEvent;
+import com.eu.habbo.messages.incoming.wired.UpdateActionEvent;
+import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
+import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-    /**
-     * Incoming Emulator Packets which are currently implemented.
-     * Named 1:1 based on outgoing client packet names from PRODUCTION-201611291003-338511768
-    */
+@Getter
+@RequiredArgsConstructor
+public enum Incoming {
+    acceptFriendEvent(137, AcceptFriendEvent.class), acceptTradingEvent(3863, AcceptTradingEvent.class), addAdminRightsToMemberEvent(2894, AddAdminRightsToMemberEvent.class), addFavouriteRoomEvent(3817, AddFavouriteRoomEvent.class), addItemToTradeEvent(3107, AddItemToTradeEvent.class), addItemsToTradeEvent(1263, AddItemsToTradeEvent.class), addJukeboxDiskEvent(753, AddJukeboxDiskEvent.class), addSpamWallPostItEvent(3283, AddSpamWallPostItEvent.class), ambassadorAlertEvent(2996, AmbassadorAlertEvent.class), answerPollEvent(3505, AnswerPollEvent.class), applySnapshotEvent(3373, ApplySnapshotEvent.class), approveMembershipRequestEvent(3386, ApproveMembershipRequestEvent.class), approveNameEvent(2109, ApproveNameEvent.class), assignRightsEvent(808, AssignRightsEvent.class), avatarEffectActivatedEvent(2959, AvatarEffectActivatedEvent.class), avatarEffectSelectedEvent(1752, AvatarEffectSelectedEvent.class), avatarExpressionEvent(2456, AvatarExpressionEvent.class), banUserWithDurationEvent(1477, BanUserWithDurationEvent.class), breedPetsEvent(1638, BreedPetsEvent.class), buildersClubPlaceWallItemEvent(2462, BuildersClubPlaceWallItemEvent.class), buildersClubQueryFurniCountEvent(2529, BuildersClubQueryFurniCountEvent.class), buyMarketplaceOfferEvent(1603, BuyMarketplaceOfferEvent.class), callForHelpEvent(1691, CallForHelpEvent.class), callForHelpFromForumMessageEvent(1412, CallForHelpFromForumMessageEvent.class), callForHelpFromForumThreadEvent(534, CallForHelpFromForumThreadEvent.class), callForHelpFromIMEvent(2950, CallForHelpFromIMEvent.class), callForHelpFromPhotoEvent(2492, CallForHelpFromPhotoEvent.class), canCreateRoomEvent(2128, CanCreateRoomEvent.class), cancelMarketplaceOfferEvent(434, CancelMarketplaceOfferEvent.class), cancelPetBreedingEvent(2713, CancelPetBreedingEvent.class), cancelTypingEvent(1474, CancelTypingEvent.class), changeMottoEvent(2228, ChangeMottoEvent.class), changePostureEvent(2235, ChangePostureEvent.class), changeUserNameEvent(2977, ChangeUserNameEvent.class), chatEvent(1314, ChatEvent.class), chatReviewGuideDecidesOnOfferEvent(3365, ChatReviewGuideDecidesOnOfferEvent.class), chatReviewGuideDetachedEvent(2501, ChatReviewGuideDetachedEvent.class), chatReviewGuideVoteEvent(3961, ChatReviewGuideVoteEvent.class), chatReviewSessionCreateEvent(3060, ChatReviewSessionCreateEvent.class), checkUserNameEvent(3950, CheckUserNameEvent.class), clientHelloEvent(4000, ClientHelloEvent.class), closeIssueDefaultActionEvent(2717, CloseIssueDefaultActionEvent.class), closeIssuesEvent(2067, CloseIssuesEvent.class), closeTradingEvent(2551, CloseTradingEvent.class), commandBotEvent(2624, CommandBotEvent.class), completeDiffieHandshakeEvent(773, CompleteDiffieHandshakeEvent.class), compostPlantEvent(3835, CompostPlantEvent.class), confirmAcceptTradingEvent(2760, ConfirmAcceptTradingEvent.class), confirmDeclineTradingEvent(2341, ConfirmDeclineTradingEvent.class), confirmPetBreedingEvent(3382, ConfirmPetBreedingEvent.class), controlYoutubeDisplayPlaybackEvent(3005, ControlYoutubeDisplayPlaybackEvent.class), craftEvent(3591, CraftEvent.class), craftSecretEvent(1251, CraftSecretEvent.class), createFlatEvent(2752, CreateFlatEvent.class), createGuildEvent(230, CreateGuildEvent.class), creditFurniRedeemEvent(3115, CreditFurniRedeemEvent.class), customizeAvatarWithFurniEvent(3374, CustomizeAvatarWithFurniEvent.class), customizePetWithFurniEvent(1328, CustomizePetWithFurniEvent.class), danceEvent(2080, DanceEvent.class), deactivateGuildEvent(1134, DeactivateGuildEvent.class), declineFriendEvent(2890, DeclineFriendEvent.class), deleteFavouriteRoomEvent(309, DeleteFavouriteRoomEvent.class), deleteRoomEvent(532, DeleteRoomEvent.class), deselectFavouriteHabboGroupEvent(1820, DeselectFavouriteHabboGroupEvent.class), diceOffEvent(1533, DiceOffEvent.class),
 
-    public static final int acceptFriendEvent = 137;
-    public static final int acceptTradingEvent = 3863;
-    public static final int addAdminRightsToMemberEvent = 2894;
-    public static final int addFavouriteRoomEvent = 3817;
-    public static final int addItemToTradeEvent = 3107;
-    public static final int addItemsToTradeEvent = 1263;
-    public static final int addJukeboxDiskEvent = 753;
-    public static final int addSpamWallPostItEvent = 3283;
-    public static final int ambassadorAlertEvent = 2996;
-    public static final int answerPollEvent = 3505;
-    public static final int applySnapshotEvent = 3373;
-    public static final int approveMembershipRequestEvent = 3386;
-    public static final int approveNameEvent = 2109;
-    public static final int assignRightsEvent = 808;
-    public static final int avatarEffectActivatedEvent = 2959;
-    public static final int avatarEffectSelectedEvent = 1752;
-    public static final int avatarExpressionEvent = 2456;
-    public static final int banUserWithDurationEvent = 1477;
-    public static final int breedPetsEvent = 1638;
-    public static final int buildersClubPlaceWallItemEvent = 2462;
-    public static final int buildersClubQueryFurniCountEvent = 2529;
-    public static final int buyMarketplaceOfferEvent = 1603;
-    public static final int callForHelpEvent = 1691;
-    public static final int callForHelpFromForumMessageEvent = 1412;
-    public static final int callForHelpFromForumThreadEvent = 534;
-    public static final int callForHelpFromIMEvent = 2950;
-    public static final int callForHelpFromPhotoEvent = 2492;
-    public static final int canCreateRoomEvent = 2128;
-    public static final int cancelMarketplaceOfferEvent = 434;
-    public static final int cancelPetBreedingEvent = 2713;
-    public static final int cancelTypingEvent = 1474;
-    public static final int changeMottoEvent = 2228;
-    public static final int changePostureEvent = 2235;
-    public static final int changeUserNameEvent = 2977;
-    public static final int chatEvent = 1314;
-    public static final int chatReviewGuideDecidesOnOfferEvent = 3365;
-    public static final int chatReviewGuideDetachedEvent = 2501;
-    public static final int chatReviewGuideVoteEvent = 3961;
-    public static final int chatReviewSessionCreateEvent = 3060;
-    public static final int checkUserNameEvent = 3950;
-    public static final int clientHelloEvent = 4000;
-    public static final int closeIssueDefaultActionEvent = 2717;
-    public static final int closeIssuesEvent = 2067;
-    public static final int closeTradingEvent = 2551;
-    public static final int commandBotEvent = 2624;
-    public static final int completeDiffieHandshakeEvent = 773;
-    public static final int compostPlantEvent = 3835;
-    public static final int confirmAcceptTradingEvent = 2760;
-    public static final int confirmDeclineTradingEvent = 2341;
-    public static final int confirmPetBreedingEvent = 3382;
-    public static final int controlYoutubeDisplayPlaybackEvent = 3005;
-    public static final int craftEvent = 3591;
-    public static final int craftSecretEvent = 1251;
-    public static final int createFlatEvent = 2752;
-    public static final int createGuildEvent = 230;
-    public static final int creditFurniRedeemEvent = 3115;
-    public static final int customizeAvatarWithFurniEvent = 3374;
-    public static final int customizePetWithFurniEvent = 1328;
-    public static final int danceEvent = 2080;
-    public static final int deactivateGuildEvent = 1134;
-    public static final int declineFriendEvent = 2890;
-    public static final int deleteFavouriteRoomEvent = 309;
-    public static final int deleteRoomEvent = 532;
-    public static final int deselectFavouriteHabboGroupEvent = 1820;
-    public static final int diceOffEvent = 1533;
-    public static final int dropCarryItemEvent = 2814;
-    public static final int editEventEvent = 3991;
-    public static final int enterOneWayDoorEvent = 2765;
-    public static final int eventLogEvent = 3457;
-    public static final int findNewFriendsEvent = 516;
-    public static final int followFriendEvent = 2970;
-    public static final int forwardToSomeRoomEvent = 1703;
-    public static final int friendFurniConfirmLockEvent = 3775;
-    public static final int game2GetAccountGameStatusEvent = 11;
-    public static final int gameUnloadedEvent = 3207;
-    public static final int getAchievementsEvent = 219;
-    public static final int getBadgePointLimitsEvent = 1371;
-    public static final int getBadgesEvent = 2769;
-    public static final int getBannedUsersFromRoomEvent = 2267;
-    public static final int getBonusRareInfoEvent = 957;
-    public static final int getBotCommandConfigurationDataEvent = 1986;
-    public static final int getBotInventoryEvent = 3848;
-    public static final int getBundleDiscountRulesetEvent = 223;
-    public static final int getCatalogIndexEvent = 1195;
-    public static final int getCatalogPageEvent = 412;
-    public static final int getCfhChatlogEvent = 211;
-    public static final int getCfhStatusEvent = 2746;
-    public static final int getClubGiftInfo = 487;
-    public static final int getClubOffersEvent = 3285;
-    public static final int getCraftableProductsEvent = 633;
-    public static final int getCraftingRecipeEvent = 1173;
-    public static final int getCraftingRecipesAvailableEvent = 3086;
-    public static final int getCreditsInfoEvent = 273;
-    public static final int getCurrentTimingCodeEvent = 2912;
-    public static final int getCustomRoomFilterEvent = 1911;
-    public static final int getExtendedProfileEvent = 3265;
-    public static final int getFlatControllersEvent = 3385;
-    public static final int getForumStatsEvent = 3149; // previously ConvertGlobalRoomIdEvent
-    public static final int getForumsListEvent = 873;
-    public static final int getFriendRequestsEvent = 2448;
-    public static final int getFurnitureAliasesEvent = 3898;
-    public static final int getGameListEvent = 741;
-    public static final int getGameStatusEvent = 3171;
-    public static final int getGiftWrappingConfigurationEvent = 418;
-    public static final int getGuestRoomEvent = 2230;
-    public static final int getGuideReportingStatusEvent = 3786;
-    public static final int getGuildCreationInfoEvent = 798;
-    public static final int getGuildEditInfoEvent = 1004;
-    public static final int getGuildEditorDataEvent = 813;
-    public static final int getGuildFurniContextMenuInfoEvent = 2651;
-    public static final int getGuildMembersEvent = 312;
-    public static final int getGuildMembershipsEvent = 367;
-    public static final int getHabboGroupBadgesEvent = 21;
-    public static final int getHabboGroupDetailsEvent = 2991;
-    public static final int getIgnoredUsersEvent = 3878;
-    public static final int getItemDataEvent = 3964;
-    public static final int getJukeboxPlayListEvent = 1435;
-    public static final int getLimitedOfferAppearingNextEvent = 410;
-    public static final int getMOTDEvent = 1523;
-    public static final int getMarketplaceCanMakeOfferEvent = 848;
-    public static final int getMarketplaceConfigurationEvent = 2597;
-    public static final int getMarketplaceItemStatsEvent = 3288;
-    public static final int getMarketplaceOffersEvent = 2407;
-    public static final int getMarketplaceOwnOffersEvent = 2105;
-    public static final int getMemberGuildItemCountEvent = 3593;
-    public static final int getMessagesEvent = 232;
-    public static final int getModeratorRoomInfoEvent = 707;
-    public static final int getModeratorUserInfoEvent = 3295;
-    public static final int getNowPlayingEvent = 1325;
-    public static final int getOccupiedTilesEvent = 1687;
-    public static final int getOfficialSongIdEvent = 3189;
-    public static final int getPendingCallsForHelpEvent = 3267;
-    public static final int getPetCommandsEvent = 2161;
-    public static final int getPetInfoEvent = 2934;
-    public static final int getPetInventoryEvent = 3095;
-    public static final int getPopularRoomTagsEvent = 826;
-    public static final int getProductOfferEvent = 2594;
-    public static final int getPromoArticlesEvent = 1827;
-    public static final int getRecyclerPrizesEvent = 398;
-    public static final int getRecyclerStatusEvent = 1342;
-    public static final int getRelationshipStatusInfoEvent = 2138;
-    public static final int getResolutionAchievementsEvent = 359;
-    public static final int getRoomAdPurchaseInfoEvent = 1075;
-    public static final int getRoomChatlogEvent = 2587;
-    public static final int getRoomEntryDataEvent = 2300;
-    public static final int getRoomEntryTileEvent = 3559;
-    public static final int getRoomSettingsEvent = 3129;
-    public static final int getRoomVisitsEvent = 3526;
-    public static final int getSelectedBadgesEvent = 2091;
-    public static final int getSellablePetPalettesEvent = 1756;
-    public static final int getSongInfoEvent = 3082;
-    public static final int getSoundSettingsEvent = 2388;
-    public static final int getTalentTrackEvent = 196;
-    public static final int getTalentTrackLevelEvent = 2127;
-    public static final int getThreadsEvent = 436;
-    public static final int getUnreadForumsCountEvent = 2908; // wtf is this wrong? // previously RequestPromotedRoomsEvent
-    public static final int getUserChatlogEvent = 1391;
-    public static final int getUserEventCatsEvent = 1782;
-    public static final int getUserFlatCatsEvent = 3027;
-    public static final int getUserTagsEvent = 17;
-    public static final int getWardrobeEvent = 2742;
-    public static final int getWeeklyGameRewardEvent = 2914;
-    public static final int getWeeklyGameRewardWinnersEvent = 1054;
-    public static final int getYoutubeDisplayStatusEvent = 336;
-    public static final int guideSessionCreateEvent = 3338;
-    public static final int guideSessionFeedbackEvent = 477;
-    public static final int guideSessionGetRequesterRoomEvent = 1052;
-    public static final int guideSessionGuideDecidesEvent = 1424;
-    public static final int guideSessionInviteRequesterEvent = 234;
-    public static final int guideSessionIsTypingEvent = 519;
-    public static final int guideSessionMessageEvent = 3899;
-    public static final int guideSessionOnDutyUpdateEvent = 1922;
-    public static final int guideSessionReportEvent = 3969;
-    public static final int guideSessionRequesterCancelsEvent = 291;
-    public static final int guideSessionResolvedEvent = 887;
-    public static final int habboSearchEvent = 1210;
-    public static final int hotelViewClaimBadgeRewardEvent = -1;
-    public static final int hotelViewRequestBadgeRewardEvent = 2318;
-    public static final int hotelViewRequestSecondsUntilEvent = 271;
-    public static final int ignoreUserEvent = 1117;
-    public static final int infoRetrieveEvent = 357;
-    public static final int initDiffieHandshakeEvent = 3110;
-    public static final int joinHabboGroupEvent = 998;
-    public static final int joinQueueEvent = 1458;
-    public static final int jukeBoxEventOne = 2304;
-    public static final int kickMemberEvent = 593;
-    public static final int latencyPingRequestEvent = 295;
-    public static final int letUserInEvent = 1644;
-    public static final int lookToEvent = 3301;
-    public static final int makeOfferEvent = 3447;
-    public static final int messengerInitEvent = 2781;
-    public static final int modAlertEvent = 229;
-    public static final int modBanEvent = 2766;
-    public static final int modKickEvent = 2582;
-    public static final int modMessageEvent = 1840;
-    public static final int modMuteEvent = 1945;
-    public static final int modToolRequestRoomUserChatlogEvent = -1;
-    public static final int modToolSanctionEvent = 1392;
-    public static final int modToolWarnEvent = -1;
-    public static final int modTradingLockEvent = 3742;
-    public static final int moderateMessageEvent = 286;
-    public static final int moderateRoomEvent = 3260;
-    public static final int moderateThreadEvent = 1397;
-    public static final int moderatorActionEvent = 3842;
-    public static final int mountPetEvent = 1036;
-    public static final int moveAvatarEvent = 3320;
-    public static final int moveObjectEvent = 248;
-    public static final int movePetEvent = 3449;
-    public static final int moveWallItemEvent = 168;
-    public static final int muteAllInRoomEvent = 3637;
-    public static final int myFavouriteRoomsSearchEvent = 2578;
-    public static final int myFriendsRoomsSearchEvent = 2266;
-    public static final int myGuildBasesSearchEvent = 39;
-    public static final int myRoomHistorySearchEvent = 2264;
-    public static final int myRoomRightsSearchEvent = 272;
-    public static final int myRoomsSearchEvent = 2277;
-    public static final int navigatorAddCollapsedCategoryEvent = 1834;
-    public static final int navigatorAddSavedSearchEvent = 2226;
-    public static final int navigatorDeleteSavedSearchEvent = 1954;
-    public static final int navigatorRemoveCollapsedCategoryEvent = 637;
-    public static final int navigatorSetSearchCodeViewModeEvent = 1202;
-    public static final int newNavigatorInitEvent = 2110;
-    public static final int newNavigatorSearchEvent = 249;
-    public static final int newUserExperienceGetGiftsEvent = 1822;
-    public static final int newUserExperienceScriptProceedEvent = 1299;
-    public static final int openCampaignCalendarDoorEvent = 8809;
-    public static final int openCampaignCalendarDoorAsStaffEvent = 2507;
-    public static final int openFlatConnectionEvent = 2312;
-    public static final int openPetPackageEvent = 3698;
-    public static final int openTradingEvent = 1481;
-    public static final int passCarryItemEvent = 2941;
-    public static final int pickIssuesEvent = 15;
-    public static final int pickupObjectEvent = 3456;
-    public static final int placeBotEvent = 1592;
-    public static final int placeObjectEvent = 1258;
-    public static final int placePetEvent = 2647;
-    public static final int placePostItEvent = 2248;
-    public static final int pollRejectEvent = 1773;
-    public static final int pollStartEvent = 109;
-    public static final int pongEvent = 2596;
-    public static final int popularRoomsSearchEvent = 2758;
-    public static final int postMessageEvent = 3529;
-    public static final int presentOpenEvent = 3558;
-    public static final int publishPhotoEvent = 2068;
-    public static final int purchaseFromCatalogAsGiftEvent = 1411;
-    public static final int purchaseFromCatalogEvent = 3492;
-    public static final int purchasePhotoEvent = 2408;
-    public static final int purchaseRoomAdEvent = 777;
-    public static final int purchaseTargetedOfferEvent = 1826;
-    public static final int purchaseVipMembershipExtensionEvent = 3407;
-    public static final int quitEvent = 105;
-    public static final int rateFlatEvent = 3582;
-    public static final int recycleItemsEvent = 2771;
-    public static final int redeemMarketplaceOfferCreditsEvent = 2650;
-    public static final int redeemVoucherEvent = 339;
-    public static final int rejectMembershipRequestEvent = 1894;
-    public static final int releaseIssuesEvent = 1572;
-    public static final int removeAdminRightsFromMemberEvent = 722;
-    public static final int removeAllRightsEvent = 2683;
-    public static final int removeBotFromFlatEvent = 3323;
-    public static final int removeFriendEvent = 1689;
-    public static final int removeItemEvent = 3336;
-    public static final int removeItemFromTradeEvent = 3845;
-    public static final int removeJukeboxDiskEvent = 3050;
-    public static final int removeOwnRoomRightsRoomEvent = 3182;
-    public static final int removePetFromFlatEvent = 1581;
-    public static final int removeRightsEvent = 2064;
-    public static final int removeSaddleFromPetEvent = 186;
-    public static final int renderRoomEvent = 3226;
-    public static final int renderRoomThumbnailEvent = 1982;
-    public static final int rentableSpaceCancelRentEvent = 1667;
-    public static final int rentableSpaceRentEvent = 2946;
-    public static final int requestAchievementConfigurationEvent = -1;
-    public static final int requestCameraConfigurationEvent = 796;
-    public static final int requestFriendEvent = 3157;
-    public static final int requestFurniInventoryEvent = 3150;
-    public static final int requestFurniInventoryWhenNotInRoomEvent = 3500;
-    public static final int requestRoomPropertySet = 711;
-    public static final int respectPetEvent = 3202;
-    public static final int respectUserEvent = 2694;
-    public static final int roomDimmerChangeStateEvent = 2296;
-    public static final int roomDimmerGetPresetsEvent = 2813;
-    public static final int roomDimmerSavePresetEvent = 1648;
-    public static final int roomTextSearchEvent = 3943;
-    public static final int roomUserKickEvent = 1320;
-    public static final int roomUserMuteEvent = 3485;
-    public static final int roomsWhereMyFriendsAreSearchEvent = 1786;
-    public static final int roomsWithHighestScoreSearchEvent = 2939;
-    public static final int sSOTicketEvent = 2419;
-    public static final int saveRoomSettingsEvent = 1969;
-    public static final int saveWardrobeOutfitEvent = 800;
-    public static final int scrGetKickbackInfoEvent = 869;
-    public static final int scrGetUserInfoEvent = 3166;
-    public static final int searchRoomsByTagEvent = -1;
-    public static final int selectClubGiftEvent = 2276;
-    public static final int selectFavouriteHabboGroupEvent = 3549;
-    public static final int sendMsgEvent = 3567;
-    public static final int sendRoomInviteEvent = 1276;
-    public static final int setActivatedBadgesEvent = 644;
-    public static final int setChatPreferencesEvent = 1262;
-    public static final int setChatStylePreferenceEvent = 1030;
-    public static final int setClothingChangeDataEvent = 924;
-    public static final int setCustomStackingHeightEvent = 3839;
-    public static final int setIgnoreRoomInvitesEvent = 1086;
-    public static final int setItemDataEvent = 3666;
-    public static final int setMannequinFigureEvent = 2209;
-    public static final int setMannequinNameEvent = 2850;
-    public static final int setNewNavigatorWindowPreferencesEvent = 3159;
-    public static final int setObjectDataEvent = 3608;
-    public static final int setRandomStateEvent = 3617;
-    public static final int setRelationshipStatusEvent = 3768;
-    public static final int setRoomBackgroundColorDataEvent = 2880;
-    public static final int setRoomCameraPreferencesEvent = 1461;
-    public static final int setSoundSettingsEvent = 1367;
-    public static final int setTargetedOfferStateEvent = 2041;
-    public static final int setYoutubeDisplayPlaylistEvent = 2069;
-    public static final int shoutEvent = 2085;
-    public static final int signEvent = 1975;
-    public static final int spinWheelOfFortuneEvent = 2144;
-    public static final int startTypingEvent = 1597;
-    public static final int submitRoomToCompetitionEvent = 2595;
-    public static final int throwDiceEvent = 1990;
-    public static final int togglePetBreedingPermissionEvent = 3379;
-    public static final int togglePetRidingPermissionEvent = 1472;
-    public static final int toggleStaffPickEvent = 1918;
-    public static final int unacceptTradingEvent = 1444;
-    public static final int unbanUserFromRoomEvent = 992;
-    public static final int unignoreUserEvent = 2061;
-    public static final int uniqueIDEvent = 2490;
-    public static final int updateActionEvent = 2281;
-    public static final int updateConditionEvent = 3203;
-    public static final int updateFigureDataEvent = 2730;
-    public static final int updateFloorPropertiesEvent = 875;
-    public static final int updateForumSettingsEvent = 2214;
-    public static final int updateGuildBadgeEvent = 1991;
-    public static final int updateGuildColorsEvent = 1764;
-    public static final int updateGuildIdentityEvent = 3137;
-    public static final int updateGuildSettingsEvent = 3435;
-    public static final int updateHomeRoomEvent = 1740;
-    public static final int updateRoomFilterEvent = 3001;
-    public static final int updateThreadEvent = 3045;
-    public static final int updateTriggerEvent = 1520;
-    public static final int updateUIFlagsEvent = 2313;
-    public static final int useFurnitureEvent = 99;
-    public static final int useWallItemEvent = 210;
-    public static final int visitUserEvent = 3997;
-    public static final int whisperEvent = 1543;
+    dropCarryItemEvent(2814, DropCarryItemEvent.class),
 
-    /**
-     * Incoming Emulator Packets which are currently NOT implemented.
-     * Named 1:1 based on outgoing client packet names from PRODUCTION-201611291003-338511768
-     * TODO: Implement them and move them to the above.
-    */
+    editEventEvent(3991, EditEventEvent.class),
 
-    public static final int acceptGameInviteEvent = 3802;
-    public static final int acceptQuestEvent = 3604; 
-    public static final int approveAllMembershipRequestsEvent = 882; 
-    public static final int buildersClubPlaceRoomItemEvent = 1051; 
-    public static final int buyMarketplaceTokensEvent = 1866; 
-    public static final int callForHelpFromSelfieEvent = 2755; 
-    public static final int cancelEventEvent = 2725; 
-    public static final int cancelQuestEvent = 3133; 
-    public static final int changeEmailEvent = 3965; 
-    public static final int changeQueueEvent = 3093; 
-    public static final int communityGoalVoteEvent = 3536; 
-    public static final int competitionRoomsSearchEvent = 433; 
-    public static final int deletePendingCallsForHelpEvent = 3605; 
-    public static final int disconnectEvent = 2445; 
-    public static final int extendRentOrBuyoutFurniEvent = 1071; 
-    public static final int extendRentOrBuyoutStripItemEvent = 2115; 
-    public static final int forwardToACompetitionRoomEvent = 172; 
-    public static final int forwardToARandomPromotedRoomEvent = 10; 
-    public static final int forwardToRandomCompetitionRoomEvent = 865; 
-    public static final int friendListUpdateEvent = 1419; 
-    public static final int friendRequestQuestCompleteEvent = 1148; 
-    public static final int game2CheckGameDirectoryStatusEvent = 3259; 
-    public static final int game2ExitGameEvent = 1445; 
-    public static final int game2GameChatEvent = 2502; 
-    public static final int game2GetWeeklyFriendsLeaderboardEvent = 1232;
-    public static final int game2GetWeeklyLeaderboardEvent = 2565; 
-    public static final int game2LoadStageReadyEvent = 2415; 
-    public static final int game2PlayAgainEvent = 3196; 
-    public static final int game2RequestFullStatusUpdateEvent = 1598; 
-    public static final int getCatalogPageExpirationEvent = 742; 
-    public static final int getCatalogPageWithEarliestExpiryEvent = 3135; 
-    public static final int getCategoriesWithUserCountEvent = 3782; 
-    public static final int getCommunityGoalEarnedPrizesEvent = 2688; 
-    public static final int getCommunityGoalHallOfFameEvent = 2167; 
-    public static final int getCommunityGoalProgressEvent = 1145; 
-    public static final int getConcurrentUsersGoalProgressEvent = 1343; 
-    public static final int getConcurrentUsersRewardEvent = 3872; 
-    public static final int getDailyQuestEvent = 2486; 
-    public static final int getDirectClubBuyAvailableEvent = 801; 
-    public static final int getEmailStatusEvent = 2557; 
-    public static final int getExtendedProfileByNameEvent = 2249; 
-    public static final int getFaqCategoryEvent = 3445; 
-    public static final int getFaqTextEvent = 1849; 
-    public static final int getGameAchievementsEvent = 2399; 
-    public static final int getHabboBasicMembershipExtendOfferEvent = 603; 
-    public static final int getInterstitialEvent = 2519;
-    public static final int getIsBadgeRequestFulfilledEvent = 1364; 
-    public static final int getIsOfferGiftableEvent = 1347; 
-    public static final int getIsUserPartOfCompetitionEvent = 2077; 
-    public static final int getNextTargetedOfferEvent = 2487; 
-    public static final int getOfficialRoomsEvent = 1229; 
-    public static final int getQuestsEvent = 3333; 
-    public static final int getQuizQuestionsEvent = 1296; 
-    public static final int getSeasonalCalendarDailyOfferEvent = 3257; 
-    public static final int getSeasonalQuestsOnlyEvent = 1190; 
-    public static final int getSoundMachinePlayListEvent = 3498; 
-    public static final int getTargetedOfferEvent = 596; 
-    public static final int getThreadEvent = 3900; 
-    public static final int getUserGameAchievementsEvent = 389; 
-    public static final int giveSupplementToPetEvent = 749; 
-    public static final int goToFlatEvent = 685; 
-    public static final int guideAdvertisementReadEvent = 2455; 
-    public static final int guildBaseSearchEvent = 2930; 
-    public static final int harvestPetEvent = 1521; 
-    public static final int ignoreUserIdEvent = 3314; 
-    public static final int interstitialShownEvent = 1109; 
-    public static final int lagWarningReportEvent = 3847; 
-    public static final int latencyPingReportEvent = 96; 
-    public static final int leaveQueueEvent = 2384; 
-    public static final int modToolPreferencesEvent = 31; 
-    public static final int myFrequentRoomHistorySearchEvent = 1002; 
-    public static final int myRecommendedRoomsEvent = 2537; 
-    public static final int mysteryBoxWaitingCanceledEvent = 2012; 
-    public static final int openMysteryTrophyEvent = 3074; 
-    public static final int openQuestTrackerEvent = 2750; 
-    public static final int openWelcomeGiftEvent = 2638; 
-    public static final int passCarryItemToPetEvent = 2768; 
-    public static final int peerUsersClassificationEvent = 1160; 
-    public static final int performanceLogEvent = 3230; 
-    public static final int petSelectedEvent = 549; 
-    public static final int photoCompetitionEvent = 3959; 
-    public static final int postQuizAnswersEvent = 3720; 
-    public static final int purchaseBasicMembershipExtensionEvent = 2735; 
-    public static final int redeemCommunityGoalPrizeEvent = 90; 
-    public static final int rejectQuestEvent = 2397; 
-    public static final int rentableSpaceStatusEvent = 872; 
-    public static final int requestABadgeEvent = 3077; 
-    public static final int resetPhoneNumberStateEvent = 2741; 
-    public static final int resetResolutionAchievementEvent = 3144; 
-    public static final int resetUnseenItemIdsEvent = 3493; 
-    public static final int resetUnseenItemsEvent = 2343; 
-    public static final int roomAdEventTabAdClickedEvent = 2412; 
-    public static final int roomAdEventTabViewedEvent = 2668; 
-    public static final int roomAdPurchaseInitiatedEvent = 2283; 
-    public static final int roomAdSearchEvent = 2809; 
-    public static final int roomCompetitionInitEvent = 1334; 
-    public static final int roomNetworkOpenConnectionEvent = 3736; 
-    public static final int roomUsersClassificationEvent = 2285; 
-    public static final int searchFaqsEvent = 2031; 
-    public static final int setPhoneNumberVerificationStatusEvent = 1379; 
-    public static final int setRoomSessionTagsEvent = 3305; 
-    public static final int shopTargetedOfferViewedEvent = 3483; 
-    public static final int startCampaignEvent = 1697;
-    public static final int tryPhoneNumberEvent = 790; 
-    public static final int unblockGroupMemberEvent = 2864; 
-    public static final int updateForumReadMarkerEvent = 1855; 
-    public static final int updateRoomCategoryAndTradeSettingsEvent = 1265; 
-    public static final int updateRoomThumbnailEvent = 2468; 
-    public static final int verifyCodeEvent = 2721; 
-    public static final int versionCheckEvent = 1053; 
-    public static final int voteForRoomEvent = 143; 
-    public static final int welcomeGiftChangeEmailEvent = 66; 
+    enterOneWayDoorEvent(2765, EnterOneWayDoorEvent.class),
 
-    /**
-     * Snowstorm incoming packets, which are not from PRODUCTION-201611291003-338511768, but are in the OpenSource SWF.
-    */
+    eventLogEvent(3457, EventLogEvent.class),
 
-    public static final int unknownSnowStormEvent_6000 = 6000;
-    public static final int unknownSnowStormEvent_6001 = 6001;
-    public static final int unknownSnowStormEvent_6002 = 6002;
-    public static final int unknownSnowStormEvent_6003 = 6003;
-    public static final int unknownSnowStormEvent_6004 = 6004;
-    public static final int unknownSnowStormEvent_6005 = 6005;
-    public static final int unknownSnowStormEvent_6006 = 6006;
-    public static final int unknownSnowStormEvent_6007 = 6007;
-    public static final int unknownSnowStormEvent_6008 = 6008;
-    public static final int unknownSnowStormEvent_6009 = 6009;
-    public static final int unknownSnowStormEvent_6010 = 6010;
-    public static final int unknownSnowStormEvent_6011 = 6011;
-    public static final int snowStormJoinQueueEvent = 6012;
-    public static final int unknownSnowStormEvent_6013 = 6013;
-    public static final int unknownSnowStormEvent_6014 = 6014;
-    public static final int unknownSnowStormEvent_6015 = 6015;
-    public static final int unknownSnowStormEvent_6016 = 6016;
-    public static final int unknownSnowStormEvent_6017 = 6017;
-    public static final int unknownSnowStormEvent_6018 = 6018;
-    public static final int unknownSnowStormEvent_6019 = 6019;
-    public static final int unknownSnowStormEvent_6020 = 6020;
-    public static final int unknownSnowStormEvent_6021 = 6021;
-    public static final int unknownSnowStormEvent_6022 = 6022;
-    public static final int unknownSnowStormEvent_6023 = 6023;
-    public static final int unknownSnowStormEvent_6024 = 6024;
-    public static final int unknownSnowStormEvent_6025 = 6025;
-    public static final int snowStormUserPickSnowballEvent = 6026;
+    findNewFriendsEvent(516, FindNewFriendsEvent.class),
+
+    followFriendEvent(2970, FollowFriendEvent.class),
+
+    forwardToSomeRoomEvent(1703, ForwardToSomeRoomEvent.class),
+
+    friendFurniConfirmLockEvent(3775, FriendFurniConfirmLockEvent.class),
+
+    game2GetAccountGameStatusEvent(11, UnknownEvent2.class),
+
+    gameUnloadedEvent(3207, GameUnloadedEvent.class),
+
+    getAchievementsEvent(219, GetAchievementsEvent.class),
+
+    getBadgePointLimitsEvent(1371, GetBadgePointLimitsEvent.class),
+
+    getBadgesEvent(2769, GetBadgesEvent.class),
+
+    getBannedUsersFromRoomEvent(2267, GetBannedUsersFromRoomEvent.class),
+
+    getBonusRareInfoEvent(957, GetBonusRareInfoEvent.class),
+
+    getBotCommandConfigurationDataEvent(1986, GetBotCommandConfigurationDataEvent.class),
+
+    getBotInventoryEvent(3848, GetBotInventoryEvent.class),
+
+    getBundleDiscountRulesetEvent(223, GetBundleDiscountRulesetEvent.class),
+
+    getCatalogIndexEvent(1195, GetCatalogIndexEvent.class),
+
+    getCatalogPageEvent(412, GetCatalogPageEvent.class),
+
+    getCfhChatlogEvent(211, GetCfhChatlogEvent.class),
+
+    getCfhStatusEvent(2746, GetCfhStatusEvent.class),
+
+    getClubGiftInfo(487, GetClubGiftInfo.class),
+
+    getClubOffersEvent(3285, GetClubOffersEvent.class),
+
+    getCraftableProductsEvent(633, GetCraftableProductsEvent.class),
+
+    getCraftingRecipeEvent(1173, GetCraftingRecipeEvent.class),
+
+    getCraftingRecipesAvailableEvent(3086, GetCraftingRecipesAvailableEvent.class),
+
+    getCreditsInfoEvent(273, GetCreditsInfoEvent.class),
+
+    getCurrentTimingCodeEvent(2912, GetCurrentTimingCodeEvent.class),
+
+    getCustomRoomFilterEvent(1911, GetCustomRoomFilterEvent.class),
+
+    getExtendedProfileEvent(3265, GetExtendedProfileEvent.class),
+
+    getFlatControllersEvent(3385, GetFlatControllersEvent.class),
+
+    getForumStatsEvent(3149, GetForumStatsEvent.class),
+
+    getForumsListEvent(873, GetForumsListEvent.class),
+
+    getFriendRequestsEvent(2448, GetFriendRequestsEvent.class),
+
+    getFurnitureAliasesEvent(3898, GetRoomEntryDataEvent.class),
+
+    getGameListEvent(741, GetGameListEvent.class),
+
+    getGameStatusEvent(3171, GetGameStatusEvent.class),
+
+    getGiftWrappingConfigurationEvent(418, GetGiftWrappingConfigurationEvent.class),
+
+    getGuestRoomEvent(2230, GetGuestRoomEvent.class),
+
+    getGuideReportingStatusEvent(3786, GetGuideReportingStatusEvent.class),
+
+    getGuildCreationInfoEvent(798, GetGuildCreationInfoEvent.class),
+
+    getGuildEditInfoEvent(1004, GetGuildEditInfoEvent.class),
+
+    getGuildEditorDataEvent(813, GetGuildEditorDataEvent.class),
+
+    getGuildFurniContextMenuInfoEvent(2651, GetGuildFurniContextMenuInfoEvent.class),
+
+    getGuildMembersEvent(312, GetGuildMembersEvent.class),
+
+    getGuildMembershipsEvent(367, GetGuildMembershipsEvent.class),
+
+    getHabboGroupBadgesEvent(21, GetHabboGroupBadgesEvent.class),
+
+    getHabboGroupDetailsEvent(2991, GetHabboGroupDetailsEvent.class),
+
+    getIgnoredUsersEvent(3878, GetIgnoredUsersEvent.class),
+
+    getItemDataEvent(3964, GetItemDataEvent.class),
+
+    getJukeboxPlayListEvent(1435, GetJukeboxPlayListEvent.class),
+
+    getLimitedOfferAppearingNextEvent(410, GetLimitedOfferAppearingNextEvent.class),
+
+    getMOTDEvent(1523, GetMOTDEvent.class),
+
+    getMarketplaceCanMakeOfferEvent(848, GetMarketplaceCanMakeOfferEvent.class),
+
+    getMarketplaceConfigurationEvent(2597, GetMarketplaceConfigurationEvent.class),
+
+    getMarketplaceItemStatsEvent(3288, GetMarketplaceItemStatsEvent.class),
+
+    getMarketplaceOffersEvent(2407, GetMarketplaceOffersEvent.class),
+
+    getMarketplaceOwnOffersEvent(2105, GetMarketplaceOwnOffersEvent.class),
+
+    getMemberGuildItemCountEvent(3593, GetMemberGuildItemCountEvent.class),
+
+    getMessagesEvent(232, GetMessagesEvent.class),
+
+    getModeratorRoomInfoEvent(707, GetModeratorRoomInfoEvent.class),
+
+    getModeratorUserInfoEvent(3295, GetModeratorUserInfoEvent.class),
+
+    getNowPlayingEvent(1325, GetNowPlayingEvent.class),
+
+    getOccupiedTilesEvent(1687, GetOccupiedTilesEvent.class),
+
+    getOfficialSongIdEvent(3189, GetOfficialSongIdEvent.class),
+
+    getPendingCallsForHelpEvent(3267, GetPendingCallsForHelpEvent.class),
+
+    getPetCommandsEvent(2161, GetPetCommandsEvent.class),
+
+    getPetInfoEvent(2934, GetPetInfoEvent.class),
+
+    getPetInventoryEvent(3095, GetPetInventoryEvent.class),
+
+    getPopularRoomTagsEvent(826, GetPopularRoomTagsEvent.class),
+
+    getProductOfferEvent(2594, GetProductOfferEvent.class),
+
+    getPromoArticlesEvent(1827, GetPromoArticlesEvent.class),
+
+    getRecyclerPrizesEvent(398, GetRecyclerPrizesEvent.class),
+
+    getRecyclerStatusEvent(1342, GetRecyclerStatusEvent.class),
+
+    getRelationshipStatusInfoEvent(2138, GetRelationshipStatusInfoEvent.class),
+
+    getResolutionAchievementsEvent(359, GetResolutionAchievementsEvent.class),
+
+    getRoomAdPurchaseInfoEvent(1075, GetRoomAdPurchaseInfoEvent.class),
+
+    getRoomChatlogEvent(2587, GetRoomChatlogEvent.class),
+
+    getRoomEntryDataEvent(2300, GetRoomEntryDataEvent.class),
+
+    getRoomEntryTileEvent(3559, GetRoomEntryTileEvent.class),
+
+    getRoomSettingsEvent(3129, GetRoomSettingsEvent.class),
+
+    getRoomVisitsEvent(3526, GetRoomVisitsEvent.class),
+
+    getSelectedBadgesEvent(2091, GetSelectedBadgesEvent.class),
+
+    getSellablePetPalettesEvent(1756, GetSellablePetPalettesEvent.class),
+
+    getSongInfoEvent(3082, GetSongInfoEvent.class),
+
+    getSoundSettingsEvent(2388, GetSoundSettingsEvent.class),
+
+    getTalentTrackEvent(196, GetTalentTrackEvent.class),
+
+    getTalentTrackLevelEvent(2127, GetTalentTrackLevelEvent.class),
+
+    getThreadsEvent(436, GetThreadsEvent.class),
+
+    getUnreadForumsCountEvent(2908, GetUnreadForumsCountEvent.class),
+
+    getUserChatlogEvent(1391, GetUserChatlogEvent.class),
+
+    getUserEventCatsEvent(1782, GetUserEventCatsEvent.class),
+
+    getUserFlatCatsEvent(3027, GetUserFlatCatsEvent.class),
+
+    getUserTagsEvent(17, GetUserTagsEvent.class),
+
+    getWardrobeEvent(2742, GetWardrobeEvent.class),
+
+    getWeeklyGameRewardEvent(2914, GetWeeklyGameRewardEvent.class),
+
+    getWeeklyGameRewardWinnersEvent(1054, GetWeeklyGameRewardWinnersEvent.class),
+
+    getYoutubeDisplayStatusEvent(336, GetYoutubeDisplayStatusEvent.class),
+
+    guideSessionCreateEvent(3338, GuideSessionCreateEvent.class),
+
+    guideSessionFeedbackEvent(477, GuideSessionFeedbackEvent.class),
+
+    guideSessionGetRequesterRoomEvent(1052, GuideSessionGetRequesterRoomEvent.class),
+
+    guideSessionGuideDecidesEvent(1424, GuideSessionGuideDecidesEvent.class),
+
+    guideSessionInviteRequesterEvent(234, GuideSessionInviteRequesterEvent.class),
+
+    guideSessionIsTypingEvent(519, GuideSessionIsTypingEvent.class),
+
+    guideSessionMessageEvent(3899, GuideSessionMessageEvent.class),
+
+    guideSessionOnDutyUpdateEvent(1922, GuideSessionOnDutyUpdateEvent.class),
+
+    guideSessionReportEvent(3969, GuideSessionReportEvent.class),
+
+    guideSessionRequesterCancelsEvent(291, GuideSessionRequesterCancelsEvent.class),
+
+    guideSessionResolvedEvent(887, GuideSessionResolvedEvent.class),
+
+    habboSearchEvent(1210, HabboSearchEvent.class),
+
+    hotelViewClaimBadgeRewardEvent(-1, HotelViewClaimBadgeRewardEvent.class),
+
+    hotelViewRequestBadgeRewardEvent(2318, HotelViewRequestBadgeRewardEvent.class),
+
+    hotelViewRequestSecondsUntilEvent(271, HotelViewRequestSecondsUntilEvent.class),
+
+    ignoreUserEvent(1117, IgnoreUserEvent.class),
+
+    infoRetrieveEvent(357, InfoRetrieveEvent.class),
+
+    initDiffieHandshakeEvent(3110, InitDiffieHandshakeEvent.class),
+
+    joinHabboGroupEvent(998, JoinHabboGroupEvent.class),
+
+    joinQueueEvent(1458, JoinQueueEvent.class),
+
+    jukeBoxEventOne(2304, JukeBoxEventOne.class),
+
+    kickMemberEvent(593, KickMemberEvent.class),
+
+    latencyPingRequestEvent(295, LatencyPingRequestEvent.class),
+
+    letUserInEvent(1644, LetUserInEvent.class),
+
+    lookToEvent(3301, LookToEvent.class),
+
+    makeOfferEvent(3447, MakeOfferEvent.class),
+
+    messengerInitEvent(2781, MessengerInitEvent.class),
+
+    modAlertEvent(229, ModAlertEvent.class),
+
+    modBanEvent(2766, ModBanEvent.class),
+
+    modKickEvent(2582, ModKickEvent.class),
+
+    modMessageEvent(1840, ModMessageEvent.class),
+
+    modMuteEvent(1945, ModMuteEvent.class),
+
+    modToolRequestRoomUserChatlogEvent(-1, ModToolRequestRoomUserChatlogEvent.class),
+
+    modToolSanctionEvent(1392, ModToolSanctionEvent.class),
+
+    modToolWarnEvent(-1, ModToolWarnEvent.class),
+
+    modTradingLockEvent(3742, ModTradingLockEvent.class),
+
+    moderateMessageEvent(286, ModerateMessageEvent.class),
+
+    moderateRoomEvent(3260, ModerateRoomEvent.class),
+
+    moderateThreadEvent(1397, ModerateThreadEvent.class),
+
+    moderatorActionEvent(3842, ModeratorActionEvent.class),
+
+    mountPetEvent(1036, MountPetEvent.class),
+
+    moveAvatarEvent(3320, MoveAvatarEvent.class),
+
+    moveObjectEvent(248, MoveObjectEvent.class),
+
+    movePetEvent(3449, MovePetEvent.class),
+
+    moveWallItemEvent(168, MoveWallItemEvent.class),
+
+    muteAllInRoomEvent(3637, MuteAllInRoomEvent.class),
+
+    myFavouriteRoomsSearchEvent(2578, MyFavouriteRoomsSearchEvent.class),
+
+    myFriendsRoomsSearchEvent(2266, MyFriendsRoomsSearchEvent.class),
+
+    myGuildBasesSearchEvent(39, MyGuildBasesSearchEvent.class),
+
+    myRoomHistorySearchEvent(2264, MyRoomHistorySearchEvent.class),
+
+    myRoomRightsSearchEvent(272, MyRoomRightsSearchEvent.class),
+
+    myRoomsSearchEvent(2277, MyRoomsSearchEvent.class),
+
+    navigatorAddCollapsedCategoryEvent(1834, NavigatorAddCollapsedCategoryEvent.class),
+
+    navigatorAddSavedSearchEvent(2226, NavigatorAddSavedSearchEvent.class),
+
+    navigatorDeleteSavedSearchEvent(1954, NavigatorDeleteSavedSearchEvent.class),
+
+    navigatorRemoveCollapsedCategoryEvent(637, NavigatorRemoveCollapsedCategoryEvent.class),
+
+    navigatorSetSearchCodeViewModeEvent(1202, NavigatorSetSearchCodeViewModeEvent.class),
+
+    newNavigatorInitEvent(2110, NewNavigatorInitEvent.class),
+
+    newNavigatorSearchEvent(249, NewNavigatorSearchEvent.class),
+
+    newUserExperienceGetGiftsEvent(1822, NewUserExperienceGetGiftsEvent.class),
+
+    newUserExperienceScriptProceedEvent(1299, NewUserExperienceScriptProceedEvent.class),
+
+    openCampaignCalendarDoorEvent(8809, OpenCampaignCalendarDoorEvent.class),
+
+    openCampaignCalendarDoorAsStaffEvent(2507, OpenCampaignCalendarDoorAsStaffEvent.class),
+
+    openFlatConnectionEvent(2312, OpenFlatConnectionEvent.class),
+
+    openPetPackageEvent(3698, OpenPetPackageEvent.class),
+
+    openTradingEvent(1481, OpenTradingEvent.class),
+
+    passCarryItemEvent(2941, PassCarryItemEvent.class),
+
+    pickIssuesEvent(15, PickIssuesEvent.class),
+
+    pickupObjectEvent(3456, PickupObjectEvent.class),
+
+    placeBotEvent(1592, PlaceBotEvent.class),
+
+    placeObjectEvent(1258, PlaceObjectEvent.class),
+
+    placePetEvent(2647, PlacePetEvent.class),
+
+    placePostItEvent(2248, PlacePostItEvent.class),
+
+    pollRejectEvent(1773, PollRejectEvent.class),
+
+    pollStartEvent(109, PollStartEvent.class),
+
+    pongEvent(2596, UnknownEvent2.class),
+
+    popularRoomsSearchEvent(2758, PopularRoomsSearchEvent.class),
+
+    postMessageEvent(3529, PostMessageEvent.class),
+
+    presentOpenEvent(3558, PresentOpenEvent.class),
+
+    publishPhotoEvent(2068, PublishPhotoEvent.class),
+
+    purchaseFromCatalogAsGiftEvent(1411, PurchaseFromCatalogAsGiftEvent.class),
+
+    purchaseFromCatalogEvent(3492, PurchaseFromCatalogEvent.class),
+
+    purchasePhotoEvent(2408, PurchasePhotoEvent.class),
+
+    purchaseRoomAdEvent(777, PurchaseRoomAdEvent.class),
+
+    purchaseTargetedOfferEvent(1826, PurchaseTargetedOfferEvent.class),
+
+    purchaseVipMembershipExtensionEvent(3407, PurchaseVipMembershipExtensionEvent.class),
+
+    quitEvent(105, QuitEvent.class),
+
+    rateFlatEvent(3582, RateFlatEvent.class),
+
+    recycleItemsEvent(2771, RecycleItemsEvent.class),
+
+    redeemMarketplaceOfferCreditsEvent(2650, RedeemMarketplaceOfferCreditsEvent.class),
+
+    redeemVoucherEvent(339, RedeemVoucherEvent.class),
+
+    rejectMembershipRequestEvent(1894, RejectMembershipRequestEvent.class),
+
+    releaseIssuesEvent(1572, ReleaseIssuesEvent.class),
+
+    removeAdminRightsFromMemberEvent(722, RemoveAdminRightsFromMemberEvent.class),
+
+    removeAllRightsEvent(2683, RemoveAllRightsEvent.class),
+
+    removeBotFromFlatEvent(3323, RemoveBotFromFlatEvent.class),
+
+    removeFriendEvent(1689, RemoveFriendEvent.class),
+
+    removeItemEvent(3336, RemoveItemEvent.class),
+
+    removeItemFromTradeEvent(3845, RemoveItemFromTradeEvent.class),
+
+    removeJukeboxDiskEvent(3050, RemoveJukeboxDiskEvent.class),
+
+    removeOwnRoomRightsRoomEvent(3182, RemoveOwnRoomRightsRoomEvent.class),
+
+    removePetFromFlatEvent(1581, RemovePetFromFlatEvent.class),
+
+    removeRightsEvent(2064, RemoveRightsEvent.class),
+
+    removeSaddleFromPetEvent(186, RemoveSaddleFromPetEvent.class),
+
+    renderRoomEvent(3226, RenderRoomEvent.class),
+
+    renderRoomThumbnailEvent(1982, RenderRoomThumbnailEvent.class),
+
+    rentableSpaceCancelRentEvent(1667, RentableSpaceCancelRentEvent.class),
+
+    rentableSpaceRentEvent(2946, RentableSpaceRentEvent.class),
+
+    requestAchievementConfigurationEvent(-1, RequestAchievementConfigurationEvent.class),
+
+    requestCameraConfigurationEvent(796, RequestCameraConfigurationEvent.class),
+
+    requestFriendEvent(3157, RequestFriendEvent.class),
+
+    requestFurniInventoryEvent(3150, RequestFurniInventoryWhenNotInRoomEvent.class),
+
+    requestFurniInventoryWhenNotInRoomEvent(3500, RequestFurniInventoryWhenNotInRoomEvent.class),
+
+    requestRoomPropertySet(711, RequestRoomPropertySet.class),
+
+    respectPetEvent(3202, RespectPetEvent.class),
+
+    respectUserEvent(2694, RespectUserEvent.class),
+
+    roomDimmerChangeStateEvent(2296, RoomDimmerChangeStateEvent.class),
+
+    roomDimmerGetPresetsEvent(2813, RoomDimmerGetPresetsEvent.class),
+
+    roomDimmerSavePresetEvent(1648, RoomDimmerSavePresetEvent.class),
+
+    roomTextSearchEvent(3943, RoomTextSearchEvent.class),
+
+    roomUserKickEvent(1320, RoomUserKickEvent.class),
+
+    roomUserMuteEvent(3485, RoomUserMuteEvent.class),
+
+    roomsWhereMyFriendsAreSearchEvent(1786, RoomsWhereMyFriendsAreSearchEvent.class),
+
+    roomsWithHighestScoreSearchEvent(2939, RoomsWithHighestScoreSearchEvent.class),
+
+    sSOTicketEvent(2419, SSOTicketEvent.class),
+
+    saveRoomSettingsEvent(1969, SaveRoomSettingsEvent.class),
+
+    saveWardrobeOutfitEvent(800, SaveWardrobeOutfitEvent.class),
+
+    scrGetKickbackInfoEvent(869, ScrGetKickbackInfoEvent.class),
+
+    scrGetUserInfoEvent(3166, ScrGetUserInfoEvent.class),
+
+    searchRoomsByTagEvent(-1, SearchRoomsByTagEvent.class),
+
+    selectClubGiftEvent(2276, SelectClubGiftEvent.class),
+
+    selectFavouriteHabboGroupEvent(3549, SelectFavouriteHabboGroupEvent.class),
+
+    sendMsgEvent(3567, SendMsgEvent.class),
+
+    sendRoomInviteEvent(1276, SendRoomInviteEvent.class),
+
+    setActivatedBadgesEvent(644, SetActivatedBadgesEvent.class),
+
+    setChatPreferencesEvent(1262, SetChatPreferencesEvent.class),
+
+    setChatStylePreferenceEvent(1030, SetChatStylePreferenceEvent.class),
+
+    setClothingChangeDataEvent(924, SetClothingChangeDataEvent.class),
+
+    setCustomStackingHeightEvent(3839, SetCustomStackingHeightEvent.class),
+
+    setIgnoreRoomInvitesEvent(1086, SetIgnoreRoomInvitesEvent.class),
+
+    setItemDataEvent(3666, SetItemDataEvent.class),
+
+    setMannequinFigureEvent(2209, SetMannequinFigureEvent.class),
+
+    setMannequinNameEvent(2850, SetMannequinNameEvent.class),
+
+    setNewNavigatorWindowPreferencesEvent(3159, SetNewNavigatorWindowPreferencesEvent.class),
+
+    setObjectDataEvent(3608, SetObjectDataEvent.class),
+
+    setRandomStateEvent(3617, SetRandomStateEvent.class),
+
+    setRelationshipStatusEvent(3768, SetRelationshipStatusEvent.class),
+
+    setRoomBackgroundColorDataEvent(2880, SetRoomBackgroundColorDataEvent.class),
+
+    setRoomCameraPreferencesEvent(1461, SetRoomCameraPreferencesEvent.class),
+
+    setSoundSettingsEvent(1367, SetSoundSettingsEvent.class),
+
+    setTargetedOfferStateEvent(2041, SetTargetedOfferStateEvent.class),
+
+    setYoutubeDisplayPlaylistEvent(2069, SetYoutubeDisplayPlaylistEvent.class),
+
+    shoutEvent(2085, ShoutEvent.class),
+
+    signEvent(1975, SignEvent.class),
+
+    spinWheelOfFortuneEvent(2144, SpinWheelOfFortuneEvent.class),
+
+    startTypingEvent(1597, StartTypingEvent.class),
+
+    submitRoomToCompetitionEvent(2595, SubmitRoomToCompetitionEvent.class),
+
+    throwDiceEvent(1990, ThrowDiceEvent.class),
+
+    togglePetBreedingPermissionEvent(3379, TogglePetBreedingPermissionEvent.class),
+
+    togglePetRidingPermissionEvent(1472, TogglePetRidingPermissionEvent.class),
+
+    toggleStaffPickEvent(1918, ToggleStaffPickEvent.class),
+
+    unacceptTradingEvent(1444, UnacceptTradingEvent.class),
+
+    unbanUserFromRoomEvent(992, UnbanUserFromRoomEvent.class),
+
+    unignoreUserEvent(2061, UnignoreUserEvent.class),
+
+    uniqueIDEvent(2490, UniqueIDEvent.class),
+
+    updateActionEvent(2281, UpdateActionEvent.class),
+
+    updateConditionEvent(3203, UpdateConditionEvent.class),
+
+    updateFigureDataEvent(2730, UpdateFigureDataEvent.class),
+
+    updateFloorPropertiesEvent(875, UpdateFloorPropertiesEvent.class),
+
+    updateForumSettingsEvent(2214, UpdateForumSettingsEvent.class),
+
+    updateGuildBadgeEvent(1991, UpdateGuildBadgeEvent.class),
+
+    updateGuildColorsEvent(1764, UpdateGuildColorsEvent.class),
+
+    updateGuildIdentityEvent(3137, UpdateGuildIdentityEvent.class),
+
+    updateGuildSettingsEvent(3435, UpdateGuildSettingsEvent.class),
+
+    updateHomeRoomEvent(1740, UpdateHomeRoomEvent.class),
+
+    updateRoomFilterEvent(3001, UpdateRoomFilterEvent.class),
+
+    updateThreadEvent(3045, UpdateThreadEvent.class),
+
+    updateTriggerEvent(1520, UpdateTriggerEvent.class),
+
+    updateUIFlagsEvent(2313, UpdateUIFlagsEvent.class),
+
+    useFurnitureEvent(99, UseFurnitureEvent.class),
+
+    useWallItemEvent(210, UseWallItemEvent.class),
+
+    visitUserEvent(3997, VisitUserEvent.class),
+
+    whisperEvent(1543, WhisperEvent.class),
+
+    acceptGameInviteEvent(3802, UnknownEvent2.class),
+
+    acceptQuestEvent(3604, UnknownEvent2.class),
+
+    approveAllMembershipRequestsEvent(882, UnknownEvent2.class),
+
+    buildersClubPlaceRoomItemEvent(1051, UnknownEvent2.class),
+
+    buyMarketplaceTokensEvent(1866, UnknownEvent2.class),
+
+    callForHelpFromSelfieEvent(2755, UnknownEvent2.class),
+
+    cancelEventEvent(2725, UnknownEvent2.class),
+
+    cancelQuestEvent(3133, UnknownEvent2.class),
+
+    changeEmailEvent(3965, UnknownEvent2.class),
+
+    changeQueueEvent(3093, UnknownEvent2.class),
+
+    communityGoalVoteEvent(3536, UnknownEvent2.class),
+
+    competitionRoomsSearchEvent(433, UnknownEvent2.class),
+
+    deletePendingCallsForHelpEvent(3605, UnknownEvent2.class),
+
+    disconnectEvent(2445, UnknownEvent2.class),
+
+    extendRentOrBuyoutFurniEvent(1071, UnknownEvent2.class),
+
+    extendRentOrBuyoutStripItemEvent(2115, UnknownEvent2.class),
+
+    forwardToACompetitionRoomEvent(172, UnknownEvent2.class),
+
+    forwardToARandomPromotedRoomEvent(10, UnknownEvent2.class),
+
+    forwardToRandomCompetitionRoomEvent(865, UnknownEvent2.class),
+
+    friendListUpdateEvent(1419, UnknownEvent2.class),
+
+    friendRequestQuestCompleteEvent(1148, UnknownEvent2.class),
+
+    game2CheckGameDirectoryStatusEvent(3259, UnknownEvent2.class),
+
+    game2ExitGameEvent(1445, UnknownEvent2.class),
+
+    game2GameChatEvent(2502, UnknownEvent2.class),
+
+    game2GetWeeklyFriendsLeaderboardEvent(1232, UnknownEvent2.class),
+
+    game2GetWeeklyLeaderboardEvent(2565, UnknownEvent2.class),
+
+    game2LoadStageReadyEvent(2415, UnknownEvent2.class),
+
+    game2PlayAgainEvent(3196, UnknownEvent2.class),
+
+    game2RequestFullStatusUpdateEvent(1598, UnknownEvent2.class),
+
+    getCatalogPageExpirationEvent(742, UnknownEvent2.class),
+
+    getCatalogPageWithEarliestExpiryEvent(3135, UnknownEvent2.class),
+
+    getCategoriesWithUserCountEvent(3782, UnknownEvent2.class),
+
+    getCommunityGoalEarnedPrizesEvent(2688, UnknownEvent2.class),
+
+    getCommunityGoalHallOfFameEvent(2167, UnknownEvent2.class),
+
+    getCommunityGoalProgressEvent(1145, UnknownEvent2.class),
+
+    getConcurrentUsersGoalProgressEvent(1343, UnknownEvent2.class),
+
+    getConcurrentUsersRewardEvent(3872, UnknownEvent2.class),
+
+    getDailyQuestEvent(2486, UnknownEvent2.class),
+
+    getDirectClubBuyAvailableEvent(801, UnknownEvent2.class),
+
+    getEmailStatusEvent(2557, UnknownEvent2.class),
+
+    getExtendedProfileByNameEvent(2249, UnknownEvent2.class),
+
+    getFaqCategoryEvent(3445, UnknownEvent2.class),
+
+    getFaqTextEvent(1849, UnknownEvent2.class),
+
+    getGameAchievementsEvent(2399, UnknownEvent2.class),
+
+    getHabboBasicMembershipExtendOfferEvent(603, UnknownEvent2.class),
+
+    getInterstitialEvent(2519, UnknownEvent2.class),
+
+    getIsBadgeRequestFulfilledEvent(1364, UnknownEvent2.class),
+
+    getIsOfferGiftableEvent(1347, UnknownEvent2.class),
+
+    getIsUserPartOfCompetitionEvent(2077, UnknownEvent2.class),
+
+    getNextTargetedOfferEvent(2487, UnknownEvent2.class),
+
+    getOfficialRoomsEvent(1229, UnknownEvent2.class),
+
+    getQuestsEvent(3333, UnknownEvent2.class),
+
+    getQuizQuestionsEvent(1296, UnknownEvent2.class),
+
+    getSeasonalCalendarDailyOfferEvent(3257, UnknownEvent2.class),
+
+    getSeasonalQuestsOnlyEvent(1190, UnknownEvent2.class),
+
+    getSoundMachinePlayListEvent(3498, UnknownEvent2.class),
+
+    getTargetedOfferEvent(596, UnknownEvent2.class),
+
+    getThreadEvent(3900, UnknownEvent2.class),
+
+    getUserGameAchievementsEvent(389, UnknownEvent2.class),
+
+    giveSupplementToPetEvent(749, UnknownEvent2.class),
+
+    goToFlatEvent(685, UnknownEvent2.class),
+
+    guideAdvertisementReadEvent(2455, UnknownEvent2.class),
+
+    guildBaseSearchEvent(2930, UnknownEvent2.class),
+
+    harvestPetEvent(1521, UnknownEvent2.class),
+
+    ignoreUserIdEvent(3314, UnknownEvent2.class),
+
+    interstitialShownEvent(1109, UnknownEvent2.class),
+
+    lagWarningReportEvent(3847, UnknownEvent2.class),
+
+    latencyPingReportEvent(96, UnknownEvent2.class),
+
+    leaveQueueEvent(2384, UnknownEvent2.class),
+
+    modToolPreferencesEvent(31, UnknownEvent2.class),
+
+    myFrequentRoomHistorySearchEvent(1002, UnknownEvent2.class),
+
+    myRecommendedRoomsEvent(2537, UnknownEvent2.class),
+
+    mysteryBoxWaitingCanceledEvent(2012, UnknownEvent2.class),
+
+    openMysteryTrophyEvent(3074, UnknownEvent2.class),
+
+    openQuestTrackerEvent(2750, UnknownEvent2.class),
+
+    openWelcomeGiftEvent(2638, UnknownEvent2.class),
+
+    passCarryItemToPetEvent(2768, UnknownEvent2.class),
+
+    peerUsersClassificationEvent(1160, UnknownEvent2.class),
+
+    performanceLogEvent(3230, UnknownEvent2.class),
+
+    petSelectedEvent(549, UnknownEvent2.class),
+
+    photoCompetitionEvent(3959, UnknownEvent2.class),
+
+    postQuizAnswersEvent(3720, UnknownEvent2.class),
+
+    purchaseBasicMembershipExtensionEvent(2735, UnknownEvent2.class),
+
+    redeemCommunityGoalPrizeEvent(90, UnknownEvent2.class),
+
+    rejectQuestEvent(2397, UnknownEvent2.class),
+
+    rentableSpaceStatusEvent(872, UnknownEvent2.class),
+
+    requestABadgeEvent(3077, UnknownEvent2.class),
+
+    resetPhoneNumberStateEvent(2741, UnknownEvent2.class),
+
+    resetResolutionAchievementEvent(3144, UnknownEvent2.class),
+
+    resetUnseenItemIdsEvent(3493, UnknownEvent2.class),
+
+    resetUnseenItemsEvent(2343, UnknownEvent2.class),
+
+    roomAdEventTabAdClickedEvent(2412, UnknownEvent2.class),
+
+    roomAdEventTabViewedEvent(2668, UnknownEvent2.class),
+
+    roomAdPurchaseInitiatedEvent(2283, UnknownEvent2.class),
+
+    roomAdSearchEvent(2809, UnknownEvent2.class),
+
+    roomCompetitionInitEvent(1334, UnknownEvent2.class),
+
+    roomNetworkOpenConnectionEvent(3736, UnknownEvent2.class),
+
+    roomUsersClassificationEvent(2285, UnknownEvent2.class),
+
+    searchFaqsEvent(2031, UnknownEvent2.class),
+
+    setPhoneNumberVerificationStatusEvent(1379, UnknownEvent2.class),
+
+    setRoomSessionTagsEvent(3305, UnknownEvent2.class),
+
+    shopTargetedOfferViewedEvent(3483, UnknownEvent2.class),
+
+    startCampaignEvent(1697, UnknownEvent2.class),
+
+    tryPhoneNumberEvent(790, UnknownEvent2.class),
+
+    unblockGroupMemberEvent(2864, UnknownEvent2.class),
+
+    updateForumReadMarkerEvent(1855, UnknownEvent2.class),
+
+    updateRoomCategoryAndTradeSettingsEvent(1265, UnknownEvent2.class),
+
+    updateRoomThumbnailEvent(2468, UnknownEvent2.class),
+
+    verifyCodeEvent(2721, UnknownEvent2.class),
+
+    versionCheckEvent(1053, UnknownEvent2.class),
+
+    voteForRoomEvent(143, UnknownEvent2.class),
+
+    welcomeGiftChangeEmailEvent(66, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6000(6000, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6001(6001, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6002(6002, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6003(6003, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6004(6004, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6005(6005, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6006(6006, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6007(6007, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6008(6008, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6009(6009, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6010(6010, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6011(6011, UnknownEvent2.class),
+
+    snowStormJoinQueueEvent(6012, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6013(6013, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6014(6014, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6015(6015, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6016(6016, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6017(6017, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6018(6018, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6019(6019, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6020(6020, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6021(6021, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6022(6022, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6023(6023, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6024(6024, UnknownEvent2.class),
+
+    unknownSnowStormEvent_6025(6025, UnknownEvent2.class),
+
+    snowStormUserPickSnowballEvent(6026, UnknownEvent2.class);
+
+    private final int messageId;
+    private final Class<? extends MessageHandler> messageClass;
+
 }
